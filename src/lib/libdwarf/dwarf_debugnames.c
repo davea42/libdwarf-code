@@ -226,8 +226,10 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                     "corrupt abbrevs");
                 return DW_DLV_ERROR;
             }
-            curdab->da_idxattr[curdab->da_pairs_count] =  (Dwarf_Half)attr;
-            curdab->da_form[curdab->da_pairs_count] = (Dwarf_Half)form;
+            curdab->da_idxattr[curdab->da_pairs_count] =
+                (Dwarf_Half)attr;
+            curdab->da_form[curdab->da_pairs_count] =
+                (Dwarf_Half)form;
             curdab->da_pairs_count++;
             if (!attr && !form) {
                 /*  We put the terminator into the pairs list.

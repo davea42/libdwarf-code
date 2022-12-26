@@ -134,7 +134,8 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         if (size_left < (off_t)readlenu) {
             readlenu = (size_t)size_left;
         }
-        /* Fix warning on Windows: read()'s 3rd parameter is a unsigned const */
+        /*  Fix warning on Windows: read()'s
+            3rd parameter is a unsigned const */
 #ifdef _WIN32
         readreturnv = read(fd,readbuf,(unsigned const)readlenu);
 #else

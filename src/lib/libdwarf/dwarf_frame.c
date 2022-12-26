@@ -844,7 +844,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             localregtab[reg_noA].ru_is_offset = 0;
             localregtab[reg_noA].ru_value_type = DW_EXPR_OFFSET;
-            localregtab[reg_noA].ru_register = 
+            localregtab[reg_noA].ru_register =
                 (Dwarf_Half)reg_noB;
             localregtab[reg_noA].ru_offset = 0;
             if (make_instr) {
@@ -2015,7 +2015,7 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
         return DW_DLV_ERROR;
     }
     if (ptr_to_version != NULL)
-        *ptr_to_version = 
+        *ptr_to_version =
             (Dwarf_Small)cie->ci_cie_version_number;
     if (augmenter != NULL)
         *augmenter = cie->ci_augmentation;
@@ -2922,7 +2922,7 @@ dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
 
 /*  Does something only if value passed in is greater than 0 and
     a size than we can handle (in number of bytes).  */
-Dwarf_Small 
+Dwarf_Small
 dwarf_set_default_address_size(Dwarf_Debug dbg,
     Dwarf_Small value  )
 {

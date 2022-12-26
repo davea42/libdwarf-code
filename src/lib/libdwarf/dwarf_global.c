@@ -172,11 +172,11 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     global->gl_context = pubnames_context;
     global->gl_alloc_type = (Dwarf_Small)global_DLA_code;
     global->gl_named_die_offset_within_cu = die_offset_in_cu;
-    global->gl_name = glname; 
+    global->gl_name = glname;
     global->gl_tag = tag;
     /* Finish off current entry chain */
-    curr_chain =
-        (Dwarf_Chain) _dwarf_get_alloc(dbg, (Dwarf_Small)DW_DLA_CHAIN, 1);
+    curr_chain = (Dwarf_Chain) _dwarf_get_alloc(dbg,
+        (Dwarf_Small)DW_DLA_CHAIN, 1);
     if (!curr_chain) {
         dwarf_dealloc(dbg,global,pubnames_context->pu_alloc_type);
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
@@ -192,7 +192,6 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     *pubnames_context_on_list = TRUE;
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_chain_to_array(Dwarf_Debug dbg,
@@ -266,7 +265,6 @@ pubnames_error_length(Dwarf_Debug dbg,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
-
 
 /*  There are only 6 DW_IDX values defined in DWARF5
     so 7 would suffice, but lets allow for future DW_IDX too.
@@ -503,7 +501,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                 cu_header_global_offset)) {
                 pubnames_context_on_list = FALSE;
                 pubnames_context = (Dwarf_Global_Context)
-                    _dwarf_get_alloc(dbg, 
+                    _dwarf_get_alloc(dbg,
                         (Dwarf_Small)context_DLA_code, 1);
                 if (!pubnames_context) {
                     dwarf_dealloc_dnames(dn_head);
@@ -580,7 +578,7 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
     int   cu_number,
     Dwarf_Unsigned length_section_offset,
     Dwarf_Unsigned length_field,
-    Dwarf_Error *error) 
+    Dwarf_Error *error)
 {
     dwarfstring m;
     Dwarf_Unsigned remaining = 0;
@@ -597,14 +595,12 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
         "offset %u ",length_section_offset);
     dwarfstring_append_printf_u(&m,"has value %u ",
         length_field);
-    dwarfstring_append_printf_u(&m,"though just %u bytes " 
+    dwarfstring_append_printf_u(&m,"though just %u bytes "
         "remain in the section. Corrupt DWARF",remaining);
     _dwarf_error_string(dbg, error,errornumber,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
-
-
 
 /*  Sweeps the complete  section.
     On error it frees the head_chain,
@@ -692,7 +688,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
 
         pubnames_context_on_list = FALSE;
         pubnames_context = (Dwarf_Global_Context)
-            _dwarf_get_alloc(dbg, 
+            _dwarf_get_alloc(dbg,
                 (Dwarf_Small)context_DLA_code, 1);
         if (!pubnames_context) {
             dealloc_globals_chain(dbg,*out_phead_chain);
@@ -761,12 +757,12 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
         ++context_count;
         /*  Dwarf_Global_Context initialization. */
         pubnames_context->pu_global_category  = category;
-        pubnames_context->pu_alloc_type = 
+        pubnames_context->pu_alloc_type =
             (unsigned)context_DLA_code;
-        pubnames_context->pu_length_size = 
+        pubnames_context->pu_length_size =
             (unsigned char)local_length_size;
         pubnames_context->pu_length = (unsigned char)length;
-        pubnames_context->pu_extension_size = 
+        pubnames_context->pu_extension_size =
             (unsigned char)local_extension_size;
         pubnames_context->pu_dbg = dbg;
         pubnames_context->pu_pub_offset = pubnames_section_cu_offset;
@@ -1211,7 +1207,7 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
         }
     }
     if (have_second_sec) {
-         res = _dwarf_internal_get_debug_names_globals(dbg,
+        res = _dwarf_internal_get_debug_names_globals(dbg,
             &plast_chain,
             ret_count,
             error,
@@ -1264,7 +1260,6 @@ dwarf_get_pubtypes(Dwarf_Debug dbg,
     return res;
 }
 
-
 /* Deallocating fully requires deallocating the list
    and all entries.  But some internal data is
    not exposed, so we need a function with internal knowledge.
@@ -1309,7 +1304,6 @@ _dwarf_internal_globals_dealloc(Dwarf_Debug dbg,
     dwarf_dealloc(dbg, dwgl, DW_DLA_LIST);
     return;
 }
-
 
 /*  Given a pubnames entry (or other like section entry)
     return thru the ret_name pointer

@@ -232,7 +232,7 @@ int dwarf_discr_list(Dwarf_Debug dbg,
     entry. Callers must know which is the appropriate
     one of the following two interfaces, though both
     will work. */
-int 
+int
 dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
     Dwarf_Unsigned   entrynum,
     Dwarf_Half     * out_type,
@@ -276,7 +276,7 @@ dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
 
 /*  NEW September 2016. Allows easy access to DW_AT_discr_list
     entry. */
-int 
+int
 dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
     Dwarf_Unsigned   entrynum,
     Dwarf_Half     * out_type,

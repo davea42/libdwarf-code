@@ -968,10 +968,10 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     new_cie->ci_cie_version_number = version;
     new_cie->ci_initial_table = NULL;
     new_cie->ci_length = (Dwarf_Unsigned) prefix->cf_length;
-    new_cie->ci_length_size = 
+    new_cie->ci_length_size =
         (Dwarf_Small)prefix->cf_local_length_size;
-    new_cie->ci_extension_size = 
-       (Dwarf_Small)prefix->cf_local_extension_size;
+    new_cie->ci_extension_size =
+        (Dwarf_Small)prefix->cf_local_extension_size;
     new_cie->ci_augmentation = (char *) augmentation;
 
     new_cie->ci_data_alignment_factor =
@@ -1222,9 +1222,9 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     }
 
     new_fde->fd_length = prefix->cf_length;
-    new_fde->fd_length_size = 
+    new_fde->fd_length_size =
         (Dwarf_Small)prefix->cf_local_length_size;
-    new_fde->fd_extension_size = 
+    new_fde->fd_extension_size =
         (Dwarf_Small)prefix->cf_local_extension_size;
     new_fde->fd_is_eh = (Dwarf_Small)use_gnu_cie_calc;
     new_fde->fd_cie_offset = cie_base_offset;

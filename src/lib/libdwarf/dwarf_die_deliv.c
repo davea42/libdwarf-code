@@ -594,7 +594,7 @@ finish_cu_context_via_cudie_inner(
         }
         dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
         return resdwob;
-    } 
+    }
     if (resdwo == DW_DLV_NO_ENTRY) {
         /* no cudie. Empty CU. */
         return DW_DLV_OK;
@@ -1846,7 +1846,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         if (tres == DW_DLV_ERROR && error) {
             /*  We'll assume any errors will be
                 discovered later. Lets get our CU_context
-                finished.  
+                finished.
                 if error NULL it's a caller issue
                 and there is nothing we can do here */
             dwarf_dealloc_error(dbg,*error);

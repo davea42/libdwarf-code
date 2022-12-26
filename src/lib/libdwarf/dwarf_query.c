@@ -222,8 +222,8 @@ dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
 static void
 free_dwarf_offsets_chain(Dwarf_Debug dbg, Dwarf_Chain_2 head_chain)
 {
-    Dwarf_Chain_2 cur = head_chain; 
-    Dwarf_Chain_2 next = 0; 
+    Dwarf_Chain_2 cur = head_chain;
+    Dwarf_Chain_2 next = 0;
 
     for ( ; cur ; cur = next ) {
         next = cur->ch_next;
@@ -1147,7 +1147,7 @@ dwarf_lowpc(Dwarf_Die die,
     In case of DW_DLV_NO_ENTRY or DW_DLV_ERROR it sets offset zero. */
 int
 dwarf_dietype_offset(Dwarf_Die die,
-    Dwarf_Off *return_off, 
+    Dwarf_Off *return_off,
     Dwarf_Bool *return_is_info,
     Dwarf_Error *error)
 {

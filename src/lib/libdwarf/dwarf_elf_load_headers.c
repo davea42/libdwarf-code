@@ -1540,7 +1540,7 @@ elf_load_elf_header32(
     dw_elf32_ehdr ehdr32;
     struct generic_ehdr *ehdr = 0;
 
-    ehdr32 = eh32_zero; 
+    ehdr32 = eh32_zero;
     res = RRMOA(ep->f_fd,&ehdr32,0,sizeof(ehdr32),
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
@@ -1563,7 +1563,7 @@ elf_load_elf_header64(
     dw_elf64_ehdr ehdr64;
     struct generic_ehdr *ehdr = 0;
 
-    ehdr64 = eh64_zero; 
+    ehdr64 = eh64_zero;
     res = RRMOA(ep->f_fd,&ehdr64,0,sizeof(ehdr64),
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {

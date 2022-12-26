@@ -508,7 +508,7 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Small *end = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     Dwarf_Unsigned val = 0;
-    Dwarf_Unsigned fieldlen = 
+    Dwarf_Unsigned fieldlen =
         gdbindexptr->gi_cuvectorhdr.dg_entry_length;
 
     base += cuvector_offset;

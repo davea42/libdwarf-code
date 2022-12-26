@@ -350,7 +350,7 @@ grp_walk_for_name(const void *nodep,
     const int depth)
 {
     struct Dwarf_Group_Map_Entry_s *re = 0;
- 
+
     (void)depth;
     re = *(struct Dwarf_Group_Map_Entry_s **)nodep;
     if (which == dwarf_postorder || which == dwarf_endorder) {

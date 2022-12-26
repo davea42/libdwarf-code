@@ -264,7 +264,7 @@ dwarf_dealloc_uncompressed_block(Dwarf_Debug dbg, void * space)
     dwarf_dealloc(dbg, space, DW_DLA_STRING);
 }
 
-/*  Never returns DW_DLV_NO_ENTRY 
+/*  Never returns DW_DLV_NO_ENTRY
     Returns the final form after any DW_FORM_indirect
     resolved to final form. */
 int
@@ -862,7 +862,7 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
             /*  Lets construct an easily usable error number.
                 Avoiding resizing strings and avoiding
                 using the stack for strings possibly
-                a few hundred bytes long */ 
+                a few hundred bytes long */
             dwarfstring_constructor_fixed(&m,400);
             dwarfstring_constructor_fixed(&k,200);
             dwarfstring_append(&k,dwarf_errmsg(*error));

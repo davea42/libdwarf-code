@@ -202,12 +202,12 @@ dw_empty_errlist_item(Dwarf_Error e_in)
                 the base. Free by the base.  */
             void *mallocaddr = 0;
 
-            if ( (uintptr_t)e > DW_RESERVE) { 
+            if ( (uintptr_t)e > DW_RESERVE) {
                 mallocaddr = (char*)e - DW_RESERVE;
             } else {
                 /*  Impossible */
                 continue;
-            }   
+            }
             _dwarf_error_destructor(e);
             free(mallocaddr);
         }
@@ -499,11 +499,11 @@ tdestroy_free_node(void *nodep)
     unsigned int           type = 0;
 
     m = (char *)nodep;
-    if ((uintptr_t)m > DW_RESERVE) { 
+    if ((uintptr_t)m > DW_RESERVE) {
         malloc_addr = m - DW_RESERVE;
     } else {
         /* impossible */
-        return; 
+        return;
     }
     reserve = (struct reserve_data_s *)malloc_addr;
     type = reserve->rd_type;
