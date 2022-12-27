@@ -1092,9 +1092,5 @@ int _dwarf_skip_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     char           * /*endptr*/);
 
-unsigned int  _dwarf_crc32(unsigned int init,
-    const unsigned char * buf,
-    size_t len);
 int _dwarf_get_suppress_debuglink_crc(void);
-
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);

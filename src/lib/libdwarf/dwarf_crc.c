@@ -117,9 +117,16 @@ static const uint32_t crc32_table[256] =
     in a simple logic loop (written in no actual
     language but English) and the following is a translation
     into C. Just like every other crc calculation.
-*/
+
+    The unsigned int return will not get the same CRC as
+    Linux/Macos if int/unsigned-int is 16 bits (Windows),
+    but there the crc does not matter in practice. 
+    The results on big-endian are not the same
+    as little-endian machines.*/
 unsigned int
-_dwarf_crc32 (unsigned int crc, const unsigned char *buf, size_t len)
+dwarf_basic_crc32 (const unsigned char *buf,
+    unsigned long len,
+    unsigned int crc)
 {
     const unsigned char *end = 0;
 

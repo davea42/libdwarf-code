@@ -48,13 +48,6 @@
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
 
-unsigned int
-dwarf_basic_crc32 (const unsigned char *buf,
-    unsigned long len,
-    unsigned int init)
-{
-    return _dwarf_crc32(init,buf,len);
-}
 /*  Returns DW_DLV_OK DW_DLV_NO_ENTRY or DW_DLV_ERROR
     crc32 used for debuglink crc calculation.
     Caller passes pointer to an
@@ -147,7 +140,9 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
             free(readbuf);
             return DW_DLV_ERROR;
         }
-        tcrc = _dwarf_crc32(init,readbuf,readlenu);
+        /*  Call the public API function so it gets tested too. */
+        tcrc = dwarf_basic_crc32(readbuf,readlenu,
+            (unsigned long)init);
         init = tcrc;
         size_left -= (off_t)readlenu;
     }

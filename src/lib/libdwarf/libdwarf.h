@@ -7840,8 +7840,8 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
 /*! @brief Crc32 used for debuglink crc calculation.
 
     Caller passes pointer to array of 4 unsigned char
-    provided by the caller and if this returns
-    DW_DLV_OK that is filled in.
+    provided by the caller and if this returns DW_DLV_OK
+    that is filled in.
 
     @param dw_dbg
     Pass in an open dw_dbg.  When you attempted
@@ -7864,7 +7864,10 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
 
 /*! @brief Public interface to the real crc calculation
 
-    It is unlikely this is useful.
+    It is unlikely this is useful.  The calculation will
+    not produce a return matching that of Linux/Macos if
+    the compiler implements unsigned int or signed int as
+    16 bits long.
 
     @param dw_buf
     Pass in a pointer to some bytes on which the
