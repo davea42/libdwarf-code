@@ -1,3 +1,189 @@
+2022-12-27:  David Anderson
+    commit 99081b97a0c3cc2e312ea5f15d0fe47699bc86f0
+
+    Removed a useless function
+    The remaining functions are executed in testing.
+            modified:   dwarf_crc.c
+            modified:   dwarf_crc32.c
+
+    Removed the now-unused non-API _dwarf_crc32()
+            modified:   dwarf_opaque.h
+
+    Added doxygen comments about the crc functions.
+            modified:   libdwarf.h
+
+2022-12-26:  David Anderson
+    commit b966a1964b0711f7791383a01d3473250507cfee
+
+    Fix indents and remove trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_dsc.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_groups.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2022-12-26:  David Anderson
+    commit 8825b8280394deb8df28514164317317a9a424cb
+
+    Fix indents and remove trailing whitespace.
+            modified:   dwarfdump.c
+            modified:   print_die.c
+            modified:   print_pubnames.c
+
+2022-12-26:  David Anderson
+    commit 6ce0f705f8931e095e4334ebe33ec1f220042367
+
+    Now with latest date.
+            modified:   doc/libdwarf.pdf
+
+    Add new calls (with -ka) testing
+    additional library API functions.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Add new calls (with -ka) testing
+    additional library API functions.
+    Refactor to pull checking code out of the
+    main line. For clarity.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+    if 0 out a local unusable function
+            modified:   src/lib/libdwarf/dwarf_arange.c
+
+    Clarify some comments and spacing.
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2022-12-26:  David Anderson
+    commit 8c03d27394d69f06271dc5298cc7956c77e4ca53
+
+    updating date in the document.
+            modified:   doc/libdwarf.dox
+
+2022-12-23:  David Anderson
+    commit 169a8639254511ecbbd0d5ae15406e36a576e8e5
+
+    Remove trailing whitespace and
+    correct indents.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+
+2022-12-23:  David Anderson
+    commit 24197dd18e8682a1fb8859b797062e777fafa0aa
+
+    Removing trailing whitespace
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+            modified:   src/lib/libdwarf/dwarf_global.h
+            modified:   src/lib/libdwarf/dwarf_string.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-23:  David Anderson
+    commit a4bf108310059bc04306de7aa11b788041e31c6e
+
+    Corrected error cases in dwarf_offset_list
+    by adding free_dwarf_offsets_chain() in those
+    cases.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Minor change in format, no change in content.
+            modified:   src/lib/libdwarf/dwarf_string.h
+
+2022-12-23:  David Anderson
+    commit 382fc73ca8146c7aa364fc2f7e90b77e7dfde688
+
+    Changes in dwarfstring_constructors,
+    one of them a fix.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2022-12-23:  David Anderson
+    commit b46cbc3e7134bdb3c7ebb8c9d3b74ca17102248a
+
+    Now using dwarfstring_constructor* better and added
+    comments in places about those..
+    Corrected a dwarfstring_destructor(&incdir)
+    to  dwarfstring_reset(&incdir) in create_fullest_file_path
+    error case.
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+
+2022-12-23:  David Anderson
+    commit 801a5e278bb753ea9df68abab953e603bb425e83
+
+    Add casts to avoid compiler warnings.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-12-23:  David Anderson
+    commit a4a10e6c1e77d5a054b3200201638e461bff69fd
+
+    Removed unreachable code to avoid compiler warning.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+2022-12-23:  David Anderson
+    commit b35972b2c7910585bc0515ec289871e8ee390ca6
+
+    Adding cast to target type to avoid compiler warnings.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.h
+
+2022-12-23:  David Anderson
+    commit 554e754d588941023f1f1bf7f57548ccbfbde907
+
+    Some modifications of local data types to avoid
+    compiler warnings.
+    Correction of error handling in
+    find_sig8_target_as_global_offset()
+    to avoid leak of a Dwarf_Error.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2022-12-23:  David Anderson
+    commit 5519cdc5582ffdeadac865f6bb8de15a60ab798d
+
+    Adding casts to avoid compiler warnings.
+    Correcting a return tykpe which has long been wrong:
+    DW_DLV_NO_ENTRY changed to DW_DLV_OK
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+2022-12-23:  David Anderson
+    commit c3f3babcd7c0ba6620e19b11d7079fa53e10b7e8
+
+    Added an if (resdwo == DW_DLV_NO_ENTRY)
+    for clarity.
+    Updated a dwarfstring constructor to use
+    a local char array instead of all malloc.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2022-12-23:  David Anderson
+    commit e4c58a7ab39a8f28d938dfc2e6f89e61ea27eae9
+
+    Fix a number of minor errors and
+    add casts where needed to avoid compiler warnings.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2022-12-20:  David Anderson
+    commit 98e7e804427e979ba4140b1725553dbfa0f4e3b7
+
+    Using casts to ensure no compiler warnings on assigning
+    a big unsigned to a smaller unsigned type.
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+
+    A simple and clead way to ininialize local structs.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2022-12-20:  David Anderson
+    commit cc347303b0a019f3e352303e866a305a3c2e0c48
+
+    Now up to date with ChangeLog
+            modified:   ChangeLog
+
 2022-12-20:  David Anderson
     commit 04f3722747e3991fced621cef60fd91654ef2e2d
 
