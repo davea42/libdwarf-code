@@ -34,8 +34,9 @@ extern "C" {
 
 void _dwarf_memcpy_swap_bytes(void *s1, const void *s2,
     unsigned long len);
-/*  It's inconvenient to use memcpy directly as it
-    uses size_t and that requires <stddef.h> */
+/*  It was once inconvenient to use memcpy directly as it
+    uses size_t and that requires <stddef.h>,
+    although stddef.h is part of C90.
 void _dwarf_memcpy_noswap_bytes(void *s1,
     const void *s2, unsigned long len);
 

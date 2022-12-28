@@ -8662,9 +8662,32 @@ DW_API int dwarf_set_stringcheck(int dw_stringcheck);
 */
 DW_API int dwarf_set_reloc_application(int dw_apply);
 
-/*  dwarf_get_endian_copy_function new. December 2019. */
-DW_API void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
-    (void *, const void * /*src*/, unsigned long /*srclen*/);
+/*! @brief Get a pointer to the applicable swap/noswap function
+
+    the function pointer returned enables libdwarf users
+    to use the same 64bit/32bit/16bit word copy
+    as libdwarf does internally for the Dwarf_Debug
+    passed in. The function makes it possible for
+    libdwarf to read either endianness.
+
+    @param dw_dbg
+    Pass in a pointer to the applicable Dwarf_Debug.
+
+    @returns a pointer to a copy function.
+    If the object file referred to and the libdwarf
+    reading that file are the same endianness the function
+    returned will, when called, do a simple memcpy,
+    effectively, while otherwise
+    it would do a byte-swapping copy. It seems unlikely
+    this will be useful to most library users.
+    To call the copy function returned the first argument
+    must be a pointer to the target word and the second
+    must be a pointer to the input word. The third argument
+    is the length to be copied and it must be 2,4,or 8.
+*/
+
+DW_API void (*dwarf_get_endian_copy_function(Dwarf_Debug dw_dbg))
+   (void *, const void *, unsigned long);
 
 /*  A global flag in libdwarf. Applies to all Dwarf_Debug */
 DW_API extern Dwarf_Cmdline_Options dwarf_cmdline_options;
