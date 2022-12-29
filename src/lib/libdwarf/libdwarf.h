@@ -5266,7 +5266,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
 /*! @brief Return details about a particular pc and register.
 
     It is inefficient to iterate across all table_columns (registers)
-    using this function.
+    using this function (dwarf_get_fde_info_for_reg3_b()).
     Instead call dwarf_get_fde_info_for_all_regs3()
     and index into the table it fills in.
 
@@ -5345,8 +5345,10 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
 
 /*! @brief Get the fde given DW_AT_MIPS_fde in a DIE.
 
-    This is essentially useless as only SGI compilers
-    from the 1990's had  DW_AT_MIPS_fde in the CU DIE.
+    This is essentially useless as only SGI/MIPS compilers
+    from the 1990's had  DW_AT_MIPS_fde in 
+    DW_TAG_subprogram DIEs.
+ 
 */
 DW_API int dwarf_get_fde_for_die(Dwarf_Debug dw_dbg,
     Dwarf_Die        dw_subr_die,
@@ -5560,6 +5562,7 @@ DW_API int dwarf_get_frame_instruction(
     Dwarf_Signed    *  dw_data_alignment_factor,
     Dwarf_Block     *  dw_expression_block,
     Dwarf_Error     *  dw_error);
+
 /*! @brief Expands CIE or FDE instructions for detailed examination.
     Called for CIE initial instructions and
     FDE instructions. This is the same as
