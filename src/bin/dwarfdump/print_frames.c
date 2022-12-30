@@ -55,6 +55,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 #include "dd_addrmap.h"
 #include "dd_naming.h"
 #include "dd_safe_strcpy.h"
+#include "dd_glflags.h"
 #include "print_frames.h"
 
 #define TRUE 1
@@ -911,6 +912,99 @@ valid_fde_content(Dwarf_Small * fde_start,
     return TRUE;
 }
 
+static void
+dd_check_fde_cie(Dwarf_Debug dbg,
+    Dwarf_Fde fde,
+    Dwarf_Signed cie_index,
+    Dwarf_Cie cie)
+{
+    Dwarf_Error  error;
+    Dwarf_Cie    ret_cie = 0;
+    Dwarf_Signed ret_index = 0;
+    int          res = 0;
+
+    if (!glflags.gf_check_functions) {
+        return;
+    }
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    res = dwarf_get_cie_of_fde(fde,&ret_cie,&error);
+    if (res == DW_DLV_ERROR) {
+        DWARF_CHECK_ERROR2(check_functions_result,
+            "Error calling dwarf_get_cie_of_fde() "
+            "underlying error is:",
+            dwarf_errmsg(error));
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        DWARF_CHECK_ERROR(check_functions_result,
+                "NO_ENTRY calling dwarf_get_cie_of_fde()");
+    } else  { /* OK */
+        if ( ret_cie != cie) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_get_cie_of_fde() returns "
+                "inconsistent cie");
+        }
+    }
+    res = dwarf_get_cie_index(cie,&ret_index,&error);
+    if (res == DW_DLV_ERROR) {
+        DWARF_CHECK_ERROR2(check_functions_result,
+            "Error calling dwarf_get_index() "
+            "underlying error is:",
+            dwarf_errmsg(error));
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        DWARF_CHECK_ERROR(check_functions_result,
+                "NO_ENTRY calling dwarf_get_cie_index()");
+    } else  { /* OK */
+        if ( ret_index != cie_index) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_get_cie_index() returns"
+                " mismatched cie index");
+        }
+    }
+}
+
+static void
+dd_check_retrieved_fde(Dwarf_Debug dbg,
+    Dwarf_Fde *fde_data,
+    Dwarf_Fde  expected_fde,
+    Dwarf_Addr pc)
+{
+    int         res = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Fde   returned_fde = 0;
+    Dwarf_Addr  lopc = 0;
+    Dwarf_Addr  hipc = 0;
+ 
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    res = dwarf_get_fde_at_pc(fde_data,pc,
+         &returned_fde,&lopc,&hipc,&error);
+    if (res == DW_DLV_ERROR) {
+        DWARF_CHECK_ERROR2(check_functions_result,
+            "Error calling dwarf_get_fde_at_pc() "
+            "underlying error is:",
+            dwarf_errmsg(error));
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        struct esb_s m;
+
+        esb_constructor(&m);
+        esb_append_printf_u(&m,
+            "NO_ENTRY calling dwarf_get_fde_at_pc()"
+            " got NO ENTRY for pc 0x%" 
+            DW_PR_XZEROS DW_PR_DUx
+            " which indicates corrupt dwarf",pc);
+        DWARF_CHECK_ERROR(check_functions_result,
+            esb_get_string(&m));
+        esb_destructor(&m);
+    } else  { /* OK */
+        if ( returned_fde != expected_fde) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_get_fde_at_pc() returns"
+                " mismatched fde index");
+        }
+    }
+
+}
 static const Dwarf_Block blockzero;
 
 /*  Gather the fde print logic here so the control logic
@@ -918,8 +1012,8 @@ static const Dwarf_Block blockzero;
 static int
 print_one_fde(Dwarf_Debug dbg,
     const char *frame_section_name,
-    Dwarf_Fde  fde,
-    Dwarf_Unsigned fde_index,
+    Dwarf_Fde  *fde_data,
+    Dwarf_Signed fde_index,
     Dwarf_Cie * cie_data,
     Dwarf_Signed cie_element_count,
     Dwarf_Half address_size,
@@ -932,22 +1026,26 @@ print_one_fde(Dwarf_Debug dbg,
     Dwarf_Die *cu_die_for_print_frames,
     Dwarf_Error *err)
 {
-    Dwarf_Addr j = 0;
-    Dwarf_Addr low_pc = 0;
+    Dwarf_Addr     j = 0;
+    Dwarf_Addr     low_pc = 0;
     Dwarf_Unsigned func_length = 0;
-    Dwarf_Addr end_func_addr = 0;
-    Dwarf_Small *fde_bytes = NULL;
+    Dwarf_Addr     end_func_addr = 0;
+    Dwarf_Small   *fde_bytes = NULL;
     Dwarf_Unsigned fde_bytes_length = 0;
-    Dwarf_Off cie_offset = 0;
-    Dwarf_Signed cie_index = 0;
-    Dwarf_Off fde_offset = 0;
-    Dwarf_Signed eh_table_offset = 0;
-    int fres = 0;
-    int offres = 0;
-    struct esb_s temps;
-    int printed_intro_addr = 0;
-    char local_buf[100];
-    char temps_buf[200];
+    Dwarf_Off      cie_offset = 0;
+    Dwarf_Signed   cie_index = 0;
+    Dwarf_Off      fde_offset = 0;
+    Dwarf_Signed   eh_table_offset = 0;
+    int            fres = 0;
+    int            offres = 0;
+    struct esb_s   temps;
+    int            printed_intro_addr = 0;
+    char           local_buf[100];
+    char           temps_buf[200];
+    Dwarf_Fde      fde = 0;
+    unsigned long  fde_checking_count = 0;
+
+    fde = fde_data[fde_index];
     fres = dwarf_get_fde_range(fde,
         &low_pc, &func_length,
         &fde_bytes,
@@ -964,13 +1062,14 @@ print_one_fde(Dwarf_Debug dbg,
     if (fres == DW_DLV_NO_ENTRY) {
         return DW_DLV_NO_ENTRY;
     }
+    dd_check_fde_cie(dbg,fde,cie_index,cie_data[cie_index]);
     if (glflags.gf_cu_name_flag &&
         glflags.fde_offset_for_cu_low != DW_DLV_BADOFFSET &&
         (fde_offset < glflags.fde_offset_for_cu_low ||
         fde_offset > glflags.fde_offset_for_cu_high)) {
         return DW_DLV_NO_ENTRY;
     }
-    /* eh_table_offset is IRIX ONLY. */
+    /* eh_table_offset was IRIX ONLY. */
     fres = dwarf_get_fde_exception_info(fde,
         &eh_table_offset, err);
     if (fres == DW_DLV_ERROR) {
@@ -1064,7 +1163,7 @@ print_one_fde(Dwarf_Debug dbg,
     }
     esb_destructor(&temps);
     if (!is_eh) {
-        /* IRIX uses eh_table_offset. No one else uses it. */
+        /* IRIX used eh_table_offset. No one else uses it. */
         /* Do not print if in check mode */
         if (glflags.gf_do_print_dwarf) {
             if (eh_table_offset == DW_DLX_NO_EH_OFFSET) {
@@ -1129,6 +1228,11 @@ print_one_fde(Dwarf_Debug dbg,
         Dwarf_Addr cur_pc_in_table = 0;
 
         cur_pc_in_table = j;
+        if (glflags.gf_check_functions && 
+            fde_checking_count < 100){ /* 100 is arbitrary */
+            ++fde_checking_count;
+            dd_check_retrieved_fde(dbg,fde_data,fde,cur_pc_in_table);
+        }
         {
             Dwarf_Unsigned reg = 0;
             Dwarf_Unsigned offset_relevant = 0;
@@ -2096,6 +2200,37 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     return;
 }
 
+static void
+dd_check_get_fde_n(Dwarf_Debug dbg,
+    Dwarf_Fde *fde_data,
+    Dwarf_Fde expected_fde,
+    Dwarf_Signed index)
+{
+    int         res = 0;
+    Dwarf_Error localerr = 0;
+    Dwarf_Fde   ret_fde = 0;
+
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    res = dwarf_get_fde_n(fde_data,
+        (Dwarf_Unsigned)index,&ret_fde,&localerr);
+    if (res == DW_DLV_ERROR) {
+        DWARF_CHECK_ERROR2(check_functions_result,
+            "dwarf_get_cie_index() returned DW_DLV_ERRORi "
+            "underlying error is ",
+            dwarf_errmsg(localerr));
+        DROP_ERROR_INSTANCE(dbg,res,localerr);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        DWARF_CHECK_ERROR(check_functions_result,
+            "dwarf_get_cie_index() returned DW_DLV_NO_ENTRY ");
+    } else {
+        if (ret_fde != expected_fde) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_get_cie_index() does not"
+                " return the expected fde!");
+        }
+    }
+}
+
 /*  We do NOT want to free cie/fde data as we will
     use that in print_all_cies() */
 static int
@@ -2139,10 +2274,17 @@ print_all_fdes(Dwarf_Debug dbg,
 
     for (i = 0; i < fde_element_count; i++) {
         int fdres = 0;
+        Dwarf_Fde fde = 0;
 
+        fde = fde_data[i];
+        if (glflags.gf_check_functions) {
+            dd_check_get_fde_n(dbg,fde_data,
+                fde,i);
+        }
         fdres = print_one_fde(dbg,
-            frame_section_name, fde_data[i],
-            i, cie_data, cie_element_count,
+            frame_section_name, 
+            fde_data,i,
+            cie_data, cie_element_count,
             address_size, offset_size, version,
             is_eh, config_data,
             map_lowpc_to_name,

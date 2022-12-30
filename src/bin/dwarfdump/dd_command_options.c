@@ -1968,14 +1968,15 @@ void arg_show_dwarfdump_conf(void)
 void arg_show_args(void)
 {
     glflags.gf_show_args_flag = TRUE;
+    print_version_details(glflags.program_fullname);
 }
 
 /*  Option '-V' */
 void arg_version(void)
 {
     /* Display dwarfdump compilation date and time */
-    arg_show_args();
     print_version_details(glflags.program_fullname);
+    arg_show_args();
     makename_destructor();
     global_destructors();
     exit(OKAY);

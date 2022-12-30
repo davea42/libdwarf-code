@@ -348,7 +348,8 @@ main(int argc, char *argv[])
 #endif /* _WIN32 */
 
     file_name = process_args(argc, argv);
-    print_version_details(argv[0]);
+    /*  print_version_details already done in
+        dd_command_options.c */
     print_args(argc,argv);
 
     /*  Redirect stdout  to an specific file */
