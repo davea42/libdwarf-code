@@ -1,3 +1,48 @@
+2022-12-29:  David Anderson
+    commit b6af42015d91df10dca09f4f8607076e0e248d89
+
+    Alter the postioning of calls to print_version_details
+    to make the output more consistent overall.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Removing a print_version_details() call as it's now
+    done in dd_command_options.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Adding checks of a few API calls (when using -ka)
+    that were previously not called from dwarfdump.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+2022-12-29:  David Anderson
+    commit e63643d5f24cfbf2203d185b432ef4b56b1edc07
+
+    Clarifying doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-27:  David Anderson
+    commit 312ac6f05dc573dbdf7c686c586de6ffdf1784b5
+
+    Fix silly typo, fixing a comment.
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.h
+
+2022-12-27:  David Anderson
+    commit a5df21f0eb961e1280c4c09a0c4828ad6c76f41c
+
+    Documenting access to the word copy function
+    libdwarf uses to deal with endian differences
+    between an object being read and the the
+    running system library doing the reading.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-27:  David Anderson
+    commit cb506fb532653167cd631adfa530de3efa86df1c
+
+    Bringing up to date with git log
+            modified:   ChangeLog
+
 2022-12-27:  David Anderson
     commit 99081b97a0c3cc2e312ea5f15d0fe47699bc86f0
 
