@@ -441,8 +441,15 @@ main(int argc, char *argv[])
         &ftype,&endian,&offsetsize,&filesize,
         &path_source,&errcode);
     if (res != DW_DLV_OK) {
-        printf("%s ERROR:  Can't open %s\n",
-            glflags.program_name, sanitized(file_name));
+        if (res == DW_DLV_ERROR) {
+            printf("%s ERROR:  Can't open %s. Error %s\n",
+                glflags.program_name, sanitized(file_name),
+                dwarf_errmsg_by_number(errcode));
+        } else {
+            printf("%s ERROR:  Can't open %s. "
+                "There is no such file\n",
+                glflags.program_name, sanitized(file_name));
+        }
         global_destructors();
         free(temp_path_buf);
         exit(EXIT_FAILURE);
