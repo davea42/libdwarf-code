@@ -103,6 +103,29 @@ dumpsizes(int line,Dwarf_Unsigned s,
 }
 #endif /*0*/
 
+int nibblecounts[16] = {
+0,1,1,2,
+1,2,2,3,
+2,2,2,3,
+2,3,3,4
+};
+
+static int
+getbitsoncount(Dwarf_Unsigned v_in)
+{
+     int           bitscount = 0;
+     Dwarf_Unsigned v = v_in;
+
+     while (v) {
+         unsigned int nibble = v & 0xf;
+         bitscount += nibblecounts[nibble];
+         v >>= 4;
+     }
+     return bitscount;
+}
+
+
+
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
     int *is_rela,int *is_rel)
@@ -263,7 +286,8 @@ dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
 
 static int
 generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
-    struct generic_ehdr *ehdr, dw_elf32_ehdr *e)
+    struct generic_ehdr *ehdr, dw_elf32_ehdr *e,
+    int *errcode)
 {
     int i = 0;
 
@@ -283,6 +307,23 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shentsize,e->e_shentsize);
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
+    if (ehdr->ge_shstrndx < 1) {
+        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        return DW_DLV_ERROR;
+    } 
+    if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
+        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        return DW_DLV_ERROR;
+    } 
+    if (ehdr->ge_shnum < 3) {
+        *errcode = DW_DLE_TOO_FEW_SECTIONS; 
+        return DW_DLV_ERROR;
+    } 
+    if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
+        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        return DW_DLV_ERROR;
+    }
+
     ep->f_machine = (unsigned int)ehdr->ge_machine;
     ep->f_ehdr = ehdr;
     ep->f_loc_ehdr.g_name = "Elf File Header";
@@ -295,7 +336,8 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
 
 static int
 generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
-    struct generic_ehdr *ehdr, dw_elf64_ehdr *e)
+    struct generic_ehdr *ehdr, dw_elf64_ehdr *e,
+    int *errcode)
 {
     int i = 0;
 
@@ -315,6 +357,22 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shentsize,e->e_shentsize);
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
+    if (ehdr->ge_shstrndx < 1) {
+        *errcode = DW_DLE_NO_SECT_STRINGS;  
+        return DW_DLV_ERROR;
+    } 
+    if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
+        *errcode = DW_DLE_NO_SECT_STRINGS;
+        return DW_DLV_ERROR;
+    } 
+    if (ehdr->ge_shnum < 3) {
+        *errcode = DW_DLE_TOO_FEW_SECTIONS;
+        return DW_DLV_ERROR;
+    }
+    if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
+        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        return DW_DLV_ERROR;
+    }
     ep->f_machine = (unsigned int)ehdr->ge_machine;
     ep->f_ehdr = ehdr;
     ep->f_loc_ehdr.g_name = "Elf File Header";
@@ -488,6 +546,9 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
     }
     for (i = 0; i < count;
         ++i,  psh++,gshdr++) {
+        int isempty     = FALSE;
+        int bitsoncount = 0;
+
         gshdr->gh_secnum = i;
         ASNAR(ep->f_copy_word,gshdr->gh_name,psh->sh_name);
         ASNAR(ep->f_copy_word,gshdr->gh_type,psh->sh_type);
@@ -499,7 +560,7 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
         ASNAR(ep->f_copy_word,gshdr->gh_info,psh->sh_info);
         ASNAR(ep->f_copy_word,gshdr->gh_addralign,psh->sh_addralign);
         ASNAR(ep->f_copy_word,gshdr->gh_entsize,psh->sh_entsize);
-#if 0
+#if 1
         if (gshdr->gh_size >= ep->f_filesize &&
             gshdr->gh_type != SHT_NOBITS) {
             free(orig_psh);
@@ -508,6 +569,23 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
             return DW_DLV_ERROR;
         }
 #endif /* 0 */
+        isempty = is_empty_section(gshdr->gh_type);
+        if (i == 0) {
+            /*  We require that section zero be 'empty'
+                per the Elf ABI. */
+            if (!isempty || gshdr->gh_name || gshdr->gh_flags ||
+                gshdr->gh_addr || gshdr->gh_link ||
+                gshdr->gh_info) {
+                *errcode = DW_DLE_IMPROPER_SECTION_ZERO;
+                return DW_DLV_ERROR;
+            }
+        }
+        bitsoncount = getbitsoncount(gshdr->gh_flags);
+        if (bitsoncount > 8) {
+            *errcode = DW_DLE_BAD_SECTION_FLAGS;
+            return DW_DLV_ERROR;
+        }
+
         if (gshdr->gh_type == SHT_REL || gshdr->gh_type == SHT_RELA){
             gshdr->gh_reloc_target_secnum = gshdr->gh_info;
         }
@@ -562,6 +640,9 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
     }
     for ( i = 0; i < count;
         ++i,  psh++,gshdr++) {
+        int bitsoncount = 0;
+        int isempty = FALSE;
+
         gshdr->gh_secnum = i;
         ASNAR(ep->f_copy_word,gshdr->gh_name,psh->sh_name);
         ASNAR(ep->f_copy_word,gshdr->gh_type,psh->sh_type);
@@ -573,7 +654,7 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
         ASNAR(ep->f_copy_word,gshdr->gh_info,psh->sh_info);
         ASNAR(ep->f_copy_word,gshdr->gh_addralign,psh->sh_addralign);
         ASNAR(ep->f_copy_word,gshdr->gh_entsize,psh->sh_entsize);
-#if 0
+#if 1
         if (gshdr->gh_size >= ep->f_filesize &&
             gshdr->gh_type != SHT_NOBITS) {
             free(orig_psh);
@@ -582,6 +663,23 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
             return DW_DLV_ERROR;
         }
 #endif
+        isempty = is_empty_section(gshdr->gh_type);
+        if (i == 0) {
+            /*  We require that section zero be 'empty'
+                per the Elf ABI. */
+            if (!isempty || gshdr->gh_name || gshdr->gh_flags ||
+                gshdr->gh_addr || gshdr->gh_link ||
+                gshdr->gh_info) {
+                *errcode = DW_DLE_IMPROPER_SECTION_ZERO;
+                return DW_DLV_ERROR;
+            }
+        }
+        bitsoncount = getbitsoncount(gshdr->gh_flags);
+        if (bitsoncount > 8) {
+            *errcode = DW_DLE_BAD_SECTION_FLAGS;
+            return DW_DLV_ERROR;
+        }
+
         if (gshdr->gh_type == SHT_REL ||
             gshdr->gh_type == SHT_RELA){
             gshdr->gh_reloc_target_secnum = gshdr->gh_info;
@@ -1497,6 +1595,8 @@ validate_section_name_string(Dwarf_Unsigned section_length,
     return DW_DLV_ERROR;
 }
 
+/*  Without proper section names in place nothing
+    is going to work in reading DWARF sections. */
 static int
 _dwarf_elf_load_sect_namestring(
     dwarf_elf_object_access_internals_t *ep,
@@ -1512,17 +1612,28 @@ _dwarf_elf_load_sect_namestring(
     generic_count = ep->f_loc_shdr.g_count;
     for (i = 0; i < generic_count; i++, ++gshdr) {
         const char *namestr =
-            "<Invalid sh_name value. Corrupt Elf.>";
+            "<No valid Elf section strings exist>";
         int res = 0;
 
+        if (!ep->f_ehdr->ge_shstrndx || !stringsecbase) {
+            gshdr->gh_namestring = namestr;
+            continue;
+        }
+        namestr = "<Invalid sh_name value. Corrupt Elf.>";
         res = validate_section_name_string(ep->f_elf_shstrings_length,
             gshdr->gh_name, stringsecbase,
             errcode);
         if (res != DW_DLV_OK) {
             gshdr->gh_namestring = namestr;
-            return res;
+            if (res == DW_DLV_ERROR) {
+                return res;
+            }
+            /* no entry, missing strings. */
+            *errcode = DW_DLE_NO_SECT_STRINGS;
+            return DW_DLV_ERROR;
+        } else {
+            gshdr->gh_namestring = stringsecbase + gshdr->gh_name;
         }
-        gshdr->gh_namestring = stringsecbase + gshdr->gh_name;
     }
     return DW_DLV_OK;
 }
@@ -1552,7 +1663,7 @@ elf_load_elf_header32(
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    res  = generic_ehdr_from_32(ep,ehdr,&ehdr32);
+    res  = generic_ehdr_from_32(ep,ehdr,&ehdr32,errcode);
     return res;
 }
 static int
@@ -1575,7 +1686,7 @@ elf_load_elf_header64(
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    res  = generic_ehdr_from_64(ep,ehdr,&ehdr64);
+    res  = generic_ehdr_from_64(ep,ehdr,&ehdr64,errcode);
     return res;
 }
 
@@ -1891,6 +2002,7 @@ _dwarf_elf_setup_all_section_groups(
     /* Does step A and step B */
     for (i = 0; i < count; ++psh,++i) {
         const char *name = psh->gh_namestring;
+
         if (is_empty_section(psh->gh_type)) {
             /*  No data here. */
             continue;

@@ -35,6 +35,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 extern "C" {
 #endif /* __cplusplus */
 
+#define  DW_BUILDID_SANE_SIZE (8*1024)
+
 int _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input);
 
 int _dwarf_construct_linkedto_path(

@@ -108,6 +108,11 @@ main(int argc, char **argv)
         }
         if (!strcmp(argv[curopt],"--just-print-selected-regs")) {
             just_print_selected_regs++;
+            continue;
+        }
+        if (!strcmp(argv[curopt],"--suppress-de-alloc-tree")) {
+            dwarf_set_de_alloc_flag(FALSE);
+            continue;
         }
     }
 

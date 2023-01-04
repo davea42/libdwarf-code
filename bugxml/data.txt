@@ -1,4 +1,34 @@
 
+id: DW202212-001
+cve:
+fuzzer: oss-fuzz
+datereported: 2022-12-28
+reportedby: David Korczynski
+vulnerability: Denial of Service with fuzzed object.
+product: libdwarf
+description: The fuzzed testcase has at least four major
+  errors which libdwarf did not catch, leading
+  to unpredictable library behavior, possibly
+  including crashing the calling program.
+  Things not noticed before the fix (and now resulting
+  in error being reported):
+  A) The object has just 2 sections, 
+  too few to be real.  at least 3 sections are needed
+  to contain DWARF information of any kind.
+  B) Section zero has non-zero contents, in violation
+  of the Elf object specification.
+  C) The header says section strings are in section
+  zero (a violation of the Elf specification).
+  D) Section 1 masquerades as .note.gnu.debug-id
+  and the description size is gigantic (as is
+  the section, which fits the description field
+  length).
+datefixed: 2023-01-03
+references: regressiontests/ossfuzz54724/clusterfuzz-54724-poc
+gitfixid: 
+tarrelease:
+endrec: DW202212-001
+
 
 
 id: DW202208-001

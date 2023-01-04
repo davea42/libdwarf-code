@@ -13,6 +13,7 @@
 #include <stddef.h> /* NULL */
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
+#include <string.h> /* strcmp() */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -414,13 +415,23 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
 
 /*  testing interfaces useful for embedding
     libdwarf inside another program or library. */
-int main(void)
+int main(int argc, char **argv)
 {
     int res = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Error error = 0;
     int fail = FALSE;
+    int i = 1;
 
+    if (i >= argc) {
+       /* OK */
+    } else {
+        if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
+            /* This is solely for improved testing of libdwarf*/
+            dwarf_set_de_alloc_flag(FALSE);
+            ++i;
+        }
+    }
     /*  Fill in iface before this call.
         We are using a static area, see above. */
     res = dwarf_object_init_b(&interface,

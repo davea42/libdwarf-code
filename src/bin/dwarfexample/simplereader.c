@@ -407,45 +407,62 @@ main(int argc, char **argv)
     for (i = 1; i < (argc-1) ; ++i) {
         if (strcmp(argv[i],"--names") == 0) {
             namesoptionon=1;
-        } else if (startswithextractstring(argv[1],"--dumpallnames=",
+            continue;
+        } 
+        if (startswithextractstring(argv[1],"--dumpallnames=",
             &dumpallnamespath)) {
             dumpallnames=1;
-        } else if (strcmp(argv[i],"--check") == 0) {
+            continue;
+        } 
+        if (strcmp(argv[i],"--check") == 0) {
             checkoptionon=1;
-        } else if (startswithextractstring(argv[i],
+            continue;
+        } 
+        if (startswithextractstring(argv[i],
             "--tuhash=",&tuhash)) {
-            /* done */
-        } else if (startswithextractstring(argv[i],
+            continue;
+        } 
+        if (startswithextractstring(argv[i],
             "--cuhash=",&cuhash)) {
-            /* done */
-        } else if (startswithextractstring(argv[i],
-            "--tufissionhash=",
-            &tufissionhash)) {
-            /* done */
-        } else if (startswithextractstring(argv[i],
+            continue;
+        } 
+        if (startswithextractstring(argv[i],
+            "--tufissionhash=", &tufissionhash)) {
+            continue;
+        } 
+        if (startswithextractstring(argv[i],
             "--cufissionhash=",
             &cufissionhash)) {
-            /* done */
-        } else if (strcmp(argv[i],"--passnullerror") == 0) {
+            continue;
+        } 
+        if (strcmp(argv[i],"--passnullerror") == 0) {
             passnullerror=1;
-        } else if (strcmp(argv[i],"--simpleerrhand") == 0) {
+            continue;
+        } 
+        if (strcmp(argv[i],"--simpleerrhand") == 0) {
             simpleerrhand=1;
-        } else if (startswithextractnum(argv[i],
+            continue;
+        } 
+        if (startswithextractnum(argv[i],
             "--isinfo=",&g_is_info)) {
-            /* done */
-        } else if (startswithextractnum(argv[i],
+            continue;
+        } 
+        if (startswithextractnum(argv[i],
             "--type=",&unittype)) {
-            /* done */
-        } else if (startswithextractnum(argv[i],
+            continue;
+        } 
+        if (startswithextractnum(argv[i],
             "--fissionfordie=",
             &fissionfordie)) {
-            /* done */
-        } else if (!strcmp(argv[i],"--use-init-fd")) {
+            continue;
+        } 
+        if (!strcmp(argv[i],"--use-init-fd")) {
             use_init_fd = TRUE;
             /* done */
-        } else {
-            printf("Unknown argument \"%s\", give up \n",argv[i]);
-            exit(EXIT_FAILURE);
+        } 
+        if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
+            dwarf_set_de_alloc_flag(FALSE);
+            continue;
         }
     }
     if (i >= argc) {

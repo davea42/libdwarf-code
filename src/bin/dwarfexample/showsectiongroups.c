@@ -20,6 +20,7 @@
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#define FALSE 0
 
 char trueoutpath[2000];
 
@@ -40,7 +41,21 @@ one_file_show_groups(char  *path_in,
     Dwarf_Unsigned * sec_numbers_array = 0;
     const char    ** sec_names_array = 0;
     Dwarf_Unsigned   i = 0;
+    const char *grpname  = 0;
 
+    switch(chosengroup) {
+    case DW_GROUPNUMBER_ANY:
+        grpname="DW_GROUPNUMBER_ANY";
+        break;
+    case DW_GROUPNUMBER_BASE:
+        grpname="DW_GROUPNUMBER_BASE";
+        break;
+    case DW_GROUPNUMBER_DWO:
+        grpname="DW_GROUPNUMBER_DWO";
+        break;
+    default:
+        grpname = "";
+    }
     path =  path_in;
     res = dwarf_init_path(path,
         0,0,
@@ -54,8 +69,10 @@ one_file_show_groups(char  *path_in,
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
-        printf("There is no such file as \"%s\"\n",
-            shortpath);
+        printf("There is no such file as \"%s\" "
+           "or the selected group %d (%s) does "
+           "not appear in the file\n",
+            shortpath,chosengroup,grpname);
         return DW_DLV_NO_ENTRY;
     }
 
@@ -220,6 +237,11 @@ main(int argc, char **argv)
             /*  We are ignoring errors to simplify
                 this source. Use strtol, carefully,
                 in real code. */
+            continue;
+        }
+        if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
+            /* Just for improved testing. */
+            dwarf_set_de_alloc_flag(FALSE);
             continue;
         }
         trimpathprefix(reportingpath,sizeof(reportingpath),arg);

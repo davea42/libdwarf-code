@@ -204,7 +204,7 @@ main(int argc, char **argv)
     if (res == FOUND_SUBPROG) {
         /* OK */
     } else if (res != DW_DLV_OK) {
-        printf("look for target failed!\n");
+        printf("Look for target PC failed!\n");
     }
     target_data_destructor(&target_data);
     res = dwarf_finish(dbg);
@@ -633,6 +633,7 @@ look_for_our_target(Dwarf_Debug dbg,
                 return res;
             }
             reset_target_data(dbg,td);
+            return res;
         }
         else if (res == IN_THIS_CU) {
             char *em = dwarf_errmsg(*errp);

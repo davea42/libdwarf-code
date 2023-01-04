@@ -846,6 +846,28 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
     bu = (struct buildid_s *)ptr;
     ASNAR(dbg->de_copy_word,namesize, bu->bu_ownernamesize);
     ASNAR(dbg->de_copy_word,descrsize,bu->bu_buildidsize);
+    if (descrsize >= secsize) {
+        _dwarf_error_string(dbg,error,
+            DW_DLE_BUILD_ID_DESCRIPTION_SIZE,
+            "DW_DLE_BUILD_ID_DESCRIPTION_SIZE Size is much too "
+            "large to be correct. Corrupt Dwarf");
+        return DW_DLV_ERROR;
+    }
+    if ((descrsize+8) >= secsize) {
+        _dwarf_error_string(dbg,error,
+            DW_DLE_BUILD_ID_DESCRIPTION_SIZE,
+            "DW_DLE_BUILD_ID_DESCRIPTION_SIZE Size is too "
+            "large to be correct. Corrupt Dwarf");
+        return DW_DLV_ERROR;
+    }
+    if (descrsize >= DW_BUILDID_SANE_SIZE) {
+        _dwarf_error_string(dbg,error,
+            DW_DLE_BUILD_ID_DESCRIPTION_SIZE,
+            "DW_DLE_BUILD_ID_DESCRIPTION_SIZE Size is too "
+            "large to be sane. Corrupt Dwarf");
+        return DW_DLV_ERROR;
+    }
+
     ASNAR(dbg->de_copy_word,type,     bu->bu_type);
     /*  descrsize  test is no longer appropriate, other lengths
         than 20 may exist.  --Wl,--build-id= can have
@@ -872,6 +894,34 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
     }
     *type_returned = (unsigned)type;
     *owner_name_returned = &bu->bu_owner[0];
+    if (descrsize >= secsize) { /* In case value insanely large */
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_CORRUPT_NOTE_GNU_DEBUGID buildid description"
+            "length %u larger than the section size. "
+            "Corrupt object section",descrsize);
+        _dwarf_error_string(dbg,error,
+            DW_DLE_CORRUPT_GNU_DEBUGID_SIZE, 
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    if ((descrsize+8) >= secsize) { /* In case a bit too large */
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_CORRUPT_NOTE_GNU_DEBUGID buildid description"
+            "length %u larger than is appropriate. "
+            "Corrupt object section",descrsize);
+        _dwarf_error_string(dbg,error, 
+            DW_DLE_CORRUPT_GNU_DEBUGID_SIZE,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     *build_id_length_returned = (unsigned)descrsize;
     *build_id_returned = (unsigned char *)ptr +
         sizeof(struct buildid_s)-1 + namesize;
