@@ -1365,8 +1365,14 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_PE_SECTION_SIZE_ERROR           491
 #define DW_DLE_DEBUG_ADDR_ERROR                492
 
+#define DW_DLE_NO_SECT_STRINGS                 493
+#define DW_DLE_TOO_FEW_SECTIONS                494
+#define DW_DLE_BUILD_ID_DESCRIPTION_SIZE       495
+#define DW_DLE_BAD_SECTION_FLAGS               496
+#define DW_DLE_IMPROPER_SECTION_ZERO            497
+
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        492
+#define DW_DLE_LAST        497
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 

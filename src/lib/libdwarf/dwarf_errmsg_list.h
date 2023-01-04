@@ -663,6 +663,17 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "Symbols section size bad"},
 {"DW_DLE_PE_SECTION_SIZE_ERROR(491) Corrupt PE object. "
     "Section size too large."},
-{"DW_DLE_DEBUG_ADDR_ERROR(492) Problem reading .debug_addr"}
+{"DW_DLE_DEBUG_ADDR_ERROR(492) Problem reading .debug_addr"},
+{"DW_DLE_NO_SECT_STRINGS(493) Section strings section "
+    "number from header "
+    "is incorrect. Unusable object"},
+{"DW_DLE_TOO_FEW_SECTIONS(494) Sections incomplete, corrupted. "
+    "Unusable object"},
+{"DW_DLE_BUILD_ID_DESCRIPTION_SIZE(495) .note.gnu.build-id section"
+    " corrupt.  Unusable object"},
+{"DW_DLE_BAD_SECTION_FLAGS(496) Some section flags are incorrect."
+    " Unusable object"},
+{"DW_DLE_IMPROPER_SECTION_ZERO(497) Section zero header contents "
+    "incorrect. See Elf ABI.  Unsafe object."}
 };
 #endif /* DWARF_ERRMSG_LIST_H */
