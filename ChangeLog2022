@@ -1,3 +1,17 @@
+
+2022-12-31:  David Anderson
+    commit 1aa419e3c8c4e32397532a9ffc03bb89a7d99d53
+
+    Improved error messages for empty or really short
+    files dwarfdump is asked to look at.
+            modified:   dwarfdump.c
+
+2022-12-29:  David Anderson
+    commit 2e2eae77fdf848c4af3c1e0340716ee1ad44791b
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2022-12-29:  David Anderson
     commit b6af42015d91df10dca09f4f8607076e0e248d89
 

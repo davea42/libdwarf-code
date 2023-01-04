@@ -1,15 +1,10 @@
-2022-12-29:  David Anderson
-    commit b6af42015d91df10dca09f4f8607076e0e248d89
+2023-01-04:  David Anderson
+    commit 5960a7983e58c4263d752daa53866c25f3e4ef50
 
-    Alter the postioning of calls to print_version_details
-    to make the output more consistent overall.
-            modified:   src/bin/dwarfdump/dd_command_options.c
+    New log, new year.
+            modified:   ChangeLog
+            new file:   ChangeLog2022
 
-    Removing a print_version_details() call as it's now
-    done in dd_command_options.c
-            modified:   src/bin/dwarfdump/dwarfdump.c
-
-    Adding checks of a few API calls (when using -ka)
-    that were previously not called from dwarfdump.
-            modified:   src/bin/dwarfdump/print_frames.c
-
+    New DW_DLE error codes for bug DW202212-001
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/libdwarf.h
