@@ -23,9 +23,9 @@ description: The fuzzed testcase has at least four major
   and the description size is gigantic (as is
   the section, which fits the description field
   length).
-datefixed: 2023-01-03
+datefixed: 2023-01-09
 references: regressiontests/ossfuzz54724/clusterfuzz-54724-poc
-gitfixid: 
+gitfixid: 45f6d778811553a835916b60845933e6dda63b7f
 tarrelease:
 endrec: DW202212-001
 
