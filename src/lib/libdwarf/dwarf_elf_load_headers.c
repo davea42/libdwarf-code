@@ -576,12 +576,16 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
             if (!isempty || gshdr->gh_name || gshdr->gh_flags ||
                 gshdr->gh_addr || gshdr->gh_link ||
                 gshdr->gh_info) {
+                free(orig_psh);
+                free(orig_gshdr);
                 *errcode = DW_DLE_IMPROPER_SECTION_ZERO;
                 return DW_DLV_ERROR;
             }
         }
         bitsoncount = getbitsoncount(gshdr->gh_flags);
         if (bitsoncount > 8) {
+            free(orig_psh);
+            free(orig_gshdr);
             *errcode = DW_DLE_BAD_SECTION_FLAGS;
             return DW_DLV_ERROR;
         }
@@ -670,12 +674,16 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
             if (!isempty || gshdr->gh_name || gshdr->gh_flags ||
                 gshdr->gh_addr || gshdr->gh_link ||
                 gshdr->gh_info) {
+                free(orig_psh);
+                free(orig_gshdr);
                 *errcode = DW_DLE_IMPROPER_SECTION_ZERO;
                 return DW_DLV_ERROR;
             }
         }
         bitsoncount = getbitsoncount(gshdr->gh_flags);
         if (bitsoncount > 8) {
+            free(orig_psh);
+            free(orig_gshdr);
             *errcode = DW_DLE_BAD_SECTION_FLAGS;
             return DW_DLV_ERROR;
         }
@@ -1664,6 +1672,9 @@ elf_load_elf_header32(
         return DW_DLV_ERROR;
     }
     res  = generic_ehdr_from_32(ep,ehdr,&ehdr32,errcode);
+    if (res != DW_DLV_OK) {
+        free(ehdr);
+    }
     return res;
 }
 static int
@@ -1687,6 +1698,9 @@ elf_load_elf_header64(
         return DW_DLV_ERROR;
     }
     res  = generic_ehdr_from_64(ep,ehdr,&ehdr64,errcode);
+    if (res != DW_DLV_OK) {
+        free(ehdr);
+    }
     return res;
 }
 

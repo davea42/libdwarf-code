@@ -476,7 +476,7 @@ dwarf_attrlist(Dwarf_Die die,
             if (_dwarf_reference_outside_section(die,
                 (Dwarf_Small*) info_ptr,
                 ((Dwarf_Small*) info_ptr )+1)) {
-                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -489,7 +489,7 @@ dwarf_attrlist(Dwarf_Die die,
             ires = _dwarf_leb128_uword_wrapper(dbg,
                 &info_ptr,die_info_end,&utmp6,error);
             if (ires != DW_DLV_OK) {
-                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -500,7 +500,7 @@ dwarf_attrlist(Dwarf_Die die,
             }
             attr_form = (Dwarf_Half) utmp6;
             if (attr_form == DW_FORM_implicit_const) {
-                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -538,11 +538,15 @@ dwarf_attrlist(Dwarf_Die die,
                 at least one byte, we think.
                 We do not want info_ptr to point past end so
                 we add 1 to the end-pointer.  */
+            new_attr->ar_cu_context = die->di_cu_context;
+            new_attr->ar_debug_ptr = info_ptr;
+            new_attr->ar_die = die;
+            new_attr->ar_dbg = dbg;
             if ( attr_form != DW_FORM_implicit_const &&
                 _dwarf_reference_outside_section(die,
                 (Dwarf_Small*) info_ptr,
                 ((Dwarf_Small*) info_ptr )+1)) {
-                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -552,10 +556,6 @@ dwarf_attrlist(Dwarf_Die die,
                     "Corrupt Dwarf");
                 return DW_DLV_ERROR;
             }
-            new_attr->ar_cu_context = die->di_cu_context;
-            new_attr->ar_debug_ptr = info_ptr;
-            new_attr->ar_die = die;
-            new_attr->ar_dbg = dbg;
             if (attr_form == DW_FORM_implicit_const) {
                 /*  The value is here, not in a DIE.
                     Do not increment info_ptr */
@@ -574,7 +574,7 @@ dwarf_attrlist(Dwarf_Die die,
                     die_info_end,
                     error);
                 if (vres!= DW_DLV_OK) {
-                    dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                    dwarf_dealloc_attribute(new_attr);
                     empty_local_attrlist(dbg,head_attr);
                     return vres;
                 }

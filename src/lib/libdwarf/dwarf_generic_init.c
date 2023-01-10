@@ -66,6 +66,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* free() */
 #include <string.h> /* strdup() */
+#include <stdio.h> /* debugging */
 
 #ifdef _WIN32
 #ifdef HAVE_STDAFX_H

@@ -2616,7 +2616,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     }
 
     ret_die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
-    if (ret_die == NULL) {
+    if (!ret_die) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
