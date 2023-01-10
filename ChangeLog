@@ -1,3 +1,25 @@
+2023-01-10:  David Anderson
+    commit 78855e4b8b1f48e456cec9adbf21de1d78ff5433
+
+    Improved the -h (help) message for
+    --print-strings and --print-str-offsets
+    dwarfdump options.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2023-01-10:  David Anderson
+    commit d3e59a126829b098ac5f1a7ab757f545287607f1
+
+    The -f option was omitted from the help text.
+    Oops. Added it following -F in help.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2023-01-09:  David Anderson
+    commit 8133c2d0a6068c99193cf47f36de3dced60a7855
+
+    Now with latest includeing git fix id
+    for bug DW202212-001
+            modified:   ChangeLog
+
 2023-01-09:  David Anderson
     commit 35fb2b0eb05e6e52eaf4a674429067644d7bdb57
 
