@@ -455,6 +455,7 @@ static const char *usage_long_text[] = {
 "-a   --print-all         Print all debug_* sections",
 "-r   --print-aranges     Print aranges section",
 "-F   --print-eh-frame    Print gnu .eh_frame section",
+"-f   --print-frame       Print .debug_frame section",
 "-I   --print-fission     Print fission sections:",
 "                         .gdb_index, .debug_cu_index,",
 "                         .debug_tu_index, .gnu.debuglink,",
