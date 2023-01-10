@@ -1,3 +1,69 @@
+2023-01-09:  David Anderson
+    commit 35fb2b0eb05e6e52eaf4a674429067644d7bdb57
+
+    Updated DW202212-001 with git fix id.
+            modified:   bugxml/data.txt
+
+2023-01-09:  David Anderson
+    commit 45f6d778811553a835916b60845933e6dda63b7f
+
+    See  bug DW202212-001
+    There are four different Elf/Dwarf corruptions here
+    not previously noticed.  All these now noticed.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-01-04:  David Anderson
+    commit 096f1ab0727baa1ba72b08d00953e2a5b243a2b3
+
+    Defines the new DenialOfService bug DW202212-001
+            modified:   bugxml/data.txt
+
+    correct a printf for clarity.
+    Add a return on success finding the pc in the object.
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+
+    Add a new option to help test this cude.
+    --suppress-de-alloc-tree is the option.
+            modified:   src/bin/dwarfexample/frame1.c
+
+    Add a new option to help test this cude.
+    --suppress-de-alloc-tree is the option.
+            modified:   src/bin/dwarfexample/jitreader.c
+
+    Clarify the error report in case the group requested
+    is simply not present.
+    Add a new option to help test this cude.
+    --suppress-de-alloc-tree is the option.
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+
+    Add a new option to help test this cude.
+    --suppress-de-alloc-tree is the option.
+    Simplify the code in main() reading argv[].
+            modified:   src/bin/dwarfexample/simplereader.c
+
+    Add new tests so if an unreasonable build-id
+    is present an error is returned.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Define the meaning of 'unreasonable build-id'
+    as DW_BUILDID_SANE_SIZE.
+            modified:   src/lib/libdwarf/dwarf_debuglink.h
+
+    Look for a variety of Elf object errors not
+    previosly noted. See DW202212-001.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-01-04:  David Anderson
+    commit c49cf80fd866d968c3606f520050e74deeb7d665
+
+    Up to date 2023
+            modified:   ChangeLog
+    Now with all 2022
+            modified:   ChangeLog2022
+
 2023-01-04:  David Anderson
     commit 5960a7983e58c4263d752daa53866c25f3e4ef50
 
