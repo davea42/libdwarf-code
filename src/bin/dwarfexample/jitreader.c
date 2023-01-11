@@ -290,7 +290,7 @@ print_attr(Dwarf_Attribute atr,
 }
 
 static void
-dealloc_rest_of_list(Dwarf_Debug dbg,
+dealloc_list(Dwarf_Debug dbg,
     Dwarf_Attribute *attrbuf,
     Dwarf_Signed attrcount,
     Dwarf_Signed i)
@@ -330,12 +330,12 @@ print_one_die(Dwarf_Debug dbg,Dwarf_Die in_die,int level,
     for (i = 0; i <attrcount;++i) {
         res  =print_attr(attrbuf[i],i,error);
         if (res != DW_DLV_OK) {
-            dealloc_rest_of_list(dbg,attrbuf, attrcount,i);
+            dealloc_list(dbg,attrbuf,attrcount,0);
             printf("dwarf_attr print failed! res %d\n",res);
             return res;
         }
     }
-    dwarf_dealloc(dbg,attrbuf,DW_DLA_LIST);
+    dealloc_list(dbg,attrbuf,attrcount,0);
     return DW_DLV_OK;
 }
 
@@ -403,13 +403,11 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
     }
     res = print_one_die(dbg,cu_die,level,error);
     if (res != DW_DLV_OK) {
+        dwarf_dealloc_die(cu_die);
         printf("print_one_die failed! %d\n",res);
-        if (res == DW_DLV_ERROR) {
-            printf("Error is: %s\n",dwarf_errmsg(*error));
-        }
-        exit(EXIT_FAILURE);
+        return res;
     }
-
+    dwarf_dealloc_die(cu_die);
     return DW_DLV_OK;
 }
 
@@ -427,12 +425,11 @@ int main(int argc, char **argv)
        /* OK */
     } else {
         if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
-            /* This is solely for improved testing of libdwarf*/
-            dwarf_set_de_alloc_flag(FALSE);
+            /* Do nothing, ignore the argument */
             ++i;
         }
     }
-    /*  Fill in iface before this call.
+    /*  Fill in interface before this call.
         We are using a static area, see above. */
     res = dwarf_object_init_b(&interface,
         0,0,DW_GROUPNUMBER_ANY,&dbg,
@@ -441,14 +438,17 @@ int main(int argc, char **argv)
         if (res == DW_DLV_NO_ENTRY) {
             printf("FAIL Cannot dwarf_object_init_b() NO ENTRY. \n");
         } else {
+            dwarf_dealloc_error(dbg,error);
             printf("FAIL Cannot dwarf_object_init_b(). \n");
             printf("msg: %s\n",dwarf_errmsg(error));
         }
-        dwarf_dealloc_error(dbg,error);
         exit(EXIT_FAILURE);
     }
     res = print_object_info(dbg,&error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,error);
+        }
         printf("FAIL printing, res %d line %d\n",res,__LINE__);
         exit(EXIT_FAILURE);
     }

@@ -508,6 +508,10 @@ main(int argc, char **argv)
             add_a_path(arg+21);
             continue;
         }
+        if (!strcmp(arg,"--suppress-de-alloc-tree")){
+            /* do nothing, ignore the argument */
+            continue;
+        }
         filenamein = arg;
         one_file_debuglink(filenamein,gl_pathnames,gl_pathcount,
             no_follow_debuglink);

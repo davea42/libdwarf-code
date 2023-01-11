@@ -87,6 +87,9 @@ main(int argc, char **argv)
 {
     const char *fname = 0;
 
+    (void)argc;
+    (void)argv;
+
     fname =    "/usr/lib/debug/.build-id/1c/"
         "2d642ffb01d1894d3c7dba050fcd160580a3e1.debug";
     simple_test(fname);

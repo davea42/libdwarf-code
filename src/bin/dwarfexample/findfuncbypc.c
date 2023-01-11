@@ -172,6 +172,9 @@ main(int argc, char **argv)
         } else if (!strcmp(argv[i],"--help")){
             printusage();
             exit(0);
+        } else if (!strcmp(argv[i],"--suppress-de-alloc-tree")){
+            /*  Do nothing. This function needs that
+                left on (the default) */
         } else {
             /*  Assume next arg is a pathname.*/
             break;
@@ -194,6 +197,7 @@ main(int argc, char **argv)
             dwarf_errno(error),
             dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
+        dwarf_finish(dbg);
         exit(EXIT_FAILURE);
     }
     if (res == DW_DLV_NO_ENTRY) {

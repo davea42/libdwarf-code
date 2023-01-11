@@ -111,7 +111,7 @@ main(int argc, char **argv)
             continue;
         }
         if (!strcmp(argv[curopt],"--suppress-de-alloc-tree")) {
-            dwarf_set_de_alloc_flag(FALSE);
+            /* Do nothing, ignore the argument */
             continue;
         }
     }

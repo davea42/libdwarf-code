@@ -240,8 +240,7 @@ main(int argc, char **argv)
             continue;
         }
         if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
-            /* Just for improved testing. */
-            dwarf_set_de_alloc_flag(FALSE);
+            /* Do nothing, ignore the argument */
             continue;
         }
         trimpathprefix(reportingpath,sizeof(reportingpath),arg);
