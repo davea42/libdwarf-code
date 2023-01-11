@@ -72,6 +72,19 @@ _dwarf_error(Dwarf_Debug dbg,
     stuff.er_errval = errval;
     *error = &stuff;
 }
+void
+_dwarf_error_string(Dwarf_Debug dbg,
+    Dwarf_Error * error,
+    Dwarf_Signed errval,
+    char *msg)
+{
+    static struct Dwarf_Error_s stuff;
+
+    (void)dbg;
+    (void)msg;
+    stuff.er_errval = errval;
+    *error = &stuff;
+}
 
 /* literal copy from dwarf_error.c */
 Dwarf_Unsigned
