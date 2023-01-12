@@ -1,3 +1,31 @@
+2023-01-11:  David Anderson
+    commit 9f0c8cd7ba0903b2fea66115afb8b16312ea4222
+
+    Needed to add a fake _dwarf_error_string()
+    implementation so this can compile (as we
+    do not link with libdwarf itself).
+            modified:   test/test_linkedtopath.c
+
+2023-01-11:  David Anderson
+    commit 5ca41b6751adf51856b839da3168a7baf2a7268c
+
+    Now all these accept option --suppress-de-alloc-tree
+    and ignore it so regressiontests can use
+    these more easily.
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplecrc.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2023-01-10:  David Anderson
+    commit f043691022b9ec4c6dc13ad6a7e650e7a6ea7dfb
+
+    Fixing dwardump -h : changes now in ChangeLog
+            modified:   ChangeLog
+
 2023-01-10:  David Anderson
     commit 78855e4b8b1f48e456cec9adbf21de1d78ff5433
 
