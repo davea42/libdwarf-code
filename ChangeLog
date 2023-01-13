@@ -1,3 +1,18 @@
+2023-01-13:  David Anderson
+    commit ac6dd985c978dbeaca258be325b98d6aafb805b2
+
+    To do a pointer-difference without
+    compiler warnings we fix using uintptr_t.
+            modified:   dwarf_str_offsets.c
+
+2023-01-12:  David Anderson
+    commit e14770ba81d514b9e962b82479c30ece8a1a2db0
+
+    Up to date with git log, including
+    fixing a bug with make check (which
+    would cause compilation failure).
+            modified:   ChangeLog
+
 2023-01-11:  David Anderson
     commit 9f0c8cd7ba0903b2fea66115afb8b16312ea4222
 
