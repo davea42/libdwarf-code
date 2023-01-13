@@ -28,6 +28,9 @@
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -463,10 +466,10 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             Dwarf_Unsigned len = 0;
             dwarfstring m;
 
-            /*  ptrdiff_t is generated but not named */
             len = (sot->so_section_end_ptr >= table_header_ptr)?
-                (sot->so_section_end_ptr - table_header_ptr):
-                0xffffffff;
+                (Dwarf_Unsigned)(uintptr_t)sot->so_section_end_ptr - 
+                (Dwarf_Unsigned)(uintptr_t)table_header_ptr:
+                (Dwarf_Unsigned)0xffffffff;
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_i(&m,
                 "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "
@@ -494,9 +497,10 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             return DW_DLV_NO_ENTRY;
         }
         hend = table_header_ptr + MIN_HEADER_LENGTH;
-        /*  ptrdiff_t is generated but not named */
         len = (hend >= sot->so_section_end_ptr)?
-            (hend - sot->so_section_end_ptr): 0xffffffff;
+            (Dwarf_Unsigned)(uintptr_t)sot->so_section_end_ptr - 
+            (Dwarf_Unsigned)(uintptr_t)table_header_ptr:
+            (Dwarf_Unsigned)0xffffffff;
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_i(&m,
             "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "
