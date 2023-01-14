@@ -35,6 +35,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() memset() strcmp() strdup() strlen() */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
 
 #if defined _WIN32
 #ifdef HAVE_STDAFX_H
@@ -297,7 +300,10 @@ mydirlen(char *s)
     if (lastjoinchar) {
         /*  ptrdiff_t is generated but not named */
         Dwarf_Unsigned sizetoendjoin =
-            (lastjoinchar >= s)?(lastjoinchar-s):0xffffffff;
+            (lastjoinchar >= s)?
+            (Dwarf_Unsigned)(uintptr_t)lastjoinchar -
+            (Dwarf_Unsigned)(uintptr_t)s
+            :(Dwarf_Unsigned)0xffffffff;
         /* count the last join as mydirlen. */
         if (sizetoendjoin == 0xffffffff) {
             /* impossible. */

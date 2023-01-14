@@ -108,7 +108,7 @@ _dwarf_next_cu_header_internal(
     (void)typeoffset;
     (void)next_cu_offset;
     (void)header_cu_type;;
-    (void)error;;
+    (void)error;
     return DW_DLV_NO_ENTRY;
 }
 
@@ -122,7 +122,7 @@ makeentry(Dwarf_Unsigned instance, unsigned ct)
     memset(&s8,0,sizeof(s8));
     /* Silly, but just a test...*/
     memcpy(&s8,&instance,sizeof(instance));
-    context = (Dwarf_CU_Context)instance;
+    context = (Dwarf_CU_Context)(uintptr_t)instance;
 
     entry = (struct Dwarf_Tied_Entry_s *)
         _dwarf_tied_make_entry(&s8,context);
