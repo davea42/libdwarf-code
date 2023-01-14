@@ -159,7 +159,8 @@ if (DO_TESTING)
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_tsearchhash.c )
     add_executable(selftied ${TESTTIED})
     target_compile_options(selftied PRIVATE 
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" "-DLIBDWARF_BUILD")
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-DTESTING" "-DLIBDWARF_BUILD")
     target_compile_options(selftied PRIVATE ${DW_FWALL})
     add_test(NAME selftied COMMAND selftied)
 endif()

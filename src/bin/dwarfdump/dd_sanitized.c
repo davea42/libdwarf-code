@@ -31,7 +31,9 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 #include "libdwarf.h"
 #include "dd_globals.h"
 #include "dd_esb.h"
+#ifndef TESTING
 #include "dd_glflags.h"
+#endif
 #include "dd_sanitized.h"
 
 /*  This does a uri-style conversion of control characters.
@@ -242,9 +244,11 @@ sanitized(const char *s)
 {
     const char *sout = 0;
 
+#ifndef TESTING 
     if (glflags.gf_no_sanitize_strings) {
         return s;
     }
+#endif
     if (no_questionable_chars(s)) {
         /*  The original string is safe as is. */
         return s;
