@@ -59,20 +59,22 @@ libdwarf_src = [
 ]
 
 zlib_deps = dependency('zlib', method: 'pkg-config', required: false)
-zstd_deps = dependency('zstd', method: 'pkg-config', required: false)
+libzstd_deps = dependency('libzstd', method: 'pkg-config', required: false)
 
 if zlib_deps.found() == true
+  # set10 means set to 1 or 0. Ref man, see cfg_data.set10
+  # A variation on set().
   config_h.set10('HAVE_ZLIB', true)
   config_h.set10('HAVE_ZLIB_H', true)
 endif
-if zstd_deps.found() == true
-  config_h.set11('HAVE_ZSTD', true)
-  config_h.set11('HAVE_ZSTD_H', true)
+if libzstd_deps.found() == true
+  config_h.set10('HAVE_ZSTD', true)
+  config_h.set10('HAVE_ZSTD_H', true)
 endif
 
 libdwarf_lib = library('dwarf', libdwarf_src,
   c_args : [ dev_cflags, libdwarf_args, '-DLIBDWARF_BUILD' ],
-  dependencies : [ zlib_deps, zstd_deps ],
+  dependencies : [ zlib_deps, libzstd_deps ],
   gnu_symbol_visibility: 'hidden',
   include_directories : config_dir,
   install : true,
@@ -83,7 +85,7 @@ libdwarf_lib = library('dwarf', libdwarf_src,
 libdwarf = declare_dependency(
   include_directories : [ include_directories('.')],
   link_with : libdwarf_lib,
-  dependencies : [zlib_deps, zstd_deps]
+  dependencies : [zlib_deps, libzstd_deps]
 )
 
 install_headers(libdwarf_header_src,
