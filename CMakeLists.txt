@@ -307,7 +307,7 @@ check_c_source_compiles( [=[
       size_t destlen = 100;
       char *src = 0;
       size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,&destlen,src,srclen);
+      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
       if (res == destlen) {
            /* ALL IS WELL */
       }
@@ -315,8 +315,8 @@ check_c_source_compiles( [=[
   } ]=]  HAVE_ZSTD_H )
 set(CMAKE_REQUIRED_LIBRARIES)
 if (HAVE_ZSTD)
-  # For linking in libz
-  set(DW_FSTD "zstd")
+  # For linking in libzstd
+  set(DW_FZSTD "zstd")
 endif()
 
 
