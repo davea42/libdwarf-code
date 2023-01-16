@@ -166,11 +166,11 @@ PKG_CHECK_MODULES([ZLIB], [zlib],
      have_zlib="no"
      have_pc_zlib="no"
     ])
-PKG_CHECK_MODULES([ZSTD], [zstd],
+PKG_CHECK_MODULES([ZSTD], [libzstd],
     [
      have_zstd="yes"
      have_pc_zstd="yes"
-     requirements_libdwarf_pc="${requirements_libdwarf_pc} zstd"
+     requirements_libdwarf_pc="${requirements_libdwarf_pc} libzstd"
     ],
     [
      have_zstd="no"
