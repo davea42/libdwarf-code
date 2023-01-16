@@ -1,3 +1,60 @@
+2023-01-16:  David Anderson
+    commit 31c3f298d4d11ec92fde6b5d176007ed20fe3755
+
+    Changed zstd_deps to libzstd_dep and
+    similarly for requirements_libdwarf_pc.
+    To match the real pkgconf name of the library.
+            modified:   meson.build
+
+    Fixed the typo ref config_h.set11
+    where config.h.set10 was meant. It means set to one or
+    zero specifically (rather than a more
+    general set). In meson documentation, look for
+    config_data.set10
+            modified:   src/lib/libdwarf/meson.build
+
+2023-01-16:  David Anderson
+    commit f6d5dc20755cfcba300bac9eb27f86447c51a3df
+
+    Corrected the requirements_libdwarf_pc
+    to reference libzstd  because the
+    pkgconf name is libzstd.pc
+            modified:   configure.ac
+
+2023-01-16:  David Anderson
+    commit 7c83a9e7dd5a7238b16c7a38862a95fd3d39e2ba
+
+    Corrected the check for libzstd, so HAVE_ZSTD
+    and HAVE_ZSTD_H are now set in config.h
+            modified:   CMakeLists.txt
+
+2023-01-14:  David Anderson
+    commit bf923fc046fd868808489e5137b9f7bb0d982902
+
+    To avoid warnings from a careful compiler we avoid
+    redefining glflags when  building test__sanitized.c
+    by using a -DTESTING in test/ builds
+    to remove the reference to glflags
+    from dd_sanitized.c.
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   test/CMakeLists.txt
+
+2023-01-14:  David Anderson
+    commit 76bebde070af2d49360a141053962949a9ea913a
+
+    Each had a pointer subtraction and wanted
+    a result of Dwarf_Unsigned so now using
+    uintptr_t and Dwarf_Unsigned casts to
+    assure compilers this is as intended.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   test/test_dwarf_tied.c
+
+2023-01-13:  David Anderson
+    commit 3f8182189e94c9db549f1c59ac4fddafe3da30e4
+
+    Now with the warning fixed.
+            modified:   ChangeLog
+
 2023-01-13:  David Anderson
     commit ac6dd985c978dbeaca258be325b98d6aafb805b2
 
