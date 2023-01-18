@@ -1,3 +1,31 @@
+2023-01-17:  David Anderson
+    commit 1bffee59eb8de582fe360601a0a7d485a45fe066
+
+    Twenty functions named
+      dwarf_<something>
+    were really internal-only functions. Not in the API.
+    A few named decades ago, some created more recently.
+    Now all such have a leading single underbar, so named
+    _dwarf_<something> as a clear indication they
+    are not part of the API.
+    These became apparent comparing the API (libdwarf.h)
+    to functions reported by coverage analysis (gcov/lcov).
+            modified:   dwarf_arange.c
+            modified:   dwarf_elf_load_headers.c
+            modified:   dwarf_frame.c
+            modified:   dwarf_line.c
+            modified:   dwarf_machoread.c
+            modified:   dwarf_machoread.h
+            modified:   dwarf_peread.c
+            modified:   dwarf_tsearchhash.c
+
+2023-01-16:  David Anderson
+    commit d46c1d2eeac7a66a699a892b3d3c50b6a6f135e1
+
+    Now showing latest fixes to pkgconf
+    references for libzstd.
+            modified:   ChangeLog
+
 2023-01-16:  David Anderson
     commit 31c3f298d4d11ec92fde6b5d176007ed20fe3755
 
