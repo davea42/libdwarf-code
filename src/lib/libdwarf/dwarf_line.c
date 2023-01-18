@@ -153,7 +153,7 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 
 /*  With this routine we ensure the file full path
     is calculated identically for
-    dwarf_srcfiles() and dwarf_filename()
+    dwarf_srcfiles() and _dwarf_filename()
 
     As of March 14 2020 this *always*
     does an allocation for the string. dwarf_dealloc
@@ -1559,7 +1559,7 @@ dwarf_lineoff_b(Dwarf_Line line,
 }
 
 static int
-dwarf_filename(Dwarf_Line_Context context,
+_dwarf_filename(Dwarf_Line_Context context,
     Dwarf_Signed fileno_in,
     char **ret_filename, Dwarf_Error *error)
 {
@@ -1634,7 +1634,7 @@ dwarf_linesrc(Dwarf_Line line, char **ret_linesrc,
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_NULL);
         return DW_DLV_ERROR;
     }
-    return dwarf_filename(line->li_context,
+    return _dwarf_filename(line->li_context,
         line->li_addr_line.li_l_data.li_file, ret_linesrc, error);
 }
 
@@ -1752,7 +1752,7 @@ dwarf_line_subprog(Dwarf_Line line,
     *subprog_name = (char *)subprog->ds_subprog_name;
     *decl_line = subprog->ds_decl_line;
 
-    res = dwarf_filename(line->li_context,
+    res = _dwarf_filename(line->li_context,
         subprog->ds_decl_file,
         decl_filename, error);
     if (res != DW_DLV_OK) {

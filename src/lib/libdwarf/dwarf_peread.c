@@ -490,7 +490,7 @@ _dwarf_destruct_pe_access(
 }
 
 static int
-dwarf_pe_load_dwarf_section_headers(
+_dwarf_pe_load_dwarf_section_headers(
     dwarf_pe_object_access_internals_t *pep,int *errcode)
 {
     Dwarf_Unsigned i = 0;
@@ -632,7 +632,7 @@ dwarf_pe_load_dwarf_section_headers(
 }
 
 static int
-dwarf_load_pe_sections(
+_dwarf_load_pe_sections(
     dwarf_pe_object_access_internals_t *pep,int *errcode)
 {
     struct dos_header_dw dhinmem;
@@ -837,7 +837,7 @@ dwarf_load_pe_sections(
         /*  Should pass coverity now. */
         pep->pe_string_table[pep->pe_string_table_size] = 0;
     }
-    res = dwarf_pe_load_dwarf_section_headers(pep,errcode);
+    res = _dwarf_pe_load_dwarf_section_headers(pep,errcode);
     return res;
 }
 
@@ -946,7 +946,7 @@ _dwarf_pe_object_access_internals_init(
         intfc->pe_endian = DW_END_big;
     }
 #endif /* LITTLE- BIG-ENDIAN */
-    res = dwarf_load_pe_sections(intfc,errcode);
+    res = _dwarf_load_pe_sections(intfc,errcode);
     if (res != DW_DLV_OK) {
         localdoas->ai_object = intfc;
         localdoas->ai_methods = 0;

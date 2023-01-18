@@ -126,10 +126,10 @@ typedef struct dwarf_macho_filedata_s {
     struct generic_macho_section *mo_dwarf_sections;
 } dwarf_macho_object_access_internals_t;
 
-int dwarf_load_macho_header(
+int _dwarf_load_macho_header(
     dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
-int dwarf_load_macho_commands(
+int _dwarf_load_macho_commands(
     dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
 

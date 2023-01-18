@@ -141,12 +141,12 @@ enum search_intent_t
 };
 
 static struct ts_entry *
-tsearch_inner( const void *key, struct hs_base* head,
+_tsearch_inner( const void *key, struct hs_base* head,
     int (*compar)(const void *, const void *),
     const enum search_intent_t intent, int*inserted,
     struct ts_entry **parent_ptr);
 static void
-dwarf_tdestroy_inner(struct hs_base*h,
+_dwarf_tdestroy_inner(struct hs_base*h,
     void (*free_node)(void *nodep));
 
 /*  A trivial integer-based percentage calculation.
@@ -393,7 +393,7 @@ printf("debugging: Resize %lu to %lu\n",tsize,prime_to_use);
                 break;
             }
             if (p->keyptr) {
-                tsearch_inner(p->keyptr,
+                _tsearch_inner(p->keyptr,
                     &newhead,compar,
                     want_insert,
                     &inserted,
@@ -405,7 +405,7 @@ printf("debugging: Resize %lu to %lu\n",tsize,prime_to_use);
             }
             for (n = p->next; n ; n = n->next) {
                 inserted = 0;
-                tsearch_inner(n->keyptr,
+                _tsearch_inner(n->keyptr,
                     &newhead,compar,
                     want_insert,
                     &inserted,
@@ -422,7 +422,7 @@ printf("debugging: Resize %lu to %lu\n",tsize,prime_to_use);
         }
     }
     /* Now get rid of the chain entries of the old table. */
-    dwarf_tdestroy_inner(head,0);
+    _dwarf_tdestroy_inner(head,0);
     /* Now get rid of the old table itself. */
     free(head->hashtab_);
     head->hashtab_ = 0;
@@ -432,7 +432,7 @@ printf("debugging: Resize %lu to %lu\n",tsize,prime_to_use);
 
 /*  Inner search of the hash and synonym chains.  */
 static struct ts_entry *
-tsearch_inner( const void *key, struct hs_base* head,
+_tsearch_inner( const void *key, struct hs_base* head,
     int (*compar)(const void *, const void *),
     const enum search_intent_t intent, int*inserted,
     /* owner_ptr used for delete.  Only set
@@ -525,7 +525,7 @@ dwarf_tsearch(const void *key, void **headin,
         /* something is wrong here, not initialized. */
         return NULL;
     }
-    r = tsearch_inner(key,head,compar,want_insert,&inserted,&nullme);
+    r = _tsearch_inner(key,head,compar,want_insert,&inserted,&nullme);
     if (!r) {
         return NULL;
     }
@@ -552,7 +552,7 @@ dwarf_tfind(const void *key, void *const *rootp,
         return NULL;
     }
 
-    r = tsearch_inner(key,head,compar,only_find,&inserted,&nullme);
+    r = _tsearch_inner(key,head,compar,only_find,&inserted,&nullme);
     if (!r) {
         return NULL;
     }
@@ -577,7 +577,7 @@ dwarf_tdelete(const void *key, void **rootp,
         return NULL;
     }
 
-    found = tsearch_inner(key,head,compar,want_delete,&inserted,
+    found = _tsearch_inner(key,head,compar,want_delete,&inserted,
         &parentp);
     if (found) {
         if (parentp) {
@@ -617,7 +617,7 @@ dwarf_tdelete(const void *key, void **rootp,
 }
 
 static void
-dwarf_twalk_inner(const struct hs_base *h,
+_dwarf_twalk_inner(const struct hs_base *h,
     struct ts_entry *p,
     void (*action)(const void *nodep, const DW_VISIT which,
         const int depth )
@@ -649,11 +649,11 @@ dwarf_twalk(const void *rootp,
     }
     root = head->hashtab_;
     /* Get to actual tree. */
-    dwarf_twalk_inner(head,root,action);
+    _dwarf_twalk_inner(head,root,action);
 }
 
 static void
-dwarf_tdestroy_inner(struct hs_base*h,
+_dwarf_tdestroy_inner(struct hs_base*h,
     void (*free_node)(void *nodep))
 {
     unsigned long ix = 0;
@@ -702,7 +702,7 @@ dwarf_tdestroy(void *rootp, void (*free_node)(void *nodep))
         return;
     }
     root = head->hashtab_;
-    dwarf_tdestroy_inner(head,free_node);
+    _dwarf_tdestroy_inner(head,free_node);
     free(root);
     free(head);
 }

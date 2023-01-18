@@ -705,7 +705,7 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
 }
 
 static int
-dwarf_generic_elf_load_symbols32(
+_dwarf_generic_elf_load_symbols32(
     dwarf_elf_object_access_internals_t *ep,
     struct generic_symentry **gsym_out,
     Dwarf_Unsigned offset,Dwarf_Unsigned size,
@@ -772,7 +772,7 @@ dwarf_generic_elf_load_symbols32(
 }
 
 static int
-dwarf_generic_elf_load_symbols64(
+_dwarf_generic_elf_load_symbols64(
     dwarf_elf_object_access_internals_t *ep,
     struct generic_symentry **gsym_out,
     Dwarf_Unsigned offset,Dwarf_Unsigned size,
@@ -840,7 +840,7 @@ dwarf_generic_elf_load_symbols64(
 }
 
 static int
-dwarf_generic_elf_load_symbols(
+_dwarf_generic_elf_load_symbols(
     dwarf_elf_object_access_internals_t *ep,
     Dwarf_Unsigned secnum,
     struct generic_shdr *psh,
@@ -859,12 +859,12 @@ dwarf_generic_elf_load_symbols(
         return DW_DLV_ERROR;
     }
     if (ep->f_offsetsize == 32) {
-        res = dwarf_generic_elf_load_symbols32(ep,
+        res = _dwarf_generic_elf_load_symbols32(ep,
             &gsym,
             psh->gh_offset,psh->gh_size,
             &count,errcode);
     } else if (ep->f_offsetsize == 64) {
-        res = dwarf_generic_elf_load_symbols64(ep,
+        res = _dwarf_generic_elf_load_symbols64(ep,
             &gsym,
             psh->gh_offset,psh->gh_size,
             &count,errcode);
@@ -894,7 +894,7 @@ dwarf_load_elf_dynsym_symbols(
     }
     psh = ep->f_shdr + secnum;
     if we ever use this... gh_size big?
-    res = dwarf_generic_elf_load_symbols(ep,
+    res = _dwarf_generic_elf_load_symbols(ep,
         secnum,
         psh,
         &gsym,
@@ -925,7 +925,7 @@ _dwarf_load_elf_symtab_symbols(
         *errcode = DW_DLE_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
-    res = dwarf_generic_elf_load_symbols(ep,
+    res = _dwarf_generic_elf_load_symbols(ep,
         secnum,
         psh,
         &gsym,

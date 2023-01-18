@@ -349,7 +349,7 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
 }
 
 int
-dwarf_load_macho_header(dwarf_macho_object_access_internals_t *mfp,
+_dwarf_load_macho_header(dwarf_macho_object_access_internals_t *mfp,
     int *errcode)
 {
     int res = 0;
@@ -499,7 +499,7 @@ load_segment_command_content64(
 }
 
 static int
-dwarf_macho_load_segment_commands(
+_dwarf_macho_load_segment_commands(
     dwarf_macho_object_access_internals_t *mfp,int *errcode)
 {
     Dwarf_Unsigned i = 0;
@@ -541,7 +541,7 @@ dwarf_macho_load_segment_commands(
 }
 
 static int
-dwarf_macho_load_dwarf_section_details32(
+_dwarf_macho_load_dwarf_section_details32(
     dwarf_macho_object_access_internals_t *mfp,
     struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi, int *errcode)
@@ -629,7 +629,7 @@ dwarf_macho_load_dwarf_section_details32(
     return DW_DLV_OK;
 }
 static int
-dwarf_macho_load_dwarf_section_details64(
+_dwarf_macho_load_dwarf_section_details64(
     dwarf_macho_object_access_internals_t *mfp,
     struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi,
@@ -720,7 +720,7 @@ dwarf_macho_load_dwarf_section_details64(
 }
 
 static int
-dwarf_macho_load_dwarf_section_details(
+_dwarf_macho_load_dwarf_section_details(
     dwarf_macho_object_access_internals_t *mfp,
     struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi,int *errcode)
@@ -728,10 +728,10 @@ dwarf_macho_load_dwarf_section_details(
     int res = 0;
 
     if (mfp->mo_offsetsize == 32) {
-        res = dwarf_macho_load_dwarf_section_details32(mfp,
+        res = _dwarf_macho_load_dwarf_section_details32(mfp,
             segp,segi,errcode);
     } else if (mfp->mo_offsetsize == 64) {
-        res = dwarf_macho_load_dwarf_section_details64(mfp,
+        res = _dwarf_macho_load_dwarf_section_details64(mfp,
             segp,segi,errcode);
     } else {
         *errcode = DW_DLE_OFFSET_SIZE;
@@ -741,7 +741,7 @@ dwarf_macho_load_dwarf_section_details(
 }
 
 static int
-dwarf_macho_load_dwarf_sections(
+_dwarf_macho_load_dwarf_sections(
     dwarf_macho_object_access_internals_t *mfp,int *errcode)
 {
     Dwarf_Unsigned segi = 0;
@@ -755,7 +755,7 @@ dwarf_macho_load_dwarf_sections(
             continue;
         }
         /* Found DWARF, for now assume only one such. */
-        res = dwarf_macho_load_dwarf_section_details(mfp,
+        res = _dwarf_macho_load_dwarf_section_details(mfp,
             segp,segi,errcode);
         return res;
     }
@@ -764,7 +764,7 @@ dwarf_macho_load_dwarf_sections(
 
 /* Works the same, 32 or 64 bit */
 int
-dwarf_load_macho_commands(
+_dwarf_load_macho_commands(
     dwarf_macho_object_access_internals_t *mfp,int *errcode)
 {
     Dwarf_Unsigned cmdi = 0;
@@ -815,11 +815,11 @@ dwarf_load_macho_commands(
         }
     }
     mfp->mo_segment_count = segment_command_count;
-    res = dwarf_macho_load_segment_commands(mfp,errcode);
+    res = _dwarf_macho_load_segment_commands(mfp,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
-    res = dwarf_macho_load_dwarf_sections(mfp,errcode);
+    res = _dwarf_macho_load_dwarf_sections(mfp,errcode);
     return res;
 }
 int
@@ -930,7 +930,7 @@ _dwarf_macho_object_access_internals_init(
         intfc->mo_endian = DW_END_big;
     }
 #endif /* LITTLE- BIG-ENDIAN */
-    res = dwarf_load_macho_header(intfc,errcode);
+    res = _dwarf_load_macho_header(intfc,errcode);
     if (res != DW_DLV_OK) {
         localdoas->ai_object = intfc;
         localdoas->ai_methods = 0;
@@ -938,7 +938,7 @@ _dwarf_macho_object_access_internals_init(
         return res;
     }
     /* Load sections */
-    res = dwarf_load_macho_commands(intfc,errcode);
+    res = _dwarf_load_macho_commands(intfc,errcode);
     if (res != DW_DLV_OK) {
         localdoas->ai_object = intfc;
         localdoas->ai_methods = 0;
