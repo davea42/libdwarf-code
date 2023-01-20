@@ -104,6 +104,7 @@ static void ParseDefinitionsAndWriteOutput(void);
 
 /* To store entries from dwarf.h */
 typedef struct {
+    char     prefixname[MAX_NAME_LEN];  /* short name */
     char     name[MAX_NAME_LEN];  /* short name */
     unsigned value; /* value */
     /* Original spot in array.   Lets us guarantee a stable sort. */
@@ -225,9 +226,9 @@ PrintArray(void)
     int i;
     for (i = 0; i < array_count; ++i) {
         printf("%d: Name %s_%s, Value 0x%04x\n",
-            i,prefix,
-            array[i].name,
-            array[i].value);
+            i,grouparray[i].prefixname,
+            grouparray[i].name,
+            grouparray[i].value);
     }
 }
 #endif /* TRACE_ARRAY */
