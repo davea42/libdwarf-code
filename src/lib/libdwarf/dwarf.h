@@ -1006,7 +1006,7 @@ most-likely-useful name. */
 #define DW_IDX_GNU_internal         0x2000
 #define DW_IDX_lo_user              0x2000   /* DWARF5 */
 #define DW_IDX_GNU_external         0x2001
-#define DW_IDX_hi_user              0x0fff   /* DWARF5 */
+#define DW_IDX_hi_user              0x3fff   /* DWARF5 */
 
 /*  These with not-quite-the-same-names were used in DWARF4
     We call then DW_LLEX.
