@@ -1,8 +1,8 @@
 set_source_group(SIMPLE_READER_SOURCES "Source Files" simplereader.c)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files"
-  ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake
-  ${CMAKE_BINARY_DIR}/config.h)
+  ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
+  ${PROJECT_BINARY_DIR}/config.h)
 
 add_executable(simplereader 
    ${SIMPLE_READER_SOURCES} 

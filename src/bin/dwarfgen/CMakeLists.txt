@@ -14,8 +14,8 @@ set_source_group(HEADERS "Header Files" createirepfrombinary.h
     ../../lib/libdwarfp/libdwarfp.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake
-    ${CMAKE_BINARY_DIR}/config.h)
+    ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
+    ${PROJECT_BINARY_DIR}/config.h)
     
 add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 

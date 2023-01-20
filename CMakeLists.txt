@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.3)
 project(libdwarf C CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include_directories( ${CMAKE_BINARY_DIR} )
+include_directories( ${PROJECT_BINARY_DIR} )
 
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)

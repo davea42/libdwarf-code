@@ -62,8 +62,8 @@ dwarf_macho_loader.h
 dwarf_memcpy_swap.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake 
-    ${CMAKE_BINARY_DIR}/config.h)
+    ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake 
+    ${PROJECT_BINARY_DIR}/config.h)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
