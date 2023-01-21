@@ -2258,7 +2258,7 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
             Dwarf_Form_Data16  data16;
 
             memset(&data16,0,sizeof(data16));
-            dwarf_formdata16(attrlist[i],&data16,&error);
+            res = dwarf_formdata16(attrlist[i],&data16,&error);
             if (res == DW_DLV_ERROR) {
                 DWARF_CHECK_ERROR(check_functions_result,
                     "dwarf_formdata16 fails");

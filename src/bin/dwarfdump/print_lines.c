@@ -803,7 +803,8 @@ print_line_context_record(Dwarf_Line_Context line_context,
 
             /* ctime supplies newline */
             printf(
-                "file mod time 0x%x %s", (unsigned)tt3, ctime(&tt3));
+                "file mod time 0x%lx %s", (unsigned long)tt3,
+                   ctime(&tt3));
         } else {
             printf("  file mod time 0\n");
         }

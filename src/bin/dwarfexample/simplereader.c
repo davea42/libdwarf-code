@@ -540,7 +540,7 @@ main(int argc, char **argv)
     }
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
-            if(!passnullerror) {
+            if(errp) {
                 dwarf_dealloc_error(dbg,*errp);
             }
             error = 0;
@@ -758,7 +758,9 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         if (res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
             dwarf_dealloc_die(cur_die);
-            dwarf_dealloc_error(dbg,*errp);
+            if (errp) {
+                dwarf_dealloc_error(dbg,*errp);
+            }
             dwarf_finish(dbg);
             cleanupstr();
             exit(EXIT_FAILURE);
@@ -867,7 +869,7 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     res = dwarf_attrlist(die,&attrbuf,&attrcount,errp);
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
-            if (!passnullerror) {
+            if (errp) {
                 dwarf_dealloc_error(dbg,error);
                 error = 0;
                 dwarf_finish(dbg);
@@ -905,7 +907,7 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
                 get_addr(attrbuf[i],&highpc);
             }
         }
-        if (res == DW_DLV_ERROR && !passnullerror) {
+        if (res == DW_DLV_ERROR && errp) {
             dwarf_dealloc_error(dbg,error);
             error = 0;
         }
@@ -1155,19 +1157,21 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     res = dwarf_tag(print_me,&tag,errp);
     if (res != DW_DLV_OK) {
         printf("Error in dwarf_tag , level %d \n",level);
-        dwarf_finish(dbg);
-        dwarf_dealloc_error(dbg,*errp);
+        if(res == DW_DLV_ERROR && errp) {
+            dwarf_dealloc_error(dbg,*errp);
+        }
         cleanupstr();
+        dwarf_finish(dbg);
         exit(EXIT_FAILURE);
     }
     res = dwarf_get_TAG_name(tag,&tagname);
     if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR && errp) {
             dwarf_dealloc_error(dbg,*errp);
         }
         printf("Error in dwarf_get_TAG_name , level %d \n",level);
-        dwarf_finish(dbg);
         cleanupstr();
+        dwarf_finish(dbg);
         exit(EXIT_FAILURE);
     }
     if (dumpallnames) {
@@ -1179,7 +1183,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     } else {
         res = dwarf_whatform(attr,&formnum,errp);
         if (res != DW_DLV_OK) {
-            if (res == DW_DLV_ERROR) {
+            if (res == DW_DLV_ERROR && errp) {
                 dwarf_dealloc_error(dbg,*errp);
             }
             printf("Error in dwarf_whatform , level %d \n",level);
@@ -1252,7 +1256,9 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
                 printf("FAIL: Error in "
                     "dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
-                dwarf_dealloc_error(dbg,*errp);
+                if(errp) {
+                    dwarf_dealloc_error(dbg,*errp);
+                }
                 dwarf_finish(dbg);
                 cleanupstr();
                 exit(EXIT_FAILURE);

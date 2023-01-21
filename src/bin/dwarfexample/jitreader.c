@@ -434,14 +434,13 @@ int main(int argc, char **argv)
     res = dwarf_object_init_b(&interface,
         0,0,DW_GROUPNUMBER_ANY,&dbg,
         &error);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_NO_ENTRY) {
-            printf("FAIL Cannot dwarf_object_init_b() NO ENTRY. \n");
-        } else {
-            dwarf_dealloc_error(dbg,error);
-            printf("FAIL Cannot dwarf_object_init_b(). \n");
-            printf("msg: %s\n",dwarf_errmsg(error));
-        }
+    if (res == DW_DLV_NO_ENTRY) {
+        printf("FAIL Cannot dwarf_object_init_b() NO ENTRY. \n");
+        exit(EXIT_FAILURE);
+    } else if (res == DW_DLV_ERROR){
+        printf("FAIL Cannot dwarf_object_init_b(). \n");
+        printf("msg: %s\n",dwarf_errmsg(error));
+        dwarf_dealloc_error(dbg,error);
         exit(EXIT_FAILURE);
     }
     res = print_object_info(dbg,&error);
