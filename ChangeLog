@@ -1,4 +1,40 @@
 2023-01-21:  David Anderson
+    commit 2fc3bdd86abe60a2083e0baaeabf5fe54e966412
+
+    Removing trailing whitespace and fixing indents.
+    Fixed a couple lines pointlessly longer than
+    libdwarf CODINGSTYLE specifies.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/lib/libdwarf/dwarf_crc.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   src/lib/libdwarf/dwarf_arange.c
+
+2023-01-21:  David Anderson
+    commit 4274fabfb0baf26db172cb818e8e1245fed3913b
+
+    Fixing seven defects noted by CoverityScan.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2023-01-21:  David Anderson
+    commit b78bd35437ca6649a860bf83fa6b454a2a7bc119
+
+    Bringing git log up to date.
+            modified:   ChangeLog
+
+2023-01-21:  David Anderson
     commit e57c7e731ca54002fc00595a62f3d99191c27d33
 
     Removing a set of DW_FRAME #define
