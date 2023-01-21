@@ -25,8 +25,8 @@ dwarf_pro_reloc_symbolic.h
 dwarf_pro_section.h dwarf_pro_types.h dwarf_pro_util.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake 
-    ${CMAKE_BINARY_DIR}/config.h)
+    ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake 
+    ${PROJECT_BINARY_DIR}/config.h)
 
 	
 list(LENGTH DWARFP_TARGETS targetCount)
