@@ -1,3 +1,76 @@
+2023-01-21:  David Anderson
+    commit e57c7e731ca54002fc00595a62f3d99191c27d33
+
+    Removing a set of DW_FRAME #define
+    that were just added and are not actually
+    desirable.
+            modified:   src/lib/libdwarf/dwarf.h
+
+    Updateing these as a consequence.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+    Some duplicate dwarf_get_GNUIVIS_name() entries
+    removed.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-01-21:  David Anderson
+    commit 9ed3f2ff43bfc611ee763bab7a8907941137fd26
+    Merge: b4eb3ae5 671571a9
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Cmake now using PROJECT_DIR
+
+2023-01-21:  Pavel Dovgalyuk
+    commit 671571a9a14999b88662ce855513545da87f4602
+
+    Replace CMAKE dirs with PROJECT dirs (#148)
+
+    Replacing CMAKE_*_DIR with PROJECT_*_DIR allows adding this
+    project as a subproject in cmake config.
+
+2023-01-20:  David Anderson
+    commit b4eb3ae529a54e8bac4de6408e0f63b4a72f80dc
+
+    The added entries in dwarf.h are now reflected
+    in these functions. Now dwarf_get_FRAME_name()
+    knows of the full set of such defined
+    in dwarf.h.
+    Created, as always, by the command 'make rebuild' in
+    a build directory.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-01-20:  David Anderson
+    commit d2ac319d3349b86b6f5fbba009657e3c8e52220d
+
+    Refining a printf used in debugging, and only debugging.
+            modified:   src/bin/gennames/gennames.c
+
+2023-01-20:  David Anderson
+    commit d899c99aa0a7e29cdb3d024c875561a43579b048
+
+    The DW_FRAME defines set is expanded to
+    fill in a gap. A gap that should never have
+    existed. There is no effect on the API other than
+    dwarf_get_FRAME_name() can now return a full
+    set of the basic static set.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2023-01-20:  David Anderson
+    commit 04ab8c31ba97ee7e21c251d6f605aff54ebeb326
+
+    Corrected DW_IDX_hi_user
+    from  0x0fff to the DWARF5
+    value of 0x3fff.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2023-01-17:  David Anderson
+    commit a4acf84b0f3aa087e4ed4413bcd9b13f7cae7aa3
+
+    Bringing up to date with git log
+            modified:   ChangeLog
+
 2023-01-17:  David Anderson
     commit 1bffee59eb8de582fe360601a0a7d485a45fe066
 
