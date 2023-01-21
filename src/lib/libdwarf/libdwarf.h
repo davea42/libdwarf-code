@@ -8092,18 +8092,6 @@ DW_API int dwarf_get_FORM_name(unsigned int dw_val_in,
 */
 DW_API int dwarf_get_FRAME_name(unsigned int dw_val_in,
     const char ** dw_s_out);
-/*! @brief dwarf_get_GNUIKIND_name - a libdwarf invention
-
-    So we report a GNU extension sensibly.
-*/
-DW_API int dwarf_get_GNUIKIND_name(unsigned int dw_val_in,
-    const char ** dw_s_out);
-/*! @brief dwarf_get_GNUIKIND_name
-
-    So we report a GNU extension sensibly.
-*/
-DW_API int dwarf_get_GNUIKIND_name(unsigned int dw_val_in,
-    const char ** dw_s_out);
 /*! @brief dwarf_get_GNUIVIS_name - a libdwarf invention
 
     So we report a GNU extension sensibly.
