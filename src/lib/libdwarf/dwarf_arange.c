@@ -430,7 +430,8 @@ dwarf_get_aranges(Dwarf_Debug dbg,
         return res;
     }
 
-    res = _dwarf_get_aranges_list(dbg,&head_chain,&arange_count,error);
+    res = _dwarf_get_aranges_list(dbg,&head_chain,
+        &arange_count,error);
     if (res != DW_DLV_OK) {
         free_aranges_chain(dbg,head_chain);
         return res;
@@ -512,7 +513,8 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
-    res = _dwarf_get_aranges_list(dbg,&head_chain,&arange_count,error);
+    res = _dwarf_get_aranges_list(dbg,&head_chain,
+        &arange_count,error);
     if (res != DW_DLV_OK) {
         return res;
     }

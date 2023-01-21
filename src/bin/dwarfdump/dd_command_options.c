@@ -471,7 +471,7 @@ static const char *usage_long_text[] = {
 "-l   --print-lines       Print line section",
 "-ls  --print-lines-short Print line section, but do not",
 "                         print <pc> address",
-"-c   --print-loc         Does nothing, was never very useful", 
+"-c   --print-loc         Does nothing, was never very useful",
 "-m   --print-macinfo     Print DWARF5 style .debug_macro section",
 "                         and DWARF2,3,4 .debug_macinfo section.",
 "-P   --print-producers   Print list of compile units per producer",

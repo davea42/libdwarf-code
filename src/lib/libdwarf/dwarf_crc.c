@@ -120,7 +120,7 @@ static const uint32_t crc32_table[256] =
 
     The unsigned int return will not get the same CRC as
     Linux/Macos if int/unsigned-int is 16 bits (Windows),
-    but there the crc does not matter in practice. 
+    but there the crc does not matter in practice.
     The results on big-endian are not the same
     as little-endian machines.*/
 unsigned int

@@ -422,7 +422,7 @@ int main(int argc, char **argv)
     int i = 1;
 
     if (i >= argc) {
-       /* OK */
+        /* OK */
     } else {
         if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
             /* Do nothing, ignore the argument */

@@ -223,7 +223,9 @@ static unsigned  char_to_uns4bit(Dwarf_Debug dbg,unsigned char c)
 }
 
 static void
-xfrm_to_sig8(Dwarf_Debug dbg,const char *cuhash_in, Dwarf_Sig8 *hash_out)
+xfrm_to_sig8(Dwarf_Debug dbg,
+    const char *cuhash_in,
+    Dwarf_Sig8 *hash_out)
 {
     char localhash[16];
     unsigned hashin_len = strlen(cuhash_in);
@@ -414,68 +416,68 @@ main(int argc, char **argv)
         if (strcmp(argv[i],"--names") == 0) {
             namesoptionon=1;
             continue;
-        } 
+        }
         if (startswithextractstring(argv[1],"--dumpallnames=",
             &dumpallnamespath)) {
             dumpallnames=1;
             continue;
-        } 
+        }
         if (strcmp(argv[i],"--check") == 0) {
             checkoptionon=1;
             continue;
-        } 
+        }
         if (startswithextractstring(argv[i],
             "--tuhash=",&tuhash)) {
             continue;
-        } 
+        }
         if (startswithextractstring(argv[i],
             "--cuhash=",&cuhash)) {
             continue;
-        } 
+        }
         if (startswithextractstring(argv[i],
             "--tufissionhash=", &tufissionhash)) {
             continue;
-        } 
+        }
         if (startswithextractstring(argv[i],
             "--cufissionhash=",
             &cufissionhash)) {
             continue;
-        } 
+        }
         if (strcmp(argv[i],"--passnullerror") == 0) {
             passnullerror=1;
-            /* If null error, we cannot do much.
-               Do not expect to avoid a like without
-               help from libdwarf. */
+            /*  If null error, we cannot do much.
+                Do not expect to avoid a like without
+                help from libdwarf. */
             dwarf_set_de_alloc_flag(TRUE);
             continue;
-        } 
+        }
         if (strcmp(argv[i],"--simpleerrhand") == 0) {
             simpleerrhand=1;
             continue;
-        } 
+        }
         if (startswithextractnum(argv[i],
             "--isinfo=",&g_is_info)) {
             continue;
-        } 
+        }
         if (startswithextractnum(argv[i],
             "--type=",&unittype)) {
             continue;
-        } 
+        }
         if (startswithextractnum(argv[i],
             "--fissionfordie=",
             &fissionfordie)) {
             continue;
-        } 
+        }
         if (!strcmp(argv[i],"--use-init-fd")) {
             use_init_fd = TRUE;
             /* done */
-        } 
+        }
         if (!strcmp(argv[i],"--suppress-de-alloc-tree")) {
             /*  Never allow the call to suppress
                 alloc tracking in libdwarf as without normal
                 alloc tracking this source will have
                 leaks. Especially on corrupt DWARF or
-                corrupt Elf. 
+                corrupt Elf.
                 Just accept the option and continue.  */
             continue;
         }
@@ -540,7 +542,7 @@ main(int argc, char **argv)
     }
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
-            if(errp) {
+            if (errp) {
                 dwarf_dealloc_error(dbg,*errp);
             }
             error = 0;
@@ -1157,7 +1159,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     res = dwarf_tag(print_me,&tag,errp);
     if (res != DW_DLV_OK) {
         printf("Error in dwarf_tag , level %d \n",level);
-        if(res == DW_DLV_ERROR && errp) {
+        if (res == DW_DLV_ERROR && errp) {
             dwarf_dealloc_error(dbg,*errp);
         }
         cleanupstr();
@@ -1256,7 +1258,7 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
                 printf("FAIL: Error in "
                     "dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
-                if(errp) {
+                if (errp) {
                     dwarf_dealloc_error(dbg,*errp);
                 }
                 dwarf_finish(dbg);

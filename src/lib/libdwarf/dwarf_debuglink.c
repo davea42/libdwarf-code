@@ -909,7 +909,7 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
             "length %u larger than the section size. "
             "Corrupt object section",descrsize);
         _dwarf_error_string(dbg,error,
-            DW_DLE_CORRUPT_GNU_DEBUGID_SIZE, 
+            DW_DLE_CORRUPT_GNU_DEBUGID_SIZE,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
@@ -922,7 +922,7 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
             "DW_DLE_CORRUPT_NOTE_GNU_DEBUGID buildid description"
             "length %u larger than is appropriate. "
             "Corrupt object section",descrsize);
-        _dwarf_error_string(dbg,error, 
+        _dwarf_error_string(dbg,error,
             DW_DLE_CORRUPT_GNU_DEBUGID_SIZE,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);

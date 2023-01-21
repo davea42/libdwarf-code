@@ -467,7 +467,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             dwarfstring m;
 
             len = (sot->so_section_end_ptr >= table_header_ptr)?
-                (Dwarf_Unsigned)(uintptr_t)sot->so_section_end_ptr - 
+                (Dwarf_Unsigned)(uintptr_t)sot->so_section_end_ptr -
                 (Dwarf_Unsigned)(uintptr_t)table_header_ptr:
                 (Dwarf_Unsigned)0xffffffff;
             dwarfstring_constructor(&m);
@@ -498,7 +498,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         }
         hend = table_header_ptr + MIN_HEADER_LENGTH;
         len = (hend >= sot->so_section_end_ptr)?
-            (Dwarf_Unsigned)(uintptr_t)sot->so_section_end_ptr - 
+            (Dwarf_Unsigned)(uintptr_t)sot->so_section_end_ptr -
             (Dwarf_Unsigned)(uintptr_t)table_header_ptr:
             (Dwarf_Unsigned)0xffffffff;
         dwarfstring_constructor(&m);

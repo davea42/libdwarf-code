@@ -244,7 +244,7 @@ sanitized(const char *s)
 {
     const char *sout = 0;
 
-#ifndef TESTING 
+#ifndef TESTING
     if (glflags.gf_no_sanitize_strings) {
         return s;
     }

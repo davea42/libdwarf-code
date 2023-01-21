@@ -70,8 +70,8 @@ one_file_show_groups(char  *path_in,
     }
     if (res == DW_DLV_NO_ENTRY) {
         printf("There is no such file as \"%s\" "
-           "or the selected group %d (%s) does "
-           "not appear in the file\n",
+            "or the selected group %d (%s) does "
+            "not appear in the file\n",
             shortpath,chosengroup,grpname);
         return DW_DLV_NO_ENTRY;
     }

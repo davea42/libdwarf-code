@@ -826,7 +826,7 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
 #endif
 
 /*  Used when have only processed *some* list items
-    and dealloc'd.  This finishes up. 
+    and dealloc'd.  This finishes up.
     Not really essential as dwarf_finish() would
     do it anyway, but Coverity Scan does not
     understand that dwarf_finish() cleans up.

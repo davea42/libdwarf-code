@@ -113,18 +113,16 @@ int nibblecounts[16] = {
 static int
 getbitsoncount(Dwarf_Unsigned v_in)
 {
-     int           bitscount = 0;
-     Dwarf_Unsigned v = v_in;
+    int           bitscount = 0;
+    Dwarf_Unsigned v = v_in;
 
-     while (v) {
-         unsigned int nibble = v & 0xf;
-         bitscount += nibblecounts[nibble];
-         v >>= 4;
-     }
-     return bitscount;
+    while (v) {
+        unsigned int nibble = v & 0xf;
+        bitscount += nibblecounts[nibble];
+        v >>= 4;
+    }
+    return bitscount;
 }
-
-
 
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
@@ -308,19 +306,19 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
     if (ehdr->ge_shstrndx < 1) {
-        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        *errcode = DW_DLE_NO_SECT_STRINGS;
         return DW_DLV_ERROR;
-    } 
+    }
     if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
-        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        *errcode = DW_DLE_NO_SECT_STRINGS;
         return DW_DLV_ERROR;
-    } 
+    }
     if (ehdr->ge_shnum < 3) {
-        *errcode = DW_DLE_TOO_FEW_SECTIONS; 
+        *errcode = DW_DLE_TOO_FEW_SECTIONS;
         return DW_DLV_ERROR;
-    } 
+    }
     if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
-        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        *errcode = DW_DLE_NO_SECT_STRINGS;
         return DW_DLV_ERROR;
     }
 
@@ -358,19 +356,19 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
     if (ehdr->ge_shstrndx < 1) {
-        *errcode = DW_DLE_NO_SECT_STRINGS;  
+        *errcode = DW_DLE_NO_SECT_STRINGS;
         return DW_DLV_ERROR;
-    } 
+    }
     if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
         *errcode = DW_DLE_NO_SECT_STRINGS;
         return DW_DLV_ERROR;
-    } 
+    }
     if (ehdr->ge_shnum < 3) {
         *errcode = DW_DLE_TOO_FEW_SECTIONS;
         return DW_DLV_ERROR;
     }
     if (ehdr->ge_shstrndx >= ehdr->ge_shnum) {
-        *errcode = DW_DLE_NO_SECT_STRINGS; 
+        *errcode = DW_DLE_NO_SECT_STRINGS;
         return DW_DLV_ERROR;
     }
     ep->f_machine = (unsigned int)ehdr->ge_machine;

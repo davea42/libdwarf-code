@@ -936,7 +936,7 @@ dd_check_fde_cie(Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,res,error);
     } else if (res == DW_DLV_NO_ENTRY) {
         DWARF_CHECK_ERROR(check_functions_result,
-                "NO_ENTRY calling dwarf_get_cie_of_fde()");
+            "NO_ENTRY calling dwarf_get_cie_of_fde()");
     } else  { /* OK */
         if ( ret_cie != cie) {
             DWARF_CHECK_ERROR(check_functions_result,
@@ -953,7 +953,7 @@ dd_check_fde_cie(Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,res,error);
     } else if (res == DW_DLV_NO_ENTRY) {
         DWARF_CHECK_ERROR(check_functions_result,
-                "NO_ENTRY calling dwarf_get_cie_index()");
+            "NO_ENTRY calling dwarf_get_cie_index()");
     } else  { /* OK */
         if ( ret_index != cie_index) {
             DWARF_CHECK_ERROR(check_functions_result,
@@ -974,10 +974,10 @@ dd_check_retrieved_fde(Dwarf_Debug dbg,
     Dwarf_Fde   returned_fde = 0;
     Dwarf_Addr  lopc = 0;
     Dwarf_Addr  hipc = 0;
- 
+
     DWARF_CHECK_COUNT(check_functions_result,1);
     res = dwarf_get_fde_at_pc(fde_data,pc,
-         &returned_fde,&lopc,&hipc,&error);
+        &returned_fde,&lopc,&hipc,&error);
     if (res == DW_DLV_ERROR) {
         DWARF_CHECK_ERROR2(check_functions_result,
             "Error calling dwarf_get_fde_at_pc() "
@@ -990,7 +990,7 @@ dd_check_retrieved_fde(Dwarf_Debug dbg,
         esb_constructor(&m);
         esb_append_printf_u(&m,
             "NO_ENTRY calling dwarf_get_fde_at_pc()"
-            " got NO ENTRY for pc 0x%" 
+            " got NO ENTRY for pc 0x%"
             DW_PR_XZEROS DW_PR_DUx
             " which indicates corrupt dwarf",pc);
         DWARF_CHECK_ERROR(check_functions_result,
@@ -1003,7 +1003,6 @@ dd_check_retrieved_fde(Dwarf_Debug dbg,
                 " mismatched fde index");
         }
     }
-
 }
 static const Dwarf_Block blockzero;
 
@@ -1228,7 +1227,7 @@ print_one_fde(Dwarf_Debug dbg,
         Dwarf_Addr cur_pc_in_table = 0;
 
         cur_pc_in_table = j;
-        if (glflags.gf_check_functions && 
+        if (glflags.gf_check_functions &&
             fde_checking_count < 100){ /* 100 is arbitrary */
             ++fde_checking_count;
             dd_check_retrieved_fde(dbg,fde_data,fde,cur_pc_in_table);
@@ -2282,7 +2281,7 @@ print_all_fdes(Dwarf_Debug dbg,
                 fde,i);
         }
         fdres = print_one_fde(dbg,
-            frame_section_name, 
+            frame_section_name,
             fde_data,i,
             cie_data, cie_element_count,
             address_size, offset_size, version,

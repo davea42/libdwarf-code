@@ -5352,9 +5352,9 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
 /*! @brief Get the fde given DW_AT_MIPS_fde in a DIE.
 
     This is essentially useless as only SGI/MIPS compilers
-    from the 1990's had  DW_AT_MIPS_fde in 
+    from the 1990's had  DW_AT_MIPS_fde in
     DW_TAG_subprogram DIEs.
- 
+
 */
 DW_API int dwarf_get_fde_for_die(Dwarf_Debug dw_dbg,
     Dwarf_Die        dw_subr_die,
@@ -8684,7 +8684,7 @@ DW_API int dwarf_set_reloc_application(int dw_apply);
 */
 
 DW_API void (*dwarf_get_endian_copy_function(Dwarf_Debug dw_dbg))
-   (void *, const void *, unsigned long);
+    (void *, const void *, unsigned long);
 
 /*  A global flag in libdwarf. Applies to all Dwarf_Debug */
 DW_API extern Dwarf_Cmdline_Options dwarf_cmdline_options;
