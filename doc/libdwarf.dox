@@ -916,9 +916,11 @@
     dwarf_dietype_offset(), which on success returns
     the offset of the target of the DW_AT_type attribute
     (if such exists in the Dwarf_Die).  Added a pointer
-    argument so the function can return a FALSE argument
+    argument so the function can (when
+    appropriate) return a FALSE argument
     indicating the offset refers to DWARF4 .debug_types
-    section, rather than the .debug_info section.
+    section, rather than TRUE value when .debug_info
+    is the section the offset refers to.
     If anyone was using this function it would fail
     badly (while pretending success)
     with a DWARF4 DW_FORM_ref_sig8 on a DW_AT_type
@@ -961,6 +963,13 @@
     SGI/IRIX/MIPS in that period.  There is (revised)
     support in libdwarf to read these sections,
     but we will not mention details here.
+
+    Any use of DW_FORM_strx3 or DW_FORM_addrx3 in
+    DWARF would, in 0.5.0 and earlier, result in
+    libdwarf reporting erroneous data.  A copy-paste
+    error in libdwarf/dwarf_util.c was noticed
+    and fixed 24 Januarly 2023 for 0.6.0.
+    Bug <strong>DW202301-001</strong>.
 
     <b>Changes 0.4.2 to 0.5.0</b>
     v0.5.0 released 2022-11-22 

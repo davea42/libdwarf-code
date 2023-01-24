@@ -1,4 +1,23 @@
 
+id: DW202301-001
+cve:
+fuzzer: 
+datereported: 2023-01-24
+reportedby: Steve Kaufmann
+vulnerability: Denial of Service with DW_FORM_strx3 
+product: libdwarf
+description: The testcase uses DW_FORM_strx3 
+  and the library calls that a 4 byte form 
+  (and similarly for DW_FORM_addrx3) in dwarf_util.c.
+  Leading to unpredictable library behavior, possibly
+  including crashing the calling program.
+datefixed: 2023-01-24
+references: regressiontests/kaufmann2/ct-bad.o
+gitfixid: 97e90eb7ab98df60b8da0bdc2ac855711c4db804
+tarrelease:
+endrec: DW202301-001
+
+
 id: DW202212-001
 cve:
 fuzzer: oss-fuzz
