@@ -530,7 +530,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = 2;
         return DW_DLV_OK;
     case DW_FORM_addrx3:
-        *size_out = 4;
+        *size_out = 3;
         return DW_DLV_OK;
     case DW_FORM_addrx4:
         *size_out = 4;
@@ -542,7 +542,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = 2;
         return DW_DLV_OK;
     case DW_FORM_strx3:
-        *size_out = 4;
+        *size_out = 3;
         return DW_DLV_OK;
     case DW_FORM_strx4:
         *size_out = 4;
