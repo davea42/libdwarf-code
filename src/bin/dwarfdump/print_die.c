@@ -4986,7 +4986,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 Used in the SNC LinkOnce feature. */
             name = esb_get_string(&lesb);
             dd_safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
-                name,strlen(name));
+                name,esb_string_len(&lesb));
             esb_destructor(&lesb);
         }
         }
@@ -5093,7 +5093,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
             name = esb_get_string(&lesb);
             dd_safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
-                name, strlen(name));
+                name, esb_string_len(&lesb));
             esb_destructor(&lesb);
         }
 
