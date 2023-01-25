@@ -48,8 +48,6 @@ gitfixid: 45f6d778811553a835916b60845933e6dda63b7f
 tarrelease:
 endrec: DW202212-001
 
-
-
 id: DW202208-001
 cve:
 fuzzer: unspecified
@@ -68,12 +66,8 @@ description: A carefully corrupted object file
 datefixed: 2022-08-27
 references: regressiontests/hanzheng/fuzzedobject
 gitfixid: 428235e3d132fb62faf7732735fdbb034d6264b4
-tarrelease:
+tarrelease: libdwarf-0.5.0.tar.xz
 endrec: DW202208-001
-
-
-
-
 
 id: DW202207-001
 cve:
@@ -93,7 +87,7 @@ description: A carefully corrupted string
 datefixed: 2022-07-23
 references: regressiontests/ossfuzz47150/clusterfuzz-testcase-minimized-fuzz_init_path-6727387238236160.fuzz
 gitfixid:  24dff940cc4c71a9c3cb5475aee231b19163a12c
-tarrelease: 
+tarrelease: libdwarf-0.5.0.tar.xz
 endrec: DW202207-001
 
 id: DW202206-001
