@@ -1398,8 +1398,8 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
     WRITE_UNALIGNED(dbg, (void *) data, (const void *) &db,
         sizeof(db), sizeof(Dwarf_Ubyte));
     data += sizeof(Dwarf_Ubyte);
-    WRITE_UNALIGNED(dbg, (void *) data, (const void *) std_opcode_len,
-        inits->pi_opcode_base-1,
+    /* stream of single bytes. No endian issues. */
+    memcpy((void *) data, (const void *) std_opcode_len,
         inits->pi_opcode_base-1);
     data += inits->pi_opcode_base-1;
 

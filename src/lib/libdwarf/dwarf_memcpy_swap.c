@@ -49,35 +49,25 @@ _dwarf_memcpy_noswap_bytes(void *s1,
     memcpy(s1,s2,(size_t)len);
     return;
 }
-void
-_dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
-{
-    unsigned char *targ = (unsigned char *) s1;
-    const unsigned char *src = (const unsigned char *) s2;
 
-    if (len == 4) {
-        targ[3] = src[0];
-        targ[2] = src[1];
-        targ[1] = src[2];
-        targ[0] = src[3];
-    } else if (len == 8) {
-        targ[7] = src[0];
-        targ[6] = src[1];
-        targ[5] = src[2];
-        targ[4] = src[3];
-        targ[3] = src[4];
-        targ[2] = src[5];
-        targ[1] = src[6];
-        targ[0] = src[7];
-    } else if (len == 2) {
-        targ[1] = src[0];
-        targ[0] = src[1];
+void
+_dwarf_memcpy_swap_bytes(void *s1,
+    const void *s2,
+    unsigned long len)
+{
+    unsigned char       *targ = (unsigned char *) s1;
+    const unsigned char *src = (const unsigned char *) s2;
+    unsigned long        i = 0;
+    unsigned long        n = len-1;
+
+    if (len > 8) {
+        /*  Not writing an integer, we think, so
+            best to not swap bytes! */
+        memcpy(s1,s2,(size_t)len);
+        return;
     }
-/* should NOT get below here: is not the intended use */
-    else if (len == 1) {
-        targ[0] = src[0];
-    } else {
-        memcpy(s1, s2, (size_t)len);
+    for ( ; i < len; ++i,--n) {
+        targ[n]  = src[i];
     }
     return;
 }
