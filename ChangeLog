@@ -1,3 +1,59 @@
+2023-01-28:  David Anderson
+    commit 4f6376d8f4d57497e4083405d94f00651576b51a
+
+    _dwarf_memcpy_swap_bytes is now simpler and accomodates
+    all words 8 bytes or less long by swapping bytes.
+      modified:   src/lib/libdwarf/dwarf_memcpy_swap.c
+
+    Now uses memcpy to write part of
+    the line table header, not WRITE_UNALIGNED
+    as WRITE_UNALIGNED is intended for integers
+    requiring byte-swapping when the target object
+    and the runnning libdwarfp do not have the
+    same endianness. the write changed is a set of
+    bytes, not an integer at all.
+      modified:   src/lib/libdwarfp/dwarf_pro_section.c
+
+2023-01-24:  David Anderson
+    commit ac2952e266e617cddd9d371d18b6664906e7e012
+
+    Now notes release in a couple entries (0.5.0).
+            modified:   bugxml/data.txt
+
+    Latest.
+            modified:   doc/libdwarf.pdf
+
+2023-01-24:  David Anderson
+    commit 8b8265142a78563b840df9b02f15b263cac8708e
+
+    Now with the git id of the fix.
+            modified:   bugxml/data.txt
+    Mention the bug in Changes from 0.5.0 to 0.60.
+            modified:   doc/libdwarf.dox
+
+2023-01-24:  David Anderson
+    commit d059264c2e2a8e74b6ad6e13b7ea062b2cbec650
+
+    Instead of strlen, use esb_string_len() on
+    the struct esb_s string so safe_strcpy()
+    is aware of the copy-from length..
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-01-24:  David Anderson
+    commit 97e90eb7ab98df60b8da0bdc2ac855711c4db804
+
+    Fix DW202301-001, where
+    DW_FORM_strx3
+    DW_FORM_addrx3
+    were mistakenly treated as 4 byte values.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2023-01-21:  David Anderson
+    commit 52f9045ac2d0e07e83b0e617eb75a7906722303d
+
+    Bringing up to date with git log.
+            modified:   ChangeLog
+
 2023-01-21:  David Anderson
     commit 2fc3bdd86abe60a2083e0baaeabf5fe54e966412
 
