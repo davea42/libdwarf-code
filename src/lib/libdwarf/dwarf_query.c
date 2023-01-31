@@ -316,7 +316,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
 
     /* Points to contiguous block of Dwarf_Off's. */
     ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg,
-        DW_DLA_LIST, off_count);
+        DW_DLA_UARRAY, off_count);
     if (ret_offsets == NULL) {
         free_dwarf_offsets_chain(dbg,head_chain);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);

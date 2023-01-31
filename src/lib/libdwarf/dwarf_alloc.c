@@ -321,8 +321,8 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x18 DW_DLA_FUNC UNUSED */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
-    /* 0x19 DW_DLA_TYPENAME UNUSED */
-    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
+    /* 0x19 DW_DLA_UARRAY */
+    {sizeof(Dwarf_Off),MULTIPLY_CT,  0, 0},
 
     /* 0x1a DW_DLA_VAR UNUSED  */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},

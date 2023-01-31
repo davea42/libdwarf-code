@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-12-27 v0.6.0
+    @date 2023-01-31 v0.6.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -22,7 +22,6 @@
     not a list.
 
     Thanks in advance for any suggestions.
-
  
     @section dwsec_intro Introduction
 
@@ -907,6 +906,13 @@
     We list these with newest first.
 
     <b>Changes 0.5.0 to 0.6.0</b>
+    The dealloc required by dwarf_offset_list()
+    was wrong. The call could crash libdwarf
+    on systems with 32bit pointers.
+    The new and proper dealloc (for all
+    pointer sizes) is
+    dwarf_dealloc(dbg,offsetlistptr,DW_DLA_UARRAY);
+
     A memory leak from dwarf_load_loclists()
     and dwarf_load_rnglists() is fixed and the
     libdwarf-regressiontests error that hid the leak

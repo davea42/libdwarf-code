@@ -1679,20 +1679,27 @@ check_sibling_off(Dwarf_Unsigned loop_iteration,
     } else {
         Dwarf_Unsigned i = 0;
         Dwarf_Off      off = 0;
+        struct esb_s m;
+        Dwarf_Off check_off = glflags.DIE_section_offset;
 
         /*  The following could use binary search as
             the array is strictly assending values. */
         for ( ; i < sibling_off_count; ++i) {
             off = sibling_off_array[i];
-            if (glflags.DIE_section_offset == off) {
+            if (check_off == off) {
                 /* Good. Found */
                 return;
             }
         }
+        esb_constructor(&m);
+        esb_append_printf_u(&m,
+            "An offset  from dwarf_offset_list"
+            " of 0x%x"
+            " is different than any actual"
+            " sibling offset",glflags.DIE_section_offset);
         DWARF_CHECK_ERROR(check_functions_result,
-            "An offset from dwarf_offset_list"
-            " is different than an actual"
-            " sibling offset");
+            esb_get_string(&m));
+        esb_destructor(&m);
     }
 }
 
@@ -1979,7 +1986,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     inner_offset_array, inner_offset_count,
                     err);
                 if (inner_offset_array) {
-                    dwarf_dealloc(dbg,inner_offset_array,DW_DLA_LIST);
+                    dwarf_dealloc(dbg,
+                        inner_offset_array,DW_DLA_UARRAY);
                 }
             }
 

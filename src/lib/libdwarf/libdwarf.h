@@ -830,9 +830,9 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLA_FDE             0x15  /* Dwarf_Fde */
 #define DW_DLA_LOC_BLOCK       0x16  /* Dwarf_Loc */
 
-#define DW_DLA_FRAME_OP        0x17 /* Dwarf_Frame_Op (not used) */
+#define DW_DLA_FRAME_OP        0x17  /* Dwarf_Frame_Op (not used) */
 #define DW_DLA_FUNC            0x18  /* Dwarf_Func */
-#define DW_DLA_TYPENAME        0x19  /* Dwarf_Type */
+#define DW_DLA_UARRAY          0x19  /* Array of Dwarf_Off:Jan2023 */
 #define DW_DLA_VAR             0x1a  /* Dwarf_Var */
 #define DW_DLA_WEAK            0x1b  /* Dwarf_Weak */
 #define DW_DLA_ADDR            0x1c  /* Dwarf_Addr sized entries */
@@ -2280,7 +2280,7 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     hence no list of child offsets.
 
     On successful return, use
-    dwarf_dealloc(dbg, dw_offbuf, DW_DLA_LIST);
+    dwarf_dealloc(dbg, dw_offbuf, DW_DLA_UARRAY);
     to dealloc the allocated space.
 
     @see exampleoffset_list
