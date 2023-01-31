@@ -1,3 +1,30 @@
+2023-01-31:  David Anderson
+    commit 4823a9a14a127ba298b37cbc7613de0c21e0682a
+
+    Documenting  corrections to dwarf_offset_list()
+            modified:   doc/libdwarf.dox
+
+    Improve an error message related to checking
+    dwarf_offset_list() results.
+    Correct the dealloc call to be correct.
+    This function did not, before this, work
+    on 32bit pointer systems.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Dealing with the new DW_DLA_UARRAY allocation type
+    for dwarf_offset_list().
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Defining and documenting DW_DLA_UARRAY.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-01-28:  David Anderson
+    commit ef60bff461a533da09f4ad3e9c1ece1249237ea2
+
+    Bringing ChangeLog up to date with git log.
+            modified:   ChangeLog
+
 2023-01-28:  David Anderson
     commit 4f6376d8f4d57497e4083405d94f00651576b51a
 
