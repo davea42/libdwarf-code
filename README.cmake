@@ -81,8 +81,11 @@ passed at compile time use
 instead of plain
     make
 
-cmake make install and make dist do not yet work properly.
-Use configure for those.
+cmake make install works somewhat usefully, but
+generates two libdwarf.pc files, only one of which
+is usable. It is unclear why two such.
+
+We suggest you use meson or configure for install
 
 END of cmake on Linux/Unix/Macos/Freebsd/Openbsd
 ===========================
