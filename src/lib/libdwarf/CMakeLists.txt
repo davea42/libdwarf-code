@@ -100,6 +100,10 @@ foreach(i RANGE ${targetCount})
 		LIBRARY DESTINATION ${LIBDIR}
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
+
+# add_library(libdwarf)
+configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY )
+
 # The install has to be here, not in
 # another CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
@@ -122,3 +126,6 @@ install(DIRECTORY libdwarf DESTINATION include/
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarf.h
     DESTINATION include/libdwarf)
+install( FILES ${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc
+    DESTINATION lib/pkgconfig
+)
