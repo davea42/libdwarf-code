@@ -1,3 +1,34 @@
+2023-02-01:  David Anderson
+    commit 5ea279585fe15b8a9a0cf8efe034518799e2803f
+
+    Ensure new file libdwarf/libdwarf.pc.cmake gets into
+    the distribution.
+            modified:   src/lib/libdwarf/Makefile.am
+
+2023-01-31:  David Anderson
+    commit 44bd35172ee75cb96d7c56031b2f986336eaf435
+
+    A few words on cmake 'make install' added.
+            modified:   README.cmake
+
+2023-01-31:  David Anderson
+    commit 7368a1062271e08e7df0f188d8b02c9991a0d03a
+
+    This creates a useful libdwarf.pc with install.
+
+    It also creates a useless extra libdwarf.pc
+    which is not at all useful. Unsure why.
+    You will get better results using meson instead
+    in most cases.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            new file:   src/lib/libdwarf/libdwarf.pc.cmake
+
+2023-01-31:  David Anderson
+    commit a8b59bea77d868fae8442e69fe4d366c7045df61
+
+    Bringing up to date.
+            modified:   ChangeLog
+
 2023-01-31:  David Anderson
     commit 4823a9a14a127ba298b37cbc7613de0c21e0682a
 
