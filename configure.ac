@@ -252,13 +252,23 @@ AC_ARG_VAR([DWARF_BIGENDIAN],
 # -Wno-long-long suppresses warnings on 'long long'
 # -Wno-pedantic-ms-format (which only exists in mingw)
 # suppresses warnings about I64 printf format.
+# -Wnostringop_overread is to avoid a build fail with
+
+# some versions of gcc when building with -fsanitize
+# (and some other flags). See, in libdwarf/dwarf_init_finish.c
+# around line 330.
+# one such gcc: Alpine 12.2.1_git20220924-r4) 12.2.1 20220924
+# error: 'strcmp' reading 1 or more bytes from a region of
+# size 0 [-Werror=stringop-overread]
+# !strcmp(postzprefix,targname+DPREFIXLEN)
+
 c_common_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Werror -Wno-long-long"
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
     [
        cxx_compiler_flags="$c_common_flags -Wno-unused-private-field"
 
-       c_compiler_flags="$c_common_flags -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs"
+       c_compiler_flags="$c_common_flags -Wnostringop-overread -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs"
     ]
     )
 AS_IF(

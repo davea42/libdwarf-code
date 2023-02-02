@@ -36,7 +36,7 @@ AC_SUBST(DWARF_CFLAGS_WARN)dnl
 ])
 
 dnl DWARF_CHECK_C_COMPILER_FLAGS(FLAGS)
-dnl Checks if FLAGS are supported and add to DWARF_CLFAGS.
+dnl Checks if FLAGS are supported and add to DWARF_CFLAGS.
 dnl
 dnl It will first try every flag at once, if one fails we will try
 dnl them one by one.
@@ -81,7 +81,7 @@ AC_SUBST(DWARF_CXXFLAGS_WARN)dnl
 ])
 
 dnl DWARF_CHECK_CXX_COMPILER_FLAGS(FLAGS)
-dnl Checks if FLAGS are supported and add to DWARF_CXXLFAGS.
+dnl Checks if FLAGS are supported and add to DWARF_CXXFLAGS.
 dnl
 dnl It will first try every flag at once, if one fails we will try
 dnl them one by one.
