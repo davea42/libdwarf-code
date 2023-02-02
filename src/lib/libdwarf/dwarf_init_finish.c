@@ -271,7 +271,9 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
 }
 #endif /*0*/
 
-/* Return DW_DLV_OK etc. */
+/*  Return DW_DLV_OK etc.
+    PRECONDITION: secname and targname are non-null
+        pointers to strings. */
 static int
 set_up_section(Dwarf_Debug dbg,
     /*  Section name from object format.
@@ -302,6 +304,7 @@ set_up_section(Dwarf_Debug dbg,
 #define ZPREFIXLEN 8
     int havezdebug = FALSE;
     int namesmatch = FALSE;
+    const char *postzprefix = 0;
 
     /*  For example, if the secname is .zdebug_info
         we update the finaltargname to .debug_info
@@ -316,14 +319,25 @@ set_up_section(Dwarf_Debug dbg,
             our caller will keep looking. */
         return DW_DLV_NO_ENTRY;
     }
-    if ((secnamelen+1) < SECNAMEMAX &&
-        !strncmp(secname,zprefix,ZPREFIXLEN) &&
-        !strcmp(secname+ZPREFIXLEN,targname+DPREFIXLEN)) {
+    havezdebug = !strncmp(secname,zprefix,ZPREFIXLEN);      
+    if (havezdebug) {                                     
+        postzprefix = secname+ZPREFIXLEN;                
+    }                                       
+    /*  With Alpine gcc 
+        12.2.1_git20220924-r4) 12.2.1 20220924
+        and some other gcc versions when compiling
+        with -Werror and -fsanitize:
+        we get 
+        error: 'strcmp' reading 1 or more bytes
+        from a region of size 0 [-Werror=stringop-overread]
+        So we add -Wnostringop-overread to the build as the error is
+        a false positive. */
+    if (postzprefix &&
+        !strcmp(postzprefix,targname+DPREFIXLEN)) {
             /*  zprefix version matches the object section
                 name so the section is compressed and is
                 the section this targname applies to. */
-            havezdebug = TRUE;
-            namesmatch = TRUE;
+        namesmatch = TRUE;
     } else if (!strcmp(secname,targname)) {
         namesmatch = TRUE;
     } else { /*  Fall to next statement */ }
