@@ -1,3 +1,28 @@
+2023-02-02:  David Anderson
+    commit fc1c55b70f52f18f491f82a9ffda8fa1d379fe58
+
+    set_up_section() is now easier to understand
+    yet does the same job.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2023-02-02:  David Anderson
+    commit 08bcf43f4b293d5206dfcc2f107ea0041fb8d5de
+
+    Added -Wnostringop-overread to the -W list
+    as -Wstringop-overread  defaults *on* in alpinelinux
+    gcc and sometimes has false positives
+    depending on other compiler options (not good).
+            modified:   configure.ac
+
+    Corrected two typos in comment words. LFAGS -> FLAGS
+            modified:   m4/dw_compiler.m4
+
+2023-02-01:  David Anderson
+    commit 27704554af7294899f33706c2908565b1ad8d20e
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-02-01:  David Anderson
     commit 5ea279585fe15b8a9a0cf8efe034518799e2803f
 
