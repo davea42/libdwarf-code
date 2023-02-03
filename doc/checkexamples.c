@@ -8,14 +8,17 @@
     checkexamples.c need not be compiled routinely nor
     should it ever be executed.
 
-    To verify syntatic correctness compile with
+    To verify syntatic correctness compile in the
+    libdwarf-code/doc directory with:
 
+@code
 cc -c -Wall -O0 -Wpointer-arith  \
 -Wdeclaration-after-statement \
 -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
 -Wno-long-long -Wshadow -Wbad-function-cast \
 -Wmissing-parameter-type -Wnested-externs \
--I../src/lib/libdwarf checkexamples.c
+-Isrc/lib/libdwarf checkexamples.c
+@endcode
 */
 
 #include <stdio.h> /* for printf */
