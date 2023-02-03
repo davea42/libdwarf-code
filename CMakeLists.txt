@@ -225,8 +225,8 @@ check_c_source_compiles("
   }" HAVE_RAW_LIBELF_OK)
 else()
 endif()
-  static unsigned foo( unsigned x, 
 check_c_source_compiles("
+  static unsigned foo( unsigned x, 
       __attribute__ ((unused)) int y)
   {  
       unsigned x2 = x + 1;
