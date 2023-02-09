@@ -220,10 +220,10 @@ dw_empty_errlist_item(Dwarf_Error e_in)
     it in the static err list. Here dbg is NULL
     so not mentioned.  */
 void
-_dwarf_add_to_static_err_list(Dwarf_Error err)
+_dwarf_add_to_static_err_list(Dwarf_Error error)
 {
     unsigned i = 0;
-    if (!err) {
+    if (!error) {
         return;
     }
     for ( ; i <static_used; ++i) {
@@ -231,11 +231,11 @@ _dwarf_add_to_static_err_list(Dwarf_Error err)
         if (e) {
             continue;
         }
-        staticerrlist[i] = err;
+        staticerrlist[i] = error;
         return;
     }
     if (static_used < STATIC_ALLOWED) {
-        staticerrlist[static_used] = err;
+        staticerrlist[static_used] = error;
         ++static_used;
     }
 }
