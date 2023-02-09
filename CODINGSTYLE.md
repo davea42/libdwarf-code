@@ -42,6 +42,7 @@ Section list:
     Dwarfdump Flags Data
     Never use strcpy strcat strncpy
     Static data and functions
+    Argument Lists
     Tools that help
 
 ###Indentation
@@ -482,6 +483,18 @@ Multiple Dwarf_Debug
 may be open at the same time in a single
 program (dwarfdump or user code) so static data
 will eventually be a bug.
+### Argument Lists
+
+Beginning February 2023 we are moving to presenting
+argument lists with no space between any
+pointer * and the immediately following argument name.
+And with such lists mostly lining up the names
+(with the first argument usually not lined up with anything).
+
+	functionname(Dwarf_Debug x,
+        Dwarf_Off   *out_value,
+        Dwarf_Error *error)
+
 
 ### Tools that help
 
