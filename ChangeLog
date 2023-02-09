@@ -1,3 +1,85 @@
+2023-02-09:  David Anderson
+    commit a9a8924d775c0389220a0fce7a762f4752fd974c
+
+    Everywhere we dealloc (drop)
+    a Dwarf_Error ensure we have a valid
+    Dwarf_Error* to dereference for the
+    dealloc.
+    These situations arise when the calling
+    program passes NULL as the Dwarf_Error*
+    to a libdwarf function, which normally
+    only happens in toy or small calling
+    programs.
+    In libdwarf/
+            modified:   dwarf_debugaddr.c
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_fission_to_cu.c
+            modified:   dwarf_form.c
+            modified:   dwarf_generic_init.c
+            modified:   dwarf_init_finish.c
+            modified:   dwarf_loc.c
+            modified:   dwarf_loclists.c
+            modified:   dwarf_query.c
+            modified:   dwarf_str_offsets.c
+            modified:   dwarf_util.c
+
+2023-02-08:  David Anderson
+    commit 4a78820c8749eeca6f56d4f31693965f7cac0473
+
+    Changed the name of the error arg
+    from err to error for consistency.
+            modified:   dwarf_alloc.c
+
+2023-02-08:  David Anderson
+    commit 3423ca18432b02b3ac2ecbb8541a16becb373474
+
+    Changed the Dwarf_Error name to be error
+    for consistency across the rest of libdwarf.
+            modified:   dwarf_frame.c
+            modified:   dwarf_gdbindex.c
+            modified:   dwarf_line.c
+            modified:   dwarf_print_lines.c
+            modified:   dwarf_util.c
+            modified:   dwarf_xu_index.c
+
+2023-02-03:  David Anderson
+    commit 43107bc59332a47aeb17e4a63ad4f191ab92c41c
+
+    Something went badly wrong with the pull or something.
+    Obvious misaligment from the last change.
+            modified:   CMakeLists.txt
+
+2023-02-03:  David Anderson
+    commit a26db7aeefb8bb6a9d8fca029459e7ea071e8f00
+
+    Using @code @endcode so the cc command
+    looks right.
+            modified:   doc/checkexamples.c
+
+    Updated date of last update.
+            modified:   doc/libdwarf.dox
+
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2023-02-03:  Ludovic Chopin
+    commit 74837fb700269b26287a401a8d91061725c48c82
+
+    CMakeLists.txt: fix crosscompile cmake build (#150)
+
+    `check_c_source_runs` cannot be run in crosscompilation cases,
+    only check compilation by replacing it with `check_c_source_compiles`
+
+    Fixes #149
+
+    Co-authored-by: Ludovic Chopin <lchopin@wyplay.com>
+
+2023-02-02:  David Anderson
+    commit 6123495407fa877b6a2e17f7a7f7c0e5632bdcc5
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2023-02-02:  David Anderson
     commit fc1c55b70f52f18f491f82a9ffda8fa1d379fe58
 
