@@ -495,6 +495,8 @@ And with such lists mostly lining up the names
         Dwarf_Off   *out_value,
         Dwarf_Error *error)
 
+This format is suggested, not required.
+
 
 ### Tools that help
 
