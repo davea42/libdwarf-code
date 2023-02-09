@@ -99,7 +99,7 @@ set_base(Dwarf_Debug dbg,
     /* The size of each field in the struct in the object. */
     Dwarf_Unsigned fieldlen,
     enum gdbindex_type_e type,
-    Dwarf_Error * err)
+    Dwarf_Error * error)
 {
 
     if (type == git_std || type == git_cuvec) {
@@ -107,7 +107,7 @@ set_base(Dwarf_Debug dbg,
             section, but a useful one. */
         Dwarf_Unsigned count = 0;
         if ( end < start) {
-            _dwarf_error(dbg, err,DW_DLE_GDB_INDEX_COUNT_ERROR);
+            _dwarf_error(dbg, error,DW_DLE_GDB_INDEX_COUNT_ERROR);
             return DW_DLV_ERROR;
         }
         count = end - start;
@@ -123,7 +123,7 @@ set_base(Dwarf_Debug dbg,
         Dwarf_Unsigned count = 0;
         hdr->dg_base = start;
         if ( end < start) {
-            _dwarf_error(dbg, err,DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR);
+            _dwarf_error(dbg, error,DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR);
             return DW_DLV_ERROR;
         }
         /* entry length includes pad. */

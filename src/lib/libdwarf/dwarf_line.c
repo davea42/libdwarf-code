@@ -1921,7 +1921,7 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     Dwarf_Unsigned ltype,
     int dlecode,
     const char  *dlename,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     dwarfstring m;  /* constructor_static ok */
     dwarfstring f2; /* constructor_static ok */
@@ -1944,7 +1944,7 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     dwarfstring_append_printf_s(&m,
         " %s ",
         dwarfstring_string(&f2));
-    _dwarf_error_string(dbg, err, dlecode,
+    _dwarf_error_string(dbg, error, dlecode,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
     dwarfstring_destructor(&f2);

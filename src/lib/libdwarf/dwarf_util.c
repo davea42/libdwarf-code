@@ -1503,12 +1503,12 @@ _dwarf_read_unaligned_ck_wrapper(Dwarf_Debug dbg,
     Dwarf_Small *readfrom,
     int          readlength,
     Dwarf_Small *end_arange,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned val = 0;
 
     READ_UNALIGNED_CK(dbg,val,Dwarf_Unsigned,
-        readfrom,readlength,err,end_arange);
+        readfrom,readlength,error,end_arange);
     *out_value = val;
     return DW_DLV_OK;
 }
@@ -1521,7 +1521,7 @@ _dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
     int    *  exten_size_out,
     Dwarf_Unsigned sectionlength,
     Dwarf_Small *endsection,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     Dwarf_Small *ptr = *readfrom;
     Dwarf_Unsigned val = 0;
@@ -1530,7 +1530,7 @@ _dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
 
     READ_AREA_LENGTH_CK(dbg,val,Dwarf_Unsigned,
         ptr,length_size,exten_size,
-        err,
+        error,
         sectionlength,endsection);
     *readfrom = ptr;
     *out_value = val;

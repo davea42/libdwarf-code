@@ -2678,22 +2678,22 @@ dwarf_get_frame_instruction_a(Dwarf_Frame_Instr_Head head,
 int
 _dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     Dwarf_Off * fde_off, Dwarf_Off * cie_off,
-    Dwarf_Error * err)
+    Dwarf_Error * error)
 {
     return dwarf_fde_section_offset(dbg,in_fde,fde_off,
-        cie_off,err);
+        cie_off,error);
 }
 /* ARGSUSED 4 */
 int
 dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     Dwarf_Off * fde_off, Dwarf_Off * cie_off,
-    Dwarf_Error * err)
+    Dwarf_Error * error)
 {
     char *start = 0;
     char *loc = 0;
 
     if (!in_fde) {
-        _dwarf_error(dbg, err, DW_DLE_FDE_NULL);
+        _dwarf_error(dbg, error, DW_DLE_FDE_NULL);
         return DW_DLV_ERROR;
     }
     start = (char *) in_fde->fd_section_ptr;
@@ -2712,20 +2712,20 @@ dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
 /* ARGSUSED 4 */
 int
 _dwarf_cie_section_offset(Dwarf_Debug dbg, Dwarf_Cie in_cie,
-    Dwarf_Off * cie_off, Dwarf_Error * err)
+    Dwarf_Off * cie_off, Dwarf_Error * error)
 {
-    return dwarf_cie_section_offset(dbg,in_cie,cie_off,err);
+    return dwarf_cie_section_offset(dbg,in_cie,cie_off,error);
 }
 /* ARGSUSED 4 */
 int
 dwarf_cie_section_offset(Dwarf_Debug dbg, Dwarf_Cie in_cie,
-    Dwarf_Off * cie_off, Dwarf_Error * err)
+    Dwarf_Off * cie_off, Dwarf_Error * error)
 {
     char *start = 0;
     char *loc = 0;
 
     if (!in_cie) {
-        _dwarf_error(dbg, err, DW_DLE_CIE_NULL);
+        _dwarf_error(dbg, error, DW_DLE_CIE_NULL);
         return DW_DLV_ERROR;
     }
     start = (char *) in_cie->ci_section_ptr;

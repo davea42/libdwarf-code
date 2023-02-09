@@ -545,7 +545,7 @@ static int print_actuals_and_locals(Dwarf_Debug dbg,
     Dwarf_Small *line_ptr_end,
     Dwarf_Half   address_size,
     int *        err_count_out,
-    Dwarf_Error *err);
+    Dwarf_Error *error);
 
 /*  return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
     If err_count_out is non-NULL, this is a special 'check'
@@ -1016,12 +1016,12 @@ dwarf_print_lines(Dwarf_Die die,
 */
 int
 dwarf_check_lineheader_b(Dwarf_Die die, int *err_count_out,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     int res = 0;
 
     int only_line_header = 1;
     res = _dwarf_internal_printlines(die,err_count_out,
-        only_line_header,err);
+        only_line_header,error);
     return res;
 }

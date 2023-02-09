@@ -110,7 +110,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
     Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned headerline_offset,
     Dwarf_Unsigned num_sects,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     Dwarf_Small *section_start = xuhdr->gx_section_data;
     Dwarf_Small *section_end = xuhdr->gx_section_data+
@@ -124,7 +124,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
 
         READ_UNALIGNED_CK(dbg,v, Dwarf_Unsigned,
             data,SIZEOFT32,
-            err,section_end);
+            error,section_end);
         data += SIZEOFT32;
         if (v > DW_SECT_RNGLISTS) {
             dwarfstring s;
@@ -136,7 +136,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
             dwarfstring_append(&s," is too high. "
                 "Sections 1-8 are listed in "
                 "DWARF5 Table 7.1.");
-            _dwarf_error_string(dbg, err, DW_DLE_XU_NAME_COL_ERROR,
+            _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
                 dwarfstring_string(&s));
             dwarfstring_destructor(&s);
             return DW_DLV_ERROR;
@@ -427,9 +427,9 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header xuhdr,
         the immutable section name. Do not free.
         .debug_cu_index or .debug_tu_index */
     const char ** sectionname,
-    Dwarf_Error * err)
+    Dwarf_Error * error)
 {
-    (void)err;
+    (void)error;
     *typename    = &xuhdr->gx_type[0];
     *sectionname = xuhdr->gx_section_name;
     return DW_DLV_OK;
@@ -443,7 +443,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
 
     /* returns the index into rows of offset/size tables. */
     Dwarf_Unsigned *  index_to_sections,
-    Dwarf_Error *     err)
+    Dwarf_Error *     error)
 {
     Dwarf_Debug dbg = xuhdr->gx_dbg;
     Dwarf_Small *hashtab = xuhdr->gx_section_data +
@@ -457,7 +457,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         xuhdr->gx_section_length;
 
     if (!xuhdr->gx_slots_in_hash) {
-        _dwarf_error_string(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR,
+        _dwarf_error_string(dbg, error,  DW_DLE_XU_HASH_ROW_ERROR,
             "DW_DLE_XU_HASH_ROW_ERROR the number of slots is zero"
             " which seems wrong.");
         return DW_DLV_ERROR;
@@ -470,7 +470,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
             "DW_DLE_XU_HASH_ROW_ERROR the index passed in, "
             " %u, is greater than the number of slots "
             " in the hash table.",index);
-        _dwarf_error_string(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR,
+        _dwarf_error_string(dbg, error,  DW_DLE_XU_HASH_ROW_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
@@ -480,10 +480,10 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     indexentry = indextab + (index * SIZEOFT32);
     READ_UNALIGNED_CK(dbg,indexval,Dwarf_Unsigned, indexentry,
         SIZEOFT32,
-        err,section_end);
+        error,section_end);
     indexentry += SIZEOFT32;
     if (indexval > xuhdr->gx_units_in_index) {
-        _dwarf_error(dbg, err,  DW_DLE_XU_HASH_INDEX_ERROR);
+        _dwarf_error(dbg, error,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
     *index_to_sections = indexval;
@@ -511,7 +511,7 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned  column_index,
     Dwarf_Unsigned* number,
     const char **   name,
-    Dwarf_Error *   err)
+    Dwarf_Error *   error)
 {
     Dwarf_Unsigned sec_num = 0;
     Dwarf_Debug dbg = xuhdr->gx_dbg;
@@ -526,7 +526,7 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
         dwarfstring_append_printf_u(&s," is too high. "
             "There are %u sections.",
             xuhdr->gx_column_count_sections);
-        _dwarf_error_string(dbg, err, DW_DLE_XU_NAME_COL_ERROR,
+        _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
             dwarfstring_string(&s));
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
@@ -554,7 +554,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned  column_index,
     Dwarf_Unsigned* sec_offset,
     Dwarf_Unsigned* sec_size,
-    Dwarf_Error *   err)
+    Dwarf_Error *   error)
 {
     /* We use zero origin in the arrays, Users see
         one origin from the hash table. */
@@ -583,7 +583,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
             "is zero, which is not a valid row in "
             " the offset-table or the size table as we think"
             " of them as 1-origin.");
-        _dwarf_error_string(dbg, err, DW_DLE_XU_NAME_COL_ERROR,
+        _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
             dwarfstring_string(&s));
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
@@ -597,7 +597,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
             "row index of %u ",row_index);
         dwarfstring_append_printf_u(&s," is too high. "
             "Valid units must be < %u ",xuhdr->gx_units_in_index);
-        _dwarf_error_string(dbg, err, DW_DLE_XU_NAME_COL_ERROR,
+        _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
             dwarfstring_string(&s));
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
@@ -613,7 +613,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         dwarfstring_append_printf_u(&s," is too high. "
             "Valid column indexes  must be < %u ",
             xuhdr->gx_column_count_sections);
-        _dwarf_error_string(dbg, err, DW_DLE_XU_NAME_COL_ERROR,
+        _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
             dwarfstring_string(&s));
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
@@ -630,12 +630,12 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     {
         READ_UNALIGNED_CK(dbg,offset,Dwarf_Unsigned,
             offsetentry,
-            SIZEOFT32,err,section_end);
+            SIZEOFT32,error,section_end);
         offsetentry += SIZEOFT32;
 
         READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,
             sizeentry,
-            SIZEOFT32,err,section_end);
+            SIZEOFT32,error,section_end);
         sizeentry += SIZEOFT32;
     }
     *sec_offset = offset;
