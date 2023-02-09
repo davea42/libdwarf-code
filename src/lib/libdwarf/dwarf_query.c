@@ -50,9 +50,9 @@
 #include "dwarf_string.h"
 
 static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
-    Dwarf_Half attr,
-    Dwarf_Unsigned * return_val,
-    Dwarf_Error * error);
+    Dwarf_Half      attr,
+    Dwarf_Unsigned *return_val,
+    Dwarf_Error    *error);
 
 int dwarf_get_offset_size(Dwarf_Debug dbg,
     Dwarf_Half  *    offset_size,
@@ -92,7 +92,7 @@ this may not give the correct value in all contexts.
 */
 int
 dwarf_get_address_size(Dwarf_Debug dbg,
-    Dwarf_Half * ret_addr_size, Dwarf_Error * error)
+    Dwarf_Half *ret_addr_size, Dwarf_Error *error)
 {
     Dwarf_Half address_size = 0;
 
@@ -110,7 +110,7 @@ dwarf_get_address_size(Dwarf_Debug dbg,
 */
 int
 dwarf_get_die_address_size(Dwarf_Die die,
-    Dwarf_Half * ret_addr_size, Dwarf_Error * error)
+    Dwarf_Half * ret_addr_size, Dwarf_Error *error)
 {
     Dwarf_Half address_size = 0;
     CHECK_DIE(die, DW_DLV_ERROR);
@@ -121,7 +121,7 @@ dwarf_get_die_address_size(Dwarf_Die die,
 
 int
 dwarf_dieoffset(Dwarf_Die die,
-    Dwarf_Off * ret_offset, Dwarf_Error * error)
+    Dwarf_Off *ret_offset, Dwarf_Error *error)
 {
     Dwarf_Small *dataptr = 0;
     Dwarf_Debug dbg = 0;
@@ -141,7 +141,7 @@ dwarf_dieoffset(Dwarf_Die die,
     Returns DW_DLV_ERROR on error.  */
 int
 dwarf_die_CU_offset(Dwarf_Die die,
-    Dwarf_Off * cu_off, Dwarf_Error * error)
+    Dwarf_Off *cu_off, Dwarf_Error *error)
 {
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Small *dataptr = 0;
@@ -196,9 +196,9 @@ dwarf_die_offsets(Dwarf_Die die,
     Used for correctness checking by dwarfdump.  */
 int
 dwarf_die_CU_offset_range(Dwarf_Die die,
-    Dwarf_Off * cu_off,
-    Dwarf_Off * cu_length,
-    Dwarf_Error * error)
+    Dwarf_Off   *cu_off,
+    Dwarf_Off   *cu_length,
+    Dwarf_Error *error)
 {
     Dwarf_CU_Context cu_context = 0;
 
@@ -212,7 +212,7 @@ dwarf_die_CU_offset_range(Dwarf_Die die,
 }
 
 int
-dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
+dwarf_tag(Dwarf_Die die, Dwarf_Half *tag, Dwarf_Error *error)
 {
     CHECK_DIE(die, DW_DLV_ERROR);
     *tag = die->di_abbrev_list->abl_tag;
@@ -234,9 +234,9 @@ free_dwarf_offsets_chain(Dwarf_Debug dbg, Dwarf_Chain_2 head_chain)
 /* Returns the children offsets for the given offset */
 int
 dwarf_offset_list(Dwarf_Debug dbg,
-    Dwarf_Off offset, Dwarf_Bool is_info,
-    Dwarf_Off **offbuf, Dwarf_Unsigned *offcnt,
-    Dwarf_Error * error)
+    Dwarf_Off    offset, Dwarf_Bool      is_info,
+    Dwarf_Off  **offbuf, Dwarf_Unsigned *offcnt,
+    Dwarf_Error *error)
 {
     Dwarf_Die die = 0;
     Dwarf_Die child = 0;
@@ -354,8 +354,8 @@ empty_local_attrlist(Dwarf_Debug dbg,
 
 int
 dwarf_attrlist(Dwarf_Die die,
-    Dwarf_Attribute ** attrbuf,
-    Dwarf_Signed * attrcnt, Dwarf_Error * error)
+    Dwarf_Attribute **attrbuf,
+    Dwarf_Signed     *attrcnt, Dwarf_Error *error)
 {
     Dwarf_Unsigned    attr_count = 0;
     Dwarf_Unsigned    attr = 0;
@@ -787,9 +787,9 @@ _dwarf_get_value_ptr(Dwarf_Die die,
 
 int
 dwarf_die_text(Dwarf_Die die,
-    Dwarf_Half attrnum,
-    char **ret_name,
-    Dwarf_Error * error)
+    Dwarf_Half   attrnum,
+    char       **ret_name,
+    Dwarf_Error *error)
 {
     Dwarf_Debug dbg = 0;
     int res = DW_DLV_ERROR;
@@ -814,16 +814,16 @@ dwarf_die_text(Dwarf_Die die,
 
 int
 dwarf_diename(Dwarf_Die die,
-    char **ret_name,
-    Dwarf_Error * error)
+    char       **ret_name,
+    Dwarf_Error *error)
 {
     return dwarf_die_text(die,DW_AT_name,ret_name,error);
 }
 
 int
 dwarf_hasattr(Dwarf_Die die,
-    Dwarf_Half attr,
-    Dwarf_Bool * return_bool, Dwarf_Error * error)
+    Dwarf_Half  attr,
+    Dwarf_Bool *return_bool, Dwarf_Error *error)
 {
     Dwarf_Half attr_form = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
@@ -848,7 +848,7 @@ dwarf_hasattr(Dwarf_Die die,
 int
 dwarf_attr(Dwarf_Die die,
     Dwarf_Half attr,
-    Dwarf_Attribute * ret_attr, Dwarf_Error * error)
+    Dwarf_Attribute *ret_attr, Dwarf_Error *error)
 {
     Dwarf_Half attr_form = 0;
     Dwarf_Attribute attrib = 0;
@@ -1033,7 +1033,7 @@ _dwarf_look_in_local_and_tied_by_index(
 int
 dwarf_debug_addr_index_to_addr(Dwarf_Die die,
     Dwarf_Unsigned index,
-    Dwarf_Addr *return_addr,
+    Dwarf_Addr  *return_addr,
     Dwarf_Error *error)
 {
     Dwarf_Debug dbg = 0;
@@ -1084,8 +1084,8 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
 
 int
 dwarf_lowpc(Dwarf_Die die,
-    Dwarf_Addr * return_addr,
-    Dwarf_Error * error)
+    Dwarf_Addr  *return_addr,
+    Dwarf_Error *error)
 {
     Dwarf_Addr ret_addr = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
@@ -1279,10 +1279,10 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     */
 int
 dwarf_highpc_b(Dwarf_Die die,
-    Dwarf_Addr * return_value,
-    Dwarf_Half * return_form,
-    enum Dwarf_Form_Class * return_class,
-    Dwarf_Error * error)
+    Dwarf_Addr *return_value,
+    Dwarf_Half *return_form,
+    enum Dwarf_Form_Class *return_class,
+    Dwarf_Error *error)
 {
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Half attr_form = 0;
@@ -1465,9 +1465,9 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
 */
 static int
 _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
-    Dwarf_Half attr,
-    Dwarf_Unsigned * return_val,
-    Dwarf_Error * error)
+    Dwarf_Half      attr,
+    Dwarf_Unsigned *return_val,
+    Dwarf_Error    *error)
 {
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Half attr_form = 0;
@@ -1554,7 +1554,7 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     a negative value is surely not meaningful. */
 int
 dwarf_bytesize(Dwarf_Die die,
-    Dwarf_Unsigned * ret_size, Dwarf_Error * error)
+    Dwarf_Unsigned *ret_size, Dwarf_Error *error)
 {
     Dwarf_Unsigned luns = 0;
     int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_byte_size,
@@ -1567,7 +1567,7 @@ dwarf_bytesize(Dwarf_Die die,
     a negative value is not meaningful. */
 int
 dwarf_bitsize(Dwarf_Die die,
-    Dwarf_Unsigned * ret_size, Dwarf_Error * error)
+    Dwarf_Unsigned *ret_size, Dwarf_Error *error)
 {
     Dwarf_Unsigned luns = 0;
     int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_bit_size,
@@ -1583,9 +1583,9 @@ dwarf_bitsize(Dwarf_Die die,
     DWARF3.  */
 int
 dwarf_bitoffset(Dwarf_Die die,
-    Dwarf_Half     * attribute,
-    Dwarf_Unsigned * ret_offset,
-    Dwarf_Error * error)
+    Dwarf_Half     *attribute,
+    Dwarf_Unsigned *ret_offset,
+    Dwarf_Error    *error)
 {
     Dwarf_Unsigned luns = 0;
     int res = 0;
@@ -1614,7 +1614,7 @@ dwarf_bitoffset(Dwarf_Die die,
     and specified in the DWARF standard*/
 int
 dwarf_srclang(Dwarf_Die die,
-    Dwarf_Unsigned * ret_size, Dwarf_Error * error)
+    Dwarf_Unsigned *ret_size, Dwarf_Error *error)
 {
     Dwarf_Unsigned luns = 0;
     int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_language,
@@ -1628,7 +1628,7 @@ dwarf_srclang(Dwarf_Die die,
     and specified in the DWARF standard*/
 int
 dwarf_arrayorder(Dwarf_Die die,
-    Dwarf_Unsigned * ret_size, Dwarf_Error * error)
+    Dwarf_Unsigned *ret_size, Dwarf_Error *error)
 {
     Dwarf_Unsigned luns = 0;
     int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_ordering,
@@ -1644,8 +1644,8 @@ dwarf_arrayorder(Dwarf_Die die,
     meaningless.  */
 int
 dwarf_attr_offset(Dwarf_Die die, Dwarf_Attribute attr,
-    Dwarf_Off * offset /* return offset thru this ptr */,
-    Dwarf_Error * error)
+    Dwarf_Off   *offset /* return offset thru this ptr */,
+    Dwarf_Error *error)
 {
     Dwarf_Off attroff = 0;
     Dwarf_Small *dataptr = 0;
