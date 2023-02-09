@@ -157,7 +157,7 @@ final_common_settings(Dwarf_Debug dbg,
     }
     dbg->de_owns_fd = TRUE;
     res = set_global_paths_init(dbg,error);
-    if (res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR && error) {
         dwarf_dealloc_error(dbg,*error);
         *error = 0;
     }

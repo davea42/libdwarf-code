@@ -1356,32 +1356,48 @@ _dwarf_printf(Dwarf_Debug dbg,
 
 /*  Often errs and errt point to the same Dwarf_Error,
     So exercise care.
-    All the arguments MUST be non-null.*/
+    All the arguments MUST be non-null, though
+    we deal with null errs/errt as best we can.
+    We ensure null dbg? will not cause problem either.  */
 void
 _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     Dwarf_Debug dbgt,Dwarf_Error *errt)
 {
-    if (!errt || !errs) {
+    int mydw_errno = 0;
+    if (!errt) {
+        if(!errs) {
+            /* Nobody here! Surely this is impossible. */
+            return;
+        } else {
+            /* There is no errt to copy errs to! */
+            dwarf_dealloc(dbgs,*errs, DW_DLA_ERROR);
+            *errs = 0;
+        }
         return;
     }
-    if (!dbgs || !dbgt) {
+    if (!errs) {
+        /* there is no useful errs  to build errt with! */
         return;
     }
     if (dbgs == dbgt) {
+        /* nothing much to do here. */
         if (errs != errt) {
+            /* Trivial copy of an error. */
             Dwarf_Error ers = *errs;
             *errs = 0;
             *errt = ers;
         }
-    } else {
-        /*  Do not stomp on the system errno
-            variable if there is one! */
-        int mydw_errno = dwarf_errno(*errs);
+        return;
+    } 
+    /*  copy errs errno to errt by building
+        a new errt.
+        variable if there is one! 
+        Move the error from dbgs to dbgt. */
+    mydw_errno = dwarf_errno(*errs);
 
-        dwarf_dealloc(dbgs,*errs, DW_DLA_ERROR);
-        *errs = 0;
-        _dwarf_error(dbgt,errt, mydw_errno);
-    }
+    dwarf_dealloc(dbgs,*errs, DW_DLA_ERROR);
+    *errs = 0;
+    _dwarf_error(dbgt,errt, mydw_errno);
 }
 
 static int

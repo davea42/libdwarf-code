@@ -154,7 +154,7 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
             &header_length,
             error);
         if (res != DW_DLV_OK) {
-            if (res == DW_DLV_ERROR) {
+            if (res == DW_DLV_ERROR && error) {
                 dwarf_dealloc_error(dbg,*error);
                 *error = 0;
             }
@@ -311,8 +311,10 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
             continue;
         }
         if (fdres == DW_DLV_ERROR) {
-            dwarf_dealloc_error(dbg,*error);
-            *error = 0;
+            if (error) {
+                dwarf_dealloc_error(dbg,*error);
+                *error = 0;
+            }
             continue;
         }
         for (sec_index = 1; sec_index < DW_FISSION_SECT_COUNT;

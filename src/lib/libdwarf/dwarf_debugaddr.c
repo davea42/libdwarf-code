@@ -83,13 +83,15 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
         return res;
     }
     if (res == DW_DLV_ERROR) {
-        Dwarf_Error e = *error;
+        if (error) { 
+            Dwarf_Error e = *error;
 
-        /* Lets append info to the error string! */
-        if (e->er_static_alloc != DE_STATIC) {
-            dwarfstring *em = (dwarfstring*)(e->er_msg);
-            dwarfstring_append(em, "Unable to open "
-                ".debug_addr section, serious error");
+            /* Lets append info to the error string! */
+            if (e->er_static_alloc != DE_STATIC) {
+                dwarfstring *em = (dwarfstring*)(e->er_msg);
+                dwarfstring_append(em, "Unable to open "
+                    ".debug_addr section, serious error");
+            }
         }
         return DW_DLV_ERROR;
     }

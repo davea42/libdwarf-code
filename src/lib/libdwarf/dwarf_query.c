@@ -946,7 +946,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     res = _dwarf_load_section(dbg, &dbg->de_debug_addr,error);
     if (res != DW_DLV_OK) {
         /*  Ignore the inner error, report something meaningful */
-        if (res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR && error) {
             dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
             *error = 0;
         }
@@ -1015,8 +1015,9 @@ _dwarf_look_in_local_and_tied_by_index(
             int res3 = 0;
 
             /*  We do not want to leak error structs... */
+            /* *error safe */
             dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
-            *error = 0;
+            *error = 0; /* *error safe */
             /* error is returned on dbg, not tieddbg. */
             res3 = _dwarf_get_addr_from_tied(dbg,
                 context,index,return_addr,error);

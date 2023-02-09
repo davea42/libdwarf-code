@@ -366,7 +366,7 @@ _dwarf_read_str_offsets_header(Dwarf_Debug dbg,
             &padding,
             error);
         if (res != DW_DLV_OK) {
-            if (res == DW_DLV_ERROR) {
+            if (res == DW_DLV_ERROR && error) {
                 dwarf_dealloc_error(dbg,*error);
                 *error = 0;
             }

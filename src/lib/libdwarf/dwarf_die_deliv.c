@@ -627,10 +627,13 @@ static void
 report_local_unit_type_error(Dwarf_Debug dbg,
     int unit_type,
     const char *msg,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     dwarfstring m;
 
+    if (!error) {
+        return;
+    }
     dwarfstring_constructor(&m);
     dwarfstring_append_printf_s(&m,
         "DW_DLE_CU_UT_TYPE_VALUE: %s ",(char *)msg);
@@ -638,7 +641,7 @@ report_local_unit_type_error(Dwarf_Debug dbg,
         "the compilation unit unit_type is 0x%x,"
         " which is unknown to libdwarf. Corrupt DWARF.",
         unit_type);
-    _dwarf_error_string(dbg,err,DW_DLE_CU_UT_TYPE_VALUE,
+    _dwarf_error_string(dbg,error,DW_DLE_CU_UT_TYPE_VALUE,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
@@ -1077,12 +1080,12 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
         Dwarf_Attribute attr = alist[i];
 
         ares = dwarf_whatattr(attr,&attrnum,error);
-        if (ares == DW_DLV_ERROR) {
+        if (ares == DW_DLV_ERROR && error) {
             dwarf_dealloc_error(dbg,*error);
             *error = 0;
         }
         ares2 = dwarf_whatform(attr,&form,error);
-        if (ares2 == DW_DLV_ERROR) {
+        if (ares2 == DW_DLV_ERROR && error) {
             dwarf_dealloc_error(dbg,*error);
             *error = 0;
         }

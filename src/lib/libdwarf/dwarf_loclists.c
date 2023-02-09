@@ -101,12 +101,12 @@ counted_loc_descr(Dwarf_Debug dbg,
     Dwarf_Unsigned *loc_ops_len,
     Dwarf_Small    **opsdata,
     Dwarf_Unsigned *opsoffset,
-    Dwarf_Error *  err)
+    Dwarf_Error *  error)
 {
     Dwarf_Unsigned ops_len = 0;
     Dwarf_Unsigned leblen = 0;
     DECODE_LEB128_UWORD_LEN_CK(data,ops_len,leblen,
-        dbg,err,enddata);
+        dbg,error,enddata);
     *loc_ops_count_len = leblen;
     *loc_ops_overall_size = ops_len+leblen;
     *loc_ops_len = ops_len;
@@ -128,7 +128,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned *opsblocksize, /* Just the  expr data */
     Dwarf_Unsigned *opsoffset, /* Just the expr ops data */
     Dwarf_Small   **ops, /*  pointer to expr ops ops */
-    Dwarf_Error* err)
+    Dwarf_Error* error)
 {
     Dwarf_Unsigned count = 0;
     unsigned int   leblen = 0;
@@ -150,7 +150,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     case DW_LLE_end_of_list: break;
     case DW_LLE_base_addressx:{
         DECODE_LEB128_UWORD_LEN_CK(data,val1,leblen,
-            dbg,err,enddata);
+            dbg,error,enddata);
         count += leblen;
         }
         break;
@@ -160,10 +160,10 @@ read_single_lle_entry(Dwarf_Debug dbg,
         int res = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(data,val1,leblen,
-            dbg,err,enddata);
+            dbg,error,enddata);
         count += leblen;
         DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
-            dbg,err,enddata);
+            dbg,error,enddata);
         count += leblen;
         res = counted_loc_descr(dbg,data,enddata,
             dataoffset,
@@ -172,7 +172,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             &loc_ops_len,
             &lopsdata,
             &lopsoffset,
-            err);
+            error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -191,7 +191,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             &loc_ops_len,
             &lopsdata,
             &lopsoffset,
-            err);
+            error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -201,7 +201,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
         break;
     case DW_LLE_base_address: {
         READ_UNALIGNED_CK(dbg,val1, Dwarf_Unsigned,
-            data,address_size,err,enddata);
+            data,address_size,error,enddata);
         data += address_size;
         count += address_size;
         }
@@ -210,11 +210,11 @@ read_single_lle_entry(Dwarf_Debug dbg,
         int res = 0;
 
         READ_UNALIGNED_CK(dbg,val1, Dwarf_Unsigned,
-            data,address_size,err,enddata);
+            data,address_size,error,enddata);
         data += address_size;
         count += address_size;
         READ_UNALIGNED_CK(dbg,val2, Dwarf_Unsigned,
-            data,address_size,err,enddata);
+            data,address_size,error,enddata);
         data += address_size;
         count += address_size;
         res = counted_loc_descr(dbg,data,enddata,
@@ -224,7 +224,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             &loc_ops_len,
             &lopsdata,
             &lopsoffset,
-            err);
+            error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -236,11 +236,11 @@ read_single_lle_entry(Dwarf_Debug dbg,
         int res = 0;
 
         READ_UNALIGNED_CK(dbg,val1, Dwarf_Unsigned,
-            data,address_size,err,enddata);
+            data,address_size,error,enddata);
         data += address_size;
         count += address_size;
         DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
-            dbg,err,enddata);
+            dbg,error,enddata);
         count += leblen;
         res = counted_loc_descr(dbg,data,enddata,
             dataoffset,
@@ -249,7 +249,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             &loc_ops_len,
             &lopsdata,
             &lopsoffset,
-            err);
+            error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -258,18 +258,20 @@ read_single_lle_entry(Dwarf_Debug dbg,
         }
         break;
     default: {
-        dwarfstring m;
+        if(error) {
+            dwarfstring m;
 
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_LOCLISTS_ERROR: "
-            "The loclists entry at .debug_loclists"
-            " offset 0x%x" ,dataoffset);
-        dwarfstring_append_printf_u(&m,
-            " has code 0x%x which is unknown",code);
-        _dwarf_error_string(dbg,err,DW_DLE_LOCLISTS_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "The loclists entry at .debug_loclists"
+                " offset 0x%x" ,dataoffset);
+            dwarfstring_append_printf_u(&m,
+                " has code 0x%x which is unknown",code);
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+        }
         return DW_DLV_ERROR;
         }
         break;

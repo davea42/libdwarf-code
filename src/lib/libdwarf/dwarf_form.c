@@ -856,27 +856,31 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
         res = find_sig8_target_as_global_offset(attr,
             &sig8,&t_is_info,&t_offset,error);
         if (res == DW_DLV_ERROR) {
-            dwarfstring m;
-            dwarfstring k;
 
             /*  Lets construct an easily usable error number.
                 Avoiding resizing strings and avoiding
                 using the stack for strings possibly
                 a few hundred bytes long */
-            dwarfstring_constructor_fixed(&m,400);
-            dwarfstring_constructor_fixed(&k,200);
-            dwarfstring_append(&k,dwarf_errmsg(*error));
-            dwarfstring_append(&m,
+            if (error) {
+                dwarfstring m;
+                dwarfstring k;
+
+                dwarfstring_constructor_fixed(&m,400);
+                dwarfstring_constructor_fixed(&k,200);
+                /* *error non null */
+                dwarfstring_append(&k,dwarf_errmsg(*error));
+                dwarfstring_append(&m,
                 "DW_DLE_REF_SIG8_NOT_HANDLED: "
                 " problem finding target. ");
-            dwarf_dealloc_error(dbg,*error);
-            *error = 0;
-            dwarfstring_append(&m,dwarfstring_string(&k));
-            dwarfstring_destructor(&k);
-            _dwarf_error_string(dbg, error,
-                DW_DLE_REF_SIG8_NOT_HANDLED,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
+                dwarf_dealloc_error(dbg,*error);/* *error nonnull*/
+                *error = 0; /*error nonnull*/
+                dwarfstring_append(&m,dwarfstring_string(&k));
+                dwarfstring_destructor(&k);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_REF_SIG8_NOT_HANDLED,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+            }
             return DW_DLV_ERROR;
         }
         if (res == DW_DLV_NO_ENTRY) {
@@ -1713,7 +1717,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
                     local_offset_size +
                     2*DWARF_HALF_SIZE;
             } else {
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg,*error);
                     *error = 0;
                 } else {}

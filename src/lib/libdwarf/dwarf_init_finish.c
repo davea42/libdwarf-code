@@ -1632,13 +1632,16 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
             But error might be NULL and the init call
             error-handler function might be set.
         */
-        if (error && (*error)) {
+        if (error && *error) {
             /*  Preserve our _dwarf_setup error number, but
                 this does not apply if error NULL. */
+            /* *error safe */
             myerr = dwarf_errno(*error);
+            /* *error safe */
             dwarfstring_append(&msg,dwarf_errmsg(*error));
             /*  deallocate the soon-stale error pointer. */
             dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+            /* *error safe */
             *error = 0;
         }
         /*  The status we want to return  here is of _dwarf_setup,

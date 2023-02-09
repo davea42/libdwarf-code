@@ -1321,7 +1321,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
                 llc->ld_highpc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1343,7 +1343,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1366,7 +1366,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1379,7 +1379,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_highpc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1446,7 +1446,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
                 base_address_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1471,7 +1471,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
                 debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1490,7 +1490,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
                 debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_highpc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
@@ -1513,7 +1513,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
                 debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                if (res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
                 }
