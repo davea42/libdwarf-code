@@ -169,15 +169,15 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
 int
 dwarf_get_xu_index_header(Dwarf_Debug dbg,
     /* Pass in section_type "tu" or "cu" */
-    const char *     section_type,
-    Dwarf_Xu_Index_Header * xuptr,
-    Dwarf_Unsigned * version,
-    Dwarf_Unsigned * number_of_columns, /* L section count.*/
-    Dwarf_Unsigned * number_of_CUs,     /* U unit count    */
-    Dwarf_Unsigned * number_of_slots,   /* S slot count    */
+    const char     *section_type,
+    Dwarf_Xu_Index_Header *xuptr,
+    Dwarf_Unsigned *version,
+    Dwarf_Unsigned *number_of_columns, /* L section count.*/
+    Dwarf_Unsigned *number_of_CUs,     /* U unit count    */
+    Dwarf_Unsigned *number_of_slots,   /* S slot count    */
     /*  Standard says S > U DWARF5 sec 7.3.5.3 */
-    const char    ** section_name,
-    Dwarf_Error    * error)
+    const char    **section_name,
+    Dwarf_Error    *error)
 {
     Dwarf_Xu_Index_Header indexptr = 0;
     int res = DW_DLV_ERROR;
@@ -422,12 +422,12 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header xuhdr,
     /*  the function returns a pointer to
         the immutable string "tu" or "cu" via
         this arg. Do not free.  */
-    const char ** typename,
+    const char **typename,
     /*  the function returns a pointer to
         the immutable section name. Do not free.
         .debug_cu_index or .debug_tu_index */
-    const char ** sectionname,
-    Dwarf_Error * error)
+    const char **sectionname,
+    Dwarf_Error *error)
 {
     (void)error;
     *typename    = &xuhdr->gx_type[0];
@@ -437,13 +437,13 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header xuhdr,
 
 /*  Index values 0 to S-1 are valid. */
 int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
-    Dwarf_Unsigned    index,
+    Dwarf_Unsigned  index,
     /* returns the hash value. 64 bits. */
-    Dwarf_Sig8     *  hash_value,
+    Dwarf_Sig8     *hash_value,
 
     /* returns the index into rows of offset/size tables. */
-    Dwarf_Unsigned *  index_to_sections,
-    Dwarf_Error *     error)
+    Dwarf_Unsigned *index_to_sections,
+    Dwarf_Error    *error)
 {
     Dwarf_Debug dbg = xuhdr->gx_dbg;
     Dwarf_Small *hashtab = xuhdr->gx_section_data +
@@ -509,9 +509,9 @@ static const char * dwp_secnames[] = {
 int
 dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned  column_index,
-    Dwarf_Unsigned* number,
-    const char **   name,
-    Dwarf_Error *   error)
+    Dwarf_Unsigned *number,
+    const char    **name,
+    Dwarf_Error    *error)
 {
     Dwarf_Unsigned sec_num = 0;
     Dwarf_Debug dbg = xuhdr->gx_dbg;
@@ -552,9 +552,9 @@ int
 dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned  irow_index,
     Dwarf_Unsigned  column_index,
-    Dwarf_Unsigned* sec_offset,
-    Dwarf_Unsigned* sec_size,
-    Dwarf_Error *   error)
+    Dwarf_Unsigned *sec_offset,
+    Dwarf_Unsigned *sec_size,
+    Dwarf_Error    *error)
 {
     /* We use zero origin in the arrays, Users see
         one origin from the hash table. */
@@ -894,10 +894,10 @@ _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
 }
 int
 dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
-    Dwarf_Sig8 *  key  /* pointer to hash signature */,
-    const char * key_type  /*  "cu" or "tu" */,
+    Dwarf_Sig8  *key  /* pointer to hash signature */,
+    const char  *key_type  /*  "cu" or "tu" */,
     Dwarf_Debug_Fission_Per_CU *  percu_out,
-    Dwarf_Error *  error )
+    Dwarf_Error *error)
 {
     int sres = 0;
     Dwarf_Unsigned percu_index = 0;

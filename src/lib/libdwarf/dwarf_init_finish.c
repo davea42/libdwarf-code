@@ -319,15 +319,15 @@ set_up_section(Dwarf_Debug dbg,
             our caller will keep looking. */
         return DW_DLV_NO_ENTRY;
     }
-    havezdebug = !strncmp(secname,zprefix,ZPREFIXLEN);      
-    if (havezdebug) {                                     
-        postzprefix = secname+ZPREFIXLEN;                
-    }                                       
-    /*  With Alpine gcc 
+    havezdebug = !strncmp(secname,zprefix,ZPREFIXLEN);
+    if (havezdebug) {
+        postzprefix = secname+ZPREFIXLEN;
+    }
+    /*  With Alpine gcc
         12.2.1_git20220924-r4) 12.2.1 20220924
         and some other gcc versions when compiling
         with -Werror and -fsanitize:
-        we get 
+        we get
         error: 'strcmp' reading 1 or more bytes
         from a region of size 0 [-Werror=stringop-overread]
         So we add -Wnostringop-overread to the build as the error is

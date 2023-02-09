@@ -83,7 +83,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
         return res;
     }
     if (res == DW_DLV_ERROR) {
-        if (error) { 
+        if (error) {
             Dwarf_Error e = *error;
 
             /* Lets append info to the error string! */

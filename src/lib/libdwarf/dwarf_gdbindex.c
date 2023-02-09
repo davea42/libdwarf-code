@@ -123,7 +123,8 @@ set_base(Dwarf_Debug dbg,
         Dwarf_Unsigned count = 0;
         hdr->dg_base = start;
         if ( end < start) {
-            _dwarf_error(dbg, error,DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR);
+            _dwarf_error(dbg, error,
+                DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR);
             return DW_DLV_ERROR;
         }
         /* entry length includes pad. */

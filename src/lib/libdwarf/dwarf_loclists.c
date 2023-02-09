@@ -258,7 +258,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
         }
         break;
     default: {
-        if(error) {
+        if (error) {
             dwarfstring m;
 
             dwarfstring_constructor(&m);

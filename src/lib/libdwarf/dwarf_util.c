@@ -1365,7 +1365,7 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
 {
     int mydw_errno = 0;
     if (!errt) {
-        if(!errs) {
+        if (!errs) {
             /* Nobody here! Surely this is impossible. */
             return;
         } else {
@@ -1388,10 +1388,10 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
             *errt = ers;
         }
         return;
-    } 
+    }
     /*  copy errs errno to errt by building
         a new errt.
-        variable if there is one! 
+        variable if there is one!
         Move the error from dbgs to dbgt. */
     mydw_errno = dwarf_errno(*errs);
 
