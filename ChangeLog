@@ -1,4 +1,47 @@
 2023-02-09:  David Anderson
+    commit ce1fee38c5586889e2d2dfd6af35dc083be9028a
+
+    Emphasize the new argument style
+    is a suggestion, not a requirement.
+            modified:   CODINGSTYLE.md
+
+2023-02-09:  David Anderson
+    commit 3312467a707e743f91f535f4fcdcde4dc6bb5981
+
+    A minor addition that describes
+    the (new) approach to argument list presentation.
+    It's mostly not yet followed and is not
+    required.
+            modified:   CODINGSTYLE.md
+
+2023-02-09:  David Anderson
+    commit 48bd6abf355262f29b293a24c425dc81eec9b639
+
+    Improving the consistency of presentation of arguments
+    to functions. No logic change.
+            modified:   dwarf_query.c
+
+2023-02-09:  David Anderson
+    commit 43aeedce6984b7c09ea4adc608f277279c5e5683
+
+    Fixing discrepancies from CODINGSTYLE.
+    Trailing whitespace, a too-long line,
+    and if(  ->  if (
+    No change in logic.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-02-09:  David Anderson
+    commit 16b3f93fac0989d25c129182130afc62719ffa4e
+
+    Bringing up to date with git log
+            modified:   ChangeLog
+
+2023-02-09:  David Anderson
     commit a9a8924d775c0389220a0fce7a762f4752fd974c
 
     Everywhere we dealloc (drop)
