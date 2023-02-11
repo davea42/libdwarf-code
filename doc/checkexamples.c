@@ -816,8 +816,17 @@ int example_discr_list(Dwarf_Debug dbg,
 }
 /*! @endcode */
 
-/*! @defgroup example_loclistcv5 Example access to DWARF5 locationlist
-    @brief Get access to DWARF5 loclist entries given Attribute
+/*! @defgroup example_loclistcv5 Example access to locationlist
+    @brief Get access to DWARF2-5 loclist entries given Attribute
+
+    This example simply *assumes* the attribute
+    has a form which relates to location lists
+    or location expressions. Use dwarf_get_form_class()
+    to determine if this attribute fits. 
+    Use dwarf_get_version_of_die() to help get the
+    data you need.
+    @see dwarf_get_form_class
+    @see dwarf_get_version_of_die
 
     @code
 */
@@ -1059,7 +1068,7 @@ int examplea(Dwarf_Attribute someattr,
 */
 int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 {
-    /* EXAMPLE: DWARF5 style access.  */
+    /* EXAMPLE: DWARF2-DWARF5  access.  */
     Dwarf_Line  *linebuf = 0;
     Dwarf_Signed linecount = 0;
     Dwarf_Line  *linebuf_actuals = 0;
@@ -2756,6 +2765,7 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
     @brief example_rnglist_for_attribute Showing access to rnglist
 
     This is accessing DWARF5 .debug_rnglists.
+    The section first appears in DWARF5.
 
     @code
 */

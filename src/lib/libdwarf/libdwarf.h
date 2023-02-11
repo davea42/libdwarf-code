@@ -4169,6 +4169,8 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
 */
 /*! @brief Location Lists and Expressions
 
+    This works on DWARF2 through DWARF5.
+
     @see example_loclistcv5
 
     @see examplea
