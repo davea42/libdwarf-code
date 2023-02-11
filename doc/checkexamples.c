@@ -819,6 +819,8 @@ int example_discr_list(Dwarf_Debug dbg,
 /*! @defgroup example_loclistcv5 Example access to locationlist
     @brief Get access to DWARF2-5 loclist entries given Attribute
 
+    Valid for DWARF2 and later DWARF.
+
     This example simply *assumes* the attribute
     has a form which relates to location lists
     or location expressions. Use dwarf_get_form_class()
@@ -827,6 +829,7 @@ int example_discr_list(Dwarf_Debug dbg,
     data you need.
     @see dwarf_get_form_class
     @see dwarf_get_version_of_die
+    @see examplea
 
     @code
 */
@@ -994,6 +997,10 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 
 /*! @defgroup examplea  Example of dwarf_get_loclist_c
     @brief Example using dwarf_get_loclist_c
+
+    Valid for all DWARF2 and later.
+
+    @see example_loclistcv5
 
     @code
 */
