@@ -6,6 +6,7 @@
 */
 /*! @file showsectiongroups.c
     @defgroup showsecgroups A simple report on section groups.
+    @brief Section groups are for Split DWARF 
 
     @code
 

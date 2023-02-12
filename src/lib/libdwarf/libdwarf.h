@@ -4173,8 +4173,6 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
 
     @see example_loclistcv5
 
-    @see examplea
-
     @param dw_attr
     The attribute must refer to a location expression
     or a location list, so must be DW_FORM_block,
@@ -4396,7 +4394,7 @@ DW_API void dwarf_dealloc_loc_head_c(Dwarf_Loc_Head_c dw_head);
     loclists_count. */
 /*! @brief Load Loclists
 
-    This loads .debug_loclists (DWARF5).
+    This loads raw .debug_loclists (DWARF5).
     It is unlikely you have a reason to use this function.
     If CUs or DIES  have been referenced in any way
     loading is already done. A duplicate loading

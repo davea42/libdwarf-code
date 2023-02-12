@@ -30,8 +30,8 @@ cc -c -Wall -O0 -Wpointer-arith  \
 #define TRUE  1
 #define FALSE 0
 
-/*! @defgroup exampleinit Example of dwarf_init_path
-    @brief exampleinit
+/*! @defgroup exampleinit Using dwarf_init_path()
+    @brief A libdwarf initialization call.
 
     An example calling  dwarf_init_path() and dwarf_finish()
     @param path
@@ -69,8 +69,8 @@ void exampleinit(const char *path, unsigned groupnumber)
 }
 /*! @endcode */
 
-/*! @defgroup exampleinit_dl Example of dwarf_init_path_dl
-    @brief Example calling the debuglink init.
+/*! @defgroup exampleinit_dl Using dwarf_init_path_dl()
+    @brief Initialization focused on GNU debuglink data
 
     In case GNU debuglink data is followed the true_pathbuf
     content will not match path.
@@ -131,7 +131,7 @@ int exampleinit_dl(const char *path, unsigned groupnumber,
 }
 /*! @endcode */
 
-/*! @defgroup example1 Example of dwarf_attrlist
+/*! @defgroup example1 Using dwarf_attrlist()
     @brief Showing dwarf_attrlist()
 
     @code
@@ -246,7 +246,7 @@ int example3(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplesecgroup Examing Section Group data
+/*! @defgroup examplesecgroup Examining Section Group data
     @brief Accessing Section Group data
 
     With split dwarf your libdwarf calls after
@@ -325,7 +325,7 @@ void examplesecgroup(Dwarf_Debug dbg)
 }
 /*! @endcode */
 
-/*! @defgroup example4 Example dwarf_siblingofb call
+/*! @defgroup example4 Using dwarf_siblingofb()
     @brief Accessing a DIE sibling.
 
     Access to each DIE on a sibling list
@@ -353,7 +353,7 @@ int example4(Dwarf_Debug dbg,Dwarf_Die in_die,
 }
 /*! @endcode */
 
-/*! @defgroup example5 Example dwarf_child call
+/*! @defgroup example5 Using dwarf_child()
     @brief Accessing a DIE child
 
     If the DIE has children (for example
@@ -535,7 +535,7 @@ int examplecuhdr(Dwarf_Debug dbg,
 }
 /*! @endcode */
 
-/*! @defgroup example6 Example dwarf_offdie_b call
+/*! @defgroup example6 Using dwarf_offdie_b()
 
     @brief Accessing a DIE by its offset
 
@@ -565,7 +565,7 @@ int example6(Dwarf_Debug dbg,Dwarf_Off die_offset,
 }
 /*! @endcode */
 
-/*! @defgroup example7 Example dwarf_offset_given_die
+/*! @defgroup example7 Using dwarf_offset_given_die()
     @brief Finding the section offset of a CU DIE and the DIE
 
     @code
@@ -595,7 +595,7 @@ int example7(Dwarf_Debug dbg, Dwarf_Die in_die,
 /*! @endcode */
 
 /* See also example1, which is more complete */
-/*! @defgroup example8 Example calling  dwarf_attrlist
+/*! @defgroup example8 Using  dwarf_attrlist()
     @brief Calling dwarf_attrlist()
 
     @code
@@ -621,7 +621,7 @@ int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup exampleoffset_list Example using dwarf_offset_list
+/*! @defgroup exampleoffset_list Using dwarf_offset_list()
     @brief Using dwarf_offset_list
 
     An example calling  dwarf_offset_list
@@ -693,7 +693,7 @@ int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
     @endcode
 */
 
-/*! @defgroup examplediscrlist Example using dwarf_discr_list
+/*! @defgroup examplediscrlist Using dwarf_discr_list()
     @brief Using dwarf_discr_list and dwarf_formblock
 
     An example calling dwarf_get_form_class,
@@ -816,8 +816,8 @@ int example_discr_list(Dwarf_Debug dbg,
 }
 /*! @endcode */
 
-/*! @defgroup example_loclistcv5 Example access to locationlist
-    @brief Get access to DWARF2-5 loclist entries given Attribute
+/*! @defgroup example_loclistcv5 Location/expression access
+    @brief Access to DWARF2-5 loclists and loc-expressions
 
     Valid for DWARF2 and later DWARF.
 
@@ -829,7 +829,7 @@ int example_discr_list(Dwarf_Debug dbg,
     data you need.
     @see dwarf_get_form_class
     @see dwarf_get_version_of_die
-    @see examplea
+    @see example_locexprc
 
     @code
 */
@@ -916,8 +916,10 @@ int example_loclistcv5(Dwarf_Attribute someattr,
 }
 /*! @endcode */
 
-/*! @defgroup example_locexprc Example reading a location expression
+/*! @defgroup example_locexprc Reading a location expression
     @brief Getting the details of a location expression
+
+    @see example_loclistcv5
 
     @code
 */
@@ -995,73 +997,11 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 }
 /*! @endcode */
 
-/*! @defgroup examplea  Example of dwarf_get_loclist_c
-    @brief Example using dwarf_get_loclist_c
-
-    Valid for all DWARF2 and later.
-
-    @see example_loclistcv5
-
-    @code
-*/
-int examplea(Dwarf_Attribute someattr,
-    Dwarf_Unsigned *silly_total,Dwarf_Error*error)
-{
-    Dwarf_Loc_Head_c loclisthead = 0;
-    Dwarf_Unsigned   loc_count = 0;
-    Dwarf_Unsigned i = 0;
-    Dwarf_Small    lle_value = 0;
-    Dwarf_Unsigned rawlowpc = 0;
-    Dwarf_Unsigned rawhipc  = 0;
-    Dwarf_Locdesc_c locentry = 0;
-    Dwarf_Bool     debug_addr_unavailable = 0;
-    Dwarf_Addr     lowpc = 0;
-    Dwarf_Addr     hipc = 0;
-    Dwarf_Unsigned loclist_count  =  0;
-    Dwarf_Small    loclist_source_out = 0;
-    Dwarf_Unsigned expression_offset = 0;
-    Dwarf_Unsigned locdesc_offset = 0;
-    int lres = 0;
-    Dwarf_Unsigned meaninglesstotal = 0;
-
-    lres = dwarf_get_loclist_c(someattr, &loclisthead,
-        &loc_count,error);
-    if (lres != DW_DLV_OK) {
-        return lres;
-    }
-    for (i=0 ; ;++i) {
-        lres = dwarf_get_locdesc_entry_d(loclisthead,i,
-            &lle_value,&rawlowpc,&rawhipc,&debug_addr_unavailable,
-            &lowpc,&hipc,
-            &loclist_count, &locentry,
-            &loclist_source_out, &expression_offset,&locdesc_offset,
-            error);
-        if (lres == DW_DLV_ERROR) {
-            dwarf_dealloc_loc_head_c(loclisthead);
-            return lres;
-        }
-        if (lres == DW_DLV_NO_ENTRY) {
-            /* done */
-            break;
-        }
-        /* Do something with the values. We fake to avoid
-            compiler complaints about unused args.*/
-        meaninglesstotal += lle_value + rawlowpc+
-            rawhipc+(int)debug_addr_unavailable +
-            lowpc+ hipc+loclist_count+loclist_source_out+
-            expression_offset+locdesc_offset;
-
-    }
-    dwarf_dealloc_loc_head_c(loclisthead);
-    *silly_total = meaninglesstotal;
-    return DW_DLV_OK;
-}
-/*! @endcode */
-
-/*! @defgroup examplec Example of dwarf_srclines_b etc
-    @brief examplesrclines
+/*! @defgroup examplec Using dwarf_srclines_b()
+    @brief example using dwarf_srclines_b()
 
     An example calling dwarf_srclines_b
+
     dwarf_srclines_dealloc_b
     dwarf_srclines_from_linecontext
     dwarf_srclines_files_indexes
@@ -1217,7 +1157,8 @@ int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup exampled Example of dwarf_srclines_b use
+/*! @defgroup exampled Using dwarf_srclines_b() and linecontext
+    @brief Another example of using dwarf_srclines_b()
     @see dwarf_srclines_b
     @see dwarf_srclines_from_linecontext
     @see dwarf_srclines_dealloc_b
@@ -1254,7 +1195,8 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplee Example of dwarf_srcfiles use
+/*! @defgroup examplee Using dwarf_srcfiles()
+    @brief Getting source file names given a DIE
     @code
 */
 int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
@@ -1277,7 +1219,8 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplef Example of dwarf_get_globals use
+/*! @defgroup examplef Using dwarf_get_globals()
+    @brief Access to global symbol names
 
     For 0.4.2 and earlier this returned .debug_pubnames
     content.
@@ -1312,11 +1255,14 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup exampleg Example of dwarf_get_pubtypes use
+/*! @defgroup exampleg Using dwarf_globals_by_type()
+    @brief Reading .debug_pubtypes
 
-    This section (.debug_pubtypes) was in DWARF4,
+    The .debug_pubtypes section was in DWARF4,
     it could appear as an extension
     in other DWARF versions..
+    In libdwarf 0.5.0 and earlier the function
+    dwarf_get_pubtypes() was used instead.
 
     @code
 */
@@ -1342,10 +1288,12 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup exampleh Example of access to .debug_weaknames
+/*! @defgroup exampleh Reading .debug_weaknames (nonstandard)
+    @brief The section was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
+    You 
 
     @code
 */
@@ -1369,7 +1317,8 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplej Example of .debug_funcnames access.
+/*! @defgroup examplej Reading .debug_funcnames (nonstandard)
+    @brief The section was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1396,7 +1345,8 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 }
 /*! @endcode */
 
-/*! @defgroup examplel Example of getting .debug_types data
+/*! @defgroup examplel Reading .debug_types (nonstandard)
+    @brief The section was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1423,7 +1373,8 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplen Example of .debug_varnames access
+/*! @defgroup examplen Reading .debug_varnames data (nonstandard)
+    @brief The section was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1449,7 +1400,7 @@ int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
     return DW_DLV_OK;
 }
 
-/*! @defgroup exampledebugnames Example accessing .debug_names
+/*! @defgroup exampledebugnames Reading .debug_names data
     @brief exampledebugnames Showing access to .debug_names
 
     This is accessing DWARF5 .debug_names, a section
@@ -1680,7 +1631,7 @@ int exampledebugnames(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*! @defgroup examplep5 An example reading .debug_macro
+/*! @defgroup examplep5 Reading .debug_macro data (DWARF5)
 
     @brief An example reading DWARF5 macro data
     This builds an list or some other data structure
@@ -1851,8 +1802,8 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 }
 /* @endcode */
 
-/*! @defgroup examplep2 Example of reading .debug_macinfo
-    @brief examplep2 Reading .debug_macinfo, DWARF2-4
+/*! @defgroup examplep2 Reading .debug_macinfo (DWARF2-4)
+    @brief Reading .debug_macinfo, DWARF2-4
 
     @code */
 
@@ -1905,8 +1856,8 @@ int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
 }
 /*! @endcode */
 
-/*! @defgroup exampleq Example of opening fde, cie lists.
-    @brief exampleq Opening FDE and CIE lists
+/*! @defgroup exampleq Extracting fde, cie lists.
+    @brief Opening FDE and CIE lists
 
     @code */
 int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
@@ -1929,7 +1880,7 @@ int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup exampler Access to .eh_frame section
+/*! @defgroup exampler Reading the .eh_frame section
     @brief  Access to .eh_frame
 
     @code
@@ -1979,7 +1930,7 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
 }
 /*! @endcode */
 
-/*! @defgroup examples Example of dwarf_expand_frame_instructions
+/*! @defgroup examples Using  dwarf_expand_frame_instructions
     @brief  Example using dwarf_expand_frame_instructions
 
     @code
@@ -2043,7 +1994,7 @@ int examples(Dwarf_Cie cie,
 }
 /*! @endcode */
 
-/*! @defgroup examplestrngoffsets Example of string offsets access
+/*! @defgroup examplestrngoffsets Reading string offsets section data
     @brief examplestrngoffsets
 
     An example accessing the string offsets section
@@ -2133,8 +2084,8 @@ int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /* @endcode */
 
-/*! @defgroup exampleu Example of aranges access
-    @brief exampleu
+/*! @defgroup exampleu Reading an aranges section
+    @brief Reading .debug_aranges
 
     An example accessing the .debug_aranges
     section. Looking all the aranges entries.
@@ -2198,7 +2149,7 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplev Example getting ranges data
+/*! @defgroup examplev Example getting .debug_ranges data
     @brief Accessing ranges data.
 
     @code
@@ -2232,7 +2183,7 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
 }
 /*! @endcode */
 
-/*! @defgroup examplew Example getting gdbindex data
+/*! @defgroup examplew Reading gdbindex data
     @brief Accessing  gdbindex section data
 
     @code
@@ -2304,7 +2255,7 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup examplewgdbindex Example getting gdbindex addressarea
+/*! @defgroup examplewgdbindex Reading  gdbindex addressarea
     @brief Accessing gdbindex addressarea data
 
     @code
@@ -2341,7 +2292,7 @@ int examplewgdbindex(Dwarf_Gdbindex gdbindex,
 }
 /*! @endcode */
 
-/*! @defgroup examplex Example getting gdbindex symbol table
+/*! @defgroup examplex Reading the gdbindex symbol table
     @brief Example accessing gdbindex symbol table data
 
     @code
@@ -2409,7 +2360,7 @@ int examplex(Dwarf_Gdbindex gdbindex,Dwarf_Error*error)
     return DW_DLV_OK;
 }
 /*! @endcode */
-/*! @defgroup exampley Example getting cu and tu Debug Fission data
+/*! @defgroup exampley Reading cu and tu Debug Fission data
     @brief Example using dwarf_get_xu_index_header
 
     @code
@@ -2444,7 +2395,7 @@ int exampley(Dwarf_Debug dbg, const char *type,
 }
 /*! @endcode */
 
-/*! @defgroup examplez Example getting Debug Fission hash slots
+/*! @defgroup examplez Reading Split Dwarf (Debug Fission) hash slots
     @brief Example using dwarf_get_xu_hash_entry()
 
     @code
@@ -2482,7 +2433,7 @@ int examplez( Dwarf_Xu_Index_Header xuhdr,
 }
 /*! @endcode */
 
-/*! @defgroup examplehighpc Example getting high pc from a DIE.
+/*! @defgroup examplehighpc Reading high pc from a DIE.
     @brief Example get high-pc from a DIE
 
     @code
@@ -2520,7 +2471,7 @@ int examplehighpc(Dwarf_Die die,
 /*! @endcode */
 
 
-/*! @defgroup exampleza Example getting Debug Fission data
+/*! @defgroup exampleza Reading Split Dwarf (Debug Fission) data
     @brief Example getting cu/tu name, offset
 
     @code
@@ -2568,7 +2519,7 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
 }
 /*! @endcode */
 
-/*! @defgroup examplezb Example getting tag,attribute,etc names
+/*! @defgroup examplezb Retrieving tag,attribute,etc names
     @brief Example getting tag,attribute,etc names as strings.
 
     @code
@@ -2595,7 +2546,7 @@ void examplezb(void)
 }
 /*! @endcode */
 
-/*! @defgroup exampledebuglink Example using GNU debuglink
+/*! @defgroup exampledebuglink Using GNU debuglink data
     @brief exampledebuglink Showing dwarf_add_debuglink_global_path
 
     An example using both dwarf_add_debuglink_global_path
@@ -2677,8 +2628,8 @@ int exampledebuglink(Dwarf_Debug dbg, Dwarf_Error* error)
 }
 /*! @endcode */
 
-/*! @defgroup example_raw_rnglist Example accessing rnglist
-    @brief example_raw_rnglist Showing access to rnglist
+/*! @defgroup example_raw_rnglist Accesing accessing raw rnglist
+    @brief Showing access to rnglist
 
     This is accessing DWARF5 .debug_rnglists.
 
@@ -2768,8 +2719,8 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup example_rnglist_for_attribute Example accessing rnglist
-    @brief example_rnglist_for_attribute Showing access to rnglist
+/*! @defgroup example_rnglist_for_attribute Accessing a rnglists section
+    @brief Showing access to rnglists on an Attribute
 
     This is accessing DWARF5 .debug_rnglists.
     The section first appears in DWARF5.

@@ -3,7 +3,8 @@
     for anyone to use in any way.  */
 
 /*! @file jitreader.c
-    @defgroup jitreader Jitreader Demonstrating DWARF without a file.
+    @defgroup jitreader Demonstrating reading DWARF without a file.
+    @brief How to read DWARF2 and later from memory.
 
     @code
 */
