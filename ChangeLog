@@ -1,3 +1,54 @@
+2023-02-13:  David Anderson
+    commit b0af192116cbe4a79b0ca7b8fb47900b5ae3648f
+
+    Now up to date with latest
+    changes in module titles..
+            modified:   doc/libdwarf.pdf
+
+2023-02-11:  David Anderson
+    commit 4cb3d61c49edb2fcf888708060c9ce09f952fb73
+
+    Working toward easier to read documentation.
+    All the changes are in doxygen comments.
+            modified:   doc/checkexamples.c
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-02-11:  David Anderson
+    commit 447a6d8f35f5945c0a8edbb01f3afc2a28765538
+
+    Small tweeks relating the two
+    loclist examples (with links from each
+    to the other).
+            modified:   doc/checkexamples.c
+    Corrected date to today.
+            modified:   doc/libdwarf.dox
+
+2023-02-11:  David Anderson
+    commit 1805c17ae90ea29b913fbd0aca7dad3253c18d40
+
+    Loclist access/locexpr access is valid for
+    DWARF2 through DWARF5, clarified that here.
+            modified:   doc/checkexamples.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-02-09:  David Anderson
+    commit 13f1fe1cb73bc393f4abef85cdbb378ffd5bcdb2
+
+    With latest from gitlog
+            modified:   ChangeLog
+
+2023-02-09:  David Anderson
+    commit ce1fee38c5586889e2d2dfd6af35dc083be9028a
+
+    Emphasize the new argument style
+    is a suggestion, not a requirement.
+            modified:   CODINGSTYLE.md
+
 2023-02-09:  David Anderson
     commit ce1fee38c5586889e2d2dfd6af35dc083be9028a
 
