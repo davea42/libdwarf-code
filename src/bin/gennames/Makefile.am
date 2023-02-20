@@ -9,7 +9,6 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = dwarf_names.h dwarf_names.c
 rebuild: gennames 
 	./gennames -o . -i $(top_srcdir)/src/lib/libdwarf
-	cp dwarf_names.c $(top_srcdir)/src/bin/dwarfdump/dwarf_names.c
 	mv dwarf_names.c $(top_srcdir)/src/lib/libdwarf/dwarf_names.c
 
 noinst_PROGRAMS = gennames
