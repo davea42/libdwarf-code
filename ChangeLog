@@ -1,5 +1,8 @@
 2023-02-20:  David Anderson
     Release of libdwarf 0.6.0 today.
+	modified:   ChangeLog
+	modified:   doc/libdwarf.dox
+	modified:   doc/libdwarf.pdf
 
 2023-02-13:  David Anderson
     commit b0af192116cbe4a79b0ca7b8fb47900b5ae3648f
