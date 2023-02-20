@@ -77,7 +77,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef DW_CHECK_CONSISTENCY
 struct ts_entry;
-void dwarf_check_balance(struct ts_entry *head,int finalprefix);
+void 
+ddlocal_dwarf_check_balance(struct ts_entry *head,int finalprefix);
 #endif
 
 /*  HEAD is a special record. rlink points to root node.
@@ -176,7 +177,7 @@ tdump_inner(struct ts_entry *t,
     Returns the depth.
 */
 int
-dwarf_check_balance_inner(struct ts_entry *t,int level,
+dd_local_check_balance_inner(struct ts_entry *t,int level,
     int maxdepth,
     int *founderror,
     const char *prefix)
@@ -203,9 +204,9 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,
         }
         return 1;
     }
-    l = dwarf_check_balance_inner(t->llink,level+1,maxdepth,
+    l = dd_local_check_balance_inner(t->llink,level+1,maxdepth,
         founderror,prefix);
-    r = dwarf_check_balance_inner(t->rlink,level+1,maxdepth,
+    r = dd_local_check_balance_inner(t->rlink,level+1,maxdepth,
         founderror,prefix);
     if (l ==r && t->balance != 0) {
         printf("%s Balance at 0x%" DW_PR_DUx
@@ -266,7 +267,7 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,
 }
 
 void
-dwarf_check_balance(struct ts_entry *head,int finalprefix)
+ddlocal_dwarf_check_balance(struct ts_entry *head,int finalprefix)
 {
     const char *prefix = 0;
     int maxdepth = 0;
@@ -294,7 +295,7 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
     maxdepth = headdepth+10;
     /* Counting in levels, not level number of top level. */
     headdepth++;
-    depth = dwarf_check_balance_inner(root,depth,maxdepth,
+    depth = ddlocal_dwarf_check_balance_inner(root,depth,maxdepth,
         &errcount,prefix);
     if (depth != headdepth) {
         printf("%s Head node says depth %lu, it is really %d\n",
@@ -545,7 +546,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
         t->llink = p;
     }
 #ifdef DW_CHECK_CONSISTENCY
-    dwarf_check_balance(head,1);
+    ddlocal_dwarf_check_balance(head,1);
 #endif
     return q;
 }
@@ -915,7 +916,7 @@ tdelete_inner(const void *key,
     cleanup:
     free(pkarray);
 #ifdef DW_CHECK_CONSISTENCY
-    dwarf_check_balance(head,1);
+    ddlocal_dwarf_check_balance(head,1);
 #endif
     return pp;
 }
@@ -962,7 +963,7 @@ dwarf_tdelete(const void *key, void **rootp,
 }
 
 static void
-dwarf_twalk_inner(struct ts_entry *p,
+dd_local_twalk_inner(struct ts_entry *p,
     void (*action)(const void *nodep,
         const DW_VISIT which, const int depth),
     unsigned level)
@@ -973,11 +974,11 @@ dwarf_twalk_inner(struct ts_entry *p,
     }
     action((const void *)(&(p->keyptr)),dwarf_preorder,level);
     if (p->llink) {
-        dwarf_twalk_inner(p->llink,action,level+1);
+        dd_local_twalk_inner(p->llink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_postorder,level);
     if (p->rlink) {
-        dwarf_twalk_inner(p->rlink,action,level+1);
+        dd_local_twalk_inner(p->rlink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_endorder,level);
 }
@@ -997,20 +998,20 @@ dwarf_twalk(const void *rootp,
         return;
     }
     /* Get to actual tree. */
-    dwarf_twalk_inner(root,action,0);
+    dd_local_twalk_inner(root,action,0);
 }
 
 static void
-dwarf_tdestroy_inner(struct ts_entry*p,
+dd_local_tdestroy_inner(struct ts_entry*p,
     void (*free_node)(void *nodep),
     int depth)
 {
     if (p->llink) {
-        dwarf_tdestroy_inner(p->llink,free_node,depth+1);
+        dd_local_tdestroy_inner(p->llink,free_node,depth+1);
         p->llink = 0;
     }
     if (p->rlink) {
-        dwarf_tdestroy_inner(p->rlink,free_node,depth+1);
+        dd_local_tdestroy_inner(p->rlink,free_node,depth+1);
         p->rlink = 0;
     }
     free_node((void *)p->keyptr);
@@ -1034,7 +1035,7 @@ dwarf_tdestroy(void *rootp, void (*free_node)(void *nodep))
     }
     root = head->rlink;
     if (root) {
-        dwarf_tdestroy_inner(root,free_node,0);
+        dd_local_tdestroy_inner(root,free_node,0);
     }
     free(head);
 }
