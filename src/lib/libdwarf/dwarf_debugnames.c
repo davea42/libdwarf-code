@@ -1597,43 +1597,6 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         0
 */
 
-#if 0
-/*  This provides a way to print the abbrev table by
-    indexing from 0. The indexes themselves
-    are not meaningful.  */
-int
-dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned   abbrev_entry,
-    Dwarf_Unsigned * abbrev_code,
-    Dwarf_Half     * tag,
-
-    /*  The number of attr/form pairs, counting the trailing
-        0,0 pair. */
-    Dwarf_Unsigned *  number_of_abbrev_pairs,
-    Dwarf_Error *error)
-{
-    struct Dwarf_D_Abbrev_s * abbrev = 0;
-
-    if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
-    if (abbrev_entry >= dn->dn_abbrev_instance_count) {
-        return DW_DLV_NO_ENTRY;
-    }
-    abbrev = dn->dn_abbrevinstances + abbrev_entry;
-    if (abbrev_code) {
-        *abbrev_code = abbrev->da_abbrev_code;
-    }
-    if (tag) {
-        *tag = abbrev->da_tag;
-    }
-    if (number_of_attr_form_entries) {
-        *number_of_attr_form_entries = abbrev->da_pairs_count;
-    }
-    return DW_DLV_OK;
-}
-#endif
 
 static int
 _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
@@ -1664,58 +1627,6 @@ _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     return DW_DLV_NO_ENTRY;
 }
 
-/* Access the abbrev by abbrev code (instead of index). */
-int
-dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dn,
-    Dwarf_Half  abbrev_code,
-    Dwarf_Half  *tag,
-
-    /*  The number of this code/tag as an array index. */
-    Dwarf_Unsigned *index_of_abbrev,
-
-    /*  The number of attr/form pairs, counting the trailing
-        0,0 pair. */
-    Dwarf_Unsigned *number_of_attr_form_entries)
-{
-    int res;
-    res = _dwarf_internal_abbrev_by_code(dn,
-        abbrev_code,
-        tag, index_of_abbrev,
-        number_of_attr_form_entries);
-    return res;
-}
-
-int
-dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned   abbrev_entry_index,
-    Dwarf_Unsigned   abbrev_form_index,
-    Dwarf_Unsigned * idx_attr,
-    Dwarf_Unsigned * form,
-    Dwarf_Error    * error)
-{
-    struct Dwarf_D_Abbrev_s * abbrev = 0;
-
-    if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: bad Head argument to "
-            "dwarf_dnames_abbrev_form_by_index");
-        return DW_DLV_ERROR;
-    }
-    if (abbrev_entry_index >= dn->dn_abbrev_instance_count) {
-        return DW_DLV_NO_ENTRY;
-    }
-    abbrev = dn->dn_abbrev_instances + abbrev_entry_index;
-    if (abbrev_form_index >= abbrev->da_pairs_count) {
-        return DW_DLV_NO_ENTRY;
-    }
-    if (idx_attr) {
-        *idx_attr = abbrev->da_idxattr[abbrev_form_index];
-    }
-    if (form) {
-        *form = abbrev->da_form[abbrev_form_index];
-    }
-    return DW_DLV_OK;
-}
 
 /*  This, combined with dwarf_dnames_entrypool_values(),
     lets one examine as much or as little of an entrypool

@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "0.6.1"
+#define DW_LIBDWARF_VERSION "0.7.0"
 #define DW_LIBDWARF_VERSION_MAJOR 0
-#define DW_LIBDWARF_VERSION_MINOR 6
-#define DW_LIBDWARF_VERSION_MICRO 1
+#define DW_LIBDWARF_VERSION_MINOR 7
+#define DW_LIBDWARF_VERSION_MICRO 0
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -6240,7 +6240,10 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
     @param dw_dn
     A Dwarf_Dnames_Head pointer.
     @param dw_index
-    The Names table index (starts at one) for.
+    An index (starting at zero) into a table
+    constructed of abbrev data.
+    These indexes are derived from abbrev data and
+    are not in the abbrev data itself.
     @param dw_abbrev_offset
     Returns the offset of the abbrev table entry for this names table
     entry.
@@ -6464,71 +6467,6 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half        * dw_form_array,
     Dwarf_Unsigned    * dw_idxattr_count,
     Dwarf_Error *       dw_error);
-
-/*! @brief Find an abbrev set by abbrev code
-
-    Useful for a quick look at what an abbrev record contains.
-
-    @param dw_dn
-    Pass in the debug names table of interest.
-    @param dw_abbrev_code
-    Pass in the abbrev code of interest. These
-    are not array indexes, they are compiler assigned
-    numbers, often not in any meaningful sequence.
-    @param dw_tag
-    If non-null and the call succeeds, the DW_TAG value
-    applying to this abbreviation is returned.
-    @param dw_index_of_abbrev
-    If non-null and the call succeeds, the index number
-    assigned by libdwarf to this abbrev set is returned.
-    The numbers are sequential, 0,1, etc.
-    The trailing 0,0 pair is counted.
-    @param dw_number_of_attr_form_entries
-    If non-null and the call succeeds, the number of
-    attribute-form pairs in this abbrev is returned.
-    The count includes the terminating 0,0 pair.
-    @return
-    Returns either DW_DLV_OK or, if the abbrev code is
-    not found, returns DW_DLV_NO_ENTRY.
-*/
-DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
-    Dwarf_Half   dw_abbrev_code,
-    Dwarf_Half * dw_tag,
-    Dwarf_Unsigned * dw_index_of_abbrev,
-    Dwarf_Unsigned * dw_number_of_attr_form_entries) ;
-
-/*! @brief Return a specific idxattribute form pair.
-
-    You will find calling @see dwarf_dnames_abbrev_by_code
-    useful to get the ranges you need here.
-
-    @param dw_dn
-    Pass in the debug names table of interest.
-    @param dw_abbrev_entry_index
-    Pass in the index number for an abbreviation record.
-    Numbers start at 0.
-    @param dw_abbrev_form_index
-    Pass in an index to an attr/form array. Indexes
-    start with 0.
-    @param dw_idx_attr
-    On success returns the DW_IDX value in the idxattr-form pair.
-    @param dw_form
-    On success returns the DW_FORM value in the idxattr-form pair.
-    @param dw_error
-    On error returns the usual error details.
-    @return
-    DW_DLV_OK is returned if the specified entry exists.
-    DW_DLV_NO_ENTRY is returned if the specified indexes
-    do not designate an entry (an index out of range).
-    DW_DLV_ERROR is returned in case of an internal error
-    or corrupt section content.
-*/
-DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
-    Dwarf_Unsigned   dw_abbrev_entry_index,
-    Dwarf_Unsigned   dw_abbrev_form_index,
-    Dwarf_Unsigned * dw_idx_attr,
-    Dwarf_Unsigned * dw_form,
-    Dwarf_Error    * dw_error);
 
 /*! @brief Return a the set of values from an entrypool entry
 
