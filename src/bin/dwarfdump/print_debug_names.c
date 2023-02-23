@@ -27,7 +27,9 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 
 #include <config.h>
 
+#include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -38,6 +40,31 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dd_esb_using_functions.h"
 
 #define ATTR_ARRAY_SIZE 10
+
+struct Dnames_Abb_Check_s {
+    Dwarf_Unsigned ac_code;
+    Dwarf_Unsigned ac_codeoffset;
+    Dwarf_Unsigned ac_codelength;
+    Dwarf_Unsigned ac_pairscount;
+    Dwarf_Unsigned ac_nametablerefs;
+    Dwarf_Half ac_tag;
+};
+static        Dwarf_Unsigned      abblist_nexttouse = 0;
+static        Dwarf_Unsigned      abblist_count     = 0;
+static        Dwarf_Unsigned      abblist_ab_table_len = 0;
+static struct Dnames_Abb_Check_s *abblist = 0;
+
+static void
+reset_abblist(void)
+{
+    if (abblist) {
+        free(abblist);
+        abblist = 0;
+    }
+    abblist_count = 0;
+    abblist_ab_table_len = 0;
+    abblist_nexttouse = 0;
+}
 
 #if 0
 static void
@@ -235,11 +262,157 @@ print_dnames_offsets(unsigned int indent,Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
+static void
+update_abblist_count(Dwarf_Unsigned ab_code,Dwarf_Half tag)
+{
+    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned curcount = abblist_nexttouse;
+    struct Dnames_Abb_Check_s *cur = abblist;
+
+    if (!abblist) {
+        /* Not counting. */
+        return;
+    }
+    for ( ; i < curcount; ++i,++cur) {
+        if (cur->ac_code == ab_code) {
+            if (cur->ac_tag != tag) {
+                printf("ERROR: Abbrev code %" DW_PR_DUu
+                    "has tag 0x%x but internal array shows"
+                    "tag 0x%x\n",ab_code,
+                    tag,cur->ac_tag);
+                glflags.gf_count_major_errors++;
+            }
+            break;
+        }
+    }
+    if (i >= abblist_nexttouse) {
+        printf("ERROR: Abbrev code %" DW_PR_DUu
+            " does not appear in the abbrev table. Corrupt data\n",
+            ab_code);
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    cur->ac_nametablerefs += 1 ;
+}
+static void
+insert_ab_in_abblist(
+    Dwarf_Unsigned abbrev_number,
+    Dwarf_Unsigned abbrev_code,
+    Dwarf_Half     abbrev_tag,
+    Dwarf_Unsigned abbrev_offset,
+    Dwarf_Unsigned actual_attr_count)
+{
+    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned curcount = abblist_nexttouse;
+    struct Dnames_Abb_Check_s *cur = abblist;
+
+    for ( ; i < curcount; ++i,++cur) {
+        if (cur->ac_code == abbrev_code) {
+            break;
+        }
+    }
+    if (i >= curcount) {
+        if (i >= abblist_count) {
+            static int printed = FALSE;
+
+            if (!printed) {
+                printf("ERROR: Impossible, out of room for "
+                    "abbrev list entry checking, count"
+                    " is %" DW_PR_DUu "\n",abblist_count);
+                glflags.gf_count_major_errors++;
+                printed = TRUE;
+            }
+            return;
+        }
+        cur->ac_code = abbrev_code;
+        cur->ac_tag = abbrev_tag;
+        cur->ac_codeoffset = abbrev_offset;
+        cur->ac_codelength = 0; /* unknown yet */
+        cur->ac_pairscount = actual_attr_count;
+        cur->ac_nametablerefs = 0;
+        abblist_nexttouse++;
+    } else {
+        printf("ERROR: Impossible duplicate abbrev code "
+            "at abbrev entry %" DW_PR_DUu "\n",i);
+        glflags.gf_count_major_errors++;
+    }
+}
+
+static void
+print_abblist_use(unsigned int indent)
+{
+    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned table_count = abblist_count;
+    Dwarf_Unsigned table_byte_size  = abblist_ab_table_len;
+    struct Dnames_Abb_Check_s *cur = 0;
+    Dwarf_Off current_offset = 0;
+    Dwarf_Off last_offset = 0;
+
+    if (!abblist_count || !abblist) {
+        return;
+    }
+
+    cur = abblist;
+    for (i=0; i < table_count ; ++i,++cur) {
+        Dwarf_Unsigned prevlen = 0;
+        if (!i) {
+            if (cur->ac_codeoffset) {
+                printf("ERROR: Seemingly initial abbrev"
+                    "is at non-zero offset 0x%" DW_PR_DUx "\n",
+                    cur->ac_codeoffset);
+                glflags.gf_count_major_errors++;
+            }
+            last_offset = cur->ac_codeoffset;
+            continue;
+        }
+        if ( cur->ac_codeoffset  <= last_offset) {
+            printf("ERROR: abbrev code offsets out of order"
+                " 0x%" DW_PR_DUx
+                " followed by 0x%" DW_PR_DUx "\n",
+                last_offset,
+                cur->ac_codeoffset);
+            glflags.gf_count_major_errors++;
+        }
+        prevlen = cur->ac_codeoffset - last_offset;
+        (cur-1)->ac_codelength = prevlen;
+        last_offset = cur->ac_codeoffset;
+    }
+    --cur;
+    cur->ac_codelength =
+        table_byte_size - cur->ac_codeoffset;
+    cur = abblist;
+    printindent(indent);
+    printf("Abbreviation List: %" DW_PR_DUu " entries.\n",
+        table_count);
+    printindent(indent);
+
+    printf("[   ]  code   tag                     "
+        "offs bytes uses pairs\n");
+    for (i=0; i < table_count ; ++i,++cur) {
+        const char *tagname= "<none>";
+        printindent(indent);
+        printf("[%3" DW_PR_DUu "] ",i);
+        printf(" %4" DW_PR_DUu ,cur->ac_code);
+        printf(" 0x%02x",cur->ac_tag);
+        dwarf_get_TAG_name(cur->ac_tag,&tagname);
+        printf(" %-26s",tagname);
+
+        printf(" 0x%04" DW_PR_DUx ,cur->ac_codeoffset);
+        printf(" %2" DW_PR_DUu ,cur->ac_codelength);
+        printf(" %2" DW_PR_DUu ,cur->ac_nametablerefs);
+        printf(" %2" DW_PR_DUu "\n",cur->ac_pairscount);
+    }
+}
+
+/*  The abbrev_table_length here is in bytes, not entries.
+    The name_table_count is in entries, indexed as
+    1 through name_table_count. */
 static int
 print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned table_length)
+    Dwarf_Unsigned abbrev_table_length /* bytes */,
+    Dwarf_Unsigned name_table_count)
 {
-    int res = 0;
+    int res = DW_DLV_OK;
     Dwarf_Unsigned abbrev_offset     = 0;
     Dwarf_Unsigned abbrev_code       = 0;
     Dwarf_Unsigned abbrev_tag        = 0;
@@ -248,16 +421,41 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
     static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
     Dwarf_Unsigned actual_attr_count = 0;
     Dwarf_Unsigned i                 = 0;
+    Dwarf_Unsigned number_of_abbrevs = 0;
 
+    for (  ;res == DW_DLV_OK; ++i) {
+        res = dwarf_dnames_abbrevtable(dn,i,
+            &abbrev_offset,
+            &abbrev_code, &abbrev_tag,
+            array_size,
+            idxattr_array,form_array,
+            &actual_attr_count);
+        if (res != DW_DLV_OK) {
+            break;
+        }
+    }
+    res = DW_DLV_OK;
+    abblist_count = i;
+    if (abblist_count) {
+        abblist = calloc(sizeof(struct Dnames_Abb_Check_s),
+            abblist_count);
+        if (!abblist) {
+            printf("ERROR: Unable to allocate %" DW_PR_DUu
+                "entries of a struct to check "
+                "for wasted abbrev space\n",
+                abblist_count);
+            glflags.gf_count_major_errors++;
+        }
+    }
     printf("\n");
     printindent(indent);
-    printf("Debug Names abbreviation table: length %"
-        DW_PR_DUu " bytes.\n", table_length);
+    printf("Debug Names abbreviation table entries per Name: length %"
+        DW_PR_DUu " bytes.\n", abbrev_table_length);
     printindent(indent);
-    printf("[] offset   code"
-        "            count idxattr\n");
+    printf("[NameIndex] abbrev_offset abbrev_code"
+        "   count idxattr\n");
     res = DW_DLV_OK;
-    for (  ; res == DW_DLV_OK; ++i) {
+    for (i = 0  ; res == DW_DLV_OK; ++i) {
         Dwarf_Unsigned limit = 0;
         Dwarf_Unsigned k     = 0;
         const char *tagname = "<TAGunknown>";
@@ -272,14 +470,17 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
         if (res == DW_DLV_NO_ENTRY) {
             break;
         }
+        if (abblist) {
+            insert_ab_in_abblist(i, abbrev_code, abbrev_tag,
+                abbrev_offset,actual_attr_count);
+        }
         dwarf_get_TAG_name(abbrev_tag,&tagname);
         printindent(indent+2);
         printf("[%4" DW_PR_DUu "] ",i);
         printf("     0x%" DW_PR_XZEROS DW_PR_DUx " ",abbrev_offset);
-        printf("     0x%05" DW_PR_DUx "\n",abbrev_code);
+        printf("     0x%05" DW_PR_DUx ,abbrev_code);
         printf("     %3" DW_PR_DUu " ",actual_attr_count);
-        printindent(indent+12);
-        printf("     0x%04" DW_PR_DUx " %-16s",abbrev_tag,tagname);
+        printf("     0x%04" DW_PR_DUx " %s",abbrev_tag,tagname);
         printf("\n");
         limit = actual_attr_count;
         if (limit > ATTR_ARRAY_SIZE) {
@@ -288,16 +489,16 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
                 array_size, actual_attr_count);
             glflags.gf_count_major_errors++;
         }
-        printindent(indent);
-        printf("[]     idxattr  form \n");
+        printindent(indent+4);
+        printf("[abbrindex] idxattr  form \n");
         for (k = 0; k < limit; ++k) {
             const char *idname = "<unknownidx>";
             const char *formname = "<unknownform>";
             Dwarf_Half a = idxattr_array[k];
             Dwarf_Half f = form_array[k];
 
-            printindent(indent);
-            printf("[%4" DW_PR_DUu "] ",k);
+            printindent(indent+4);
+            printf("[%3" DW_PR_DUu "] ",k);
             printf("0x%04x ",a);
             printf("0x%04x ",f);
             if (a || f) {
@@ -305,7 +506,7 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
                 printf("%-19s",idname);
                 dwarf_get_FORM_name(f,&formname);
                 printf("%15s",formname);
-                if (! (a && f)){
+                if (!(a && f)){
                     printf("\nERROR: improper idx/form pair!\n");
                     glflags.gf_count_major_errors++;
                 }
@@ -474,6 +675,7 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
         glflags.gf_count_major_errors++;
         return DW_DLV_OK;
     }
+    update_abblist_count(abbrev_code,tag);
     res = dwarf_dnames_entrypool_values(dn,
         index_of_abbrev,
         offset_of_initial_value,
@@ -744,6 +946,7 @@ print_dname_record(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
+    abblist_ab_table_len = abbrev_table_size;
     printf("\n");
     printf("Name table offset       : 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
@@ -782,9 +985,9 @@ print_dname_record(Dwarf_Debug dbg,
             return res;
         }
     }
-    if (glflags.verbose >1) {
+    if (glflags.verbose) {
         print_dnames_abbrevtable(indent+2,dn,
-            abbrev_table_size);
+            abbrev_table_size,name_count);
     }
     res = print_cu_table(indent+2,dn,"cu",comp_unit_count,
         0,&has_single_cu_offset,&single_cu_offset,error);
@@ -811,6 +1014,7 @@ print_dname_record(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         return res;
     }
+    print_abblist_use(indent+2);
     return DW_DLV_OK;
 }
 
@@ -837,9 +1041,11 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     }
 
     /*  Only print anything if we know it has debug names
-        present. And for now there is none. FIXME. */
+        present. */
+    reset_abblist();
     res = dwarf_dnames_header(dbg,offset,&dnhead,&new_offset,error);
     if (res == DW_DLV_NO_ENTRY) {
+        reset_abblist();
         return res;
     }
     esb_constructor_fixed(&truename,buf,sizeof(buf));
@@ -853,13 +1059,16 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
         if (res != DW_DLV_OK) {
             dwarf_dealloc_dnames(dnhead);
             dnhead = 0;
+            reset_abblist();
             return res;
         }
         offset = new_offset;
         dwarf_dealloc_dnames(dnhead);
         dnhead = 0;
+        reset_abblist();
         res = dwarf_dnames_header(dbg,offset,&dnhead,
             &new_offset,error);
     }
+    reset_abblist();
     return res;
 }
