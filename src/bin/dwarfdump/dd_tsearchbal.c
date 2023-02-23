@@ -77,7 +77,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef DW_CHECK_CONSISTENCY
 struct ts_entry;
-void 
+void
 ddlocal_dwarf_check_balance(struct ts_entry *head,int finalprefix);
 #endif
 
