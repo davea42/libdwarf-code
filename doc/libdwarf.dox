@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-02-20 v0.6.1
+    @date 2023-02-23 v0.7.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -904,6 +904,17 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+    <b>Changes 0.6.0 to 0.7.0</b>
+    Two functions have been removed from libdwarf.h
+    and the library.
+
+    dwarf_dnames_abbrev_by_code() is slow and pointless. 
+    Use either dwarf_dnames_name() or
+    dwarf_dnames_abbrevtable() instead, depending
+    on what you want to accomplish.
+
+    dwarf_dnames_abbrev_form_by_index() is not needed,
+    was hard to use, and never worked.
 
     <b>Changes 0.5.0 to 0.6.0</b>
     v0.6.0 released 2023-02-20 
