@@ -14,7 +14,7 @@ description: The testcase uses DW_FORM_strx3
 datefixed: 2023-01-24
 references: regressiontests/kaufmann2/ct-bad.o
 gitfixid: 97e90eb7ab98df60b8da0bdc2ac855711c4db804
-tarrelease:
+tarrelease: libdwarf-0.6.0.tar.xz
 endrec: DW202301-001
 
 
@@ -45,7 +45,7 @@ description: The fuzzed testcase has at least four major
 datefixed: 2023-01-09
 references: regressiontests/ossfuzz54724/clusterfuzz-54724-poc
 gitfixid: 45f6d778811553a835916b60845933e6dda63b7f
-tarrelease:
+tarrelease: libdwarf-0.6.0.tar.xz
 endrec: DW202212-001
 
 id: DW202208-001
@@ -1926,7 +1926,7 @@ description: dwarf_form.c in libdwarf 20160115 allows
 datefixed: 2016-05-27 
 references:
 gitfixid: 
-tarrelease: 
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201605-020
 
 id: DW201601-001
@@ -1957,7 +1957,7 @@ description: Crashes the calling program. Requires
 datefixed: 2016-01-21
 references: regressiontests/xqx-b/awbug5.elf
 gitfixid: d9d40e4d802e626065ce37ff384dd69c43bc499
-tarrelease:
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201601-001
 
 id: DW201601-002
@@ -1986,7 +1986,7 @@ description: Crashes the calling program. Requires
 datefixed: 2016-01-21
 references: regressiontests/xqx-b/aw.elf
 gitfixid: d9d40e4d802e626065ce37ff384dd69c43bc499
-tarrelease:
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201601-002
 
 id: DW201512-001
@@ -2006,7 +2006,7 @@ description: libdwarf 20151114 and earlier allows remote
 datefixed: 2015-12-31 
 references: regressiontests/xqx-c/awbug6.elf
 gitfixid: 
-tarrelease: 
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201512-001
 
 id: DW201512-002
@@ -2030,7 +2030,7 @@ description: libdwarf 20151114 and earlier allows remote
 datefixed: 2018-01-01
 references:
 gitfixid: 
-tarrelease:
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201512-002
 
 
@@ -2051,7 +2051,7 @@ description: The use-after-free has no attached testcase
 datefixed: 2018-01-01
 references: 
 gitfixid:
-tarrelease:
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201412-001
 
 
