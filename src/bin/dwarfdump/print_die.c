@@ -6704,11 +6704,6 @@ print_location_list(Dwarf_Debug dbg,
             }
             esb_append_printf_i(details, "\n   [%2d]",llent);
         }
-        /*  When dwarf_debug_addr_index_to_addr() fails
-            it is probably
-            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION 257
-            (because no TIED file supplied)
-            but we don't distinguish that from other errors here. */
         /*  We use DW_LLE names for DW_LKIND_loclist and
             DW_LKIND_loclists. We use LLEX names for
             DW_LKIND_GNU_exp_list */
@@ -7676,6 +7671,51 @@ check_sensible_addr_for_form(Dwarf_Debug dbg,
     return;
 }
 
+/*  Just report on error, do not pass any error on,
+    it will be refound if appropriate. */
+static void
+check_indexing_function(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Unsigned index,
+    Dwarf_Addr addr,
+    struct esb_s *esbp)
+{
+    int cres = 0;
+    Dwarf_Addr localaddr = 0;
+    Dwarf_Error error = 0;
+
+    if (!glflags.gf_check_attr_encoding) {
+        return;
+    }
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    cres = dwarf_debug_addr_index_to_addr(die,
+        index,&localaddr,&error);
+    if (cres == DW_DLV_OK) {
+        if (localaddr != addr) {
+            struct esb_s m;
+
+            esb_constructor(&m);
+            esb_append_printf_u(&m,
+                "(ERROR: dwarf_debug_addr_index_to_addr "
+                "Returns bad value 0x%x"
+                " vs expected ",
+                localaddr);
+            esb_append_printf_u(&m,
+                "value 0x%x",addr);
+            DWARF_CHECK_ERROR(check_functions_result,
+                esb_get_string(&m));
+            esb_append(esbp,esb_get_string(&m));
+            esb_destructor(&m);
+        }
+        return;
+    }
+    if (cres == DW_DLV_ERROR) {
+        DROP_ERROR_INSTANCE(dbg,cres,error);
+        error = 0;
+    }
+    return;
+}
+
 /*  Fill buffer with attribute value.
     We pass in tag so we can try to do the right thing with
     broken compiler DW_TAG_enumerator
@@ -7762,6 +7802,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     return res;
                 }
                 bracket_hex("(addr_index: ",index, ")",esbp);
+                if (glflags.gf_do_check_dwarf) {
+                    check_indexing_function(dbg,die,
+                        index,addr,esbp);
+                }
             }
             bracket_hex("",addr,"",esbp);
         } else if (bres == DW_DLV_ERROR) {
