@@ -6482,7 +6482,7 @@ print_location_list(Dwarf_Debug dbg,
     Dwarf_Error* llerr)
 {
     Dwarf_Unsigned no_of_elements = 0;
-    Dwarf_Loc_Head_c loclist_head = 0; /* 2015 loclist interface */
+    Dwarf_Loc_Head_c loclist_head = 0; /* For DWARF2-DWARF5 */
     int            lres = 0;
     unsigned int   llent = 0;
 
@@ -6571,6 +6571,29 @@ print_location_list(Dwarf_Debug dbg,
         if (lres != DW_DLV_OK) {
             dwarf_dealloc_loc_head_c(loclist_head);
             return lres;
+        }
+        {   /* This is a small consistency/function check. */
+            unsigned int check_lkind = DW_LKIND_unknown;
+            int          lres = 0;
+
+            lres = dwarf_get_loclist_head_kind(loclist_head,
+                &check_lkind,llerr);
+            if (lres == DW_DLV_OK) {
+                if (check_lkind != lkind) {
+                     printf("ERROR: dwarf_get_loclist_head_kind "
+                         " returned a bogus value! 0x%x vs 0x%x\n",
+                         lkind,check_lkind);
+                    glflags.gf_count_major_errors++;
+                }
+            } else {
+                /*  The only possible return is DW_DLV_ERROR,
+                    and means a NULL loclist_head!. 
+                    That will not happen here. */
+                printf("ERROR: dwarf_get_loclist_head_kind "
+                    " returned a  DW_DLV_ERROR!");
+                glflags.gf_count_major_errors++;
+                DROP_ERROR_INSTANCE(dbg,lres,*llerr);
+            }
         }
         version = lle_version;
         /*  append_local_prefix(esbp); No,

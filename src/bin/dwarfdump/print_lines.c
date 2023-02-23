@@ -576,6 +576,23 @@ process_line_table(Dwarf_Debug dbg,
                 if (call_context) {
                     printf(" CC=%" DW_PR_DUu, call_context);
                 }
+                {
+                    Dwarf_Unsigned subprogno = 0;
+                    disres = dwarf_line_subprogno(line,
+                        &subprogno,0);
+                    if (disres == DW_DLV_OK) {
+                        /* The validity of subprogno 
+                           is actually used&checked in 
+                           dwarf_line_subprog()
+                           (called next)
+                           so we need not check it here.  */
+                    } else {
+                        printf("ERROR: dwarf_line_subprogno()"
+                           " impossibly! "
+                           "fails. with result %d\n",disres);
+                        glflags.gf_count_major_errors++;
+                    }
+                }
                 subprog_name = 0;
                 disres = dwarf_line_subprog(line,
                     &subprog_name,
