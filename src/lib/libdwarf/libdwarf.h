@@ -3733,11 +3733,13 @@ DW_API int dwarf_linecontext(Dwarf_Line dw_line,
     Dwarf_Unsigned * dw_returned_context,
     Dwarf_Error*     dw_error);
 
-/*! @brief Two-level line tables get subprogam number
+/*! @brief Two-level line tables get subprogram number
     Experimental two level line tables. Not explained here.
     When reading from a logicals table, dwarf_line_subprogno()
     returns the index in the subprograms table of the inlined
-    subprogram.
+    subprogram. Currently this always returns
+    zero through the pointer as the relevant field
+    is never updated from the default of zero.
 */
 DW_API int dwarf_line_subprogno(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*ret_subprogno*/,
@@ -8290,16 +8292,16 @@ DW_API int dwarf_get_ranges_section_name(Dwarf_Debug dw_dbg,
     from object file headers.
 */
 DW_API int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
-    Dwarf_Half  *    /*offset_size*/,
-    Dwarf_Error *    /*error*/);
+    Dwarf_Half  *    dw_offset_size,
+    Dwarf_Error *    dw_error);
 /*! @brief Get the address  size as defined by the object
 
     This is not from DWARF information, it is
     from object file headers.
 */
 DW_API int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
-    Dwarf_Half  *    /*addr_size*/,
-    Dwarf_Error *    /*error*/);
+    Dwarf_Half  *    dw_addr_size,
+    Dwarf_Error *    dw_error);
 
 /*! @brief Get the string table section name
     The usual arguments and return values.
