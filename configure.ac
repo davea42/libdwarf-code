@@ -3,8 +3,8 @@
 
 dnl defines the version name of  the libdwarf.so
 m4_define([v_maj], [0])
-m4_define([v_min], [6])
-m4_define([v_mic], [1])
+m4_define([v_min], [7])
+m4_define([v_mic], [0])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([v_rel], [])
