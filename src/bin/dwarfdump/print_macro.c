@@ -28,6 +28,7 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcpy() strcmp() strdup() strlen() */
+#include <stddef.h> /* size_t */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -43,6 +44,7 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "dd_macrocheck.h"
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
+#include "dd_glflags.h"
 
 /*  See the comments at the beginning of macrocheck.c */
 
@@ -627,6 +629,48 @@ derive_error_message(unsigned k,
     esb_destructor(&m);
 }
 
+/*   For all macro/macinfo versions. */
+void
+print_split_macro_value(const char *m_in)
+{
+    char typbuf[400];
+    char    *local = (char *)m_in;
+    char    *valstart = 0;
+    size_t   j = 0;
+    size_t   namelen = 0;
+    char    *cur = local;
+    char    lastchar = 0;
+    struct esb_s m;
+
+    if (!glflags.verbose) {
+        return;
+    }
+    typbuf[0] = 0;
+    valstart = dwarf_find_macro_value_start(local);
+    if (!*valstart) {
+        /*  No value, just a name */
+        printf("         Name Only: %s\n",local);
+        return;
+    }
+    esb_constructor_fixed(&m,typbuf,sizeof(typbuf));
+    /* Has name<space>value
+       or name(operands)<space>value */
+    lastchar = 0;
+    for ( ;*cur && cur != valstart; ++namelen,++cur) {
+        esb_appendn(&m,cur,1);
+        lastchar = *cur;
+    }
+    if (lastchar != ' ') {
+        printf("ERROR: Macro missing space to separate"
+            "name from value!");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    printf("         Name : %s\n",sanitized(esb_get_string(&m)));
+    printf("         Value: %s\n",sanitized(valstart));
+    esb_destructor(&m);
+}
+
 static int
 print_macro_ops(Dwarf_Debug dbg,
     Dwarf_Die cu_die,
@@ -770,6 +814,9 @@ print_macro_ops(Dwarf_Debug dbg,
                 sanitized(macro_string):nonameavail);
             if (do_print_dwarf) {
                 printf("%s",sanitized(esb_get_string(&mtext)));
+                if (macro_string) {
+                    print_split_macro_value(macro_string);
+                }
             }
             add_def_undef(k,offset,macro_operator,
                 line_number,macro_string,
@@ -805,6 +852,9 @@ print_macro_ops(Dwarf_Debug dbg,
                 sanitized(macro_string):nonameavail);
             if (do_print_dwarf) {
                 printf("%s",esb_get_string(&mtext));
+                if (macro_string) {
+                    print_split_macro_value(macro_string);
+                }
             }
             add_def_undef(k,offset,macro_operator,
                 line_number,macro_string,
@@ -839,6 +889,9 @@ print_macro_ops(Dwarf_Debug dbg,
                 sanitized(macro_string):nonameavail);
             if (do_print_dwarf) {
                 printf("%s",sanitized(esb_get_string(&mtext)));
+                if (macro_string) {
+                    print_split_macro_value(macro_string);
+                }
             }
             add_def_undef(k,offset,macro_operator,
                 line_number,macro_string,
@@ -882,6 +935,9 @@ print_macro_ops(Dwarf_Debug dbg,
                 sanitized(macro_string):nonameavail);
             if (do_print_dwarf) {
                 printf("%s",sanitized(esb_get_string(&mtext)));
+                if (macro_string) {
+                    print_split_macro_value(macro_string);
+                }
             }
             break;
             }

@@ -70,6 +70,7 @@ print_one_macro_entry_detail(long i,
                 (Dwarf_Unsigned)mdp->dmd_offset,
                 mdp->dmd_fileindex, mdp->dmd_lineno,
                 sanitized(mdp->dmd_macro));
+            print_split_macro_value(mdp->dmd_macro);
         } else {
             printf("%3ld %s: %6" DW_PR_DUu " %4" DW_PR_DSd " [%4"
                 DW_PR_DSd "] 0\n",
