@@ -5355,7 +5355,8 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
 
     This is essentially useless as only SGI/MIPS compilers
     from the 1990's had  DW_AT_MIPS_fde in
-    DW_TAG_subprogram DIEs.
+    DW_TAG_subprogram DIEs and this relies
+    on that attribute to work.
 
 */
 DW_API int dwarf_get_fde_for_die(Dwarf_Debug dw_dbg,
