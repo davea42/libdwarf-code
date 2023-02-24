@@ -56,7 +56,9 @@
     the value.  Returns pointer to 0 byte at end of string
     if no value found (meaning the value is the empty string).
 
-    Only understands well-formed dwarf macinfo strings.
+    Only understands well-formed .debug_macinfo
+    and .debug_macro strings.
+
 */
 char *
 dwarf_find_macro_value_start(char *str)
@@ -67,12 +69,11 @@ dwarf_find_macro_value_start(char *str)
     for (lcp = str; *lcp; ++lcp) {
         switch (*lcp) {
         case LEFTPAREN:
-            funclike = 1;
+            ++funclike;
             break;
         case RIGHTPAREN:
-            /*  lcp+1 must be a space, and following
-                char is the value */
-            return lcp + 2;
+            --funclike;
+            break;
         case SPACE:
             /*  We allow extraneous spaces inside macro parameter **
                 list, just in case... This is not really needed. */
@@ -85,9 +86,10 @@ dwarf_find_macro_value_start(char *str)
         }
     }
     /*  Never found value: returns pointer to the 0 byte at end of
-        string. */
+        string. 
+        Or maybe the parentheses are unbalanced! Compiler error?
+    */
     return lcp;
-
 }
 
 /*
