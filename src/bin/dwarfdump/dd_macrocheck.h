@@ -110,6 +110,8 @@ void add_macro_import(void **base,Dwarf_Bool is_primary,
 void add_macro_area_len(void **base, Dwarf_Unsigned offset,
     Dwarf_Unsigned len);
 
+void print_split_macro_value(const char *name_in);
+
 int get_next_unprinted_macro_offset(void **base,
     Dwarf_Unsigned * off);
 void mark_macro_offset_printed(void **base, Dwarf_Unsigned offset);
