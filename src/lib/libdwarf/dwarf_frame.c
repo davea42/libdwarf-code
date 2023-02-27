@@ -1784,6 +1784,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     unsigned char *fde_end_ptr = 0;
     unsigned char *cie_ptr = 0;
     Dwarf_Unsigned cie_id = 0;
+    Dwarf_Half     address_size = 0;
 
     /* Fields for the current Cie being read. */
     int res = 0;
@@ -1807,16 +1808,20 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /* why is this formsdata? FIX */
     sdatares = dwarf_formsdata(attr, &signdval, error);
     if (sdatares != DW_DLV_OK) {
-        dwarf_dealloc_attribute(attr);
         return sdatares;
     }
+    if (die ) {
+        res = dwarf_get_die_address_size(die,&address_size,error);
+        if (res != DW_DLV_OK) {
+            dwarf_dealloc_attribute(attr);
+            return res;
+        }
+    }
     dwarf_dealloc_attribute(attr);
-
     res = _dwarf_load_section(dbg, &dbg->de_debug_frame,error);
     if (res != DW_DLV_OK) {
         return res;
     }
-
     fde_offset = signdval;
     fde_start_ptr = dbg->de_debug_frame.dss_data;
     fde_ptr = fde_start_ptr + fde_offset;
@@ -1847,7 +1852,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         fde_ptr,
         fde_end_ptr,
         /* use_gnu_cie_calc= */ 0,
+        
         /* Dwarf_Cie = */ 0,
+        address_size,
         &new_fde, error);
     if (res == DW_DLV_ERROR) {
         return res;
@@ -1857,6 +1864,8 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     }
     /* DW_DLV_OK */
 
+    /*  This is the only situation this is set. */
+    new_fde->fd_fde_owns_cie = TRUE;
     /* now read the cie corresponding to the fde */
     cie_ptr = new_fde->fd_section_ptr + cie_id;
     res = _dwarf_read_cie_fde_prefix(dbg, cie_ptr,
@@ -1907,8 +1916,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* A dwarf consumer operation, see the consumer
-    library documentation.  */
+
 int
 dwarf_get_fde_range(Dwarf_Fde fde,
     Dwarf_Addr * low_pc,
@@ -2996,6 +3004,11 @@ void
 _dwarf_fde_destructor(void *f)
 {
     struct Dwarf_Fde_s *fde = f;
+    if (fde->fd_fde_owns_cie) {
+        /*  This is just for dwarf_get_fde_for_die() */
+        dwarf_dealloc(fde->fd_dbg,fde->fd_cie,DW_DLA_CIE);
+        fde->fd_cie = 0;
+    }
     if (fde->fd_have_fde_tab) {
         _dwarf_free_fde_table(&fde->fd_fde_table);
         fde->fd_have_fde_tab = false;

@@ -315,53 +315,56 @@ struct Dwarf_Cie_s {
 */
 struct Dwarf_Fde_s {
     Dwarf_Unsigned fd_length;
-    Dwarf_Addr fd_cie_offset;
+    Dwarf_Addr     fd_cie_offset;
     Dwarf_Unsigned fd_cie_index;
-    Dwarf_Cie fd_cie;
-    Dwarf_Addr fd_initial_location;
-    Dwarf_Small *fd_initial_loc_pos;
-    Dwarf_Addr fd_address_range;
-    Dwarf_Small *fd_fde_start;
-    Dwarf_Small *fd_fde_instr_start;
-    Dwarf_Small *fd_fde_end;
-    Dwarf_Debug fd_dbg;
+    Dwarf_Cie      fd_cie;
+    Dwarf_Addr     fd_initial_location;
+    Dwarf_Small   *fd_initial_loc_pos;
+    Dwarf_Addr     fd_address_range;
+    Dwarf_Small   *fd_fde_start;
+    Dwarf_Small   *fd_fde_instr_start;
+    Dwarf_Small   *fd_fde_end;
+    Dwarf_Debug    fd_dbg;
 
     /*  fd_offset_into_exception_tables is SGI/IRIX exception table
         offset. Unused and zero if not IRIX .debug_frame. */
-    Dwarf_Signed fd_offset_into_exception_tables;
+    Dwarf_Signed   fd_offset_into_exception_tables;
 
-    Dwarf_Fde fd_next;
-    Dwarf_Small fd_length_size;
-    Dwarf_Small fd_extension_size;
+    Dwarf_Fde      fd_next;
+    Dwarf_Small    fd_length_size;
+    Dwarf_Small    fd_extension_size;
     /*  So we know from an fde which 'count' of fde-s in
         Dwarf_Debug applies:  eh or standard. */
-    Dwarf_Small fd_is_eh;
+    Dwarf_Small    fd_is_eh;
     /*  The following 2 for GNU .eh_frame exception handling
         Augmentation Data. Set if CIE ci_augmentation_type
         is aug_gcc_eh_z. Zero if unused. */
     Dwarf_Unsigned fd_gnu_eh_augmentation_len;
-    Dwarf_Bool fd_gnu_eh_aug_present;
-    Dwarf_Ptr fd_gnu_eh_augmentation_bytes;
-    Dwarf_Addr fd_gnu_eh_lsda; /* If 'L' augmentation letter
+    Dwarf_Bool     fd_gnu_eh_aug_present;
+    Dwarf_Ptr      fd_gnu_eh_augmentation_bytes;
+    Dwarf_Addr     fd_gnu_eh_lsda; /* If 'L' augmentation letter
         present:  is address of the
         Language Specific Data Area (LSDA). If not 'L" is zero. */
 
     /* The following 3 are about the Elf section the FDEs come from.*/
-    Dwarf_Small * fd_section_ptr;
+    Dwarf_Small   *fd_section_ptr;
     Dwarf_Unsigned fd_section_length;
     Dwarf_Unsigned fd_section_index;
-    Dwarf_Small * fd_section_end;
+    Dwarf_Small   *fd_section_end;
 
     /*  If fd_eh_table_value_set is true, then fd_eh_table_value is
         meaningful.  Never meaningful for .debug_frame, is
         part of .eh_frame. */
     Dwarf_Unsigned fd_eh_table_value;
-    Dwarf_Bool fd_eh_table_value_set;
+    Dwarf_Bool     fd_eh_table_value_set;
 
     /* The following are memoization to save recalculation. */
     struct Dwarf_Frame_s fd_fde_table;
-    Dwarf_Addr    fd_fde_pc_requested;
-    Dwarf_Bool    fd_have_fde_tab;
+    Dwarf_Addr     fd_fde_pc_requested;
+    Dwarf_Bool     fd_have_fde_tab;
+
+    /*  Set by dwarf_get_fde_for_die() */
+    Dwarf_Bool     fd_fde_owns_cie;
 
 };
 
@@ -467,6 +470,7 @@ int _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Small *section_ptr_end,
     int use_gnu_cie_calc,
     Dwarf_Cie  cie_ptr_in,
+    Dwarf_Small address_size_in,
     Dwarf_Fde *fde_ptr_out,
     Dwarf_Error *error);
 

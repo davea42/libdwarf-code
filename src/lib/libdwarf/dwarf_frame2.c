@@ -34,6 +34,7 @@
 #include <config.h>
 
 #include <stdlib.h> /* qsort() */
+#include <stdio.h> /* printf() */
 #include <string.h> /* memcpy() memset() strcmp()
     strncmp() strlen() */
 
@@ -515,6 +516,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 section_ptr_end,
                 use_gnu_cie_calc,
                 cie_ptr_to_use,
+                cie_ptr_to_use->ci_address_size,
                 &fde_ptr_to_use,
                 error);
             if (resf == DW_DLV_ERROR) {
@@ -1033,6 +1035,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Small *section_ptr_end,
     int          use_gnu_cie_calc,
     Dwarf_Cie    cie_ptr_in,
+    Dwarf_Small  address_size,
     Dwarf_Fde   *fde_ptr_out,
     Dwarf_Error *error)
 {
@@ -1050,7 +1053,6 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         bytes in size */
     Dwarf_Addr address_range = 0;       /* must be min de_pointer_size
         bytes in size */
-    Dwarf_Half address_size = 0;
     Dwarf_Unsigned eh_table_value = 0;
     Dwarf_Bool eh_table_value_set = FALSE;
     /* Temporary assumption.  */
@@ -1058,7 +1060,6 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
 
     if (cie_ptr_in) {
         cieptr = cie_ptr_in;
-        address_size = cieptr->ci_address_size;
         augt = cieptr->ci_augmentation_type;
     }
 
