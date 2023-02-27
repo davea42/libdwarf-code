@@ -4377,19 +4377,36 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Half version = 0;
     Dwarf_Half offset_size = 0;
     enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Half address_size_base = 0;
+    Dwarf_Half address_size_again = 0;
 
     esb_constructor_fixed(&esb_extra,xtrabuf,sizeof(xtrabuf));
     esb_constructor_fixed(&valname,valbuf,sizeof(valbuf));
     is_info = dwarf_get_die_infotypes_flag(die);
     atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
-    res = get_address_size_and_max(dbg,0,&max_address,err);
+    res = get_address_size_and_max(dbg,&address_size_base,
+        &max_address,err);
     if (res != DW_DLV_OK) {
         print_error_and_continue(
             "Getting address maximum"
             " failed in printing attribute ",res,*err);
         return res;
     }
-
+    /*  Not passing in error, this is just a check of the
+        function we call here.  No Dwarf_Error
+        will be allocated. */
+    res = dwarf_get_die_address_size(die, &address_size_again,0);
+    if (res == DW_DLV_OK) {
+       if (address_size_again != address_size_base) {
+           printf("NOTE: DIE context address size of %u"
+               " while object address size is %u\n",
+               address_size_again,address_size_base);
+       }
+    } else {
+        printf("ERROR: DIE context address size "
+             "could not be retrieved. Very odd\n");
+        glflags.gf_count_major_errors++;
+    }
     /*  The following gets the real attribute, even
         in the face of an
         incorrect doubling, or worse, of attributes. */
@@ -7739,6 +7756,56 @@ check_indexing_function(Dwarf_Debug dbg,
     return;
 }
 
+static void
+check_for_mips_fde(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    struct esb_s*esbp)
+{
+    int lres = 0;
+    Dwarf_Fde      fde = 0;
+    Dwarf_Addr     low_pc = 0;
+    Dwarf_Unsigned func_length = 0;
+    Dwarf_Small   *fde_bytes = 0;
+    Dwarf_Unsigned fde_byte_length = 0;
+    Dwarf_Off      cie_offset = 0;
+    Dwarf_Signed   cie_index = 0;
+    Dwarf_Off      fde_offset = 0;
+
+
+    /*  Not wanting a Dwarf_Error be allocated. */
+    lres = dwarf_get_fde_for_die(dbg,die,&fde,0);
+    if (lres != DW_DLV_OK) {
+        esb_append(esbp,"<WARNING: Unable to find "
+            "MIPS_fde for Die>");
+        return;
+    }
+    lres = dwarf_get_fde_range(fde,&low_pc,&func_length,
+       &fde_bytes,&fde_byte_length,
+       &cie_offset,&cie_index,&fde_offset,0);
+    dwarf_dealloc(dbg, fde, DW_DLA_FDE);
+    if (lres != DW_DLV_OK) {
+        fde = 0;
+        esb_append(esbp,"<WARNING: Unable to "
+            "extract fde address/range from its fde>");
+        return;
+    }
+    esb_append_printf_u(esbp,"<FDE with lowpc 0x%"
+        DW_PR_DUx, low_pc);
+    if (glflags.verbose) {
+        esb_append_printf_u(esbp," function length 0x%"
+            DW_PR_DUu, func_length);
+        esb_append_printf_u(esbp," fde offset 0x%"
+            DW_PR_DUx, fde_offset);
+        esb_append_printf_u(esbp," fde offset 0x%"
+            DW_PR_DUx, fde_offset);
+        esb_append_printf_u(esbp," cie index %"
+            DW_PR_DUu, cie_index);
+        esb_append_printf_u(esbp," cie offset %"
+            DW_PR_DUx, cie_offset);
+    }
+    esb_append(esbp,">");
+}
+
 /*  Fill buffer with attribute value.
     We pass in tag so we can try to do the right thing with
     broken compiler DW_TAG_enumerator
@@ -8327,6 +8394,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         wres, *err);
                     esb_destructor(&lstr);
                     return wres;
+                }
+                if (attr == DW_AT_MIPS_fde) {
+                    check_for_mips_fde(dbg,die,esbp);
                 }
                 }
                 break;
