@@ -346,6 +346,8 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
             printf("%s===executable and debug buildid match\n",
                 prefix);
         }
+        dwarf_finish(dbg);
+        free(paths);
         return DW_DLV_NO_ENTRY;
     }
     /*  If debug_path_in then this list does not
