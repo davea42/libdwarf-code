@@ -636,10 +636,9 @@ print_split_macro_value(const char *m_in)
     char typbuf[400];
     char    *local = (char *)m_in;
     char    *valstart = 0;
-    size_t   j = 0;
     size_t   namelen = 0;
     char    *cur = local;
-    char    lastchar = 0;
+    char     lastchar = 0;
     struct esb_s m;
 
     if (!glflags.verbose) {

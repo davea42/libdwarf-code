@@ -296,7 +296,6 @@ update_abblist_count(Dwarf_Unsigned ab_code,Dwarf_Half tag)
 }
 static void
 insert_ab_in_abblist(
-    Dwarf_Unsigned abbrev_number,
     Dwarf_Unsigned abbrev_code,
     Dwarf_Half     abbrev_tag,
     Dwarf_Unsigned abbrev_offset,
@@ -345,7 +344,6 @@ print_abblist_use(unsigned int indent)
     Dwarf_Unsigned table_count = abblist_count;
     Dwarf_Unsigned table_byte_size  = abblist_ab_table_len;
     struct Dnames_Abb_Check_s *cur = 0;
-    Dwarf_Off current_offset = 0;
     Dwarf_Off last_offset = 0;
 
     if (!abblist_count || !abblist) {
@@ -409,8 +407,7 @@ print_abblist_use(unsigned int indent)
     1 through name_table_count. */
 static int
 print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned abbrev_table_length /* bytes */,
-    Dwarf_Unsigned name_table_count)
+    Dwarf_Unsigned abbrev_table_length /* bytes */)
 {
     int res = DW_DLV_OK;
     Dwarf_Unsigned abbrev_offset     = 0;
@@ -421,7 +418,6 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
     static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
     Dwarf_Unsigned actual_attr_count = 0;
     Dwarf_Unsigned i                 = 0;
-    Dwarf_Unsigned number_of_abbrevs = 0;
 
     for (  ;res == DW_DLV_OK; ++i) {
         res = dwarf_dnames_abbrevtable(dn,i,
@@ -471,7 +467,7 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
             break;
         }
         if (abblist) {
-            insert_ab_in_abblist(i, abbrev_code, abbrev_tag,
+            insert_ab_in_abblist(abbrev_code, abbrev_tag,
                 abbrev_offset,actual_attr_count);
         }
         dwarf_get_TAG_name(abbrev_tag,&tagname);
@@ -987,7 +983,7 @@ print_dname_record(Dwarf_Debug dbg,
     }
     if (glflags.verbose) {
         print_dnames_abbrevtable(indent+2,dn,
-            abbrev_table_size,name_count);
+            abbrev_table_size);
     }
     res = print_cu_table(indent+2,dn,"cu",comp_unit_count,
         0,&has_single_cu_offset,&single_cu_offset,error);

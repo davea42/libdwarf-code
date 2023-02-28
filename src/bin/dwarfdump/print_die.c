@@ -6591,11 +6591,11 @@ print_location_list(Dwarf_Debug dbg,
         }
         {   /* This is a small consistency/function check. */
             unsigned int check_lkind = DW_LKIND_unknown;
-            int          lres = 0;
+            int          lresx = 0;
 
-            lres = dwarf_get_loclist_head_kind(loclist_head,
+            lresx = dwarf_get_loclist_head_kind(loclist_head,
                 &check_lkind,llerr);
-            if (lres == DW_DLV_OK) {
+            if (lresx == DW_DLV_OK) {
                 if (check_lkind != lkind) {
                      printf("ERROR: dwarf_get_loclist_head_kind "
                          " returned a bogus value! 0x%x vs 0x%x\n",
@@ -6609,7 +6609,7 @@ print_location_list(Dwarf_Debug dbg,
                 printf("ERROR: dwarf_get_loclist_head_kind "
                     " returned a  DW_DLV_ERROR!");
                 glflags.gf_count_major_errors++;
-                DROP_ERROR_INSTANCE(dbg,lres,*llerr);
+                DROP_ERROR_INSTANCE(dbg,lresx,*llerr);
             }
         }
         version = lle_version;
