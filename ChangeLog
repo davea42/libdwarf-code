@@ -1,8 +1,332 @@
+2023-03-02:  David Anderson
+    commit 948352178dc791796ed574a961191844d8322493
+
+    dwarf_attrlist()
+    With a particular error (corrupted data) leading to
+    an improper DW_FORM value did not return an error
+    and compounded problems by continuing on,
+    leading to a memory leak.
+    oss-fuzz 56465
+
+    Also moved a local down to the only lexical
+    scope using the local variable.
+            modified:   src/lib/libdwarf/dwarf_query.c
+    We now return on the first error.
+
+2023-03-02:  David Anderson
+    commit fde4acadc00c805a0e0592848d75398c142c3f19
+
+    Now uses the simpler dwarf_dealloc_attribute
+    as that guarantees the way to dealloc.
+    Also then zeroes the pointer made stale by the dealloc.
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+
+2023-03-02:  David Anderson
+    commit 1fe3b2989a08c91d68e72bdd5ce437c1ccf3024d
+
+    Was failing to check for a NULL die pointer being passed in
+    where non-null was required. Now generates an error
+    when a caller does that.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-02-28:  David Anderson
+    commit a74e1d1f6d3bb174c985d572d4b6d555a8ea6090
+
+    Removing unused locals and arguments.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+    New macro section output changed the baseline.
+            modified:   test/testobjLE32PE.base
+
+2023-02-27:  David Anderson
+    commit ef5d172dedc7c0e2a3e3d4418efa42f318b8af17
+
+    The implementation of dwarf_get_fde_for_die()
+    needed a small change to avoid a leak.
+    The API of dwarf_get_fde_for_die()
+    is unchhanged.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-02-27:  David Anderson
+    commit bfbc1cf7e4e1721f60f250d990ab484f64c189ba
+
+    Now, for SGI/MIPS executables we check
+    that any DW_AT_MIPS_fde attribute actually
+    has the offset of a genuine fde, and report
+    an error if anything wrong.
+    For the first time we are testing
+    dwarf_get_fde_for_die().
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-02-27:  David Anderson
+    commit fb66da9f410d1cdba92b7ae3117e8cd735dfe189
+
+    In one place the free(paths) required by the API
+    was ommitted, leading to a leak. Fixed now.
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+
+2023-02-24:  David Anderson
+    commit 27b1bf1b6b3f1109fdb616c17603ae3a179bd8e3
+
+    Added commentary on an IRIX/MIPS related frame.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-02-24:  David Anderson
+    commit 819cb71d795237536adce774576380bddac29d87
+
+    References the new macro print function in a few
+    places. The idea is to show the name of a macro
+    and the value as distinct fields (with -v)
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2023-02-24:  David Anderson
+    commit 73150d06208b2d936b60e49a8dfdad2015375943
+
+    A new dd internal function for reporting macro data.
+            modified:   dd_macrocheck.h
+
+2023-02-24:  David Anderson
+    commit ce58b4e9e463b7ac99fa4d0a0e15782c432320a3
+
+    Corrected  and commented the code splitting macro
+    name from the macro value (if any value there).
+            modified:   src/lib/libdwarf/dwarf_macro.c
+
+2023-02-23:  David Anderson
+    commit 309f0935a0846157e99d5627ba7a4ba0d40a968c
+
+    Each has a few lines of new code
+    testing libdwarf small functions not
+    otherwise tested.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_lines.c
+
+2023-02-23:  David Anderson
+    commit b23afe59362cfeace31215412ed24a8f46275327
+
+    Fixed a couple arguments to use the dw_<name> form.
+    Comments now explain how a function for
+    experimental line tables is not actually useful.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-02-23:  David Anderson
+    commit d91391381b145c2bf9479be82c0b76f2ec851471
+
+    Updated the tarrrelease: field
+    with 0.6.0 release where appropriate.
+            modified:   data.txt
+
+2023-02-23:  David Anderson
+    commit 0c045738675965a8ed7c4aea9f8dfa5eb297b24f
+
+    These now have the version as 0.7.0
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+
+2023-02-23:  David Anderson
+    commit 22cb0af1ebcf141a6f5d1bdb99666dedb3010eaa
+
+    Now all name the version as 0.7.0
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   meson.build
+
+2023-02-23:  David Anderson
+    commit fbd8f69c1d37f0675112227b8a3af321c75388e7
+
+    make rebuild
+    updated the version string in comments
+    in these generated source files.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2023-02-23:  David Anderson
+    commit 24fa44cc0492ae212e20e80a6faaf84517427655
+
+    Revised to provide a better print of the abbrevs
+    part of a .debug_names block and to check
+    and report on the reuses of an abbrev.
+    Add -v to
+    dwarfdump --print-debug-names
+
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    Make rebuild changed version in a comment. Now 0.7.0
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-02-23:  David Anderson
+    commit 217037be0da853b2dfb08e52a2c8c3a480a0ae47
+
+    Removed the API functions
+    dwarf_dnames_abbrev_by_code()
+        (which is slow, not needed
+        Use either dwarf_dnames_name() or
+        dwarf_dnames_abbrevtable() instead, depending
+        on what you want to accomplish.)
+
+    And
+    dwarf_dnames_abbrev_form_by_index()
+        (which never worked
+        and was never tested except just before removing
+        this function).
+
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-02-23:  David Anderson
+    commit 0535a155c5ddb2537f8ec8c84795eff025ec15eb
+
+    When the form is an indexed addr we check
+    that that referenced via the index and DIE
+    we get the correct addr.
+    A sanity and function correctness check.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-02-23:  David Anderson
+    commit cbb1c34c3a7571a3e14f06576ff244cedb7af95c
+
+    Removed trailing whitespace.
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
 2023-02-20:  David Anderson
     Release of libdwarf 0.6.0 today.
-	modified:   ChangeLog
-	modified:   doc/libdwarf.dox
-	modified:   doc/libdwarf.pdf
+    modified:   ChangeLog
+    modified:   doc/libdwarf.dox
+    modified:   doc/libdwarf.pdf
+
+2023-02-20:  David Anderson
+    commit 8a8f028978cb041e64592ad52b54567459b9a25e
+
+    make rebuild should not have copied
+    dwarf_names.c (which gennames creates)
+    into dwarfdump source. So the cp is removed.
+    The mv to libdwarf source remains and is essential.
+            modified:   src/bin/gennames/Makefile.am
+
+2023-02-20:  David Anderson
+    commit 8777ffee659b20a0d276c55d78d0d1fcf96319b3
+
+    There was no reason to have make rebuild
+    copy dwarf_names.c into dwarfdump.
+    The one in libdwarf suffices.
+            deleted:    ../dwarfdump/dwarf_names.c
+
+2023-02-20:  David Anderson
+    commit 24ae907a3034925521ed408c6ab4384e38f49a3a
+
+    make rebuild updated to match 0.6.1 as release,
+    all these instances are in comments.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-02-20:  David Anderson
+    commit e9fbfc0fac2f8fdeb2dbf057d47acf6a4b9b6b51
+
+    tools/updatesemanticversion.py 0.6.1
+    setting a new version.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-02-20:  David Anderson
+    commit da8acdad735740579d2f79856da4a617578e0a36
+
+    Change file-local function names to not
+    start with dwarf_. That is reserved for API
+    function names.
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+
+2023-02-20:  David Anderson
+    commit 52a8e4b9bd0fe8cff9d7e7fcb8ea6682d60c45b9
+
+    Added pkgconf to macos autotools run, that is
+    now required where it was not required earlier.
+            modified:   test.yml
+
+2023-02-20:  David Anderson
+    commit 80ef777ba7e2c26a35d849f365ad3ca157062087
+
+    workflow test, added a brew install pkgconf
+            modified:   mac_autotools.yml
+
+2023-02-20:  David Anderson
+    commit 104aa2da46a1a798a264654508b1e1e32baf799d
+
+    Adding as this one test is failing in test.yml
+    .github/workflows:
+            new file:   mac_autotools.yml
+
+2023-02-20:  David Anderson
+    commit 2684f4314098ff9677b4d5c18f510666fe8ce0b8
+
+    Now up to date for release 0.6.0
+            modified:   ChangeLog
+
+2023-02-20:  David Anderson
+    commit a93ff50891b07b83c1becb7cc1329236f6732cde
+
+    This is the commit (of documentation) for
+    the 6.0.0 release.
+            modified:   ChangeLog
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-02-18:  David Anderson
+    commit 9cab819ba330011b0e78754ee4f6b8937b4fd051
+
+    Source used for testing/fuzzing.
+            new file:   fuzz/fuzz_aranges.c
+            new file:   fuzz/fuzz_crc.c
+            new file:   fuzz/fuzz_crc_32.c
+            new file:   fuzz/fuzz_debug_addr_access.c
+            new file:   fuzz/fuzz_debug_str.c
+            new file:   fuzz/fuzz_debuglink.c
+            new file:   fuzz/fuzz_die_cu.c
+            new file:   fuzz/fuzz_die_cu_attrs.c
+            new file:   fuzz/fuzz_die_cu_attrs_loclist.c
+            new file:   fuzz/fuzz_die_cu_info1.c
+            new file:   fuzz/fuzz_die_cu_offset.c
+            new file:   fuzz/fuzz_die_cu_print.c
+            new file:   fuzz/fuzz_dnames.c
+            new file:   fuzz/fuzz_findfuncbypc.c
+            new file:   fuzz/fuzz_gdbindex.c
+            new file:   fuzz/fuzz_globals.c
+            new file:   fuzz/fuzz_gnu_index.c
+            new file:   fuzz/fuzz_init_b.c
+            new file:   fuzz/fuzz_init_binary.c
+            new file:   fuzz/fuzz_init_path.c
+            new file:   fuzz/fuzz_macro_dwarf4.c
+            new file:   fuzz/fuzz_macro_dwarf5.c
+            new file:   fuzz/fuzz_rng.c
+            new file:   fuzz/fuzz_set_frame_all.c
+            new file:   fuzz/fuzz_showsectgrp.c
+            new file:   fuzz/fuzz_simplereader_tu.c
+            new file:   fuzz/fuzz_srcfiles.c
+            new file:   fuzz/fuzz_stack_frame_access.c
+            new file:   fuzz/fuzz_str_offsets.c
+            new file:   fuzz/fuzz_tie.c
+            new file:   fuzz/fuzz_xuindex.c
+
+2023-02-13:  David Anderson
+    commit 77c30fe6c97f078c0f57ec946f59754dada497fd
+
+    Up to date with git log
+            modified:   ChangeLog
 
 2023-02-13:  David Anderson
     commit b0af192116cbe4a79b0ca7b8fb47900b5ae3648f
