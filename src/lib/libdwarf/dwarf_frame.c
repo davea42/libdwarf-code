@@ -1801,6 +1801,12 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
             "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
+    if (!die ) {
+        _dwarf_error_string(NULL, error, DW_DLE_DIE_NULL,
+            "DW_DLE_DIE_NUL: in dwarf_get_fde_for_die(): "
+            "Called with Dwarf_Die argument null");
+        return DW_DLV_ERROR;
+    }
     resattr = dwarf_attr(die, DW_AT_MIPS_fde, &attr, error);
     if (resattr != DW_DLV_OK) {
         return resattr;
@@ -1808,14 +1814,13 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /* why is this formsdata? FIX */
     sdatares = dwarf_formsdata(attr, &signdval, error);
     if (sdatares != DW_DLV_OK) {
+        dwarf_dealloc_attribute(attr);
         return sdatares;
     }
-    if (die ) {
-        res = dwarf_get_die_address_size(die,&address_size,error);
-        if (res != DW_DLV_OK) {
-            dwarf_dealloc_attribute(attr);
-            return res;
-        }
+    res = dwarf_get_die_address_size(die,&address_size,error);
+    if (res != DW_DLV_OK) {
+        dwarf_dealloc_attribute(attr);
+        return res;
     }
     dwarf_dealloc_attribute(attr);
     res = _dwarf_load_section(dbg, &dbg->de_debug_frame,error);
