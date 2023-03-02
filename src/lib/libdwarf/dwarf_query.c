@@ -368,8 +368,8 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Debug       dbg = 0;
     Dwarf_Byte_Ptr    info_ptr = 0;
     Dwarf_Byte_Ptr    die_info_end = 0;
-    int lres = 0;
-    int bres = 0;
+    int               lres = 0;
+    int               bres = 0;
     Dwarf_CU_Context  context = 0;
     Dwarf_Unsigned    highest_code = 0;
 
@@ -440,7 +440,6 @@ dwarf_attrlist(Dwarf_Die die,
             abbrev_ptr, abbrev_end, abbrev_list,
             error);
         if (bres != DW_DLV_OK) {
-            empty_local_attrlist(dbg,head_attr);
             return bres;
         }
     }
@@ -450,7 +449,6 @@ dwarf_attrlist(Dwarf_Die die,
 
     for ( i = 0; i <abbrev_list->abl_abbrev_count; ++i) {
         Dwarf_Signed implicit_const = 0;
-        Dwarf_Attribute new_attr = 0;
         Dwarf_Half newattr_form = 0;
         int ires = 0;
 
@@ -476,7 +474,6 @@ dwarf_attrlist(Dwarf_Die die,
             if (_dwarf_reference_outside_section(die,
                 (Dwarf_Small*) info_ptr,
                 ((Dwarf_Small*) info_ptr )+1)) {
-                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -489,7 +486,6 @@ dwarf_attrlist(Dwarf_Die die,
             ires = _dwarf_leb128_uword_wrapper(dbg,
                 &info_ptr,die_info_end,&utmp6,error);
             if (ires != DW_DLV_OK) {
-                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -500,7 +496,6 @@ dwarf_attrlist(Dwarf_Die die,
             }
             attr_form = (Dwarf_Half) utmp6;
             if (attr_form == DW_FORM_implicit_const) {
-                dwarf_dealloc_attribute(new_attr);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ATTR_OUTSIDE_SECTION,
@@ -511,16 +506,27 @@ dwarf_attrlist(Dwarf_Die die,
                 return DW_DLV_ERROR;
             }
             if (!_dwarf_valid_form_we_know(attr_form,attr)) {
-                empty_local_attrlist(dbg,head_attr);
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                     "DW_DLE_UNKNOWN_FORM "
+                     " form indirect leads to form"
+                     " of  0x%x which is unknown",
+                      attr_form);
                 _dwarf_error_string(dbg, error,
-                    DW_DLE_UNKNOWN_FORM,"DW_DLE_UNKNOWN_FORM "
-                    " is actually an indirect_form from"
-                    " .debug_info.");
+                    DW_DLE_UNKNOWN_FORM,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                empty_local_attrlist(dbg,head_attr);
+                return DW_DLV_ERROR;
             }
             newattr_form = attr_form;
         }
 
         if (attr) {
+            Dwarf_Attribute new_attr = 0;
+
             new_attr = (Dwarf_Attribute)
                 _dwarf_get_alloc(dbg, DW_DLA_ATTR, 1);
             if (!new_attr) {
@@ -580,8 +586,10 @@ dwarf_attrlist(Dwarf_Die die,
                 }
                 info_ptr += sov;
             }
+            /*  Add to single linked list */
             *last_attr = new_attr;
             last_attr = &new_attr->ar_next;
+            new_attr = 0;
             attr_count++;
         }
     }
