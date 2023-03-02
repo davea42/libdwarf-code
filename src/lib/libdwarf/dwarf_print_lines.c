@@ -629,23 +629,23 @@ _dwarf_internal_printlines(Dwarf_Die die,
     */
     lres = dwarf_whatform(stmt_list_attr,&attrform,error);
     if (lres != DW_DLV_OK) {
-        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
+        dwarf_dealloc_attribute(stmt_list_attr);
         return lres;
     }
     if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset ) {
-        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
+        dwarf_dealloc_attribute(stmt_list_attr);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
     if (lres != DW_DLV_OK) {
-        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
+        dwarf_dealloc_attribute(stmt_list_attr);
         return lres;
     }
 
     if (line_offset >= dbg->de_debug_line.dss_size) {
-        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
+        dwarf_dealloc_attribute(stmt_list_attr);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
@@ -656,14 +656,14 @@ _dwarf_internal_printlines(Dwarf_Die die,
             DW_SECT_LINE,
             &fission_offset,&fission_size,error);
         if (resfis != DW_DLV_OK) {
-            dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
+            dwarf_dealloc_attribute(stmt_list_attr);
             return resfis;
         }
     }
 
     orig_line_ptr = section_start + line_offset + fission_offset;
     line_ptr = orig_line_ptr;
-    dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
+    dwarf_dealloc_attribute(stmt_list_attr);
 
     /*  If die has DW_AT_comp_dir attribute, get the string
         that names the compilation directory. */
@@ -677,14 +677,17 @@ _dwarf_internal_printlines(Dwarf_Die die,
 
         cres = dwarf_formstring(comp_dir_attr, &cdir, error);
         if (cres == DW_DLV_ERROR) {
+            dwarf_dealloc_attribute(comp_dir_attr);
+            comp_dir_attr = 0;
             return cres;
         }
         if (cres == DW_DLV_OK) {
             comp_dir = (Dwarf_Small *) cdir;
         }
     }
-    if (resattr == DW_DLV_OK) {
-        dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
+    if (comp_dir_attr) {
+        dwarf_dealloc_attribute(comp_dir_attr);
+        comp_dir_attr = 0;
     }
     line_context = (Dwarf_Line_Context)
         _dwarf_get_alloc(dbg, DW_DLA_LINE_CONTEXT, 1);
