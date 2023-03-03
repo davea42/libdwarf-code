@@ -212,7 +212,15 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     /*  ASSERT: line_context->lc_length_field_length == line_ptr
         -line_context->lc_line_ptr_start; */
     if (line_ptr_end > section_end) {
-        _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+        dwarfstring m;
+ 
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,"DW_DLE_DEBUG_LINE_LENGTH_BAD "
+            " the total length of this line table is too large at"
+            " %" DW_PR_DUu  " bytes",total_length);
+        _dwarf_error_string(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD,
+             dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     line_context->lc_total_length = total_length;
@@ -260,6 +268,20 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     READ_UNALIGNED_CK(dbg, prologue_length, Dwarf_Unsigned,
         line_ptr, local_length_size,
         err,line_ptr_end);
+    if (prologue_length > total_length) {
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_LINE_LENGTH_BAD "
+            " the prologue length of "
+            " this line table is too large at"
+            " %" DW_PR_DUu  " bytes",prologue_length);
+        _dwarf_error_string(dbg, err,
+            DW_DLE_DEBUG_LINE_LENGTH_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     line_context->lc_prologue_length = prologue_length;
     line_ptr += local_length_size;
     line_context->lc_line_prologue_start = line_ptr;
@@ -651,6 +673,22 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             format_values = 0;
             return dres;
         }
+        if (directories_count > total_length) {
+            dwarfstring m;
+ 
+            dwarfstring_constructor(&m);
+       
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_DEBUG_LINE_LENGTH_BAD "
+                " the directories count of "
+                " this line table is too large at"
+                " %" DW_PR_DUu  ,directories_count);
+            _dwarf_error_string(dbg, err, 
+                DW_DLE_DEBUG_LINE_LENGTH_BAD,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         line_context->lc_include_directories =
             malloc(sizeof(Dwarf_Small *) * directories_count);
         if (line_context->lc_include_directories == NULL) {
@@ -771,6 +809,21 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         if (dres != DW_DLV_OK) {
             free(filename_entry_pairs);
             return dres;
+        }
+        if (files_count > total_length) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_DEBUG_LINE_LENGTH_BAD "
+                " the files count of "
+                " this line table is too large at"
+                " %" DW_PR_DUu  " files",files_count);
+            _dwarf_error_string(dbg, err,
+                DW_DLE_DEBUG_LINE_LENGTH_BAD,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
         }
 
         for (i = 0; i < files_count; i++) {
