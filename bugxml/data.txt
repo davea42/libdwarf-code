@@ -1,20 +1,55 @@
 
+id: DW202303-002
+cve:
+fuzzer: oss-fuzz id: 56548 56443
+datereported: 2023-03-01
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt line table header
+product: libdwarf
+description: With any one of a small set of corrupted data
+fields in a line table header that were not checked
+for sanity the library could try to malloc a giant space,
+which could take a long time to succeed or fail.
+After that almost anything could happen.
+datefixed: 2023-03-03
+references: regressiontests/ossfuzz56548/fuzz_findfuncbypc-5073632331431936
+gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
+tarrelease: libdwarf-0.6.0.tar.xz
+endrec: DW202303-002
+
+id: DW202303-001
+cve:
+fuzzer: oss-fuzz id: 56465  56530 56443
+datereported: 2023-03-01
+reportedby: David Korczynski
+vulnerability: Denial of Service with corrupt attribute
+product: libdwarf
+description: With a particular data corruption
+dwarf_attrlist() failed to return an error and
+the library would dereference a stale pointer.
+This also provoked a memory leak.
+datefixed: 2023-03-02
+references: regressiontests/ossfuzz56465/fuzz_die_cu_offset-5866690199289856
+gitfixid: 948352178dc791796ed574a961191844d8322493
+tarrelease: 
+endrec: DW202303-001
+
+
+
+
 id: DW202301-001
 cve:
 fuzzer: 
 datereported: 2023-01-24
-reportedby: Steve Kaufmann
+reportedby: David Korczynski
 vulnerability: Denial of Service with DW_FORM_strx3 
 product: libdwarf
-description: The testcase uses DW_FORM_strx3 
-  and the library calls that a 4 byte form 
-  (and similarly for DW_FORM_addrx3) in dwarf_util.c.
-  Leading to unpredictable library behavior, possibly
-  including crashing the calling program.
+description: 
+
 datefixed: 2023-01-24
-references: regressiontests/kaufmann2/ct-bad.o
-gitfixid: 97e90eb7ab98df60b8da0bdc2ac855711c4db804
-tarrelease: libdwarf-0.6.0.tar.xz
+references: regressiontests/
+gitfixid: 
+tarrelease: 
 endrec: DW202301-001
 
 
