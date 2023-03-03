@@ -1,3 +1,25 @@
+2023-03-03:  David Anderson
+    commit c8c029a2a91b7774908000b374342ac5239bd7ee
+
+    Now with 0.7.0 version.
+            modified:   doc/libdwarf.pdf
+
+2023-03-03:  David Anderson
+    commit 89d3beccd161657760585967255bbabf67e5b4c9
+
+    Fixes oss-fuzz 56548.
+    Reading line tables headers some fields were not checked for
+    impossibly-large values.
+    Now all such fields are checked for sanity.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-03-02:  David Anderson
+    commit 6eb98f38178814bc001187c08d9d74b4a8fa5b0f
+
+    ChangeLog up to date with git log.
+    Now working on 0.7.0.
+            modified:   ChangeLog
+
 2023-03-02:  David Anderson
     commit 948352178dc791796ed574a961191844d8322493
 
