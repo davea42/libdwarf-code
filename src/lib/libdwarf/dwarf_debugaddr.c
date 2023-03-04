@@ -70,6 +70,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     Dwarf_Small *data = 0;
     Dwarf_Small *section_start = 0;
     Dwarf_Unsigned arealen = 0;
+    Dwarf_Unsigned tablelen = 0;
     int offset_size = 0;
     int exten_size = 0;
     Dwarf_Small address_size = 0;
@@ -104,8 +105,8 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     if (dw_section_offset >= section_size) {
         return DW_DLV_NO_ENTRY;
     }
+    curlocaloffset = 0;
     data = section_start + dw_section_offset;
-
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
         data,offset_size,exten_size,
         error,
@@ -128,9 +129,11 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     tab.da_dbg = dbg;
-    tab.da_length = arealen+offset_size +exten_size;
+    tablelen = arealen - 4; /* 4: the rest of the header */
+    tab.da_length = tablelen;
     curlocaloffset += offset_size + exten_size;
-    offset_one_past_end = dw_section_offset + tab.da_length;
+    offset_one_past_end = dw_section_offset + curlocaloffset
+        +4/* header bytes */ + tablelen;
     end_data = section_start + offset_one_past_end;
     tab.da_end_table = end_data;
     READ_UNALIGNED_CK(dbg,version,Dwarf_Half,data,
@@ -191,24 +194,24 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     tab.da_data_entries = data;
     {
         Dwarf_Unsigned entry_count = 0;
-        Dwarf_Unsigned remainlen = tab.da_length -
+        Dwarf_Unsigned table_len_bytes = tab.da_length -
             curlocaloffset;
 
-        if (remainlen%address_size) {
+        if (table_len_bytes%address_size) {
             dwarfstring m;
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
                 " DW_DLE_DEBUG_ADDR_ERROR: The "
                 " .debug_addr address array "
                 "length of %u not a multiple of "
-                "address_size.",remainlen);
+                "address_size.",table_len_bytes);
             _dwarf_error_string(dbg,error,
                 DW_DLE_DEBUG_ADDR_ERROR,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        entry_count = arealen/address_size;
+        entry_count = table_len_bytes/address_size;
         tab.da_entry_count = entry_count;
     }
     tab.da_table_section_offset = dw_section_offset;
@@ -280,6 +283,13 @@ dwarf_debug_addr_by_index(Dwarf_Debug_Addr_Table dw_dat,
     }
     data = dw_dat->da_data_entries+
         dw_dat->da_address_size * dw_entry_index;
+    if ((data+ dw_dat->da_address_size) >  dw_dat->da_end_table) {
+        _dwarf_error_string(NULL,dw_error,
+            DW_DLE_DEBUG_ADDR_ERROR,
+            "DW_DLE_DEBUG_ADDR_ERROR: "
+            "Bad debug addr table: miscount, too short. ");
+        return DW_DLV_ERROR;
+    }
     READ_UNALIGNED_CK(dw_dat->da_dbg,
         addr,Dwarf_Unsigned, data,
         dw_dat->da_address_size,dw_error,
