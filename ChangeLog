@@ -1,4 +1,31 @@
 2023-03-03:  David Anderson
+    commit e7cce2398d35f6edac0cadab0e596423a73aaaa0
+
+    Added git fix id for 56636.
+            modified:   bugxml/data.txt
+
+2023-03-03:  David Anderson
+    commit a3ab3f16ab67f4d976561fe0d863e1ed8b71f3c6
+
+    oss-fuzz 56636
+    There were some logic mistakes here.
+    Now fixed, we think.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2023-03-03:  David Anderson
+    commit d7711e0dd0cc10e94cdd754ee8b4512085661c92
+
+    Minor corrections to the data on
+    DW202303-001 and -002
+            modified:   data.txt
+
+2023-03-03:  David Anderson
+    commit 92aa9854a4577d04322782c1576aaa1aa7ca0f7f
+
+    Now with latest from git log
+            modified:   ChangeLog
+
+2023-03-03:  David Anderson
     commit c8c029a2a91b7774908000b374342ac5239bd7ee
 
     Now with 0.7.0 version.
