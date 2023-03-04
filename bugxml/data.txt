@@ -1,3 +1,20 @@
+id: DW202303-003
+cve:
+fuzzer: oss-fuzz id: 56636
+datereported: 2023-03-03
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt .debug_addr section
+product: libdwarf
+description: A corrupted .debug_addr header was not
+properly checked, and the calculation setting
+up the table in memory was not correctly set up.
+Calling dwarf_debug_addr_by_index() could crash the calling
+application.
+datefixed: 2023-03-03
+references: regressiontests/ossfuzz56636/fuzz_debug_addr_access-4801779658522624.fuzz
+gitfixid: a3ab3f16ab67f4d976561fe0d863e1ed8b71f3c6 
+tarrelease: 
+endrec: DW202303-003
 
 id: DW202303-002
 cve:
@@ -14,7 +31,7 @@ After that almost anything could happen.
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56548/fuzz_findfuncbypc-5073632331431936
 gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
-tarrelease: libdwarf-0.6.0.tar.xz
+tarrelease: 
 endrec: DW202303-002
 
 id: DW202303-001
