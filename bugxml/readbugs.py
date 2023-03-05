@@ -325,9 +325,9 @@ if __name__ == "__main__":
     #  b.printbug()
 
     targlo="LibDwarf Vulnerabilities Newest First"
-    generatehtml(list2,targlo,"dwarfbuglohi.html")
-    generatexml(list2,"dwarfbuglohi.xml")
+    generatehtml(list2,targlo,"dwarfbug.html")
+    generatexml(list2,"dwarfbug.xml")
 
     list2.reverse()
     targhi="LibDwarf Vulnerabilities Oldest First"
-    generatehtml(list2,targhi,"dwarfbug.html")
+    generatehtml(list2,targhi,"dwarfbuglohi.html")

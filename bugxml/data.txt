@@ -1,3 +1,21 @@
+
+
+id: DW202303-004
+cve:
+fuzzer: oss-fuzz id: 56666
+datereported: 2023-03-04
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt gnu_index section
+product: libdwarf
+description: A corrupted .debug_gnu_index header was not
+properly checked, and the calculation setting
+up the table in memory was not correctly set up.
+datefixed: 
+references: regressiontests/
+gitfixid: 
+tarrelease: 
+endrec: DW202303-004
+
 id: DW202303-003
 cve:
 fuzzer: oss-fuzz id: 56636
