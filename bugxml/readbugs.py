@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#  Copyright (c) 2016-2016 David Anderson.
+#  Copyright (c) 2016-2023 David Anderson.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,14 @@
 
 import os
 import sys
+from datetime import datetime
 
-sys.path.append(os.path.abspath("/home/davea/dwarf/code/bugxml"))
+# Happens to be the usual location of bugxml
+# so the import works.
+path="/home/davea/dwarf/code/bugxml"
+mytz="PST"
+
+sys.path.append(os.path.abspath(path))
 import bugrecord
 
 
@@ -216,17 +222,80 @@ def write_all_lines(file, txt):
     for t in txt:
         write_line(file, t)
 
-def generatehtml(list2, name):
+headtext = [
+'<!DOCTYPE html>',
+'<html lang="en">',
+'<head>',
+' <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" >',
+'<title>Libdwarf Vulnerabilities</title>',
+'  <META NAME="description" CONTENT="Libdwarf Vulnerabilities">',
+'  <META NAME="keywords" CONTENT="DWARF, DWARF2, DWARF3, DWARF4,DWARF5">',
+'</head>',
+'</body>',
+'<h1 id=top>Libdwarf Vulnerabilities</h1>',
+'<p>',
+'This page provides',
+'documentation of known vulnerabilities',
+'in libdwarf.',
+'We are concerned here with',
+'cases where corrupt (by accident or intention)',
+'DWARF can cause the library to get',
+'a fault (crash) which',
+'could expose the calling program',
+'to interception by malefactors.',
+'Dates (where known) are in ISO extended date format.',
+'</p>',
+'<p>',
+'Some of the bugs reported here have a CVE assigned,',
+'for example CVE-2017-9052.',
+'These are reported on cve.org (or possibly the earlier',
+'cve.mitre.org).',
+'Search with "libdwarf" on cve.org for a list.',
+'</p>',
+'<p>',
+'Git reference path names refer to object files',
+'in the libdwarf regression test base.',
+'The test files can be retrieved via anonymous access:',
+'<br>',
+'"git clone https://github.org/davea42/libdwarf-regressiontests"',
+'</p>',
+'<p>',
+'A few bugs refer to https://bugzilla.redhat.com',
+'bug system entries',
+'and/or https://bugs.chromium.org',
+'in addition to showing the names of test files in',
+'the regression test base.',
+'</p>',
+'<H2 id=vulnerabilities>Vulnerabilities</H2>',
+'<p>',
+'Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.',
+'<br>',
+'Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.',
+'</p>',
+ ]
+
+def writeheader(file,headname):
+    dt = datetime.today()
+    for l in headtext:
+        write_line(file,l)
+    hl='<H2>%s</H2>'%(headname)
+    write_line(file,hl)
+    tm='</p>as of %s %s</p>'%(dt.strftime("%Y-%m-%d %H:%M "),mytz)
+    write_line(file,tm)
+
+def generatehtml(list2,headname, name):
     try:
         file = open(name, "w")
     except IOError as message:
         print("failed to open ", name, message)
         sys.exit(1)
+    writeheader(file,headname)
     write_line(file,"<p> Record count: %d </p>"%(len(list2))) 
     for i,b in enumerate(list2):
         num = int(i) +1
         txt = b.generate_html(num)
         write_all_lines(file, txt)
+    write_line(file,'<p> <a href="#top">[top]</a> </p>')
     write_line(file, "</body>")
     write_line(file, "</html>")
     file.close()
@@ -255,8 +324,10 @@ if __name__ == "__main__":
     # for b in list2:
     #  b.printbug()
 
-    generatehtml(list2, "./dwarfbugtail")
-    generatexml(list2, "./dwarfbuglohi.xml")
+    targlo="LibDwarf Vulnerabilities Newest First"
+    generatehtml(list2,targlo,"dwarfbuglohi.html")
+    generatexml(list2,"dwarfbuglohi.xml")
 
     list2.reverse()
-    generatehtml(list2, "./dwarfbuglohitail")
+    targhi="LibDwarf Vulnerabilities Oldest First"
+    generatehtml(list2,targhi,"dwarfbug.html")

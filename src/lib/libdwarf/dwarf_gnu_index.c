@@ -30,11 +30,17 @@
 
 /*  This is for accessing .debug_gnu_pubnames
     and .debug_gnu_pubtypes.
-    It has nothing to do with .gdb_index. */
+
+    These sections are designed to be compiler-generated
+    to be used by the linker to create the .gdb_index
+    section for DWARF3 and DWARF4 as part of
+    Split Dwarf (aka Debug Fission). 
+    They are not expected to be in an executable. */
 
 #include <config.h>
 
 #include <stdlib.h> /* calloc() free() */
+#include <stdio.h> /* debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -51,7 +57,7 @@
 #include "dwarf_gnu_index.h"
 #include "dwarf_string.h"
 
-#if 0
+#if 1
 static void
 dump_block(const char *msg,int bn, int lno,
     struct Dwarf_Gnu_IBlock_s *b)
@@ -93,6 +99,7 @@ dump_block(const char *msg,int bn, int lno,
         (unsigned long)b->ib_entry_count);
     printf("entries  array   : 0x%lx\n",
         (unsigned long)b->ib_entryarray);
+    fflush(stdout);
 }
 #endif /*0*/
 /*  We could use dwarf_get_real_section_name()
@@ -220,7 +227,7 @@ scan_block_entries(Dwarf_Debug  dbg,
 }
 
 static int
-count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
+_dwarf_count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
     struct DGI_Entry_s* entries,
     Dwarf_Error* error)
 {
@@ -241,6 +248,9 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         Dwarf_Unsigned infooffset = 0;
         Dwarf_Unsigned offset = 0;
         char  flagbyte = 0;
+
+        if ((curptr+offsetsize) > endptr) {
+        }
         READ_UNALIGNED_CK(dbg,offset,
             Dwarf_Unsigned,curptr,
             offsetsize,error,endptr);
@@ -343,6 +353,7 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
     Dwarf_Bool     is_for_pubnames = head->gi_is_pubnames;
     Dwarf_Debug    dbg = head->gi_dbg;
     Dwarf_Unsigned seclen = head->gi_section_length;
+    int errset = FALSE;
 
     baseptr = head->gi_section_data;
     endptr = baseptr + head->gi_section_length;
@@ -399,24 +410,89 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         READ_UNALIGNED_CK(dbg,offset_into_debug_info,
             Dwarf_Unsigned,curptr,
             offsetsize,error,endptr);
+        if (errset || dbg->de_debug_info.dss_size < 
+            offset_into_debug_info) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                " NOTE:"
+                " debug_info size of  0x%" DW_PR_DUx " is"
+                " smaller than the .debug_gnu_pub* ",
+                dbg->de_debug_info.dss_size);
+            dwarfstring_append_printf_u(&m,
+                " offset into debug_info of 0x%" DW_PR_DUx
+                " requires",offset_into_debug_info);
+            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         curptr     += offsetsize;
         dataoffset += offsetsize;
         gib->ib_offset_in_debug_info = offset_into_debug_info;
         READ_UNALIGNED_CK(dbg,length_of_CU_in_debug_info,
             Dwarf_Unsigned,curptr,
             offsetsize,error,endptr);
+        if (errset || dbg->de_debug_info.dss_size < 
+            length_of_CU_in_debug_info) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_GNU_PUBNAMES_ERROR "
+                " debug_info length of  0x%" DW_PR_DUx " is"
+                " less than ",dbg->de_debug_info.dss_size);
+            dwarfstring_append_printf_u(&m," the 0x%" DW_PR_DUx 
+                " the .debug_gnu_pub* field requires", 
+                length_of_CU_in_debug_info);
+            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        if (errset ||
+            (length_of_CU_in_debug_info + offset_into_debug_info)
+            > dbg->de_debug_info.dss_size) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_GNU_PUBNAMES_ERROR "
+                " debug_info length of  0x" DW_PR_DUx " is"
+                " less than ",dbg->de_debug_info.dss_size);
+            dwarfstring_append_printf_u(&m," the 0x%" DW_PR_DUx 
+                " the .debug_gnu_pub* offset+length  requires", 
+                length_of_CU_in_debug_info + offset_into_debug_info);
+            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         gib->ib_size_in_debug_info = length_of_CU_in_debug_info;
         dataoffset += offsetsize;
         curptr     += offsetsize;
+        if (offsetsize != 4 || offsetsize != 8) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_GNU_PUBNAMES_ERROR "
+                " offset size  is %u"
+                " which is not usable",offsetsize);
+            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         gib->ib_b_data = curptr;
         gib->ib_b_offset = dataoffset;
         gib->ib_b_entrylength = length - (2 + (2*offsetsize));
         /* Followed by 4 bytes of zeroes */
         gib->ib_b_entrylength -= 4;
-
-        /* Set for next block., add in4 for ending zeros */
+        /* Set for next block., add in 4 for ending zeros */
         dataoffset = gib->ib_block_length_offset + length + 4;
-        res = count_entries_in_block(gib,0,error);
+        res = _dwarf_count_entries_in_block(gib,0,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -458,7 +534,7 @@ fill_in_entries(Dwarf_Gnu_Index_Head head,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    res = count_entries_in_block(gib,
+    res = _dwarf_count_entries_in_block(gib,
         entryarray,error);
     if (res != DW_DLV_OK) {
         free(entryarray);
@@ -532,7 +608,8 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
         dbg->de_debug_gnu_pubnames.dss_size:
         dbg->de_debug_gnu_pubtypes.dss_size;
     head->gi_is_pubnames = for_gnu_pubnames;
-    iblock_array = calloc(count,sizeof(struct Dwarf_Gnu_IBlock_s));
+    iblock_array = calloc(count,
+        sizeof(struct Dwarf_Gnu_IBlock_s));
     if (!iblock_array) {
         dwarfstring m;
         int err = 0;
@@ -548,13 +625,14 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         dwarf_gnu_index_dealloc(head);
+        head = 0;
         return DW_DLV_ERROR;
     }
     head->gi_blockarray = iblock_array;
     head->gi_blockcount = count;
-
-    res = fill_in_blocks(head,error);
     if (res != DW_DLV_OK) {
+        dwarf_gnu_index_dealloc(head);
+        head = 0;
         return res;
     }
     *index_head_out = head;
