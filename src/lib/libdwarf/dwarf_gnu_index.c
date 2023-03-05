@@ -416,7 +416,7 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
 
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
-                " NOTE:"
+                " DW_DLE_GNU_PUBNAMES_ERROR:"
                 " debug_info size of  0x%" DW_PR_DUx " is"
                 " smaller than the .debug_gnu_pub* ",
                 dbg->de_debug_info.dss_size);
@@ -553,11 +553,11 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     Dwarf_Unsigned       * index_block_count_out,
     Dwarf_Error * error)
 {
-    Dwarf_Unsigned count = 0;
+    Dwarf_Unsigned       count = 0;
     Dwarf_Gnu_Index_Head head = 0;
-    struct Dwarf_Gnu_IBlock_s *iblock_array;
-    char buf[100];
-    int res = 0;
+    struct Dwarf_Gnu_IBlock_s *iblock_array = 0;
+    char                 buf[100];
+    int                  res = 0;
 
     if (!dbg) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
@@ -630,6 +630,7 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     }
     head->gi_blockarray = iblock_array;
     head->gi_blockcount = count;
+    res = fill_in_blocks(head,error);
     if (res != DW_DLV_OK) {
         dwarf_gnu_index_dealloc(head);
         head = 0;
