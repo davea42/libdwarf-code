@@ -176,15 +176,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       unlink(filename);
       return 0;
     }
-    Dwarf_Half dw_tag;
-    Dwarf_Unsigned dw_index_of_abbrev, dw_number_of_attr_form_entries;
-    dwarf_dnames_abbrev_by_code(dnames_h, dw_abbrev_number, &dw_tag,
-                                &dw_index_of_abbrev,
-                                &dw_number_of_attr_form_entries);
-
-    Dwarf_Unsigned dw_idx_attr, dw_form;
-    dwarf_dnames_abbrev_form_by_index(dnames_h, 0, 0, &dw_idx_attr, &dw_form,
-                                      &error);
 
     dwarf_dealloc_dnames(dnames_h);
   }
