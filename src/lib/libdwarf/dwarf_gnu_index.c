@@ -57,7 +57,28 @@
 #include "dwarf_gnu_index.h"
 #include "dwarf_string.h"
 
-#if 1
+#if 0
+static void
+dump_head(const char *msg,int lno,
+    struct Dwarf_Gnu_Index_Head_s *h)
+{
+    printf("HEAD block line %d\n",__LINE__);
+    printf("data        : %p\n",
+        (void *)h->gi_section_data);
+    printf("sec len     : %llu 0x%llx\n",
+         h->gi_section_length,
+         h->gi_section_length);
+    printf("data end    : %p\n",
+        (void *)(h->gi_section_end));
+    printf("blockarray  : %p\n",
+        (void *)h->gi_blockarray);
+    printf("block count : %llu 0x%llx\n",
+         h->gi_blockcount,
+         h->gi_blockcount);
+    printf("gnu_pubnames: %u\n",h->gi_is_pubnames);
+} 
+
+
 static void
 dump_block(const char *msg,int bn, int lno,
     struct Dwarf_Gnu_IBlock_s *b)
@@ -68,7 +89,8 @@ dump_block(const char *msg,int bn, int lno,
         (unsigned long)b->ib_head);
     printf("index            : %lu\n",
         (unsigned long)b->ib_index);
-    printf("blk len offset   : 0x%lx\n",
+    printf("blk len offset   : %lu 0x%lx\n",
+        (unsigned long)b->ib_block_length_offset,
         (unsigned long)b->ib_block_length_offset);
     printf("block length     : %lu 0x%lx\n",
         (unsigned long)b->ib_block_length,
@@ -81,23 +103,27 @@ dump_block(const char *msg,int bn, int lno,
         b->ib_version);
     printf("built entries?   : %s\n",
         b->ib_counted_entries?"yes":"no");
-    printf("debug_info offset: 0x%lx\n",
+    printf("debug_info offset: %lu 0x%lx\n",
+        (unsigned long)b->ib_offset_in_debug_info,
         (unsigned long)b->ib_offset_in_debug_info);
     printf("debug_info size  : %lu 0x%lx\n",
         (unsigned long)b->ib_size_in_debug_info,
         (unsigned long)b->ib_size_in_debug_info);
-    printf("data offset      : 0x%lx\n",
+    printf("data offset      : %lu 0x%lx\n",
+        (unsigned long)b->ib_b_data_offset,
         (unsigned long)b->ib_b_data_offset);
-    printf("entries offset   : 0x%lx\n",
+    printf("entries offset   : %lu 0x%lx\n",
+        (unsigned long)b->ib_b_offset,
         (unsigned long)b->ib_b_offset);
     printf("entries  ptr     : 0x%lx\n",
         (unsigned long)b->ib_b_data);
     printf("entries length   : %lu 0x%lx\n",
         (unsigned long)b->ib_b_entrylength,
         (unsigned long)b->ib_b_entrylength);
-    printf("entry count      : %lu\n",
+    printf("entry count      : %lu 0x%lx\n",
+        (unsigned long)b->ib_entry_count,
         (unsigned long)b->ib_entry_count);
-    printf("entries  array   : 0x%lx\n",
+    printf("entries array    : 0x%lx\n",
         (unsigned long)b->ib_entryarray);
     fflush(stdout);
 }
@@ -145,6 +171,55 @@ get_pubxx_fields(Dwarf_Debug dbg,
         }
     }
 }
+static void
+build_errm_no_v(Dwarf_Debug dbg,
+   Dwarf_Bool is_for_pubnames,
+   const char * str1,
+   Dwarf_Error *error)
+{
+   const char *errstr  = 0;
+   int   errnum        = 0;
+   const char *secname = 0;
+   dwarfstring m;
+
+   get_pubxx_fields(dbg,is_for_pubnames,
+                0,&secname,&errnum, &errstr);
+   dwarfstring_constructor(&m);
+   dwarfstring_append(&m,(char *)errstr);
+   dwarfstring_append(&m,(char *)str1);
+   dwarfstring_append_printf_s(&m," for section %s",
+                (char*)secname);
+   _dwarf_error_string(dbg,error,errnum,
+        dwarfstring_string(&m));
+   dwarfstring_destructor(&m);
+   return;
+}
+
+static void
+build_errm_one_num(Dwarf_Debug dbg,
+   Dwarf_Bool is_for_pubnames,
+   const char * str1,
+   Dwarf_Unsigned val1,
+   Dwarf_Error *error)
+{
+   const char *errstr  = 0;
+   int   errnum        = 0;
+   const char *secname = 0;
+   dwarfstring m;
+
+            /* Something is very wrong */
+   get_pubxx_fields(dbg,is_for_pubnames,
+                0,&secname,&errnum, &errstr);
+   dwarfstring_constructor(&m);
+   dwarfstring_append(&m,(char *)errstr);
+   dwarfstring_append_printf_u(&m,(char *)str1,val1);
+   dwarfstring_append_printf_s(&m," for section %s",
+                (char*)secname);
+   _dwarf_error_string(dbg,error,errnum,
+        dwarfstring_string(&m));
+   dwarfstring_destructor(&m);
+   return;
+}
 
 static int
 load_pub_section(Dwarf_Debug dbg,
@@ -188,17 +263,10 @@ scan_block_entries(Dwarf_Debug  dbg,
     endptr =   startptr + seclen;
     if (filesize) {
         if (seclen >= filesize) {
-            dwarfstring m;
-            dwarfstring_constructor(&m);
-            dwarfstring_append(&m,(char*)errstr);
-            dwarfstring_append_printf_u(&m,
+            build_errm_one_num(dbg,for_gnu_pubnames,
                 ": section length %u"
                 " is larger than the file size in",
-                seclen);
-            dwarfstring_append(&m,(char*)secname);
-            _dwarf_error_string(dbg,error,errnum,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
+                seclen,error);
             return DW_DLV_ERROR;
         }
     }
@@ -229,6 +297,7 @@ scan_block_entries(Dwarf_Debug  dbg,
 static int
 _dwarf_count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
     struct DGI_Entry_s* entries,
+    Dwarf_Bool for_gnu_pubnames,
     Dwarf_Error* error)
 {
     Dwarf_Small *curptr = gib->ib_b_data;
@@ -249,7 +318,15 @@ _dwarf_count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         Dwarf_Unsigned offset = 0;
         char  flagbyte = 0;
 
+        if ((curptr+offsetsize) == endptr) {
+            break;
+        }
         if ((curptr+offsetsize) > endptr) {
+            build_errm_one_num(dbg,for_gnu_pubnames,
+                 " Reading an address runs off the end of "
+                 "this entry at entry %" DW_PR_DUu,
+                 entrycount,error);
+            return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg,offset,
             Dwarf_Unsigned,curptr,
@@ -262,22 +339,11 @@ _dwarf_count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         }
         /* Ensure flag and start-of-string possible. */
         if ((curptr+2) >= endptr) {
-            int errnum = 0;
-            const char *secname = 0;
-            const char*errstr = 0;
-
-            dwarfstring m;
-            get_pubxx_fields(dbg,for_pubnames,0,&secname,
-                &errnum,&errstr);
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_s(&m,"%s: "
-                "Past end of current block reading strings",
-                (char *)errstr);
-            dwarfstring_append_printf_s(&m," in %s",
-                (char *)secname);
-            _dwarf_error_string(dbg,error,errnum,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
+            build_errm_one_num(dbg,for_gnu_pubnames,
+                "Past end of current block reading strings"
+                 " Reading an address runs off the end of "
+                 "this entry at entry %" DW_PR_DUu,
+                 entrycount,error);
             return DW_DLV_ERROR;
         }
         flagbyte = *curptr;
@@ -287,24 +353,15 @@ _dwarf_count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
             curentry->ge_flag_byte = flagbyte;
             curentry->ge_string = (char *)strptr;
         }
-        for ( ; *curptr  ;++curptr,++offset ) {
-            if (curptr >= endptr) {
-                int errnum = 0;
-                const char*secname = 0;
-                const char*errstr = 0;
-                dwarfstring m;
-
-                get_pubxx_fields(dbg,for_pubnames,
-                    0,&secname,&errnum,&errstr);
-                dwarfstring_constructor(&m);
-                dwarfstring_append_printf_s(&m,"%s: "
-                    "Past end of current block reading strings",
-                    (char *)errstr);
-                dwarfstring_append_printf_s(&m," in section %s",
-                    (char*)secname);
-                _dwarf_error_string(dbg,error,errnum,
-                    dwarfstring_string(&m));
-                dwarfstring_destructor(&m);
+        for ( ; curptr && curptr < endptr ;++curptr,++offset ) {
+            if (! *curptr ) {
+                /* end of string */
+                break;
+            }
+            if (curptr > endptr) {
+                build_errm_no_v(dbg,for_gnu_pubnames,
+                  "Past end of current block reading strings",
+                   error);
                 return DW_DLV_ERROR;
             }
         }
@@ -353,7 +410,6 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
     Dwarf_Bool     is_for_pubnames = head->gi_is_pubnames;
     Dwarf_Debug    dbg = head->gi_dbg;
     Dwarf_Unsigned seclen = head->gi_section_length;
-    int errset = FALSE;
 
     baseptr = head->gi_section_data;
     endptr = baseptr + head->gi_section_length;
@@ -375,25 +431,20 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         if (!length) {
             /*  Must be end of the section */
             if (curptr != endptr) {
-                const char *errstr  = 0;
-                int   errnum        = 0;
-                const char *secname = 0;
-                dwarfstring m;
-
-                /* Something is very wrong */
-                get_pubxx_fields(dbg,is_for_pubnames,
-                    0,&secname,&errnum, &errstr);
-                dwarfstring_constructor(&m);
-                dwarfstring_append(&m,(char *)errstr);
-                dwarfstring_append_printf_s(&m,": encountered zero"
-                    " area length  before end of %s",
-                    (char*)secname);
-                _dwarf_error_string(dbg,error,errnum,
-                    dwarfstring_string(&m));
-                dwarfstring_destructor(&m);
+                build_errm_no_v(dbg,is_for_pubnames,
+                  ": encountered zero area length "
+                  "before the section end.",
+                   error);
                 return DW_DLV_ERROR;
             }
             return DW_DLV_OK;
+        }
+        if (length >= head->gi_section_length) {
+            build_errm_one_num(dbg,is_for_pubnames,
+                ": block"
+                " length %" DW_PR_DUu " is too big",
+                length,error);
+            return DW_DLV_ERROR;
         }
         gib->ib_index = i;
         gib->ib_head  = head;
@@ -401,101 +452,63 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         gib->ib_block_length        = length;
         gib->ib_block_length_offset = dataoffset;
         dataoffset += offsetsize + extensize;
+        /* Now past length field. */
         gib->ib_b_data_offset       = dataoffset;
+        if ((dataoffset + length) > head->gi_section_length){
+            build_errm_one_num(dbg,is_for_pubnames,
+                 " header length is %u which runs past the "
+                 "end of section suggesting corrupt data",
+                 length,error);
+            return DW_DLV_ERROR;
+        }
         READ_UNALIGNED_CK(dbg,version,Dwarf_Half,curptr,
             DWARF_HALF_SIZE,error,endptr);
+        if (version != 2) {
+            build_errm_one_num(dbg,is_for_pubnames,
+                 " version is %u, not 2,"
+                " which suggests corrupt data",version,error);
+            return DW_DLV_ERROR;
+        }
         curptr     += DWARF_HALF_SIZE;
         dataoffset += DWARF_HALF_SIZE;
         gib->ib_version = version;
         READ_UNALIGNED_CK(dbg,offset_into_debug_info,
             Dwarf_Unsigned,curptr,
             offsetsize,error,endptr);
-        if (errset || dbg->de_debug_info.dss_size < 
-            offset_into_debug_info) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                " DW_DLE_GNU_PUBNAMES_ERROR:"
-                " debug_info size of  0x%" DW_PR_DUx " is"
-                " smaller than the .debug_gnu_pub* ",
-                dbg->de_debug_info.dss_size);
-            dwarfstring_append_printf_u(&m,
-                " offset into debug_info of 0x%" DW_PR_DUx
-                " requires",offset_into_debug_info);
-            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
-        }
         curptr     += offsetsize;
         dataoffset += offsetsize;
         gib->ib_offset_in_debug_info = offset_into_debug_info;
         READ_UNALIGNED_CK(dbg,length_of_CU_in_debug_info,
             Dwarf_Unsigned,curptr,
             offsetsize,error,endptr);
-        if (errset || dbg->de_debug_info.dss_size < 
-            length_of_CU_in_debug_info) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_GNU_PUBNAMES_ERROR "
-                " debug_info length of  0x%" DW_PR_DUx " is"
-                " less than ",dbg->de_debug_info.dss_size);
-            dwarfstring_append_printf_u(&m," the 0x%" DW_PR_DUx 
-                " the .debug_gnu_pub* field requires", 
-                length_of_CU_in_debug_info);
-            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
-        }
-        if (errset ||
-            (length_of_CU_in_debug_info + offset_into_debug_info)
-            > dbg->de_debug_info.dss_size) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_GNU_PUBNAMES_ERROR "
-                " debug_info length of  0x" DW_PR_DUx " is"
-                " less than ",dbg->de_debug_info.dss_size);
-            dwarfstring_append_printf_u(&m," the 0x%" DW_PR_DUx 
-                " the .debug_gnu_pub* offset+length  requires", 
-                length_of_CU_in_debug_info + offset_into_debug_info);
-            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
-        }
         gib->ib_size_in_debug_info = length_of_CU_in_debug_info;
         dataoffset += offsetsize;
         curptr     += offsetsize;
-        if (offsetsize != 4 || offsetsize != 8) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_GNU_PUBNAMES_ERROR "
-                " offset size  is %u"
-                " which is not usable",offsetsize);
-            _dwarf_error_string(dbg,error,DW_DLE_GNU_PUBNAMES_ERROR, 
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
+        if (offsetsize != 4 && offsetsize != 8) {
+            build_errm_one_num(dbg,is_for_pubnames,
+                 " offset size  is %u"
+                " which is not usable",offsetsize,error);
             return DW_DLV_ERROR;
         }
         gib->ib_b_data = curptr;
         gib->ib_b_offset = dataoffset;
-        gib->ib_b_entrylength = length - (2 + (2*offsetsize));
-        /* Followed by 4 bytes of zeroes */
-        gib->ib_b_entrylength -= 4;
-        /* Set for next block., add in 4 for ending zeros */
-        dataoffset = gib->ib_block_length_offset + length + 4;
-        res = _dwarf_count_entries_in_block(gib,0,error);
+        gib->ib_b_entrylength = length - (2 + 
+            (2*offsetsize)) -4;
+        if ((gib->ib_b_data +gib->ib_b_entrylength)
+            > endptr) { 
+            build_errm_one_num(dbg,is_for_pubnames,
+                 " length is %u which runs past the "
+                 "end of section suggesting corrupt data",
+                 length,error);
+            return DW_DLV_ERROR;
+        }
+        res = _dwarf_count_entries_in_block(gib,0,is_for_pubnames,
+             error);
         if (res != DW_DLV_OK) {
             return res;
         }
+        /* Set for next block., add in 4 for ending zeros */
+        dataoffset = gib->ib_block_length_offset + length + 4;
     }
     return DW_DLV_OK;
 }
@@ -517,25 +530,14 @@ fill_in_entries(Dwarf_Gnu_Index_Head head,
     entryarray = (struct DGI_Entry_s*)calloc(count,
         sizeof(struct DGI_Entry_s));
     if (!entryarray) {
-        int err = 0;
-        const char *errstr  = 0;
-        const char *secname  = 0;
-        dwarfstring m;
-
-        get_pubxx_fields(dbg,for_gnu_pubnames,0,&secname,
-            &err,&errstr);
-        dwarfstring_constructor_static(&m,buf,sizeof(buf));
-        dwarfstring_append(&m,(char *)errstr);
-        dwarfstring_append_printf_s(&m,": Unable to allocate "
-            "block_entries. Out of memory creating %s record.",
-            (char *)secname);
-        _dwarf_error_string(dbg,error,err,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
+        build_errm_no_v(dbg,for_gnu_pubnames,
+            ": Unable to allocate "
+            "block_entries. Out of memory creating record.",
+            error);
         return DW_DLV_ERROR;
     }
     res = _dwarf_count_entries_in_block(gib,
-        entryarray,error);
+        entryarray,for_gnu_pubnames,error);
     if (res != DW_DLV_OK) {
         free(entryarray);
         return res;
@@ -583,21 +585,10 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     head = (Dwarf_Gnu_Index_Head)
         _dwarf_get_alloc(dbg,DW_DLA_GNU_INDEX_HEAD,1);
     if (!head) {
-        dwarfstring m;
-        int err = 0;
-        const char *errstr  = 0;
-        const char *secname  = 0;
-
-        get_pubxx_fields(dbg,for_gnu_pubnames,0,&secname,
-            &err,&errstr);
-        dwarfstring_constructor_static(&m,buf,sizeof(buf));
-        dwarfstring_append(&m,(char *)errstr);
-        dwarfstring_append_printf_s(&m,": Unable to allocate "
-            "a header record. Out of memory creating %s record.",
-            (char *)secname);
-        _dwarf_error_string(dbg,error,err,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
+        build_errm_no_v(dbg,for_gnu_pubnames,
+            " Unable to allocate "
+            "a header record. Out of memory creating record.",
+            error);
         return DW_DLV_ERROR;
     }
     head->gi_dbg = dbg;
@@ -607,25 +598,16 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     head->gi_section_length = for_gnu_pubnames?
         dbg->de_debug_gnu_pubnames.dss_size:
         dbg->de_debug_gnu_pubtypes.dss_size;
+    head->gi_section_end = head->gi_section_data +
+        head->gi_section_length;
     head->gi_is_pubnames = for_gnu_pubnames;
     iblock_array = calloc(count,
         sizeof(struct Dwarf_Gnu_IBlock_s));
     if (!iblock_array) {
-        dwarfstring m;
-        int err = 0;
-        const char *errstr = 0;
-
-        get_pubxx_fields(dbg,for_gnu_pubnames,0,0,
-            &err,&errstr);
-        dwarfstring_constructor_static(&m,buf,sizeof(buf));
-        dwarfstring_append(&m,(char *)errstr);
-        dwarfstring_append_printf_u(&m,": Unable to allocate "
-            " %u block records. Out of memory.",count);
-        _dwarf_error_string(dbg,error,err,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        dwarf_gnu_index_dealloc(head);
-        head = 0;
+        build_errm_one_num(dbg,for_gnu_pubnames,
+            "Unable to allocate "
+            " %u block records. Out of memory.",
+            count,error);
         return DW_DLV_ERROR;
     }
     head->gi_blockarray = iblock_array;

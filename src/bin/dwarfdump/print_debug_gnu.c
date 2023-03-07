@@ -42,6 +42,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 #include "print_debug_gnu.h"
+#include "print_sections.h"
 
 char *ikind_types[8] = {
     "none",
@@ -55,9 +56,11 @@ char *ikind_types[8] = {
 
 static int
 print_block_entries(
+    Dwarf_Debug dbg,
     Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned blocknum,
     Dwarf_Unsigned entrycount,
+    Dwarf_Unsigned max_offset,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned i = 0;
@@ -96,6 +99,19 @@ print_block_entries(
         }
         printf("    [%3" DW_PR_DUu "] 0x%" DW_PR_XZEROS DW_PR_DUx,
             i,offset_in_debug_info);
+        if (offset_in_debug_info >= max_offset) {
+            printf("  ERROR: Block %" DW_PR_DUu
+                " entry %" DW_PR_DUu
+                " debug_info offset 0x%" DW_PR_DUx
+                " is greater than the debug_info section size" 
+                " of 0x%" DW_PR_DUx
+                ", something is wrong.\n",
+                blocknum,
+                i,offset_in_debug_info,max_offset);
+            glflags.gf_count_major_errors++;
+            return res;
+             
+        }
         printf(" %s,%-8s",
             staticorglobal?"s":"g",
             ikind_types[0x7 & typeofentry]);
@@ -341,6 +357,52 @@ print_die_basics(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  max_offset can be zero if no .debug_info
+    section present. */
+static void
+note_info_errors(Dwarf_Unsigned i,
+  Dwarf_Unsigned max_offset,
+  Dwarf_Unsigned offset_into_debug_info,
+  Dwarf_Unsigned size_of_debug_info_area)
+{
+    if (size_of_debug_info_area > max_offset) {
+        printf("  ERROR: Block %" DW_PR_DUu
+                " required size of .debug_info"
+                " is %" DW_PR_DUu
+                " which is greater than the size of "
+                ".debug_info of %" DW_PR_DUu
+                " bytes\n",
+                i,size_of_debug_info_area,max_offset);
+        glflags.gf_count_major_errors++;
+        return;
+    } 
+    if (offset_into_debug_info >= max_offset) {
+        printf("  ERROR: Block %" DW_PR_DUu
+                " required offset into .debug_info"
+                " is %" DW_PR_DUu
+                " which is greater than the size of "
+                ".debug_info of %" DW_PR_DUu
+                " bytes\n",
+                i,offset_into_debug_info,max_offset);
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    if ((size_of_debug_info_area+offset_into_debug_info)
+            > max_offset) {
+        printf("  ERROR: Block %" DW_PR_DUu
+                " required offset+size into .debug_info"
+                " is %" DW_PR_DUu
+                " which is greater than the size of "
+                ".debug_info of %" DW_PR_DUu
+                " bytes\n",
+                i,offset_into_debug_info+size_of_debug_info_area,
+                max_offset);
+        glflags.gf_count_major_errors++;
+        return;
+    }
+}
+
+
 static int
 print_all_blocks(Dwarf_Debug dbg,
     Dwarf_Gnu_Index_Head head,
@@ -349,6 +411,8 @@ print_all_blocks(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned i = 0;
     int res = 0;
+
+    Dwarf_Unsigned max_offset = get_info_max_offset(dbg);
 
     for ( ; i < block_count; ++i) {
         Dwarf_Unsigned block_length            = 0;
@@ -384,6 +448,8 @@ print_all_blocks(Dwarf_Debug dbg,
             "0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset_into_debug_info);
         printf("  Size of area in .debug_info section : "
             "%" DW_PR_DUu "\n",size_of_debug_info_area);
+        note_info_errors(i,max_offset,offset_into_debug_info,
+            size_of_debug_info_area);
         printf("  Number of entries in block          : "
             "%" DW_PR_DUu "\n",entrycount);
         /*  The CU offsets appear to be those in
@@ -430,7 +496,7 @@ print_all_blocks(Dwarf_Debug dbg,
                 dwarf_dealloc_die(die);
             }
         }
-        res = print_block_entries(head,i,entrycount,error);
+        res = print_block_entries(dbg,head,i,entrycount,max_offset,error);
         if (res == DW_DLV_ERROR) {
             return res;
         }

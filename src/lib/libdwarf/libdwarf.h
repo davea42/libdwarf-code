@@ -7016,9 +7016,19 @@ DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
     @param dw_offset_into_debug_info
     On success set to the offset, in .debug_info, of
     the data for this block.
+    The returned offset may be outside the bounds
+    of the actual .debug_info section, sucn a possibility
+    does not cause the function to return DW_DLV_ERROR.
     @param dw_size_of_debug_info_area
     On success set to the size in bytes, in .debug_info, of
-    the area this block refersto.
+    the area this block refers to.
+    The returned dw_ dw_size_of_debug_info_are
+    plus dw_offset_into_debug_info may be outside the bounds
+    of the actual .debug_info section, sucn a possibility
+    does not cause the function to return DW_DLV_ERROR.
+    Use  dwarf_get_section_max_offsets_d()
+    to learn the size of .debug_info and optionally other
+    sections as well.
     @param dw_count_of_index_entries
     On success set to the count of index entries in
     this particlular block number.

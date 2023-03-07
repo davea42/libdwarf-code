@@ -86,6 +86,7 @@ struct Dwarf_Gnu_Index_Head_s {
     Dwarf_Debug      gi_dbg;
     Dwarf_Small    * gi_section_data;
     Dwarf_Unsigned   gi_section_length;
+    Dwarf_Small    * gi_section_end;
     struct Dwarf_Gnu_IBlock_s *gi_blockarray;
     Dwarf_Unsigned   gi_blockcount;
     Dwarf_Bool       gi_is_pubnames; /* if false is pubtypes */
