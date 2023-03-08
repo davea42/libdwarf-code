@@ -54,6 +54,9 @@ char *ikind_types[8] = {
     "unknown6",
     "unknown7" };
 
+static int printed_infosize_error_a = FALSE;
+static int printed_infosize_error_b = FALSE;
+
 static int
 print_block_entries(
     Dwarf_Debug dbg,
@@ -99,18 +102,18 @@ print_block_entries(
         }
         printf("    [%3" DW_PR_DUu "] 0x%" DW_PR_XZEROS DW_PR_DUx,
             i,offset_in_debug_info);
-        if (offset_in_debug_info >= max_offset) {
+        if (!printed_infosize_error_a &&
+            offset_in_debug_info >= max_offset) {
+            printed_infosize_error_a = TRUE;
             printf("  ERROR: Block %" DW_PR_DUu
                 " entry %" DW_PR_DUu
                 " debug_info offset 0x%" DW_PR_DUx
-                " is greater than the debug_info section size" 
+                " is greater than the debug_info section size"
                 " of 0x%" DW_PR_DUx
-                ", something is wrong.\n",
+                ", something is wrong. (message will not repeat)\n",
                 blocknum,
                 i,offset_in_debug_info,max_offset);
             glflags.gf_count_major_errors++;
-            return res;
-             
         }
         printf(" %s,%-8s",
             staticorglobal?"s":"g",
@@ -361,47 +364,58 @@ print_die_basics(Dwarf_Debug dbg,
     section present. */
 static void
 note_info_errors(Dwarf_Unsigned i,
-  Dwarf_Unsigned max_offset,
-  Dwarf_Unsigned offset_into_debug_info,
-  Dwarf_Unsigned size_of_debug_info_area)
+    Dwarf_Unsigned max_offset,
+    Dwarf_Unsigned offset_into_debug_info,
+    Dwarf_Unsigned size_of_debug_info_area)
 {
+    if (printed_infosize_error_b) {
+        return;
+    }
     if (size_of_debug_info_area > max_offset) {
         printf("  ERROR: Block %" DW_PR_DUu
-                " required size of .debug_info"
-                " is %" DW_PR_DUu
-                " which is greater than the size of "
-                ".debug_info of %" DW_PR_DUu
-                " bytes\n",
-                i,size_of_debug_info_area,max_offset);
+            " required size of .debug_info"
+            " is %" DW_PR_DUu
+            " (0x%" DW_PR_DUx ")"
+            " which is greater than the size of "
+            ".debug_info of %" DW_PR_DUu
+            " bytes (message will not repeat)\n",
+            i,
+            size_of_debug_info_area,size_of_debug_info_area,
+            max_offset);
+        printed_infosize_error_b = TRUE;
         glflags.gf_count_major_errors++;
         return;
-    } 
+    }
     if (offset_into_debug_info >= max_offset) {
         printf("  ERROR: Block %" DW_PR_DUu
-                " required offset into .debug_info"
-                " is %" DW_PR_DUu
-                " which is greater than the size of "
-                ".debug_info of %" DW_PR_DUu
-                " bytes\n",
-                i,offset_into_debug_info,max_offset);
+            " required offset into .debug_info"
+            " is %" DW_PR_DUu
+            " (0x%" DW_PR_DUx ")"
+            " which is greater than the size of "
+            ".debug_info of %" DW_PR_DUu
+            " bytes (message will not repeat)\n",
+            i,offset_into_debug_info,
+            offset_into_debug_info,
+            max_offset);
+        printed_infosize_error_b = TRUE;
         glflags.gf_count_major_errors++;
         return;
     }
     if ((size_of_debug_info_area+offset_into_debug_info)
-            > max_offset) {
+        > max_offset) {
         printf("  ERROR: Block %" DW_PR_DUu
-                " required offset+size into .debug_info"
-                " is %" DW_PR_DUu
-                " which is greater than the size of "
-                ".debug_info of %" DW_PR_DUu
-                " bytes\n",
-                i,offset_into_debug_info+size_of_debug_info_area,
-                max_offset);
+            " required offset+size into .debug_info"
+            " is %" DW_PR_DUu
+            " which is greater than the size of "
+            ".debug_info of %" DW_PR_DUu
+            " bytes (message will not repeat)\n",
+            i,offset_into_debug_info+size_of_debug_info_area,
+            max_offset);
+        printed_infosize_error_b = TRUE;
         glflags.gf_count_major_errors++;
         return;
     }
 }
-
 
 static int
 print_all_blocks(Dwarf_Debug dbg,
@@ -496,7 +510,8 @@ print_all_blocks(Dwarf_Debug dbg,
                 dwarf_dealloc_die(die);
             }
         }
-        res = print_block_entries(dbg,head,i,entrycount,max_offset,error);
+        res = print_block_entries(dbg,head,i,entrycount,
+            max_offset,error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -528,6 +543,8 @@ print_debug_gnu(Dwarf_Debug dbg,
     struct esb_s truename;
     unsigned int i = 0;
 
+    printed_infosize_error_a = FALSE;
+    printed_infosize_error_b = FALSE;
     for (i = 0; i < 2; i++) {
         esb_constructor_fixed(&truename,buf,
             DWARF_SECNAME_BUFFER_SIZE);
