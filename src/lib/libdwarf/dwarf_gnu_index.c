@@ -186,6 +186,7 @@ build_errm_no_v(Dwarf_Debug dbg,
                 0,&secname,&errnum, &errstr);
    dwarfstring_constructor(&m);
    dwarfstring_append(&m,(char *)errstr);
+   dwarfstring_append(&m," ");
    dwarfstring_append(&m,(char *)str1);
    dwarfstring_append_printf_s(&m," for section %s",
                 (char*)secname);
@@ -212,6 +213,7 @@ build_errm_one_num(Dwarf_Debug dbg,
                 0,&secname,&errnum, &errstr);
    dwarfstring_constructor(&m);
    dwarfstring_append(&m,(char *)errstr);
+   dwarfstring_append(&m," ");
    dwarfstring_append_printf_u(&m,(char *)str1,val1);
    dwarfstring_append_printf_s(&m," for section %s",
                 (char*)secname);
@@ -251,6 +253,7 @@ scan_block_entries(Dwarf_Debug  dbg,
     Dwarf_Unsigned count = 0;
     Dwarf_Unsigned filesize = 0;
     int errnum          = 0;
+    Dwarf_Unsigned  totalframessize = 0;
     const char * errstr = 0;
     const char * secname = 0;
 
@@ -285,6 +288,14 @@ scan_block_entries(Dwarf_Debug  dbg,
             Unclear 64bit is not allowed. */
         READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
             curptr,offsetsize,extensize,error,seclen,endptr);
+        totalframessize += length +offsetsize+extensize;
+        if (length > seclen || totalframessize > seclen) {
+            build_errm_one_num(dbg,for_gnu_pubnames,
+                "Sum of frame fde/cies sizes 0x%" DW_PR_DUx
+                " exceeds section size",totalframessize,error);
+            return DW_DLV_ERROR;
+        }
+           
         ++count;
         curptr +=  length -offsetsize - extensize;
         curptr += 4;
@@ -439,7 +450,9 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
             }
             return DW_DLV_OK;
         }
-        if (length >= head->gi_section_length) {
+        if (length > head->gi_section_length ||
+            (length+offsetsize+extensize) >
+            head->gi_section_length) {
             build_errm_one_num(dbg,is_for_pubnames,
                 ": block"
                 " length %" DW_PR_DUu " is too big",
