@@ -1,3 +1,125 @@
+2023-03-07:  David Anderson
+    commit 86671059c1c240ae56433fa94993dcd28df2ae7d
+
+    Corrected several things to get correct processing.
+    Tests for appropriate values from READ_AREA_LENGTH_CK
+    were nowhere exactly correct, so all have been updated
+    (see last two commits).
+    This should finally fix oss fuzz  56636.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+    Added more precise  READ_AREA_LENGTH_CK tests.
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+
+2023-03-07:  David Anderson
+    commit 90da06a9de8e4bbdf4fe20e12322b73133166dc0
+
+    Improving the READ_AREA_LENGTH calls as
+    revealed by oss fuzz 56636
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2023-03-07:  David Anderson
+    commit bb99fe7ddb2bc6601bcb0ee30ced6a8cc8cb0564
+
+    Related to oss fuzz 56536, some placew where
+    READ_AREA_LENGTH values where not fully checked.
+    This will require a revisit in a few of these cases
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2023-03-07:  David Anderson
+    commit 832ee2aa1a8e30d7afe4fc99adcc2bd15af0802c
+
+    Change so pointless repetition of certain
+    errors in .debug_gnu_pubnames/types are avoided.
+    Fixed indents.
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+
+2023-03-07:  David Anderson
+    commit 973f16ae10e48d75a4eb0d3d9843a5b687eed8eb
+
+    Vulnerabilities update.
+            modified:   bugxml/dwarfbug.xml
+
+2023-03-07:  David Anderson
+    commit d2c18155f5d04011ac7d81d0ea696a9d34daa0c8
+
+    Latest info on vulnerabilities
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-07:  David Anderson
+    commit b55ce0185528bf0a99e375cf8f3c84b76b6881a3
+    Merge: 48bbdb9d d9c14b2b
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Due to fuzz issues.
+
+2023-03-07:  David Anderson
+    commit 48bbdb9d9fa5a400e920e5c9564243e4470bd88d
+
+    Fixes here for several fuzzing issues. WIll show numbers
+    shortly.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-03-07:  madamantis-leviathan
+    commit d9c14b2b12a3313c78bbfa808e12ed242b7f0adc
+
+    Remove functions that are no longer available from the source (#154)
+
+2023-03-05:  David Anderson
+    commit a4a5f55e0bf0678ea1c903b3ee417e4d4a22fb41
+
+    Good version.
+            new file:   bugxml/dwarfbug.xml
+
+    Not final, but at least no leakage now.
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+
+2023-03-05:  David Anderson
+    commit bcd9f7aef270e850f04a805f685ee8cb60ce85f9
+
+    New vuln.
+            modified:   data.txt
+
+    Updates.
+            modified:   dwarfbug.html
+            modified:   dwarfbuglohi.html
+            deleted:    dwarfbuglohi.xml
+
+    For now, complete.
+            modified:   readbugs.py
+
+2023-03-05:  David Anderson
+    commit 20552b46c678dd30d6ab1270ddf4054cb2d412aa
+
+    So we have the bug html inside the repo.
+            new file:   bugxml/dwarfbug.html
+            new file:   bugxml/dwarfbuglohi.html
+            new file:   bugxml/dwarfbuglohi.xml
+            modified:   bugxml/readbugs.py
+
+    Not Quite Right yet. Closer to right.
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+
+2023-03-03:  David Anderson
+    commit 590c4ca0a2a66d80f5ed1a9588656255e8e29ab7
+
+    Updated to have git log data.
+            modified:   ChangeLog
+
 2023-03-03:  David Anderson
     commit e7cce2398d35f6edac0cadab0e596423a73aaaa0
 
