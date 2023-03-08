@@ -1,4 +1,17 @@
 
+id: DW202303-005
+cve:
+fuzzer: oss-fuzz id: 56676
+datereported: 2023-03-04
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt frame section.
+product: libdwarf
+description:  TBD
+datefixed: 
+references: regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
+gitfixid: 
+tarrelease: 
+endrec: DW202303-005
 
 id: DW202303-004
 cve:
