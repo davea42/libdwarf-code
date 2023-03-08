@@ -731,7 +731,6 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
         }
         {
             Dwarf_Small * localend =pubnames_like_ptr + length;
-
             if ((length > section_length) ||
                 (localend > section_end_ptr)){
                 _dwarf_global_cu_len_error_msg(dbg,

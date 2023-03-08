@@ -147,7 +147,9 @@ _dwarf_get_aranges_list(Dwarf_Debug dbg,
         /*  arange_ptr has been incremented appropriately past
             the length field by READ_AREA_LENGTH. */
 
-        if (area_length >  dbg->de_debug_aranges.dss_size) {
+        if (area_length >  dbg->de_debug_aranges.dss_size ||
+            (area_length +local_length_size+local_extension_size)
+            > dbg->de_debug_aranges.dss_size ) {
             free_aranges_chain(dbg,head_chain);
             _dwarf_error(dbg, error,DW_DLE_ARANGES_HEADER_ERROR);
             return DW_DLV_ERROR;

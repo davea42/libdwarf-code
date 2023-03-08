@@ -444,7 +444,9 @@ read_info_area_length_and_check(Dwarf_Debug dbg,
         A preliminary sanity check. */
     max_cu_global_offset =  offset + length +
         local_extension_size + local_length_size;
-    if (length > section_size) {
+    if (length > section_size ||
+        (length+local_length_size + local_extension_size)>
+        section_size) {
         _dwarf_error(dbg, error, DW_DLE_CU_LENGTH_ERROR);
         return DW_DLV_ERROR;
     }

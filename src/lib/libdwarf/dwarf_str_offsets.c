@@ -258,9 +258,8 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
 
     }
     if (length > secsize  ||
-        secsize <
-        /* 4 is for the version and padding bytes. */
-        (length+local_extension_size +local_offset_size)) {
+        (length+local_extension_size +local_offset_size) >
+        secsize) {
         dwarfstring m;
 
         dwarfstring_constructor(&m);

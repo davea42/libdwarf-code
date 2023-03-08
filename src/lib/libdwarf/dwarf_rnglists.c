@@ -213,7 +213,8 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
         data,offset_size,exten_size,
         error,
         sectionlength,end_data);
-    if (arealen > sectionlength) {
+    if (arealen > sectionlength ||
+        (arealen+offset_size+exten_size) > sectionlength) {
         dwarfstring m;
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,

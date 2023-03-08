@@ -1312,12 +1312,17 @@ _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
         frame_ptr, local_length_size,
         local_extension_size,error,
         section_length_in,section_end);
-
     if (length == 0) {
         /*  nul bytes at end of section, seen at end of egcs eh_frame
             sections (in a.out). Take this as meaning no more CIE/FDE
             data. We should be very close to end of section. */
         return DW_DLV_NO_ENTRY;
+    }
+    if (length > section_length_in ||
+        (length +local_length_size + local_extension_size) >
+        section_length_in) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
     }
     if ((frame_ptr + local_length_size) >= section_end) {
         _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
