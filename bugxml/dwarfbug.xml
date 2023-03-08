@@ -3,6 +3,33 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>oss-fuzz id: 56676</fuzzer>
+
+<datereported>2023-03-04</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Denial of service with corrupt frame section.
+</vulnerability>
+
+<description>  TBD
+</description>
+
+<datefixed></datefixed>
+
+<references> regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
+</references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>oss-fuzz id: 56666</fuzzer>
 
 <datereported>2023-03-04</datereported>
