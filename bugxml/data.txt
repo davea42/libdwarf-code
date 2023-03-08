@@ -1,4 +1,73 @@
 
+id: DW202303-009
+cve:
+fuzzer: oss-fuzz id: 56443
+datereported: 2023-03-01
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt line table header
+product: libdwarf
+description: With any one of a small set of corrupted data
+  fields in a line table header that were not checked
+  for sanity the library could try to malloc a giant space,
+  which could take a long time to succeed or fail.
+  After that almost anything could happen.
+  Same as ossfuzz 56548.
+datefixed: 2023-03-03
+references: regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
+gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
+tarrelease:
+endrec: DW202303-009
+
+
+
+id: DW202303-008
+cve:
+fuzzer: oss-fuzz id: 56530 
+datereported: 2023-03-01
+reportedby: David Korczynski
+vulnerability: Denial of Service with corrupt attribute
+product: libdwarf
+description: With a particular data corruption
+  dwarf_attrlist() failed to return an error and
+  the library would dereference a stale pointer.
+  This also provoked a memory leak.
+  Same bug as DW202303-001
+datefixed: 2023-03-02
+references: ossfuzz56530/fuzz_findfuncbypc-6272642689925120
+gitfixid: 948352178dc791796ed574a961191844d8322493
+tarrelease:
+endrec: DW202303-008
+
+id: DW202303-007
+cve:
+fuzzer: oss-fuzz id: 56735
+datereported: 2023-03-04
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt debug_macro section.
+product: libdwarf
+description:  TBD
+datefixed:
+references: regressiontests/
+gitfixid:
+tarrelease:
+endrec: DW202303-007
+
+id: DW202303-006
+cve:
+fuzzer: oss-fuzz id: 56676
+datereported: 2023-03-04
+reportedby: David Korczynski
+vulnerability:  Denial of service with corrupt gnu_pubnames section.
+product: libdwarf
+description:  TBD
+datefixed:
+references: regressiontests/ossfuzz56676/fuzz_gdbindex-5240324382654464
+gitfixid:
+tarrelease:
+endrec: DW202303-006
+
+
+
 id: DW202303-005
 cve:
 fuzzer: oss-fuzz id: 56676
@@ -21,10 +90,10 @@ reportedby: David Korczynski
 vulnerability:  Denial of service with corrupt gnu_index section
 product: libdwarf
 description: A corrupted .debug_gnu_index header was not
-properly checked, and the calculation setting
-up the table in memory was not correctly set up.
+  properly checked, and the calculation setting
+  up the table in memory was not correctly set up.
 datefixed: 
-references: regressiontests/
+references: regressiontests/ossfuzz56666/fuzz_gnu_index-4803574417981440
 gitfixid: 
 tarrelease: 
 endrec: DW202303-004
@@ -37,10 +106,10 @@ reportedby: David Korczynski
 vulnerability:  Denial of service with corrupt .debug_addr section
 product: libdwarf
 description: A corrupted .debug_addr header was not
-properly checked, and the calculation setting
-up the table in memory was not correctly set up.
-Calling dwarf_debug_addr_by_index() could crash the calling
-application.
+  properly checked, and the calculation setting
+  up the table in memory was not correctly set up.
+  Calling dwarf_debug_addr_by_index() could crash the calling
+  application.
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56636/fuzz_debug_addr_access-4801779658522624.fuzz
 gitfixid: a3ab3f16ab67f4d976561fe0d863e1ed8b71f3c6 
@@ -55,10 +124,11 @@ reportedby: David Korczynski
 vulnerability:  Denial of service with corrupt line table header
 product: libdwarf
 description: With any one of a small set of corrupted data
-fields in a line table header that were not checked
-for sanity the library could try to malloc a giant space,
-which could take a long time to succeed or fail.
-After that almost anything could happen.
+  fields in a line table header that were not checked
+  for sanity the library could try to malloc a giant space,
+  which could take a long time to succeed or fail.
+  After that almost anything could happen.
+  Same bug fix as 56443
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56548/fuzz_findfuncbypc-5073632331431936
 gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
@@ -67,37 +137,36 @@ endrec: DW202303-002
 
 id: DW202303-001
 cve:
-fuzzer: oss-fuzz id: 56465  56530 56443
+fuzzer: oss-fuzz id: 56465 
 datereported: 2023-03-01
 reportedby: David Korczynski
 vulnerability: Denial of Service with corrupt attribute
 product: libdwarf
 description: With a particular data corruption
-dwarf_attrlist() failed to return an error and
-the library would dereference a stale pointer.
-This also provoked a memory leak.
+  dwarf_attrlist() failed to return an error and
+  the library would dereference a stale pointer.
+  This also provoked a memory leak.
 datefixed: 2023-03-02
 references: regressiontests/ossfuzz56465/fuzz_die_cu_offset-5866690199289856
 gitfixid: 948352178dc791796ed574a961191844d8322493
 tarrelease: 
 endrec: DW202303-001
 
-
-
-
 id: DW202301-001
 cve:
 fuzzer: 
 datereported: 2023-01-24
-reportedby: David Korczynski
+reportedby: Steve Kaufmann
 vulnerability: Denial of Service with DW_FORM_strx3 
 product: libdwarf
-description: 
-
+description: Any use of DW_FORM_strx3 or
+  DW_FORM_addrx3 would get libdwarf very confused
+  and incorrect return values
+  and or  a library crash might result.
 datefixed: 2023-01-24
-references: regressiontests/
-gitfixid: 
-tarrelease: 
+references: regressiontests/kaufmann2/ct-bad.o
+gitfixid: 97e90eb7ab98df60b8da0bdc2ac855711c4db804
+tarrelease: libdwarf-0.6.0.tar.xz
 endrec: DW202301-001
 
 
