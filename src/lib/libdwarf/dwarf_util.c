@@ -1074,6 +1074,14 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
     READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
         cuptr, local_length_size, local_extension_size,
         error,section_length,section_end_ptr);
+    if (length >  section_length ||
+        (length+local_length_size + local_extension_size) >
+        section_length) {
+        _dwarf_create_area_len_error(dbg, error,
+             length+local_length_size + local_extension_size,
+             section_length);
+        return DW_DLV_ERROR;
+    }
 
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
         cuptr, DWARF_HALF_SIZE,error,section_end_ptr);
@@ -1532,24 +1540,27 @@ _dwarf_read_unaligned_ck_wrapper(Dwarf_Debug dbg,
 int
 _dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
     Dwarf_Unsigned *out_value,
-    Dwarf_Small **readfrom,
-    int    *  length_size_out,
-    int    *  exten_size_out,
-    Dwarf_Unsigned sectionlength,
-    Dwarf_Small *endsection,
-    Dwarf_Error *error)
+    Dwarf_Small   **readfrom,
+    int            *length_size_out,
+    int            *exten_size_out,
+    Dwarf_Unsigned  sectionlength,
+    Dwarf_Small    *endsection,
+    Dwarf_Error    *error)
 {
     Dwarf_Small *ptr = *readfrom;
-    Dwarf_Unsigned val = 0;
+    Dwarf_Unsigned length = 0;
     int length_size = 0;
     int exten_size = 0;
 
-    READ_AREA_LENGTH_CK(dbg,val,Dwarf_Unsigned,
+    /*  This verifies the lenght itself can be read,
+        callers must verify the length is appropriate. */
+    READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
         ptr,length_size,exten_size,
         error,
         sectionlength,endsection);
+    /*  It is up to callers to check the length etc. */
     *readfrom = ptr;
-    *out_value = val;
+    *out_value = length;
     *length_size_out = length_size;
     *exten_size_out = exten_size;
     return DW_DLV_OK;
