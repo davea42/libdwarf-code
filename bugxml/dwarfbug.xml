@@ -3,6 +3,176 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-07</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>dwarfdump</product>
+
+<vulnerability>  Segmentation Violation in dwarfdump
+</vulnerability>
+
+<description> Segmentation Violation when
+  presented with option --file-abi=
+</description>
+
+<datefixed></datefixed>
+
+<references></references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-07</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>dwarfdump</product>
+
+<vulnerability>  Stack overflow dwarfdump
+</vulnerability>
+
+<description> Stack overflow in function skipwhite.
+</description>
+
+<datefixed></datefixed>
+
+<references></references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>oss-fuzz id: 56443</fuzzer>
+
+<datereported>2023-03-01</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Denial of service with corrupt line table header
+</vulnerability>
+
+<description> With any one of a small set of corrupted data
+  fields in a line table header that were not checked
+  for sanity the library could try to malloc a giant space,
+  which could take a long time to succeed or fail.
+  After that almost anything could happen.
+  Same as ossfuzz 56548.
+</description>
+
+<datefixed>2023-03-03</datefixed>
+
+<references> regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
+</references>
+
+<gitfixid>89d3beccd161657760585967255bbabf67e5b4c9</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>oss-fuzz id: 56530</fuzzer>
+
+<datereported>2023-03-01</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Denial of Service with corrupt attribute
+</vulnerability>
+
+<description> With a particular data corruption
+  dwarf_attrlist() failed to return an error and
+  the library would dereference a stale pointer.
+  This also provoked a memory leak.
+  Same bug as DW202303-001
+</description>
+
+<datefixed>2023-03-02</datefixed>
+
+<references> ossfuzz56530/fuzz_findfuncbypc-6272642689925120
+</references>
+
+<gitfixid>948352178dc791796ed574a961191844d8322493</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>oss-fuzz id: 56735</fuzzer>
+
+<datereported>2023-03-04</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Denial of service with corrupt debug_macro section.
+</vulnerability>
+
+<description>  TBD
+</description>
+
+<datefixed></datefixed>
+
+<references> regressiontests/
+</references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>oss-fuzz id: 56676</fuzzer>
+
+<datereported>2023-03-04</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Denial of service with corrupt gnu_pubnames section.
+</vulnerability>
+
+<description>  TBD
+</description>
+
+<datefixed></datefixed>
+
+<references> regressiontests/ossfuzz56676/fuzz_gdbindex-5240324382654464
+</references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>oss-fuzz id: 56676</fuzzer>
 
 <datereported>2023-03-04</datereported>
@@ -42,11 +212,13 @@
 </vulnerability>
 
 <description> A corrupted .debug_gnu_index header was not
+  properly checked, and the calculation setting
+  up the table in memory was not correctly set up.
 </description>
 
 <datefixed></datefixed>
 
-<references> regressiontests/
+<references> regressiontests/ossfuzz56666/fuzz_gnu_index-4803574417981440
 </references>
 
 <gitfixid></gitfixid>
@@ -69,6 +241,10 @@
 </vulnerability>
 
 <description> A corrupted .debug_addr header was not
+  properly checked, and the calculation setting
+  up the table in memory was not correctly set up.
+  Calling dwarf_debug_addr_by_index() could crash the calling
+  application.
 </description>
 
 <datefixed>2023-03-03</datefixed>
@@ -96,6 +272,11 @@
 </vulnerability>
 
 <description> With any one of a small set of corrupted data
+  fields in a line table header that were not checked
+  for sanity the library could try to malloc a giant space,
+  which could take a long time to succeed or fail.
+  After that almost anything could happen.
+  Same bug fix as 56443
 </description>
 
 <datefixed>2023-03-03</datefixed>
@@ -111,7 +292,7 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss-fuzz id: 56465  56530 56443</fuzzer>
+<fuzzer>oss-fuzz id: 56465</fuzzer>
 
 <datereported>2023-03-01</datereported>
 
@@ -123,6 +304,9 @@
 </vulnerability>
 
 <description> With a particular data corruption
+  dwarf_attrlist() failed to return an error and
+  the library would dereference a stale pointer.
+  This also provoked a memory leak.
 </description>
 
 <datefixed>2023-03-02</datefixed>
@@ -142,23 +326,27 @@
 
 <datereported>2023-01-24</datereported>
 
-<reportedby>David Korczynski</reportedby>
+<reportedby>Steve Kaufmann</reportedby>
 
 <product>libdwarf</product>
 
 <vulnerability> Denial of Service with DW_FORM_strx3
 </vulnerability>
 
-<description></description>
+<description> Any use of DW_FORM_strx3 or
+  DW_FORM_addrx3 would get libdwarf very confused
+  and incorrect return values
+  and or  a library crash might result.
+</description>
 
 <datefixed>2023-01-24</datefixed>
 
-<references> regressiontests/
+<references> regressiontests/kaufmann2/ct-bad.o
 </references>
 
-<gitfixid></gitfixid>
+<gitfixid>97e90eb7ab98df60b8da0bdc2ac855711c4db804</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.6.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>

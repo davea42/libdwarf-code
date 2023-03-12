@@ -1,4 +1,35 @@
 
+
+
+id: DW202303-011
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-07
+reportedby: Youngseok Choi
+vulnerability:  Segmentation Violation in dwarfdump
+product: dwarfdump
+description: Segmentation Violation when
+  presented with option --file-abi=
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202303-011
+
+id: DW202303-010
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-07
+reportedby: Youngseok Choi
+vulnerability:  Stack overflow dwarfdump
+product: dwarfdump
+description: Stack overflow in function skipwhite.
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202303-010
+
 id: DW202303-009
 cve:
 fuzzer: oss-fuzz id: 56443
