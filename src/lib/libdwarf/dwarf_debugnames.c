@@ -399,8 +399,8 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     dn->dn_offset_size = (Dwarf_Half)offset_size;
     /* Two stage length test so overflow is caught. */
     if (area_length > remaining_space ||
-       (area_length +offset_size +local_extension_size) > 
-       remaining_space) {
+        (area_length +offset_size +local_extension_size) >
+        remaining_space) {
         _dwarf_error_string(dbg, error,
             DW_DLE_DEBUG_NAMES_HEADER_ERROR,
             "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
@@ -1599,7 +1599,6 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         0
 */
 
-
 static int
 _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned  abbrev_code,
@@ -1628,7 +1627,6 @@ _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     /*  Something is wrong, not found! */
     return DW_DLV_NO_ENTRY;
 }
-
 
 /*  This, combined with dwarf_dnames_entrypool_values(),
     lets one examine as much or as little of an entrypool

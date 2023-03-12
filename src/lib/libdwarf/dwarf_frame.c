@@ -1857,7 +1857,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         fde_ptr,
         fde_end_ptr,
         /* use_gnu_cie_calc= */ 0,
-        
+
         /* Dwarf_Cie = */ 0,
         address_size,
         &new_fde, error);
@@ -1920,7 +1920,6 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     *ret_fde = new_fde;
     return DW_DLV_OK;
 }
-
 
 int
 dwarf_get_fde_range(Dwarf_Fde fde,

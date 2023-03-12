@@ -510,10 +510,10 @@ dwarf_attrlist(Dwarf_Die die,
 
                 dwarfstring_constructor(&m);
                 dwarfstring_append_printf_u(&m,
-                     "DW_DLE_UNKNOWN_FORM "
-                     " form indirect leads to form"
-                     " of  0x%x which is unknown",
-                      attr_form);
+                    "DW_DLE_UNKNOWN_FORM "
+                    " form indirect leads to form"
+                    " of  0x%x which is unknown",
+                    attr_form);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_UNKNOWN_FORM,
                     dwarfstring_string(&m));

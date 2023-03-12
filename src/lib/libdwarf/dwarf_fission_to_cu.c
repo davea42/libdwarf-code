@@ -170,7 +170,8 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
         cu_context->cc_str_offsets_tab_present = TRUE;
         cu_context->cc_str_offsets_header_offset = soff_hdroffset;
         cu_context->cc_str_offsets_tab_to_array_present = TRUE;
-        cu_context->cc_str_offsets_tab_to_array = local_offset_to_array;
+        cu_context->cc_str_offsets_tab_to_array =
+            local_offset_to_array;
         cu_context->cc_str_offsets_offset_size = offset_size;
         cu_context->cc_str_offsets_version = version;
     }

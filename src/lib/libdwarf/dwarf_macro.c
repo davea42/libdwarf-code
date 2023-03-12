@@ -86,7 +86,7 @@ dwarf_find_macro_value_start(char *str)
         }
     }
     /*  Never found value: returns pointer to the 0 byte at end of
-        string. 
+        string.
         Or maybe the parentheses are unbalanced! Compiler error?
     */
     return lcp;

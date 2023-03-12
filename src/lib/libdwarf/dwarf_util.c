@@ -1078,8 +1078,8 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
         (length+local_length_size + local_extension_size) >
         section_length) {
         _dwarf_create_area_len_error(dbg, error,
-             length+local_length_size + local_extension_size,
-             section_length);
+            length+local_length_size + local_extension_size,
+            section_length);
         return DW_DLV_ERROR;
     }
 

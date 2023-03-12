@@ -164,7 +164,7 @@ dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table sot,
         return DW_DLV_NO_ENTRY;
     }
     entryoffset = sot->so_table_start_offset +
-      sot->so_lcl_offset_to_array;
+        sot->so_lcl_offset_to_array;
     entryoffset += index*sot->so_array_entry_size;
     entryptr = sot->so_section_start_ptr + entryoffset;
     if (entryoffset > secsize ||
@@ -251,7 +251,7 @@ emit_offsets_array_msg(Dwarf_Debug dbg,
         "DW_DLE_STR_OFFSETS_ARRAY_SIZE: "
         " total length 0x%x  with table offset larger than ",
         tab_length);
-    dwarfstring_append_printf_u(&m, 
+    dwarfstring_append_printf_u(&m,
         ".debug_str_offsets section size of 0x%x."
         " Perhaps the section is a GNU DWARF4"
         " extension with a different format.",
@@ -287,8 +287,8 @@ int
 _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Unsigned  new_table_offset,
     Dwarf_Unsigned  secsize,
-    Dwarf_Unsigned *table_local_offset_of_array, 
-    Dwarf_Unsigned *total_table_length, 
+    Dwarf_Unsigned *table_local_offset_of_array,
+    Dwarf_Unsigned *total_table_length,
     Dwarf_Unsigned *length_out,
     Dwarf_Half     *local_offset_size_out,
     Dwarf_Half     *local_extension_size_out,
@@ -310,7 +310,7 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Unsigned globl_array_off = 0;
     Dwarf_Small   *secstart = dbg->de_debug_str_offsets.dss_data;
     Dwarf_Unsigned secize = dbg->de_debug_str_offsets.dss_size;
-    Dwarf_Small   *table_start_ptr = secstart + new_table_offset; 
+    Dwarf_Small   *table_start_ptr = secstart + new_table_offset;
     Dwarf_Small   *secendptr = secstart+secsize;
 
     READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
@@ -342,15 +342,15 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
         +4; /* 4 for the two Dwarf_Half in the table header */
     tab_length = local_extension_size +local_offset_size +
         length;
-    
+
     net_end_offset = tab_length+globloff;
 
     if (length > secsize  ||
         array_local_offset > secsize ||
-        tab_length > secsize ||  
+        tab_length > secsize ||
         net_end_offset > secsize) {
         emit_offsets_array_msg(dbg,tab_length,
-           secsize,error);
+            secsize,error);
         return DW_DLV_ERROR;
     }
     /*  table_start_ptr is incremented past
@@ -418,7 +418,6 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
     Dwarf_Unsigned total_table_length = 0;
     Dwarf_Unsigned globaltaboff = 0;
 
-
     globaltaboff = sot->so_next_table_offset;
     if (cucontext) {
         if (cucontext->cc_str_offsets_tab_to_array_present) {
@@ -456,10 +455,12 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
             It could also just be corrupted data.
             offset size is not going to be 8.
             de_length_size is a guess and not set at this point .
-            We assume the data starts with the array of string offsets,
-            and all in one table. */
+            We assume the data starts with the array
+            of string offsets,
+            and all in one simple array from start to end
+            of section. */
         table_local_offset_of_array = 0;
-        total_table_length = secsize; 
+        total_table_length = secsize;
         length = secsize;
         local_offset_size = 4;
         local_extension_size = 0;
@@ -483,9 +484,9 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
         *padding_out = padding;
     }
     if (cucontext) {
-        cucontext->cc_str_offsets_header_offset         = globaltaboff;
+        cucontext->cc_str_offsets_header_offset = globaltaboff;
         cucontext->cc_str_offsets_tab_present = TRUE;
-        cucontext->cc_str_offsets_tab_to_array = 
+        cucontext->cc_str_offsets_tab_to_array =
             table_local_offset_of_array;
         cucontext->cc_str_offsets_tab_to_array_present = TRUE;
         cucontext->cc_str_offsets_offset_size  = local_offset_size;
@@ -614,7 +615,8 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             the rest of the header. Don't double count!
             length includes space for 4 bytes of the header!  */
         array_start_ptr = table_header_ptr + local_offset_to_array;;
-        array_start_offset = table_header_offset +local_offset_to_array;
+        array_start_offset = table_header_offset +
+            local_offset_to_array;
         table_end_ptr = array_start_ptr + total_table_length;
         table_end_offset = array_start_offset + total_table_length;
     } else {
@@ -649,7 +651,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         /* On the next table loop this will be the new table offset */
         sot->so_next_table_offset = table_end_offset;
 
-        sot->so_table_end_offset = table_end_offset; 
+        sot->so_table_end_offset = table_end_offset;
         sot->so_table_start_offset = table_header_offset;
         sot->so_table_end_offset = table_header_offset+
             total_table_length;

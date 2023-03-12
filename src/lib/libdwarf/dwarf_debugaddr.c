@@ -64,7 +64,7 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
         (void *)start);
     fflush(stdout);
     for (; cur < end; cur++, ++lineb) {
-        if (lineb == linelim) { 
+        if (lineb == linelim) {
             printf("\n");
             lineb = 0;
         }

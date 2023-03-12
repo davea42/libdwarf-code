@@ -1679,7 +1679,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     }
     sectionptr = dbg->de_debug_str_offsets.dss_data;
     sectionlen = dbg->de_debug_str_offsets.dss_size;
-    length_size = cu_context->cc_length_size;  
+    length_size = cu_context->cc_length_size;
     /*  If this is a dwp we look there, but I suppose
         we could also look for the section in the tied
         executable object file it is not here. FIXME */
@@ -1693,7 +1693,8 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         baseoffset = cu_context->cc_str_offsets_header_offset;
     }
     if (cu_context->cc_str_offsets_tab_to_array_present) {
-        table_offset_to_array = cu_context->cc_str_offsets_tab_to_array;
+        table_offset_to_array =
+            cu_context->cc_str_offsets_tab_to_array;
     }
     table_size = cu_context->cc_str_offsets_table_size;
 
@@ -1705,7 +1706,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             combined str offsets into a
             single table this works. */
         if (cu_context->cc_version_stamp ==  DW_CU_VERSION5 ) {
-            /*  A base offset of 0 is ok for either 
+            /*  A base offset of 0 is ok for either
                 DWARF5. but some early GNU compilers emitted
                 DWARF4 .debug_str_offsets, so lets check
                 the first table.  */
@@ -1719,7 +1720,6 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             Dwarf_Half padding              = 0;
             /*  starting at head of section! This is surely wrong. */
             Dwarf_Unsigned global_array_off  = 0;
-
 
             res = _dwarf_trial_read_dwarf_five_hdr(dbg,
                 baseoffset,stsize,
@@ -1741,8 +1741,8 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         }
     }
     indexoffset = index_to_offset_entry* length_size;
-    offsetintable = indexoffset+ baseoffset 
-         + table_offset_to_array;
+    offsetintable = indexoffset+ baseoffset
+        + table_offset_to_array;
     end_offsetintable = offsetintable + length_size;
     table_end_offset = baseoffset + table_size;
     /*  The offsets table is a series of offset-size entries.
@@ -1769,7 +1769,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     }
 
     sof_start = sectionptr+ offsetintable;
-    sof_end = sectionptr + end_offsetintable; 
+    sof_end = sectionptr + end_offsetintable;
     /* Now read the string offset from the offset table. */
     READ_UNALIGNED_CK(dbg,str_sect_offset,Dwarf_Unsigned,
         sof_start,
