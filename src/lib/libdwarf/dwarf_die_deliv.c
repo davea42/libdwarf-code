@@ -1183,10 +1183,10 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 int udres = 0;
 
                 udres = dwarf_global_formref(attr,
-                    &cucon->cc_str_offsets_base,
+                    &cucon->cc_str_offsets_header_offset,
                     error);
                 if (udres == DW_DLV_OK) {
-                    cucon->cc_str_offsets_base_present = TRUE;
+                    cucon->cc_str_offsets_tab_present = TRUE;
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
                     /* Something is badly wrong. */

@@ -46,6 +46,7 @@
 #include "dwarf_util.h"
 #include "dwarf_macro5.h"
 #include "dwarf_string.h"
+#include "dwarf_str_offsets.h"
 
 #define MC_SENTINEL  0xada
 

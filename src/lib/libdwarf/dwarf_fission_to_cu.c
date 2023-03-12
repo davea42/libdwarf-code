@@ -115,10 +115,10 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Error *error )
 {
     Dwarf_Small *soff_secptr = 0;
-    Dwarf_Small *soff_hdrptr = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
     Dwarf_Unsigned soff_size = 0;
     Dwarf_Small *soff_eptr = 0;
+    Dwarf_Small *soff_hdrptr;
     int res = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,
@@ -129,7 +129,6 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     soff_hdroffset = fsd->pcu_offset[fsd_index];
     soff_secptr = dbg->de_debug_str_offsets.dss_data;
     soff_size = dbg->de_debug_str_offsets.dss_size;
-    soff_eptr = soff_secptr + soff_size;
     soff_hdrptr = soff_secptr + soff_hdroffset;
     if (soff_hdroffset >= soff_size) {
         /*  Something is badly wrong. Ignore it here. */
@@ -142,32 +141,38 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
         Dwarf_Half     extension_size = 0;
         Dwarf_Half     version = 0;
         Dwarf_Half     padding = 0;
-        Dwarf_Unsigned header_length = 0;
+        Dwarf_Unsigned local_offset_to_array=0;
+        Dwarf_Unsigned total_table_length   =0;
+        struct Dwarf_Str_Offsets_Table_s  sotstr;
 
-        res =  _dwarf_read_str_offsets_header(dbg,
+        memset(&sotstr,0,sizeof(sotstr));
+        sotstr.so_dbg = dbg;
+        sotstr.so_section_start_ptr = soff_secptr;
+        sotstr.so_section_end_ptr = soff_eptr;
+        sotstr.so_section_size = soff_size;
+        sotstr.so_next_table_offset = soff_hdroffset;
+        res =  _dwarf_read_str_offsets_header(&sotstr,
             soff_hdrptr,
-            soff_size - soff_hdroffset,
-            soff_eptr,
             cu_context,
             &length,&offset_size,
             &extension_size,&version,&padding,
-            &header_length,
+            &local_offset_to_array,
+            &total_table_length,
             error);
         if (res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR && error) {
                 dwarf_dealloc_error(dbg,*error);
                 *error = 0;
             }
-            res = DW_DLV_NO_ENTRY;
-            return res;
+            return DW_DLV_NO_ENTRY;
         }
-        cu_context->cc_str_offsets_base_present = TRUE;
-        cu_context->cc_str_offsets_header_length_present = TRUE;
+        /*  See dwarf_opaque.h for comments. */
+        cu_context->cc_str_offsets_tab_present = TRUE;
         cu_context->cc_str_offsets_header_offset = soff_hdroffset;
-        cu_context->cc_str_offsets_base = soff_hdroffset +
-            header_length;
-        cu_context->cc_str_offsets_header_length = header_length;
+        cu_context->cc_str_offsets_tab_to_array_present = TRUE;
+        cu_context->cc_str_offsets_tab_to_array = local_offset_to_array;
         cu_context->cc_str_offsets_offset_size = offset_size;
+        cu_context->cc_str_offsets_version = version;
     }
     return DW_DLV_OK;
 }

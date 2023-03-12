@@ -1235,11 +1235,23 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         context->        cc_loclists_base=
             tiedcontext->cc_loclists_base;
     }
-    if (!context->cc_str_offsets_base_present) {
-        context->        cc_str_offsets_base_present =
-            tiedcontext->cc_str_offsets_base_present;
-        context->        cc_str_offsets_base=
-            tiedcontext->cc_str_offsets_base;
+    if (!context->cc_str_offsets_tab_present) {
+        context->        cc_str_offsets_tab_present =
+            tiedcontext->cc_str_offsets_tab_present;
+        context->        cc_str_offsets_header_offset=
+            tiedcontext->cc_str_offsets_header_offset;
+    }
+    if (!context->cc_str_offsets_tab_to_array_present) {
+        context->        cc_str_offsets_tab_to_array_present =
+            tiedcontext->cc_str_offsets_tab_to_array_present;
+        context->        cc_str_offsets_tab_to_array=
+            tiedcontext->cc_str_offsets_tab_to_array;
+        context->        cc_str_offsets_table_size=
+            tiedcontext->cc_str_offsets_table_size;
+        context->        cc_str_offsets_version=
+            tiedcontext->cc_str_offsets_version;
+        context->        cc_str_offsets_offset_size=
+            tiedcontext->cc_str_offsets_offset_size;
     }
 
     /* GNU DW4 extension. */
@@ -1264,8 +1276,8 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
 {
     (void)dbg;
     (void)error;
-    if (context->cc_str_offsets_base_present) {
-        *sbase_out = context->cc_str_offsets_base;
+    if (context->cc_str_offsets_tab_present) {
+        *sbase_out = context->cc_str_offsets_header_offset;
         return DW_DLV_OK;
     }
     *sbase_out = 0;

@@ -265,21 +265,23 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_loclists_header_length_present;
 
     /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs
-        DW_AT_str_offsets_base (table array off) */
-    Dwarf_Bool     cc_str_offsets_base_present;
-    Dwarf_Bool     cc_str_offsets_header_length_present;
-    Dwarf_Unsigned cc_str_offsets_header_offset; /* from cu/tu*/
-    Dwarf_Unsigned cc_str_offsets_contr_size;
-    Dwarf_Unsigned cc_str_offsets_base;
+        DW_AT_str_offsets_base (table array offset) .
+        Here cc_str_offsets_tab_present 
+        paired with cc_str_offsets_header_offset
+        which is what the offset means */
+    Dwarf_Bool     cc_str_offsets_tab_present;
+    /*  Without tab_to_array present we cannot do much. */
+    Dwarf_Bool     cc_str_offsets_tab_to_array_present;
+
+    /*  header_offset is global offset in str_offsets section. */
+    Dwarf_Unsigned cc_str_offsets_header_offset; /* cu/tu etc*/
+    Dwarf_Unsigned cc_str_offsets_table_size; 
+
     /*  to get from the start of a str_offsets table to the
-        offsets array entries.
-        See cc_str_offsets_header_length_present,
-        though not normally needed. If header_length
-        is zero all CUs in this DWP
-        use a DWARF4 extension simple offset array,
-        not a DWARF5 set of tables. */
-    Dwarf_Unsigned cc_str_offsets_header_length;
+        offsets array entries. */
+    Dwarf_Unsigned cc_str_offsets_tab_to_array;
     Dwarf_Unsigned cc_str_offsets_offset_size;
+    Dwarf_Half     cc_str_offsets_version;
 
     /*  DW_SECT_MACRO */
     Dwarf_Unsigned cc_macro_base;    /*DW5 */
@@ -823,29 +825,6 @@ void _dwarf_dealloc_loclists_context(Dwarf_Debug dbg);
 int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned *sbase_out,
-    Dwarf_Error *error);
-
-int
-_dwarf_read_str_offsets_header(Dwarf_Debug dbg,
-    Dwarf_Small*     table_start_ptr,
-    Dwarf_Unsigned   secsize,
-    Dwarf_Small*     secendptr,
-    Dwarf_CU_Context cucontext,
-    /* Followed by return values/error */
-    Dwarf_Unsigned *length,
-    Dwarf_Half    *offset_size_out,
-    Dwarf_Half    *extension_size_out,
-    Dwarf_Half    *version_out,
-    Dwarf_Half    *padding_out,
-    Dwarf_Unsigned * header_length_out,
-    Dwarf_Error *error);
-
-int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
-    Dwarf_Small *data_ptr,
-    Dwarf_Small *end_data_ptr,
-    Dwarf_Half   attrform,
-    Dwarf_CU_Context cu_context,
-    Dwarf_Unsigned *str_sect_offset_out,
     Dwarf_Error *error);
 
 int _dwarf_look_in_local_and_tied_by_index(

@@ -35,6 +35,7 @@
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#include <stdio.h> /* printf */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -71,7 +72,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
 
-    printf("%s ",msg);
+    printf("%s starting at %p \n",msg,(void*)start);
     for (; cur < end; cur++) {
         printf("%02x ", *cur);
     }
@@ -150,16 +151,44 @@ dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table sot,
 {
     Dwarf_Small *entryptr = 0;
     Dwarf_Unsigned val = 0;
+    Dwarf_Unsigned entryoffset = 0;
+    Dwarf_Unsigned secsize = 0;
+    Dwarf_Debug dbg = 0;
+    Dwarf_Small *end_ptr = 0;
+/* so_section_size */
 
     VALIDATE_SOT(sot)
+    dbg = sot->so_dbg;
+    secsize = dbg->de_debug_str_offsets.dss_size;
     if (index >= sot->so_array_entry_count) {
-        _dwarf_error(sot->so_dbg,error,
-            DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG);
+        return DW_DLV_NO_ENTRY;
+    }
+    entryoffset = sot->so_table_start_offset +
+      sot->so_lcl_offset_to_array;
+    entryoffset += index*sot->so_array_entry_size;
+    entryptr = sot->so_section_start_ptr + entryoffset;
+#if 0
+if (index < 3) {
+    dump_bytes("dadebug bytes to read ",(Dwarf_Small*)entryptr,16);
+}
+printf("dadebug array entry count %llu line %d\n",sot->so_array_entry_count,__LINE__);
+printf("dadebug index %llu line %d\n",index,__LINE__);
+printf("dadebug section_size %llu \n",sot->so_section_size);
+printf("dadebug read at entryoffset 0x%llx line %d\n",entryoffset,__LINE__);
+printf("dadebug rd size  %d line %d\n",sot->so_array_entry_size ,__LINE__);
+fflush(stdout);
+#endif
+    if (entryoffset > secsize ||
+        (entryoffset+sot->so_array_entry_size) > secsize) {
+        _dwarf_error_string(dbg,error,
+            DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG,
+            "DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG: "
+            "A libdwarf internal bug. Report to the maintainers");
         return DW_DLV_ERROR;
     }
-    entryptr = sot->so_array_ptr + (index * sot->so_array_entry_size);
-    READ_UNALIGNED_CK(sot->so_dbg, val, Dwarf_Unsigned,
-        entryptr, sot->so_array_entry_size,error,sot->so_end_cu_ptr);
+    end_ptr = entryptr+sot->so_array_entry_size;
+    READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,
+        entryptr, sot->so_array_entry_size,error,end_ptr);
     *stroffset = val;
     return DW_DLV_OK;
 }
@@ -201,24 +230,99 @@ is_all_zeroes(Dwarf_Small*start,
     return TRUE;
 }
 
+static void
+emit_invalid_dw5tab(Dwarf_Debug dbg,
+    Dwarf_Unsigned headerlen,
+    Dwarf_Error *error)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append_printf_u(&m,
+        "DW_DLE_SECTION_SIZE_ERROR: "
+        "header length 0x%x is too small "
+        "to be a real .debug_str_offsets "
+        "DWARF5 section",
+        headerlen);
+    _dwarf_error_string(dbg,error,
+        DW_DLE_SECTION_SIZE_ERROR,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+static void
+emit_offsets_array_msg(Dwarf_Debug dbg,
+    Dwarf_Unsigned tab_length,
+    Dwarf_Unsigned secsize,
+    Dwarf_Error *error)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append_printf_u(&m,
+        "DW_DLE_STR_OFFSETS_ARRAY_SIZE: "
+        " total length 0x%x  with table offset larger than ",
+        tab_length);
+    dwarfstring_append_printf_u(&m, 
+        ".debug_str_offsets section size of 0x%x."
+        " Perhaps the section is a GNU DWARF4"
+        " extension with a different format.",
+        secsize);
+    _dwarf_error_string(dbg,error,
+        DW_DLE_STR_OFFSETS_ARRAY_SIZE,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
+static void
+emit_wrong_version(Dwarf_Debug dbg,
+    Dwarf_Half version,
+    Dwarf_Error *error)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append_printf_u(&m,
+        "DW_DLE_STR_OFFSETS_VERSION_WRONG: "
+        "%u. Only version 5 is supported "
+        "when reading .debug_str_offsets."
+        " Perhaps the section is a GNU DWARF4"
+        " extension with a different format.",
+        version);
+    _dwarf_error_string(dbg,error,
+        DW_DLE_STR_OFFSETS_VERSION_WRONG,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
 int
 _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
-    Dwarf_Small *table_start_ptr,
-    Dwarf_Unsigned secsize,
-    Dwarf_Small * secendptr,
+    Dwarf_Unsigned  new_table_offset,
+    Dwarf_Unsigned  secsize,
+    Dwarf_Unsigned *table_local_offset_of_array, 
+    Dwarf_Unsigned *total_table_length, 
     Dwarf_Unsigned *length_out,
-    Dwarf_Half *local_offset_size_out,
-    Dwarf_Half *local_extension_size_out,
-    Dwarf_Half *version_out,
-    Dwarf_Half *padding_out,
-    Dwarf_Error *error)
+    Dwarf_Half     *local_offset_size_out,
+    Dwarf_Half     *local_extension_size_out,
+    Dwarf_Half     *version_out,
+    Dwarf_Half     *padding_out,
+    Dwarf_Error    *error)
 {
     Dwarf_Unsigned length = 0; /* length following the
         local_offset_size + local_extension_size */
     Dwarf_Unsigned local_offset_size = 0;
     Dwarf_Unsigned local_extension_size = 0;
-    Dwarf_Half version = 0;
-    Dwarf_Half padding = 0;
+    Dwarf_Unsigned tab_length = 0;
+    Dwarf_Unsigned array_local_offset = 0;;
+    Dwarf_Half     version = 0;
+    Dwarf_Half     padding = 0;
+    Dwarf_Unsigned globloff = 0;
+    Dwarf_Unsigned net_new_len = 0;
+    Dwarf_Unsigned net_end_offset = 0;
+    Dwarf_Unsigned globl_array_off = 0;
+    Dwarf_Small   *secstart = dbg->de_debug_str_offsets.dss_data;
+    Dwarf_Unsigned secize = dbg->de_debug_str_offsets.dss_size;
+    Dwarf_Small   *table_start_ptr = secstart + new_table_offset; 
+    Dwarf_Small   *secendptr = secstart+secsize;
 
     READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
         table_start_ptr,local_offset_size,
@@ -238,74 +342,46 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     if (length < 4) {
         /*  Usually DW4-style .debug_str_offsets
             starts off with a zero value to ref the
-            base string in .debug_str.
+            base string in .debug_str. Should not apply here.
             Any tiny value is guaranteed not to be a legal
             DWARF5 .debug_str_offsets section. */
-        dwarfstring m;
-
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_SECTION_SIZE_ERROR: "
-            "header length 0x%x is too small "
-            "to be a real .debug_str_offsets "
-            "DWARF5 section",
-            length);
-        _dwarf_error_string(dbg,error,
-            DW_DLE_SECTION_SIZE_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
+        emit_invalid_dw5tab(dbg,length,error);
         return DW_DLV_ERROR;
-
     }
+    globloff = new_table_offset;
+    array_local_offset = local_extension_size +local_offset_size
+        +4; /* 4 for the two Dwarf_Half in the table header */
+    tab_length = local_extension_size +local_offset_size +
+        length;
+    
+    net_end_offset = tab_length+globloff;
+
     if (length > secsize  ||
-        (length+local_extension_size +local_offset_size) >
-        secsize) {
-        dwarfstring m;
-
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_STR_OFFSETS_ARRAY_SIZE: "
-            " header length 0x%x is bigger than ",
-            length);
-        dwarfstring_append_printf_u(&m,
-            ".debug_str_offsets section size of 0x%x."
-            " Perhaps the section is a GNU DWARF4"
-            " extension with a different format.",
-            secsize);
-        _dwarf_error_string(dbg,error,
-            DW_DLE_STR_OFFSETS_ARRAY_SIZE,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
+        array_local_offset > secsize ||
+        tab_length > secsize ||  
+        net_end_offset > secsize) {
+        emit_offsets_array_msg(dbg,tab_length,
+           secsize,error);
         return DW_DLV_ERROR;
     }
-    /*  table_start_ptr was incremented past
-        the length data. */
+    /*  table_start_ptr is incremented past
+        the length data by read-area-length-ck. */
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
         table_start_ptr, DWARF_HALF_SIZE,
         error,secendptr);
     table_start_ptr += DWARF_HALF_SIZE;
     if (version != DW_STR_OFFSETS_VERSION5) {
-        dwarfstring m;
-
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_STR_OFFSETS_VERSION_WRONG: "
-            "%u. Only version 5 is supported "
-            "when reading .debug_str_offsets."
-            " Perhaps the section is a GNU DWARF4"
-            " extension with a different format.",
-            version);
-        _dwarf_error_string(dbg,error,
-            DW_DLE_STR_OFFSETS_VERSION_WRONG,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
+        emit_wrong_version(dbg,version,error);
         return DW_DLV_ERROR;
     }
     READ_UNALIGNED_CK(dbg, padding, Dwarf_Half,
         table_start_ptr, DWARF_HALF_SIZE,
         error,secendptr);
+
     /*  padding should be zero, but we are
         not checking it here at present. */
+    *table_local_offset_of_array = array_local_offset;
+    *total_table_length = tab_length;
     *length_out = length;
     *local_offset_size_out = local_offset_size;
     *local_extension_size_out = local_extension_size;
@@ -324,18 +400,17 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     --print-str-offsets.
     New 30 August 2020. */
 int
-_dwarf_read_str_offsets_header(Dwarf_Debug dbg,
+_dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
     Dwarf_Small*    table_start_ptr,
-    Dwarf_Unsigned secsize,
-    Dwarf_Small*    secendptr,
-    Dwarf_CU_Context  cucontext,
+    Dwarf_CU_Context cucontext,
     /* Followed by return values/error */
     Dwarf_Unsigned *length_out,
     Dwarf_Half     *offset_size_out,
     Dwarf_Half     *extension_size_out,
     Dwarf_Half     *version_out,
     Dwarf_Half     *padding_out,
-    Dwarf_Unsigned *header_length_out,
+    Dwarf_Unsigned *local_offset_to_array_out,
+    Dwarf_Unsigned *total_table_length_out,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned length            = 0;
@@ -344,43 +419,62 @@ _dwarf_read_str_offsets_header(Dwarf_Debug dbg,
     Dwarf_Half version               = 0;
     Dwarf_Half padding               = 0;
     Dwarf_Unsigned headerlength      = 0;
-    int res = 0;
-    Dwarf_Bool is_dwarf_five = TRUE;
+    int            res = 0;
+    Dwarf_Bool     is_dwarf_five = TRUE;
+    Dwarf_Debug    dbg = sot->so_dbg;
+    Dwarf_Unsigned secsize  = sot->so_section_size;
+    Dwarf_Small   *secendptr =   sot->so_section_end_ptr;
+    Dwarf_Unsigned global_array_off = 0;
+    Dwarf_Unsigned table_local_offset_of_array = 0;
+    Dwarf_Unsigned total_table_length = 0;
+    Dwarf_Unsigned globaltaboff = 0;
 
+
+#if 0
+printf("dadebug read_str_offsets_header cucontext? %s line %d\n",cucontext?"yes":"no",__LINE__);
+#endif
+    globaltaboff = sot->so_next_table_offset;
     if (cucontext) {
-        if (cucontext->cc_str_offsets_header_length_present) {
+        if (cucontext->cc_str_offsets_tab_to_array_present) {
             /*  cu_context has what it needs already and we do
                 not need the rest of what the interface
                 provides */
             return DW_DLV_OK;
         }
     }
-    {
-        res = _dwarf_trial_read_dwarf_five_hdr(dbg,
-            table_start_ptr,secsize, secendptr,
-            &length,
-            &local_offset_size,
-            &local_extension_size,
-            &version,
-            &padding,
-            error);
-        if (res != DW_DLV_OK) {
-            if (res == DW_DLV_ERROR && error) {
-                dwarf_dealloc_error(dbg,*error);
-                *error = 0;
-            }
-            /*  If it's really DWARF5 but with a serious
-                problem  this will think...NOT 5! */
-            is_dwarf_five = FALSE;
+    res = _dwarf_trial_read_dwarf_five_hdr(dbg,
+        globaltaboff,
+        secsize,
+        &table_local_offset_of_array,
+        &total_table_length,
+        /* Length is the length field from the table involved */
+        &length,
+        &local_offset_size,
+        &local_extension_size,
+        &version,
+        &padding,
+        error);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR && error) {
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
         }
+        /*  If it's really DWARF5 but with a serious
+            problem  this will think...NOT 5! */
+        is_dwarf_five = FALSE;
     }
     if ( !is_dwarf_five) {
         length = secsize;
-        /*  This is likely
-            GNU Dwarf4 extension .debug_str_offsets,
-            and offset size is not going to be 8
-            de_length_size is most likely a guess
-            and not set properly at this point */
+        /*  This is possibly
+            GNU Dwarf4 extension .debug_str_offsets.
+            It could also just be corrupted data.
+            offset size is not going to be 8.
+            de_length_size is a guess and not set at this point .
+            We assume the data starts with the array of string offsets,
+            and all in one table. */
+        table_local_offset_of_array = 0;
+        total_table_length = secsize; 
+        length = secsize;
         local_offset_size = 4;
         local_extension_size = 0;
         version = DW_STR_OFFSETS_VERSION4;
@@ -402,21 +496,21 @@ _dwarf_read_str_offsets_header(Dwarf_Debug dbg,
     if (padding_out) {
         *padding_out = padding;
     }
-    if (is_dwarf_five) {
-        headerlength =  local_offset_size +
-            local_extension_size +
-            2*DWARF_HALF_SIZE;
-    } else { /* DWARF4 */
-        headerlength = 0;
-    }
-    if (header_length_out) {
-        *header_length_out  = headerlength;
-    }
-
     if (cucontext) {
-        cucontext->cc_str_offsets_header_length_present = TRUE;
-        cucontext->cc_str_offsets_header_length = headerlength;
-        cucontext->cc_str_offsets_offset_size = local_offset_size;
+        cucontext->cc_str_offsets_header_offset         = globaltaboff;
+        cucontext->cc_str_offsets_tab_present = TRUE;
+        cucontext->cc_str_offsets_tab_to_array = 
+            table_local_offset_of_array;
+        cucontext->cc_str_offsets_tab_to_array_present = TRUE;
+        cucontext->cc_str_offsets_offset_size  = local_offset_size;
+        cucontext->cc_str_offsets_table_size   = total_table_length;
+        cucontext->cc_str_offsets_version   = version;
+    }
+    if (local_offset_to_array_out) {
+        *local_offset_to_array_out = table_local_offset_of_array;
+    }
+    if (total_table_length_out) {
+        *total_table_length_out = total_table_length;
     }
     return DW_DLV_OK;
 }
@@ -444,7 +538,10 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     Dwarf_Half local_extension_size = 0;
     Dwarf_Half version           = 0;
     Dwarf_Half padding           = 0;
+    Dwarf_Unsigned local_offset_to_array= 0;
+    Dwarf_Unsigned  total_table_length = 0;
     Dwarf_Unsigned header_length = 0;
+    Dwarf_Debug dbg = sot->so_dbg;
     int res = 0;
 
     VALIDATE_SOT(sot)
@@ -455,8 +552,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     }
     table_header_ptr = sot->so_section_start_ptr +
         table_header_offset;
-    sot->so_header_ptr = table_header_ptr;
-    if (table_header_ptr >= sot->so_section_end_ptr) {
+    if (table_header_offset >= sot->so_section_size) {
         if (table_header_ptr == sot->so_section_end_ptr) {
             /* At end of section. Done. */
             return DW_DLV_NO_ENTRY;
@@ -513,35 +609,54 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    res = _dwarf_read_str_offsets_header(sot->so_dbg,
-        table_header_ptr,sot->so_section_size,
-        sot->so_section_end_ptr,
+
+    res = _dwarf_read_str_offsets_header(sot,
+        table_header_ptr,
         0,
         &length,
         &local_length_size,
         &local_extension_size,
         &version,
         &padding,
-        &header_length, error);
+        &local_offset_to_array,
+        &total_table_length, error);
     if (res != DW_DLV_OK) {
         return res;
     }
     if (version == DW_STR_OFFSETS_VERSION5) {
-        array_start_ptr = table_header_ptr + header_length;
-        array_start_offset = table_header_offset +header_length;
-        table_end_ptr = table_header_ptr +
-            local_length_size +local_extension_size +
-            length;
-        table_end_offset = table_header_offset +
-            local_length_size +local_extension_size +
-            +length;
+        /*  header_length includes length field plus 4 for
+            the rest of the header. Don't double count!
+            length includes space for 4 bytes of the header!  */
+        array_start_ptr = table_header_ptr + local_offset_to_array;;
+        array_start_offset = table_header_offset +local_offset_to_array;
+        table_end_ptr = array_start_ptr + total_table_length;
+        table_end_offset = array_start_offset + total_table_length;
+#if 0
+printf("dadebug DWARF5 %u line %d\n",version,__LINE__);
+printf("dadebug header_length %llu line %d\n",header_length,__LINE__);
+printf("dadebug array start offset 0x%llx line %d\n",array_start_offset,__LINE__);
+printf("dadebug table end offset offset 0x%llx line %d\n",table_end_offset,__LINE__);
+printf("dadebug array start ptr %p line %d\n",(void*)array_start_ptr,__LINE__);
+printf("dadebug table end   ptr %p line %d\n",(void*)table_end_ptr,__LINE__);
+fflush(stdout);
+#endif
     } else {
-        array_start_ptr = table_header_ptr;
+        Dwarf_Unsigned space_left = 0;
+
+        /* leave table header offset as-is */
+        space_left = sot->so_section_size - table_header_offset;
+        array_start_ptr =    table_header_ptr;
         array_start_offset = table_header_offset;
-        table_end_ptr = table_header_ptr +
-            sot->so_section_size;
-        table_end_offset = table_header_offset +
-            sot->so_section_size;
+        table_end_ptr =    array_start_ptr + space_left;
+        table_end_offset = table_header_offset + space_left;
+#if 0
+printf("dadebug DWARF4 %u line %d\n",version,__LINE__);
+printf("dadebug array start offset 0x%llx line %d\n",array_start_offset,__LINE__);
+printf("dadebug table end offset offset 0x%llx line %d\n",table_end_offset,__LINE__);
+printf("dadebug array start ptr %p line %d\n",(void*)array_start_ptr,__LINE__);
+printf("dadebug table end   ptr %p line %d\n",(void*)table_end_ptr,__LINE__);
+fflush(stdout);
+#endif
     }
     /*  So now table_start_ptr points to a table of local_length_size
         entries.
@@ -552,31 +667,48 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         Dwarf_Unsigned entrybytes = 0;
 
         entrybytes = table_end_offset - array_start_offset;
+#if 0
+printf("dadebug entrybytes %llu line %d\n",entrybytes,__LINE__);
+fflush(stdout);
+#endif
         if (entrybytes % local_length_size) {
-            _dwarf_error(sot->so_dbg,error,
-                DW_DLE_STR_OFFSETS_ARRAY_SIZE);
+            _dwarf_error_string(sot->so_dbg,error,
+                DW_DLE_STR_OFFSETS_ARRAY_SIZE,
+                "DW_DLE_STR_OFFSETS_ARRAY_SIZE "
+                " array size not a multiple of the size of "
+                "a single entry");
             return DW_DLV_ERROR;
         }
         entrycount = entrybytes/local_length_size;
+
+        /* On the next table loop this will be the new table offset */
         sot->so_next_table_offset = table_end_offset;
 
-        sot->so_end_cu_ptr =  table_end_ptr;
+        sot->so_table_end_offset = table_end_offset; 
         sot->so_table_start_offset = table_header_offset;
-        sot->so_array_ptr  = array_start_ptr;
-        sot->so_array_start_offset = array_start_offset;
+        sot->so_table_end_offset = table_header_offset+
+            total_table_length;
         sot->so_array_entry_count = entrycount;
         sot->so_array_entry_size = local_length_size;
+#if 0
+printf("dadebug entrycount %llu line %d\n",entrycount,__LINE__);
+printf("dadebug array entry size %d line %d\n",local_length_size,__LINE__);
+printf("dadebug table_end_offset %llu line %d\n",table_end_offset,__LINE__);
+fflush(stdout);
+#endif
+
         sot->so_table_count += 1;
 
         /*  The data length  in bytes following the unit_length field
-            of the header. */
+            of the header. includes any other header bytes
+            and the table space */
         *unit_length_out = length;
 
         /*  Where the unit_length field starts in the section. */
         *unit_length_offset_out = sot->so_table_start_offset;
 
         /*  Where the table of offsets starts in the section. */
-        *table_start_offset_out = sot->so_array_start_offset;
+        *table_start_offset_out = sot->so_table_start_offset;
 
         /*   Entrysize: 4 or 8 */
         *entry_size_out  = local_length_size;
