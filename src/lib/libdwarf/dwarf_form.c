@@ -1689,35 +1689,16 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         return idxres;
     }
 
-#if 0
-printf("dadebug str_offsets_base_present %u line %d\n",cu_context->cc_str_offsets_tab_present,__LINE__);
-#endif
     if (cu_context->cc_str_offsets_tab_present) {
         baseoffset = cu_context->cc_str_offsets_header_offset;
-#if 0
-printf("dadebug str_offsets_base 0x%llx line %d\n",baseoffset,__LINE__);
-#endif
     }
     if (cu_context->cc_str_offsets_tab_to_array_present) {
         table_offset_to_array = cu_context->cc_str_offsets_tab_to_array;
     }
     table_size = cu_context->cc_str_offsets_table_size;
 
-/*    if (cu_context->cc_str_offsets_table_size) */
-#if 0
-printf("dadebug indexoffset 0x%llx line %d\n",indexoffset,__LINE__);
-printf("dadebug str_offsets_base 0x%llx line %d\n",baseoffset,__LINE__);
-printf("dadebug str_offsets tab %u line %d\n",cu_context->cc_str_offsets_tab_present,__LINE__);
-printf("dadebug str_offsets tab_to_arry %u line %d\n",cu_context->
-cc_str_offsets_tab_to_array_present,__LINE__);
-fflush(stdout);
-#endif
     if (!cu_context->cc_str_offsets_tab_present ||
         !cu_context->cc_str_offsets_tab_to_array_present) {
-#if 0
-printf("dadebug ERROR: missing tab data! line %d\n",__LINE__);
-fflush(stdout);
-#endif
         /*  missing any connection to a specific
             str_offsets table this guesses at table zero.
             When the compiler/linker have
@@ -1764,11 +1745,6 @@ fflush(stdout);
          + table_offset_to_array;
     end_offsetintable = offsetintable + length_size;
     table_end_offset = baseoffset + table_size;
-#if 0
-printf("dadebug offsetintable 0x%llx line %d\n",offsetintable,__LINE__);
-printf("dadebug table end offset 0x%llx line %d\n",
-table_end_offset,__LINE__);
-#endif
     /*  The offsets table is a series of offset-size entries.
         The == case in the test applies when we are at the last table
         entry, so == is not an error, hence only test >
@@ -1794,9 +1770,6 @@ table_end_offset,__LINE__);
 
     sof_start = sectionptr+ offsetintable;
     sof_end = sectionptr + end_offsetintable; 
-#if 0
-printf("dadebug offsettostr 0x%llx line %d\n",offsetintable,__LINE__);
-#endif
     /* Now read the string offset from the offset table. */
     READ_UNALIGNED_CK(dbg,str_sect_offset,Dwarf_Unsigned,
         sof_start,

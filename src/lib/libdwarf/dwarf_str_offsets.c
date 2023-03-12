@@ -167,17 +167,6 @@ dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table sot,
       sot->so_lcl_offset_to_array;
     entryoffset += index*sot->so_array_entry_size;
     entryptr = sot->so_section_start_ptr + entryoffset;
-#if 0
-if (index < 3) {
-    dump_bytes("dadebug bytes to read ",(Dwarf_Small*)entryptr,16);
-}
-printf("dadebug array entry count %llu line %d\n",sot->so_array_entry_count,__LINE__);
-printf("dadebug index %llu line %d\n",index,__LINE__);
-printf("dadebug section_size %llu \n",sot->so_section_size);
-printf("dadebug read at entryoffset 0x%llx line %d\n",entryoffset,__LINE__);
-printf("dadebug rd size  %d line %d\n",sot->so_array_entry_size ,__LINE__);
-fflush(stdout);
-#endif
     if (entryoffset > secsize ||
         (entryoffset+sot->so_array_entry_size) > secsize) {
         _dwarf_error_string(dbg,error,
@@ -430,9 +419,6 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
     Dwarf_Unsigned globaltaboff = 0;
 
 
-#if 0
-printf("dadebug read_str_offsets_header cucontext? %s line %d\n",cucontext?"yes":"no",__LINE__);
-#endif
     globaltaboff = sot->so_next_table_offset;
     if (cucontext) {
         if (cucontext->cc_str_offsets_tab_to_array_present) {
@@ -631,15 +617,6 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         array_start_offset = table_header_offset +local_offset_to_array;
         table_end_ptr = array_start_ptr + total_table_length;
         table_end_offset = array_start_offset + total_table_length;
-#if 0
-printf("dadebug DWARF5 %u line %d\n",version,__LINE__);
-printf("dadebug header_length %llu line %d\n",header_length,__LINE__);
-printf("dadebug array start offset 0x%llx line %d\n",array_start_offset,__LINE__);
-printf("dadebug table end offset offset 0x%llx line %d\n",table_end_offset,__LINE__);
-printf("dadebug array start ptr %p line %d\n",(void*)array_start_ptr,__LINE__);
-printf("dadebug table end   ptr %p line %d\n",(void*)table_end_ptr,__LINE__);
-fflush(stdout);
-#endif
     } else {
         Dwarf_Unsigned space_left = 0;
 
@@ -649,14 +626,6 @@ fflush(stdout);
         array_start_offset = table_header_offset;
         table_end_ptr =    array_start_ptr + space_left;
         table_end_offset = table_header_offset + space_left;
-#if 0
-printf("dadebug DWARF4 %u line %d\n",version,__LINE__);
-printf("dadebug array start offset 0x%llx line %d\n",array_start_offset,__LINE__);
-printf("dadebug table end offset offset 0x%llx line %d\n",table_end_offset,__LINE__);
-printf("dadebug array start ptr %p line %d\n",(void*)array_start_ptr,__LINE__);
-printf("dadebug table end   ptr %p line %d\n",(void*)table_end_ptr,__LINE__);
-fflush(stdout);
-#endif
     }
     /*  So now table_start_ptr points to a table of local_length_size
         entries.
@@ -667,10 +636,6 @@ fflush(stdout);
         Dwarf_Unsigned entrybytes = 0;
 
         entrybytes = table_end_offset - array_start_offset;
-#if 0
-printf("dadebug entrybytes %llu line %d\n",entrybytes,__LINE__);
-fflush(stdout);
-#endif
         if (entrybytes % local_length_size) {
             _dwarf_error_string(sot->so_dbg,error,
                 DW_DLE_STR_OFFSETS_ARRAY_SIZE,
@@ -690,13 +655,6 @@ fflush(stdout);
             total_table_length;
         sot->so_array_entry_count = entrycount;
         sot->so_array_entry_size = local_length_size;
-#if 0
-printf("dadebug entrycount %llu line %d\n",entrycount,__LINE__);
-printf("dadebug array entry size %d line %d\n",local_length_size,__LINE__);
-printf("dadebug table_end_offset %llu line %d\n",table_end_offset,__LINE__);
-fflush(stdout);
-#endif
-
         sot->so_table_count += 1;
 
         /*  The data length  in bytes following the unit_length field

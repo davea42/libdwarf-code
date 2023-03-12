@@ -127,13 +127,6 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     section_size = dbg->de_debug_addr.dss_size;
     section_start = dbg->de_debug_addr.dss_data;
     end_data   = section_start + section_size;
-#if 0
-printf("dadebug start %p line %d\n",(void *)section_start,__LINE__);
-printf("dadebug end %p line %d\n",(void *)end_data,__LINE__);
-printf("dadebug secsize %llu 0x%llx line %d\n",section_size,section_size,__LINE__);
-printf("dadebug secoffset %llu 0x%llx line %d\n",dw_section_offset,dw_section_offset,__LINE__);
-fflush(stdout);
-#endif
     tab.da_section_size = section_size;
     if (dw_section_offset >= section_size) {
         return DW_DLV_NO_ENTRY;
@@ -170,12 +163,6 @@ fflush(stdout);
         + tablelen;
     end_data = section_start + offset_one_past_end;
     tab.da_end_table = end_data;
-#if 0
-printf("dadebug arealen %llu 0x%llx line %d\n",arealen,arealen,__LINE__);
-printf("dadebug da_length %llu 0x%llx line %d\n",tablelen,tablelen,__LINE__);
-printf("dadebug end table %p line %d\n",(void *)tab.da_end_table,__LINE__);
-printf("dadebug offset one past end 0x%llx line %d\n",offset_one_past_end,__LINE__);
-#endif
     READ_UNALIGNED_CK(dbg,version,Dwarf_Half,data,
         SIZEOFT16,error,end_data);
     if (version != DW_CU_VERSION5) {
@@ -238,14 +225,6 @@ printf("dadebug offset one past end 0x%llx line %d\n",offset_one_past_end,__LINE
             actual table */
         Dwarf_Unsigned table_len_bytes = tab.da_length;
 
-#if 0
-printf("dadebug data_entries loc %p line %d\n",(void *)tab.da_data_entries,__LINE__);
-printf("dadebug tab.da_length %llu line %d\n",tab.da_length,__LINE__);
-printf("dadebug address size %u line %d\n",address_size,__LINE__);
-printf("dadebug address size %llu line %d\n",table_len_bytes,__LINE__);
-fflush(stdout);
-#endif
-
         if (table_len_bytes%(Dwarf_Unsigned)address_size) {
             dwarfstring m;
             dwarfstring_constructor(&m);
@@ -265,12 +244,6 @@ fflush(stdout);
     }
     tab.da_table_section_offset = dw_section_offset;
     tab.da_addr_base =  dw_section_offset + curlocaloffset;
-#if 0
-printf("dadebug entry_count %llu line %d\n",tab.da_entry_count,__LINE__);
-printf("dadebug addr base %llu line %d\n",tab.da_addr_base,__LINE__);
-printf("dadebug tab secoff %llu line %d\n",tab.da_table_section_offset,__LINE__);
-fflush(stdout);
-#endif
     /*  Do alloc as late as possible to avoid
         any concern about missing a dealloc in
         case of error. */
@@ -306,10 +279,6 @@ fflush(stdout);
         *dw_next_table_offset = offset_one_past_end;
     }
     return DW_DLV_OK;
-#if 0
-printf("dadebug tab head addr %p line %d\n",newad,__LINE__);
-fflush(stdout);
-#endif
 }
 
 int
@@ -340,15 +309,6 @@ dwarf_debug_addr_by_index(Dwarf_Debug_Addr_Table dw_dat,
     }
     data = dw_dat->da_data_entries+
         dw_dat->da_address_size * dw_entry_index;
-#if 0
-printf("dadebug addr data entr %p line %d\n",(void *)dw_dat->da_data_entries,__LINE__);
-printf("dadebug addrsize %u line %d\n",dw_dat->da_address_size,__LINE__);
-printf("dadebug addr start %p line %d\n",(void *)data,__LINE__);
-printf("dadebug index  %llu line %d\n",dw_entry_index,__LINE__);
-printf("dadebug end table %p line %d\n",(void *)dw_dat->da_end_table,__LINE__);
-dump_bytes("dadebug about to read",data,dw_dat->da_address_size);
-fflush(stdout);
-#endif
     if ((data+ dw_dat->da_address_size) >  dw_dat->da_end_table) {
         _dwarf_error_string(NULL,dw_error,
             DW_DLE_DEBUG_ADDR_ERROR,
