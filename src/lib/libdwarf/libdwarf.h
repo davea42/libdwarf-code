@@ -7192,6 +7192,8 @@ DW_API int dwarf_gdbindex_culist_array(
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_entryindex
     Pass in a number from 0 through dw_list_length-1.
+    If dw_entryindex is too large for the array
+    the function returns DW_DLV_NO_ENTRY.
     @param dw_cu_offset
     On success returns the CU offet for this list entry.
     @param dw_cu_length
@@ -7233,6 +7235,8 @@ DW_API int dwarf_gdbindex_types_culist_array(
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_types_entryindex
     Pass in a number from 0 through dw_list_length-1.
+    If the value is greater than dw_list_length-1
+    the function returns DW_DLV_NO_ENTRY.
     @param dw_cu_offset
     On success returns the types CU offet for this list entry.
     @param dw_tu_offset
@@ -7322,6 +7326,8 @@ DW_API int dwarf_gdbindex_symboltable_array(
     @param dw_entryindex
     Pass in a valid index in the range 0 through
     dw_symtab_list_length-1
+    If the value is greater than dw_symtab_list_length-1
+    the function returns DW_DLV_NO_ENTRY;
     @param dw_string_offset
     On success returns the string offset in the
     appropriate string section.

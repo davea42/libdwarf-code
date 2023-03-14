@@ -67,8 +67,8 @@ struct Dwarf_Gdbindex_array_instance_s {
 
 struct Dwarf_Gdbindex_s {
     Dwarf_Debug      gi_dbg;
-    Dwarf_Small    * gi_section_data;
-    Dwarf_Unsigned   gi_section_length;
+    Dwarf_Small    * gi_section_data;   /* dss_data */
+    Dwarf_Unsigned   gi_section_length; /* dss_size */
 
     Dwarf_Unsigned   gi_version;
     Dwarf_Unsigned   gi_cu_list_offset;
