@@ -1,18 +1,106 @@
 
+id: DW202303-017
+cve:
+fuzzer: ossfuzz id: xx
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Heap Buffer Overflow in dwarf_get_rnglist_offset_value
+product: libdwarf
+description: A heap buffer overflow reading
+  a fuzzed object file 
+datefixed: 2023-03-12 
+references: regressiontests/ossfuzz56476/fuzz_rng-5008229349588992/
+gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
+tarrelease:
+endrec: DW202303-017
 
+id: DW202303-016
+cve:
+fuzzer: ossfuzz id: 56476
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Heap Buffer Overflow in dwarf_get_rnglist_offset_value
+product: libdwarf
+description: A heap buffer overflow reading
+  a fuzzed object file 
+datefixed: 2023-03-12 
+references: regressiontests/ossfuzz56476/fuzz_rng-5008229349588992/
+gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
+tarrelease:
+endrec: DW202303-016
+
+id: DW202303-015
+cve:
+fuzzer: ossfuzz id: 56489
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Heap Buffer Overflow in read_single_rle_entry
+product: libdwarf
+description: A heap buffer overflow reading
+  a fuzzed object file 
+datefixed: 2023-03-12 
+references: regressiontests/ossfuzz56489/fuzz_srcfiles-5091530466787328
+gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
+tarrelease:
+endrec: DW202303-015
+
+id: DW202303-014
+cve:
+fuzzer: ossfuzz id: 56478
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Heap Buffer Overflow in read_single_rle_entry
+product: libdwarf
+description: A heap buffer overflow reading
+  a fuzzed object file 
+datefixed: 2023-03-12 
+references: regressiontests/ossfuzz56460/fuzz_rng-5030515398017024
+gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
+tarrelease:
+endrec: DW202303-014
+
+id: DW202303-013
+cve:
+fuzzer: ossfuzz id: 56460
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Heap Buffer Overflow
+product: libdwarf
+description: A heap buffer overflow reading
+  a fuzzed object file 
+datefixed: 2023-03-12 
+references: regressiontests/ossfuzz56460/fuzz_str_offsets-5376904040677376-5240324382654464
+gitfixid: 64eaaa58703258cab02896e798664a1bb11a3d5c
+tarrelease:
+endrec: DW202303-013
+
+id: DW202303-012
+cve:
+fuzzer: ossfuzz id: 56456
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Heap Buffer Overflow
+product: libdwarf
+description: A heap buffer overflow reading
+  a fuzzed object file
+datefixed: 
+references: regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
+gitfixid: 
+tarrelease:
+endrec: DW202303-012
 
 id: DW202303-011
 cve:
-fuzzer: ossfuzz
-datereported: 2023-03-07
-reportedby: Youngseok Choi
-vulnerability:  Segmentation Violation in dwarfdump
-product: dwarfdump
-description: Segmentation Violation when
-  presented with option --file-abi=
-datefixed: 
-references: 
-gitfixid: 
+fuzzer: ossfuzz id: 56453
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Null pointer dereference  
+product: libdwarf
+description: A null pointer dereference in
+  reading a fuzzed object file.
+datefixed: 2023-03-07
+references: regressiontests/ossfuzz56453 
+gitfixid: 86671059c1c240ae56433fa94993dcd28df2ae7d
 tarrelease:
 endrec: DW202303-011
 
@@ -23,7 +111,10 @@ datereported: 2023-03-07
 reportedby: Youngseok Choi
 vulnerability:  Stack overflow dwarfdump
 product: dwarfdump
-description: Stack overflow in function skipwhite.
+description: Stack overflow in function skipwhite
+  as part of reading the dwarfdump.conf configure
+  file.
+  Details to follow...soonish.
 datefixed: 
 references: 
 gitfixid: 
@@ -106,7 +197,8 @@ datereported: 2023-03-04
 reportedby: David Korczynski
 vulnerability:  Denial of service with corrupt frame section.
 product: libdwarf
-description:  TBD
+description:  A call to dwarf_expand_frame_instructions()
+  with corrupt data gets a segmentation violation.
 datefixed: 
 references: regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
 gitfixid: 
@@ -125,7 +217,7 @@ description: A corrupted .debug_gnu_index header was not
   up the table in memory was not correctly set up.
 datefixed: 
 references: regressiontests/ossfuzz56666/fuzz_gnu_index-4803574417981440
-gitfixid: 
+gitfixid: 64eaaa58703258cab02896e798664a1bb11a3d5c
 tarrelease: 
 endrec: DW202303-004
 
@@ -149,7 +241,7 @@ endrec: DW202303-003
 
 id: DW202303-002
 cve:
-fuzzer: oss-fuzz id: 56548 56443
+fuzzer: oss-fuzz id: 56548 
 datereported: 2023-03-01
 reportedby: David Korczynski
 vulnerability:  Denial of service with corrupt line table header

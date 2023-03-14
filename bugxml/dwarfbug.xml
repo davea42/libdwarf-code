@@ -3,26 +3,55 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>ossfuzz</fuzzer>
+<fuzzer>ossfuzz id: 56456</fuzzer>
 
-<datereported>2023-03-07</datereported>
+<datereported>2023-02-28</datereported>
 
-<reportedby>Youngseok Choi</reportedby>
+<reportedby>David Korczynski</reportedby>
 
-<product>dwarfdump</product>
+<product>libdwarf</product>
 
-<vulnerability>  Segmentation Violation in dwarfdump
+<vulnerability>  Heap Buffer Overflow
 </vulnerability>
 
-<description> Segmentation Violation when
-  presented with option --file-abi=
+<description> A heap buffer overflow reading
+  reading a fuzzed object file.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-07</datefixed>
 
-<references></references>
+<references> regressiontests/ossfuzz56453
+</references>
 
-<gitfixid></gitfixid>
+<gitfixid>86671059c1c240ae56433fa94993dcd28df2ae7d</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 56453</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Null pointer dereference
+</vulnerability>
+
+<description> A null pointer dereference in
+  reading a fuzzed object file.
+</description>
+
+<datefixed>2023-03-07</datefixed>
+
+<references> regressiontests/ossfuzz56453
+</references>
+
+<gitfixid>86671059c1c240ae56433fa94993dcd28df2ae7d</gitfixid>
 
 <tarrelease></tarrelease>
 

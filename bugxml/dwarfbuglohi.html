@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-12 11:19  PST</p>
-<p> Record count: 88 </p>
+</p>as of 2023-03-13 11:19  PST</p>
+<p> Record count: 89 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -3248,23 +3248,51 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>cve: 
 </p>
-<p>fuzzer: ossfuzz
+<p>fuzzer: ossfuzz id: 56453
 </p>
-<p>datereported: 2023-03-07
+<p>datereported: 2023-02-28
 </p>
-<p>reportedby: Youngseok Choi
+<p>reportedby: David Korczynski
 </p>
-<p>vulnerability:   Segmentation Violation in dwarfdump
+<p>vulnerability:   Null pointer dereference
 </p>
-<p>product: dwarfdump
+<p>product: libdwarf
 </p>
-<p>description:  Segmentation Violation when
-  presented with option --file-abi=
+<p>description:  A null pointer dereference in
+  reading a fuzzed object file.
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-07
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>references:  regressiontests/ossfuzz56453
+</p>
+<p>gitfixid: 86671059c1c240ae56433fa94993dcd28df2ae7d
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-012">89) DW202303-012</h3>
+<p>id: DW202303-012
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56456
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Heap Buffer Overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A heap buffer overflow reading
+  reading a fuzzed object file.
+</p>
+<p>datefixed: 2023-03-07
+</p>
+<p>references:  regressiontests/ossfuzz56453
+</p>
+<p>gitfixid: 86671059c1c240ae56433fa94993dcd28df2ae7d
 </p>
 <p>tarrelease: 
 </p>
