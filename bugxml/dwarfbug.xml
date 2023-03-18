@@ -3,6 +3,170 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 56807</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Memory leak reading line table
+</vulnerability>
+
+<description> A memory leak in _dwarf_read_line_table()
+</description>
+
+<datefixed></datefixed>
+
+<references> regressiontests/ossfuzz56807/
+</references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id:</fuzzer>
+
+<datereported></datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability></vulnerability>
+
+<description> To Be Assigned
+</description>
+
+<datefixed></datefixed>
+
+<references></references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 56476</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Heap Buffer Overflow in dwarf_get_rnglist_offset_value
+</vulnerability>
+
+<description> A heap buffer overflow reading
+  a fuzzed object file
+</description>
+
+<datefixed>2023-03-12</datefixed>
+
+<references> regressiontests/ossfuzz56476/fuzz_rng-5008229349588992/
+</references>
+
+<gitfixid>0343c63bd04d387924974e6da60d8471fdf945a9</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 56489</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Heap Buffer Overflow in read_single_rle_entry
+</vulnerability>
+
+<description> A heap buffer overflow reading
+  a fuzzed object file
+</description>
+
+<datefixed>2023-03-12</datefixed>
+
+<references> regressiontests/ossfuzz56489/fuzz_srcfiles-5091530466787328
+</references>
+
+<gitfixid>0343c63bd04d387924974e6da60d8471fdf945a9</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 56478</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Heap Buffer Overflow in read_single_rle_entry
+</vulnerability>
+
+<description> A heap buffer overflow reading
+  a fuzzed object file
+</description>
+
+<datefixed>2023-03-12</datefixed>
+
+<references> regressiontests/ossfuzz56478/fuzz_rng-5030515398017024
+</references>
+
+<gitfixid>0343c63bd04d387924974e6da60d8471fdf945a9</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 56460</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Heap Buffer Overflow
+</vulnerability>
+
+<description> A heap buffer overflow reading
+  a fuzzed object file
+</description>
+
+<datefixed>2023-03-12</datefixed>
+
+<references> regressiontests/ossfuzz56460/fuzz_str_offsets-5376904040677376-5240324382654464
+</references>
+
+<gitfixid>64eaaa58703258cab02896e798664a1bb11a3d5c</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 56456</fuzzer>
 
 <datereported>2023-02-28</datereported>
@@ -15,15 +179,15 @@
 </vulnerability>
 
 <description> A heap buffer overflow reading
-  reading a fuzzed object file.
+  a fuzzed object file
 </description>
 
-<datefixed>2023-03-07</datefixed>
+<datefixed></datefixed>
 
-<references> regressiontests/ossfuzz56453
+<references> regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 </references>
 
-<gitfixid>86671059c1c240ae56433fa94993dcd28df2ae7d</gitfixid>
+<gitfixid></gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -70,7 +234,10 @@
 <vulnerability>  Stack overflow dwarfdump
 </vulnerability>
 
-<description> Stack overflow in function skipwhite.
+<description> Stack overflow in function skipwhite
+  as part of reading the dwarfdump.conf configure
+  file.
+  Details to follow...soonish.
 </description>
 
 <datefixed></datefixed>
@@ -159,15 +326,16 @@
 <vulnerability>  Denial of service with corrupt debug_macro section.
 </vulnerability>
 
-<description>  TBD
+<description> We were not checking .debug macro data for a
+  corrupted internal macro length field. Now we check.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-08</datefixed>
 
-<references> regressiontests/
+<references> regressiontests/ossfuzz56735/fuzz_macro_dwarf5-6718585377783808
 </references>
 
-<gitfixid></gitfixid>
+<gitfixid>bb99fe7ddb2bc6601bcb0ee30ced6a8cc8cb0564</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -183,18 +351,22 @@
 
 <product>libdwarf</product>
 
-<vulnerability>  Denial of service with corrupt gnu_pubnames section.
+<vulnerability>  Denial of service (crash) looking for gdbindex section.
 </vulnerability>
 
-<description>  TBD
+<description>  The logic was wrong in a couple places (fixed now)
+  and almost nothing was checked for validity.  Now we check,
+  so to libdwarf do not result in a crash of the library.
+  The bugs have been there since the code was written
+  in 2014.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-14</datefixed>
 
 <references> regressiontests/ossfuzz56676/fuzz_gdbindex-5240324382654464
 </references>
 
-<gitfixid></gitfixid>
+<gitfixid>e564c9350c104f16eb2223d7b29082e3deb5d2fb</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -213,10 +385,11 @@
 <vulnerability>  Denial of service with corrupt frame section.
 </vulnerability>
 
-<description>  TBD
+<description>  A call to dwarf_expand_frame_instructions()
+  with corrupt data gets a segmentation violation.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-14</datefixed>
 
 <references> regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
 </references>
@@ -245,12 +418,12 @@
   up the table in memory was not correctly set up.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-08</datefixed>
 
 <references> regressiontests/ossfuzz56666/fuzz_gnu_index-4803574417981440
 </references>
 
-<gitfixid></gitfixid>
+<gitfixid>64eaaa58703258cab02896e798664a1bb11a3d5c</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -289,7 +462,7 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss-fuzz id: 56548 56443</fuzzer>
+<fuzzer>oss-fuzz id: 56548</fuzzer>
 
 <datereported>2023-03-01</datereported>
 
