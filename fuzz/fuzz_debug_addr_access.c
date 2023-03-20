@@ -70,7 +70,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 
     if (res != DW_DLV_OK) {
       if (res == DW_DLV_ERROR) {
-        dwarf_dealloc_error(dbg, *errp);
+        if (errp) {
+          dwarf_dealloc_error(dbg, *errp);
+        }
       }
       dwarf_finish(dbg);
       close(fuzz_fd);
@@ -86,7 +88,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         break;
       }
     }
-    dwarf_dealloc_error(dbg, *errp);
+    if (errp) {
+        dwarf_dealloc_error(dbg, *errp);
+    }
     dwarf_dealloc_debug_addr_table(debug_address_table);
     dwarf_finish(dbg);
     close(fuzz_fd);

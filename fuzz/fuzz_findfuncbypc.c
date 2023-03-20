@@ -313,7 +313,9 @@ static int look_for_our_target(Dwarf_Debug dbg, struct target_data_s *td,
                                  &offset_size, &extension_size, &signature,
                                  &typeoffset, 0, &header_cu_type, errp);
     if (res == DW_DLV_ERROR) {
-      char *em = dwarf_errmsg(*errp);
+      if (errp) {
+        char *em = dwarf_errmsg(*errp);
+      }
       return DW_DLV_NO_ENTRY;
     }
     if (res == DW_DLV_NO_ENTRY) {
@@ -323,7 +325,9 @@ static int look_for_our_target(Dwarf_Debug dbg, struct target_data_s *td,
     cu_offset_size = offset_size;
     res = dwarf_siblingof_b(dbg, no_die, is_info, &cu_die, errp);
     if (res == DW_DLV_ERROR) {
-      char *em = dwarf_errmsg(*errp);
+      if (errp) {
+        char *em = dwarf_errmsg(*errp);
+      }
       return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
@@ -339,10 +343,14 @@ static int look_for_our_target(Dwarf_Debug dbg, struct target_data_s *td,
       }
       return res;
     } else if (res == IN_THIS_CU) {
-      char *em = dwarf_errmsg(*errp);
+      if (errp) {
+          char *em = dwarf_errmsg(*errp);
+      }
       return res;
     } else if (res == DW_DLV_ERROR) {
-      char *em = dwarf_errmsg(*errp);
+      if (errp) {
+        char *em = dwarf_errmsg(*errp);
+      }
       return DW_DLV_ERROR;
     }
     return DW_DLV_NO_ENTRY;
@@ -399,7 +407,9 @@ static int get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die, int is_info,
     }
     res = dwarf_siblingof_b(dbg, cur_die, is_info, &sib_die, errp);
     if (res == DW_DLV_ERROR) {
-      char *em = dwarf_errmsg(*errp);
+      if (errp) {
+          char *em = dwarf_errmsg(*errp);
+      }
       return res;
     }
     if (res == DW_DLV_NO_ENTRY) {

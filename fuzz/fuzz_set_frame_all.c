@@ -420,8 +420,10 @@ static int print_frame_instrs(Dwarf_Debug dbg,
         printf("ERROR reading frame instruction "
                "%" DW_PR_DUu "\n",
                frame_instr_count);
-        dwarf_dealloc_error(dbg, *error);
-        *error = 0;
+        if(error) {
+          dwarf_dealloc_error(dbg, *error);
+          *error = 0;
+        }
       } else {
         printf("NO ENTRY reading frame instruction "
                " %" DW_PR_DUu "\n",
