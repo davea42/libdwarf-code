@@ -57,7 +57,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
                                       &hash_slots_count, &section_name, errp);
     }
   }
-  free(errp);
   dwarf_finish(dbg);
   close(fuzz_fd);
   unlink(filename);

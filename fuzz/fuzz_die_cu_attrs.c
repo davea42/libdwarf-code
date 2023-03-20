@@ -138,7 +138,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
           const char *formname = "form-name-unavailable";
 
           if (res == DW_DLV_ERROR || res == DW_DLV_NO_ENTRY) {
-            free(errp);
             free(name);
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             dwarf_finish(dbg);
@@ -187,7 +186,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       }
     }
   }
-  free(errp);
   dwarf_finish(dbg);
   close(fuzz_fd);
   unlink(filename);

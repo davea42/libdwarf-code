@@ -47,7 +47,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   int run = dwarf_init_path(filename, 0, 0, chosengroup, 0, 0, &dbg, errp);
   if (run != -1) {
     if (run == DW_DLV_ERROR) {
-      free(errp);
       dwarf_finish(dbg);
       unlink(filename);
       return 0;

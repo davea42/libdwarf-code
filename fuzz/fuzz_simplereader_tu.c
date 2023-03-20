@@ -54,7 +54,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     dwarf_dealloc(dbg, die, DW_DLA_DIE);
     dwarf_finish(dbg);
   }
-  free(errp);
   close(fuzz_fd);
   unlink(filename);
   return 0;

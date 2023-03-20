@@ -86,7 +86,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         }
 
       } else {
-        free(errp);
         dwarf_finish(dbg);
         close(fuzz_fd);
         unlink(filename);
