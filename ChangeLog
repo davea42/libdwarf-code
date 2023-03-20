@@ -1,3 +1,134 @@
+2023-03-20:  David Anderson
+    commit 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+
+    Removed all instances of free(errp)
+    where errp is
+       Dwarf_Error *errp
+    as that is never necessary or appropriate.
+    Any leftover allocations made in libdwarf
+    and not 'dwarf_dealloc*' or documented
+    as user-must-free data returned via pointers
+    to the caller are
+    automatically freed by dwarf_finish()
+    unless there are libdwarf bugs.
+            modified:   fuzz_die_cu.c
+            modified:   fuzz_die_cu_attrs.c
+            modified:   fuzz_die_cu_info1.c
+            modified:   fuzz_die_cu_offset.c
+            modified:   fuzz_die_cu_print.c
+            modified:   fuzz_macro_dwarf5.c
+            modified:   fuzz_showsectgrp.c
+            modified:   fuzz_simplereader_tu.c
+            modified:   fuzz_srcfiles.c
+            modified:   fuzz_stack_frame_access.c
+            modified:   fuzz_xuindex.c
+
+2023-03-20:  David Anderson
+    commit 16a4078e91cf8c695b491c6fbcbe14f4e7ec02b8
+
+    Before dereferenceing errp ensure errp
+    is not NULL.
+            modified:   fuzz_debug_addr_access.c
+            modified:   fuzz_findfuncbypc.c
+            modified:   fuzz_set_frame_all.c
+
+2023-03-20:  David Anderson
+    commit 2eced75af9903ab778c3b237ec7be3ddc93ea6ec
+
+    All instances of
+    Dwarf_Error error;
+    changed to
+    Dwarf_Error error = 0;
+    to avoid unwanted stack random bytes in the pointer.
+            modified:   fuzz/fuzz_aranges.c
+            modified:   fuzz/fuzz_crc_32.c
+            modified:   fuzz/fuzz_debug_str.c
+            modified:   fuzz/fuzz_die_cu.c
+            modified:   fuzz/fuzz_die_cu_attrs.c
+            modified:   fuzz/fuzz_die_cu_attrs_loclist.c
+            modified:   fuzz/fuzz_die_cu_info1.c
+            modified:   fuzz/fuzz_die_cu_offset.c
+            modified:   fuzz/fuzz_die_cu_print.c
+            modified:   fuzz/fuzz_dnames.c
+            modified:   fuzz/fuzz_findfuncbypc.c
+            modified:   fuzz/fuzz_gdbindex.c
+            modified:   fuzz/fuzz_globals.c
+            modified:   fuzz/fuzz_gnu_index.c
+            modified:   fuzz/fuzz_init_b.c
+            modified:   fuzz/fuzz_macro_dwarf4.c
+            modified:   fuzz/fuzz_macro_dwarf5.c
+            modified:   fuzz/fuzz_set_frame_all.c
+            modified:   fuzz/fuzz_simplereader_tu.c
+            modified:   fuzz/fuzz_srcfiles.c
+            modified:   fuzz/fuzz_stack_frame_access.c
+            modified:   fuzz/fuzz_str_offsets.c
+            modified:   fuzz/fuzz_xuindex.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2023-03-20:  David Anderson
+    commit 59f5769780213c8fc4c82efbd829cc02fd13ef8c
+
+    Most recent generated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-20:  David Anderson
+    commit c04edfaf20904ee70e867afbf0ee87fb939ec42b
+
+            new file:   fuzz_debug_addr_access.c
+
+2023-03-18:  David Anderson
+    commit fafb744cfceaa53fd153a33af38f6105af9b00cf
+
+    generated files.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-14:  David Anderson
+    commit 003fb181750f499f4fd30fe7908c82fd5de62d2e
+
+    Improved a rather useless error message.
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+
+2023-03-14:  David Anderson
+    commit 8e935967d3415296f8d3886618dda7f554b16f8d
+
+    Brought up to date with the oss-fuzz fixed so far.
+            modified:   data.txt
+
+2023-03-14:  David Anderson
+    commit e564c9350c104f16eb2223d7b29082e3deb5d2fb
+
+    Added many checks for valid pointers and offsets.
+    Corrected logic which was just wrong.
+    Now ossfuzz 56676 passes (DW202303-006).
+    These problems existed since this source was
+    written in 2014.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+    Added two small comments.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.h
+    Changed doxygen comments on gdbindex functions
+    that now return DW_DLV_NO_ENTRY when an array
+    index is higher than exists in an array.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-03-13:  David Anderson
+    commit 685d4bc6589f554796f5c75cc9b4693eea0a52ed
+
+    More new bug/vulnerabilities
+    Entire new list not yet described.
+            modified:   data.txt
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2023-03-12:  David Anderson
+    commit 4360c7d2852ef54248591d25149962e404c3af83
+
+    With the recent changes shown.
+            modified:   ChangeLog
+
 2023-03-12:  David Anderson
     commit c1e0dbec0f5de31ea84931bd3f5c491d26dc2f72
 
