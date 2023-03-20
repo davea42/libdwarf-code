@@ -41,7 +41,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   int fuzz_fd = 0;
   Dwarf_Ptr errarg = 0;
   Dwarf_Handler errhand = 0;
-  Dwarf_Error error;
+  Dwarf_Error error = 0;
   Dwarf_Debug dbg = 0;
   off_t size_left = 0;
   off_t fsize = 0;

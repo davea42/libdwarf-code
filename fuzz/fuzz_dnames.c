@@ -41,7 +41,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 
   Dwarf_Debug dbg = 0;
   int res = DW_DLV_ERROR;
-  Dwarf_Error error;
+  Dwarf_Error error = 0;
   Dwarf_Handler errhand = 0;
   Dwarf_Ptr errarg = 0;
   int regtabrulecount = 0;
