@@ -46,7 +46,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Ptr errarg = 0;
   Dwarf_Error *errp = 0;
   int i = 0;
-  Dwarf_Die die;
+  Dwarf_Die die = 0;
 
   fuzz_fd = open(filename, O_RDONLY);
   if (fuzz_fd != -1) {
@@ -155,7 +155,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
             Dwarf_Half attrnum = 0;
             const char *attrname = 0;
             res = dwarf_whatform(attr, &formnum, errp);
-            Dwarf_Bool *dw_returned_bool;
+            Dwarf_Bool *dw_returned_bool = 0;
             res = dwarf_hasform(attr, formnum, dw_returned_bool, errp);
             res = dwarf_get_FORM_name(formnum, &formname);
             Dwarf_Block *tempb = 0;
@@ -165,7 +165,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
               Dwarf_Unsigned u = 0;
               Dwarf_Unsigned arraycount = 0;
               int sres = 0;
-
+                 
               sres = dwarf_discr_list(dbg, (Dwarf_Small *)tempb->bl_data,
                                       tempb->bl_len, &h, &arraycount, errp);
             }
