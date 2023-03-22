@@ -657,6 +657,7 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
     Dwarf_Unsigned mask = slots -1;
     Dwarf_Sig8 hashentry_key;
     Dwarf_Unsigned percu_index = 0;
+    Dwarf_Unsigned h = 0;
 
     (void)dbg;
     hashentry_key = zerohashkey;
@@ -675,6 +676,9 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
             dwarfstring_string(&s));
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
+    }
+    if (!slots) {
+        return DW_DLV_NO_ENTRY;
     }
     if ( (4*slots) > xuhdr->gx_section_length) {
         dwarfstring s;
@@ -698,27 +702,27 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
     ASNARL(key,key_in,sizeof(*key_in));
     primary_hash = key & mask;
     hashprime =  (((key >>32) &mask) |1);
-    while (1) {
+    /*  If we built a lookup based on hash key
+        this loop would not be necessary. */
+    for( h = 0; h < slots; ++h) {
         int res = 0;
 
         res = dwarf_get_xu_hash_entry(xuhdr,
-            primary_hash,&hashentry_key,
+            h,&hashentry_key,
             &percu_index,error);
         if (res != DW_DLV_OK) {
             return res;
         }
         if (percu_index == 0 &&
             !memcmp(&hashentry_key,&zerohashkey,sizeof(Dwarf_Sig8))) {
-            return DW_DLV_NO_ENTRY;
+            continue;
         }
         if (!memcmp(key_in,&hashentry_key,sizeof(Dwarf_Sig8))) {
             /* FOUND */
             *percu_index_out = percu_index;
             return  DW_DLV_OK;
         }
-        primary_hash = (primary_hash + hashprime) % slots;
     }
-    /* ASSERT: Cannot get here. */
     return DW_DLV_NO_ENTRY;
 }
 
