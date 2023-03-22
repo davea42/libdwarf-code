@@ -20,6 +20,13 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
+/* Every return from this after dwarf_init_b()
+    has to call 
+    dwarf_finish(dbg);
+    close(fuzz_fd);
+    unlink(filename);
+to avoid memory leaks (and close the fd, of course). */
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
   sprintf(filename, "/tmp/libfuzzer.%d", getpid());
@@ -76,6 +83,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
           resc = dwarf_get_rnglist_offset_index_value(
               dbg, i, e, &value, &global_offset_of_value, errp);
           if (resc != DW_DLV_OK) {
+            dwarf_finish(dbg);
+            close(fuzz_fd);
+            unlink(filename);
             return resc;
           }
           col++;
@@ -97,10 +107,16 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
           rese = dwarf_get_rnglist_rle(dbg, i, curoffset, endoffset, &entrylen,
                                        &code, &v1, &v2, errp);
           if (rese != DW_DLV_OK) {
+            dwarf_finish(dbg);
+            close(fuzz_fd);
+            unlink(filename);
             return rese;
           }
           curoffset += entrylen;
           if (curoffset > endoffset) {
+            dwarf_finish(dbg);
+            close(fuzz_fd);
+            unlink(filename);
             return DW_DLV_ERROR;
           }
         }

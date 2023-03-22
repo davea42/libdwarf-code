@@ -162,7 +162,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
             res = dwarf_formblock(attr, &tempb, errp);
             if (res == DW_DLV_OK) {
               Dwarf_Dsc_Head h = 0;
-              Dwarf_Unsigned u = 0;
+              /* Dwarf_Unsigned u = 0; unused */
               Dwarf_Unsigned arraycount = 0;
               int sres = 0;
                  

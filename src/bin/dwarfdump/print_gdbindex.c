@@ -245,9 +245,7 @@ get_kind_string(struct esb_s *out,unsigned k)
     esb_append(out, "kind-erroneous");
 }
 
-/*  NOTE: Returns pointer to static local string.
-    Use the returned pointer immediately or
-    things will not work properly.  */
+/*  NOTE: Returns string through esb pointer */
 static void
 get_cu_index_string(struct esb_s *out,
     Dwarf_Unsigned index,

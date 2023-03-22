@@ -159,7 +159,8 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     tablelen = arealen - 4; /* 4: the rest of the header */
     tab.da_length = tablelen;
     curlocaloffset = offset_size + exten_size;
-    offset_one_past_end = dw_section_offset + curlocaloffset
+    offset_one_past_end = dw_section_offset
+        + curlocaloffset + 4 /*rest of header */ 
         + tablelen;
     end_data = section_start + offset_one_past_end;
     tab.da_end_table = end_data;
@@ -219,6 +220,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     curlocaloffset++;
     data++;
     tab.da_data_entries = data;
+    /*  Now we are at the beginning of the actual table */
     {
         Dwarf_Unsigned entry_count = 0;
         /*  Two byte version and two byte flags preceed the
