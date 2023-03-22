@@ -81,6 +81,4 @@ struct Dwarf_Gdbindex_s {
     struct Dwarf_Gdbindex_array_instance_s  gi_addressareahdr;
     struct Dwarf_Gdbindex_array_instance_s  gi_symboltablehdr;
     struct Dwarf_Gdbindex_array_instance_s  gi_cuvectorhdr;
-
-    Dwarf_Small *    gi_string_pool;
 };
