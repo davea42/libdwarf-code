@@ -100,6 +100,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
               Dwarf_Addr low_pc = 0;
               res = dwarf_lowpc(die, &low_pc, errp);
               if (res != DW_DLV_OK) {
+                dwarf_finish(dbg);
+                close(fuzz_fd);
+                unlink(filename);
                 return res;
               } else {
                 localhighpc += low_pc;
@@ -147,7 +150,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       }
     }
   }
-  free(errp);
   dwarf_finish(dbg);
   close(fuzz_fd);
   unlink(filename);
