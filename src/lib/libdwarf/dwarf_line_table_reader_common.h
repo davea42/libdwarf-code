@@ -676,8 +676,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         if (directories_count > total_length) {
             dwarfstring m;
  
+            free(format_values);
+            format_values = 0;
             dwarfstring_constructor(&m);
-       
             dwarfstring_append_printf_u(&m,
                 "DW_DLE_DEBUG_LINE_LENGTH_BAD "
                 " the directories count of "
@@ -758,7 +759,6 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_context->lc_include_directories_count =
             directories_count;
     }
-
     if (version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* DWARF 5.  file names.*/
