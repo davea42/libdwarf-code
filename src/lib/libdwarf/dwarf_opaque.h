@@ -1067,6 +1067,20 @@ int _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
     Dwarf_Abbrev_List abbrev_list,
     Dwarf_Error *error);
 
+int _dwarf_internal_find_die_given_sig8(Dwarf_Debug dbg,
+    int context_level,
+    Dwarf_Sig8 *ref,
+    Dwarf_Die  *die_out,
+    Dwarf_Bool *is_info,
+    Dwarf_Error *error);
+int
+_dwarf_internal_global_formref_b(Dwarf_Attribute attr,
+    int context_level,
+    Dwarf_Off * ret_offset,
+    Dwarf_Bool * offset_is_info,
+    Dwarf_Error * error);
+
+
 int _dwarf_skip_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     char           * /*endptr*/);

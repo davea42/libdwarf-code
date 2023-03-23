@@ -1212,17 +1212,28 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 break;
                 }
             /*  Base offset  in .debug_addr of the addr table
-                for this CU. DWARF5 (and possibly GNU DWARF4) */
+                for this CU. DWARF5 (and possibly GNU DWARF4) 
+                So we really want to look in only
+                this section, not an offset referring
+                to another (DWARF5 debug_info vs debug_types) */ 
             case DW_AT_addr_base:
             case DW_AT_GNU_addr_base: {
                 int udres = 0;
+                Dwarf_Bool is_info = cucon->cc_is_info;
 
                 at_addr_base_attrnum = i;
-                udres = dwarf_global_formref(attr,
+
+                udres = _dwarf_internal_global_formref_b(attr,
+                    /* avoid recurse creating context */ 1,
                     &cucon->cc_addr_base,
+                    &is_info,
                     error);
-                if (udres == DW_DLV_OK) {
-                    cucon->cc_addr_base_present = TRUE;
+                if (udres == DW_DLV_OK) { 
+                    if( is_info == cucon->cc_is_info) {
+                        /*  Only accept if same .debug section,
+                            which is relevant for DWARF4 */
+                        cucon->cc_addr_base_present = TRUE;
+                    }
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
                     /* Something is badly wrong. */

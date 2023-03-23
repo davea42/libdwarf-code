@@ -50,6 +50,21 @@
 #include "dwarf_die_deliv.h"
 #include "dwarf_str_offsets.h"
 #include "dwarf_string.h"
+#if 0
+static void
+dump_bytes(const char *msg,int line,
+    Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) line %d\n ",msg,(unsigned long)start,line);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+#endif /*0*/
+
 
 /*  It is necessary at times to cause errors of this sort
     in determining what we really have.  So best to avoid
@@ -600,9 +615,12 @@ dwarf_formsig8(Dwarf_Attribute attr,
 /*  This finds a target via a sig8 and if
     DWARF4 is likely finding a reference from .debug_info
     to .debug_types.  So the offset may or may not be
-    in the same section if DWARF4. */
+    in the same section if DWARF4. 
+    context_level prevents infinite loop
+    during CU_Context creation */
 static int
 find_sig8_target_as_global_offset(Dwarf_Attribute attr,
+    int context_level,
     Dwarf_Sig8  *sig8,
     Dwarf_Bool  *is_info,
     Dwarf_Off   *targoffset,
@@ -616,7 +634,8 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
 
     targ_is_info = attr->ar_cu_context->cc_is_info;
     memcpy(sig8,attr->ar_debug_ptr,sizeof(*sig8));
-    res = dwarf_find_die_given_sig8(attr->ar_dbg,
+    res = _dwarf_internal_find_die_given_sig8(attr->ar_dbg,
+        context_level,
         sig8,&targdie,&targ_is_info,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -680,8 +699,26 @@ dwarf_global_formref(Dwarf_Attribute attr,
         &is_info,error);
     return res;
 }
+
+/* If context_level is 0, normal call
+    But if non-zero will avoid creating CU Context. */
 int
 dwarf_global_formref_b(Dwarf_Attribute attr,
+    Dwarf_Off * ret_offset,
+    Dwarf_Bool * offset_is_info,
+    Dwarf_Error * error)
+{
+    int res = 0;
+    res = _dwarf_internal_global_formref_b( attr,
+        0,
+        ret_offset,
+        offset_is_info,
+        error);
+    return res;
+}
+int
+_dwarf_internal_global_formref_b(Dwarf_Attribute attr,
+    int context_level,
     Dwarf_Off * ret_offset,
     Dwarf_Bool * offset_is_info,
     Dwarf_Error * error)
@@ -855,6 +892,7 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
         }
         memcpy(&sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
         res = find_sig8_target_as_global_offset(attr,
+            context_level,
             &sig8,&t_is_info,&t_offset,error);
         if (res == DW_DLV_ERROR) {
 
