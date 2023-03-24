@@ -1,16 +1,17 @@
 
-#57335
 id: DW202303-038
 cve:
 fuzzer: ossfuzz id: 57335
 datereported: 2023-03-22
 reportedby: David Korczynski
-vulnerability:  Null dereference
+vulnerability:  Null dereference in dwarf_hasform()
 product: libdwarf
-description:
+description: Passing a null dw_return_bool pointer dereferenced 
+  zero, but now, instead we return DW_DLV_ERROR with error code
+  DW_DLE_INVALID_NULL_ARGUMENT
 datefixed: 2023-03-24
-references: regressiontests/ossfuzz57335/
-gitfixid: 
+references: regressiontests/ossfuzz57335/fuzz_die_cu_attrs-6235345560928256.fuzz
+gitfixid: e4053c9a0f25db0bed28372d9b77a50a0307dc10
 tarrelease:
 endrec: DW202303-038
 
