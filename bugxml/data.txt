@@ -14,7 +14,42 @@
 #56958
 #56906
 #56897
-#56895
+id: DW202303-026
+cve:
+fuzzer: ossfuzz id: 56897
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Heap buffer overflow reading compilation unit header.
+product: libdwarf
+description: Calling dwarf_next_cu_header_d() on the fuzzed test 
+  object results in a library crash in fuzz_die_cu_attrs_loclist.c
+  due to a failure to 
+  precisely test for a too-short Compilation Unit header.
+  Now a DW_DLV_ERROR is returned.
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz56897
+gitfixid:  
+tarrelease:
+endrec: DW202303-026
+
+
+id: DW202303-025
+cve:
+fuzzer: ossfuzz id: 56895
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Heap buffer overflow reading compilation unit header.
+product: libdwarf
+description: Calling dwarf_next_cu_header_d() on the fuzzed test 
+  object results in a library crash in fuzz_die_cu_attrs_loclist.c
+  due to a failure to 
+  precisely test for a too-short Compilation Unit header.
+  Now a DW_DLV_ERROR is returned.
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz56895/fuzz_macro_dwarf5-5080340952907776
+gitfixid:  771cfcca1ef6a4a7eb9595d700fc72020d0ed72e 
+tarrelease:
+endrec: DW202303-025
 
 id: DW202303-024
 cve:
@@ -51,7 +86,7 @@ description: The fuzz_dnames.c testcase build failed.
   was unusable and never worked. The documentation
   (libdwarf.pdf) gives alternates in the library that work.
 datefixed: 2023-03-08
-references: regressiontests/ossfuzz56568/
+references: 
 gitfixid: 
 tarrelease:
 endrec: DW202303-023
