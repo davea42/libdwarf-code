@@ -156,6 +156,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
             const char *attrname = 0;
             res = dwarf_whatform(attr, &formnum, errp);
             Dwarf_Bool *dw_returned_bool = 0;
+            /*  This next call is incorrect! libdwarf now returns
+                DW_DLV_ERROR  */
             res = dwarf_hasform(attr, formnum, dw_returned_bool, errp);
             res = dwarf_get_FORM_name(formnum, &formname);
             Dwarf_Block *tempb = 0;

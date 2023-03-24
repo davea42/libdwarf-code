@@ -1364,15 +1364,15 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_SYMBOL_SECTION_SIZE_ERROR       490
 #define DW_DLE_PE_SECTION_SIZE_ERROR           491
 #define DW_DLE_DEBUG_ADDR_ERROR                492
-
 #define DW_DLE_NO_SECT_STRINGS                 493
 #define DW_DLE_TOO_FEW_SECTIONS                494
 #define DW_DLE_BUILD_ID_DESCRIPTION_SIZE       495
 #define DW_DLE_BAD_SECTION_FLAGS               496
-#define DW_DLE_IMPROPER_SECTION_ZERO            497
+#define DW_DLE_IMPROPER_SECTION_ZERO           497
+#define DW_DLE_INVALID_NULL_ARGUMENT           498
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        497
+#define DW_DLE_LAST        499
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
@@ -2564,6 +2564,8 @@ DW_API int dwarf_attrlist(Dwarf_Die dw_die,
     @param dw_form
     The DW_FORM you are asking about, DW_FORM_strp for example.
     @param dw_returned_bool
+    The pointer passed in must be a valid non-null pointer
+    to a Dwarf_Bool.
     On success, sets the value to TRUE or FALSE.
     @param dw_error
     A place to return error details.

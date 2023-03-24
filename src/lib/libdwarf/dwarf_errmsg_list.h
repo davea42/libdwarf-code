@@ -674,6 +674,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_BAD_SECTION_FLAGS(496) Some section flags are incorrect."
     " Unusable object"},
 {"DW_DLE_IMPROPER_SECTION_ZERO(497) Section zero header contents "
-    "incorrect. See Elf ABI.  Unsafe object."}
+    "incorrect. See Elf ABI.  Unsafe object."},
+{"DW_DLE_INVALID_NULL_ARGUMENT(498) Argument must be a valid "
+    "pointer and non-null"}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

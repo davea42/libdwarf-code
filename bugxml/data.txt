@@ -1,5 +1,18 @@
 
 #57335
+id: DW202303-038
+cve:
+fuzzer: ossfuzz id: 57335
+datereported: 2023-03-22
+reportedby: David Korczynski
+vulnerability:  Null dereference
+product: libdwarf
+description:
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz57335/
+gitfixid: 
+tarrelease:
+endrec: DW202303-038
 
 id: DW202303-037
 cve:
