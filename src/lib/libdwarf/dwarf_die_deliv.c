@@ -321,7 +321,20 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
     dataptr += DWARF_HALF_SIZE;
     if (version == DW_CU_VERSION5) {
         Dwarf_Ubyte unit_typeb = 0;
+        Dwarf_Unsigned herelen = sizeof(unit_typeb) +
+            sizeof(addrsize) + offset_size;
+          
+            
 
+        if ((dataptr+herelen) > end_data) {
+            _dwarf_error_string(dbg, error,
+            DW_DLE_CU_UT_TYPE_ERROR,
+            "DW_DLE_UT_TYPE_ERROR: "
+            " Reading the unit type, address size, "
+            "and abbrev_offset of the DWARF5 header"
+            " will run off the end of the section. "
+            "Corrupt DWARF");
+        }
         READ_UNALIGNED_CK(dbg, unit_typeb, Dwarf_Ubyte,
             dataptr, sizeof(unit_typeb),error,end_data);
         dataptr += sizeof(unit_typeb);
@@ -357,6 +370,17 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
     } else if (version == DW_CU_VERSION2 ||
         version == DW_CU_VERSION3 ||
         version == DW_CU_VERSION4) {
+        Dwarf_Unsigned herelen = sizeof(addrsize) + offset_size;
+
+        if ((dataptr+herelen) > end_data) {
+            _dwarf_error_string(dbg, error,
+            DW_DLE_CU_UT_TYPE_ERROR,
+            "DW_DLE_UT_TYPE_ERROR: "
+            " Reading the address size, "
+            "and abbrev_offset of the DWARF header"
+            " will run off the end of the section. "
+            "Corrupt DWARF");
+        }
         /*  DWARF2,3,4  */
         READ_UNALIGNED_CK(dbg, abbrev_offset, Dwarf_Unsigned,
             dataptr, offset_size,error,end_data);
@@ -579,14 +603,14 @@ finish_cu_context_via_cudie_inner(
             error);
         if (resdwob == DW_DLV_NO_ENTRY) {
             /* The CU die has no children */
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+            dwarf_dealloc_die(cudie);
             cudie = 0;
             cu_context->cc_cu_die_has_children = FALSE;
             return DW_DLV_OK;
         }
         if (resdwob == DW_DLV_ERROR) {
             /*  Not applicable or an error */
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+            dwarf_dealloc_die(cudie);
             cudie = 0;
             return resdwob;
         }
@@ -594,7 +618,7 @@ finish_cu_context_via_cudie_inner(
         if (resdwob == DW_DLV_OK) {
             cu_context->cc_cu_die_tag = cutag;
         }
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+        dwarf_dealloc_die(cudie);
         return resdwob;
     }
     if (resdwo == DW_DLV_NO_ENTRY) {
@@ -820,7 +844,9 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         types_extra_len)) {
 
         local_dealloc_cu_context(dbg,cu_context);
-        _dwarf_error(dbg, error, DW_DLE_CU_LENGTH_ERROR);
+        _dwarf_error_string(dbg, error, DW_DLE_CU_LENGTH_ERROR,
+             "DW_DLE_CU_LENGTH_ERROR: reading version "
+             "stamp and address size fields");
         return DW_DLV_ERROR;
     }
     /*  Now we can read the fields with some confidence,
@@ -840,6 +866,13 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
             (as in Type Unit),
             there was no dwo in DWARF4
         */
+        if ((cu_ptr + sizeof(signaturedata)) > section_end_ptr) {
+            _dwarf_error_string(dbg, error, DW_DLE_CU_LENGTH_ERROR,
+                 "DW_DLE_CU_LENGTH_ERROR: reading "
+                 "Dwarf_Sig8 signature field");
+            local_dealloc_cu_context(dbg,cu_context);
+            return DW_DLV_ERROR;
+        }
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
         cu_ptr += sizeof(signaturedata);
         tres = _dwarf_read_unaligned_ck_wrapper(dbg,
@@ -862,6 +895,13 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         break;
     case DW_UT_skeleton:
     case DW_UT_split_compile: {
+        if ((cu_ptr + sizeof(signaturedata)) > section_end_ptr) {
+            _dwarf_error_string(dbg, error, DW_DLE_CU_LENGTH_ERROR,
+                 "DW_DLE_CU_LENGTH_ERROR: reading "
+                 "Dwarf_Sig8 signature field");
+            local_dealloc_cu_context(dbg,cu_context);
+            return DW_DLV_ERROR;
+        }
         /*  These unit types make a pair and
             paired units have identical signature.*/
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
