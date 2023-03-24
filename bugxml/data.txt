@@ -1,4 +1,154 @@
 
+#57335
+#57300
+#57292
+#57193
+#57149
+#    new file:   ossfuzz57149/fuzz_srcfiles-6213793811398656
+#57107
+#    new file:   ossfuzz57107/fuzz_die_cu_attrs_loclist-4991396240293888
+#57048
+#    new file:   ossfuzz57048/fuzz_findfuncbypc-4647942385696768
+#57027
+#56993
+#56958
+#56906
+#56897
+#56895
+
+id: DW202303-024
+cve:
+fuzzer: ossfuzz id: 56807
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Memory Leak in dwarf_check_lineheader_b()
+product: libdwarf
+description: The fuzzed test object file resulted
+  in a memory leak calling dwarf_check_lineheader_b()
+  as called from fuzz_srcfiles.c
+  Two error conditions in dwarf_line_table_reader_common.h
+  were missing a required free().
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz56807/fuzz_srcfiles-4626047380619264
+gitfixid: 484f50ef8be0506be2e4b5fbad489868db5c7985
+tarrelease:
+endrec: DW202303-024
+
+
+id: DW202303-023
+cve:
+fuzzer: ossfuzz id: 56568
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Test build failure
+product: Test harness
+description: The fuzz_dnames.c testcase build failed.
+  A result of removing two functions from the API,
+  dwarf_dnames_abbrev_by_code() and
+  dwarf_dnames_abbrev_form_by_index().
+  The test source no longer uses those two functions.
+  The first was slow and hard to use. The second
+  was unusable and never worked. The documentation
+  (libdwarf.pdf) gives alternates in the library that work.
+datefixed: 2023-03-08
+references: regressiontests/ossfuzz56568/
+gitfixid: 
+tarrelease:
+endrec: DW202303-023
+
+
+id: DW202303-022
+cve:
+fuzzer: ossfuzz id: 56480
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Reading a compilation unit never finishes
+product: libdwarf
+description: Reading a DWARF compilation unit header
+  in  a corrupted object
+  caused an infinite loop of repeated calls (growing the stack
+  at each call) in libdwarf.  Now the library properly reflects
+  a NO ENTRY case avoiding the loop and the test case returns
+  an unrelated error due to other corruption. 
+  Arguably the loop was due to corruption too, but it should
+  not have gotten stuck in the loop (and now it will not
+  get stuck).
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56480/fuzz_die_cu_print-5264022485467136
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+tarrelease:
+endrec: DW202303-022
+
+id: DW202303-022
+cve:
+fuzzer: ossfuzz id: 56497
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Memory Leak
+product: test harness
+description: The leak was due to the test driver fuzz/fuzz_rng.c
+  failing to call dwarf_finish at the point of returning as a result
+  of the corrupted binary returning an error condition.
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56497/
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+tarrelease:
+endrec: DW202303-022
+
+
+id: DW202303-021
+cve:
+fuzzer: ossfuzz id: 56487
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Memory Leak
+product: testing harness
+description: The leak was due to the test driver fuzz/fuzz_rng.c
+  failing to call dwarf_finish at the point of returning as a result
+  of the corrupted binary returning an error condition.
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56487/clusterfuzz-testcase-fuzz_rng-6655451078197248
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+tarrelease:
+endrec: DW202303-021
+
+
+
+id: DW202303-020
+cve:
+fuzzer: ossfuzz id: 56458
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Heap buffer overflow
+product: libdwarf
+description: The overflow encountered when
+  reading a corrupted line table header in read_a_name_table_header in
+  dwarf_debugnames.c
+  There was insufficient checking for out of bounds
+  values.
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56458/fuzz_findfuncbypc-5073632331431936
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+tarrelease:
+endrec: DW202303-020
+
+id: DW202303-019
+cve:
+fuzzer: ossfuzz id: 56454
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Stack buffer overflow  
+product: libdwarf
+description: The overflow was in dwarf_get_version_of_die()
+  One return failed to free a local malloc due to the
+  particular corruption in the text object DWARF.
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56454/
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+tarrelease:
+endrec: DW202303-019
+
+
 id: DW202303-018
 cve:
 fuzzer: ossfuzz id: 56807
@@ -7,23 +157,27 @@ reportedby: David Korczynski
 vulnerability:  Memory leak reading line table
 product: libdwarf
 description: A memory leak in _dwarf_read_line_table() 
-datefixed: 
-references: regressiontests/ossfuzz56807/
-gitfixid: 
+  reading a particular corrupted object.
+  One return failed to free a local malloc.
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56807fuzz_srcfiles-4626047380619264
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 tarrelease:
 endrec: DW202303-018
 
+FIXME
 id: DW202303-017
 cve:
-fuzzer: ossfuzz id: 
-datereported: 
+fuzzer: ossfuzz id: 56450
+datereported: 2023-02-28
 reportedby: David Korczynski
-vulnerability:  
+vulnerability:  Stack Buffer Overflow
 product: libdwarf
-description: To Be Assigned
-datefixed: 
-references: 
-gitfixid: 
+description: Stack buffer overflow in dwarf_dietype_offset.
+  Reading a corrupted object file.
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56450/fuzz_die_cu_attrs-4953133005799424
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 tarrelease:
 endrec: DW202303-017
 
@@ -96,9 +250,9 @@ vulnerability:  Heap Buffer Overflow
 product: libdwarf
 description: A heap buffer overflow reading
   a fuzzed object file
-datefixed: 
+datefixed: 2023-03-14
 references: regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
-gitfixid: 
+gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
 tarrelease:
 endrec: DW202303-012
 
@@ -219,7 +373,7 @@ description:  A call to dwarf_expand_frame_instructions()
   with corrupt data gets a segmentation violation.
 datefixed: 2023-03-14
 references: regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
-gitfixid: 
+gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
 tarrelease: 
 endrec: DW202303-005
 

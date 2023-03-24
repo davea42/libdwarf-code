@@ -1,3 +1,171 @@
+2023-03-24:  David Anderson
+    commit 484f50ef8be0506be2e4b5fbad489868db5c7985
+
+    Fixing oss fuzz 56807. Memory leak reading
+    fuzzed object file.
+    This is a very old bug.
+    Only seen with a fuzzed object file.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-03-23:  David Anderson
+    commit 0c92ef5b66c5bbcacae03fbf355b12713151c098
+
+    Fixes oss fuzz 57107. The infinite loop
+    was caused by letting internal function
+    _dwarf_find_CU_Context_given_sig()
+    unconditionally do too much in the middle
+    of setting up a CU_Context (by letting
+    it start more CU_contexts().
+    The implicit infinite loop has been there
+    a few years, depending on the correctness
+    of object files DWARF4/DWARF5 being read.
+
+    Calls new internal _dwarf_internal_global_formref_b()
+    (which is also called by dwarf_global_formref_b()
+    with its specific new argument at zero)
+    So for internal-library-use we can make
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    Introduced
+    a new function _dwarf_internal_find_die_given_sig8()
+    with a new argument and now API
+    function dwarf_find_die_given_sig8() just calls
+    the new function with a specific value (0)
+    of the new argument for the general case.
+
+    Added a #if 0 dump_bytes() local function
+    for debugging of Sig8 values.
+    Added a new argument to
+    _dwarf_find_CU_Context_given_sig() so it can
+    properly decide whether it should
+    create new CU_Contexts or not.
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+
+    file-static
+    find_sig8_target_as_global_offset()
+    added the new argument to help fix the infinite loop.
+    Implements the new _dwarf_internal_global_formref_b()
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    The new internal functions declared here.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2023-03-22:  David Anderson
+    commit 266e832df89ae4b4f6a9fad28c73a2777c07eec9
+
+    free(errp) is always wrong, removed it.
+
+    Ensured on return from the LLVM fuzz interface
+    always dwarf_finish() close() and unlink
+            modified:   fuzz/fuzz_die_cu_attrs_loclist.c
+
+2023-03-22:  David Anderson
+    commit 774f98e596df9dd8f3cb92ec76243caaa4287039
+
+    Fixes ossfuzz 57027.
+    Small code change, but massive
+    difference.
+    This has been wrong since dwarf_xu_index existed,
+    which would have been after the DWARF5
+    standard was issued Feb 2017.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-03-22:  David Anderson
+    commit 5fde5e404a98c6727889cf14d8f93ec2138a6fad
+
+    oss fuzz  56993.  One place in _dwarf_read_line_table_header()
+    where there was an error (corrupt data) found
+    the code failed to free(format_values). Fixed.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+    This has been wrong for quite a while, likely years.
+
+2023-03-22:  David Anderson
+    commit b9393bb9b6399a34f8616a272d030bdd004a5ef5
+    Merge: 68089962 bd331ae7
+
+    Merge branch 'newrnglists'
+
+    Merging several fixes reading debug_addr and debug_rnglists
+    And fuzz/fuzz_rng.c too.
+
+2023-03-22:  David Anderson
+    commit bd331ae7d839983efcc3bfbe3d656b781d45160c
+
+    Removed an unnecessary struct gi_fileheader_s
+    Revised the calculations of offfsets to
+    work correctly.
+    Added many checks for out-of-bounds
+    offsets.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+
+2023-03-22:  David Anderson
+    commit 48552f5f19c90dd2737cd4ee8e03a843ae23de82
+
+    Corrected the calculation of offsets in the raw-section
+    reading code and changed to mostly use offsets.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2023-03-22:  David Anderson
+    commit 4e8f26b857b5fe86557e344cd176c69462435c19
+
+    Corrected the calculation of the ending offset
+    and added a useful comment.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2023-03-22:  David Anderson
+    commit f14ba8b4af34698b2fdbd76efc52ef96a9a91256
+
+    Removed the unused pointer gi_string_pool.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.h
+
+2023-03-22:  David Anderson
+    commit 5149a583a263a9a17e462e038d42c8e3f91c8469
+
+    Replaced an incorrect comment with a correct one.
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+
+2023-03-22:  David Anderson
+    commit ade1be5d2efacaa23fbda4b4c1f08fcb8c0b3e4b
+
+    Every return from the *LLVM* function has to
+    do certain hosekeeping
+    to avoid leaks (dwarf_finish(dhg) for example).
+    Several here failed to do that.
+            modified:   fuzz/fuzz_rng.c
+
+2023-03-21:  David Anderson
+    commit 680899627db6f05b8cf8d86272255563b6d81ebd
+
+    Initialized local variables to
+    follow the requirements of libdwarf.
+
+            modified:   fuzz_die_cu_attrs.c
+            modified:   fuzz_die_cu_offset.c
+
+2023-03-21:  David Anderson
+    commit cc6e97128fe889b11cbc9542ad6d73a3bfcdf4a0
+
+    These has local Dwarf_Die pointers
+    left uninitialized. That violates
+    the requirements of the libdwarf API.
+    Now set to 0 at declaration.
+            modified:   fuzz/fuzz_die_cu_attrs.c
+            modified:   fuzz/fuzz_die_cu_offset.c
+
+2023-03-20:  David Anderson
+    commit 2ee326bad2b4286ca19a2d007d2bb0e77adcdcff
+
+    Restoring the working dwarf_rnglists.c.
+    My mistake having a new incomplete version
+    visible.
+            modified:   dwarf_rnglists.c
+
+2023-03-20:  David Anderson
+    commit fcbbee163bbdfbba7def899d3628b912649c724e
+
+    Latest changes from git log
+            modified:   ChangeLog
+
 2023-03-20:  David Anderson
     commit 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 
