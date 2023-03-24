@@ -1,7 +1,54 @@
 
 #57335
-#57300
-#57292
+
+id: DW202303-037
+cve:
+fuzzer: ossfuzz id: 57300
+datereported: 2023-03-21
+reportedby: David Korczynski
+vulnerability: Out of Memory 
+product: libdwarf
+description: Another case of the infinite loop
+  due to _dwarf_find_CU_Context_given_sig().
+  See DW202303-034 57193 and others listed here.
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
+gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+tarrelease:
+endrec: DW202303-037
+
+id: DW202303-036
+cve:
+fuzzer: ossfuzz id: 57300
+datereported: 2023-03-15
+reportedby: David Korczynski
+vulnerability: Out of Memory 
+product: libdwarf
+description: Another case of the infinite loop
+  due to _dwarf_find_CU_Context_given_sig().
+  See DW202303-034 57193 and others listed here.
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
+gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+tarrelease:
+endrec: DW202303-036
+
+id: DW202303-035
+cve:
+fuzzer: ossfuzz id: 57292
+datereported: 2023-03-15
+reportedby: David Korczynski
+vulnerability: Out of Memory 
+product: libdwarf
+description: Another case of the infinite loop
+  due to _dwarf_find_CU_Context_given_sig().
+  See DW202303-034 57193 and others listed here.
+datefixed: 2023-03-24
+references: regressiontests/ossfuzz57292/fuzz_die_cu_print-5412313393135616
+gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78 
+tarrelease:
+endrec: DW202303-035
+
 
 id: DW202303-034
 cve:
@@ -20,9 +67,9 @@ description: The infinite loop reading a fuzzed object file
   a few years, depending on the correctness
   of object files DWARF4/DWARF5 being read.
   Same bug as oss fuzz 57107
-datefixed:  
+datefixed: 2023-03-24
 references: regressiontests/ossfuzz57193/fuzz_die_cu_offset-5215024489824256
-gitfixid:  774f98e596df9dd8f3cb92ec76243caaa4287039
+gitfixid:  7165918c8594061c3f5ba7dd4df7c4555c68ec78
 tarrelease:
 endrec: DW202303-034
 
