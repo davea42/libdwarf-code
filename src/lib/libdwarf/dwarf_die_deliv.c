@@ -1221,9 +1221,12 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 for this CU. */
             case DW_AT_str_offsets_base:{
                 int udres = 0;
+                Dwarf_Bool is_info = cucon->cc_is_info;
 
-                udres = dwarf_global_formref(attr,
+                udres = _dwarf_internal_global_formref_b(attr,
+                    /* avoid recurse creating context */ 1,
                     &cucon->cc_str_offsets_header_offset,
+                    &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
                     cucon->cc_str_offsets_tab_present = TRUE;
@@ -1238,9 +1241,12 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 applicable to this CU. */
             case DW_AT_loclists_base: {
                 int udres = 0;
+                Dwarf_Bool is_info = cucon->cc_is_info;
 
-                udres = dwarf_global_formref(attr,
+                udres = _dwarf_internal_global_formref_b(attr,
+                    /* avoid recurse creating context */ 1,
                     &cucon->cc_loclists_base,
+                    &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
                     cucon->cc_loclists_base_present = TRUE;
@@ -1294,9 +1300,12 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 referencing from the dwp, but NOT
                 when referencing from the a.out */
                 int udres = 0;
+                Dwarf_Bool is_info = cucon->cc_is_info;
 
-                udres = dwarf_global_formref(attr,
+                udres = _dwarf_internal_global_formref_b(attr,
+                    /* avoid recurse creating context */ 1,
                     &cucon->cc_ranges_base,
+                    &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
                     cucon->cc_ranges_base_present = TRUE;
@@ -1309,9 +1318,12 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 }
             case  DW_AT_rnglists_base: {
                 int udres = 0;
+                Dwarf_Bool is_info = cucon->cc_is_info;
 
-                udres = dwarf_global_formref(attr,
+                udres = _dwarf_internal_global_formref_b(attr,
+                    /* avoid recurse creating context */ 1,
                     &cucon->cc_rnglists_base,
+                    &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
                     cucon->cc_rnglists_base_present = TRUE;
