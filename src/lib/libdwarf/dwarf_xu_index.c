@@ -478,6 +478,20 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     hashentry = hashtab + (index * HASHSIGNATURELEN);
     memcpy(hash_value,hashentry,HASHSIGNATURELEN);
     indexentry = indextab + (index * SIZEOFT32);
+    if (indexentry >= section_end ||
+        (indexentry+SIZEOFT32) > section_end) {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_XU_HASH_ROW_ERROR the index passed in, "
+            " %u, results in entry not fitting"
+            " in the hash table (past end of section)",index);
+        _dwarf_error_string(dbg, error,  DW_DLE_XU_HASH_ROW_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     READ_UNALIGNED_CK(dbg,indexval,Dwarf_Unsigned, indexentry,
         SIZEOFT32,
         error,section_end);
