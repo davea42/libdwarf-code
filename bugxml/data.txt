@@ -10,33 +10,37 @@ datereported: 2023-03-15
 reportedby: David Korczynski
 vulnerability: Infinite loop till out of memory. 
 product: libdwarf
-description: 
-datefixed: 
+description: The infinite loop reading a fuzzed object file
+  was caused by letting internal function
+  _dwarf_find_CU_Context_given_sig()
+  unconditionally do too much in the middle
+  of setting up a CU_Context (by letting
+  it start more CU_contexts().
+  The implicit infinite loop has been there
+  a few years, depending on the correctness
+  of object files DWARF4/DWARF5 being read.
+  Same bug as oss fuzz 57107
+datefixed:  
 references: regressiontests/ossfuzz57193/fuzz_die_cu_offset-5215024489824256
-gitfixid:  
+gitfixid:  774f98e596df9dd8f3cb92ec76243caaa4287039
 tarrelease:
 endrec: DW202303-034
-
-
-id: DW202303-032
-cve:
 
 id: DW202303-033
 cve:
 fuzzer: ossfuzz id: 57149
 datereported: 2023-03-15
 reportedby: David Korczynski
-vulnerability: Infinite loop till out of memory. 
+vulnerability: Stack overflow
 product: libdwarf
-description: The infinite loop reading a fuzzed object file
-  was caused by letting internal function
-  _dwarf_find_CU_Context_given_sig()
-  unconditionally do too much in the middle
-  of setting up a CU_Context
-  See DW202303-032, which is essentially the same.
-datefixed: 2023-03-23
+description: Infinite loop till out of memory
+  Similar to 57107 DW202303-032 but revealed
+  there were more places in find_cu_die_base_fields that
+  needed to call the internal  _dwarf_internal_global_formref_b()
+  function.
+datefixed: 2023-03-24
 references: regressiontests/ossfuzz57149/fuzz_srcfiles-6213793811398656
-gitfixid:  0c92ef5b66c5bbcacae03fbf355b12713151c098
+gitfixid:  7165918c8594061c3f5ba7dd4df7c4555c68ec78
 tarrelease:
 endrec: DW202303-033
 
