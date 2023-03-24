@@ -823,6 +823,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 DW_DLE_DEBUG_LINE_LENGTH_BAD,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
+            free(filename_entry_pairs);
             return DW_DLV_ERROR;
         }
 
@@ -992,6 +993,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         DW_DLE_LINE_NUMBER_HEADER_ERROR,
                         "DW_DLE_LINE_NUMBER_HEADER_ERROR",
                         err);
+                    free(filename_entry_pairs);
                     return (DW_DLV_ERROR);
                 }
                 if (line_ptr > line_ptr_end) {
