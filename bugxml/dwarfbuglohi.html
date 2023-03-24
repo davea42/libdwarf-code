@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-23 11:19  PST</p>
-<p> Record count: 95 </p>
+</p>as of 2023-03-24 16:29  PST</p>
+<p> Record count: 116 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -3101,7 +3101,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>references:  regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
 </p>
-<p>gitfixid: 
+<p>gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
 </p>
 <p>tarrelease: 
 </p>
@@ -3297,11 +3297,11 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>description:  A heap buffer overflow reading
   a fuzzed object file
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-14
 </p>
 <p>references:  regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 </p>
-<p>gitfixid: 
+<p>gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
 </p>
 <p>tarrelease: 
 </p>
@@ -3419,21 +3419,24 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>cve: 
 </p>
-<p>fuzzer: ossfuzz id:
+<p>fuzzer: ossfuzz id: 56450
 </p>
-<p>datereported: 
+<p>datereported: 2023-02-28
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:</p>
+<p>vulnerability:   Stack Buffer Overflow
+</p>
 <p>product: libdwarf
 </p>
-<p>description:  To Be Assigned
+<p>description:  Stack buffer overflow in dwarf_dietype_offset.
+  Reading a corrupted object file.
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-20
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>references:  regressiontests/ossfuzz56450/fuzz_die_cu_attrs-4953133005799424
+</p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 </p>
 <p>tarrelease: 
 </p>
@@ -3454,12 +3457,638 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>product: libdwarf
 </p>
 <p>description:  A memory leak in _dwarf_read_line_table()
+  reading a particular corrupted object.
+  One return failed to free a local malloc.
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-20
 </p>
-<p>references:  regressiontests/ossfuzz56807/
+<p>references:  regressiontests/ossfuzz56807fuzz_srcfiles-4626047380619264
 </p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-019">96) DW202303-019</h3>
+<p>id: DW202303-019
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56454
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Stack buffer overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The overflow was in dwarf_get_version_of_die()
+  One return failed to free a local malloc due to the
+  particular corruption in the text object DWARF.
+</p>
+<p>datefixed: 2023-03-20
+</p>
+<p>references:  regressiontests/ossfuzz56454/
+</p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-020">97) DW202303-020</h3>
+<p>id: DW202303-020
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56458
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap buffer overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The overflow encountered when
+  reading a corrupted line table header in read_a_name_table_header in
+  dwarf_debugnames.c
+  There was insufficient checking for out of bounds
+  values.
+</p>
+<p>datefixed: 2023-03-20
+</p>
+<p>references:  regressiontests/ossfuzz56458/fuzz_findfuncbypc-5073632331431936
+</p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-021">98) DW202303-021</h3>
+<p>id: DW202303-021
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56487
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Memory Leak
+</p>
+<p>product: testing harness
+</p>
+<p>description:  The leak was due to the test driver fuzz/fuzz_rng.c
+  failing to call dwarf_finish at the point of returning as a result
+  of the corrupted binary returning an error condition.
+</p>
+<p>datefixed: 2023-03-20
+</p>
+<p>references:  regressiontests/ossfuzz56487/clusterfuzz-testcase-fuzz_rng-6655451078197248
+</p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-022">99) DW202303-022</h3>
+<p>id: DW202303-022
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56497
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Memory Leak
+</p>
+<p>product: test harness
+</p>
+<p>description:  The leak was due to the test driver fuzz/fuzz_rng.c
+  failing to call dwarf_finish at the point of returning as a result
+  of the corrupted binary returning an error condition.
+</p>
+<p>datefixed: 2023-03-20
+</p>
+<p>references:  regressiontests/ossfuzz56497/
+</p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-023">100) DW202303-023</h3>
+<p>id: DW202303-023
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56568
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Test build failure
+</p>
+<p>product: Test harness
+</p>
+<p>description:  The fuzz_dnames.c testcase build failed.
+  A result of removing two functions from the API,
+  dwarf_dnames_abbrev_by_code() and
+  dwarf_dnames_abbrev_form_by_index().
+  The test source no longer uses those two functions.
+  The first was slow and hard to use. The second
+  was unusable and never worked. The documentation
+  (libdwarf.pdf) gives alternates in the library that work.
+</p>
+<p>datefixed: 2023-03-08
+</p>
+<p>references:</p>
 <p>gitfixid: 
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-024">101) DW202303-024</h3>
+<p>id: DW202303-024
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56807
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Memory Leak in dwarf_check_lineheader_b()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The fuzzed test object file resulted
+  in a memory leak calling dwarf_check_lineheader_b()
+  as called from fuzz_srcfiles.c
+  Two error conditions in dwarf_line_table_reader_common.h
+  were missing a required free().
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz56807/fuzz_srcfiles-4626047380619264
+</p>
+<p>gitfixid: 484f50ef8be0506be2e4b5fbad489868db5c7985
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-025">102) DW202303-025</h3>
+<p>id: DW202303-025
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56895
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap buffer overflow reading compilation unit header.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Calling dwarf_next_cu_header_d() on the fuzzed test
+  object results in a library crash in fuzz_die_cu_attrs_loclist.c
+  due to a failure to
+  precisely test for a too-short Compilation Unit header.
+  Now a DW_DLV_ERROR is returned.
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz56895/fuzz_macro_dwarf5-5080340952907776
+</p>
+<p>gitfixid: 771cfcca1ef6a4a7eb9595d700fc72020d0ed72e
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-026">103) DW202303-026</h3>
+<p>id: DW202303-026
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56897
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap buffer overflow reading the rnglists section
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  dwarf_get_rnglist_offset_index_value() could fail
+  on a corrupt object due to imprecise calculations of
+  entry offsets. Fixed by a major update of the code
+  in dwarf_rnglists.c
+</p>
+<p>datefixed: 2023-03-22
+</p>
+<p>references:  regressiontests/ossfuzz56897/fuzz_rng-5105415777288192
+</p>
+<p>gitfixid: b9393bb9b6399a34f8616a272d030bdd004a5ef5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-027">104) DW202303-027</h3>
+<p>id: DW202303-027
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56906
+</p>
+<p>datereported: 2023-03-09
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap Buffer overflow reading rnglists section.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:   Calling dwarf_get_rnglist_rle() on a corrupted
+  object file could result in a library crash.
+</p>
+<p>datefixed: 2023-03-22
+</p>
+<p>references:  regressiontests/ossfuzz56906/fuzz_rng-6031783801257984.fuzz
+</p>
+<p>gitfixid: b9393bb9b6399a34f8616a272d030bdd004a5ef5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-028">105) DW202303-028</h3>
+<p>id: DW202303-028
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56958
+</p>
+<p>datereported: 2023-03-12
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Out of memory crash.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Failing to check for error conditions
+  in a fuzzed object correctly lead to a giant malloc
+  that could not succeed.
+</p>
+<p>datefixed: 2023-03-22
+</p>
+<p>references:  regressiontests/ossfuzz56958/fuzz_stack_frame_access-6097292873826304
+</p>
+<p>gitfixid: b9393bb9b6399a34f8616a272d030bdd004a5ef5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-029">106) DW202303-029</h3>
+<p>id: DW202303-029
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56993
+</p>
+<p>datereported: 2023-03-12
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Leaked Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Calling dwarf_get_macro_context on a particular
+  fuzzed object file results in a memory leak when
+  a particular error in the corrupted section is detected.
+  The malloc was done by the line table reader code.
+</p>
+<p>datefixed: 2023-03-22
+</p>
+<p>references:  regressiontests/ossfuzz56993/fuzz_macro_dwarf5-5770464300761088
+</p>
+<p>gitfixid: 5fde5e404a98c6727889cf14d8f93ec2138a6fa
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-030">107) DW202303-030</h3>
+<p>id: DW202303-030
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57027
+</p>
+<p>datereported: 2023-03-12
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Infinite loop reading a gnu index section.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Calling dwarf_next_cu_header_d() on a corrupted
+  object file results in an infinite loop
+  and (eventually) a crash in dwarf_xu_index.c attempting
+  to resolve an 8 byte hash key.
+  The bug existed from the first version of this source file.
+</p>
+<p>datefixed: 2023-03-22
+</p>
+<p>references:  regressiontests/ossfuzz57027/fuzz_stack_frame_access-5123569972805632
+</p>
+<p>gitfixid: 774f98e596df9dd8f3cb92ec76243caaa4287039
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-031">108) DW202303-031</h3>
+<p>id: DW202303-031
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57048
+</p>
+<p>datereported: 2023-03-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:</p>
+<p>product: libdwarf
+</p>
+<p>description:  Calling dwarf_next_cu_header_d() on a corrupted
+  object file results in an infinite loop
+  and (eventually) a crash in dwarf_xu_index.c attempting
+  to resolve an 8 byte hash key.
+  The bug existed from the first version of this source file.
+  The same bug as DW202303-030.
+</p>
+<p>datefixed: 2023-03-22
+</p>
+<p>references:  regressiontests/ossfuzz57048/fuzz_findfuncbypc-4647942385696768
+</p>
+<p>gitfixid: 774f98e596df9dd8f3cb92ec76243caaa4287039
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-032">109) DW202303-032</h3>
+<p>id: DW202303-032
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57107
+</p>
+<p>datereported: 2023-03-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Infinite loop till out of memory.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The infinite loop reading a fuzzed object file
+  was caused by letting internal function
+  _dwarf_find_CU_Context_given_sig()
+  unconditionally do too much in the middle
+  of setting up a CU_Context (by letting
+  it start more CU_contexts().
+  The implicit infinite loop has been there
+  a few years, depending on the correctness
+  of object files DWARF4/DWARF5 being read.
+</p>
+<p>datefixed: 2023-03-23
+</p>
+<p>references:  regressiontests/ossfuzz57107/fuzz_die_cu_attrs_loclist-4991396240293888
+</p>
+<p>gitfixid: 0c92ef5b66c5bbcacae03fbf355b12713151c098
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-033">110) DW202303-033</h3>
+<p>id: DW202303-033
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57149
+</p>
+<p>datereported: 2023-03-15
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Stack overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Infinite loop till out of memory
+  Similar to 57107 DW202303-032 but revealed
+  there were more places in find_cu_die_base_fields that
+  needed to call the internal  _dwarf_internal_global_formref_b()
+  function.
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz57149/fuzz_srcfiles-6213793811398656
+</p>
+<p>gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-034">111) DW202303-034</h3>
+<p>id: DW202303-034
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57193
+</p>
+<p>datereported: 2023-03-15
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Infinite loop till out of memory.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The infinite loop reading a fuzzed object file
+  was caused by letting internal function
+  _dwarf_find_CU_Context_given_sig()
+  unconditionally do too much in the middle
+  of setting up a CU_Context (by letting
+  it start more CU_contexts().
+  The implicit infinite loop has been there
+  a few years, depending on the correctness
+  of object files DWARF4/DWARF5 being read.
+  Same bug as oss fuzz 57107
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz57193/fuzz_die_cu_offset-5215024489824256
+</p>
+<p>gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-035">112) DW202303-035</h3>
+<p>id: DW202303-035
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57292
+</p>
+<p>datereported: 2023-03-15
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Out of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Another case of the infinite loop
+  due to _dwarf_find_CU_Context_given_sig().
+  See DW202303-034 57193 and others listed here.
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz57292/fuzz_die_cu_print-5412313393135616
+</p>
+<p>gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-036">113) DW202303-036</h3>
+<p>id: DW202303-036
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57300
+</p>
+<p>datereported: 2023-03-15
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Out of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Another case of the infinite loop
+  due to _dwarf_find_CU_Context_given_sig().
+  See DW202303-034 57193 and others listed here.
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
+</p>
+<p>gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-037">114) DW202303-037</h3>
+<p>id: DW202303-037
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57300
+</p>
+<p>datereported: 2023-03-21
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Out of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Another case of the infinite loop
+  due to _dwarf_find_CU_Context_given_sig().
+  See DW202303-034 57193 and others listed here.
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
+</p>
+<p>gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-038">115) DW202303-038</h3>
+<p>id: DW202303-038
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57335
+</p>
+<p>datereported: 2023-03-22
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Null dereference in dwarf_hasform()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Passing a null dw_return_bool pointer dereferenced
+  zero, but now, instead we return DW_DLV_ERROR with error code
+  DW_DLE_INVALID_NULL_ARGUMENT
+</p>
+<p>datefixed: 2023-03-24
+</p>
+<p>references:  regressiontests/ossfuzz57335/fuzz_die_cu_attrs-6235345560928256.fuzz
+</p>
+<p>gitfixid: e4053c9a0f25db0bed28372d9b77a50a0307dc10
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-039">116) DW202303-039</h3>
+<p>id: DW202303-039
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56480
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Reading a compilation unit never finishes
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Reading a DWARF compilation unit header
+  in  a corrupted object
+  caused an infinite loop of repeated calls (growing the stack
+  at each call) in libdwarf.  Now the library properly reflects
+  a NO ENTRY case avoiding the loop and the test case returns
+  an unrelated error due to other corruption.
+  Arguably the loop was due to corruption too, but it should
+  not have gotten stuck in the loop (and now it will not
+  get stuck).
+</p>
+<p>datefixed: 2023-03-20
+</p>
+<p>references:  regressiontests/ossfuzz56480/fuzz_die_cu_print-5264022485467136
+</p>
+<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 </p>
 <p>tarrelease: 
 </p>

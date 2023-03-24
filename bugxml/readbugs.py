@@ -321,8 +321,8 @@ if __name__ == "__main__":
     list = readbugs("")
     list2 = sort_by_id(list)
     list2.reverse()
-    # for b in list2:
-    #  b.printbug()
+    #for b in list2:
+    #    b.printbug()
 
     targlo="LibDwarf Vulnerabilities Newest First"
     generatehtml(list2,targlo,"dwarfbug.html")

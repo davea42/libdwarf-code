@@ -1,4 +1,26 @@
 
+id: DW202303-039
+cve:
+fuzzer: ossfuzz id: 56480
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Reading a compilation unit never finishes
+product: libdwarf
+description: Reading a DWARF compilation unit header
+  in  a corrupted object
+  caused an infinite loop of repeated calls (growing the stack
+  at each call) in libdwarf.  Now the library properly reflects
+  a NO ENTRY case avoiding the loop and the test case returns
+  an unrelated error due to other corruption.
+  Arguably the loop was due to corruption too, but it should
+  not have gotten stuck in the loop (and now it will not
+  get stuck).
+datefixed: 2023-03-20
+references: regressiontests/ossfuzz56480/fuzz_die_cu_print-5264022485467136
+gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+tarrelease:
+endrec: DW202303-039
+
 id: DW202303-038
 cve:
 fuzzer: ossfuzz id: 57335
@@ -147,10 +169,6 @@ gitfixid:  774f98e596df9dd8f3cb92ec76243caaa4287039
 tarrelease:
 endrec: DW202303-031
 
-id: DW202303-029
-cve:
-
-
 id: DW202303-030
 cve:
 fuzzer: ossfuzz id: 57027
@@ -294,29 +312,6 @@ gitfixid:
 tarrelease:
 endrec: DW202303-023
 
-
-id: DW202303-022
-cve:
-fuzzer: ossfuzz id: 56480
-datereported: 2023-02-28
-reportedby: David Korczynski
-vulnerability: Reading a compilation unit never finishes
-product: libdwarf
-description: Reading a DWARF compilation unit header
-  in  a corrupted object
-  caused an infinite loop of repeated calls (growing the stack
-  at each call) in libdwarf.  Now the library properly reflects
-  a NO ENTRY case avoiding the loop and the test case returns
-  an unrelated error due to other corruption. 
-  Arguably the loop was due to corruption too, but it should
-  not have gotten stuck in the loop (and now it will not
-  get stuck).
-datefixed: 2023-03-20
-references: regressiontests/ossfuzz56480/fuzz_die_cu_print-5264022485467136
-gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
-endrec: DW202303-022
-
 id: DW202303-022
 cve:
 fuzzer: ossfuzz id: 56497
@@ -332,7 +327,6 @@ references: regressiontests/ossfuzz56497/
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 tarrelease:
 endrec: DW202303-022
-
 
 id: DW202303-021
 cve:
@@ -403,7 +397,6 @@ gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 tarrelease:
 endrec: DW202303-018
 
-FIXME
 id: DW202303-017
 cve:
 fuzzer: ossfuzz id: 56450
