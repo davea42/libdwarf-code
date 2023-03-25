@@ -1,5 +1,27 @@
 
 # 57408, new oss-fuzz Mar 23.
+id: DW202303-045
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability:  Heap buffer overflow, regex
+product: dwarfdump
+description: The  command: 
+  dwarfdump --search-regex=
+  with a simple, really long, string.
+  (with no file named)
+  resulted in a buffer overflow in a buffer
+  in dd_regex.c.
+  No object file is required for the test.
+  The code now checks stores to the internal array
+  holding the non-deterministic finite automata (nfa)
+datefixed: 2023-03-25
+references:  regressiontests/baselines/choi014.base
+gitfixid: bb8fab9e5e4e40b1268b31d90882c2ab93653eaf
+tarrelease:
+endrec: DW202303-045
+
 
 id: DW202303-044
 cve:
