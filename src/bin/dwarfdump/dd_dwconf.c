@@ -170,6 +170,59 @@ static int parse_abi(FILE * stream, const char *fname,
     unsigned nest_level);
 static char *get_token(char *cp, struct token_s *outtok);
 
+/*  We insist that the dwarfdump.conf file
+    contain ASCII only and reject if non-ascii
+    characters are found. */
+static int
+is_this_text_file(FILE *stream)
+{
+    unsigned char buf[512];
+    size_t bytesread = 0;
+    unsigned long i = 0;
+    unsigned long curlinecount = 0;
+    unsigned long int maxlinelen = 0;
+
+    bytesread = fread(buf,1,sizeof(buf),stream);
+    if (bytesread != sizeof(buf)) {
+         if (bytesread < 100) {
+             printf("Found the configure file is too small to "
+                 "be reasonable. Add a few comment lines"
+                 "to enlarge it from %lu bytes to 100\n",
+                 (unsigned long)bytesread);
+             return FALSE;
+         }
+    }
+    for ( i = 0; i < bytesread; ++i) {
+        unsigned char c = buf[i];
+
+        if (c == '\n') {
+            if (curlinecount > maxlinelen) {
+                 maxlinelen = curlinecount;
+            }
+            curlinecount = 0;
+            continue;
+        } 
+        if (c == '\r' || c == '\t') {
+            continue;
+        }
+        if (c >= ' ' && c <= '}') {
+            continue;
+        } else {
+             printf("Found non-ascii character 0x%02x "
+                 "and only ascii allowed in dwarfdump.conf\n",
+                 c);
+             return FALSE;
+        }
+    }
+    if (maxlinelen > 100) {
+        printf("Found maximum line length of %lu "
+                 "which seems too long to be reasonable\n",
+                 maxlinelen);
+        return FALSE;
+    }
+    return TRUE;
+}
+
 /*  This finds a dwarfdump.conf file and
     then parses it.  It updates
     conf_out as appropriate.
@@ -236,6 +289,20 @@ find_conf_file_and_read_config_inner(const char *named_file,
     }
     conf_internal->conf_name_used = name_used;
 
+    res = is_this_text_file(conf_stream);
+    if (res == FALSE) {
+        printf("dwarfdump configuration "
+            "file \"%s\" is not plain text. Error.\n",
+            sanitized(name_used));
+        return FOUND_ERROR;
+    }
+    res = fseek(conf_stream,0,SEEK_SET);
+    if (res != 0) {
+        printf("dwarfdump configuration "
+            "file \"%s\" fseek to 0 failed. Error\n",
+            sanitized(name_used));
+        return FOUND_ERROR;
+    }
     /*  And option: lines must come before any abi data. */
     res = find_abi_start(conf_stream, named_abi, &offset, &lineno);
     if (res == FOUND_DONE ||res == FOUND_OPTION) {
@@ -1094,12 +1161,13 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
     static int first_time_done = 0;
     struct comtable_s *comtabp = 0;
     int inourabi = FALSE;
+    int unknowntextcount = 0;
 
     if (nest_level > MAX_NEST_LEVEL) {
         ++errcount;
         printf("dwarfdump.conf: includeabi nest "
             "too deep in %s at line %lu\n",
-            fname, lineno);
+            sanitized(fname), lineno);
         return FALSE;
     }
 
@@ -1117,7 +1185,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             ++errcount;
             printf("dwarfdump: end of file or error"
                 " before endabi: in %s, line %lu\n",
-                fname, lineno);
+                sanitized(fname), lineno);
             return FALSE;
         }
         ++lineno;
@@ -1126,13 +1194,21 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         switch (comtype) {
         case LT_OPTION:
             if (!inourabi) break;
-            parseoption(line, fname, lineno,comtabp);
+            parseoption(line, sanitized(fname), lineno,comtabp);
             break;
         case LT_ERROR:
+            ++unknowntextcount;
             ++errcount;
-            printf ("dwarfdump: Unknown text in %s is \"%s\" "
+            printf("dwarfdump: Unknown text in %s ",
+                sanitized(fname));
+            printf("is \"%s\" "
                 "at line %lu\n",
-                fname, line, lineno);
+                sanitized(line), lineno);
+            if (unknowntextcount > 2) {
+                printf("Too much unknown text. Giving up "
+                    "on the dwarfdump.conf file\n");
+                return FALSE;
+            }
             break;
         case LT_COMMENT:
             break;
@@ -1144,7 +1220,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                 printf("dwarfdump: Encountered beginabi: "
                     "when not expected. "
                     "%s line %lu previous beginabi line %lu\n",
-                    fname,
+                    sanitized(fname),
                     lineno, conf_internal->beginabi_lineno);
             }
             conf_internal->beginabi_lineno = lineno;
@@ -1165,7 +1241,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                     "frame_interface: "
                     "%s line %lu previous frame_interface: "
                     "line %lu\n",
-                    fname, lineno,
+                    sanitized(fname), lineno,
                     conf_internal->frame_interface_lineno);
             }
             conf_internal->frame_interface_lineno = lineno;
@@ -1177,7 +1253,8 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (conf_internal->cfa_reg_lineno > 0) {
                 printf("dwarfdump: Encountered duplicate cfa_reg: "
                     "%s line %lu previous cfa_reg line %lu\n",
-                    fname, lineno, conf_internal->cfa_reg_lineno);
+                    sanitized(fname), 
+                    lineno, conf_internal->cfa_reg_lineno);
                 ++errcount;
             }
             conf_internal->cfa_reg_lineno = lineno;
@@ -1191,7 +1268,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                     "initial_reg_value: "
                     "%s line %lu previous initial_reg_value: "
                     "line %lu\n",
-                    fname, lineno,
+                    sanitized(fname), lineno,
                     conf_internal->initial_reg_value_lineno);
                 ++errcount;
             }
@@ -1208,7 +1285,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                     "same_val_reg: "
                     "%s line %lu previous initial_reg_value: "
                     "line %lu\n",
-                    fname, lineno,
+                    sanitized(fname), lineno,
                     conf_internal->initial_reg_value_lineno);
             }
             conf_internal->same_val_reg_lineno = lineno;
@@ -1224,7 +1301,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                     "undefined_val_reg: "
                     "%s line %lu previous initial_reg_value: "
                     "line %lu\n",
-                    fname, lineno,
+                    sanitized(fname), lineno,
                     conf_internal->initial_reg_value_lineno);
             }
             conf_internal->undefined_val_reg_lineno = lineno;
@@ -1236,7 +1313,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (conf_internal->reg_table_size_lineno > 0) {
                 printf("dwarfdump: duplicate reg_table_size: "
                     "%s line %lu previous reg_table_size: line %lu\n",
-                    fname, lineno,
+                    sanitized(fname), lineno,
                     conf_internal->reg_table_size_lineno);
                 ++errcount;
             }
@@ -1255,7 +1332,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                     abiname, (unsigned long) conf_internal->regcount,
                     name_reg_table_size,
                     (unsigned long) localconf->cf_table_entry_count,
-                    fname, (unsigned long) lineno);
+                    sanitized(fname), (unsigned long) lineno);
                 ++errcount;
             }
             inourabi = FALSE;
@@ -1301,13 +1378,13 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         default:
             printf("dwarfdump internal error,"
                 " impossible line type %d  %s %lu \n",
-                (int) comtype, fname, lineno);
+                (int) comtype, sanitized(fname), lineno);
             exit(EXIT_FAILURE);
         }
     }
     ++errcount;
     printf("End of file, no endabi: found. %s, line %lu\n",
-        fname, lineno);
+        sanitized(fname), lineno);
     return FALSE;
 }
 
