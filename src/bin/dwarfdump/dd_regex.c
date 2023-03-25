@@ -208,7 +208,7 @@ chset(CHAR c)
 #define checksize() do {                                 \
     if ((CHAR *)mp > (CHAR *)(nfa-50)) {                \
          badpat;                                         \
-         printf("Pattern to large to store in regex\n"); \
+         printf("Pattern too large to store in regex\n"); \
          return DW_DLV_ERROR;                            \
     }                                                    \
     }  while(1)
