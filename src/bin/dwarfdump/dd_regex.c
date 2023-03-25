@@ -204,6 +204,15 @@ chset(CHAR c)
 #define badpat    (*nfa = END)
 #define store(x)  *mp++ = (x)
 
+/*  50 is arbitrary. Lets not get close to overfilling. */
+#define checksize() do {                                 \
+    if ((CHAR *)mp > (CHAR *)(nfa-50)) {                \
+         badpat;                                         \
+         printf("Pattern to large to store in regex\n"); \
+         return DW_DLV_ERROR;                            \
+    }                                                    \
+    }  while(1)
+
 static void
 resetbittab(void)
 {
@@ -261,6 +270,7 @@ dd_re_comp(const char *pat)
         switch(*p) {
         case '.':               /* match any char..  */
             store(ANY);
+            checksize();
             break;
 
         case '^':               /* match beginning.. */
@@ -270,6 +280,7 @@ dd_re_comp(const char *pat)
                 store(CHR);
                 store(*p);
             }
+            checksize();
             break;
 
         case '$':               /* match endofline.. */
@@ -279,6 +290,7 @@ dd_re_comp(const char *pat)
                 store(CHR);
                 store(*p);
             }
+            checksize();
             break;
 
         case '[':               /* match char class..*/
@@ -322,6 +334,7 @@ dd_re_comp(const char *pat)
             for (n = 0; n < BITBLK; bittab[n++] =
                 (char) 0) {
                 store(mask ^ bittab[n]);
+                checksize();
             }
             break;
 
@@ -352,16 +365,20 @@ dd_re_comp(const char *pat)
             if (*p == '+') {
                 for (sp = mp; lp < sp; lp++)
                     store(*lp);
+                    checksize();
             }
 
             store(END);
             store(END);
+            checksize();
             sp = mp;
             while (--mp > lp) {
                 *mp = mp[-1];
             }
             store(CLO);
+            checksize();
             mp = sp;
+            checksize();
             break;
 
         case '\\':              /* tags, backrefs .. */
@@ -374,10 +391,12 @@ dd_re_comp(const char *pat)
             }
             store(CHR);
             store(*p);
+            checksize();
             break;
         default :               /* an ordinary char  */
             store(CHR);
             store(*p);
+            checksize();
             break;
         }
         sp = lp;
