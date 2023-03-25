@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-24 16:29  PST</p>
-<p> Record count: 116 </p>
+</p>as of 2023-03-25 15:19  PST</p>
+<p> Record count: 121 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -3239,15 +3239,19 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: dwarfdump
 </p>
-<p>description:  Stack overflow in function skipwhite
-  as part of reading the dwarfdump.conf configure
-  file.
-  Details to follow...soonish.
+<p>description:  A wholly corrupted speically constructed
+  dwarfdump.conf which is entirely inappropriate ascii
+  really made a mess of one's screen.
+  Now after a couple lines of garbage we
+  give up on that conf file. And we print the garbage
+  sanitized to avoid messing up one's screen.
+  The fix also avoids buffer overflow.
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-25
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>references:  regressiontests/choi010/poc_file
+</p>
+<p>gitfixid: cb8dd45770f2e1f440aab60adac0256f268fc16e
 </p>
 <p>tarrelease: 
 </p>
@@ -4089,6 +4093,164 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz56480/fuzz_die_cu_print-5264022485467136
 </p>
 <p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-040">117) DW202303-040</h3>
+<p>id: DW202303-040
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-07
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   Reading from zero page
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command: dwarfdump --file-abi=
+  causes big problems. Denial of service.
+  For many of such commands with an '=' and nothing
+  following the
+  dwoptarg variable is not set at all, leading
+  to a segmentation violation.
+</p>
+<p>datefixed: 2023-03-25
+</p>
+<p>references:   refressiontests/choi011/README
+</p>
+<p>gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-041">118) DW202303-041</h3>
+<p>id: DW202303-041
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:  Heap Use after Free
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --check-frame-extended choi012/poc_file_06
+  is now working, apparently fixed by earlier
+  bug fixes in libdwarf.
+</p>
+<p>datefixed: 2023-03-25
+</p>
+<p>references:   refressiontests/choi012/poc_file_06
+</p>
+<p>gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-042">119) DW202303-042</h3>
+<p>id: DW202303-042
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:  Memory Leak
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --check-all choi012/poc_file_07
+  leaked memory in dwarfdump.
+  A single instance of print_error_and_continue()
+  failed to return DW_DLV_ERROR when libdwarf
+  reported an error.
+  Before recent fixes to libdwarf this would
+  also generate heap-use-after-free.
+</p>
+<p>datefixed: 2023-03-25
+</p>
+<p>references:   refressiontests/choi012/poc_file_07
+</p>
+<p>gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-043">120) DW202303-043</h3>
+<p>id: DW202303-043
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   Heap Use After Free
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The  command:
+  dwarfdump choi012/poc_file_08
+  was resulting in a heap use after free.
+  It no longer does, due to earlier
+  libdwarf fixes.
+</p>
+<p>datefixed: 2023-03-25
+</p>
+<p>references:   refressiontests/choi012/poc_file_08
+</p>
+<p>gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-044">121) DW202303-044</h3>
+<p>id: DW202303-044
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   Heap buffer overflow
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --search-regex=\\
+  (with no file named)
+  resulted in a heap use after free.
+  No object file is required for the test.
+  The dd_regex.c regex compiler failed
+  to notice when a trailing backslash
+  caused the pattern compiler to step
+  past the pattern string.
+  Now we notice and issue an error.
+</p>
+<p>datefixed: 2023-03-25
+</p>
+<p>references:   regressiontests/baselines/choi013.base
+</p>
+<p>gitfixid: 3269f43d2a044bfcce71d30ce214a305473d1ea3
 </p>
 <p>tarrelease: 
 </p>

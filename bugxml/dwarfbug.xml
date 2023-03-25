@@ -3,6 +3,169 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-08</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>dwarfdump</product>
+
+<vulnerability>  Heap buffer overflow
+</vulnerability>
+
+<description> The  command:
+  dwarfdump --search-regex=\\
+  (with no file named)
+  resulted in a heap use after free.
+  No object file is required for the test.
+  The dd_regex.c regex compiler failed
+  to notice when a trailing backslash
+  caused the pattern compiler to step
+  past the pattern string.
+  Now we notice and issue an error.
+</description>
+
+<datefixed>2023-03-25</datefixed>
+
+<references>  regressiontests/baselines/choi013.base
+</references>
+
+<gitfixid>3269f43d2a044bfcce71d30ce214a305473d1ea3</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-08</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability>  Heap Use After Free
+</vulnerability>
+
+<description> The  command:
+  dwarfdump choi012/poc_file_08
+  was resulting in a heap use after free.
+  It no longer does, due to earlier
+  libdwarf fixes.
+</description>
+
+<datefixed>2023-03-25</datefixed>
+
+<references>  refressiontests/choi012/poc_file_08
+</references>
+
+<gitfixid>4a8a201cdb3408a2cfdc2946418b51b884140a2c</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-08</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>dwarfdump</product>
+
+<vulnerability> Memory Leak
+</vulnerability>
+
+<description> The  command:
+  dwarfdump --check-all choi012/poc_file_07
+  leaked memory in dwarfdump.
+  A single instance of print_error_and_continue()
+  failed to return DW_DLV_ERROR when libdwarf
+  reported an error.
+  Before recent fixes to libdwarf this would
+  also generate heap-use-after-free.
+</description>
+
+<datefixed>2023-03-25</datefixed>
+
+<references>  refressiontests/choi012/poc_file_07
+</references>
+
+<gitfixid>4a8a201cdb3408a2cfdc2946418b51b884140a2c</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-08</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>dwarfdump</product>
+
+<vulnerability> Heap Use after Free
+</vulnerability>
+
+<description> The  command:
+  dwarfdump --check-frame-extended choi012/poc_file_06
+  is now working, apparently fixed by earlier
+  bug fixes in libdwarf.
+</description>
+
+<datefixed>2023-03-25</datefixed>
+
+<references>  refressiontests/choi012/poc_file_06
+</references>
+
+<gitfixid>fd92b647e5e3a524be94b3b06c9efd14a8292946</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz</fuzzer>
+
+<datereported>2023-03-07</datereported>
+
+<reportedby>Youngseok Choi</reportedby>
+
+<product>dwarfdump</product>
+
+<vulnerability>  Reading from zero page
+</vulnerability>
+
+<description> The  command: dwarfdump --file-abi=
+  causes big problems. Denial of service.
+  For many of such commands with an '=' and nothing
+  following the
+  dwoptarg variable is not set at all, leading
+  to a segmentation violation.
+</description>
+
+<datefixed>2023-03-25</datefixed>
+
+<references>  refressiontests/choi011/README
+</references>
+
+<gitfixid>fd92b647e5e3a524be94b3b06c9efd14a8292946</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 56480</fuzzer>
 
 <datereported>2023-02-28</datereported>
@@ -884,17 +1047,21 @@
 <vulnerability>  Stack overflow dwarfdump
 </vulnerability>
 
-<description> Stack overflow in function skipwhite
-  as part of reading the dwarfdump.conf configure
-  file.
-  Details to follow...soonish.
+<description> A wholly corrupted speically constructed
+  dwarfdump.conf which is entirely inappropriate ascii
+  really made a mess of one's screen.
+  Now after a couple lines of garbage we
+  give up on that conf file. And we print the garbage
+  sanitized to avoid messing up one's screen.
+  The fix also avoids buffer overflow.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-25</datefixed>
 
-<references></references>
+<references> regressiontests/choi010/poc_file
+</references>
 
-<gitfixid></gitfixid>
+<gitfixid>cb8dd45770f2e1f440aab60adac0256f268fc16e</gitfixid>
 
 <tarrelease></tarrelease>
 

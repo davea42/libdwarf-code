@@ -1,6 +1,85 @@
 
 # 57408, new oss-fuzz Mar 23.
 
+id: DW202303-044
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability:  Heap buffer overflow
+product: dwarfdump
+description: The  command: 
+  dwarfdump --search-regex=\\
+  (with no file named)
+  resulted in a heap use after free.
+  No object file is required for the test.
+  The dd_regex.c regex compiler failed
+  to notice when a trailing backslash
+  caused the pattern compiler to step
+  past the pattern string.
+  Now we notice and issue an error.
+datefixed: 2023-03-25
+references:  regressiontests/baselines/choi013.base
+gitfixid: 3269f43d2a044bfcce71d30ce214a305473d1ea3
+tarrelease:
+endrec: DW202303-044
+
+id: DW202303-043
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability:  Heap Use After Free
+product: libdwarf
+description: The  command: 
+  dwarfdump choi012/poc_file_08
+  was resulting in a heap use after free.
+  It no longer does, due to earlier
+  libdwarf fixes.
+datefixed: 2023-03-25
+references:  refressiontests/choi012/poc_file_08
+gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
+tarrelease:
+endrec: DW202303-043
+ 
+id: DW202303-042
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability: Memory Leak
+product: dwarfdump
+description: The  command: 
+  dwarfdump --check-all choi012/poc_file_07
+  leaked memory in dwarfdump.
+  A single instance of print_error_and_continue()
+  failed to return DW_DLV_ERROR when libdwarf
+  reported an error. 
+  Before recent fixes to libdwarf this would
+  also generate heap-use-after-free.
+datefixed: 2023-03-25
+references:  refressiontests/choi012/poc_file_07
+gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
+tarrelease:
+endrec: DW202303-042
+
+id: DW202303-041
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability: Heap Use after Free 
+product: dwarfdump
+description: The  command: 
+  dwarfdump --check-frame-extended choi012/poc_file_06
+  is now working, apparently fixed by earlier 
+  bug fixes in libdwarf.
+datefixed: 2023-03-25
+references:  refressiontests/choi012/poc_file_06
+gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
+tarrelease:
+endrec: DW202303-041
+
 id: DW202303-040
 cve:
 fuzzer: ossfuzz
