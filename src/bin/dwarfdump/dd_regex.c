@@ -217,6 +217,27 @@ resetbittab(void)
     sta = NOP;
 }
 
+#if 0
+/* Some may not be alone, 
+. \ [ ] * + ^ $
+but some can be.
+*/
+static int
+dangermetachar(CHAR c)
+{
+    switch(c) {
+    case '?':
+    case '\\':
+    case '[':
+    case '+': 
+    case '^':
+    case '$': return 1;
+    default:
+       return 0;
+    }
+}
+#endif
+
 int
 dd_re_comp(const char *pat)
 {
@@ -345,6 +366,12 @@ dd_re_comp(const char *pat)
 
         case '\\':              /* tags, backrefs .. */
             ++p;
+            if (!*p) {
+                badpat;
+                printf("Regular expression backslash"
+                    " missing its operand. Erroneous regex\n");
+                return DW_DLV_ERROR;
+            }
             store(CHR);
             store(*p);
             break;
