@@ -3769,6 +3769,7 @@ traverse_one_die(Dwarf_Debug dbg,
             print_error_and_continue(
                 "dwarf_attrlist fails in traverse die",
                 res, *err);
+            return res;
         } else if (res == DW_DLV_NO_ENTRY) {
             /* indicates there are no attrs.
             It is not an error. */
