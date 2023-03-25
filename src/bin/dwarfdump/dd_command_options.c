@@ -987,7 +987,17 @@ void arg_print_str_offsets(void)
 
 void arg_trace(void)
 {
-    int nTraceLevel = atoi(dwoptarg);
+    int nTraceLevel = 0;
+
+    if (!dwoptarg || !dwoptarg[0]) {
+        /*  --trace=0 to dwarfdump gets us here. */
+        print_usage_message(usage_debug_text);
+        makename_destructor();
+        global_destructors();
+        exit(OKAY);
+    }
+    
+    nTraceLevel = atoi(dwoptarg);
     if (nTraceLevel >= 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
         glflags.nTrace[nTraceLevel] = 1;
     }
@@ -1060,6 +1070,11 @@ void arg_format_producer(void)
 {
     /*  Assume a compiler version to check,
         most likely a substring of a compiler name.  */
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR: -c<producer> requires "
+            " a producer string\n");
+        glflags.gf_count_major_errors++;
+    }
     if (!record_producer(dwoptarg)) {
         printf("ERROR: Compiler table max %d exceeded, "
             "limiting the tracked compilers to %d\n",
@@ -1136,7 +1151,7 @@ void arg_format_global_offsets(void)
 /*  Option '-h' */
 void arg_h_multiple_selection(void)
 {
-    if (dwoptarg) {
+    if (!dwoptarg || !dwoptarg[0]) {
         arg_usage_error = TRUE;
     } else {
         arg_help();
@@ -1155,7 +1170,13 @@ void arg_help(void)
 /*  Option '-H' */
 void arg_format_limit(void)
 {
-    int break_val = atoi(dwoptarg);
+    int break_val = 0;
+ 
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR The -H option requires a limit value\n");
+        glflags.gf_count_major_errors++;
+    }
+    break_val = atoi(dwoptarg);
     if (break_val > 0) {
         glflags.break_after_n_units = break_val;
     }
@@ -1180,6 +1201,12 @@ void arg_print_fission(void)
 /*  Option '-k[...]' */
 void arg_k_multiple_selection(void)
 {
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR: The -k option requires at least"
+           " one selection\n"); 
+        glflags.gf_count_major_errors++;
+        return;
+    }
     switch (dwoptarg[0]) {
     case 'a': arg_check_all();             break;
     case 'b': arg_check_abbrev();          break;
@@ -1453,6 +1480,12 @@ void arg_check_tag_tag(void)
 void arg_ku_multiple_selection(void)
 {
     /* Tag-Tree and Tag-Attr usage */
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR: The -ku option requires at least"
+           " one selection\n"); 
+        glflags.gf_count_major_errors++;
+        return;
+    }
     if (dwoptarg[1]) {
         switch (dwoptarg[1]) {
         case 'f': arg_check_usage_extended(); break;
@@ -1497,6 +1530,14 @@ void arg_check_macros(void)
 void arg_kx_multiple_selection(void)
 {
     /* Frames check */
+#if 0
+    if (!dwoptarg) {
+        printf("ERROR: The -kx option allows at least"
+           " one selection\n"); 
+        glflags.gf_count_major_errors++;
+        return;
+    }
+#endif
     if (dwoptarg[1]) {
         switch (dwoptarg[1]) {
         case 'e': arg_check_frame_extended(); break;
@@ -1632,8 +1673,13 @@ void arg_file_output(void)
 {
     const char *ctx = arg_option > OPT_BEGIN ?
         "--file-output=" : "-O file=";
+    const char *path = 0;
 
-    const char *path = do_uri_translation(dwoptarg,ctx);
+    if (!dwoptarg || dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
+    path = do_uri_translation(dwoptarg,ctx);
     if (strlen(path) > 0) {
         glflags.output_file = path;
     } else {
@@ -1694,6 +1740,10 @@ void arg_S_multiple_selection(void)
 {
     /* 'v' option, to print number of occurrences */
     /* -S[v]match|any|regex=text*/
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     if (dwoptarg[0] == 'v') {
         ++dwoptarg;
         arg_search_count();
@@ -1770,6 +1820,10 @@ insert_debuglink_path(char *p)
 /*  Option --add-debuglink-path=<text> */
 void arg_add_debuglink_path(void)
 {
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     if (strncmp(dwoptarg,"add-debuglink-path=",21) == 0) {
         dwoptarg = &dwoptarg[21];
         if (strlen(dwoptarg)) {
@@ -1792,6 +1846,10 @@ void arg_search_any(void)
         "--search-any=" : "-S any=";
 
     /* -S any=<text> */
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     glflags.gf_search_is_on = TRUE;
     glflags.search_any_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_any_text);
@@ -1822,6 +1880,10 @@ void arg_search_match(void)
     const char *ctx = arg_option > OPT_BEGIN ?
         "--search-match=" : "-S match=";
 
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     /* -S match=<text> */
     glflags.gf_search_is_on = TRUE;
     glflags.search_match_text = makename(dwoptarg);
@@ -1854,6 +1916,10 @@ void arg_search_regex(void)
         "--search-regex=" : "-S regex=";
     int res = 0;
 
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     /* The compiled regex occupies a static area */
     /* -S regex=<regular expression> */
     glflags.gf_search_is_on = TRUE;
@@ -1898,6 +1964,10 @@ void arg_search_count(void)
 /*  Option '-t' */
 void arg_t_multiple_selection(void)
 {
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     switch (dwoptarg[0]) {
     case 'a': arg_print_static();      break;
     case 'f': arg_print_static_func(); break;
@@ -1937,6 +2007,10 @@ void arg_format_file(void)
     const char *ctx = arg_option > OPT_BEGIN ?
         "--format-file=" : "-u<cu name>";
 
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     /* compile unit */
     const char *tstr = 0;
     glflags.gf_cu_name_flag = TRUE;
@@ -1995,6 +2069,10 @@ void arg_print_weaknames(void)
 void arg_W_multiple_selection(void)
 {
     if (dwoptarg) {
+        if (!dwoptarg[0]) {
+            arg_usage_error = TRUE;
+            return;
+        }
         switch (dwoptarg[0]) {
         case 'c': arg_search_print_children(); break;
         case 'p': arg_search_print_parent();   break;
@@ -2037,6 +2115,10 @@ void arg_search_print_parent(void)
 /*  Option '-x[...]' */
 void arg_x_multiple_selection(void)
 {
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     if (strncmp(dwoptarg,"name=",5) == 0) {
         dwoptarg = &dwoptarg[5];
         arg_file_name();
@@ -2068,6 +2150,12 @@ arg_file_abi(void)
     const char *ctx = arg_option > OPT_BEGIN ?
         "--file-abi=" : "-x abi=";
 
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR *abi= does not allow an empty text\n");
+        glflags.gf_count_major_errors++;
+        arg_usage_error = TRUE;
+        return;
+    }
     /*  -x abi=<abi> meaning select abi from dwarfdump.conf
         file. Must always select abi to use dwarfdump.conf */
     const char *abi = do_uri_translation(dwoptarg,ctx);
@@ -2089,8 +2177,15 @@ arg_format_groupnumber(void)
         For group 1 (DWARF5 .dwo sections and dwp data)
             -x groupnumber=2 */
     long int gnum = 0;
+    int res = 0;
 
-    int res = get_number_value(dwoptarg,&gnum);
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR *groupnumber= does not allow an empty text\n");
+        glflags.gf_count_major_errors++;
+        arg_usage_error = TRUE;
+        return;
+    }
+    res = get_number_value(dwoptarg,&gnum);
     if (res == DW_DLV_OK) {
         glflags.group_number = gnum;
     } else {
@@ -2102,6 +2197,12 @@ arg_format_groupnumber(void)
 static void
 arg_file_line5(void)
 {
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR *line5= does not allow an empty text\n");
+        glflags.gf_count_major_errors++;
+        arg_usage_error = TRUE;
+        return;
+    }
     if (!strcmp(dwoptarg,"std")) {
         glflags.gf_line_flag_selection = singledw5;
     } else if (!strcmp(dwoptarg,"s2l")) {
@@ -2122,9 +2223,16 @@ static void arg_file_name(void)
 {
     const char *ctx = arg_option > OPT_BEGIN ?
         "--file-name=" : "-x name=";
+    const char *path = 0;
 
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR *name= does not allow an empty text\n");
+        glflags.gf_count_major_errors++;
+        arg_usage_error = TRUE;
+        return;
+    }
     /*  -x name=<path> meaning name dwarfdump.conf file. */
-    const char *path = do_uri_translation(dwoptarg,ctx);
+    path = do_uri_translation(dwoptarg,ctx);
     if (strlen(path) > 0) {
         esb_empty_string(glflags.config_file_path);
         esb_append(glflags.config_file_path,path);
@@ -2150,8 +2258,15 @@ static void arg_file_tied(void)
 {
     const char *ctx = arg_option > OPT_BEGIN ?
         "--file-tied=" : "-x tied=";
+    const char *tiedpath = 0;
 
-    const char *tiedpath = do_uri_translation(dwoptarg,ctx);
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR *tied= does not allow an empty text\n");
+        glflags.gf_count_major_errors++;
+        arg_usage_error = TRUE;
+        return;
+    }
+    tiedpath = do_uri_translation(dwoptarg,ctx);
     if (strlen(tiedpath) > 0) {
         esb_empty_string(glflags.config_file_tiedpath);
         esb_append(glflags.config_file_tiedpath,tiedpath);
@@ -2189,7 +2304,11 @@ static void arg_debuglink_path_invalid(void)
     printf("--add-debuglink-path=<text>\n");
     /*  Add quotes around string so any invisible chars
         kind of show up */
-    printf("is allowed, not  \"%s\"\n",dwoptarg);
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("is allowed, not an empty <text>\n");
+    } else {
+        printf("is allowed, not  \"%s\"\n",dwoptarg);
+    }
     glflags.gf_count_major_errors++;
     arg_usage_error = TRUE;
 
@@ -2199,7 +2318,11 @@ static void arg_search_invalid(void)
 {
     printf("-S any=<text> or -S match=<text> or"
         " -S regex=<text>\n");
-    printf("is allowed, not -S %s\n",dwoptarg);
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("is allowed, not an empty <text>\n");
+    } else {
+        printf("is allowed, not -S %s\n",dwoptarg);
+    }
     arg_usage_error = TRUE;
     glflags.gf_count_major_errors++;
 }
@@ -2216,7 +2339,11 @@ static void arg_x_invalid(void)
     printf("-x line5={std,s2l,orig,orig2l} \n");
     printf(" and  \n");
     printf("-x nosanitizestrings \n");
-    printf("are legal, not -x %s\n", dwoptarg);
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("is allowed, not an empty text after the =\n");
+    } else {
+        printf("are legal, not -x %s\n", dwoptarg);
+    }
     arg_usage_error = TRUE;
     glflags.gf_count_major_errors++;
 }
