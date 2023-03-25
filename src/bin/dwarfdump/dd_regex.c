@@ -127,9 +127,12 @@
 #include <config.h>
 
 #include <stdio.h> /* printf() */
-
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
+#incluce "dd_checkutil.h"
+#include "dd_glflags.h"
 
 /*  This version corrects two bugs (see 'code by davea'
     below).
@@ -208,7 +211,8 @@ chset(CHAR c)
 #define checksize() do {                                 \
     if ((CHAR *)mp > (CHAR *)(nfa-50)) {                \
          badpat;                                         \
-         printf("Pattern too large to store in regex\n"); \
+         printf("ERROR: Pattern too large to store in regex\n"); \
+         glflags.gf_count_major_errors++
          return DW_DLV_ERROR;                            \
     }                                                    \
     }  while(1)
@@ -261,7 +265,9 @@ dd_re_comp(const char *pat)
 
     resetbittab();
     if (!pat || !*pat) {
-        printf("Empty or NULL not a valid regular expression\n");
+        printf("ERROR: Empty or NULL not a valid "
+            "regular expression\n");
+        glflags.gf_count_major_errors++
         return DW_DLV_NO_ENTRY;
     }
 
@@ -327,7 +333,9 @@ dd_re_comp(const char *pat)
             }
             if (!*p) {
                 badpat;
-                printf("Regular expression %s missing ]\n",pat);
+                printf("ERROR: Regular expression %s missing ]\n",
+                    pat) ;
+                glflags.gf_count_major_errors++;
                 return DW_DLV_ERROR;
             }
             /* Storing the bitmask into nfa  */
@@ -342,8 +350,9 @@ dd_re_comp(const char *pat)
         case '+':               /* match 1 or more.. */
             if (p == pat) {
                 badpat;
-                printf("Regular expression %s has empty * +  "
+                printf("ERROR: Regular expression %s has empty * +  "
                     "Closure\n",pat);
+                glflags.gf_count_major_errors++;
                 return DW_DLV_ERROR;
             }
             lp = sp;        /* previous opcode */
@@ -355,8 +364,9 @@ dd_re_comp(const char *pat)
             case BOL:
             case REF:
                 badpat;
-                printf("Regular expression %s has illegal "
+                printf("ERROR Regular expression %s has illegal "
                     "* + closure\n",pat);
+                glflags.gf_count_major_errors++;
                 return DW_DLV_ERROR;
             default:
                 break;
@@ -385,8 +395,9 @@ dd_re_comp(const char *pat)
             ++p;
             if (!*p) {
                 badpat;
-                printf("Regular expression backslash"
+                printf("ERROR Regular expression backslash"
                     " missing its operand. Erroneous regex\n");
+                glflags.gf_count_major_errors++;
                 return DW_DLV_ERROR;
             }
             store(CHR);
@@ -475,8 +486,9 @@ dd_re_exec(char *lp)
     }
     case END:            /* munged automaton. fail always */
         badpat;
-        printf("Error in in regex automaton. "
+        printf("ERROR in in regex automaton. "
             "END out of place\n");
+        glflags.gf_count_major_errors++;
         return DW_DLV_ERROR;
     }
     if (res != DW_DLV_OK) {
@@ -655,8 +667,9 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr,
                 break;
             default:
                 badpat;
-                printf("Regular expression has illegal "
+                printf("ERROR Regular expression has illegal "
                     "closure: bad nfa\n");
+                glflags.gf_count_major_errors++;
                 return DW_DLV_ERROR;
             }
             ap += n;
@@ -687,8 +700,9 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr,
             return DW_DLV_NO_ENTRY;
         default:
             badpat;
-            printf("Regular expression has illegal "
+            printf("ERROR Regular expression has illegal "
                 "dd_re_exec: bad nfa.\n");
+            glflags.gf_count_major_errors++;
             return DW_DLV_ERROR;
         }
     }
