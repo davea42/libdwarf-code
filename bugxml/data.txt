@@ -1,4 +1,25 @@
 
+# 57408, new oss-fuzz Mar 23.
+
+id: DW202303-040
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-07
+reportedby: Youngseok Choi
+vulnerability:  Reading from zero page
+product: dwarfdump
+description: The  command: dwarfdump --file-abi=
+  causes big problems. Denial of service.
+  For many of such commands with an '=' and nothing
+  following the
+  dwoptarg variable is not set at all, leading
+  to a segmentation violation.
+datefixed: 2023-03-25
+references:  refressiontests/choi011/README
+gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
+tarrelease:
+endrec: DW202303-040
+
 id: DW202303-039
 cve:
 fuzzer: ossfuzz id: 56480
@@ -509,13 +530,16 @@ datereported: 2023-03-07
 reportedby: Youngseok Choi
 vulnerability:  Stack overflow dwarfdump
 product: dwarfdump
-description: Stack overflow in function skipwhite
-  as part of reading the dwarfdump.conf configure
-  file.
-  Details to follow...soonish.
-datefixed: 
-references: 
-gitfixid: 
+description: A wholly corrupted speically constructed
+  dwarfdump.conf which is entirely inappropriate ascii
+  really made a mess of one's screen.
+  Now after a couple lines of garbage we
+  give up on that conf file. And we print the garbage
+  sanitized to avoid messing up one's screen.
+  The fix also avoids buffer overflow.
+datefixed: 2023-03-25
+references: regressiontests/choi010/poc_file
+gitfixid: cb8dd45770f2e1f440aab60adac0256f268fc16e
 tarrelease:
 endrec: DW202303-010
 
