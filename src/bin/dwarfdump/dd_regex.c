@@ -131,7 +131,7 @@
 #include "libdwarf.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
-#incluce "dd_checkutil.h"
+#include "dd_checkutil.h"
 #include "dd_glflags.h"
 
 /*  This version corrects two bugs (see 'code by davea'

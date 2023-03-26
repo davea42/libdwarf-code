@@ -1,6 +1,8 @@
 name: ci
 
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
   workflow_dispatch:
@@ -36,7 +38,7 @@ jobs:
         ctest -R self
   linux_meson:
     runs-on: ubuntu-latest
-    steps:  
+    steps:
     - uses: actions/checkout@v2
     - name: Install meson / ninja
       run: |
