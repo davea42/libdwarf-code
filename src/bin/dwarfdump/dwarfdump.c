@@ -2299,10 +2299,14 @@ dump_unique_errors_table(void)
 void
 release_unique_errors_table(void)
 {
+#if 0
+    The pointed-to entries are all saved in makename,
+    so let its destructor do the work.
     unsigned int index;
     for (index = 0; index < set_unique_errors_entries; ++index) {
         free(set_unique_errors[index]);
     }
+#endif
     free(set_unique_errors);
     set_unique_errors = 0;
     set_unique_errors_entries = 0;
