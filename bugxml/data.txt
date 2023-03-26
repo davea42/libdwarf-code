@@ -1,5 +1,69 @@
 
 # 57408, new oss-fuzz Mar 23.
+
+id: DW202303-048
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability:  Memory leak (was double free).
+product: dwarfdump
+description: The  command: 
+  dwarfdump --file-name=<file> -kG -ka <objectfile>
+  results in a a memory leak.
+  In certain error cases we failed to fclose()
+  a FILE * used to read dwarfdump.conf.
+  Earlier changes fixed the double free, this
+  fixes the memory leak..
+datefixed: 
+references: regressiontests/choi015/poc_file_03
+gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+tarrelease:
+endrec: DW202303-048
+
+id: DW202303-047
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability:  Double Free
+product: dwarfdump
+description: The  command: 
+  dwarfdump --check-unique --check-abbrev 
+  results in a double free.
+  The table of unique errors contained 
+  makename() data, so that aspect caused
+  a double free as makename gets destructed
+  independently. Fixed now,letting makename
+  destructor do the work.
+datefixed: 
+references: regressiontests/choi015/poc_file_04
+gitfixid: df64db4740f1b480e602b1112107d51f0d269828
+tarrelease:
+endrec: DW202303-047
+
+
+
+id: DW202303-046
+cve:
+fuzzer: ossfuzz
+datereported: 2023-03-08
+reportedby: Youngseok Choi
+vulnerability:  global buffer overflow
+product: dwarfdump
+description: The  command: 
+  dwarfdump --search-regex=t[ą--]e
+  Note the non-ascii character.
+  The dwarfdump regex only allows ascii
+  in search patterns, not the rest of UTF-8.
+datefixed: 2023-03-26
+references:  regressiontests/choi012/poc_file_10
+gitfixid: 9eac0c8bbae3fadb2be3d5ee15b9c44f42d2f966
+tarrelease:
+endrec: DW202303-046
+
+
+
 id: DW202303-045
 cve:
 fuzzer: ossfuzz
