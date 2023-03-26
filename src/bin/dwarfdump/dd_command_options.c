@@ -1151,7 +1151,7 @@ void arg_format_global_offsets(void)
 /*  Option '-h' */
 void arg_h_multiple_selection(void)
 {
-    if (!dwoptarg || !dwoptarg[0]) {
+    if (dwoptarg) { 
         arg_usage_error = TRUE;
     } else {
         arg_help();
