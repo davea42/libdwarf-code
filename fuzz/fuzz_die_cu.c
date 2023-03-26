@@ -47,7 +47,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Ptr errarg = 0;
   Dwarf_Error *errp = 0;
   int i = 0;
-  Dwarf_Die die;
 
   fuzz_fd = open(filename, O_RDONLY);
   if (fuzz_fd != -1) {
