@@ -185,10 +185,11 @@ is_this_text_file(FILE *stream)
     bytesread = fread(buf,1,sizeof(buf),stream);
     if (bytesread != sizeof(buf)) {
          if (bytesread < 100) {
-             printf("Found the configure file is too small to "
-                 "be reasonable. Add a few comment lines"
+             printf("ERROR: Found the configure file is too small to "
+                 "be reasonable. Add a few comment lines "
                  "to enlarge it from %lu bytes to 100\n",
                  (unsigned long)bytesread);
+             glflags.gf_count_major_errors++;
              return FALSE;
          }
     }
@@ -215,9 +216,11 @@ is_this_text_file(FILE *stream)
         }
     }
     if (maxlinelen > 100) {
-        printf("Found maximum line length of %lu "
-                 "which seems too long to be reasonable\n",
+        printf("ERROR: Found maximum configure file"
+                 " line length of %lu"
+                 " which seems too long to be reasonable\n",
                  maxlinelen);
+        glflags.gf_count_major_errors++;
         return FALSE;
     }
     return TRUE;
@@ -267,19 +270,21 @@ find_conf_file_and_read_config_inner(const char *named_file,
     if (!conf_stream) {
         ++errcount;
         if (!named_file || !strlen(named_file)) {
-            printf("dwarfdump found no dwarfdump.conf file "
+            printf("ERROR: dwarfdump found no dwarfdump.conf file "
                 "in any of the standard places\n"
                 "(precede all arguments "
                 "with option --show-dwarfdump-conf to see "
                 "what file paths tried)\n"
                 "If no print/check arguments also provided "
                 "dwarfdump may silently just stop.\n");
+            glflags.gf_count_major_errors++;
         } else {
-            printf("dwarfdump found no dwarfdump.conf "
+            printf("ERROR: dwarfdump found no dwarfdump.conf "
                 "file \"%s\"\n"
                 "If no print/check arguments also provided "
                 "dwarfdump may silently just stop.\n",
                 sanitized(named_file));
+            glflags.gf_count_major_errors++;
         }
         return FOUND_ERROR;
     }
@@ -291,16 +296,20 @@ find_conf_file_and_read_config_inner(const char *named_file,
 
     res = is_this_text_file(conf_stream);
     if (res == FALSE) {
-        printf("dwarfdump configuration "
+        printf("ERROR: dwarfdump configuration "
             "file \"%s\" is not plain text. Error.\n",
             sanitized(name_used));
+        glflags.gf_count_major_errors++;
+        fclose(conf_stream);
         return FOUND_ERROR;
     }
     res = fseek(conf_stream,0,SEEK_SET);
     if (res != 0) {
-        printf("dwarfdump configuration "
+        printf("ERROR: dwarfdump configuration "
             "file \"%s\" fseek to 0 failed. Error\n",
             sanitized(name_used));
+        glflags.gf_count_major_errors++;
+        fclose(conf_stream);
         return FOUND_ERROR;
     }
     /*  And option: lines must come before any abi data. */
@@ -313,10 +322,11 @@ find_conf_file_and_read_config_inner(const char *named_file,
     if (res == FOUND_ERROR) {
         ++errcount;
         fclose(conf_stream);
-        printf("dwarfdump found no usable abi \"%s\" "
+        printf("ERROR: dwarfdump found no usable abi \"%s\" "
             "in file \"%s\".\n",
             named_abi?named_abi:"<not looking for abi>",
             name_used);
+        glflags.gf_count_major_errors++;
         return FOUND_ERROR;
     }
     /* res == FOUND_ABI_START */
@@ -324,8 +334,9 @@ find_conf_file_and_read_config_inner(const char *named_file,
     if (res != 0) {
         ++errcount;
         fclose(conf_stream);
-        printf("dwarfdump seek to %ld offset in %s failed!\n",
+        printf("ERROR: dwarfdump seek to %ld offset in %s failed!\n",
             offset, name_used);
+        glflags.gf_count_major_errors++;
         return FOUND_ERROR;
     }
     parse_abi(conf_stream, name_used, named_abi,
@@ -352,6 +363,7 @@ find_conf_file_and_read_config(const char *named_file,
     res =  find_conf_file_and_read_config_inner(named_file,
         named_abi,
         &conf_internal,0);
+    /*  Nothing in conf_internal need be freed */
     return res;
 }
 
@@ -384,7 +396,7 @@ find_a_file(const char *named_file,
             " configuration as \"%s\"\n", lname);
         fin = fopen(lname, type);
         if (fin) {
-            *name_used = lname;
+            *name_used = makename(lname);
             return fin;
         }
         return 0;
@@ -421,7 +433,7 @@ find_a_file(const char *named_file,
             }
             fin = fopen(lname, type);
             if (fin) {
-                *name_used = lname;
+                *name_used = makename(lname);
                 return fin;
             }
             /* No file was found */
@@ -434,10 +446,12 @@ find_a_file(const char *named_file,
 
     /* No name given, find a default, if we can. */
     for (i = 0; defaults[i]; ++i) {
+        char buf[2000];
+
+        buf[0] = 0;
         lname = defaults[i];
         if (strncmp(lname, "HOME/", 5) == 0) {
             /* arbitrary size */
-            char buf[2000];
             char *homedir = getenv("HOME");
             if (homedir) {
                 char *cp = _dwarf_canonical_append(buf,
@@ -446,7 +460,7 @@ find_a_file(const char *named_file,
                     /* OOps, ignore this one. */
                     continue;
                 }
-                lname = makename(buf);
+                lname = buf;
             }
         }
         if (glflags.gf_show_dwarfdump_conf) {
@@ -458,7 +472,7 @@ find_a_file(const char *named_file,
         }
         fin = fopen(lname, type);
         if (fin) {
-            *name_used = lname;
+            *name_used = makename(lname);
             return fin;
         }
     }
