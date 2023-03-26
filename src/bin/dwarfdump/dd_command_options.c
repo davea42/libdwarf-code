@@ -1889,7 +1889,7 @@ void arg_search_match(void)
     glflags.search_match_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_match_text);
     if (!tempstr){
-        printf("regcomp: unable to compile "
+        printf("ERROR: regcomp unable to compile "
             " search expression match=%s, out of memory\n",
             glflags.search_match_text);
         glflags.gf_count_major_errors++;
@@ -1938,9 +1938,12 @@ void arg_search_regex(void)
         res = dd_re_comp(glflags.search_regex_text);
 
         if (res != DW_DLV_OK) {
-            printf("regcomp: unable to compile "
-                " search regular expression %s\n",
+            printf("ERROR: regcomp: unable to compile "
+                " search regular expression %s "
+                "so regex= ignored.\n",
                 glflags.search_regex_text);
+            glflags.search_regex_text = 0;
+            glflags.gf_search_is_on = FALSE;
             glflags.gf_count_major_errors++;
         }
     } else {

@@ -152,6 +152,7 @@
 #define DW_DLV_ERROR     1
 #endif /* DW_DLV_OK */
 
+#define inascii(x)    (0177&(x))
 #define MAXNFA  2048
 
 #define OKP     1
@@ -209,10 +210,11 @@ chset(CHAR c)
 
 /*  50 is arbitrary. Lets not get close to overfilling. */
 #define checksize() do {                                 \
-    if ((CHAR *)mp > (CHAR *)(nfa-50)) {                \
+    if ((CHAR *)mp > (CHAR *)(nfa-20)) {                 \
          badpat;                                         \
-         printf("ERROR: Pattern too large to store in regex\n"); \
-         glflags.gf_count_major_errors++
+         printf("ERROR: Pattern too large to store "     \
+             "in regex\n");                              \
+         glflags.gf_count_major_errors++;                \
          return DW_DLV_ERROR;                            \
     }                                                    \
     }  while(1)
@@ -251,6 +253,7 @@ dangermetachar(CHAR c)
 }
 #endif
 
+
 int
 dd_re_comp(const char *pat)
 {
@@ -265,10 +268,23 @@ dd_re_comp(const char *pat)
 
     resetbittab();
     if (!pat || !*pat) {
+        badpat;
         printf("ERROR: Empty or NULL not a valid "
             "regular expression\n");
-        glflags.gf_count_major_errors++
+        glflags.gf_count_major_errors++;
         return DW_DLV_NO_ENTRY;
+    }
+    for (p = pat; *p; p++) {
+        int a =  (unsigned char)*p;
+        int b =  inascii(*p);
+        if (b != a) {
+            badpat;
+            printf("ERROR: Only the ASCII subset of "
+                " characters are supported in dwarfdump "
+                "regular expressions\n");
+            glflags.gf_count_major_errors++;
+            return DW_DLV_NO_ENTRY;
+        }
     }
 
     for (p = pat; *p; p++) {
@@ -592,7 +608,6 @@ naming(CHAR c)
     return outtab;
 }
 #define iswordc(x)     chrtyp[inascii(x)]
-#define inascii(x)    (0177&(x))
 #endif
 #define isinset(x,y)     ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
 
