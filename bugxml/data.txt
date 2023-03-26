@@ -1,5 +1,105 @@
 
+
+
+#57463
+#57443
+#57442
+#57437
+# 57429, new oss-fuzz Mar 25.
 # 57408, new oss-fuzz Mar 23.
+
+id: DW202303-054
+cve:
+fuzzer: ossfuzz id: 57463
+datereported: 2023-03-24
+reportedby: David Korczynski
+vulnerability:
+product: libdwarf
+description:
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202303-054
+
+id: DW202303-053
+cve:
+fuzzer: ossfuzz id: 57443
+datereported: 2023-03-24
+reportedby: David Korczynski
+vulnerability:
+product: libdwarf
+description:
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202303-053
+
+
+id: DW202303-052
+cve:
+fuzzer: ossfuzz id: 57442
+datereported: 2023-03-24
+reportedby: David Korczynski
+vulnerability:
+product: libdwarf
+description:
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202303-052
+
+
+id: DW202303-051
+cve:
+fuzzer: ossfuzz id: 57437
+datereported: 2023-03-24
+reportedby: David Korczynski
+vulnerability:  
+product: libdwarf
+description: 
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202303-051
+
+id: DW202303-050
+cve:
+fuzzer: ossfuzz id: 57429
+datereported: 2023-03-24
+reportedby: David Korczynski
+vulnerability:  
+product: libdwarf
+description: 
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202303-050
+
+
+
+id: DW202303-049
+cve:
+fuzzer: ossfuzz id: 57408
+datereported: 2023-03-24
+reportedby: David Korczynski
+vulnerability:  Stack Overflow, _dwarf_create_a_new_cu_context...
+product: libdwar 
+description: involves find_sig8_target_as_global_offset()
+  and is the same problem as seen in other guises earlier.
+  The case becomes an infinite loop, so eventually the
+  stack gets exhausted. Fixed.
+datefixed: 2023-03-26
+references: regressiontests/ossfuzz57408/fuzz_die_cu-4702098356043776
+gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+tarrelease:
+endrec: DW202303-049
+
+
 
 id: DW202303-048
 cve:
