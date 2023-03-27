@@ -205,19 +205,18 @@ chset(CHAR c)
     bittab[(CHAR) ((c) & BLKIND) >> 3] |= bitarr[(c) & BITIND];
 }
 
-#define badpat    (*nfa = END)
-#define store(x)  *mp++ = (x)
-
-/*  50 is arbitrary. Lets not get close to overfilling. */
-#define checksize() do {                                 \
-    if ((CHAR *)mp > (CHAR *)(nfa-20)) {                 \
-         badpat;                                         \
-         printf("ERROR: Pattern too large to store "     \
-             "in regex\n");                              \
-         glflags.gf_count_major_errors++;                \
-         return DW_DLV_ERROR;                            \
+#define badpat    (nfa[0] = END)
+#define store(x) do {                                    \
+    if ( mp > endpoint){                                 \
+        badpat;                                          \
+        printf("ERROR: Pattern too large to store "      \
+            "in regex\n");                               \
+        glflags.gf_count_major_errors++;                 \
+        return DW_DLV_ERROR;                             \
     }                                                    \
-    }  while(1)
+    *mp++ = (x);                                         \
+    }  while(0)
+#define checksize()
 
 static void
 resetbittab(void)
@@ -233,7 +232,7 @@ resetbittab(void)
 }
 
 #if 0
-/* Some may not be alone, 
+/* Some may not be alone,
 . \ [ ] * + ^ $
 but some can be.
 */
@@ -244,15 +243,14 @@ dangermetachar(CHAR c)
     case '?':
     case '\\':
     case '[':
-    case '+': 
+    case '+':
     case '^':
     case '$': return 1;
     default:
-       return 0;
+        return 0;
     }
 }
 #endif
-
 
 int
 dd_re_comp(const char *pat)
@@ -261,6 +259,7 @@ dd_re_comp(const char *pat)
     CHAR *mp = nfa;
     CHAR *lp = 0;          /* saved pointer..   */
     CHAR *sp = nfa;      /* another one..     */
+    CHAR *endpoint = nfa+MAXNFA - 2;
     int n    = 0;
     CHAR mask = 0;        /* xor mask -CCL/NCL */
     int c1   = 0;
