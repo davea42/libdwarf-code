@@ -2013,13 +2013,13 @@ void arg_format_file(void)
 {
     const char *ctx = arg_option > OPT_BEGIN ?
         "--format-file=" : "-u<cu name>";
+    const char *tstr = 0;
 
     if (!dwoptarg || !dwoptarg[0]) {
         arg_usage_error = TRUE;
         return;
     }
     /* compile unit */
-    const char *tstr = 0;
     glflags.gf_cu_name_flag = TRUE;
     tstr = do_uri_translation(dwoptarg,ctx);
     if (!tstr) {
@@ -2156,6 +2156,7 @@ arg_file_abi(void)
 {
     const char *ctx = arg_option > OPT_BEGIN ?
         "--file-abi=" : "-x abi=";
+    const char *abi = 0;
 
     if (!dwoptarg || !dwoptarg[0]) {
         printf("ERROR *abi= does not allow an empty text\n");
@@ -2165,7 +2166,7 @@ arg_file_abi(void)
     }
     /*  -x abi=<abi> meaning select abi from dwarfdump.conf
         file. Must always select abi to use dwarfdump.conf */
-    const char *abi = do_uri_translation(dwoptarg,ctx);
+    abi = do_uri_translation(dwoptarg,ctx);
     if (strlen(abi) > 0) {
         config_file_abi = abi;
     } else {

@@ -301,7 +301,7 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Unsigned local_offset_size = 0;
     Dwarf_Unsigned local_extension_size = 0;
     Dwarf_Unsigned tab_length = 0;
-    Dwarf_Unsigned array_local_offset = 0;;
+    Dwarf_Unsigned array_local_offset = 0;
     Dwarf_Half     version = 0;
     Dwarf_Half     padding = 0;
     Dwarf_Unsigned globloff = 0;
