@@ -1,3 +1,316 @@
+2023-03-27:  David Anderson
+    commit 054de66aec29f3ed67c14b675b9e0981004cdd27
+
+    Now shows several new bug reports.
+            modified:   bugxml/dwarfbug.html
+
+2023-03-27:  David Anderson
+    commit 920f292fe6437fa69e6f973cfcb023a5d070383b
+
+    Now the warning about odd address size no longer
+    repeats. Happens just once, not every time detected.
+    Once suffices.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-03-27:  David Anderson
+    commit 33144113e7dceab8c087b370308bef4b872e6bf4
+
+    Previous commit was flawed.
+    This is much better and clearer.
+    And indents/trailingwhitespace fixed.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2023-03-26:  David Anderson
+    commit dbacdce5f28b28ec468f1c6b252d4cd6ca3ca443
+
+    Fixes a number of warnings about
+    unused and set but not used.
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-03-26:  David Anderson
+    commit 3f497b52a5216f107e5d8bf01102d996d82b9f55
+
+    Fixed a mistaken change for -h
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Fixing a misplaced #endif
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+    Improving an error message
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-03-26:  David Anderson
+    commit b8d7a93053aa178c8c95dbcc0a514e4766447e5d
+
+    Added test file name
+            modified:   bugxml/data.txt
+
+2023-03-26:  David Anderson
+    commit 11e1bb2dd0d05fde888e5a7ad336b96354c1ef18
+
+    this had a mistake which somehow still compiled for me.
+    The isinset() macro was not visible during the compile
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2023-03-26:  David Anderson
+    commit 0d02f951643bc3b75300b27ff796f83dd6befe86
+
+    The declaration/definition
+    Dwarf_Die die;
+    was both uninitialized and unused.
+    Removed it.
+            modified:   fuzz/fuzz_die_cu.c
+
+2023-03-26:  David Anderson
+    commit c3280f61a5fd2cb792ad36160cf1c11b1950c37d
+
+    Unfixed ossfuzz bugs noted.
+            modified:   data.txt
+
+2023-03-26:  David Anderson
+    commit 07573fe97064ebf1d9b36269aa1219f4728225f0
+
+    With all recent fixes.
+            modified:   bugxml/data.txt
+
+2023-03-26:  David Anderson
+    commit b21f40a9047e288e931b2b15729965a7dd2529e8
+
+    Printing -h usage data
+    failed do to a change yesterday.
+    Fixed
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2023-03-26:  David Anderson
+    commit 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+
+    In new error cases we could fail to close a
+    FILE stream, resulting in a memory leak from
+    fopen.
+    DW202303-48
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+
+2023-03-26:  David Anderson
+    commit df64db4740f1b480e602b1112107d51f0d269828
+
+    DW202303-047.
+    This eliminates the double free.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-03-26:  David Anderson
+    commit 9eac0c8bbae3fadb2be3d5ee15b9c44f42d2f966
+
+    Fixes DW202303-045.  We were not checking
+    for ASCII and not ensuring that if
+    the regex compile failed we ignored
+    regex processing.
+    The restriction that the regex search pattern
+    may only include the ASCII subset of utf-8
+    is now enforced and ERRORs result if it is
+    violated.
+    (At the present time: this is a limitation of the
+    existing code)
+            modified:   dd_command_options.c
+            modified:   dd_regex.c
+
+2023-03-25:  David Anderson
+    commit 8d5319d90610c4cc38c08ba2c8e64a3dba4a6761
+
+    Now with  DW202303-045 filled in.
+            modified:   bugxml/data.txt
+
+2023-03-25:  David Anderson
+    commit b2e5a6288e268c80a36ffeb1f6fb369d0a92a559
+
+    Now all ERROR messages show up in the count
+    at the end of dwarfdump output.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2023-03-25:  David Anderson
+    commit c3c9dfb666bb668377e0d3a16813d24c367e4667
+
+    Corrected spelling in an error message.
+    src/bin/dwarfdump
+            modified:   dd_regex.c
+
+2023-03-25:  David Anderson
+    commit bb8fab9e5e4e40b1268b31d90882c2ab93653eaf
+
+    DW202303-045
+    Now stops compiling regex and issues
+    an error if the string (or rather the
+    nfa for the string) is too long.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2023-03-25:  David Anderson
+    commit 69f13a2106201145939a68ed662c0c9e4b54579f
+
+    Now DW202303-044 is complete.
+            modified:   bugxml/data.txt
+
+    Regenerated:
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-25:  David Anderson
+    commit 3269f43d2a044bfcce71d30ce214a305473d1ea3
+
+    Fixes DW202303-044
+
+    With that lone backslash  in --search-regex=\\
+    (or any pattern ending in backslash)
+    The regex compiler incremented p by one and
+    then dereferenced and stored the
+    resulting value. But if the dereference
+    gave 0 (the NULL byte) this resulted
+    in unpredictable, but bad, effects
+    since unknown bytes after the pattern string
+    would then be referenced as part of the pattern.
+    Now we notice the improper NUL and issue an error.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2023-03-25:  David Anderson
+    commit 4a8a201cdb3408a2cfdc2946418b51b884140a2c
+
+    Fixing DW202303-042, the code did not return
+    from traverse_die() on receiving an error
+    from libdwarf. Fixed.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-03-25:  David Anderson
+    commit bbc9b05ef89a6cd92ad167ad0f16d8eaea946879
+
+    Documented DW202303-040 (on dwarfdump).
+            modified:   data.txt
+
+2023-03-25:  David Anderson
+    commit fd92b647e5e3a524be94b3b06c9efd14a8292946
+
+    DW202303-040.
+    Fixes crashes due to bad handling of options like
+    --file-abi=
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2023-03-25:  David Anderson
+    commit cb8dd45770f2e1f440aab60adac0256f268fc16e
+
+    Fixes DW202303-010 by dealing with a corrupted
+    dwarfdump.conf file..
+    src/bin/dwarfdump:
+            modified:   dd_dwconf.c
+
+    Minor message change to be a tiny bit more
+    accurate if dwarfdump cannot open an object file.
+    src/bin/dwarfdump:
+            modified:   dwarfdump.c
+
+2023-03-24:  David Anderson
+    commit 06a34f2ecc42078f92883be5124c988010ed3013
+
+    Latest and current data
+            modified:   data.txt
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+    no actual change.
+            modified:   readbugs.py
+
+2023-03-24:  David Anderson
+    commit 216840b5e441dda5352037aaeac023182a577107
+
+    Now with all the (known) oss fuzz bugs fixed.
+            modified:   bugxml/data.txt
+    regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-24:  David Anderson
+    commit e4053c9a0f25db0bed28372d9b77a50a0307dc10
+
+    Fixes oss fuzz 57335. The  test case is
+    kind of pushing the bounds here.
+            modified:   bugxml/data.txt
+
+    oss fuzz  57335.
+    Added a comment, the call will fail as written.
+    But now there will be no library crash.
+            modified:   fuzz/fuzz_die_cu_attrs.c
+
+    Added a new error,  DW_DLE_INVALID_NULL_ARGUMENT(498)
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+        Now returns DW_DLV_ERROR
+        if dw_return_bool is passed in as NULL.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    Added a new error,  DW_DLE_INVALID_NULL_ARGUMENT(498)
+    Documented the dw_return_bool pointer
+    to dwarf_hasform() more completely.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-03-24:  David Anderson
+    commit 0e8fafd578695235cdd8cc8857eae22d64f940fb
+
+    Another libdwarf fix defined.
+            modified:   bugxml/data.txt
+
+2023-03-24:  David Anderson
+    commit 8b6fcfb5cb38ee491ea0973b7699fb7d2c3e080f
+
+    More of the oss fuzz covered by reports now.
+            modified:   bugxml/data.txt
+
+2023-03-24:  David Anderson
+    commit 7165918c8594061c3f5ba7dd4df7c4555c68ec78
+
+    In find_cu_die_base_fields() we use _dwarf_internal_global_formref_b()
+    in several additional places as all these need
+    to constrain the search, not just one of thes base-fields.
+    Fixes ossfuzz 57149, .
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2023-03-24:  David Anderson
+    commit 873aa151d50e4b701f99a58b6cf07f0c5ea1d2af
+
+    Added a sanity check before reading so if it's
+    the check fails we get a more detailed message
+    than otherwise.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-03-24:  David Anderson
+    commit fcf906a3ab1e5488e818b7393fc06a20414b3a53
+
+    Latest vulnerability updates.
+
+    bugxml/
+            modified:   data.txt
+
+2023-03-24:  David Anderson
+    commit 9253810b56ece5dd7722407aacf503e606c7338c
+
+    Fixed oss fuzz 56895
+            modified:   data.txt
+
+2023-03-24:  David Anderson
+    commit 771cfcca1ef6a4a7eb9595d700fc72020d0ed72e
+
+    Fixing ossfuzz 56895, reading past end of section
+    of a Compilation Unit. the tests of such were not
+    sufficiently precise to catch the error.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2023-03-24:  David Anderson
+    commit 81ee0849b77554d93805b79a59d3e0370b1fbe16
+
+    Now showing fix to ossfuzz 56807 and recording it
+    in vulnerabilities.
+            modified:   ChangeLog
+
 2023-03-24:  David Anderson
     commit 484f50ef8be0506be2e4b5fbad489868db5c7985
 
