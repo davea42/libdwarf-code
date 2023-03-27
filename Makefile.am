@@ -16,8 +16,8 @@ SUBDIRS += src/bin/dwarfexample
 endif
 
 SUBDIRS += test
-
 SUBDIRS += doc
+SUBDIRS += fuzz
 SUBDIRS += src/bin/gennames
 SUBDIRS += src/bin/tag_tree
 SUBDIRS += src/bin/tag_attr

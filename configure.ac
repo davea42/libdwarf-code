@@ -439,6 +439,7 @@ src/bin/attr_form/Makefile
 src/bin/buildopstab/Makefile
 src/bin/builduritable/Makefile
 test/Makefile
+fuzz/Makefile
 doc/Makefile
 libdwarf.pc
 libdwarfp.pc
