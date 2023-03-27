@@ -59,7 +59,6 @@ static int printed_infosize_error_b = FALSE;
 
 static int
 print_block_entries(
-    Dwarf_Debug dbg,
     Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned blocknum,
     Dwarf_Unsigned entrycount,
@@ -510,7 +509,7 @@ print_all_blocks(Dwarf_Debug dbg,
                 dwarf_dealloc_die(die);
             }
         }
-        res = print_block_entries(dbg,head,i,entrycount,
+        res = print_block_entries(head,i,entrycount,
             max_offset,error);
         if (res == DW_DLV_ERROR) {
             return res;
