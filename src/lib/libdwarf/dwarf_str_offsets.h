@@ -71,7 +71,6 @@ int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
 
 int
 _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
-    Dwarf_Small*     table_start_ptr,
     Dwarf_CU_Context cucontext,
     /* Followed by return values/error */
     Dwarf_Unsigned *length,

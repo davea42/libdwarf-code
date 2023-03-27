@@ -387,7 +387,6 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     New 30 August 2020. */
 int
 _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
-    Dwarf_Small*    table_start_ptr,
     Dwarf_CU_Context cucontext,
     /* Followed by return values/error */
     Dwarf_Unsigned *length_out,
@@ -589,8 +588,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     }
 
     res = _dwarf_read_str_offsets_header(sot,
-        table_header_ptr,
-        0,
+        0 /* cu_context */,
         &length,
         &local_length_size,
         &local_extension_size,
@@ -616,10 +614,6 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         array_start_offset = table_header_offset;
         table_end_offset = table_header_offset + space_left;
     }
-    /*  So now table_start_ptr points to a table of local_length_size
-        entries.
-        Each entry in this table is local_length_size bytes
-        long: 4 or 8. */
     {
         Dwarf_Unsigned entrycount = 0;
         Dwarf_Unsigned entrybytes = 0;
