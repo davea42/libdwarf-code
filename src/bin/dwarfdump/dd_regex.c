@@ -607,9 +607,9 @@ naming(CHAR c)
     use1 = !use1;
     return outtab;
 }
-#define iswordc(x)     chrtyp[inascii(x)]
-#endif
-#define isinset(x,y)     ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
+#define iswordc(x)   chrtyp[inascii(x)]
+#endif /* 0 */
+#define isinset(x,y) ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
 
 /* skip values for CLO XXX to skip past the closure */
 
