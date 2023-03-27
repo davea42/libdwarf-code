@@ -4398,10 +4398,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         will be allocated. */
     res = dwarf_get_die_address_size(die, &address_size_again,0);
     if (res == DW_DLV_OK) {
-       if (address_size_again != address_size_base) {
+       static int showedsizeoddness;
+       if ( !showedsizeoddness &&
+           address_size_again != address_size_base) {
            printf("NOTE: DIE context address size of %u"
-               " while object address size is %u\n",
+               " while object address size is %u."
+               " This message will not be repeated.\n",
                address_size_again,address_size_base);
+           showedsizeoddness++;
        }
     } else {
         printf("ERROR: DIE context address size "
