@@ -665,10 +665,7 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned key = 0;
-    Dwarf_Unsigned primary_hash = 0;
-    Dwarf_Unsigned hashprime = 0;
     Dwarf_Unsigned slots =  xuhdr->gx_slots_in_hash;
-    Dwarf_Unsigned mask = slots -1;
     Dwarf_Sig8 hashentry_key;
     Dwarf_Unsigned percu_index = 0;
     Dwarf_Unsigned h = 0;
@@ -714,8 +711,6 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_XU_HASH_ROW_ERROR);
     }
     ASNARL(key,key_in,sizeof(*key_in));
-    primary_hash = key & mask;
-    hashprime =  (((key >>32) &mask) |1);
     /*  If we built a lookup based on hash key
         this loop would not be necessary. */
     for( h = 0; h < slots; ++h) {

@@ -233,7 +233,6 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     Dwarf_Unsigned offset_entry_count = 0;
     Dwarf_Unsigned localoff = 0;
     Dwarf_Unsigned lists_len = 0;
-    Dwarf_Unsigned offset_in_section = offset;
     Dwarf_Unsigned secsize_dbg = 0;
 
     secsize_dbg = dbg->de_debug_rnglists.dss_size;
@@ -604,8 +603,6 @@ dwarf_get_rnglist_offset_index_value(
     unsigned offset_len = 0;
     Dwarf_Small *offsetptr = 0;
     Dwarf_Unsigned targetoffset = 0;
-    Dwarf_Small * secptr = 0;
-    Dwarf_Unsigned secsize = 0;
     Dwarf_Unsigned localoffset = 0;
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
@@ -626,8 +623,6 @@ dwarf_get_rnglist_offset_index_value(
     if (context_index >= dbg->de_rnglists_context_count) {
         return DW_DLV_NO_ENTRY;
     }
-    secptr = dbg->de_debug_rnglists.dss_data;
-    secsize = dbg->de_debug_rnglists.dss_size;
     con = dbg->de_rnglists_context[context_index];
     if (con->rc_magic != RNGLISTS_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,

@@ -1709,16 +1709,13 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned indexoffset = 0;
     Dwarf_Unsigned baseoffset = 0;
     Dwarf_Unsigned table_offset_to_array = 0;
-    Dwarf_Unsigned table_size = 0;
     int res = 0;
     int idxres = 0;
     Dwarf_Small *sectionptr = 0;
     Dwarf_Unsigned sectionlen = 0;
-    Dwarf_Unsigned sof_len = 0;
     Dwarf_Small   *sof_start = 0;
     Dwarf_Small   *sof_end = 0;
     Dwarf_Unsigned str_sect_offset = 0;
-    Dwarf_Unsigned table_end_offset = 0;
     Dwarf_Unsigned length_size  = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
@@ -1744,7 +1741,6 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         table_offset_to_array =
             cu_context->cc_str_offsets_tab_to_array;
     }
-    table_size = cu_context->cc_str_offsets_table_size;
 
     if (!cu_context->cc_str_offsets_tab_present ||
         !cu_context->cc_str_offsets_tab_to_array_present) {
@@ -1766,8 +1762,6 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             Dwarf_Half local_extension_size = 0;
             Dwarf_Half version              = 0;
             Dwarf_Half padding              = 0;
-            /*  starting at head of section! This is surely wrong. */
-            Dwarf_Unsigned global_array_off  = 0;
 
             res = _dwarf_trial_read_dwarf_five_hdr(dbg,
                 baseoffset,stsize,
@@ -1792,7 +1786,6 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     offsetintable = indexoffset+ baseoffset
         + table_offset_to_array;
     end_offsetintable = offsetintable + length_size;
-    table_end_offset = baseoffset + table_size;
     /*  The offsets table is a series of offset-size entries.
         The == case in the test applies when we are at the last table
         entry, so == is not an error, hence only test >

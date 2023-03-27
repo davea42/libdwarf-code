@@ -305,11 +305,8 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Half     version = 0;
     Dwarf_Half     padding = 0;
     Dwarf_Unsigned globloff = 0;
-    Dwarf_Unsigned net_new_len = 0;
     Dwarf_Unsigned net_end_offset = 0;
-    Dwarf_Unsigned globl_array_off = 0;
     Dwarf_Small   *secstart = dbg->de_debug_str_offsets.dss_data;
-    Dwarf_Unsigned secize = dbg->de_debug_str_offsets.dss_size;
     Dwarf_Small   *table_start_ptr = secstart + new_table_offset;
     Dwarf_Small   *secendptr = secstart+secsize;
 
@@ -407,13 +404,10 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
     Dwarf_Half local_extension_size = 0;
     Dwarf_Half version               = 0;
     Dwarf_Half padding               = 0;
-    Dwarf_Unsigned headerlength      = 0;
     int            res = 0;
     Dwarf_Bool     is_dwarf_five = TRUE;
     Dwarf_Debug    dbg = sot->so_dbg;
     Dwarf_Unsigned secsize  = sot->so_section_size;
-    Dwarf_Small   *secendptr =   sot->so_section_end_ptr;
-    Dwarf_Unsigned global_array_off = 0;
     Dwarf_Unsigned table_local_offset_of_array = 0;
     Dwarf_Unsigned total_table_length = 0;
     Dwarf_Unsigned globaltaboff = 0;
@@ -515,8 +509,6 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
 {
 
     Dwarf_Small *table_header_ptr = 0;
-    Dwarf_Small *array_start_ptr = 0;
-    Dwarf_Small *table_end_ptr   = 0;
     Dwarf_Unsigned table_header_offset  = 0;
     Dwarf_Unsigned table_end_offset   = 0;
     Dwarf_Unsigned array_start_offset = 0;
@@ -527,7 +519,6 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     Dwarf_Half padding           = 0;
     Dwarf_Unsigned local_offset_to_array= 0;
     Dwarf_Unsigned  total_table_length = 0;
-    Dwarf_Unsigned header_length = 0;
     Dwarf_Debug dbg = sot->so_dbg;
     int res = 0;
 
@@ -557,7 +548,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
                 "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "
                 "Table Offset is %"   DW_PR_DSd
                 " bytes past end of section",len);
-            _dwarf_error_string(sot->so_dbg,error,
+            _dwarf_error_string(dbg,error,
                 DW_DLE_STR_OFFSETS_EXTRA_BYTES,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
@@ -590,7 +581,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             DW_PR_DSd
             " bytes past end of section"
             " and some bytes in-section are non-zero",len);
-        _dwarf_error_string(sot->so_dbg,error,
+        _dwarf_error_string(dbg,error,
             DW_DLE_STR_OFFSETS_EXTRA_BYTES,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
@@ -614,19 +605,15 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         /*  header_length includes length field plus 4 for
             the rest of the header. Don't double count!
             length includes space for 4 bytes of the header!  */
-        array_start_ptr = table_header_ptr + local_offset_to_array;;
         array_start_offset = table_header_offset +
             local_offset_to_array;
-        table_end_ptr = array_start_ptr + total_table_length;
         table_end_offset = array_start_offset + total_table_length;
     } else {
         Dwarf_Unsigned space_left = 0;
 
         /* leave table header offset as-is */
         space_left = sot->so_section_size - table_header_offset;
-        array_start_ptr =    table_header_ptr;
         array_start_offset = table_header_offset;
-        table_end_ptr =    array_start_ptr + space_left;
         table_end_offset = table_header_offset + space_left;
     }
     /*  So now table_start_ptr points to a table of local_length_size
@@ -639,7 +626,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
 
         entrybytes = table_end_offset - array_start_offset;
         if (entrybytes % local_length_size) {
-            _dwarf_error_string(sot->so_dbg,error,
+            _dwarf_error_string(dbg,error,
                 DW_DLE_STR_OFFSETS_ARRAY_SIZE,
                 "DW_DLE_STR_OFFSETS_ARRAY_SIZE "
                 " array size not a multiple of the size of "
