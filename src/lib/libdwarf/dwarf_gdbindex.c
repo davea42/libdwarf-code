@@ -182,7 +182,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
 {
     Dwarf_Gdbindex indexptr = 0;
     int res = DW_DLV_ERROR;
-    Dwarf_Unsigned localoff = 0;
     Dwarf_Small *data = 0;
     Dwarf_Small *startdata = 0;
     Dwarf_Unsigned version_in = 0;
@@ -238,7 +237,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += DWARF_32BIT_SIZE;
-    localoff += DWARF_32BIT_SIZE;
     READ_GDBINDEX(indexptr->gi_cu_list_offset ,Dwarf_Unsigned,
         data, DWARF_32BIT_SIZE);
     if (indexptr->gi_cu_list_offset > indexptr->gi_section_length) {
@@ -250,7 +248,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += DWARF_32BIT_SIZE;
-    localoff += DWARF_32BIT_SIZE;
     READ_GDBINDEX(indexptr->gi_types_cu_list_offset ,Dwarf_Unsigned,
         data, DWARF_32BIT_SIZE);
     if (indexptr->gi_types_cu_list_offset > 
@@ -264,7 +261,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += DWARF_32BIT_SIZE;
-    localoff += DWARF_32BIT_SIZE;
     READ_GDBINDEX(indexptr->gi_address_area_offset ,Dwarf_Unsigned,
         data, DWARF_32BIT_SIZE);
     if (indexptr->gi_address_area_offset > 
@@ -278,7 +274,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += DWARF_32BIT_SIZE;
-    localoff += DWARF_32BIT_SIZE;
     READ_GDBINDEX(indexptr->gi_symbol_table_offset ,Dwarf_Unsigned,
         data, DWARF_32BIT_SIZE);
     if (indexptr->gi_symbol_table_offset > 
@@ -292,7 +287,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += DWARF_32BIT_SIZE;
-    localoff += DWARF_32BIT_SIZE;
     READ_GDBINDEX(indexptr->gi_constant_pool_offset ,Dwarf_Unsigned,
         data, DWARF_32BIT_SIZE);
     if (indexptr->gi_constant_pool_offset > 
@@ -306,7 +300,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += DWARF_32BIT_SIZE;
-    localoff += DWARF_32BIT_SIZE;
     
     res = set_base(dbg,&indexptr->gi_culisthdr,
         startdata + indexptr->gi_cu_list_offset,
@@ -689,7 +682,6 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Small *endptr = 0;
     Dwarf_Unsigned fieldlen = 0;
     Dwarf_Unsigned val = 0;
-    Dwarf_Unsigned secoff = 0;
 
     if (!gdbindexptr || !gdbindexptr->gi_dbg) {
         _dwarf_error_string(NULL, error,
@@ -701,12 +693,10 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindexptr,
     }
 
     base = gdbindexptr->gi_cuvectorhdr.dg_base;
-    secoff = (Dwarf_Unsigned)(base - gdbindexptr->gi_section_data); 
     endptr = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     fieldlen = gdbindexptr->gi_cuvectorhdr.dg_entry_length;
     base += cuvector_offset;
-    secoff += cuvector_offset;
     if (( base + fieldlen) >endptr) {
         Dwarf_Debug dbg = gdbindexptr->gi_dbg;
         emit_no_value_msg(dbg, DW_DLE_GDB_INDEX_INDEX_ERROR,

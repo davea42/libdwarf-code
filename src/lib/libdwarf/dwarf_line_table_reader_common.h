@@ -987,7 +987,6 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
 
                 default:
-                    free(filename_entry_pairs);
                     _dwarf_report_bad_lnct(dbg,
                         lntype,
                         DW_DLE_LINE_NUMBER_HEADER_ERROR,
