@@ -447,7 +447,7 @@ main(int argc, char *argv[])
                 dwarf_errmsg_by_number(errcode));
         } else {
             printf("%s ERROR:  Can't open %s. "
-                "There is no object file with that name)\n",
+                "There is no valid object file with that name)\n",
                 glflags.program_name, sanitized(file_name));
         }
         global_destructors();

@@ -1660,6 +1660,10 @@ void arg_O_multiple_selection(void)
 {
     /* Output filename */
     /*  -O file=<filename> */
+    if (!dwoptarg || !dwoptarg[0]) {
+        arg_usage_error = TRUE;
+        return;
+    }
     if (strncmp(dwoptarg,"file=",5) == 0) {
         dwoptarg = &dwoptarg[5];
         arg_file_output();
@@ -1675,7 +1679,7 @@ void arg_file_output(void)
         "--file-output=" : "-O file=";
     const char *path = 0;
 
-    if (!dwoptarg || dwoptarg[0]) {
+    if (!dwoptarg || !dwoptarg[0]) {
         arg_usage_error = TRUE;
         return;
     }

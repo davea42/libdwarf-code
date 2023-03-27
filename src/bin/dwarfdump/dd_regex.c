@@ -389,9 +389,10 @@ dd_re_comp(const char *pat)
             }
 
             if (*p == '+') {
-                for (sp = mp; lp < sp; lp++)
+                for (sp = mp; lp < sp; lp++) {
                     store(*lp);
                     checksize();
+                }
             }
 
             store(END);
