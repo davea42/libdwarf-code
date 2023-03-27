@@ -75,7 +75,7 @@ vulnerability:
 product: libdwarf
 description: 
 datefixed: 
-references: 
+references: regressiontests/ossfuzz57429/fuzz_die_cu_attrs-4845537731149824 
 gitfixid: 
 tarrelease:
 endrec: DW202303-050
