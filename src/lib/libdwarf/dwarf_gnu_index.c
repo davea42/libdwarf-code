@@ -533,12 +533,10 @@ fill_in_entries(Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned count = gib->ib_entry_count;
     struct DGI_Entry_s * entryarray = 0;
     Dwarf_Bool for_gnu_pubnames = head->gi_is_pubnames;
-    char buf[150];
     int res = 0;
     Dwarf_Debug dbg = 0;
 
     dbg = head->gi_dbg;
-    buf[0] = 0;
     entryarray = (struct DGI_Entry_s*)calloc(count,
         sizeof(struct DGI_Entry_s));
     if (!entryarray) {
@@ -570,7 +568,6 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     Dwarf_Unsigned       count = 0;
     Dwarf_Gnu_Index_Head head = 0;
     struct Dwarf_Gnu_IBlock_s *iblock_array = 0;
-    char                 buf[100];
     int                  res = 0;
 
     if (!dbg) {
