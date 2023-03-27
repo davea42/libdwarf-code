@@ -1,8 +1,6 @@
 name: ci_mac_meson
 
 on:
-  pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 jobs:
