@@ -1372,7 +1372,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_INVALID_NULL_ARGUMENT           498
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        499
+#define DW_DLE_LAST        498
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
