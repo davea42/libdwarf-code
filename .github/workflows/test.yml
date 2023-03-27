@@ -154,6 +154,7 @@ jobs:
         # find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
         # overwrite will need to be manually updated as needed.
         brew install --overwrite python@3.11
+        brew install --overwrite pkgconf
         brew install meson ninja
     - name:
       run:  |
