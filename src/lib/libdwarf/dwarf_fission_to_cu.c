@@ -118,7 +118,6 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Unsigned soff_hdroffset = 0;
     Dwarf_Unsigned soff_size = 0;
     Dwarf_Small *soff_eptr = 0;
-    Dwarf_Small *soff_hdrptr;
     int res = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,
@@ -129,7 +128,6 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     soff_hdroffset = fsd->pcu_offset[fsd_index];
     soff_secptr = dbg->de_debug_str_offsets.dss_data;
     soff_size = dbg->de_debug_str_offsets.dss_size;
-    soff_hdrptr = soff_secptr + soff_hdroffset;
     if (soff_hdroffset >= soff_size) {
         /*  Something is badly wrong. Ignore it here. */
         return DW_DLV_NO_ENTRY;
@@ -152,7 +150,6 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
         sotstr.so_section_size = soff_size;
         sotstr.so_next_table_offset = soff_hdroffset;
         res =  _dwarf_read_str_offsets_header(&sotstr,
-            soff_hdrptr,
             cu_context,
             &length,&offset_size,
             &extension_size,&version,&padding,
