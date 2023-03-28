@@ -1,12 +1,28 @@
 
 
 
+#57485
 #57463
-#57443
+#57443 (marked fixed by ossfuzz)
 #57442
 #57437
 # 57429, new oss-fuzz Mar 25.
 # 57408, new oss-fuzz Mar 23.
+
+id: DW202303-055
+cve:
+fuzzer: ossfuzz id: 57485
+datereported: 2023-03-27
+reportedby: David Korczynski
+vulnerability:
+product: libdwarf
+description:
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202303-055
+
 
 id: DW202303-054
 cve:
