@@ -2,8 +2,6 @@
 
 
 #57485
-#57463
-#57443 (marked fixed by ossfuzz)
 
 id: DW202303-055
 cve:
@@ -25,7 +23,7 @@ cve:
 fuzzer: ossfuzz id: 57463
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability:
+vulnerability: dereference null
 product: libdwarf
 description:
 datefixed:
@@ -39,12 +37,16 @@ cve:
 fuzzer: ossfuzz id: 57443
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability:
+vulnerability: Double free in _dwarf_read_line_table_header
 product: libdwarf
-description:
-datefixed:
-references:
-gitfixid:
+description: The same bug seen earlier
+  A double free when a particular error is
+  in the line table header.
+  Fixed already.
+  gitfixid is more recent than truly required.
+datefixed: 2023-03-28
+references: regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
+gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810 
 tarrelease:
 endrec: DW202303-053
 
