@@ -33,6 +33,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <config.h>
 
 #include <stdlib.h> /* free() malloc() */
+#include <stdio.h> /* printf */
 #include <string.h> /* memset() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -264,6 +265,7 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
          dwarfstring_destructor(&m);
          return DW_DLV_ERROR;
     }
+    buildhere->rc_startaddr = data;
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
         data,offset_size,exten_size,
         error,
@@ -368,6 +370,7 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     if (offset_entry_count ){
         buildhere->rc_offsets_array = data;
     }
+
     lists_len = offset_size *offset_entry_count;
     if (offset_entry_count >= secsize_dbg ||
         lists_len >= secsize_dbg) {
@@ -402,6 +405,19 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     buildhere->rc_first_rnglist_offset = offset+localoff;
     buildhere->rc_rnglists_header = startdata;
     buildhere->rc_endaddr = startdata +buildhere->rc_length;
+    if (buildhere->rc_endaddr > end_data) {
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            " DW_DLE_RNGLISTS_ERROR: .debug_rnglists"
+            " length of rnglists header (%u) "
+            "runs off end of section. Corrupt data",
+            buildhere->rc_length);
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     buildhere->rc_past_last_rnglist_offset =
         buildhere->rc_header_offset +buildhere->rc_length;
     *next_offset =  buildhere->rc_past_last_rnglist_offset;
@@ -604,6 +620,7 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Small *offsetptr = 0;
     Dwarf_Unsigned targetoffset = 0;
     Dwarf_Unsigned localoffset = 0;
+    Dwarf_Unsigned lastvalidlocaloffset = 0;
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
@@ -637,8 +654,8 @@ dwarf_get_rnglist_offset_index_value(
     offset_len  = con->rc_offset_size;
     localoffset = offsetentry_index*offset_len;
     offsetptr   = con->rc_offsets_array + localoffset;
-
-    if ((con->rc_offsets_off_in_sect +offset_len) > 
+    if ((con->rc_offsets_off_in_sect +localoffset +
+        offset_len) > 
         con->rc_past_last_rnglist_offset) {  
         dwarfstring m;
 
