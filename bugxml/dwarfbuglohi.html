@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-25 15:19  PST</p>
-<p> Record count: 121 </p>
+</p>as of 2023-03-28 13:50  PST</p>
+<p> Record count: 132 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4251,6 +4251,322 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:   regressiontests/baselines/choi013.base
 </p>
 <p>gitfixid: 3269f43d2a044bfcce71d30ce214a305473d1ea3
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-045">122) DW202303-045</h3>
+<p>id: DW202303-045
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   Heap buffer overflow, regex
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --search-regex=
+  with a simple, really long, string.
+  (with no file named)
+  resulted in a buffer overflow in a buffer
+  in dd_regex.c.
+  No object file is required for the test.
+  The code now checks stores to the internal array
+  holding the non-deterministic finite automata (nfa)
+</p>
+<p>datefixed: 2023-03-25
+</p>
+<p>references:   regressiontests/baselines/choi014.base
+</p>
+<p>gitfixid: bb8fab9e5e4e40b1268b31d90882c2ab93653eaf
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-046">123) DW202303-046</h3>
+<p>id: DW202303-046
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   global buffer overflow
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --search-regex=t[ą--]e
+  Note the non-ascii character.
+  The dwarfdump regex only allows ascii
+  in search patterns, not the rest of UTF-8.
+</p>
+<p>datefixed: 2023-03-26
+</p>
+<p>references:   regressiontests/choi012/poc_file_10
+</p>
+<p>gitfixid: 9eac0c8bbae3fadb2be3d5ee15b9c44f42d2f966
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-047">124) DW202303-047</h3>
+<p>id: DW202303-047
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   Double Free
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --check-unique --check-abbrev
+  results in a double free.
+  The table of unique errors contained
+  makename() data, so that aspect caused
+  a double free as makename gets destructed
+  independently. Fixed now,letting makename
+  destructor do the work.
+</p>
+<p>datefixed: 
+</p>
+<p>references:  regressiontests/choi015/poc_file_04
+</p>
+<p>gitfixid: df64db4740f1b480e602b1112107d51f0d269828
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-048">125) DW202303-048</h3>
+<p>id: DW202303-048
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz
+</p>
+<p>datereported: 2023-03-08
+</p>
+<p>reportedby: Youngseok Choi
+</p>
+<p>vulnerability:   Memory leak (was double free).
+</p>
+<p>product: dwarfdump
+</p>
+<p>description:  The  command:
+  dwarfdump --file-name=&lt;file&gt; -kG -ka &lt;objectfile&gt;
+  results in a a memory leak.
+  In certain error cases we failed to fclose()
+  a FILE * used to read dwarfdump.conf.
+  Earlier changes fixed the double free, this
+  fixes the memory leak..
+</p>
+<p>datefixed: 
+</p>
+<p>references:  regressiontests/choi015/poc_file_03
+</p>
+<p>gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-049">126) DW202303-049</h3>
+<p>id: DW202303-049
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57408
+</p>
+<p>datereported: 2023-03-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Stack Overflow, _dwarf_create_a_new_cu_context...
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  involves find_sig8_target_as_global_offset()
+  and is the same problem as seen in other guises earlier.
+  The case becomes an infinite loop, so eventually the
+  stack gets exhausted. Fixed.
+</p>
+<p>datefixed: 2023-03-26
+</p>
+<p>references:  regressiontests/ossfuzz57408/fuzz_die_cu-4702098356043776
+</p>
+<p>gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-050">127) DW202303-050</h3>
+<p>id: DW202303-050
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57429
+</p>
+<p>datereported: 2023-03-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  invalid free() in test source
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The test source violates libdwarf requirements.
+  fuzz/fuzz_die_cu_attrs.c was doing free on a name pointer
+  returned from dwarf_diename. The documentation clearly
+  states that pointer should not have a free() done.
+  fix id below is fixing the test source.
+</p>
+<p>datefixed: 3023-03-28
+</p>
+<p>references:  regressiontests/ossfuzz57429/fuzz_die_cu_attrs-4845537731149824
+</p>
+<p>gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-051">128) DW202303-051</h3>
+<p>id: DW202303-051
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57437
+</p>
+<p>datereported: 2023-03-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap double free
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  In a specific error case
+  reading a fuzzed object and calling
+  dwarf_srcfiles local data was
+  freed twice. The bug was
+  fixed earlier.
+</p>
+<p>datefixed: 2023-03-28
+</p>
+<p>references:  regressiontests/ossfuzz57437/fuzz_srcfiles-5281689109921792
+</p>
+<p>gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-052">129) DW202303-052</h3>
+<p>id: DW202303-052
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57442
+</p>
+<p>datereported: 2023-03-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap buffer overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Corrupt .debug_rngslists leads to crash
+  when a rnglists header has a length indicating
+  a longer section than we really have.
+  Now we check more carefully for that situation.
+</p>
+<p>datefixed: 2023-03-28
+</p>
+<p>references:  regressiontests/ossfuzz57442/fuzz_rng-5974595378479104
+</p>
+<p>gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-053">130) DW202303-053</h3>
+<p>id: DW202303-053
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57443
+</p>
+<p>datereported: 2023-03-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:</p>
+<p>product: libdwarf
+</p>
+<p>description:</p>
+<p>datefixed: 
+</p>
+<p>references:</p>
+<p>gitfixid: 
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-054">131) DW202303-054</h3>
+<p>id: DW202303-054
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57463
+</p>
+<p>datereported: 2023-03-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:</p>
+<p>product: libdwarf
+</p>
+<p>description:</p>
+<p>datefixed: 
+</p>
+<p>references:</p>
+<p>gitfixid: 
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-055">132) DW202303-055</h3>
+<p>id: DW202303-055
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57485
+</p>
+<p>datereported: 2023-03-27
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:</p>
+<p>product: libdwarf
+</p>
+<p>description:</p>
+<p>datefixed: 
+</p>
+<p>references:</p>
+<p>gitfixid: 
 </p>
 <p>tarrelease: 
 </p>

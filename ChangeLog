@@ -1,3 +1,164 @@
+2023-03-28:  David Anderson
+    commit 29a27cc5df622674fe14d3bc9b43cfe663db6da3
+
+    Completed notes on ossfuzz 57442 DW2023-052
+            modified:   bugxml/data.txt
+
+2023-03-28:  David Anderson
+    commit 271b9b8367a8151fcd98723d73382ec56f05c810
+
+    Fixes ossfuzz 57442  DW202303-052
+    Checks more carefully for a corrupted rnglists
+    header.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2023-03-28:  David Anderson
+    commit 2b19bc239f3cedd1b2461e4265d90633277ce704
+
+    Fixing a mistake in this test source,
+    which was doing a free() that is
+    documented as inappropriate..
+            modified:   fuzz/fuzz_die_cu_attrs.c
+
+2023-03-28:  David Anderson
+    commit 8bf96199a0e130483cceca6bfacfbe4127441ab1
+
+    Previous version was wrong for large sections.
+    This version with the read
+    loop tested is working.
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2023-03-28:  David Anderson
+    commit 506d2d3a1b2de05095cca4b6754c47f41a0cfd45
+
+    Broke the read of object sections into
+    pieces < 2GB in size. Necessary due to Linux
+    read() size limit (in the kernel).
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2023-03-28:  David Anderson
+    commit 76bc7743752724be5b87a4da3f0d2242e6a0be50
+
+    Now known bug reports all listed,
+    some with no fixes yet.
+            modified:   bugxml/data.txt
+
+2023-03-28:  David Anderson
+    commit e1b613af80a6e09140f018e983d16cb1a0e5af07
+
+    Coverity Scan discovered issues.
+    All are fixed with these changes.
+
+    A loop looking for invalid .conf files
+    was kind of doing the wrong thing.
+    So it had dead code.
+    Now doing the right thing and passes
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+
+    Deleted dead code (constand propagation in
+    Coverity found it) and replaced with a comment
+    saying there is no need to check the offset-size.
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+
+    More dead code. Removed it.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2023-03-27:  David Anderson
+    commit 51617feed280703a409b91396fc291208693b410
+
+    The fuzz/* files have to be in a distribution
+    for testing to fully work. So now they are.
+            modified:   Makefile.am
+            modified:   configure.ac
+            new file:   fuzz/Makefile.am
+            new file:   fuzz/README.md
+
+2023-03-27:  David Anderson
+    commit e0e732929c36887e4cea82e38fab075786cdf320
+
+    Had an accidental c99 declaration mixed with code.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Had an accidental c99 declaration mixed with code, but
+    here it was just a stray extra ; in a list of declarations.
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2023-03-27:  David Anderson
+    commit 72087846050cb22d0b241a1aefd6fe057ad0ee9a
+
+    Remove build on push.
+    This is only for emergency testing
+    of changes in brew or mac setup
+            modified:   mac_meson.yml
+
+2023-03-27:  David Anderson
+    commit 75f5b429bfd8558bde047b6286e3ea9e013fdecf
+
+    using --overwrite on mac_autotools now
+            modified:   test.yml
+
+2023-03-27:  David Anderson
+    commit f00c2a86398b653a639d8116669e24b46f5e0e6d
+
+    A test on its own of mac autotools
+            modified:   mac_autotools.yml
+
+2023-03-27:  David Anderson
+    commit e6e586971d04da33031743c8c88dd659381493ef
+
+    Another odd mod to get
+    macos_meson to build.
+            modified:   test.yml
+
+2023-03-27:  David Anderson
+    commit f43538102e793386352ae4368b781cb62d8504c5
+
+    For a test. pkgconf problem.
+            modified:   mac_meson.yml
+
+2023-03-27:  David Anderson
+    commit c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
+
+    Unused local variables removed.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+
+    A free() was duplicated, Windows compiler noticed.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-03-27:  David Anderson
+    commit cfe5c2dfac0d4eca22cf450db770fdba2bacdd38
+
+    Another unused arg not reported by
+    local compilers. Removed argument.
+            modified:   print_debug_gnu.c
+
+2023-03-27:  David Anderson
+    commit 61d50244ca20877638ae5ca1c453f5066198c6d4
+
+    The compiler used in workflows noticed an unused
+    argument that is not noticed in local builds.
+    This removes that unused argument
+    in _dwarf_read_str_offsets_header().
+            modified:   ../../src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   ../../src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   ../../src/lib/libdwarf/dwarf_str_offsets.h
+
+2023-03-27:  David Anderson
+    commit dbc0c3fff2a066bf422d655188cacc9fe0194900
+
+    Fixing the DW_DLE count
+            modified:   ../../lib/libdwarf/libdwarf.h
+    We now have to have more #include and
+    declarge a glflags instance explicitly here
+    since we updated dd_regex.c.
+            modified:   ../../../test/test_regex.c
+
+2023-03-27:  David Anderson
+    commit d202f85d6e9f83d25cbb6287a0d55973cf86b923
+
+    latest
+            modified:   ChangeLog
+
 2023-03-27:  David Anderson
     commit 054de66aec29f3ed67c14b675b9e0981004cdd27
 
