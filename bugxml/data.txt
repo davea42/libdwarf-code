@@ -1,19 +1,17 @@
 
-
-
-#57485
-
 id: DW202303-055
 cve:
 fuzzer: ossfuzz id: 57485
 datereported: 2023-03-27
 reportedby: David Korczynski
 vulnerability:
-product: libdwarf
-description:
-datefixed:
-references:
-gitfixid:
+product: None, test code bug
+description: Abort in fuzz_die_cu_attrs.c
+  The fault was in test code.
+  Since fixed (earlier today). No code change here.
+datefixed: 2023-03-28
+references: regressiontests/ossfuzz57485/
+gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
 tarrelease:
 endrec: DW202303-055
 
@@ -23,12 +21,14 @@ cve:
 fuzzer: ossfuzz id: 57463
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability: dereference null
-product: libdwarf
-description:
-datefixed:
-references:
-gitfixid:
+vulnerability: dereference null in test code
+product: none, test code bug
+description: The fault was in test code.
+  fuzz_die_cu_attrs.c
+  Since fixed (earlier today). No code change here.
+datefixed: 2023-03-28
+references: regressiontests/ossfuzz57463/fuzz_die_cu_attrs-5158380196200448
+gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
 tarrelease:
 endrec: DW202303-054
 

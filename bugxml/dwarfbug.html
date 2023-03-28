@@ -48,7 +48,7 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Newest First</H2>
-</p>as of 2023-03-28 13:50  PST</p>
+</p>as of 2023-03-28 14:43  PST</p>
 <p> Record count: 132 </p>
 <h3 id="DW202303-055">1) DW202303-055</h3>
 <p>id: DW202303-055
@@ -62,13 +62,17 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>reportedby: David Korczynski
 </p>
 <p>vulnerability:</p>
-<p>product: libdwarf
+<p>product: None, test code bug
 </p>
-<p>description:</p>
-<p>datefixed: 
+<p>description:  Abort in fuzz_die_cu_attrs.c
+  The fault was in test code.
+  Since fixed (earlier today). No code change here.
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>datefixed: 2023-03-28
+</p>
+<p>references:  regressiontests/ossfuzz57485/
+</p>
+<p>gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
 </p>
 <p>tarrelease: 
 </p>
@@ -84,14 +88,19 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:</p>
-<p>product: libdwarf
+<p>vulnerability:  dereference null in test code
 </p>
-<p>description:</p>
-<p>datefixed: 
+<p>product: none, test code bug
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>description:  The fault was in test code.
+  fuzz_die_cu_attrs.c
+  Since fixed (earlier today). No code change here.
+</p>
+<p>datefixed: 2023-03-28
+</p>
+<p>references:  regressiontests/ossfuzz57463/fuzz_die_cu_attrs-5158380196200448
+</p>
+<p>gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
 </p>
 <p>tarrelease: 
 </p>
@@ -107,14 +116,21 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:</p>
+<p>vulnerability:  Double free in _dwarf_read_line_table_header
+</p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed: 
+<p>description:  The same bug seen earlier
+  A double free when a particular error is
+  in the line table header.
+  Fixed already.
+  gitfixid is more recent than truly required.
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>datefixed: 2023-03-28
+</p>
+<p>references:  regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
+</p>
+<p>gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810
 </p>
 <p>tarrelease: 
 </p>
