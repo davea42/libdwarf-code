@@ -1005,12 +1005,7 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     }
-    _dwarf_error_string(dbg,error,
-        DW_DLE_RNGLISTS_ERROR,
-        "DW_DLE_RNGLISTS_ERROR: Unable to find "
-        "an applicabl3 rangelists context so "
-        "something is very wrong.");
-    return DW_DLV_ERROR;
+    /*  ASSERT: This line cannot be reached. */
 }
 
 void
