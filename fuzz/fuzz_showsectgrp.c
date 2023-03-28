@@ -52,7 +52,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       return 0;
     }
     if (run == DW_DLV_NO_ENTRY) {
-      free(errp);
       dwarf_finish(dbg);
       unlink(filename);
       return 0;
@@ -62,7 +61,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     if (res != DW_DLV_OK) {
       dwarf_dealloc_error(dbg, error);
       error = 0;
-      free(errp);
       dwarf_finish(dbg);
       unlink(filename);
       close(run);
@@ -81,7 +79,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     free(group_numbers_array);
     dwarf_dealloc_error(dbg, error);
   }
-  free(errp);
   dwarf_finish(dbg);
   unlink(filename);
   close(run);
