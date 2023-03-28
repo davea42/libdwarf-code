@@ -620,7 +620,6 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Small *offsetptr = 0;
     Dwarf_Unsigned targetoffset = 0;
     Dwarf_Unsigned localoffset = 0;
-    Dwarf_Unsigned lastvalidlocaloffset = 0;
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
