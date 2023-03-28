@@ -996,7 +996,7 @@ void arg_trace(void)
         global_destructors();
         exit(OKAY);
     }
-    
+
     nTraceLevel = atoi(dwoptarg);
     if (nTraceLevel >= 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
         glflags.nTrace[nTraceLevel] = 1;
@@ -1151,7 +1151,7 @@ void arg_format_global_offsets(void)
 /*  Option '-h' */
 void arg_h_multiple_selection(void)
 {
-    if (dwoptarg) { 
+    if (dwoptarg) {
         arg_usage_error = TRUE;
     } else {
         arg_help();
@@ -1171,7 +1171,7 @@ void arg_help(void)
 void arg_format_limit(void)
 {
     int break_val = 0;
- 
+
     if (!dwoptarg || !dwoptarg[0]) {
         printf("ERROR The -H option requires a limit value\n");
         glflags.gf_count_major_errors++;
@@ -1203,7 +1203,7 @@ void arg_k_multiple_selection(void)
 {
     if (!dwoptarg || !dwoptarg[0]) {
         printf("ERROR: The -k option requires at least"
-           " one selection\n"); 
+            " one selection\n");
         glflags.gf_count_major_errors++;
         return;
     }
@@ -1482,7 +1482,7 @@ void arg_ku_multiple_selection(void)
     /* Tag-Tree and Tag-Attr usage */
     if (!dwoptarg || !dwoptarg[0]) {
         printf("ERROR: The -ku option requires at least"
-           " one selection\n"); 
+            " one selection\n");
         glflags.gf_count_major_errors++;
         return;
     }
@@ -1530,14 +1530,6 @@ void arg_check_macros(void)
 void arg_kx_multiple_selection(void)
 {
     /* Frames check */
-#if 0
-    if (!dwoptarg) {
-        printf("ERROR: The -kx option allows at least"
-           " one selection\n"); 
-        glflags.gf_count_major_errors++;
-        return;
-    }
-#endif
     if (dwoptarg[1]) {
         switch (dwoptarg[1]) {
         case 'e': arg_check_frame_extended(); break;

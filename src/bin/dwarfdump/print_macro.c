@@ -652,8 +652,8 @@ print_split_macro_value(const char *m_in)
         return;
     }
     esb_constructor_fixed(&m,typbuf,sizeof(typbuf));
-    /* Has name<space>value
-       or name(operands)<space>value */
+    /*  Has name<space>value
+        or name(operands)<space>value */
     lastchar = 0;
     for ( ;*cur && cur != valstart; ++namelen,++cur) {
         esb_appendn(&m,cur,1);

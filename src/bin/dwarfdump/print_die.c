@@ -4398,18 +4398,18 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         will be allocated. */
     res = dwarf_get_die_address_size(die, &address_size_again,0);
     if (res == DW_DLV_OK) {
-       static int showedsizeoddness;
-       if ( !showedsizeoddness &&
-           address_size_again != address_size_base) {
-           printf("NOTE: DIE context address size of %u"
-               " while object address size is %u."
-               " This message will not be repeated.\n",
-               address_size_again,address_size_base);
-           showedsizeoddness++;
-       }
+        static int showedsizeoddness;
+        if ( !showedsizeoddness &&
+            address_size_again != address_size_base) {
+            printf("NOTE: DIE context address size of %u"
+                " while object address size is %u."
+                " This message will not be repeated.\n",
+                address_size_again,address_size_base);
+            showedsizeoddness++;
+        }
     } else {
         printf("ERROR: DIE context address size "
-             "could not be retrieved. Very odd\n");
+            "could not be retrieved. Very odd\n");
         glflags.gf_count_major_errors++;
     }
     /*  The following gets the real attribute, even
@@ -6602,14 +6602,14 @@ print_location_list(Dwarf_Debug dbg,
                 &check_lkind,llerr);
             if (lresx == DW_DLV_OK) {
                 if (check_lkind != lkind) {
-                     printf("ERROR: dwarf_get_loclist_head_kind "
-                         " returned a bogus value! 0x%x vs 0x%x\n",
-                         lkind,check_lkind);
+                    printf("ERROR: dwarf_get_loclist_head_kind "
+                        " returned a bogus value! 0x%x vs 0x%x\n",
+                        lkind,check_lkind);
                     glflags.gf_count_major_errors++;
                 }
             } else {
                 /*  The only possible return is DW_DLV_ERROR,
-                    and means a NULL loclist_head!. 
+                    and means a NULL loclist_head!.
                     That will not happen here. */
                 printf("ERROR: dwarf_get_loclist_head_kind "
                     " returned a  DW_DLV_ERROR!");
@@ -7776,7 +7776,6 @@ check_for_mips_fde(Dwarf_Debug dbg,
     Dwarf_Signed   cie_index = 0;
     Dwarf_Off      fde_offset = 0;
 
-
     /*  Not wanting a Dwarf_Error be allocated. */
     lres = dwarf_get_fde_for_die(dbg,die,&fde,0);
     if (lres != DW_DLV_OK) {
@@ -7785,8 +7784,8 @@ check_for_mips_fde(Dwarf_Debug dbg,
         return;
     }
     lres = dwarf_get_fde_range(fde,&low_pc,&func_length,
-       &fde_bytes,&fde_byte_length,
-       &cie_offset,&cie_index,&fde_offset,0);
+        &fde_bytes,&fde_byte_length,
+        &cie_offset,&cie_index,&fde_offset,0);
     dwarf_dealloc(dbg, fde, DW_DLA_FDE);
     if (lres != DW_DLV_OK) {
         fde = 0;
