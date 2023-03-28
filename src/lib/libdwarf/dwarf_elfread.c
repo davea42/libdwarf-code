@@ -201,6 +201,13 @@ static int
 elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
     Dwarf_Small **return_data, int *error)
 {
+    /*  Linux kernel read size limit 0x7ffff000,
+        Without any good reason, limit our reads
+        to a bit less. */
+    const Dwarf_Unsigned read_size_limit = 0x7fff0000; 
+    Dwarf_Unsigned read_offset = 0;
+    Dwarf_Unsigned read_size = 0;
+    Dwarf_Unsigned remaining_bytes = 0;
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
 
@@ -232,14 +239,26 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
             *error = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
-        res = RRMOA(elf->f_fd,
-            sp->gh_content, (off_t)sp->gh_offset,
-            (size_t)sp->gh_size,
-            (off_t)elf->f_filesize, error);
-        if (res != DW_DLV_OK) {
-            free(sp->gh_content);
-            sp->gh_content = 0;
-            return res;
+        /*  Linux has a 2GB limit on read size.
+            So break this into 2gb pieces.  */
+        remaining_bytes = sp->gh_size;
+        read_size = remaining_bytes;
+        read_offset = sp->gh_offset;
+        for( ; remaining_bytes > 0; read_size = remaining_bytes ) {
+            if (read_size > read_size_limit) {
+                read_size = read_size_limit;
+            }
+            res = RRMOA(elf->f_fd,
+                sp->gh_content, (off_t)read_offset,
+                (size_t)read_size,
+                (off_t)elf->f_filesize, error);
+            if (res != DW_DLV_OK) {
+                free(sp->gh_content);
+                sp->gh_content = 0;
+                return res;
+            }
+            remaining_bytes -= read_size;
+            read_offset += read_size;
         }
         *return_data = (Dwarf_Small *)sp->gh_content;
         return DW_DLV_OK;
