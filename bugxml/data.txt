@@ -4,10 +4,6 @@
 #57485
 #57463
 #57443 (marked fixed by ossfuzz)
-#57442
-#57437
-# 57429, new oss-fuzz Mar 25.
-# 57408, new oss-fuzz Mar 23.
 
 id: DW202303-055
 cve:
@@ -58,12 +54,15 @@ cve:
 fuzzer: ossfuzz id: 57442
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability:
+vulnerability: Heap buffer overflow
 product: libdwarf
-description:
-datefixed:
-references:
-gitfixid:
+description: Corrupt .debug_rngslists leads to crash
+  when a rnglists header has a length indicating
+  a longer section than we really have.
+  Now we check more carefully for that situation.
+datefixed: 2023-03-28
+references: regressiontests/ossfuzz57442/fuzz_rng-5974595378479104
+gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810 
 tarrelease:
 endrec: DW202303-052
 
@@ -73,12 +72,16 @@ cve:
 fuzzer: ossfuzz id: 57437
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability:  
+vulnerability: Heap double free 
 product: libdwarf
-description: 
-datefixed: 
-references: 
-gitfixid: 
+description: In a specific error case
+  reading a fuzzed object and calling
+  dwarf_srcfiles local data was
+  freed twice. The bug was
+  fixed earlier.
+datefixed: 2023-03-28 
+references: regressiontests/ossfuzz57437/fuzz_srcfiles-5281689109921792
+gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
 tarrelease:
 endrec: DW202303-051
 
@@ -87,12 +90,16 @@ cve:
 fuzzer: ossfuzz id: 57429
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability:  
+vulnerability: invalid free() in test source
 product: libdwarf
-description: 
-datefixed: 
+description: The test source violates libdwarf requirements.
+  fuzz/fuzz_die_cu_attrs.c was doing free on a name pointer
+  returned from dwarf_diename. The documentation clearly
+  states that pointer should not have a free() done.
+  fix id below is fixing the test source.
+datefixed: 3023-03-28
 references: regressiontests/ossfuzz57429/fuzz_die_cu_attrs-4845537731149824 
-gitfixid: 
+gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704 
 tarrelease:
 endrec: DW202303-050
 
@@ -104,7 +111,7 @@ fuzzer: ossfuzz id: 57408
 datereported: 2023-03-24
 reportedby: David Korczynski
 vulnerability:  Stack Overflow, _dwarf_create_a_new_cu_context...
-product: libdwar 
+product: libdwarf
 description: involves find_sig8_target_as_global_offset()
   and is the same problem as seen in other guises earlier.
   The case becomes an infinite loop, so eventually the
