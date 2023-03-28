@@ -619,7 +619,7 @@
 2023-03-21:  David Anderson
     commit cc6e97128fe889b11cbc9542ad6d73a3bfcdf4a0
 
-    These has local Dwarf_Die pointers
+    These have local Dwarf_Die pointers
     left uninitialized. That violates
     the requirements of the libdwarf API.
     Now set to 0 at declaration.

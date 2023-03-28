@@ -9,17 +9,21 @@
 
 <reportedby>David Korczynski</reportedby>
 
-<product>libdwarf</product>
+<product>None, test code bug</product>
 
 <vulnerability></vulnerability>
 
-<description></description>
+<description> Abort in fuzz_die_cu_attrs.c
+  The fault was in test code.
+  Since fixed (earlier today). No code change here.
+</description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-28</datefixed>
 
-<references></references>
+<references> regressiontests/ossfuzz57485/
+</references>
 
-<gitfixid></gitfixid>
+<gitfixid>2b19bc239f3cedd1b2461e4265d90633277ce704</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -33,17 +37,22 @@
 
 <reportedby>David Korczynski</reportedby>
 
-<product>libdwarf</product>
+<product>none, test code bug</product>
 
-<vulnerability></vulnerability>
+<vulnerability> dereference null in test code
+</vulnerability>
 
-<description></description>
+<description> The fault was in test code.
+  fuzz_die_cu_attrs.c
+  Since fixed (earlier today). No code change here.
+</description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-28</datefixed>
 
-<references></references>
+<references> regressiontests/ossfuzz57463/fuzz_die_cu_attrs-5158380196200448
+</references>
 
-<gitfixid></gitfixid>
+<gitfixid>2b19bc239f3cedd1b2461e4265d90633277ce704</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -59,15 +68,22 @@
 
 <product>libdwarf</product>
 
-<vulnerability></vulnerability>
+<vulnerability> Double free in _dwarf_read_line_table_header
+</vulnerability>
 
-<description></description>
+<description> The same bug seen earlier
+  A double free when a particular error is
+  in the line table header.
+  Fixed already.
+  gitfixid is more recent than truly required.
+</description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-28</datefixed>
 
-<references></references>
+<references> regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
+</references>
 
-<gitfixid></gitfixid>
+<gitfixid>271b9b8367a8151fcd98723d73382ec56f05c810</gitfixid>
 
 <tarrelease></tarrelease>
 
