@@ -184,42 +184,42 @@ is_this_text_file(FILE *stream)
 
     bytesread = fread(buf,1,sizeof(buf),stream);
     if (bytesread != sizeof(buf)) {
-         if (bytesread < 100) {
-             printf("ERROR: Found the configure file is too small to "
-                 "be reasonable. Add a few comment lines "
-                 "to enlarge it from %lu bytes to 100\n",
-                 (unsigned long)bytesread);
-             glflags.gf_count_major_errors++;
-             return FALSE;
-         }
+        if (bytesread < 100) {
+            printf("ERROR: Found the configure file is too small to "
+                "be reasonable. Add a few comment lines "
+                "to enlarge it from %lu bytes to 100\n",
+                (unsigned long)bytesread);
+            glflags.gf_count_major_errors++;
+            return FALSE;
+        }
     }
     for ( i = 0; i < bytesread; ++i,++curlinelen) {
         unsigned char c = buf[i];
 
         if (c == '\n') {
             if (curlinelen > maxlinelen) {
-                 maxlinelen = curlinelen;
+                maxlinelen = curlinelen;
             }
             curlinelen = 0;
             continue;
-        } 
+        }
         if (c == '\r' || c == '\t') {
             continue;
         }
         if (c >= ' ' && c <= '}') {
             continue;
         } else {
-             printf("Found non-ascii character 0x%02x "
-                 "and only ascii allowed in dwarfdump.conf\n",
-                 c);
-             return FALSE;
+            printf("Found non-ascii character 0x%02x "
+                "and only ascii allowed in dwarfdump.conf\n",
+                c);
+            return FALSE;
         }
     }
     if (maxlinelen > 100) {
         printf("ERROR: Found maximum configure file"
-                 " line length of %lu"
-                 " which seems too long to be reasonable\n",
-                 maxlinelen);
+            " line length of %lu"
+            " which seems too long to be reasonable\n",
+            maxlinelen);
         glflags.gf_count_major_errors++;
         return FALSE;
     }
@@ -1267,7 +1267,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (conf_internal->cfa_reg_lineno > 0) {
                 printf("dwarfdump: Encountered duplicate cfa_reg: "
                     "%s line %lu previous cfa_reg line %lu\n",
-                    sanitized(fname), 
+                    sanitized(fname),
                     lineno, conf_internal->cfa_reg_lineno);
                 ++errcount;
             }

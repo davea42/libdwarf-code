@@ -477,7 +477,6 @@ print_symboltable(Dwarf_Gdbindex  gdbindex,
     return DW_DLV_OK;
 }
 
-
 int
 print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
 {
@@ -516,11 +515,6 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
         printf(" ERROR: .gdb_index not readable  %s\n",
             err?dwarf_errmsg(*err):"No details available");
         glflags.gf_count_major_errors++;
-#if 0
-glflags major FIXME
-        simple_err_return_msg_either_action(res,
-            "ERROR: .gdb_index not readable.");
-#endif
         return res;
     }
     {
