@@ -63,6 +63,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* free() malloc() */
+#include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
 
 #ifdef _WIN32
@@ -204,10 +205,11 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
     /*  Linux kernel read size limit 0x7ffff000,
         Without any good reason, limit our reads
         to a bit less. */
-    const Dwarf_Unsigned read_size_limit = 0x7fff0000; 
+    const Dwarf_Unsigned read_size_limit = 0x7ff00000;
     Dwarf_Unsigned read_offset = 0;
     Dwarf_Unsigned read_size = 0;
     Dwarf_Unsigned remaining_bytes = 0;
+    Dwarf_Small *  read_target = 0;
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
 
@@ -244,12 +246,13 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
         remaining_bytes = sp->gh_size;
         read_size = remaining_bytes;
         read_offset = sp->gh_offset;
+        read_target = (Dwarf_Small*)sp->gh_content;
         for( ; remaining_bytes > 0; read_size = remaining_bytes ) {
             if (read_size > read_size_limit) {
                 read_size = read_size_limit;
             }
             res = RRMOA(elf->f_fd,
-                sp->gh_content, (off_t)read_offset,
+                (void *)read_target, (off_t)read_offset,
                 (size_t)read_size,
                 (off_t)elf->f_filesize, error);
             if (res != DW_DLV_OK) {
@@ -259,6 +262,7 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
             }
             remaining_bytes -= read_size;
             read_offset += read_size;
+            read_target += read_size;
         }
         *return_data = (Dwarf_Small *)sp->gh_content;
         return DW_DLV_OK;
