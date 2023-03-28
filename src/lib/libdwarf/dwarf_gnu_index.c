@@ -458,6 +458,11 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
                 length,error);
             return DW_DLV_ERROR;
         }
+        /*  offsetsize will be set to a constant
+            of either 4 or 8 by READ_AREA_LENGTH_CK.
+            So any check for a usable offsetsize 
+            here is dead code. 
+            see dwarf_util.h  */
         gib->ib_index = i;
         gib->ib_head  = head;
         gib->ib_offset_size         = offsetsize;
@@ -496,12 +501,6 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         gib->ib_size_in_debug_info = length_of_CU_in_debug_info;
         dataoffset += offsetsize;
         curptr     += offsetsize;
-        if (offsetsize != 4 && offsetsize != 8) {
-            build_errm_one_num(dbg,is_for_pubnames,
-                " offset size  is %u"
-                " which is not usable",offsetsize,error);
-            return DW_DLV_ERROR;
-        }
         gib->ib_b_data = curptr;
         gib->ib_b_offset = dataoffset;
         gib->ib_b_entrylength = length - (2 +
@@ -617,6 +616,8 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
             "Unable to allocate "
             " %u block records. Out of memory.",
             count,error);
+        dwarf_gnu_index_dealloc(head);
+        head = 0;
         return DW_DLV_ERROR;
     }
     head->gi_blockarray = iblock_array;

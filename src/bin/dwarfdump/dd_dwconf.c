@@ -179,7 +179,7 @@ is_this_text_file(FILE *stream)
     unsigned char buf[512];
     size_t bytesread = 0;
     unsigned long i = 0;
-    unsigned long curlinecount = 0;
+    unsigned long curlinelen = 0;
     unsigned long int maxlinelen = 0;
 
     bytesread = fread(buf,1,sizeof(buf),stream);
@@ -193,14 +193,14 @@ is_this_text_file(FILE *stream)
              return FALSE;
          }
     }
-    for ( i = 0; i < bytesread; ++i) {
+    for ( i = 0; i < bytesread; ++i,++curlinelen) {
         unsigned char c = buf[i];
 
         if (c == '\n') {
-            if (curlinecount > maxlinelen) {
-                 maxlinelen = curlinecount;
+            if (curlinelen > maxlinelen) {
+                 maxlinelen = curlinelen;
             }
-            curlinecount = 0;
+            curlinelen = 0;
             continue;
         } 
         if (c == '\r' || c == '\t') {
