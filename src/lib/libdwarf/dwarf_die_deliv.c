@@ -323,8 +323,6 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
         Dwarf_Ubyte unit_typeb = 0;
         Dwarf_Unsigned herelen = sizeof(unit_typeb) +
             sizeof(addrsize) + offset_size;
-          
-            
 
         if ((dataptr+herelen) > end_data) {
             _dwarf_error_string(dbg, error,
@@ -845,8 +843,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
         local_dealloc_cu_context(dbg,cu_context);
         _dwarf_error_string(dbg, error, DW_DLE_CU_LENGTH_ERROR,
-             "DW_DLE_CU_LENGTH_ERROR: reading version "
-             "stamp and address size fields");
+            "DW_DLE_CU_LENGTH_ERROR: reading version "
+            "stamp and address size fields");
         return DW_DLV_ERROR;
     }
     /*  Now we can read the fields with some confidence,
@@ -868,8 +866,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         */
         if ((cu_ptr + sizeof(signaturedata)) > section_end_ptr) {
             _dwarf_error_string(dbg, error, DW_DLE_CU_LENGTH_ERROR,
-                 "DW_DLE_CU_LENGTH_ERROR: reading "
-                 "Dwarf_Sig8 signature field");
+                "DW_DLE_CU_LENGTH_ERROR: reading "
+                "Dwarf_Sig8 signature field");
             local_dealloc_cu_context(dbg,cu_context);
             return DW_DLV_ERROR;
         }
@@ -897,8 +895,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     case DW_UT_split_compile: {
         if ((cu_ptr + sizeof(signaturedata)) > section_end_ptr) {
             _dwarf_error_string(dbg, error, DW_DLE_CU_LENGTH_ERROR,
-                 "DW_DLE_CU_LENGTH_ERROR: reading "
-                 "Dwarf_Sig8 signature field");
+                "DW_DLE_CU_LENGTH_ERROR: reading "
+                "Dwarf_Sig8 signature field");
             local_dealloc_cu_context(dbg,cu_context);
             return DW_DLV_ERROR;
         }
@@ -1258,10 +1256,10 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 break;
                 }
             /*  Base offset  in .debug_addr of the addr table
-                for this CU. DWARF5 (and possibly GNU DWARF4) 
+                for this CU. DWARF5 (and possibly GNU DWARF4)
                 So we really want to look in only
                 this section, not an offset referring
-                to another (DWARF5 debug_info vs debug_types) */ 
+                to another (DWARF5 debug_info vs debug_types) */
             case DW_AT_addr_base:
             case DW_AT_GNU_addr_base: {
                 int udres = 0;
@@ -1274,8 +1272,8 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     &cucon->cc_addr_base,
                     &is_info,
                     error);
-                if (udres == DW_DLV_OK) { 
-                    if( is_info == cucon->cc_is_info) {
+                if (udres == DW_DLV_OK) {
+                    if (is_info == cucon->cc_is_info) {
                         /*  Only accept if same .debug section,
                             which is relevant for DWARF4 */
                         cucon->cc_addr_base_present = TRUE;

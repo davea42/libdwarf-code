@@ -713,7 +713,7 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
     ASNARL(key,key_in,sizeof(*key_in));
     /*  If we built a lookup based on hash key
         this loop would not be necessary. */
-    for( h = 0; h < slots; ++h) {
+    for (h = 0; h < slots; ++h) {
         int res = 0;
 
         res = dwarf_get_xu_hash_entry(xuhdr,

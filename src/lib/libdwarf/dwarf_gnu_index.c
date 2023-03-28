@@ -460,8 +460,8 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         }
         /*  offsetsize will be set to a constant
             of either 4 or 8 by READ_AREA_LENGTH_CK.
-            So any check for a usable offsetsize 
-            here is dead code. 
+            So any check for a usable offsetsize
+            here is dead code.
             see dwarf_util.h  */
         gib->ib_index = i;
         gib->ib_head  = head;

@@ -59,7 +59,6 @@ dump_bytes(const char *msg,int line,
 }
 #endif /*0*/
 
-
 static int
 _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
     int context_level,
@@ -117,7 +116,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
         if (context_level > 0) {
             /*  Make no attempt to create new context,
                 we are finishing cu die base fields
-                on one already. 
+                on one already.
                 Just look for the other context,
                 DWARF4 debug_types  */
             continue;
@@ -181,7 +180,7 @@ dwarf_find_die_given_sig8(Dwarf_Debug dbg,
     Dwarf_Sig8 *ref,
     Dwarf_Die  *die_out,
     Dwarf_Bool *is_info,
-    Dwarf_Error *error) 
+    Dwarf_Error *error)
 {
     int res = 0;
     res = _dwarf_internal_find_die_given_sig8(
