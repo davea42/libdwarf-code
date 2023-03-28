@@ -48,7 +48,7 @@ struct  Dwarf_Str_Offsets_Table_s {
     Dwarf_Unsigned so_next_table_offset;
 
     /*  Per table (ie, a table is a
-        header and array of offsets) inside the section.  
+        header and array of offsets) inside the section.
         Offset to first byte of a table
         Offset one past last byte of a table.
         Offset from first byte of table to its array.
@@ -85,7 +85,7 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
 int _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Unsigned  table_start_offset,
     Dwarf_Unsigned  secsize,
-    Dwarf_Unsigned *table_local_offset_of_array, 
+    Dwarf_Unsigned *table_local_offset_of_array,
     Dwarf_Unsigned *total_table_length,
     /*  length_out is the initial DWARF length value
         from the table header. */

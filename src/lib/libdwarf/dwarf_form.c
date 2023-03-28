@@ -65,7 +65,6 @@ dump_bytes(const char *msg,int line,
 }
 #endif /*0*/
 
-
 /*  It is necessary at times to cause errors of this sort
     in determining what we really have.  So best to avoid
     too much malloc and free, hence the static constructor
@@ -154,7 +153,7 @@ dwarf_hasform(Dwarf_Attribute attr,
         return res;
     }
     if (!dw_return_bool) {
-        _dwarf_error_string(dbg,error,   
+        _dwarf_error_string(dbg,error,
             DW_DLE_INVALID_NULL_ARGUMENT,
             " DW_DLE_INVALID_NULL_ARGUMENT "
             "calling dwarf_hasform: "
@@ -625,7 +624,7 @@ dwarf_formsig8(Dwarf_Attribute attr,
 /*  This finds a target via a sig8 and if
     DWARF4 is likely finding a reference from .debug_info
     to .debug_types.  So the offset may or may not be
-    in the same section if DWARF4. 
+    in the same section if DWARF4.
     context_level prevents infinite loop
     during CU_Context creation */
 static int

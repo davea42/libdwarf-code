@@ -247,7 +247,7 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
         read_size = remaining_bytes;
         read_offset = sp->gh_offset;
         read_target = (Dwarf_Small*)sp->gh_content;
-        for( ; remaining_bytes > 0; read_size = remaining_bytes ) {
+        for ( ; remaining_bytes > 0; read_size = remaining_bytes ) {
             if (read_size > read_size_limit) {
                 read_size = read_size_limit;
             }

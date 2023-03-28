@@ -266,7 +266,7 @@ struct Dwarf_CU_Context_s {
 
     /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs
         DW_AT_str_offsets_base (table array offset) .
-        Here cc_str_offsets_tab_present 
+        Here cc_str_offsets_tab_present
         paired with cc_str_offsets_header_offset
         which is what the offset means */
     Dwarf_Bool     cc_str_offsets_tab_present;
@@ -275,7 +275,7 @@ struct Dwarf_CU_Context_s {
 
     /*  header_offset is global offset in str_offsets section. */
     Dwarf_Unsigned cc_str_offsets_header_offset; /* cu/tu etc*/
-    Dwarf_Unsigned cc_str_offsets_table_size; 
+    Dwarf_Unsigned cc_str_offsets_table_size;
 
     /*  to get from the start of a str_offsets table to the
         offsets array entries. */
@@ -1079,7 +1079,6 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
     Dwarf_Off * ret_offset,
     Dwarf_Bool * offset_is_info,
     Dwarf_Error * error);
-
 
 int _dwarf_skip_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,

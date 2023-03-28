@@ -160,7 +160,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     tab.da_length = tablelen;
     curlocaloffset = offset_size + exten_size;
     offset_one_past_end = dw_section_offset
-        + curlocaloffset + 4 /*rest of header */ 
+        + curlocaloffset + 4 /*rest of header */
         + tablelen;
     end_data = section_start + offset_one_past_end;
     tab.da_end_table = end_data;

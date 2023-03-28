@@ -78,16 +78,16 @@ dump_rh(const char *msg,
     printf("Rnglists_Head: %s  line %d\n",
         msg,line);
     printf("  count of entries: "
-         DW_PR_DUu 
-         "  (0x%" DW_PR_DUx ")\n",
-         head->rh_count,head->rh_count);
+        DW_PR_DUu
+        "  (0x%" DW_PR_DUx ")\n",
+        head->rh_count,head->rh_count);
     printf("  rh_rnglists     : %p\n",(void *)) head->rh_rnglists);
     if (head->rh_first) {
         printf("  rh_first    : %" DW_PR_DUu "\n", head->rh_first);
     if (head->rh_last) {
         printf("  rh_last     :  %" DW_PR_DUu "\n",head->rh_last);
     }
-    printf("  rh_bytes total  : %" DW_PR_DUu 
+    printf("  rh_bytes total  : %" DW_PR_DUu
         "  (0x%" DW_PR_DUx ")\n",head->rh_bytes_total,
         head->rh_bytes_total);
     printf("  CU Context      : %p",(void *)head->rh_context);
@@ -239,31 +239,31 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     secsize_dbg = dbg->de_debug_rnglists.dss_size;
     /*  Sanity checks */
     if (sectionlength > secsize_dbg) {
-         dwarfstring m;
-         dwarfstring_constructor(&m);
-         dwarfstring_append_printf_u(&m,
-             "DW_DLE_RNGLISTS_ERROR: "
-             " section_length argument (%lu) mismatch vs.",
-             sectionlength); 
-         dwarfstring_append_printf_u(&m,
-             ".debug_rnglists"
-             " section length",secsize_dbg);
-         _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
-             dwarfstring_string(&m));
-         dwarfstring_destructor(&m);
-         return DW_DLV_ERROR;
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_RNGLISTS_ERROR: "
+            " section_length argument (%lu) mismatch vs.",
+            sectionlength);
+        dwarfstring_append_printf_u(&m,
+            ".debug_rnglists"
+            " section length",secsize_dbg);
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
     }
     if (sectionlength > secsize_dbg) {
-         dwarfstring m;
-         dwarfstring_constructor(&m);
-         dwarfstring_append(&m, 
-             "DW_DLE_RNGLISTS_ERROR: "
-             " section_length argument mismatch vs. .debug_rnglists"
-             " section length including header.");
-         _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
-             dwarfstring_string(&m));
-         dwarfstring_destructor(&m);
-         return DW_DLV_ERROR;
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append(&m,
+            "DW_DLE_RNGLISTS_ERROR: "
+            " section_length argument mismatch vs. .debug_rnglists"
+            " section length including header.");
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
     }
     buildhere->rc_startaddr = data;
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
@@ -540,7 +540,7 @@ int dwarf_load_rnglists(
     Dwarf_Rnglists_Context *cxt = 0;
     Dwarf_Unsigned count = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL"
             "NULL or invalid Dwarf_Debug "
@@ -585,7 +585,7 @@ _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
     Dwarf_Unsigned i = 0;
     Dwarf_Rnglists_Context * rngcon = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         return;
     }
     if (!dbg->de_rnglists_context) {
@@ -621,7 +621,7 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Unsigned targetoffset = 0;
     Dwarf_Unsigned localoffset = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL "
             "NULL or invalid dbg "
@@ -654,8 +654,8 @@ dwarf_get_rnglist_offset_index_value(
     localoffset = offsetentry_index*offset_len;
     offsetptr   = con->rc_offsets_array + localoffset;
     if ((con->rc_offsets_off_in_sect +localoffset +
-        offset_len) > 
-        con->rc_past_last_rnglist_offset) {  
+        offset_len) >
+        con->rc_past_last_rnglist_offset) {
         dwarfstring m;
 
         dwarfstring_constructor(&m);
@@ -668,7 +668,7 @@ dwarf_get_rnglist_offset_index_value(
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
-    
+
     }
     READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
         offsetptr,
@@ -871,10 +871,10 @@ int dwarf_get_rnglist_rle(
     if (contextnumber >= dbg->de_rnglists_context_count) {
         return DW_DLV_NO_ENTRY;
     }
-    if (entry_offset >= secsize) {  
+    if (entry_offset >= secsize) {
         return DW_DLV_NO_ENTRY;
     }
-    if (endoffset > secsize) {  
+    if (endoffset > secsize) {
         _dwarf_error_string(dbg, error, DW_DLE_RNGLISTS_ERROR,
             " DW_DLE_RNGLISTS_ERROR "
             "The end offset to "
@@ -882,7 +882,7 @@ int dwarf_get_rnglist_rle(
             "too large for the section");
         return DW_DLV_ERROR;
     }
-    if (endoffset <= entry_offset) {  
+    if (endoffset <= entry_offset) {
         _dwarf_error_string(dbg, error, DW_DLE_RNGLISTS_ERROR,
             " DW_DLE_RNGLISTS_ERROR "
             "The end offset to "
@@ -895,7 +895,7 @@ int dwarf_get_rnglist_rle(
             at least 1 byte as it reads at least one
             ULEB */
         dwarfstring m;
-        dwarfstring_constructor(&m); 
+        dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             " DW_DLE_RNGLISTS_ERROR "
             "The entry offset+1 (%lu) "
@@ -906,7 +906,7 @@ int dwarf_get_rnglist_rle(
             " Apparently corrupt Dwarf",endoffset);
         _dwarf_error_string(dbg, error, DW_DLE_RNGLISTS_ERROR,
             dwarfstring_string(&m));
-        dwarfstring_destructor(&m); 
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     data = dbg->de_debug_rnglists.dss_data +
@@ -1308,7 +1308,7 @@ dwarf_rnglists_get_rle_head(
     memset(&shead,0,sizeof(shead));
     ctx = attr->ar_cu_context;
     dbg = ctx->cc_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) { 
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL "
             "NULL or invalid dbg "

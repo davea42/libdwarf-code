@@ -213,13 +213,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         -line_context->lc_line_ptr_start; */
     if (line_ptr_end > section_end) {
         dwarfstring m;
- 
+
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,"DW_DLE_DEBUG_LINE_LENGTH_BAD "
             " the total length of this line table is too large at"
             " %" DW_PR_DUu  " bytes",total_length);
         _dwarf_error_string(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD,
-             dwarfstring_string(&m));
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
@@ -675,7 +675,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         if (directories_count > total_length) {
             dwarfstring m;
- 
+
             free(format_values);
             format_values = 0;
             dwarfstring_constructor(&m);
@@ -684,7 +684,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 " the directories count of "
                 " this line table is too large at"
                 " %" DW_PR_DUu  ,directories_count);
-            _dwarf_error_string(dbg, err, 
+            _dwarf_error_string(dbg, err,
                 DW_DLE_DEBUG_LINE_LENGTH_BAD,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
