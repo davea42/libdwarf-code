@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-28 14:43  PST</p>
-<p> Record count: 132 </p>
+</p>as of 2023-03-29 12:11  PST</p>
+<p> Record count: 133 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -1954,11 +1954,11 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
  </pre>
 <p> Fix date is irrelevant, libdwarf no longer uses libelf.
 </p>
-<p>datefixed: 
+<p>datefixed: 2017-07-06
 </p>
 <p>references:  regressiontests/marcel/crash7
 </p>
-<p>gitfixid: 
+<p>gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 </p>
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
@@ -4343,7 +4343,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   independently. Fixed now,letting makename
   destructor do the work.
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-24
 </p>
 <p>references:  regressiontests/choi015/poc_file_04
 </p>
@@ -4375,7 +4375,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   Earlier changes fixed the double free, this
   fixes the memory leak..
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-03-24
 </p>
 <p>references:  regressiontests/choi015/poc_file_03
 </p>
@@ -4583,6 +4583,43 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz57485/
 </p>
 <p>gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-056">133) DW202303-056</h3>
+<p>id: DW202303-056
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57516
+</p>
+<p>datereported: 2023-03-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Null dereference in dwarf_hasattr()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  With a corrupted attribute
+  dwarf_hasattr() could try to access
+  an implicit_const abbrev value indexing
+  off of a NULL library internal pointer.
+  Because the abbrev section had no actual implicit
+  const value due to the corruption, so the internal
+  array for holding such was not present.
+  The pointer abl_implicit_const was NULL.
+  Now we test the pointer for NULL and if NULL
+  report an error.
+  This lack of a NULL check has existed
+  for many years.
+</p>
+<p>datefixed: 2023-03-29
+</p>
+<p>references:  regressiontests/ossfuzz57516/fuzz_die_cu_attrs-6171488289161216
+</p>
+<p>gitfixid: 5dc3de5ce70331692a2700b218fb79e0d4d81c23
 </p>
 <p>tarrelease: 
 </p>

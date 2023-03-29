@@ -3,6 +3,44 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 57516</fuzzer>
+
+<datereported>2023-03-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Null dereference in dwarf_hasattr()
+</vulnerability>
+
+<description> With a corrupted attribute
+  dwarf_hasattr() could try to access
+  an implicit_const abbrev value indexing
+  off of a NULL library internal pointer.
+  Because the abbrev section had no actual implicit
+  const value due to the corruption, so the internal
+  array for holding such was not present.
+  The pointer abl_implicit_const was NULL.
+  Now we test the pointer for NULL and if NULL
+  report an error.
+  This lack of a NULL check has existed
+  for many years.
+</description>
+
+<datefixed>2023-03-29</datefixed>
+
+<references> regressiontests/ossfuzz57516/fuzz_die_cu_attrs-6171488289161216
+</references>
+
+<gitfixid>5dc3de5ce70331692a2700b218fb79e0d4d81c23</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 57485</fuzzer>
 
 <datereported>2023-03-27</datereported>
@@ -233,7 +271,7 @@
   fixes the memory leak..
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-24</datefixed>
 
 <references> regressiontests/choi015/poc_file_03
 </references>
@@ -267,7 +305,7 @@
   destructor do the work.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2023-03-24</datefixed>
 
 <references> regressiontests/choi015/poc_file_04
 </references>
@@ -2751,12 +2789,12 @@
  Fix date is irrelevant, libdwarf no longer uses libelf.
 </description>
 
-<datefixed></datefixed>
+<datefixed>2017-07-06</datefixed>
 
 <references> regressiontests/marcel/crash7
 </references>
 
-<gitfixid></gitfixid>
+<gitfixid>cc37d6917011733d776ae228af4e5d6abe9613c1</gitfixid>
 
 <tarrelease>libdwarf-20160507.tar.gz</tarrelease>
 
