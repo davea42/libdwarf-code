@@ -1,4 +1,30 @@
 
+id: DW202303-056
+cve:
+fuzzer: ossfuzz id: 57516
+datereported: 2023-03-28
+reportedby: David Korczynski
+vulnerability: Null dereference in dwarf_hasattr()
+product: libdwarf
+description: With a corrupted attribute
+  dwarf_hasattr() could try to access
+  an implicit_const abbrev value indexing
+  off of a NULL library internal pointer.
+  
+  Because the abbrev section had no actual implicit
+  const value due to the corruption, so the internal
+  array for holding such was not present.
+  The pointer abl_implicit_const was NULL.
+  Now we test the pointer for NULL and if NULL
+  report an error.
+  This lack of a NULL check has existed
+  for many years.
+datefixed: 2023-03-29
+references: regressiontests/ossfuzz57516/fuzz_die_cu_attrs-6171488289161216
+gitfixid: 5dc3de5ce70331692a2700b218fb79e0d4d81c23
+tarrelease:
+endrec: DW202303-056
+
 id: DW202303-055
 cve:
 fuzzer: ossfuzz id: 57485
