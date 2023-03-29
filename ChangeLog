@@ -1,3 +1,93 @@
+2023-03-29:  David Anderson
+    commit d5d5d919743b9a7920a0686eef12046ae336d1a1
+
+    Filling in datefixed: and gitfixid:
+    with best current guess
+    in a couple of old entries.
+            modified:   data.txt
+
+2023-03-28:  David Anderson
+    commit e5ca7fef6d6680b251dcd7d4fbbfc140b8cfb5b1
+
+    Remove trailing whitespace.
+    Fix indents.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.h
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-03-28:  David Anderson
+    commit 45be14751e65fe7f2a26d0258edf7663a2136e0f
+
+    Remove trailing whitespace.
+    Fix indents.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2023-03-28:  David Anderson
+    commit 711416fd385ac28921e43beb759777d7d685c302
+
+    Removed all mention of macro checksize(),
+    it was already an empty macro.
+            modified:   dd_regex.c
+
+2023-03-28:  David Anderson
+    commit 3addc636fe5fa0b47a58ca90e848df1aada25dde
+
+    Deleting a single line with declaring
+    an unused local variable.
+            modified:   dwarf_rnglists.c
+
+2023-03-28:  David Anderson
+    commit f8032529c9deb4dd15d80325c6f2e6cb8c5fa6f5
+
+    All these had free(errp) which
+    here is harmless as errp is null,
+    but whether a Dwarf_Error * is
+    null or not free() on it is never
+    appropriate, and if not-null
+    the free is very wrong.
+
+            modified:   fuzz_die_cu_offset.c
+            modified:   fuzz_die_cu_print.c
+            modified:   fuzz_showsectgrp.c
+
+2023-03-28:  David Anderson
+    commit 541b15c1ec2e01396f36d389bc9fe98da48ecb55
+
+    Fixed typo.
+            modified:   ChangeLog
+
+    Now with all known bugs covered & fixed.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-28:  David Anderson
+    commit 39a1abd35cba15967b96fb22b71b54870c312195
+
+    ChangeLog up to date.
+            modified:   ChangeLog
+
+    Latest bug content
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
 2023-03-28:  David Anderson
     commit 29a27cc5df622674fe14d3bc9b43cfe663db6da3
 
