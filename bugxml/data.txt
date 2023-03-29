@@ -140,7 +140,7 @@ description: The  command:
   a FILE * used to read dwarfdump.conf.
   Earlier changes fixed the double free, this
   fixes the memory leak..
-datefixed: 
+datefixed: 2023-03-24
 references: regressiontests/choi015/poc_file_03
 gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
 tarrelease:
@@ -161,7 +161,7 @@ description: The  command:
   a double free as makename gets destructed
   independently. Fixed now,letting makename
   destructor do the work.
-datefixed: 
+datefixed: 2023-03-24
 references: regressiontests/choi015/poc_file_04
 gitfixid: df64db4740f1b480e602b1112107d51f0d269828
 tarrelease:
@@ -1682,9 +1682,9 @@ description:  7/7. A heap overflow in
  a call to elf_strptr() failed trying to get a section name
  </pre>
  Fix date is irrelevant, libdwarf no longer uses libelf.
-datefixed: 
+datefixed: 2017-07-06
 references: regressiontests/marcel/crash7
-gitfixid: 
+gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-007
 
