@@ -1,4 +1,53 @@
 2023-03-29:  David Anderson
+    commit 5c153615e4e0c610bd6e541fcf74523654ebd90c
+
+    Added DW202303-056 for oss fuzz 57516
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-29:  David Anderson
+    commit 5dc3de5ce70331692a2700b218fb79e0d4d81c23
+
+    Fixing DW202303-055 ossfuzz id: 57516
+    The abbrev section showed DW_FORM_implicit_const
+    after fuzzing the test object yet there
+    was no implicit const in the original
+    and no implicit const value to access.
+    Resulted in an attempt to index off a non-existent
+    array. library crash.
+    Now we issue an error.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-03-29:  David Anderson
+    commit 0e3ff723b6d6eec263db0cee6162393c011e4b5d
+
+    Removed an if and related as
+    the following if was sufficient all by itself.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    I case dwarf_get_xu_hash_entry is passed a dw_index
+    which is out of range return DW_DLV_NO_ENTRY
+    instead of an error.
+    Fix the test of Dwarf_Unsigned vs Dwarf_Sig8 size,
+    and if the sizes don't match actually
+    return DW_DLV_ERROR (the return was missing!)
+    Peculiar testcase behavior running on 32bit FreeBSD
+    revealed the coding error.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+    In doxygen comments document the behavior of
+    dwarf_get_xu_hash_entry with a too-large dw_index.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-03-29:  David Anderson
+    commit ae22edab4dfddf3b22f966df38c4a7da2417ebac
+
+    Bringing up to date with git log.
+            modified:   ChangeLog
+
+2023-03-29:  David Anderson
     commit d5d5d919743b9a7920a0686eef12046ae336d1a1
 
     Filling in datefixed: and gitfixid:
