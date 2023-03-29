@@ -751,6 +751,13 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             return DW_DLV_ERROR;
         }
         if (curr_attr_form == DW_FORM_implicit_const) {
+            if (!abbrev_list->abl_implicit_const) {
+                _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_BAD,
+                    "DW_DLE_ATTR_FORM_BAD: "
+                    "A DW_FORM_implicit_const in an abbreviation "
+                    "has no implicit const value. Corrupt dwarf.");
+                return DW_DLV_ERROR;
+            }
             implicit_const = abbrev_list->abl_implicit_const[i];
         }
         if (curr_attr == attrnum_in) {
