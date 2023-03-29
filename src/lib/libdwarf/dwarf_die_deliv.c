@@ -1447,13 +1447,9 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
         &signaturedata,
         offset,
         error);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
     if (res != DW_DLV_OK) {
         return res;
     }
-
     if (cu_context->cc_dwp_offsets.pcu_type) {
         Dwarf_Unsigned absize = 0;
         Dwarf_Unsigned aboff = 0;

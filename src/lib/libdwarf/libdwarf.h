@@ -7532,6 +7532,8 @@ DW_API int dwarf_get_xu_index_section_type(
     @param dw_index
     Pass in the index of the entry you wish.
     Valid index values are 0 through @b S-1.
+    If the dw_index passed in is outside the valid range
+    the functionj
     @param dw_hash_value
     Pass in a pointer to a Dwarf_Sig8.
     On success the hash struct is filled in with
@@ -7542,7 +7544,14 @@ DW_API int dwarf_get_xu_index_section_type(
     @param dw_error
     The usual pointer to return error details.
     @return
-    Returns DW_DLV_OK etc.
+    Returns DW_DLV_OK on success.
+    If the dw_index passed in is outside the valid range
+    the function it returns DW_DLV_NO_ENTRY
+    (before version 0.7.0 it returned DW_DLV_ERROR,
+    though nothing mentioned that).
+    In case of error it returns DW_DLV_ERROR.
+    If dw_error is non-null returns error details through
+    dw_error (the usual error behavior).
 
 */
 DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header dw_xuhdr,

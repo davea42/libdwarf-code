@@ -463,17 +463,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         return DW_DLV_ERROR;
     }
     if (index >= xuhdr->gx_slots_in_hash) {
-        dwarfstring m;
-
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_XU_HASH_ROW_ERROR the index passed in, "
-            " %u, is greater than the number of slots "
-            " in the hash table.",index);
-        _dwarf_error_string(dbg, error,  DW_DLE_XU_HASH_ROW_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
+        return DW_DLV_NO_ENTRY;
     }
     hashentry = hashtab + (index * HASHSIGNATURELEN);
     memcpy(hash_value,hashentry,HASHSIGNATURELEN);
@@ -706,9 +696,19 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
     }
-    if (sizeof (key) != sizeof(key_in)) {
+    if (sizeof(key) != sizeof(*key_in)) {
         /* The hash won't work right in this case */
-        _dwarf_error(dbg, error, DW_DLE_XU_HASH_ROW_ERROR);
+        dwarfstring s;
+
+        dwarfstring_constructor(&s);
+        dwarfstring_append_printf_u(&s,
+            "DW_DLE_XU_HASH_ROW_ERROR "
+            "We require 8 byte keys, not %u byte keys",
+            sizeof(key));
+        _dwarf_error_string(dbg, error, DW_DLE_XU_HASH_ROW_ERROR,
+            dwarfstring_string(&s));
+        dwarfstring_destructor(&s);
+        return DW_DLV_ERROR;
     }
     ASNARL(key,key_in,sizeof(*key_in));
     /*  If we built a lookup based on hash key
