@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-29 12:11  PST</p>
-<p> Record count: 133 </p>
+</p>as of 2023-03-30 08:32  PST</p>
+<p> Record count: 134 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4620,6 +4620,39 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz57516/fuzz_die_cu_attrs-6171488289161216
 </p>
 <p>gitfixid: 5dc3de5ce70331692a2700b218fb79e0d4d81c23
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-057">134) DW202303-057</h3>
+<p>id: DW202303-057
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: 
+</p>
+<p>datereported: 2023-03-26
+</p>
+<p>reportedby: Pedro Navarro
+</p>
+<p>vulnerability:  Unable to read large object sections
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A section 2GB+ in size could not be
+  read by libdwarf. Such is a Denial of Service.
+  Simply turning the big read
+  into however many are needed (each below 2GB)
+  was simple to do.  The limitation in the 'read'
+  libc function (really a Linux kernel
+  limitation) is well documented but
+  we had not noticed before now.
+  Few object files are so large.
+</p>
+<p>datefixed: 2023-03-28
+</p>
+<p>references:</p>
+<p>gitfixid: 8bf96199a0e130483cceca6bfacfbe4127441ab1
 </p>
 <p>tarrelease: 
 </p>

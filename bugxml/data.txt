@@ -1,4 +1,27 @@
 
+id: DW202303-057
+cve:
+fuzzer: 
+datereported: 2023-03-26
+reportedby: Pedro Navarro
+vulnerability: Unable to read large object sections
+product: libdwarf
+description: A section 2GB+ in size could not be
+  read by libdwarf. Such is a Denial of Service.
+  Simply turning the big read
+  into however many are needed (each below 2GB)
+  was simple to do.  The limitation in the 'read'
+  libc function (really a Linux kernel
+  limitation) is well documented but
+  we had not noticed before now.
+  Few object files are so large.
+datefixed: 2023-03-28
+references: 
+gitfixid: 8bf96199a0e130483cceca6bfacfbe4127441ab1
+tarrelease:
+endrec: DW202303-057
+
+
 id: DW202303-056
 cve:
 fuzzer: ossfuzz id: 57516
