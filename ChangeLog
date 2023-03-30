@@ -1,3 +1,45 @@
+2023-03-30:  David Anderson
+    commit a2f248569cd52d6955f160fd5f153c9afe8ec945
+
+    Added DW202303-058 ossfuzz 57537
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-30:  David Anderson
+    commit 36e4063ade31c9ea6ea5df973d2045b36877885b
+
+    ossfuzz 57527.
+    A .debug_line section truncated to just the right point
+    (in a certain 12 byte area)
+    in a line table header causes an memory reference outside
+    any correct data.
+    This has been true for many years.
+    Now we check before looking at memory.
+    In addition a few _dwarf_error() now use _dwarf_error_string()
+    so some possibly-useful information can be reported
+    by library callers.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+    Also changed a few return (DW_DLV_ERROR); to
+    return DW_DLV_ERROR; with
+    no useless parentheses.
+
+2023-03-30:  David Anderson
+    commit 4eb65e7aabd5343956768cc9b7c4f7f04f4cbea5
+
+    Identifying 2GB read limit as vulnerability.
+            modified:   data.txt
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2023-03-29:  David Anderson
+    commit 025f6bcdb3ed51606d73f4bb4c5cfb7e7066f336
+
+    Updated from git log
+            modified:   ChangeLog
+
 2023-03-29:  David Anderson
     commit 5c153615e4e0c610bd6e541fcf74523654ebd90c
 
