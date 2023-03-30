@@ -3,6 +3,38 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>oss fuzz id: 75527</fuzzer>
+
+<datereported>2023-03-29</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> reading off end of valid data can crash library
+</vulnerability>
+
+<description> A line table header truncated by a fuzzer
+  to just the right length (anywhere within a 12 byte area)
+  would cause memory references outside of valid data.
+  Now we check there is object data present
+  before referring to that area and if not, return
+  an error.
+</description>
+
+<datefixed>2023-03-30</datefixed>
+
+<references> regressiontests/ossfuzz57527/fuzz_srcfiles-4599045397282816
+</references>
+
+<gitfixid>36e4063ade31c9ea6ea5df973d2045b36877885b</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer></fuzzer>
 
 <datereported>2023-03-26</datereported>
