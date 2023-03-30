@@ -2,7 +2,7 @@
 
 id: DW202303-058
 cve:
-fuzzer: oss fuzz id: 75527
+fuzzer: oss fuzz id: 57527
 datereported: 2023-03-29
 reportedby: David Korczynski
 vulnerability: reading off end of valid data can crash library 
