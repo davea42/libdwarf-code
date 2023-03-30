@@ -67,9 +67,12 @@ STANDARD_OPERAND_COUNT_DWARF3] = {
     0, 0, 1
 };
 
-/* Rather like memcmp but identifies which value pair
+/*  Rather like memcmp but identifies which value pair
     mismatches (the return value is non-zero if mismatch,
     zero if match)..
+    This is used only in determining which kind of
+    standard-opcode-table we have in the DWARF: std-original,
+    or std-later.
     mismatch_entry returns the table index that mismatches.
     tabval returns the table byte value.
     lineval returns the value from the line table header.  */
@@ -81,9 +84,10 @@ operandmismatch(unsigned char * table,unsigned table_length,
 {
     unsigned i = 0;
 
-    /* check_count better be <= table_length */
+    /*  ASSERT: check_count is <= table_length, which
+        is guaranteed by the caller. */
     for (i = 0; i<check_count; ++i) {
-        if (i > table_length) {
+        if (i >= table_length) {
             *mismatch_entry = i;
             *lineval = linetable[i];
             *tabval = 0; /* No entry present. */
@@ -366,6 +370,14 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 err_count_out);
             check_count = tab_count;
         }
+        if ((line_context->lc_opcode_length_table + check_count) >=
+                section_end) {
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_NUM_OPERANDS_BAD,
+                "DW_DLE_LINE_NUM_OPERANDS_BAD: "
+                "The .debug_line section is too short to be real "
+                "as a standard opcode table does not fit");
+            return DW_DLV_ERROR;
+        }
         {
             unsigned entrynum = 0;
             unsigned tabv     = 0;
@@ -420,13 +432,19 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         if (operand_ck_fail) {
             /* Here we are not sure what the lc_std_op_count is. */
-            _dwarf_error(dbg, err, DW_DLE_LINE_NUM_OPERANDS_BAD);
-            return (DW_DLV_ERROR);
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_NUM_OPERANDS_BAD,
+                "DW_DLE_LINE_NUM_OPERANDS_BAD "
+                "we cannot determine the size of the standard opcode"
+                " table in the line table header");
+            return DW_DLV_ERROR;
         }
     }
     /*  At this point we no longer need to check operand counts. */
     if (line_ptr >= line_ptr_end) {
-        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+            "DW_DLE_LINE_OFFSET_BAD "
+            "we run off the end of the .debug_line section "
+            "reading a line table header");
         return DW_DLV_ERROR;
     }
 
@@ -437,15 +455,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             malloc(sizeof(Dwarf_Small *) * directories_malloc);
         if (line_context->lc_include_directories == NULL) {
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         memset(line_context->lc_include_directories, 0,
             sizeof(Dwarf_Small *) * directories_malloc);
 
-        if (line_ptr >= line_ptr_end) {
-            _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
-        }
         while ((*(char *) line_ptr) != '\0') {
             if (directories_count >= directories_malloc) {
                 Dwarf_Unsigned expand = 2 * directories_malloc;
@@ -456,8 +470,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         bytesalloc);
 
                 if (!newdirs) {
-                    _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-                    return (DW_DLV_ERROR);
+                    _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                        "DW_DLE_ALLOC_FAIL "
+                        "reallocating an array of include directories"
+                        " in a line table");
+                    return DW_DLV_ERROR;
                 }
                 /* Doubled size, zero out second half. */
                 memset(newdirs + directories_malloc, 0,
