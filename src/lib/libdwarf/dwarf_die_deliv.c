@@ -1826,7 +1826,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
 
     /*  Check that there is room in .debug_info beyond
         the new offset for at least a new cu header.
-        If not, return -1 (DW_DLV_NO_ENTRY) to indicate end
+        If not, return DW_DLV_NO_ENTRY to indicate end
         of debug_info section, and reset
         de_cu_debug_info_offset to
         enable looping back through the cu's. */
