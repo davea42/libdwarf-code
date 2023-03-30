@@ -20,6 +20,8 @@
     In addition a few _dwarf_error() now use _dwarf_error_string()
     so some possibly-useful information can be reported
     by library callers.
+    Also deleted 4 lines of dead code (was repeating
+    a test done a few lines above).
             modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
     Also changed a few return (DW_DLV_ERROR); to
     return DW_DLV_ERROR; with
