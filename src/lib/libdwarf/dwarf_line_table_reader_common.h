@@ -252,13 +252,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (version == DW_LINE_VERSION5) {
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         line_context->lc_address_size = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         line_context->lc_segment_selector_size =
             *(unsigned char *) line_ptr;
@@ -291,7 +291,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     line_context->lc_line_prologue_start = line_ptr;
     if (line_ptr >= line_ptr_end) {
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     line_context->lc_minimum_instruction_length =
         *(unsigned char *) line_ptr;
@@ -302,7 +302,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         line_context->lc_maximum_ops_per_instruction =
             *(unsigned char *) line_ptr;
@@ -310,14 +310,14 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     }
     if (line_ptr >= line_ptr_end) {
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     line_context->lc_default_is_stmt = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
 
     if (line_ptr >= line_ptr_end) {
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     line_context->lc_line_base = *(signed char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Sbyte);
@@ -371,8 +371,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             check_count = tab_count;
         }
         if ((line_context->lc_opcode_length_table + check_count) >=
-                section_end) {
-            _dwarf_error_string(dbg, err, DW_DLE_LINE_NUM_OPERANDS_BAD,
+            section_end) {
+            _dwarf_error_string(dbg, err,
+                DW_DLE_LINE_NUM_OPERANDS_BAD,
                 "DW_DLE_LINE_NUM_OPERANDS_BAD: "
                 "The .debug_line section is too short to be real "
                 "as a standard opcode table does not fit");
@@ -432,7 +433,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         if (operand_ck_fail) {
             /* Here we are not sure what the lc_std_op_count is. */
-            _dwarf_error_string(dbg, err, DW_DLE_LINE_NUM_OPERANDS_BAD,
+            _dwarf_error_string(dbg, err,
+                DW_DLE_LINE_NUM_OPERANDS_BAD,
                 "DW_DLE_LINE_NUM_OPERANDS_BAD "
                 "we cannot determine the size of the standard opcode"
                 " table in the line table header");
@@ -495,7 +497,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             if (line_ptr >= line_ptr_end) {
                 _dwarf_error(dbg, err,
                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
         line_ptr++;
@@ -516,7 +518,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (version < DW_LINE_VERSION5) {
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         while (*(char *) line_ptr != '\0') {
             Dwarf_Unsigned utmp;
@@ -530,7 +532,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 malloc(sizeof(struct Dwarf_File_Entry_s));
             if (currfile == NULL) {
                 _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             memset(currfile,0,sizeof(struct Dwarf_File_Entry_s));
             /*  Insert early so in case of error we can find
@@ -556,7 +558,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             if (dir_index >
                 line_context->lc_include_directories_count) {
                 _dwarf_error(dbg, err, DW_DLE_DIR_INDEX_BAD);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             currfile->fi_dir_index = dir_index;
             currfile->fi_dir_index_present = TRUE;
@@ -579,7 +581,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             if (line_ptr >= line_ptr_end) {
                 _dwarf_error(dbg, err,
                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
         /* Skip trailing nul byte */
@@ -587,11 +589,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         if (*line_ptr != 0) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         line_ptr++;
     } else if (version == 5) {
@@ -614,12 +616,12 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             if (line_ptr >= line_ptr_end) {
                 _dwarf_error(dbg, err,
                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             if (*line_ptr != expbytes[i]) {
                 _dwarf_error(dbg, err,
                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             line_ptr++;
         }
@@ -650,7 +652,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         directory_format_count = *(unsigned char *) line_ptr;
         line_context->lc_directory_entry_format_count =
@@ -662,7 +664,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 directory_format_count);
             if (format_values == NULL) {
                 _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             for (i = 0; i < directory_format_count; i++) {
                 dres=read_uword_de(&line_ptr,
@@ -713,7 +715,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             free(format_values);
             format_values = 0;
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         if (directory_format_count == 0 &&
             directories_count > 0) {
@@ -724,7 +726,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 "DW_DLE_DIRECTORY_FORMAT_COUNT_"
                 "VS_DIRECTORIES_MISMATCH"
                 ": format count is zero yet directories count > 0");
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         memset(line_context->lc_include_directories, 0,
             sizeof(Dwarf_Small *) * directories_count);
@@ -759,7 +761,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     format_values = 0;
                     _dwarf_error(dbg, err,
                         DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
             }
             if (line_ptr > line_ptr_end) {
@@ -767,7 +769,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 format_values = 0;
                 _dwarf_error(dbg, err,
                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
         line_context->lc_directory_format_values =
@@ -790,7 +792,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err,
                 DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         filename_format_count = *(unsigned char *) line_ptr;
         line_context->lc_file_name_format_count =
@@ -851,7 +853,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             if (curline == NULL) {
                 free(filename_entry_pairs);
                 _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             memset(curline,0,sizeof(*curline));
             _dwarf_add_to_files_list(line_context,curline);
@@ -1010,13 +1012,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         "DW_DLE_LINE_NUMBER_HEADER_ERROR",
                         err);
                     free(filename_entry_pairs);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
                 if (line_ptr > line_ptr_end) {
                     free(filename_entry_pairs);
                     _dwarf_error(dbg, err,
                         DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
             }
         }
@@ -1036,7 +1038,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
         if (line_ptr > line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         subprog_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -1044,14 +1046,14 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             subprog_format_count);
         if (subprog_entry_types == NULL) {
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         subprog_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
             subprog_format_count);
         if (subprog_entry_forms == NULL) {
             free(subprog_entry_types);
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
 
         for (i = 0; i < subprog_format_count; i++) {
@@ -1085,7 +1087,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             free(subprog_entry_types);
             free(subprog_entry_forms);
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         memset(line_context->lc_subprogs, 0,
             sizeof(struct Dwarf_Subprog_Entry_s) * subprogs_count);
@@ -1146,7 +1148,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         DW_DLE_LINE_NUMBER_HEADER_ERROR,
                         "DW_DLE_LINE_NUMBER_HEADER_ERROR",
                         err);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
                 if (line_ptr >= line_ptr_end) {
                     free(subprog_entry_types);
@@ -1156,7 +1158,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         "DW_DLE_LINE_NUMBER_HEADER_ERROR:"
                         " Reading suprogram entry DW_LNCT* types "
                         " we run off the end of the table");
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
             }
         }
@@ -1179,7 +1181,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (line_ptr != lp_begin) {
         if (line_ptr > lp_begin) {
             _dwarf_error(dbg, err, DW_DLE_LINE_PROLOG_LENGTH_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         } else {
             /*  Bug in compiler. These
                 bytes are really part of the instruction
@@ -1439,7 +1441,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     _dwarf_free_chain_entries(dbg,head_chain,
                         line_count);
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
 
                 /* Mark a line record as being DW_LNS_set_address */
@@ -1562,7 +1564,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         _dwarf_free_chain_entries(dbg,head_chain,
                             line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                        return (DW_DLV_ERROR);
+                        return DW_DLV_ERROR;
                     }
                     chain_line->ch_itemtype = DW_DLA_LINE;
                     chain_line->ch_item = curr_line;
@@ -1886,7 +1888,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         head_chain,line_count);
                     _dwarf_error(dbg, error,
                         DW_DLE_LINE_NUM_OPERANDS_BAD);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
                 }
                 break;
@@ -2219,7 +2221,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         _dwarf_free_chain_entries(dbg,head_chain,
                             line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                        return (DW_DLV_ERROR);
+                        return DW_DLV_ERROR;
                     }
 
 #ifdef PRINTING_DETAILS
@@ -2338,7 +2340,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         _dwarf_free_chain_entries(dbg,head_chain,
                             line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                        return (DW_DLV_ERROR);
+                        return DW_DLV_ERROR;
                     }
                     chain_line->ch_itemtype = DW_DLA_LINE;
                     chain_line->ch_item = curr_line;
