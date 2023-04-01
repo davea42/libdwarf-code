@@ -2250,6 +2250,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         Dwarf_Half   attr = 0;
         Dwarf_Half   attr_form = 0;
         int          res = 0;
+        Dwarf_Byte_Ptr next_die_ptr = 0;
 
         attr =  abbrev_list->abl_attr[i];
         attr_form =  abbrev_list->abl_form[i];
@@ -2340,13 +2341,33 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                     (die_info_end - cu_info_start):0;
                 if (offset > plen) {
                     /* Error case, bad DWARF. */
-                    _dwarf_error(dbg, error,
-                        DW_DLE_SIBLING_OFFSET_WRONG);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_SIBLING_OFFSET_WRONG,
+                        "DW_DLE_SIBLING_OFFSET_WRONG "
+                        "the offset makes the new die ptr "
+                        "off the end of the section. Corrupt dwarf");
                     return DW_DLV_ERROR;
                 }
             }
             /* At or before end-of-cu */
-            *next_die_ptr_out = cu_info_start + offset;
+            next_die_ptr = cu_info_start + offset;
+            if (next_die_ptr <= die_info_ptr) {
+                /*  This is a fix for ossfuzz 57562 */
+                dwarfstring m;
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_SIBLING_OFFSET_WRONG "
+                    "the DW_AT_sibling offset (%u) puts "
+                    "the sibling DIE ptr "
+                    "equal to or less then the current DIE ptr. "
+                    "Corrupt dwarf",offset);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_SIBLING_OFFSET_WRONG,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                return DW_DLV_ERROR;
+            }
+            *next_die_ptr_out = next_die_ptr;
             return DW_DLV_OK;
         }
 
@@ -2463,7 +2484,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
     Dwarf_Die * caller_ret_die, Dwarf_Error * error)
 {
-    int res;
+    int res = 0;
     Dwarf_Debug_InfoTypes dis = 0;
 
     dis = is_info? &dbg->de_info_reading:
@@ -2502,6 +2523,9 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     }
     dataptr = is_info? dbg->de_debug_info.dss_data:
         dbg->de_debug_types.dss_data;
+    if (!dataptr) {
+        return DW_DLV_NO_ENTRY;
+    }
     if (die == NULL) {
         /*  Find root die of cu */
         /*  die_info_end is untouched here, need not be set in this
@@ -2564,6 +2588,27 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
                 error);
             if (res2 != DW_DLV_OK) {
                 return res2;
+            }
+            if (die_info_ptr2 == die_info_ptr) {
+                /*  There is something very wrong, our die value
+                    unchanged.  Bad DWARF. */
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_NEXT_DIE_LOW_ERROR: "
+                    "Somehow the next die pointer 0x%x",
+                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr2);
+                dwarfstring_append_printf_u(&m,
+                    " points before the current die "
+                    "pointer 0x%x so an "
+                    "overflow of some sort happened",
+                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_NEXT_DIE_LOW_ERROR,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                return DW_DLV_ERROR;
             }
             if (die_info_ptr2 < die_info_ptr) {
                 /*  There is something very wrong, our die value
@@ -2665,7 +2710,6 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             }
         } while (child_depth != 0);
     }
-
     /*  die_info_ptr > die_info_end is really a bug (possibly in dwarf
         generation)(but we are past end, no more DIEs here), whereas
         die_info_ptr == die_info_end means 'one past end, no more DIEs
@@ -2676,7 +2720,6 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     if ((*die_info_ptr) == 0) {
         return DW_DLV_NO_ENTRY;
     }
-
     ret_die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
     if (!ret_die) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
