@@ -1,4 +1,23 @@
-
+#57562
+id: DW202303-059
+cve:
+fuzzer: oss fuzz id: 57562
+datereported: 2023-03-30
+reportedby: David Korczynski
+vulnerability: Infinite loop reading DIEs
+product: libdwarf
+description:  Caller looping on dwarf_siblingof_b()
+  (wanting to touch all siblings)
+  could be put in an infinite loop.
+  A DW_AT_sibling attribute with a corrupted
+  attribute value meant the caller never sees
+  the DW_DLV_NO_ENTRY return signalling all siblings
+  have been seen.
+datefixed: 2023-04-01
+references: regressiontests/ossfuzz57562/fuzz_findfuncbypc-6681114772373504
+gitfixid: 21b076f652992c03f145f6edeb623918e17693f8
+tarrelease:
+endrec: DW202303-059
 
 id: DW202303-058
 cve:
