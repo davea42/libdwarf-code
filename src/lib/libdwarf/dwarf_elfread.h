@@ -1,5 +1,4 @@
-/* Copyright (c) 2013-2019, David Anderson
-All rights reserved.
+/* Copyright (c) 2013-2023, David Anderson All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -67,7 +66,22 @@ struct generic_ehdr {
     Dwarf_Unsigned ge_phnum;
     Dwarf_Unsigned ge_shentsize;
     Dwarf_Unsigned ge_shnum;
+    /*  if ge_shnum >= 0xff00 SHN_LORESERVE
+        Once section zero is read we put the sh_size
+        member as the true count and set ge_shnum_in_shnum TRUE.
+        ge_shnum_extended is TRUE if the object used the extension 
+        mechanism */
+    Dwarf_Bool ge_shnum_in_shnum;
+    Dwarf_Bool ge_shnum_extended;
+
+    /* if section num of sec strings >= 0xff SHN_LORESERVE
+        this member holds SHN_XINDEX (0xffff) and the real
+        section string index is the sh_link value of section
+        0.  ge_sstrndx_extended is TRUE if the object used
+        the extension mechanism */
     Dwarf_Unsigned ge_shstrndx;
+    Dwarf_Bool ge_strndx_in_strndx;
+    Dwarf_Bool ge_strndx_extended;
 };
 struct generic_phdr {
     Dwarf_Unsigned gp_type;
@@ -258,6 +272,14 @@ int _dwarf_load_elf_relx(dwarf_elf_object_access_internals_t *ep,
 #ifndef EI_NIDENT
 #define EI_NIDENT 16
 #endif /* EI_NIDENT */
+
+#ifndef SHN_XINDEX
+#define SHN_XINDEX 0xffff
+#endif /* SHN_XINDEX */
+
+#ifndef SHN_lORESERVE
+#define SHN_LORESERVE 0xff00
+#endif /* SHN_lORESERVE */
 
 #ifdef __cplusplus
 }
