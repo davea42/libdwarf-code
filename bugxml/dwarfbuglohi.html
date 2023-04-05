@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of 2023-03-30 13:31  PST</p>
-<p> Record count: 135 </p>
+</p>as of 2023-04-05 13:46  PST</p>
+<p> Record count: 136 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4684,6 +4684,38 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz57527/fuzz_srcfiles-4599045397282816
 </p>
 <p>gitfixid: 36e4063ade31c9ea6ea5df973d2045b36877885b
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202303-059">136) DW202303-059</h3>
+<p>id: DW202303-059
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: oss fuzz id: 57562
+</p>
+<p>datereported: 2023-03-30
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Infinite loop reading DIEs
+</p>
+<p>product: libdwarf
+</p>
+<p>description:   Caller looping on dwarf_siblingof_b()
+  (wanting to touch all siblings)
+  could be put in an infinite loop.
+  A DW_AT_sibling attribute with a corrupted
+  attribute value meant the caller never sees
+  the DW_DLV_NO_ENTRY return signalling all siblings
+  have been seen.
+</p>
+<p>datefixed: 2023-04-01
+</p>
+<p>references:  regressiontests/ossfuzz57562/fuzz_findfuncbypc-6681114772373504
+</p>
+<p>gitfixid: 21b076f652992c03f145f6edeb623918e17693f8
 </p>
 <p>tarrelease: 
 </p>
