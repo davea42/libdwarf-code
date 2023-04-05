@@ -670,9 +670,12 @@ typedef struct Dwarf_Obj_Access_Methods_a_s
     Dwarf_Obj_Access_Methods_a;
 
 /*! @typedef Dwarf_Obj_Access_Section_a
-    Used for access to and settint up special data
+    Used for access to and setting up special data
     allowing access to DWARF even with no object
-    files present
+    files present.
+    The fields match up with Elf section headers,
+    but for non-Elf many of the fields can be set
+    to zero.
 */
 typedef struct Dwarf_Obj_Access_Section_a_s
     Dwarf_Obj_Access_Section_a;
