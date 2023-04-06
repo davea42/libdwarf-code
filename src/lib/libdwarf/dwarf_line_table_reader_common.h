@@ -1445,32 +1445,32 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
 
                 /* Mark a line record as being DW_LNS_set_address */
-                curr_line->li_addr_line.li_l_data.li_is_addr_set =
+                curr_line->li_l_data.li_is_addr_set =
                     is_addr_set;
                 is_addr_set = false;
                 curr_line->li_address = regs.lr_address;
-                curr_line->li_addr_line.li_l_data.li_file =
+                curr_line->li_l_data.li_file =
                     (Dwarf_Signed) regs.lr_file;
-                curr_line->li_addr_line.li_l_data.li_line =
+                curr_line->li_l_data.li_line =
                     (Dwarf_Signed) regs.lr_line;
-                curr_line->li_addr_line.li_l_data.li_column =
+                curr_line->li_l_data.li_column =
                     (Dwarf_Half) regs.lr_column;
-                curr_line->li_addr_line.li_l_data.li_is_stmt =
+                curr_line->li_l_data.li_is_stmt =
                     regs.lr_is_stmt;
-                curr_line->li_addr_line.li_l_data.li_basic_block =
+                curr_line->li_l_data.li_basic_block =
                     regs.lr_basic_block;
-                curr_line->li_addr_line.li_l_data.li_end_sequence =
-                    curr_line->li_addr_line.li_l_data.
+                curr_line->li_l_data.li_end_sequence =
+                    curr_line->li_l_data.
                     li_epilogue_begin = regs.lr_epilogue_begin;
-                curr_line->li_addr_line.li_l_data.li_prologue_end =
+                curr_line->li_l_data.li_prologue_end =
                     regs.lr_prologue_end;
-                curr_line->li_addr_line.li_l_data.li_isa =
+                curr_line->li_l_data.li_isa =
                     regs.lr_isa;
-                curr_line->li_addr_line.li_l_data.li_discriminator =
+                curr_line->li_l_data.li_discriminator =
                     regs.lr_discriminator;
-                curr_line->li_addr_line.li_l_data.li_call_context =
+                curr_line->li_l_data.li_call_context =
                     regs.lr_call_context;
-                curr_line->li_addr_line.li_l_data.li_subprogram =
+                curr_line->li_l_data.li_subprogram =
                     regs.lr_subprogram;
                 curr_line->li_context = line_context;
                 curr_line->li_is_actuals_table = is_actuals_table;
@@ -1524,36 +1524,36 @@ read_line_table_program(Dwarf_Debug dbg,
                     }
 
                     /* Mark a line record as DW_LNS_set_address */
-                    curr_line->li_addr_line.li_l_data.li_is_addr_set =
+                    curr_line->li_l_data.li_is_addr_set =
                         is_addr_set;
                     is_addr_set = false;
 
                     curr_line->li_address = regs.lr_address;
-                    curr_line->li_addr_line.li_l_data.li_file =
+                    curr_line->li_l_data.li_file =
                         (Dwarf_Signed) regs.lr_file;
-                    curr_line->li_addr_line.li_l_data.li_line =
+                    curr_line->li_l_data.li_line =
                         (Dwarf_Signed) regs.lr_line;
-                    curr_line->li_addr_line.li_l_data.li_column =
+                    curr_line->li_l_data.li_column =
                         (Dwarf_Half) regs.lr_column;
-                    curr_line->li_addr_line.li_l_data.li_is_stmt =
+                    curr_line->li_l_data.li_is_stmt =
                         regs.lr_is_stmt;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_basic_block = regs.lr_basic_block;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_end_sequence = regs.lr_end_sequence;
                     curr_line->li_context = line_context;
                     curr_line->li_is_actuals_table = is_actuals_table;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_epilogue_begin = regs.lr_epilogue_begin;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_prologue_end = regs.lr_prologue_end;
-                    curr_line->li_addr_line.li_l_data.li_isa =
+                    curr_line->li_l_data.li_isa =
                         regs.lr_isa;
-                    curr_line->li_addr_line.li_l_data.li_discriminator
+                    curr_line->li_l_data.li_discriminator
                         = regs.lr_discriminator;
-                    curr_line->li_addr_line.li_l_data.li_call_context
+                    curr_line->li_l_data.li_call_context
                         = regs.lr_call_context;
-                    curr_line->li_addr_line.li_l_data.li_subprogram =
+                    curr_line->li_l_data.li_subprogram =
                         regs.lr_subprogram;
                     line_count++;
 
@@ -1680,6 +1680,23 @@ read_line_table_program(Dwarf_Debug dbg,
                     }
                     return DW_DLV_ERROR;
                 }
+                {
+                    Dwarf_Signed fno = (Dwarf_Signed)utmp2;
+                    if (fno < 0) {
+                        _dwarf_free_chain_entries(dbg,head_chain,
+                            line_count);
+                        if (curr_line) {
+                            dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        }
+                        _dwarf_error_string(dbg,error,
+                            DW_DLE_LINE_INDEX_WRONG,
+                            "DW_DLE_LINE_INDEX_WRONG "
+                            "A DW_LNS_set_file has an "
+                            "Impossible "
+                            "file number ");
+                        return DW_DLV_ERROR;
+                    }
+                }
 
                 regs.lr_file = utmp2;
 #ifdef PRINTING_DETAILS
@@ -1705,6 +1722,23 @@ read_line_table_program(Dwarf_Debug dbg,
                         dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                     }
                     return DW_DLV_ERROR;
+                }
+                {
+                    Dwarf_Signed cno = (Dwarf_Signed)utmp2;
+                    if (cno < 0) {
+                        _dwarf_free_chain_entries(dbg,head_chain,
+                            line_count);
+                        if (curr_line) {
+                            dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        }
+                        _dwarf_error_string(dbg,error,
+                            DW_DLE_LINE_INDEX_WRONG,
+                            "DW_DLE_LINE_INDEX_WRONG "
+                            "A DW_LNS_set_column has an "
+                            "impossible "
+                            "column number ");
+                        return DW_DLV_ERROR;
+                    }
                 }
 
                 regs.lr_column = utmp2;
@@ -2083,24 +2117,24 @@ read_line_table_program(Dwarf_Debug dbg,
                     logical_line =
                         (Dwarf_Line) logical_chain->ch_item;
                     regs.lr_file =
-                        logical_line->li_addr_line.li_l_data.li_file;
+                        logical_line->li_l_data.li_file;
                     regs.lr_line =
-                        logical_line->li_addr_line.li_l_data.li_line;
+                        logical_line->li_l_data.li_line;
                     regs.lr_column =
                         logical_line->
-                            li_addr_line.li_l_data.li_column;
+                            li_l_data.li_column;
                     regs.lr_discriminator =
                         logical_line->
-                            li_addr_line.li_l_data.li_discriminator;
+                            li_l_data.li_discriminator;
                     regs.lr_is_stmt =
                         logical_line->
-                            li_addr_line.li_l_data.li_is_stmt;
+                            li_l_data.li_is_stmt;
                     regs.lr_call_context =
                         logical_line->
-                            li_addr_line.li_l_data.li_call_context;
+                            li_l_data.li_call_context;
                     regs.lr_subprogram =
                         logical_line->
-                            li_addr_line.li_l_data.li_subprogram;
+                            li_l_data.li_subprogram;
 #ifdef PRINTING_DETAILS
                     {
                     dwarfstring pcon;
@@ -2231,31 +2265,31 @@ read_line_table_program(Dwarf_Debug dbg,
                         is_single_table, is_actuals_table);
 #endif /* PRINTING_DETAILS */
                     curr_line->li_address = regs.lr_address;
-                    curr_line->li_addr_line.li_l_data.li_file =
+                    curr_line->li_l_data.li_file =
                         (Dwarf_Signed) regs.lr_file;
-                    curr_line->li_addr_line.li_l_data.li_line =
+                    curr_line->li_l_data.li_line =
                         (Dwarf_Signed) regs.lr_line;
-                    curr_line->li_addr_line.li_l_data.li_column =
+                    curr_line->li_l_data.li_column =
                         (Dwarf_Half) regs.lr_column;
-                    curr_line->li_addr_line.li_l_data.li_is_stmt =
+                    curr_line->li_l_data.li_is_stmt =
                         regs.lr_is_stmt;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_basic_block = regs.lr_basic_block;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_end_sequence = regs.lr_end_sequence;
                     curr_line->li_context = line_context;
                     curr_line->li_is_actuals_table = is_actuals_table;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_epilogue_begin = regs.lr_epilogue_begin;
-                    curr_line->li_addr_line.li_l_data.
+                    curr_line->li_l_data.
                         li_prologue_end = regs.lr_prologue_end;
-                    curr_line->li_addr_line.li_l_data.li_isa =
+                    curr_line->li_l_data.li_isa =
                         regs.lr_isa;
-                    curr_line->li_addr_line.li_l_data.li_discriminator
+                    curr_line->li_l_data.li_discriminator
                         = regs.lr_discriminator;
-                    curr_line->li_addr_line.li_l_data.li_call_context
+                    curr_line->li_l_data.li_call_context
                         = regs.lr_call_context;
-                    curr_line->li_addr_line.li_l_data.li_subprogram =
+                    curr_line->li_l_data.li_subprogram =
                         regs.lr_subprogram;
                     line_count++;
                     chain_line = (Dwarf_Chain)
@@ -2323,13 +2357,13 @@ read_line_table_program(Dwarf_Debug dbg,
                     }
                     /*  Mark a line record as being
                         DW_LNS_set_address */
-                    curr_line->li_addr_line.li_l_data.li_is_addr_set
+                    curr_line->li_l_data.li_is_addr_set
                         = is_addr_set;
                     is_addr_set = false;
                     curr_line->li_address = regs.lr_address;
 #ifdef __sgi /* SGI IRIX ONLY */
                     /*  ptrdiff_t is generated but not named */
-                    curr_line->li_addr_line.li_offset =
+                    curr_line->li_offset =
                         line_ptr - dbg->de_debug_line.dss_data;
 #endif /* __sgi */
                     line_count++;
