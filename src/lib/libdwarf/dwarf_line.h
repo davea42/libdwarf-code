@@ -295,68 +295,60 @@ void _dwarf_set_line_table_regs_default_values(
 
 /*
     This structure defines a row of the line table.
-    All of the fields except li_offset have the exact
+    All of the fields 
     same meaning that is defined in Section 6.2.2
     of the Libdwarf Document.
 
-    li_offset is used by _dwarf_addr_finder() which is called
-    by rqs(1), an sgi utility for 'moving' shared libraries
-    as if the static linker (ld) had linked the shared library
-    at the newly-specified address.  Most libdwarf-using
-    apps will ignore li_offset and _dwarf_addr_finder().
 */
 struct Dwarf_Line_s {
     Dwarf_Addr li_address;  /* pc value of machine instr */
-    union addr_or_line_s {
-        struct li_inner_s {
-            /* New as of DWARF4 */
-            Dwarf_Unsigned li_discriminator;
+#if 1
+    struct li_inner_s {
+        /* New as of DWARF4 */
+        Dwarf_Unsigned li_discriminator;
 
-            /*  int identifying src file
-                li_file is a number 1-N, indexing into a conceptual
-                source file table as described in dwarf2/3 spec line
-                table doc. (see Dwarf_File_Entry lc_file_entries; and
-                Dwarf_Unsigned lc_file_entry_count;) */
-            Dwarf_Unsigned li_file;
+        /*  int identifying src file
+            li_file is a number 1-N, indexing into a conceptual
+            source file table as described in dwarf2/3 spec line
+            table doc. (see Dwarf_File_Entry lc_file_entries; and
+            Dwarf_Unsigned lc_file_entry_count;) */
+        Dwarf_Unsigned li_file;
 
-            /*  In single-level table is line number in
-                source file. 1-N
-                In logicals table is not used.
-                In actuals table is index into logicals table. 1-N*/
-            Dwarf_Unsigned li_line;
+        /*  In single-level table is line number in
+            source file. 1-N
+            In logicals table is not used.
+            In actuals table is index into logicals table. 1-N*/
+        Dwarf_Unsigned li_line;
 
-            Dwarf_Half li_column; /*source file column number 1-N */
-            Dwarf_Small li_isa;   /*New as of DWARF4. */
+        Dwarf_Half li_column; /*source file column number 1-N */
+        Dwarf_Small li_isa;   /*New as of DWARF4. */
 
-            /*  Two-level line tables.
-                Is index from logicals table
-                into logicals table. 1-N */
-            Dwarf_Unsigned li_call_context;
+        /*  Two-level line tables.
+            Is index from logicals table
+            into logicals table. 1-N */
+        Dwarf_Unsigned li_call_context;
 
-            /*  Two-level line tables.
-                is index into subprograms table. 1-N */
-            Dwarf_Unsigned li_subprogram;
+        /*  Two-level line tables.
+            is index into subprograms table. 1-N */
+        Dwarf_Unsigned li_subprogram;
 
-            /* To save space, use bit flags. */
-            /* indicate start of stmt */
-            unsigned li_is_stmt:1;
+        /* To save space, use bit flags. */
+        /* indicate start of stmt */
+        unsigned li_is_stmt:1;
 
-            /* indicate start basic block */
-            unsigned li_basic_block:1;
+        /* indicate start basic block */
+        unsigned li_basic_block:1;
 
-            /* first post sequence instr */
-            unsigned li_end_sequence:1;
+        /* first post sequence instr */
+        unsigned li_end_sequence:1;
 
-            unsigned li_prologue_end:1;
-            unsigned li_epilogue_begin:1;
+        unsigned li_prologue_end:1;
+        unsigned li_epilogue_begin:1;
 
-            /* Mark a line record as being DW_LNS_set_address. */
-            unsigned li_is_addr_set:1;
-        } li_l_data;
-#ifdef __sgi /* SGI IRIX ONLY */
-        Dwarf_Off li_offset;  /* for SGI IRIX rqs only*/
-#endif /* __sgi */
-    } li_addr_line;
+        /* Mark a line record as being DW_LNS_set_address. */
+        unsigned li_is_addr_set:1;
+    } li_l_data;
+#endif /* 1 */
     Dwarf_Line_Context li_context; /* assoc Dwarf_Line_Context_s */
 
     /*  Set only on the actuals table of a two-level line table.
