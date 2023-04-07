@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of April 2023</p>
-<p> Record count: 136 </p>
+<p> Record count: 137 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4716,6 +4716,41 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz57562/fuzz_findfuncbypc-6681114772373504
 </p>
 <p>gitfixid: 21b076f652992c03f145f6edeb623918e17693f8
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202304-001">137) DW202304-001</h3>
+<p>id: DW202304-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: oss fuzz id: 57711
+</p>
+<p>datereported: 2023-04-04
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  dereference null pointer
+</p>
+<p>product: libdwarf
+</p>
+<p>description:   Crash in libdwarf on dwarf_srcfiles() call.
+  A dereference off a null pointer due to corrupt
+  file numbers not being noticed. Any such crash left an
+  incomplete and misleading stack trace.
+  The large numbers treated as Dwarf_Signed were part of the problem.
+  Now in libdwarf we check Dwarf_Signed for negative values and issue
+  an error if the value less than 0. So later casts to
+  Dwarf_Unsigned work as intended.
+  The libdwarf problems have been in the library for a very
+  long time.
+</p>
+<p>datefixed: 2023-04-06
+</p>
+<p>references:  regressiontests/ossfuzz57711/fuzz_srcfiles-4695324781576192
+</p>
+<p>gitfixid: da0d1efbeddcff23c25704bd9672e98314928b19
 </p>
 <p>tarrelease: 
 </p>
