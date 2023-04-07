@@ -905,6 +905,18 @@
 
     We list these with newest first.
     <b>Changes 0.6.0 to 0.7.0</b>
+    Elf section counts can now exceed 16 bits 
+    (on linux see `man 5 elf`)
+    so some function prototype members 
+    of struct Dwarf_Obj_Access_Methods_a_s must change.
+    Specifically, om_get_section_info()
+    om_load_section(), and
+    om_relocate_a_section()
+    now pass section indexes as Dwarf_Unsigned
+    instead of Dwarf_Half.
+    Without this change large executable/objects simply cannot
+    be read by libdwarf.
+
     Two functions have been removed from libdwarf.h
     and the library.
 

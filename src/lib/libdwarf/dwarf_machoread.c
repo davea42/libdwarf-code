@@ -155,7 +155,7 @@ static Dwarf_Unsigned macho_get_section_count (void *obj)
 }
 
 static int macho_get_section_info (void *obj,
-    Dwarf_Half section_index,
+    Dwarf_Unsigned section_index,
     Dwarf_Obj_Access_Section_a *return_section,
     int *error)
 {
@@ -183,7 +183,7 @@ static int macho_get_section_info (void *obj,
 }
 
 static int
-macho_load_section (void *obj, Dwarf_Half section_index,
+macho_load_section (void *obj, Dwarf_Unsigned section_index,
     Dwarf_Small **return_data, int *error)
 {
     dwarf_macho_object_access_internals_t *macho =

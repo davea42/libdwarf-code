@@ -33,6 +33,7 @@
 
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() strcmp() strncmp() strlen() */
+#include <stdio.h> /* debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -134,7 +135,7 @@ static int
 get_basic_section_data(Dwarf_Debug dbg,
     struct Dwarf_Section_s *secdata,
     struct Dwarf_Obj_Access_Section_a_s *doas,
-    Dwarf_Half section_index,
+    Dwarf_Unsigned section_index,
     unsigned group_number,
     Dwarf_Error* error,
     int duperr, int emptyerr )
@@ -177,7 +178,8 @@ get_basic_section_data(Dwarf_Debug dbg,
 static void
 add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     struct Dwarf_Obj_Access_Section_a_s *doas,
-    Dwarf_Half section_index,int is_rela)
+    Dwarf_Unsigned section_index,
+    int is_rela)
 {
     secdata->dss_reloc_index = section_index;
     secdata->dss_reloc_size = doas->as_size;
@@ -199,7 +201,7 @@ add_debug_section_info(Dwarf_Debug dbg,
     /* Name as seen in object file. */
     const char *name,
     const char *standard_section_name,
-    unsigned obj_sec_num,
+    Dwarf_Unsigned obj_sec_num,
     struct Dwarf_Section_s *secdata,
     unsigned groupnum,
     /*  The have_dwarf flag is a somewhat imprecise
@@ -282,7 +284,7 @@ set_up_section(Dwarf_Debug dbg,
     /*  Standard section name, such as .debug_info */
     const char *sec_standard_name,
     /*  Section number from object format  */
-    unsigned obj_sec_num,
+    Dwarf_Unsigned obj_sec_num,
     /*  The name associated with this secdata in libdwarf */
     const char *targname,
     /*  DW_GROUPNUMBER_ANY or BASE or DWO or some other group num */
@@ -396,7 +398,7 @@ static int
 enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     const char *scn_name,
     /* This is the number of the section in the object file. */
-    unsigned scn_number,
+    Dwarf_Unsigned scn_number,
     unsigned group_number,
     int *err)
 {
@@ -1245,15 +1247,15 @@ determine_target_group(Dwarf_Unsigned section_count,
 static int
 _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 {
-    const char *scn_name = 0;
+    const char    *scn_name = 0;
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
-    int resn = 0;
+    int            resn = 0;
     struct Dwarf_Section_s **sections = 0;
-    Dwarf_Small            endianness = 0;
+    Dwarf_Small    endianness = 0;
     Dwarf_Unsigned section_count = 0;
-    unsigned default_group_number = 0;
-    unsigned foundDwarf = FALSE;
-    unsigned obj_section_index = 0;
+    unsigned       default_group_number = 0;
+    unsigned       foundDwarf = FALSE;
+    Dwarf_Unsigned obj_section_index = 0;
 
     dbg->de_assume_string_in_bounds =
         _dwarf_assume_string_in_bounds;
@@ -1398,8 +1400,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         {
             /*  Build up the sections table and the
                 de_debug* etc pointers in Dwarf_Debug. */
-            struct Dwarf_dbg_sect_s *section;
-
+            struct Dwarf_dbg_sect_s *section = 0;
             int found_match = FALSE;
 
             res = is_section_name_known_already(dbg,scn_name);
@@ -2172,7 +2173,7 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
 {
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     Dwarf_Unsigned section_count = 0;
-    Dwarf_Half section_index = 0;
+    Dwarf_Unsigned section_index = 0;
     struct Dwarf_Obj_Access_Section_a_s doas;
 
     *section_addr = 0;

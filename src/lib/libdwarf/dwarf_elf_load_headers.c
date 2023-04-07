@@ -313,7 +313,8 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
             return DW_DLV_ERROR;
         }
     }
-    if (ehdr->ge_shnum >= SHN_LORESERVE) {
+    if (ehdr->ge_shnum >= SHN_LORESERVE ||
+        (ehdr->ge_strndx_extended && !ehdr->ge_shnum)) {
         ehdr->ge_shnum_extended = TRUE;
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
@@ -371,7 +372,8 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
             return DW_DLV_ERROR;
         }
     }
-    if (ehdr->ge_shnum >= SHN_LORESERVE) {
+    if (ehdr->ge_shnum >= SHN_LORESERVE ||
+        (ehdr->ge_strndx_extended && !ehdr->ge_shnum)) {
         ehdr->ge_shnum_extended = TRUE;
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;

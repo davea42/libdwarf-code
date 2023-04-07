@@ -172,7 +172,7 @@ static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
 }
 
 static int elf_get_nolibelf_section_info(void *obj,
-    Dwarf_Half section_index,
+    Dwarf_Unsigned section_index,
     Dwarf_Obj_Access_Section_a *return_section,
     int *error)
 {
@@ -199,7 +199,7 @@ static int elf_get_nolibelf_section_info(void *obj,
 }
 
 static int
-elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
+elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
     Dwarf_Small **return_data, int *error)
 {
     /*  Linux kernel read size limit 0x7ffff000,
@@ -277,7 +277,7 @@ if ((i_) == (s_).dss_index) { \
 }
 
 static int
-find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
+find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Unsigned section_index,
     struct Dwarf_Section_s **relocatablesec, int *error)
 {
     MATCH_REL_SEC(section_index,dbg->de_debug_info,relocatablesec);
@@ -425,7 +425,7 @@ static int
 apply_rela_entries(
     Dwarf_Debug dbg,
     /* Section_index of the relocation section, .rela entries  */
-    Dwarf_Half r_section_index,
+    Dwarf_Unsigned r_section_index,
     dwarf_elf_object_access_internals_t*obj,
     /* relocatablesec is the .debug_info(etc)  in Dwarf_Debug */
     struct Dwarf_Section_s * relocatablesec,
@@ -475,14 +475,14 @@ apply_rela_entries(
 */
 static int
 elf_relocations_nolibelf(void* obj_in,
-    Dwarf_Half section_index,
+    Dwarf_Unsigned section_index,
     Dwarf_Debug dbg,
     int* error)
 {
     int res = DW_DLV_ERROR;
     dwarf_elf_object_access_internals_t*obj = 0;
     struct Dwarf_Section_s * relocatablesec = 0;
-    Dwarf_Half section_with_reloc_records = 0;
+    Dwarf_Unsigned section_with_reloc_records = 0;
 
     if (section_index == 0) {
         return DW_DLV_NO_ENTRY;
