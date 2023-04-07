@@ -262,10 +262,13 @@ process_line_table(Dwarf_Debug dbg,
 
             sres = dwarf_linesrc(line, &lsrc_filename, &aterr);
             if (sres == DW_DLV_ERROR) {
-                /* Do not terminate processing */
-                where = "dwarf_linesrc()";
-                print_common_line_error(where,aterr);
-                found_line_error = TRUE;
+                /* Do not terminate processing  */
+                if (glflags.gf_do_check_dwarf &&
+                    checking_this_compiler()) {
+                    where = "dwarf_linesrc()";
+                    print_common_line_error(where,aterr);
+                    found_line_error = TRUE;
+                }
                 DROP_ERROR_INSTANCE(dbg,sres,aterr);
             }
         }
@@ -275,9 +278,12 @@ process_line_table(Dwarf_Debug dbg,
 
         if (ares == DW_DLV_ERROR) {
             /* Do not terminate processing */
-            where = "dwarf_lineaddr()";
-            print_common_line_error(where,*lt_err);
-            found_line_error = TRUE;
+            if (glflags.gf_do_check_dwarf &&
+                checking_this_compiler()) {
+                where = "dwarf_lineaddr()";
+                print_common_line_error(where,*lt_err);
+                found_line_error = TRUE;
+            }
             pc = 0;
             DROP_ERROR_INSTANCE(dbg,ares,*lt_err);
         }
@@ -289,9 +295,12 @@ process_line_table(Dwarf_Debug dbg,
             lires = dwarf_linelogical(line, &logicalno, lt_err);
             if (lires == DW_DLV_ERROR) {
                 /* Do not terminate processing */
-                where = "dwarf_linelogical()";
-                print_common_line_error(where,*lt_err);
-                found_line_error = TRUE;
+                if (glflags.gf_do_check_dwarf &&
+                    checking_this_compiler()) {
+                    where = "dwarf_linelogical()";
+                    print_common_line_error(where,*lt_err);
+                    found_line_error = TRUE;
+                }
                 DROP_ERROR_INSTANCE(dbg,lires,*lt_err);
             }
             if (lires == DW_DLV_NO_ENTRY) {
@@ -313,9 +322,12 @@ process_line_table(Dwarf_Debug dbg,
             cores = dwarf_lineoff_b(line, &column, lt_err);
             if (cores == DW_DLV_ERROR) {
                 /* Do not terminate processing */
-                where = "dwarf_lineoff()";
-                print_common_line_error(where,*lt_err);
-                found_line_error = TRUE;
+                if (glflags.gf_do_check_dwarf &&
+                    checking_this_compiler()) {
+                    where = "dwarf_lineoff()";
+                    print_common_line_error(where,*lt_err);
+                    found_line_error = TRUE;
+                }
                 DROP_ERROR_INSTANCE(dbg,cores,*lt_err);
             }
             if (cores == DW_DLV_NO_ENTRY) {
