@@ -1,4 +1,30 @@
-#57562
+
+
+
+id: DW202304-001
+cve:
+fuzzer: oss fuzz id: 57711
+datereported: 2023-04-04
+reportedby: David Korczynski
+vulnerability: dereference null pointer
+product: libdwarf
+description:  Crash in libdwarf on dwarf_srcfiles() call.
+  A dereference off a null pointer due to corrupt 
+  file numbers not being noticed. Any such crash left an
+  incomplete and misleading stack trace. 
+  The large numbers treated as Dwarf_Signed were part of the problem.
+  Now in libdwarf we check Dwarf_Signed for negative values and issue
+  an error if the value less than 0. So later casts to
+  Dwarf_Unsigned work as intended.
+  The libdwarf problems have been in the library for a very
+  long time.
+datefixed: 2023-04-06
+references: regressiontests/ossfuzz57711/fuzz_srcfiles-4695324781576192
+gitfixid: da0d1efbeddcff23c25704bd9672e98314928b19
+tarrelease:
+endrec: DW202304-001
+
+
 id: DW202303-059
 cve:
 fuzzer: oss fuzz id: 57562
