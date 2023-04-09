@@ -1055,6 +1055,9 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
     return DW_DLV_ERROR;
 }
 
+/*  The index value here is the value of the
+    attribute with this form.
+    FORMs passed in are always strx forms. */
 static int
 dw_read_str_index_val_itself(Dwarf_Debug dbg,
     unsigned theform,
@@ -1116,7 +1119,10 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     Dwarf_Unsigned index = 0;
     Dwarf_Small *info_ptr = 0;
     int indxres = 0;
+    Dwarf_Unsigned length_size = 0;
+    Dwarf_Unsigned sectionlen = 0;
 
+    
     res = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -1130,6 +1136,18 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     if (indxres == DW_DLV_OK) {
         *return_index = index;
         return indxres;
+    }
+    length_size = cu_context->cc_length_size;
+    sectionlen = dbg->de_debug_str_offsets.dss_size;
+    if (index > sectionlen ||
+        (index *length_size) > sectionlen) {
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ATTR_FORM_SIZE_BAD,
+            "DW_DLE_ATTR_FORM_SIZE_BAD: "
+            "An Attribute Value (index  into "
+            ".debug_str_offsets) is Impossibly "            
+            "large. Corrupt Dwarf.");
+        return DW_DLV_ERROR;
     }
     return indxres;
 }
@@ -1693,6 +1711,10 @@ dwarf_formblock(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
+/*  This is called for attribute with strx form
+    or macro5 with strx form. 
+    No relation to the Name Table or
+    to  FIXME */
 int
 _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small *data_ptr,
@@ -1703,8 +1725,8 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned index_to_offset_entry = 0;
-    Dwarf_Unsigned offsetintable = 0;
-    Dwarf_Unsigned end_offsetintable = 0;
+    Dwarf_Unsigned offsettotable = 0;
+    Dwarf_Unsigned end_offsettotable = 0;
     Dwarf_Unsigned indexoffset = 0;
     Dwarf_Unsigned baseoffset = 0;
     Dwarf_Unsigned table_offset_to_array = 0;
@@ -1716,6 +1738,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small   *sof_end = 0;
     Dwarf_Unsigned str_sect_offset = 0;
     Dwarf_Unsigned length_size  = 0;
+    Dwarf_Bool have_array_offset = FALSE;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
     if (res != DW_DLV_OK) {
@@ -1732,22 +1755,34 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     if ( idxres != DW_DLV_OK) {
         return idxres;
     }
-
-    if (cu_context->cc_str_offsets_tab_present) {
+    if (cu_context->cc_str_offsets_array_offset_present) {
+        baseoffset = cu_context->cc_str_offsets_array_offset;
+        have_array_offset = TRUE;
+    } else if (cu_context->cc_str_offsets_tab_present) {
         baseoffset = cu_context->cc_str_offsets_header_offset;
+        baseoffset += cu_context->cc_str_offsets_tab_to_array;
+        have_array_offset = TRUE;
+    } else { /* do nothing */}
+    if (baseoffset > sectionlen ||
+        (baseoffset+length_size) > sectionlen ||
+        (baseoffset+(index_to_offset_entry *length_size)) >
+            sectionlen) {
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ATTR_FORM_SIZE_BAD,
+            "DW_DLE_ATTR_FORM_SIZE_BAD: "
+            "An Attribute value (offset  into "
+            ".debug_str_offsets) is impossibly "            
+            "large. Corrupt Dwarf.");
+        return DW_DLV_ERROR;
     }
-    if (cu_context->cc_str_offsets_tab_to_array_present) {
-        table_offset_to_array =
-            cu_context->cc_str_offsets_tab_to_array;
-    }
-
-    if (!cu_context->cc_str_offsets_tab_present ||
-        !cu_context->cc_str_offsets_tab_to_array_present) {
+    indexoffset = index_to_offset_entry* length_size;
+    if (!have_array_offset) {
         /*  missing any connection to a specific
             str_offsets table this guesses at table zero.
             When the compiler/linker have
             combined str offsets into a
             single table this works. */
+        Dwarf_Unsigned headeroffset = 0;
         if (cu_context->cc_version_stamp ==  DW_CU_VERSION5 ) {
             /*  A base offset of 0 is ok for either
                 DWARF5. but some early GNU compilers emitted
@@ -1763,7 +1798,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             Dwarf_Half padding              = 0;
 
             res = _dwarf_trial_read_dwarf_five_hdr(dbg,
-                baseoffset,stsize,
+                headeroffset,stsize,
                 &table_offset_to_array,
                 &table_length,
                 &length, &local_offset_size,
@@ -1772,7 +1807,8 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
                 &padding,
                 error);
             if (res == DW_DLV_OK) {
-                /* baseoffset unchanged */
+                baseoffset = table_offset_to_array+
+                    headeroffset;
             } else {
                 if (res == DW_DLV_ERROR && error) {
                     dwarf_dealloc_error(dbg,*error);
@@ -1781,22 +1817,21 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             }
         }
     }
-    indexoffset = index_to_offset_entry* length_size;
-    offsetintable = indexoffset+ baseoffset
-        + table_offset_to_array;
-    end_offsetintable = offsetintable + length_size;
+    offsettotable = indexoffset+ baseoffset;
+    end_offsettotable = offsettotable + length_size;
     /*  The offsets table is a series of offset-size entries.
         The == case in the test applies when we are at the last table
         entry, so == is not an error, hence only test >
     */
-    if (end_offsetintable  > sectionlen) {
+    if (offsettotable  > sectionlen ||
+        end_offsettotable  > sectionlen) {
         dwarfstring m;
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_ATTR_FORM_SIZE_BAD: The end offset of "
             "a .debug_str_offsets table is 0x%x ",
-            end_offsetintable);
+            end_offsettotable);
         dwarfstring_append_printf_u(&m,
             "but the object section is just 0x%x "
             "bytes long",
@@ -1807,9 +1842,8 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-
-    sof_start = sectionptr+ offsetintable;
-    sof_end = sectionptr + end_offsetintable;
+    sof_start = sectionptr+ offsettotable;
+    sof_end = sectionptr + end_offsettotable;
     /* Now read the string offset from the offset table. */
     READ_UNALIGNED_CK(dbg,str_sect_offset,Dwarf_Unsigned,
         sof_start,

@@ -1247,10 +1247,6 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
             tiedcontext->cc_str_offsets_tab_present;
         context->        cc_str_offsets_header_offset=
             tiedcontext->cc_str_offsets_header_offset;
-    }
-    if (!context->cc_str_offsets_tab_to_array_present) {
-        context->        cc_str_offsets_tab_to_array_present =
-            tiedcontext->cc_str_offsets_tab_to_array_present;
         context->        cc_str_offsets_tab_to_array=
             tiedcontext->cc_str_offsets_tab_to_array;
         context->        cc_str_offsets_table_size=

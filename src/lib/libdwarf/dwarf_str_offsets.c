@@ -413,7 +413,7 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
 
     globaltaboff = sot->so_next_table_offset;
     if (cucontext) {
-        if (cucontext->cc_str_offsets_tab_to_array_present) {
+        if (cucontext->cc_str_offsets_tab_present) {
             /*  cu_context has what it needs already and we do
                 not need the rest of what the interface
                 provides */
@@ -481,10 +481,9 @@ _dwarf_read_str_offsets_header(Dwarf_Str_Offsets_Table sot,
         cucontext->cc_str_offsets_tab_present = TRUE;
         cucontext->cc_str_offsets_tab_to_array =
             table_local_offset_of_array;
-        cucontext->cc_str_offsets_tab_to_array_present = TRUE;
+        cucontext->cc_str_offsets_version   = version;
         cucontext->cc_str_offsets_offset_size  = local_offset_size;
         cucontext->cc_str_offsets_table_size   = total_table_length;
-        cucontext->cc_str_offsets_version   = version;
     }
     if (local_offset_to_array_out) {
         *local_offset_to_array_out = table_local_offset_of_array;

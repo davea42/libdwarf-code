@@ -1216,18 +1216,18 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
 
             /*  The offset is of the first offset in
                 .debug_str_offsets that is the string table
-                for this CU. */
+                offset array for this CU. */
             case DW_AT_str_offsets_base:{
                 int udres = 0;
                 Dwarf_Bool is_info = cucon->cc_is_info;
 
                 udres = _dwarf_internal_global_formref_b(attr,
                     /* avoid recurse creating context */ 1,
-                    &cucon->cc_str_offsets_header_offset,
+                    &cucon->cc_str_offsets_array_offset,
                     &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
-                    cucon->cc_str_offsets_tab_present = TRUE;
+                    cucon->cc_str_offsets_array_offset_present = TRUE;
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
                     /* Something is badly wrong. */

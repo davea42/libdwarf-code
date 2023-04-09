@@ -264,24 +264,36 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_loclists_base_present;
     Dwarf_Bool     cc_loclists_header_length_present;
 
-    /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs
-        DW_AT_str_offsets_base (table array offset) .
-        Here cc_str_offsets_tab_present
-        paired with cc_str_offsets_header_offset
-        which is what the offset means */
+    /* ======= str_offsets table data  =======*/
+    /*  header_offset is global offset in str_offsets section
+        of an array of string offsets. Not a header offset
+        at all.
+        from DW_AT_str_offsets_base DW5 page 66 item 13.
+        Not related to the Name Table */
+    /*  Set from DW_AT_str_offsets_base. Global offset. */
+    Dwarf_Bool     cc_str_offsets_array_offset_present;
+    Dwarf_Unsigned cc_str_offsets_array_offset;
+
+    /*  Set from str_offsets header, means all the relevant
+        data from the header is present. Does not mean
+        the data from DW_AT_str_offsets_base is present */
     Dwarf_Bool     cc_str_offsets_tab_present;
-    /*  Without tab_to_array present we cannot do much. */
-    Dwarf_Bool     cc_str_offsets_tab_to_array_present;
+    /*  Set from str_offsets header. */
+    Dwarf_Unsigned cc_str_offsets_header_offset;
 
-    /*  header_offset is global offset in str_offsets section. */
-    Dwarf_Unsigned cc_str_offsets_header_offset; /* cu/tu etc*/
-    Dwarf_Unsigned cc_str_offsets_table_size;
-
-    /*  to get from the start of a str_offsets table to the
-        offsets array entries. */
+    /*  Set by reading str_offsets header. Local offset
+        from header to its array. */
     Dwarf_Unsigned cc_str_offsets_tab_to_array;
+
+    /*  The following three set but not used. Might
+        be useful for error checking. */
     Dwarf_Unsigned cc_str_offsets_offset_size;
+    /*  The size of the table from table header
+        to end of this table. Not the size of array
+        in the table */
+    Dwarf_Unsigned cc_str_offsets_table_size;
     Dwarf_Half     cc_str_offsets_version;
+    /* ======= end str_offsets table data  =======*/
 
     /*  DW_SECT_MACRO */
     Dwarf_Unsigned cc_macro_base;    /*DW5 */
