@@ -3,6 +3,38 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>oss fuzz id: 57766</fuzzer>
+
+<datereported>2023-04-07</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap Buffer Overflow
+</vulnerability>
+
+<description>  Crash in libdwarf on reading an attribute
+  due to failing to check that an index into .debug_str_offsets
+  is sane. So we read far outside the relevant table.
+  The checks have been incomplete since this DWARF5 section
+  code was written.  Two functions in libdwarf
+  dwarf_form.c had the same problem.
+</description>
+
+<datefixed>2023-04-09</datefixed>
+
+<references> regressiontests/ossfuzz57766/fuzz_die_cu_print-5295062170075136
+</references>
+
+<gitfixid>761da806fc950c6b26c1763e8989a814e9b16a59</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>oss fuzz id: 57711</fuzzer>
 
 <datereported>2023-04-04</datereported>

@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of April 2023</p>
-<p> Record count: 137 </p>
+<p> Record count: 138 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4751,6 +4751,37 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz57711/fuzz_srcfiles-4695324781576192
 </p>
 <p>gitfixid: da0d1efbeddcff23c25704bd9672e98314928b19
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202304-002">138) DW202304-002</h3>
+<p>id: DW202304-002
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: oss fuzz id: 57766
+</p>
+<p>datereported: 2023-04-07
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap Buffer Overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:   Crash in libdwarf on reading an attribute
+  due to failing to check that an index into .debug_str_offsets
+  is sane. So we read far outside the relevant table.
+  The checks have been incomplete since this DWARF5 section
+  code was written.  Two functions in libdwarf
+  dwarf_form.c had the same problem.
+</p>
+<p>datefixed: 2023-04-09
+</p>
+<p>references:  regressiontests/ossfuzz57766/fuzz_die_cu_print-5295062170075136
+</p>
+<p>gitfixid: 761da806fc950c6b26c1763e8989a814e9b16a59
 </p>
 <p>tarrelease: 
 </p>

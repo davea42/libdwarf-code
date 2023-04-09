@@ -1,6 +1,4 @@
 
-
-#57766
 id: DW202304-002
 cve:
 fuzzer: oss fuzz id: 57766
@@ -10,16 +8,15 @@ vulnerability: Heap Buffer Overflow
 product: libdwarf
 description:  Crash in libdwarf on reading an attribute
   due to failing to check that an index into .debug_str_offsets
-  is sane. So we read far ouside the relevant table.
+  is sane. So we read far outside the relevant table.
   The checks have been incomplete since this DWARF5 section
-  code was written.  Two functions in the libdwarf 
-  dwarf_form.c had the same problem.
-datefixed: 2023-04-08
+  code was written.  Two functions in libdwarf 
+  dwarf_form.c had the same problem. 
+datefixed: 2023-04-09
 references: regressiontests/ossfuzz57766/fuzz_die_cu_print-5295062170075136
-gitfixid: 
+gitfixid: 761da806fc950c6b26c1763e8989a814e9b16a59  
 tarrelease:
 endrec: DW202304-002
-
 
 id: DW202304-001
 cve:
