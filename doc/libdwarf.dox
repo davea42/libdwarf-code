@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-02-23 v0.7.0
+    @date 2023-04-10 v0.7.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -81,7 +81,7 @@
     only one of them is truly appropriate except
     in toy programs).
 
-    <strong>A) The recommmended approach</strong> is to 
+    <b>A) The recommmended approach</b> is to 
     define a Dwarf_Error and initialize it to 0.
 
     @code
@@ -109,7 +109,7 @@
     Some functions cannot possibly return some of these
     three values. As defined later for each function.
 
-    <strong>B) An alternative (not recommended)</strong> approach is
+    <b>B) An alternative (not recommended)</b> approach is
     to pass NULL to the error argument.
 
     @code
@@ -119,7 +119,7 @@
     If your initialization provided an 'errhand'
     function pointer argument (see below) the
     library will call errhand if an error is encountered.
-    (Your errhand function could simply exit if you so choose.)
+    (Your errhand function could exit if you so choose.)
 
     The the library will then return DW_DLV_ERROR, though
     you will have no way to identify what the error was.
@@ -149,7 +149,7 @@
     Note that dw_errarg is a pointer so one could
     create a struct with data of interest and use
     that pointer as the dw_errarg.
-    Or one could put an integer in there or simply NULL,
+    Or one could put an integer in there or NULL,
     it just depends what you want to do in the
     Dwarf_Handler function you write.
 
@@ -515,7 +515,7 @@
     have essentially written the dwarf_init_path
     equivalent and you can access compilation units,
     line tables etc and the standard @e libdwarf
-    function calls simply work.
+    function calls work.
 
     Data you need to create involves these types.
     What follows describes how to fill them in and
@@ -569,7 +569,7 @@
 
     @b Dwarf_Obj_Access_Section_a:
     Your implementation of a @b om_get_section_info
-    must simply fill in a few fields (leaving most
+    must fill in a few fields (leaving most
     zero) for @e libdwarf. The fields here are
     standard Elf, but for most you can just use
     the value zero.  We assume here you will not be
@@ -699,7 +699,7 @@
     the init will call return DW_DLV_NO_ENTRY.
 
     If a groupnumber greater than two is passed in
-    @e libdwarf simply accepts it, whether any sections
+    @e libdwarf accepts it, whether any sections
     corresponding to that groupnumber exist or not.
 
     For information on groups  "dwarfdump -i"
@@ -904,21 +904,25 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
     <b>Changes 0.6.0 to 0.7.0</b>
-    Elf section counts can now exceed 16 bits 
-    (on linux see `man 5 elf`)
+
+    Elf section counts can exceed 16 bits 
+    (on linux see <b>man 5 elf</b>)
     so some function prototype members 
-    of struct Dwarf_Obj_Access_Methods_a_s must change.
+    of struct <b>Dwarf_Obj_Access_Methods_a_s</b>
+    changed.
     Specifically, om_get_section_info()
     om_load_section(), and
     om_relocate_a_section()
     now pass section indexes as Dwarf_Unsigned
     instead of Dwarf_Half.
-    Without this change large executable/objects simply cannot
+    Without this change large executable/objects cannot
     be read by libdwarf.
 
     Two functions have been removed from libdwarf.h
-    and the library.
+    and the library: dwarf_dnames_abbrev_by_code()
+    and dwarf_dnames_abbrev_form_by_index().
 
     dwarf_dnames_abbrev_by_code() is slow and pointless. 
     Use either dwarf_dnames_name() or
@@ -926,9 +930,11 @@
     on what you want to accomplish.
 
     dwarf_dnames_abbrev_form_by_index() is not needed,
-    was hard to use, and never worked.
+    was difficult to call due to argument list
+    requirements, and never worked.
 
     <b>Changes 0.5.0 to 0.6.0</b>
+
     v0.6.0 released 2023-02-20 
     The dealloc required by dwarf_offset_list()
     was wrong. The call could crash libdwarf
@@ -971,10 +977,6 @@
     inflated the libdwarf API and documentation for
     no good reason.
 
-    For any application <b>not</b> calling
-    dwarf_get_pubtypes() there is no compatibility
-    issue.
-
     The changes are: the data type Dwarf_Type
     disappears as do dwarf_pubtypename()
     dwarf_pubtype_die_offset(),
@@ -999,9 +1001,10 @@
     libdwarf reporting erroneous data.  A copy-paste
     error in libdwarf/dwarf_util.c was noticed
     and fixed 24 Januarly 2023 for 0.6.0.
-    Bug <strong>DW202301-001</strong>.
+    Bug <b>DW202301-001</b>.
 
     <b>Changes 0.4.2 to 0.5.0</b>
+
     v0.5.0 released 2022-11-22 
     The handling of the .debug_abbrev data in
     libdwarf is now more cpu-efficient (measurably
@@ -1036,6 +1039,7 @@
     (left out by accident earlier).
 
     <b>Changes 0.4.1 to 0.4.2</b>
+
     0.4.2 released 2022-09-13.
     No API changes. No API additions.  Corrected
     a bug in dwarf_tsearchhash.c where a delete
@@ -1061,6 +1065,7 @@
     mechanism.
 
     <b>Changes 0.4.0 to 0.4.1</b>
+
     Reading a carefully corrupted DIE with form DW_FORM_ref_sig8
     could result in reading memory outside any section, possibly
     leading to a segmentation violation or other crash. Fixed.
