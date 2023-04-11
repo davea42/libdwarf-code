@@ -1024,6 +1024,21 @@ _dwarf_get_addr_index_itself(int theform,
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
         return DW_DLV_ERROR;
     }
+    /*  At this point we do not know for sure
+        if the index refers
+        to a local .debug_addr or a tied file .debug_addr
+        so lets be cautious. */
+#if 0
+    if (!dbg->de_tied_data.td_tied_object &&
+        index > dbg->de_filesize) {
+        _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
+            "DW_DLE_ATTR_FORM_OFFSET_BAD "
+            "reading an indexed form addr the index "
+            "read is impossibly large (no tied file "
+            "available). Corrupt Dwarf.");
+        return DW_DLV_ERROR;
+    }
+#endif
     *val_out = index;
     return DW_DLV_OK;
 }
@@ -1122,7 +1137,6 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     Dwarf_Unsigned length_size = 0;
     Dwarf_Unsigned sectionlen = 0;
 
-    
     res = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -1145,7 +1159,7 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
             DW_DLE_ATTR_FORM_SIZE_BAD,
             "DW_DLE_ATTR_FORM_SIZE_BAD: "
             "An Attribute Value (index  into "
-            ".debug_str_offsets) is Impossibly "            
+            ".debug_str_offsets) is Impossibly "
             "large. Corrupt Dwarf.");
         return DW_DLV_ERROR;
     }
@@ -1712,7 +1726,7 @@ dwarf_formblock(Dwarf_Attribute attr,
 }
 
 /*  This is called for attribute with strx form
-    or macro5 with strx form. 
+    or macro5 with strx form.
     No relation to the Name Table or
     to  FIXME */
 int
@@ -1771,7 +1785,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             DW_DLE_ATTR_FORM_SIZE_BAD,
             "DW_DLE_ATTR_FORM_SIZE_BAD: "
             "An Attribute value (offset  into "
-            ".debug_str_offsets) is impossibly "            
+            ".debug_str_offsets) is impossibly "
             "large. Corrupt Dwarf.");
         return DW_DLV_ERROR;
     }
