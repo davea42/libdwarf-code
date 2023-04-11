@@ -982,12 +982,19 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
         but with a base. */
     sectionsize = dbg->de_debug_addr.dss_size;
     sectionend = sectionstart + sectionsize;
-    if (addr_offset > (sectionsize - context->cc_address_size)) {
+    /*  At this point we have a local .debug_addr table
+        Might get here on dbg or tied-dbg. Check either way
+        ASSERT: cc_address_size is sensible (small) */
+    if (addrindex >= sectionsize ||
+        (addrindex*context->cc_address_size) >= sectionsize ||
+        addr_offset > sectionsize ||
+        addr_offset > (sectionsize - context->cc_address_size)) {
         dwarfstring m;
 
+        /* Was DW_DLE_ATTR_FORM_SIZE_BAD. Regression issue */
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            "DW_DLE_ATTR_FORM_SIZE_BAD: "
+            "DW_DLE_ATTR_FORM_OFFSET_BAD: "
             "Extracting an address from .debug_addr fails"
             "as the offset is  0x%x ",
             addr_offset);
@@ -997,7 +1004,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
             " for an address.",
             sectionsize);
         _dwarf_error_string(dbg, error,
-            DW_DLE_ATTR_FORM_SIZE_BAD,
+            DW_DLE_ATTR_FORM_OFFSET_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
@@ -1033,7 +1040,8 @@ _dwarf_look_in_local_and_tied_by_index(
             /* *error safe */
             dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
             *error = 0; /* *error safe */
-            /* error is returned on dbg, not tieddbg. */
+            /*  Any error is returned on dbg,
+                not tieddbg. */
             res3 = _dwarf_get_addr_from_tied(dbg,
                 context,index,return_addr,error);
             return res3;
@@ -1081,6 +1089,7 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     int res2 = 0;
     Dwarf_Unsigned index_to_addr = 0;
     Dwarf_Debug dbg = 0;
+    Dwarf_Unsigned addrtabsize = 0;
 
     /*  We get the index. It might apply here
         or in tied object. Checking that next. */
@@ -1090,6 +1099,22 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     if (res2 != DW_DLV_OK) {
         return res2;
     }
+    addrtabsize = dbg->de_debug_addr.dss_size;
+#if 0
+    If there is  no .debug_addr the error here should
+    not be reported as will report that
+    via _dwarf_look_in_local_and_tied_by_index
+    if (!dbg->de_tied_data.td_tied_object &&
+        (index_to_addr > dbg->de_filesize ||
+        index_to_addr > addrtabsize ||
+        (index_to_addr*context->cc_address_size) > addrtabsize)) {
+        _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
+            "DW_DLE_ATTR_FORM_OFFSET_BAD "
+            "Looking for an index from an addr FORM "
+            "we find an impossibly large value. Corrupt DWARF");
+        return DW_DLV_ERROR;
+    }
+#endif
     /* error is returned on dbg, not tieddbg. */
     res2 = _dwarf_look_in_local_and_tied_by_index(
         dbg,context,index_to_addr,return_addr,error);
@@ -1426,6 +1451,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Addr local_addr = 0;
     Dwarf_CU_Context tiedcontext = 0;
+    Dwarf_Unsigned addrtabsize = 0;
 
     if (!context->cc_signature_present) {
         _dwarf_error(dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
@@ -1451,6 +1477,18 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     }
     if ( res == DW_DLV_NO_ENTRY) {
         return res;
+    }
+    /* We have .debug_addr */
+    addrtabsize = tieddbg->de_debug_addr.dss_size;
+    if ( (index > tieddbg->de_filesize ||
+        index > addrtabsize ||
+        (index*tiedcontext->cc_address_size) > addrtabsize)) {
+        _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
+            "DW_DLE_ATTR_FORM_OFFSET_BAD "
+            "Looking for an index from an addr FORM "
+            "we find an impossibly large index value for the tied "
+            "object. Corrupt DWARF");
+        return DW_DLV_ERROR;
     }
     res = _dwarf_extract_address_from_debug_addr(tieddbg,
         tiedcontext,
