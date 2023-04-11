@@ -99,8 +99,8 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  
-   
+/*
+
     ASSERT: dbg,cu_context, and fsd are non-NULL
     as the caller ensured that.
     If .debug_cu_index or
