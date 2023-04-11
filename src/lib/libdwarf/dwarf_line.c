@@ -651,16 +651,15 @@ dwarf_srcfiles(Dwarf_Die die,
         list of strings or our strings.
         Our caller has to do the deallocations.  */
     {
-        Dwarf_Signed srccount = 
+        Dwarf_Signed srccount =
             (Dwarf_Signed)line_context->lc_file_entry_count;
         if (srccount < 0) {
-            /*  Impossible corruption! */   
+            /*  Impossible corruption! */
             _dwarf_error_string(dbg,error,DW_DLE_LINE_COUNT_WRONG,
                 "DW_DLE_LINE_COUNT_WRONG "
                 "Call to dwarf_srcfiles finds an impossible "
                 "source files count");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         *srcfiles = ret_files;
         *srcfilecount = srccount;
@@ -898,7 +897,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             *linebuf = line_context->lc_linebuf_logicals;
         }
         if (linecount) {
-            Dwarf_Signed lcl = 
+            Dwarf_Signed lcl =
                 (Dwarf_Signed)line_context->lc_linecount_logicals;
             if (lcl < 0) {
                 _dwarf_error_string(dbg,error,DW_DLE_LINE_COUNT_WRONG,
@@ -906,7 +905,6 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     "Call to dwarf_srclines finds an impossible "
                     "lines count");
                 return DW_DLV_ERROR;
-/*FIXME */
             }
             *linecount =  lcl;
         }
@@ -940,9 +938,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
             }
             return res;
         }
-      
+
         if (linecount) {
-            Dwarf_Signed lcl = 
+            Dwarf_Signed lcl =
                 (Dwarf_Signed)line_context->lc_linecount_logicals;
             if (lcl < 0) {
                 _dwarf_error_string(dbg,error,DW_DLE_LINE_COUNT_WRONG,
@@ -950,7 +948,6 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     "Call to dwarf_srclines finds an Impossible "
                     "lines count");
                 return DW_DLV_ERROR;
-/*FIXME */
             }
             *linecount =  lcl;
         }
@@ -979,7 +976,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 *linebuf_actuals = line_context->lc_linebuf_actuals;
             }
             if (linecount_actuals) {
-                Dwarf_Signed lca = 
+                Dwarf_Signed lca =
                     (Dwarf_Signed)line_context->lc_linecount_actuals;
                 if (lca < 0) {
                     _dwarf_error_string(dbg,error,
@@ -988,7 +985,6 @@ _dwarf_internal_srclines(Dwarf_Die die,
                         "Call to dwarf_srclines finds an Impossible "
                         "lines count");
                     return DW_DLV_ERROR;
-  /*  FIXME */
                 }
                 *linecount_actuals = lca;
             }
@@ -1183,7 +1179,6 @@ dwarf_srclines_from_linecontext(Dwarf_Line_Context line_context,
                 "finds an Impossible "
                 "lines count");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         *linebuf =   line_context->lc_linebuf_logicals;
         *linecount = lc;
@@ -1223,7 +1218,6 @@ dwarf_srclines_two_level_from_linecontext(
                 "finds an Impossible "
                 "lines count");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         if (lca < 0) {
             _dwarf_error_string(line_context->lc_dbg,error,
@@ -1233,7 +1227,6 @@ dwarf_srclines_two_level_from_linecontext(
                 "finds an Impossible "
                 "lines count");
             return DW_DLV_ERROR;
-/* FIXME */
         }
 
         *linebuf =           line_context->lc_linebuf_logicals;
@@ -1303,8 +1296,8 @@ dwarf_srclines_subprog_count(Dwarf_Line_Context line_context,
         return DW_DLV_ERROR;
     }
     if (count_out) {
-        Dwarf_Signed co = 
-            (Dwarf_Signed) line_context->lc_subprogs_count; 
+        Dwarf_Signed co =
+            (Dwarf_Signed) line_context->lc_subprogs_count;
         if (co < 0) {
             _dwarf_error_string(line_context->lc_dbg,error,
                 DW_DLE_LINE_COUNT_WRONG,
@@ -1313,7 +1306,6 @@ dwarf_srclines_subprog_count(Dwarf_Line_Context line_context,
                 "finds an Impossible "
                 "subprogs count");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         *count_out = co;
     }
@@ -1343,7 +1335,6 @@ dwarf_srclines_subprog_data(Dwarf_Line_Context line_context,
             "finds an Impossible "
             "index argument value");
         return DW_DLV_ERROR;
-/* FIXME */
     }
     index = (Dwarf_Unsigned)index_in;
     if (!line_context || line_context->lc_magic != DW_CONTEXT_MAGIC) {
@@ -1389,7 +1380,6 @@ dwarf_srclines_files_indexes(Dwarf_Line_Context line_context,
                 "finds an Impossible "
                 "file entry index value");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         if (fc < 0) {
             _dwarf_error_string(line_context->lc_dbg,error,
@@ -1399,7 +1389,6 @@ dwarf_srclines_files_indexes(Dwarf_Line_Context line_context,
                 "finds an Impossible "
                 "file count index value");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         if (ei < 0) {
             _dwarf_error_string(line_context->lc_dbg,error,
@@ -1409,7 +1398,6 @@ dwarf_srclines_files_indexes(Dwarf_Line_Context line_context,
                 "finds an Impossible "
                 "endindex value");
             return DW_DLV_ERROR;
-/* FIXME */
         }
         *baseindex  = bi;
         *file_count = fc;
@@ -1446,7 +1434,6 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
             "passes an Impossible "
             "index argument value");
         return DW_DLV_ERROR;
-/* FIXME */
     }
     if (!line_context || line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
@@ -1472,7 +1459,6 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
             "finds an Impossible "
             "file entry index value");
         return DW_DLV_ERROR;
-/* FIXME */
     }
     if (file_count < 0) {
         _dwarf_error_string(line_context->lc_dbg,error,
@@ -1482,7 +1468,6 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
             "finds an Impossible "
             "file count value");
         return DW_DLV_ERROR;
-/* FIXME */
     }
     if (endindex < 0) {
         _dwarf_error_string(line_context->lc_dbg,error,
@@ -1492,7 +1477,6 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
             "finds an Impossible "
             "endindex value");
         return DW_DLV_ERROR;
-/* FIXME */
     }
 
     if (index < baseindex || index >= endindex) {
@@ -1551,7 +1535,6 @@ dwarf_srclines_include_dir_count(Dwarf_Line_Context line_context,
             "finds an Impossible "
             "include directories count");
         return DW_DLV_ERROR;
-/* FIXME */
     }
     *count = scount;
     return DW_DLV_OK;
@@ -1578,7 +1561,6 @@ dwarf_srclines_include_dir_data(Dwarf_Line_Context line_context,
             "finds an Impossible "
             "include directories count");
         return DW_DLV_ERROR;
-/* FIXME */
     }
     if (!line_context || line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
@@ -1655,7 +1637,7 @@ dwarf_linebeginstatement(Dwarf_Line line,
     See the DWARF3 spec section 6.2.  */
 int
 dwarf_lineendsequence(Dwarf_Line line,
-    Dwarf_Bool * return_bool, 
+    Dwarf_Bool * return_bool,
     Dwarf_Error * error)
 {
     if (line == NULL) {
@@ -1805,14 +1787,13 @@ _dwarf_filename(Dwarf_Line_Context context,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
-/* FIXME */
     }
 #if 0
     if (fileno_in >= context->lc_file_entry_count) {
-         _dwarf_error_string(dbg,error, DW_DLE_NO_FILE_NAME,
-             "DW_DLE_NO_FILE_NAME "
-             "A file number is too larg. Corrupt dwarf");
-         return DW_DLV_ERROR;
+        _dwarf_error_string(dbg,error, DW_DLE_NO_FILE_NAME,
+            "DW_DLE_NO_FILE_NAME "
+            "A file number is too larg. Corrupt dwarf");
+        return DW_DLV_ERROR;
     }
 #endif
     res =  dwarf_srclines_files_indexes(context, &baseindex,
@@ -1841,7 +1822,6 @@ _dwarf_filename(Dwarf_Line_Context context,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
-/* FIXME */
         }
         if (fc < 0) {
             dwarfstring m;
@@ -1857,7 +1837,6 @@ _dwarf_filename(Dwarf_Line_Context context,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
-/* FIXME */
         }
         if (ei < 0) {
             dwarfstring m;
@@ -1873,7 +1852,6 @@ _dwarf_filename(Dwarf_Line_Context context,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
-/* FIXME */
         }
     }
 
@@ -2052,7 +2030,7 @@ dwarf_line_subprog(Dwarf_Line line,
     *decl_line = subprog->ds_decl_line;
     res = _dwarf_filename(line->li_context,
         subprog->ds_decl_file,
-        decl_filename, 
+        decl_filename,
         "dwarf_line_subprog",error);
     if (res != DW_DLV_OK) {
         *decl_filename = NULL;
