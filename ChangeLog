@@ -190,6 +190,7 @@
 2023-03-28:  David Anderson
     commit 271b9b8367a8151fcd98723d73382ec56f05c810
 
+    Fixes ossfuzz 57443  DW202303-053
     Fixes ossfuzz 57442  DW202303-052
     Checks more carefully for a corrupted rnglists
     header.
@@ -197,6 +198,7 @@
 
 2023-03-28:  David Anderson
     commit 2b19bc239f3cedd1b2461e4265d90633277ce704
+    ossfuzz 57485
 
     Fixing a mistake in this test source,
     which was doing a free() that is
@@ -302,6 +304,8 @@
 2023-03-27:  David Anderson
     commit c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 
+    ossfuzz 57437
+    ossfuzz 57443
     Unused local variables removed.
             modified:   src/lib/libdwarf/dwarf_gdbindex.c
 
@@ -435,7 +439,7 @@
     In new error cases we could fail to close a
     FILE stream, resulting in a memory leak from
     fopen.
-    DW202303-48
+    DW202303-048
             modified:   src/bin/dwarfdump/dd_dwconf.c
 
 2023-03-26:  David Anderson
@@ -575,12 +579,12 @@
 
 2023-03-24:  David Anderson
     commit e4053c9a0f25db0bed28372d9b77a50a0307dc10
+    oss fuzz  57335.
+    oss fuzz  57463.
 
-    Fixes oss fuzz 57335. The  test case is
-    kind of pushing the bounds here.
+    The  test case is kind of pushing the bounds here.
             modified:   bugxml/data.txt
 
-    oss fuzz  57335.
     Added a comment, the call will fail as written.
     But now there will be no library crash.
             modified:   fuzz/fuzz_die_cu_attrs.c
@@ -612,10 +616,15 @@
 2023-03-24:  David Anderson
     commit 7165918c8594061c3f5ba7dd4df7c4555c68ec78
 
+    Fixes ossfuzz 57149.
+    Fixes ossfuzz 57193.
+    Fixes ossfuzz 57292.
+    Fixes ossfuzz 57300.
+
     In find_cu_die_base_fields() we use _dwarf_internal_global_formref_b()
     in several additional places as all these need
     to constrain the search, not just one of thes base-fields.
-    Fixes ossfuzz 57149, .
+    The bugs present since 2017 (DWARF5 released).
             modified:   src/lib/libdwarf/dwarf_die_deliv.c
 
 2023-03-24:  David Anderson
@@ -646,6 +655,7 @@
     Fixing ossfuzz 56895, reading past end of section
     of a Compilation Unit. the tests of such were not
     sufficiently precise to catch the error.
+    This was a very old bug.
             modified:   src/lib/libdwarf/dwarf_die_deliv.c
 
 2023-03-24:  David Anderson
@@ -720,6 +730,7 @@
     commit 774f98e596df9dd8f3cb92ec76243caaa4287039
 
     Fixes ossfuzz 57027.
+    Fixes ossfuzz 57048.
     Small code change, but massive
     difference.
     This has been wrong since dwarf_xu_index existed,
@@ -733,12 +744,17 @@
     oss fuzz  56993.  One place in _dwarf_read_line_table_header()
     where there was an error (corrupt data) found
     the code failed to free(format_values). Fixed.
+    This bug was years old.
             modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
     This has been wrong for quite a while, likely years.
 
 2023-03-22:  David Anderson
     commit b9393bb9b6399a34f8616a272d030bdd004a5ef5
     Merge: 68089962 bd331ae7
+
+    ossfuzz  56897
+    ossfuzz  56906
+    ossfuzz  56958
 
     Merge branch 'newrnglists'
 
@@ -825,6 +841,13 @@
 
 2023-03-20:  David Anderson
     commit 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+    ossfuzz id 56540.
+    ossfuzz id 56487.
+    ossfuzz id 56480.
+    ossfuzz id 56497.
+    These fixes are to the tests, not the library.
+    Several had code that was going to crash
+    due to mistakes in the test code itself.
 
     Removed all instances of free(errp)
     where errp is
@@ -859,6 +882,7 @@
 
 2023-03-20:  David Anderson
     commit 2eced75af9903ab778c3b237ec7be3ddc93ea6ec
+    ossfuzz 56568
 
     All instances of
     Dwarf_Error error;
@@ -928,6 +952,7 @@
     Added many checks for valid pointers and offsets.
     Corrected logic which was just wrong.
     Now ossfuzz 56676 passes (DW202303-006).
+    Also fixes oss fuzz 56456.
     These problems existed since this source was
     written in 2014.
             modified:   src/lib/libdwarf/dwarf_gdbindex.c
@@ -984,6 +1009,9 @@
 
     This is a significant revision of dwarf_str_offsets.[ch]
     with consequences in several places.
+    ossfuzz id 56478.
+    ossfuzz id 56489.
+    ossfuzz id 56476.
 
     The old code was hard to follow. This
     is much easier to understand.
@@ -1027,6 +1055,7 @@
     Tests for appropriate values from READ_AREA_LENGTH_CK
     were nowhere exactly correct, so all have been updated
     (see last two commits).
+    Also fix 56453.
     This should finally fix oss fuzz  56636.
             modified:   src/lib/libdwarf/dwarf_debugaddr.c
 
