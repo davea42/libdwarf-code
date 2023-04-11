@@ -1,4 +1,71 @@
 2023-04-11:  David Anderson
+    commit 78da6f683a34052b5a3c0ea11cfe774fc7ec6e84
+
+    Made a small change to the description
+    of DW202304-003.  The test case
+    was cleverly fuzzed to bypass some
+    kinds of checks.
+        modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-11:  David Anderson
+    commit 4aa19e68e135a9124478254df398b60c9cc0cced
+
+    New bug fix
+    DW202304-003   oss fuzz 57887
+            modified:   bugxml/data.txt
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-11:  David Anderson
+    commit aa7a80e8fcd473041dd319f1a9209af04aae1d6f
+
+    Fixing trailing whitespace.
+    Removing several comments like
+      /* FIXME */
+    as they related to a past change and no longer need
+    to be referenced.
+            modified:   src/lib/libdwarfdwarf_line.c
+
+2023-04-11:  David Anderson
+    commit 426ed6faa6bae3274e3da93a3e33ddaf94037e3a
+
+    Removing trailing whitespace.
+            modified:   dwarf_fission_to_cu.c
+
+2023-04-11:  David Anderson
+    commit 2eac3737685eda19eb3ddcc0e386f901709510c1
+
+    Added commentary in _dwarf_get_addr_index_itself()
+    as to why one cannot issue the error there in case
+    of a bogus index into .debug_addr.
+    Removed some trailing whitespace.
+            modified:   dwarf_form.c
+
+2023-04-11:  David Anderson
+    commit 1729d9af3f690bece912ae0f625b312566d0ae25
+
+    DW202304-003  ossfuzz  57887
+    The fuzzed test case involved an index
+    that was so close to wrapping around
+    a 64bit unsigned that testing after
+    doing arithmetic would fail to catch the error.
+    Now doing much better checking in
+    _dwarf_extract_address_from_debug_addr().
+            modified:   dwarf_query.c
+
+2023-04-11:  David Anderson
+    commit ce002f8e78c80a96997efa86db51ec0f38a04fda
+
+    Up to date with git log now.
+            modified:   ChangeLog
+
+2023-04-11:  David Anderson
     commit 00f42432edf992246ad4e4a475a30808334820ab
 
     Correcting by adding omitted ossfuzz
