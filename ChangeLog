@@ -1,3 +1,293 @@
+2023-04-11:  David Anderson
+    commit 00f42432edf992246ad4e4a475a30808334820ab
+
+    Correcting by adding omitted ossfuzz
+    identifiers to ChangeLog (just a few cases missed)
+    and ensuring that data.txt is correct.
+            modified:   ChangeLog
+            modified:   bugxml/data.txt
+
+2023-04-10:  David Anderson
+    commit 480f858bd03bff4e64ee353c2d11c5b8ffa6ff4d
+
+    Updated date, removed noise word 'simply'
+    from several places, and cleaned up formatting
+    of the Recent Changes section.
+    now mentions the compatibility break
+    due to 32bit section counts added to Elf
+    requiring a library API change.
+            modified:   doc/libdwarf.dox
+
+2023-04-09:  David Anderson
+    commit a0b23a465aa67a519a3d0fee6f2b035cc4aebac7
+
+    Updated DW202304-002 oss fuzz  57766
+            modified:   bugxml/data.txt
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-09:  David Anderson
+    commit 761da806fc950c6b26c1763e8989a814e9b16a59
+
+    Fixing DW202304-002 oss fuzz  57766
+    A  read off the end of the relevant (.debug_str_offsets)
+    section.
+
+    Using renamed fields related to str_offsets
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Add a new check for sanity in reading indexes
+    to be used on str_offsets.
+    Simplify and correct
+    _dwarf_extract_string_offset_via_str_offsets()
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    Revise the list of values used in str_offsets
+    data for cu contexts. Document the fields better.
+    Put the boolean markers next to what they relate
+    to.  Delete a useless boolean.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Using renamed fields related to str_offsets
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2023-04-09:  David Anderson
+    commit 77e8585029e71c296eca40a39cd1907256302cd1
+
+    Notes on a new bug number. More in a few minutes.
+            modified:   bugxml/data.txt
+
+2023-04-07:  David Anderson
+    commit 6caff11db733e9d8bb2125a0edeac2ade65ef545
+
+    Documenting the new incompatibility forced by
+    section counts > 16 bits.
+            modified:   doc/libdwarf.dox
+
+    The incompatibilities are discussed here.
+    Will affect those using dwarf_object_init_b().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    These are the changes to correctly read
+    the 32bit section count e_shnum and e_shstrndx
+    The 'man 5 elf' page gives the outline, but
+    what linkers create is slightly different.
+    Now we handle both documented and actual.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    All this is due to changing index section numbers
+    from Dwarf_Half to Dwarf_Unsigned.
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2023-04-07:  David Anderson
+    commit 02f451aed20dae9bdb4ed6267d561c6ca7a52f09
+
+    Bugs fixed by the commit shown next.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-06:  David Anderson
+    commit 91c8bffb6c8104ad3231ed040d77a30018e6c981
+
+    Adding DW202304-001  for oss fuzz 57711
+    with fix commit id..
+            modified:   bugxml/data.txt
+
+2023-04-06:  David Anderson
+    commit a53581496308f1a84fafde7de6e4eda91efa38b6
+
+    We no longer issue DWARF_CHECK messages on problems
+    reading certain line table API functions.
+    Unless we are using a relevant -k option.
+    Only matters in three corrupted objects.
+    Might change it back at some point.
+            modified:   src/bin/dwarfdump/print_lines.c
+
+2023-04-06:  David Anderson
+    commit da0d1efbeddcff23c25704bd9672e98314928b19
+
+    Some lines printing DWARF_CHECK appeared when
+    doing printing. Now they only appear when doing'checking.
+    It has to do with line (table) details details
+    suceeding or (in 3 test objects) failing.
+    Now we don't print the DWARF_CHECK
+    if printing.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+    A fix to oss fuzz 57711.
+    A problem present for many years.
+    A crash due to a negative value
+    in a line table Dwarf_Signed API.
+    The stack trace shown was pretty crazy (a mess).
+    Many places were having trouble checking bounds
+    due to the historic choice of Dwarf_Signed
+    in the API interfaces but Dwarf_Unsigned internally
+    (as Dwarf_Unsigned is really the only sensible choice).
+    So now we explicitly check for value < 0
+    (where that makes sense) so even with signed values
+    we can do other checks without worrying about
+    negative values.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-04-06:  David Anderson
+    commit 89ebcaffd9913e371b8f7e2afd72e097350067ab
+
+    Dated April
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-06:  David Anderson
+    commit 8d08175af2b842e2994e2ffae1945273c23a1470
+
+    now the date prints as
+        January 2023
+    instead of with a specific date and time.
+    Makes it simpler in git not having change so
+    frequently.
+            modified:   bugxml/readbugs.py
+
+2023-04-06:  David Anderson
+    commit 5ac919ea71370bad448628900f4f75919b1654df
+
+    Many local variables were used that had
+    no initializer. function exampled().
+    While that may not have changed the output
+    it is extremely bad proctice.
+    And can easily lead to irreproducible results.
+    Now all initialized to zero. No other change.
+            modified:   fuzz/fuzz_srcfiles.c
+
+2023-04-06:  David Anderson
+    commit c6e362598b9cf78f9dc8c07e8f2e1341b84522fd
+
+    Adding two new error codes for line table errors/corruption.
+    DW_DLE_LINE_INDEX_WRONG  index into line table corrupt
+    DW_DLE_LINE_COUNT_WRONG  count in line table corrupt
+            modified:   dwarf_errmsg_list.h
+            modified:   libdwarf.h
+
+2023-04-06:  David Anderson
+    commit 60b324de009df07ca34e47b60d3d5e18fa3b07ac
+
+    Removed the union defined here,
+    the struct member of the union
+    is retained. References to the struct
+    are shorter now.  The union was created
+    to support IRIX rqs (not described here)
+    and that support has been irrelevant for
+    25 years.
+            modified:   dwarf_line.h
+
+2023-04-05:  David Anderson
+    commit 6c4e9c043f9a50626f940b5372ad6116cd3c351c
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-05:  David Anderson
+    commit 4bb3aaed068e4f9e1ef972a041238d6942131e87
+
+    generated from latest bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-05:  David Anderson
+    commit 4cac4e5031ef3131055bd24c15b51383a6208d4d
+
+    Remove trailing whitespace and
+    fix indents.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-04-05:  David Anderson
+    commit 28ddb555edd1c4639b843381039824fb04025911
+
+    Now correctly reads the rare Elf object files
+    that need more sections
+    than fit in a 16 bit section count.
+    See 'man 5 elf' for details (at least on modern Linux)
+    on how this works.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.h
+
+2023-04-05:  David Anderson
+    commit ac7e8b7b5ee25a37448ba4d374f62110702ab059
+
+    Refined a comment about Elf sections.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-04-01:  David Anderson
+    commit db71f9b6841053057394db9472c7cfc0681a7eeb
+
+    New bug fix
+            modified:   bugxml/data.txt
+
+2023-04-01:  David Anderson
+    commit 21b076f652992c03f145f6edeb623918e17693f8
+
+    Fix ossfuzz 57562.  DW202303-59
+    a corrupt DW_AT_sibling value
+    (in  a fuzzed object) resulted in
+    an infinite loop in a normal
+    calling program looking for sibling DIEs.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2023-03-30:  David Anderson
+    commit fa14b64ae7d3ed79d872475a3936a275f135bf9c
+
+    Latest dwarfbug data
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-03-30:  David Anderson
+    commit 9977c2912fa84b5a9b883baf4db311da447e5e50
+
+    Removed the only (DW_DLV_NO_ENTRY) instance,
+    using DW_DLV_NO_ENTRY itself (it is in a comment).
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2023-03-30:  David Anderson
+    commit b5173ffefaa1bbbcf400819e1f8e4356486d3f16
+
+    Changed
+      (DW_DLV_ERROR)
+    to
+      DW_DLV_ERROR
+    everywhere. It looks better now.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-03-30:  David Anderson
+    commit 33813299bdb67d00ef994929ef2e849a92bcdcac
+
+    75527 ->  57527. fixed typo.
+            modified:   bugxml/data.txt
+
+2023-03-30:  David Anderson
+    commit d9a1fccce9940812f60fd1e9f5a8f557d92a7a0b
+
+    Just added a note on the 57527 code change
+            modified:   ChangeLog
+
+2023-03-30:  David Anderson
+    commit f0dc381cad6c0ed62e3a41de8f796bc8c6a5009a
+
+    Added new bug fix
+            modified:   ChangeLog
+
 2023-03-30:  David Anderson
     commit a2f248569cd52d6955f160fd5f153c9afe8ec945
 
