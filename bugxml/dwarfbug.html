@@ -69,7 +69,10 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   .debug_addr given a bogus index entry.
   Due to failing to correctly check that the index is
   out of range.
-  So we read far outside the .debug_addr table.
+  The index was close to overflowing Dwarf_Unsigned
+  so testing values *after* arithmetic done on the
+  incoming index was too late:
+  so we read outside the .debug_addr table.
   The checks have been incomplete since this DWARF5 section
   code was written. libdwarf/dwarf_query.c
 </p>
