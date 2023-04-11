@@ -1,4 +1,25 @@
 
+
+id: DW202304-003
+cve:
+fuzzer: ossfuzz id: 57887
+datereported: 2023-04-10
+reportedby: David Korczynski
+vulnerability: Reading outside the intended section data.
+product: libdwarf
+description:  Crash in libdwarf on reading
+  .debug_addr given a bogus index entry.
+  Due to failing to correctly check that the index is
+  out of range.
+  So we read far outside the .debug_addr table.
+  The checks have been incomplete since this DWARF5 section
+  code was written. libdwarf/dwarf_query.c
+datefixed: 2023-04-11
+references: regressiontests/ossfuzz57887/fuzz_die_cu-4866423964172288
+gitfixid: 1729d9af3f690bece912ae0f625b312566d0ae25
+tarrelease:
+endrec: DW202304-003
+
 id: DW202304-002
 cve:
 fuzzer: ossfuzz id: 57766

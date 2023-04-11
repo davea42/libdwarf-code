@@ -49,13 +49,45 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Newest First</H2>
 </p>as of April 2023</p>
-<p> Record count: 138 </p>
-<h3 id="DW202304-002">1) DW202304-002</h3>
+<p> Record count: 139 </p>
+<h3 id="DW202304-003">1) DW202304-003</h3>
+<p>id: DW202304-003
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 57887
+</p>
+<p>datereported: 2023-04-10
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Reading outside the intended section data.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:   Crash in libdwarf on reading
+  .debug_addr given a bogus index entry.
+  Due to failing to correctly check that the index is
+  out of range.
+  So we read far outside the .debug_addr table.
+  The checks have been incomplete since this DWARF5 section
+  code was written. libdwarf/dwarf_query.c
+</p>
+<p>datefixed: 2023-04-11
+</p>
+<p>references:  regressiontests/ossfuzz57887/fuzz_die_cu-4866423964172288
+</p>
+<p>gitfixid: 1729d9af3f690bece912ae0f625b312566d0ae25
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202304-002">2) DW202304-002</h3>
 <p>id: DW202304-002
 </p>
 <p>cve: 
 </p>
-<p>fuzzer: oss fuzz id: 57766
+<p>fuzzer: ossfuzz id: 57766
 </p>
 <p>datereported: 2023-04-07
 </p>
@@ -81,12 +113,12 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202304-001">2) DW202304-001</h3>
+<h3 id="DW202304-001">3) DW202304-001</h3>
 <p>id: DW202304-001
 </p>
 <p>cve: 
 </p>
-<p>fuzzer: oss fuzz id: 57711
+<p>fuzzer: ossfuzz id: 57711
 </p>
 <p>datereported: 2023-04-04
 </p>
@@ -116,12 +148,12 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-059">3) DW202303-059</h3>
+<h3 id="DW202303-059">4) DW202303-059</h3>
 <p>id: DW202303-059
 </p>
 <p>cve: 
 </p>
-<p>fuzzer: oss fuzz id: 57562
+<p>fuzzer: ossfuzz id: 57562
 </p>
 <p>datereported: 2023-03-30
 </p>
@@ -148,12 +180,12 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-058">4) DW202303-058</h3>
+<h3 id="DW202303-058">5) DW202303-058</h3>
 <p>id: DW202303-058
 </p>
 <p>cve: 
 </p>
-<p>fuzzer: oss fuzz id: 57527
+<p>fuzzer: ossfuzz id: 57527
 </p>
 <p>datereported: 2023-03-29
 </p>
@@ -179,7 +211,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-057">5) DW202303-057</h3>
+<h3 id="DW202303-057">6) DW202303-057</h3>
 <p>id: DW202303-057
 </p>
 <p>cve: 
@@ -212,7 +244,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-056">6) DW202303-056</h3>
+<h3 id="DW202303-056">7) DW202303-056</h3>
 <p>id: DW202303-056
 </p>
 <p>cve: 
@@ -249,7 +281,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-055">7) DW202303-055</h3>
+<h3 id="DW202303-055">8) DW202303-055</h3>
 <p>id: DW202303-055
 </p>
 <p>cve: 
@@ -276,7 +308,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-054">8) DW202303-054</h3>
+<h3 id="DW202303-054">9) DW202303-054</h3>
 <p>id: DW202303-054
 </p>
 <p>cve: 
@@ -295,16 +327,16 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   fuzz_die_cu_attrs.c
   Since fixed (earlier today). No code change here.
 </p>
-<p>datefixed: 2023-03-28
+<p>datefixed: 2023-03-24
 </p>
 <p>references:  regressiontests/ossfuzz57463/fuzz_die_cu_attrs-5158380196200448
 </p>
-<p>gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
+<p>gitfixid: e4053c9a0f25db0bed28372d9b77a50a0307dc10
 </p>
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-053">9) DW202303-053</h3>
+<h3 id="DW202303-053">10) DW202303-053</h3>
 <p>id: DW202303-053
 </p>
 <p>cve: 
@@ -329,12 +361,12 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>references:  regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
 </p>
-<p>gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810
+<p>gitfixid: 25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 </p>
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-052">10) DW202303-052</h3>
+<h3 id="DW202303-052">11) DW202303-052</h3>
 <p>id: DW202303-052
 </p>
 <p>cve: 
@@ -353,6 +385,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   when a rnglists header has a length indicating
   a longer section than we really have.
   Now we check more carefully for that situation.
+  The bug existed from 2017, when DWARF5 support
+  was added to the library.
 </p>
 <p>datefixed: 2023-03-28
 </p>
@@ -363,7 +397,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-051">11) DW202303-051</h3>
+<h3 id="DW202303-051">12) DW202303-051</h3>
 <p>id: DW202303-051
 </p>
 <p>cve: 
@@ -382,18 +416,19 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   reading a fuzzed object and calling
   dwarf_srcfiles local data was
   freed twice. The bug was
-  fixed earlier.
+  fixed earlier, and involved
+   src/lib/libdwarf/dwarf_line_table_reader_common.h.
 </p>
 <p>datefixed: 2023-03-28
 </p>
 <p>references:  regressiontests/ossfuzz57437/fuzz_srcfiles-5281689109921792
 </p>
-<p>gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
+<p>gitfixid: c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 </p>
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-050">12) DW202303-050</h3>
+<h3 id="DW202303-050">13) DW202303-050</h3>
 <p>id: DW202303-050
 </p>
 <p>cve: 
@@ -423,7 +458,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-049">13) DW202303-049</h3>
+<h3 id="DW202303-049">14) DW202303-049</h3>
 <p>id: DW202303-049
 </p>
 <p>cve: 
@@ -442,6 +477,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   and is the same problem as seen in other guises earlier.
   The case becomes an infinite loop, so eventually the
   stack gets exhausted. Fixed.
+  See also ossfuzz id 56540.  ossfuzz id 56487.  ossfuzz id 56497.
+  ossfuzz 57480
 </p>
 <p>datefixed: 2023-03-26
 </p>
@@ -452,7 +489,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-048">14) DW202303-048</h3>
+<h3 id="DW202303-048">15) DW202303-048</h3>
 <p>id: DW202303-048
 </p>
 <p>cve: 
@@ -484,7 +521,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-047">15) DW202303-047</h3>
+<h3 id="DW202303-047">16) DW202303-047</h3>
 <p>id: DW202303-047
 </p>
 <p>cve: 
@@ -517,7 +554,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-046">16) DW202303-046</h3>
+<h3 id="DW202303-046">17) DW202303-046</h3>
 <p>id: DW202303-046
 </p>
 <p>cve: 
@@ -547,7 +584,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-045">17) DW202303-045</h3>
+<h3 id="DW202303-045">18) DW202303-045</h3>
 <p>id: DW202303-045
 </p>
 <p>cve: 
@@ -581,7 +618,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-044">18) DW202303-044</h3>
+<h3 id="DW202303-044">19) DW202303-044</h3>
 <p>id: DW202303-044
 </p>
 <p>cve: 
@@ -616,7 +653,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-043">19) DW202303-043</h3>
+<h3 id="DW202303-043">20) DW202303-043</h3>
 <p>id: DW202303-043
 </p>
 <p>cve: 
@@ -646,7 +683,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-042">20) DW202303-042</h3>
+<h3 id="DW202303-042">21) DW202303-042</h3>
 <p>id: DW202303-042
 </p>
 <p>cve: 
@@ -679,7 +716,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-041">21) DW202303-041</h3>
+<h3 id="DW202303-041">22) DW202303-041</h3>
 <p>id: DW202303-041
 </p>
 <p>cve: 
@@ -708,7 +745,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-040">22) DW202303-040</h3>
+<h3 id="DW202303-040">23) DW202303-040</h3>
 <p>id: DW202303-040
 </p>
 <p>cve: 
@@ -739,7 +776,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-039">23) DW202303-039</h3>
+<h3 id="DW202303-039">24) DW202303-039</h3>
 <p>id: DW202303-039
 </p>
 <p>cve: 
@@ -763,6 +800,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   Arguably the loop was due to corruption too, but it should
   not have gotten stuck in the loop (and now it will not
   get stuck).
+  See also ossfuzz id 56540.  ossfuzz id 56487.  ossfuzz id 56497.
+  ossfuzz 57408
 </p>
 <p>datefixed: 2023-03-20
 </p>
@@ -773,7 +812,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-038">24) DW202303-038</h3>
+<h3 id="DW202303-038">25) DW202303-038</h3>
 <p>id: DW202303-038
 </p>
 <p>cve: 
@@ -791,6 +830,9 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>description:  Passing a null dw_return_bool pointer dereferenced
   zero, but now, instead we return DW_DLV_ERROR with error code
   DW_DLE_INVALID_NULL_ARGUMENT
+  The test driver fuzz_die_cu_attrs.c passed in a NULL
+  argument (the test was not modified except for adding
+  a comment) but libdwarf now checks for a null argument.
 </p>
 <p>datefixed: 2023-03-24
 </p>
@@ -801,7 +843,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-037">25) DW202303-037</h3>
+<h3 id="DW202303-037">26) DW202303-037</h3>
 <p>id: DW202303-037
 </p>
 <p>cve: 
@@ -829,7 +871,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-036">26) DW202303-036</h3>
+<h3 id="DW202303-036">27) DW202303-036</h3>
 <p>id: DW202303-036
 </p>
 <p>cve: 
@@ -846,7 +888,10 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  Another case of the infinite loop
   due to _dwarf_find_CU_Context_given_sig().
-  See DW202303-034 57193 and others listed here.
+  See DW202303-034 57193
+  See DW202303-034 57149
+  See DW202303-034 57193
+  See DW202303-034 57292
 </p>
 <p>datefixed: 2023-03-24
 </p>
@@ -857,7 +902,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-035">27) DW202303-035</h3>
+<h3 id="DW202303-035">28) DW202303-035</h3>
 <p>id: DW202303-035
 </p>
 <p>cve: 
@@ -885,7 +930,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-034">28) DW202303-034</h3>
+<h3 id="DW202303-034">29) DW202303-034</h3>
 <p>id: DW202303-034
 </p>
 <p>cve: 
@@ -909,7 +954,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   The implicit infinite loop has been there
   a few years, depending on the correctness
   of object files DWARF4/DWARF5 being read.
-  Same bug as oss fuzz 57107
+  Same bug as ossfuzz 57107, ossfuzz 57149.
 </p>
 <p>datefixed: 2023-03-24
 </p>
@@ -920,7 +965,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-033">29) DW202303-033</h3>
+<h3 id="DW202303-033">30) DW202303-033</h3>
 <p>id: DW202303-033
 </p>
 <p>cve: 
@@ -940,6 +985,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   there were more places in find_cu_die_base_fields that
   needed to call the internal  _dwarf_internal_global_formref_b()
   function.
+  The bug was present since 2017, when DWARF5 support for
+  new 'base' fields was created.
 </p>
 <p>datefixed: 2023-03-24
 </p>
@@ -950,7 +997,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-032">30) DW202303-032</h3>
+<h3 id="DW202303-032">31) DW202303-032</h3>
 <p>id: DW202303-032
 </p>
 <p>cve: 
@@ -984,7 +1031,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-031">31) DW202303-031</h3>
+<h3 id="DW202303-031">32) DW202303-031</h3>
 <p>id: DW202303-031
 </p>
 <p>cve: 
@@ -1014,7 +1061,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-030">32) DW202303-030</h3>
+<h3 id="DW202303-030">33) DW202303-030</h3>
 <p>id: DW202303-030
 </p>
 <p>cve: 
@@ -1033,7 +1080,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   object file results in an infinite loop
   and (eventually) a crash in dwarf_xu_index.c attempting
   to resolve an 8 byte hash key.
-  The bug existed from the first version of this source file.
+  The bug existed from the first version of this source file,
+  which was in 2017 as the data involved DWARF5, new in 2017.
 </p>
 <p>datefixed: 2023-03-22
 </p>
@@ -1044,7 +1092,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-029">33) DW202303-029</h3>
+<h3 id="DW202303-029">34) DW202303-029</h3>
 <p>id: DW202303-029
 </p>
 <p>cve: 
@@ -1063,6 +1111,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   fuzzed object file results in a memory leak when
   a particular error in the corrupted section is detected.
   The malloc was done by the line table reader code.
+  The bug was there for many years
 </p>
 <p>datefixed: 2023-03-22
 </p>
@@ -1073,7 +1122,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-028">34) DW202303-028</h3>
+<h3 id="DW202303-028">35) DW202303-028</h3>
 <p>id: DW202303-028
 </p>
 <p>cve: 
@@ -1101,7 +1150,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-027">35) DW202303-027</h3>
+<h3 id="DW202303-027">36) DW202303-027</h3>
 <p>id: DW202303-027
 </p>
 <p>cve: 
@@ -1128,7 +1177,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-026">36) DW202303-026</h3>
+<h3 id="DW202303-026">37) DW202303-026</h3>
 <p>id: DW202303-026
 </p>
 <p>cve: 
@@ -1157,7 +1206,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-025">37) DW202303-025</h3>
+<h3 id="DW202303-025">38) DW202303-025</h3>
 <p>id: DW202303-025
 </p>
 <p>cve: 
@@ -1177,6 +1226,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   due to a failure to
   precisely test for a too-short Compilation Unit header.
   Now a DW_DLV_ERROR is returned.
+  A very old bug.
 </p>
 <p>datefixed: 2023-03-24
 </p>
@@ -1187,7 +1237,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-024">38) DW202303-024</h3>
+<h3 id="DW202303-024">39) DW202303-024</h3>
 <p>id: DW202303-024
 </p>
 <p>cve: 
@@ -1217,7 +1267,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-023">39) DW202303-023</h3>
+<h3 id="DW202303-023">40) DW202303-023</h3>
 <p>id: DW202303-023
 </p>
 <p>cve: 
@@ -1236,20 +1286,21 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   A result of removing two functions from the API,
   dwarf_dnames_abbrev_by_code() and
   dwarf_dnames_abbrev_form_by_index().
+  Removed 2023-02-23.
   The test source no longer uses those two functions.
   The first was slow and hard to use. The second
   was unusable and never worked. The documentation
   (libdwarf.pdf) gives alternates in the library that work.
 </p>
-<p>datefixed: 2023-03-08
+<p>datefixed: 2023-03-20
 </p>
 <p>references:</p>
-<p>gitfixid: 
+<p>gitfixid: 2eced75af9903ab778c3b237ec7be3ddc93ea6ec
 </p>
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-022">40) DW202303-022</h3>
+<h3 id="DW202303-022">41) DW202303-022</h3>
 <p>id: DW202303-022
 </p>
 <p>cve: 
@@ -1277,7 +1328,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-021">41) DW202303-021</h3>
+<h3 id="DW202303-021">42) DW202303-021</h3>
 <p>id: DW202303-021
 </p>
 <p>cve: 
@@ -1305,7 +1356,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-020">42) DW202303-020</h3>
+<h3 id="DW202303-020">43) DW202303-020</h3>
 <p>id: DW202303-020
 </p>
 <p>cve: 
@@ -1335,7 +1386,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-019">43) DW202303-019</h3>
+<h3 id="DW202303-019">44) DW202303-019</h3>
 <p>id: DW202303-019
 </p>
 <p>cve: 
@@ -1363,7 +1414,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-018">44) DW202303-018</h3>
+<h3 id="DW202303-018">45) DW202303-018</h3>
 <p>id: DW202303-018
 </p>
 <p>cve: 
@@ -1381,6 +1432,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>description:  A memory leak in _dwarf_read_line_table()
   reading a particular corrupted object.
   One return failed to free a local malloc.
+  An very old bug, encountered reading corrupted
+  DWARF line tables.
 </p>
 <p>datefixed: 2023-03-20
 </p>
@@ -1391,7 +1444,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-017">45) DW202303-017</h3>
+<h3 id="DW202303-017">46) DW202303-017</h3>
 <p>id: DW202303-017
 </p>
 <p>cve: 
@@ -1408,6 +1461,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  Stack buffer overflow in dwarf_dietype_offset.
   Reading a corrupted object file.
+  The bug was in the test code, not libdwarf.
 </p>
 <p>datefixed: 2023-03-20
 </p>
@@ -1418,7 +1472,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-016">46) DW202303-016</h3>
+<h3 id="DW202303-016">47) DW202303-016</h3>
 <p>id: DW202303-016
 </p>
 <p>cve: 
@@ -1435,6 +1489,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </p>
 <p>datefixed: 2023-03-12
 </p>
@@ -1445,7 +1501,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-015">47) DW202303-015</h3>
+<h3 id="DW202303-015">48) DW202303-015</h3>
 <p>id: DW202303-015
 </p>
 <p>cve: 
@@ -1462,6 +1518,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </p>
 <p>datefixed: 2023-03-12
 </p>
@@ -1472,7 +1530,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-014">48) DW202303-014</h3>
+<h3 id="DW202303-014">49) DW202303-014</h3>
 <p>id: DW202303-014
 </p>
 <p>cve: 
@@ -1489,6 +1547,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </p>
 <p>datefixed: 2023-03-12
 </p>
@@ -1499,7 +1559,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-013">49) DW202303-013</h3>
+<h3 id="DW202303-013">50) DW202303-013</h3>
 <p>id: DW202303-013
 </p>
 <p>cve: 
@@ -1516,17 +1576,19 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </p>
 <p>datefixed: 2023-03-12
 </p>
 <p>references:  regressiontests/ossfuzz56460/fuzz_str_offsets-5376904040677376-5240324382654464
 </p>
-<p>gitfixid: 64eaaa58703258cab02896e798664a1bb11a3d5c
+<p>gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
 </p>
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-012">50) DW202303-012</h3>
+<h3 id="DW202303-012">51) DW202303-012</h3>
 <p>id: DW202303-012
 </p>
 <p>cve: 
@@ -1543,6 +1605,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  A heap buffer overflow reading
   a fuzzed object file
+  Code reading the gdbindex section was not
+  fully checking for valid offsets and pointers
 </p>
 <p>datefixed: 2023-03-14
 </p>
@@ -1553,7 +1617,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-011">51) DW202303-011</h3>
+<h3 id="DW202303-011">52) DW202303-011</h3>
 <p>id: DW202303-011
 </p>
 <p>cve: 
@@ -1570,6 +1634,10 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  A null pointer dereference in
   reading a fuzzed object file.
+  This is related to checks for a correct
+  value from the READ_AREA_LENGTH macro.
+  The missing checks have been missing a very
+  long time.
 </p>
 <p>datefixed: 2023-03-07
 </p>
@@ -1580,7 +1648,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-010">52) DW202303-010</h3>
+<h3 id="DW202303-010">53) DW202303-010</h3>
 <p>id: DW202303-010
 </p>
 <p>cve: 
@@ -1612,7 +1680,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-009">53) DW202303-009</h3>
+<h3 id="DW202303-009">54) DW202303-009</h3>
 <p>id: DW202303-009
 </p>
 <p>cve: 
@@ -1643,7 +1711,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-008">54) DW202303-008</h3>
+<h3 id="DW202303-008">55) DW202303-008</h3>
 <p>id: DW202303-008
 </p>
 <p>cve: 
@@ -1673,7 +1741,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-007">55) DW202303-007</h3>
+<h3 id="DW202303-007">56) DW202303-007</h3>
 <p>id: DW202303-007
 </p>
 <p>cve: 
@@ -1700,7 +1768,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-006">56) DW202303-006</h3>
+<h3 id="DW202303-006">57) DW202303-006</h3>
 <p>id: DW202303-006
 </p>
 <p>cve: 
@@ -1730,7 +1798,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-005">57) DW202303-005</h3>
+<h3 id="DW202303-005">58) DW202303-005</h3>
 <p>id: DW202303-005
 </p>
 <p>cve: 
@@ -1757,7 +1825,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-004">58) DW202303-004</h3>
+<h3 id="DW202303-004">59) DW202303-004</h3>
 <p>id: DW202303-004
 </p>
 <p>cve: 
@@ -1785,7 +1853,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-003">59) DW202303-003</h3>
+<h3 id="DW202303-003">60) DW202303-003</h3>
 <p>id: DW202303-003
 </p>
 <p>cve: 
@@ -1815,7 +1883,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-002">60) DW202303-002</h3>
+<h3 id="DW202303-002">61) DW202303-002</h3>
 <p>id: DW202303-002
 </p>
 <p>cve: 
@@ -1846,7 +1914,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202303-001">61) DW202303-001</h3>
+<h3 id="DW202303-001">62) DW202303-001</h3>
 <p>id: DW202303-001
 </p>
 <p>cve: 
@@ -1875,7 +1943,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202301-001">62) DW202301-001</h3>
+<h3 id="DW202301-001">63) DW202301-001</h3>
 <p>id: DW202301-001
 </p>
 <p>cve: 
@@ -1904,7 +1972,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.6.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202212-001">63) DW202212-001</h3>
+<h3 id="DW202212-001">64) DW202212-001</h3>
 <p>id: DW202212-001
 </p>
 <p>cve: 
@@ -1946,7 +2014,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.6.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202208-001">64) DW202208-001</h3>
+<h3 id="DW202208-001">65) DW202208-001</h3>
 <p>id: DW202208-001
 </p>
 <p>cve: 
@@ -1979,7 +2047,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.5.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202207-001">65) DW202207-001</h3>
+<h3 id="DW202207-001">66) DW202207-001</h3>
 <p>id: DW202207-001
 </p>
 <p>cve: 
@@ -2012,7 +2080,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.5.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202206-001">66) DW202206-001</h3>
+<h3 id="DW202206-001">67) DW202206-001</h3>
 <p>id: DW202206-001
 </p>
 <p>cve: 
@@ -2045,7 +2113,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202205-001">67) DW202205-001</h3>
+<h3 id="DW202205-001">68) DW202205-001</h3>
 <p>id: DW202205-001
 </p>
 <p>cve: 
@@ -2077,7 +2145,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-016">68) DW202111-016</h3>
+<h3 id="DW202111-016">69) DW202111-016</h3>
 <p>id: DW202111-016
 </p>
 <p>cve: 
@@ -2112,7 +2180,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-015">69) DW202111-015</h3>
+<h3 id="DW202111-015">70) DW202111-015</h3>
 <p>id: DW202111-015
 </p>
 <p>cve: 
@@ -2144,7 +2212,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-014">70) DW202111-014</h3>
+<h3 id="DW202111-014">71) DW202111-014</h3>
 <p>id: DW202111-014
 </p>
 <p>cve: 
@@ -2175,7 +2243,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-013">71) DW202111-013</h3>
+<h3 id="DW202111-013">72) DW202111-013</h3>
 <p>id: DW202111-013
 </p>
 <p>cve: 
@@ -2208,7 +2276,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-012">72) DW202111-012</h3>
+<h3 id="DW202111-012">73) DW202111-012</h3>
 <p>id: DW202111-012
 </p>
 <p>cve: 
@@ -2238,7 +2306,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-011">73) DW202111-011</h3>
+<h3 id="DW202111-011">74) DW202111-011</h3>
 <p>id: DW202111-011
 </p>
 <p>cve: 
@@ -2271,7 +2339,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-010">74) DW202111-010</h3>
+<h3 id="DW202111-010">75) DW202111-010</h3>
 <p>id: DW202111-010
 </p>
 <p>cve: 
@@ -2302,7 +2370,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-009">75) DW202111-009</h3>
+<h3 id="DW202111-009">76) DW202111-009</h3>
 <p>id: DW202111-009
 </p>
 <p>cve: 
@@ -2336,7 +2404,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-008">76) DW202111-008</h3>
+<h3 id="DW202111-008">77) DW202111-008</h3>
 <p>id: DW202111-008
 </p>
 <p>cve: 
@@ -2366,7 +2434,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-005">77) DW202111-005</h3>
+<h3 id="DW202111-005">78) DW202111-005</h3>
 <p>id: DW202111-005
 </p>
 <p>cve: 
@@ -2396,7 +2464,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-004">78) DW202111-004</h3>
+<h3 id="DW202111-004">79) DW202111-004</h3>
 <p>id: DW202111-004
 </p>
 <p>cve: 
@@ -2427,7 +2495,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-003">79) DW202111-003</h3>
+<h3 id="DW202111-003">80) DW202111-003</h3>
 <p>id: DW202111-003
 </p>
 <p>cve: 
@@ -2462,7 +2530,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-002">80) DW202111-002</h3>
+<h3 id="DW202111-002">81) DW202111-002</h3>
 <p>id: DW202111-002
 </p>
 <p>cve: 
@@ -2497,7 +2565,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202111-001">81) DW202111-001</h3>
+<h3 id="DW202111-001">82) DW202111-001</h3>
 <p>id: DW202111-001
 </p>
 <p>cve: 
@@ -2533,7 +2601,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202010-003">82) DW202010-003</h3>
+<h3 id="DW202010-003">83) DW202010-003</h3>
 <p>id: DW202010-003
 </p>
 <p>cve: CVE-2020-28163
@@ -2571,7 +2639,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202010-002">83) DW202010-002</h3>
+<h3 id="DW202010-002">84) DW202010-002</h3>
 <p>id: DW202010-002
 </p>
 <p>cve: CVE-2020-28162
@@ -2614,7 +2682,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW202010-001">84) DW202010-001</h3>
+<h3 id="DW202010-001">85) DW202010-001</h3>
 <p>id: DW202010-001
 </p>
 <p>cve: CVE-2020-27545
@@ -2654,7 +2722,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201907-001">85) DW201907-001</h3>
+<h3 id="DW201907-001">86) DW201907-001</h3>
 <p>id: DW201907-001
 </p>
 <p>cve: CVE-2019-14249
@@ -2679,7 +2747,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-0.4.1.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201801-001">86) DW201801-001</h3>
+<h3 id="DW201801-001">87) DW201801-001</h3>
 <p>id: DW201801-001
 </p>
 <p>cve: 
@@ -2711,7 +2779,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20180129.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201712-001">87) DW201712-001</h3>
+<h3 id="DW201712-001">88) DW201712-001</h3>
 <p>id: DW201712-001
 </p>
 <p>cve: 
@@ -2744,7 +2812,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201711-002">88) DW201711-002</h3>
+<h3 id="DW201711-002">89) DW201711-002</h3>
 <p>id: DW201711-002
 </p>
 <p>cve: 
@@ -2775,7 +2843,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201711-001">89) DW201711-001</h3>
+<h3 id="DW201711-001">90) DW201711-001</h3>
 <p>id: DW201711-001
 </p>
 <p>cve: 
@@ -2807,7 +2875,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201709-001">90) DW201709-001</h3>
+<h3 id="DW201709-001">91) DW201709-001</h3>
 <p>id: DW201709-001
 </p>
 <p>cve: 
@@ -2836,7 +2904,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201706-001">91) DW201706-001</h3>
+<h3 id="DW201706-001">92) DW201706-001</h3>
 <p>id: DW201706-001
 </p>
 <p>cve: CVE-2017-9998
@@ -2873,7 +2941,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-007">92) DW201703-007</h3>
+<h3 id="DW201703-007">93) DW201703-007</h3>
 <p>id: DW201703-007
 </p>
 <p>cve: 
@@ -2924,7 +2992,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-006">93) DW201703-006</h3>
+<h3 id="DW201703-006">94) DW201703-006</h3>
 <p>id: DW201703-006
 </p>
 <p>cve: CVE-2017-9052
@@ -2971,7 +3039,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-005">94) DW201703-005</h3>
+<h3 id="DW201703-005">95) DW201703-005</h3>
 <p>id: DW201703-005
 </p>
 <p>cve: CVE-2017-9053
@@ -3019,7 +3087,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-004">95) DW201703-004</h3>
+<h3 id="DW201703-004">96) DW201703-004</h3>
 <p>id: DW201703-004
 </p>
 <p>cve: 
@@ -3070,7 +3138,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-003">96) DW201703-003</h3>
+<h3 id="DW201703-003">97) DW201703-003</h3>
 <p>id: DW201703-003
 </p>
 <p>cve: 
@@ -3123,7 +3191,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-002">97) DW201703-002</h3>
+<h3 id="DW201703-002">98) DW201703-002</h3>
 <p>id: DW201703-002
 </p>
 <p>cve: CVE-2017-9054
@@ -3174,7 +3242,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201703-001">98) DW201703-001</h3>
+<h3 id="DW201703-001">99) DW201703-001</h3>
 <p>id: DW201703-001
 </p>
 <p>cve: CVE-2017-9055
@@ -3225,7 +3293,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-008">99) DW201611-008</h3>
+<h3 id="DW201611-008">100) DW201611-008</h3>
 <p>id: DW201611-008
 </p>
 <p>cve: CVE-2016-10254
@@ -3259,7 +3327,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-007">100) DW201611-007</h3>
+<h3 id="DW201611-007">101) DW201611-007</h3>
 <p>id: DW201611-007
 </p>
 <p>cve: CVE-2016-10255
@@ -3294,7 +3362,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-006">101) DW201611-006</h3>
+<h3 id="DW201611-006">102) DW201611-006</h3>
 <p>id: DW201611-006
 </p>
 <p>cve: CVE-2016-9480
@@ -3358,7 +3426,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-005">102) DW201611-005</h3>
+<h3 id="DW201611-005">103) DW201611-005</h3>
 <p>id: DW201611-005
 </p>
 <p>cve: CVE-2016-9558
@@ -3387,7 +3455,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-004">103) DW201611-004</h3>
+<h3 id="DW201611-004">104) DW201611-004</h3>
 <p>id: DW201611-004
 </p>
 <p>cve: CVE-2016-9275
@@ -3417,7 +3485,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-003">104) DW201611-003</h3>
+<h3 id="DW201611-003">105) DW201611-003</h3>
 <p>id: DW201611-003
 </p>
 <p>cve: CVE-2016-9276
@@ -3446,7 +3514,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20170416.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-002">105) DW201611-002</h3>
+<h3 id="DW201611-002">106) DW201611-002</h3>
 <p>id: DW201611-002
 </p>
 <p>cve: 
@@ -3485,7 +3553,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20170416.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201611-001">106) DW201611-001</h3>
+<h3 id="DW201611-001">107) DW201611-001</h3>
 <p>id: DW201611-001
 </p>
 <p>cve: 
@@ -3524,7 +3592,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20170416.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201610-003">107) DW201610-003</h3>
+<h3 id="DW201610-003">108) DW201610-003</h3>
 <p>id: DW201610-003
 </p>
 <p>cve: CVE-2016-8679
@@ -3558,7 +3626,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201610-002">108) DW201610-002</h3>
+<h3 id="DW201610-002">109) DW201610-002</h3>
 <p>id: DW201610-002
 </p>
 <p>cve: CVE-2016-8680
@@ -3591,7 +3659,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201610-001">109) DW201610-001</h3>
+<h3 id="DW201610-001">110) DW201610-001</h3>
 <p>id: DW201610-001
 </p>
 <p>cve: CVE-2016-8681
@@ -3624,7 +3692,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201609-004">110) DW201609-004</h3>
+<h3 id="DW201609-004">111) DW201609-004</h3>
 <p>id: DW201609-004
 </p>
 <p>cve: CVE-2016-7510
@@ -3667,7 +3735,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201609-003">111) DW201609-003</h3>
+<h3 id="DW201609-003">112) DW201609-003</h3>
 <p>id: DW201609-003
 </p>
 <p>cve: CVE-2016-7410
@@ -3729,7 +3797,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201609-002">112) DW201609-002</h3>
+<h3 id="DW201609-002">113) DW201609-002</h3>
 <p>id: DW201609-002
 </p>
 <p>cve: CVE-2016-7511
@@ -3773,7 +3841,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201609-001">113) DW201609-001</h3>
+<h3 id="DW201609-001">114) DW201609-001</h3>
 <p>id: DW201609-001
 </p>
 <p>cve: 
@@ -3826,7 +3894,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-020">114) DW201605-020</h3>
+<h3 id="DW201605-020">115) DW201605-020</h3>
 <p>id: DW201605-020
 </p>
 <p>cve: CVE-2016-5027
@@ -3865,7 +3933,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-019">115) DW201605-019</h3>
+<h3 id="DW201605-019">116) DW201605-019</h3>
 <p>id: DW201605-019
 </p>
 <p>cve: CVE-2016-5028
@@ -3895,7 +3963,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-018">116) DW201605-018</h3>
+<h3 id="DW201605-018">117) DW201605-018</h3>
 <p>id: DW201605-018
 </p>
 <p>cve: CVE-2016-5029
@@ -3944,7 +4012,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-017">117) DW201605-017</h3>
+<h3 id="DW201605-017">118) DW201605-017</h3>
 <p>id: DW201605-017
 </p>
 <p>cve: CVE-2016-5030
@@ -4005,7 +4073,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-016">118) DW201605-016</h3>
+<h3 id="DW201605-016">119) DW201605-016</h3>
 <p>id: DW201605-016
 </p>
 <p>cve: 
@@ -4062,7 +4130,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-015">119) DW201605-015</h3>
+<h3 id="DW201605-015">120) DW201605-015</h3>
 <p>id: DW201605-015
 </p>
 <p>cve: CVE-2016-5031
@@ -4111,7 +4179,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-014">120) DW201605-014</h3>
+<h3 id="DW201605-014">121) DW201605-014</h3>
 <p>id: DW201605-014
 </p>
 <p>cve: CVE-2016-5032
@@ -4152,7 +4220,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-013">121) DW201605-013</h3>
+<h3 id="DW201605-013">122) DW201605-013</h3>
 <p>id: DW201605-013
 </p>
 <p>cve: CVE-2016-5033
@@ -4190,7 +4258,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-012">122) DW201605-012</h3>
+<h3 id="DW201605-012">123) DW201605-012</h3>
 <p>id: DW201605-012
 </p>
 <p>cve: CVE-2016-5034
@@ -4223,7 +4291,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-011">123) DW201605-011</h3>
+<h3 id="DW201605-011">124) DW201605-011</h3>
 <p>id: DW201605-011
 </p>
 <p>cve: CVE-2016-5035
@@ -4252,7 +4320,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-010">124) DW201605-010</h3>
+<h3 id="DW201605-010">125) DW201605-010</h3>
 <p>id: DW201605-010
 </p>
 <p>cve: CVE-2016-5036
@@ -4282,7 +4350,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-009">125) DW201605-009</h3>
+<h3 id="DW201605-009">126) DW201605-009</h3>
 <p>id: DW201605-009
 </p>
 <p>cve: CVE-2016-5037
@@ -4313,7 +4381,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-008">126) DW201605-008</h3>
+<h3 id="DW201605-008">127) DW201605-008</h3>
 <p>id: DW201605-008
 </p>
 <p>cve: CVE-2016-5038
@@ -4346,7 +4414,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160923.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-007">127) DW201605-007</h3>
+<h3 id="DW201605-007">128) DW201605-007</h3>
 <p>id: DW201605-007
 </p>
 <p>cve: CVE-2016-5039
@@ -4377,7 +4445,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-006">128) DW201605-006</h3>
+<h3 id="DW201605-006">129) DW201605-006</h3>
 <p>id: DW201605-006
 </p>
 <p>cve: 
@@ -4410,7 +4478,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-005">129) DW201605-005</h3>
+<h3 id="DW201605-005">130) DW201605-005</h3>
 <p>id: DW201605-005
 </p>
 <p>cve: CVE-2016-5040
@@ -4443,7 +4511,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-004">130) DW201605-004</h3>
+<h3 id="DW201605-004">131) DW201605-004</h3>
 <p>id: DW201605-004
 </p>
 <p>cve: CVE-2016-5041
@@ -4478,7 +4546,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-003">131) DW201605-003</h3>
+<h3 id="DW201605-003">132) DW201605-003</h3>
 <p>id: DW201605-003
 </p>
 <p>cve: CVE-2016-5042
@@ -4511,7 +4579,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-002">132) DW201605-002</h3>
+<h3 id="DW201605-002">133) DW201605-002</h3>
 <p>id: DW201605-002
 </p>
 <p>cve: CVE-2016-5043
@@ -4556,7 +4624,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201605-001">133) DW201605-001</h3>
+<h3 id="DW201605-001">134) DW201605-001</h3>
 <p>id: DW201605-001
 </p>
 <p>cve: CVE-2016-5044
@@ -4599,7 +4667,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201601-002">134) DW201601-002</h3>
+<h3 id="DW201601-002">135) DW201601-002</h3>
 <p>id: DW201601-002
 </p>
 <p>cve: CVE-2016-2050
@@ -4641,7 +4709,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201601-001">135) DW201601-001</h3>
+<h3 id="DW201601-001">136) DW201601-001</h3>
 <p>id: DW201601-001
 </p>
 <p>cve: CVE-2016-2091
@@ -4685,7 +4753,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201512-002">136) DW201512-002</h3>
+<h3 id="DW201512-002">137) DW201512-002</h3>
 <p>id: DW201512-002
 </p>
 <p>cve: CVE-2015-8538
@@ -4721,7 +4789,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201512-001">137) DW201512-001</h3>
+<h3 id="DW201512-001">138) DW201512-001</h3>
 <p>id: DW201512-001
 </p>
 <p>cve: CVE-2015-8750
@@ -4754,7 +4822,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>tarrelease: libdwarf-20160507.tar.gz
 </p>
 <p> <a href="#top">[top]</a> </p>
-<h3 id="DW201412-001">138) DW201412-001</h3>
+<h3 id="DW201412-001">139) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
 <p>cve: CVE-2014-9482

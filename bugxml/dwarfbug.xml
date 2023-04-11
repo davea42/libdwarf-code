@@ -3,7 +3,40 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss fuzz id: 57766</fuzzer>
+<fuzzer>ossfuzz id: 57887</fuzzer>
+
+<datereported>2023-04-10</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Reading outside the intended section data.
+</vulnerability>
+
+<description>  Crash in libdwarf on reading
+  .debug_addr given a bogus index entry.
+  Due to failing to correctly check that the index is
+  out of range.
+  So we read far outside the .debug_addr table.
+  The checks have been incomplete since this DWARF5 section
+  code was written. libdwarf/dwarf_query.c
+</description>
+
+<datefixed>2023-04-11</datefixed>
+
+<references> regressiontests/ossfuzz57887/fuzz_die_cu-4866423964172288
+</references>
+
+<gitfixid>1729d9af3f690bece912ae0f625b312566d0ae25</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 57766</fuzzer>
 
 <datereported>2023-04-07</datereported>
 
@@ -35,7 +68,7 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss fuzz id: 57711</fuzzer>
+<fuzzer>ossfuzz id: 57711</fuzzer>
 
 <datereported>2023-04-04</datereported>
 
@@ -71,7 +104,7 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss fuzz id: 57562</fuzzer>
+<fuzzer>ossfuzz id: 57562</fuzzer>
 
 <datereported>2023-03-30</datereported>
 
@@ -104,7 +137,7 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss fuzz id: 57527</fuzzer>
+<fuzzer>ossfuzz id: 57527</fuzzer>
 
 <datereported>2023-03-29</datereported>
 
@@ -252,12 +285,12 @@
   Since fixed (earlier today). No code change here.
 </description>
 
-<datefixed>2023-03-28</datefixed>
+<datefixed>2023-03-24</datefixed>
 
 <references> regressiontests/ossfuzz57463/fuzz_die_cu_attrs-5158380196200448
 </references>
 
-<gitfixid>2b19bc239f3cedd1b2461e4265d90633277ce704</gitfixid>
+<gitfixid>e4053c9a0f25db0bed28372d9b77a50a0307dc10</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -288,7 +321,7 @@
 <references> regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
 </references>
 
-<gitfixid>271b9b8367a8151fcd98723d73382ec56f05c810</gitfixid>
+<gitfixid>25a14c3fd5522aff0b1d2a77d7ee66b7c529779</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -311,6 +344,8 @@
   when a rnglists header has a length indicating
   a longer section than we really have.
   Now we check more carefully for that situation.
+  The bug existed from 2017, when DWARF5 support
+  was added to the library.
 </description>
 
 <datefixed>2023-03-28</datefixed>
@@ -341,7 +376,8 @@
   reading a fuzzed object and calling
   dwarf_srcfiles local data was
   freed twice. The bug was
-  fixed earlier.
+  fixed earlier, and involved
+   src/lib/libdwarf/dwarf_line_table_reader_common.h.
 </description>
 
 <datefixed>2023-03-28</datefixed>
@@ -349,7 +385,7 @@
 <references> regressiontests/ossfuzz57437/fuzz_srcfiles-5281689109921792
 </references>
 
-<gitfixid>24f5697aecd77092de20f0f7e7d91fbc1f2b3da0</gitfixid>
+<gitfixid>c25a14c3fd5522aff0b1d2a77d7ee66b7c529779</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -403,6 +439,8 @@
   and is the same problem as seen in other guises earlier.
   The case becomes an infinite loop, so eventually the
   stack gets exhausted. Fixed.
+  See also ossfuzz id 56540.  ossfuzz id 56487.  ossfuzz id 56497.
+  ossfuzz 57480
 </description>
 
 <datefixed>2023-03-26</datefixed>
@@ -734,6 +772,8 @@
   Arguably the loop was due to corruption too, but it should
   not have gotten stuck in the loop (and now it will not
   get stuck).
+  See also ossfuzz id 56540.  ossfuzz id 56487.  ossfuzz id 56497.
+  ossfuzz 57408
 </description>
 
 <datefixed>2023-03-20</datefixed>
@@ -763,6 +803,9 @@
 <description> Passing a null dw_return_bool pointer dereferenced
   zero, but now, instead we return DW_DLV_ERROR with error code
   DW_DLE_INVALID_NULL_ARGUMENT
+  The test driver fuzz_die_cu_attrs.c passed in a NULL
+  argument (the test was not modified except for adding
+  a comment) but libdwarf now checks for a null argument.
 </description>
 
 <datefixed>2023-03-24</datefixed>
@@ -820,7 +863,10 @@
 
 <description> Another case of the infinite loop
   due to _dwarf_find_CU_Context_given_sig().
-  See DW202303-034 57193 and others listed here.
+  See DW202303-034 57193
+  See DW202303-034 57149
+  See DW202303-034 57193
+  See DW202303-034 57292
 </description>
 
 <datefixed>2023-03-24</datefixed>
@@ -885,7 +931,7 @@
   The implicit infinite loop has been there
   a few years, depending on the correctness
   of object files DWARF4/DWARF5 being read.
-  Same bug as oss fuzz 57107
+  Same bug as ossfuzz 57107, ossfuzz 57149.
 </description>
 
 <datefixed>2023-03-24</datefixed>
@@ -917,6 +963,8 @@
   there were more places in find_cu_die_base_fields that
   needed to call the internal  _dwarf_internal_global_formref_b()
   function.
+  The bug was present since 2017, when DWARF5 support for
+  new 'base' fields was created.
 </description>
 
 <datefixed>2023-03-24</datefixed>
@@ -1013,7 +1061,8 @@
   object file results in an infinite loop
   and (eventually) a crash in dwarf_xu_index.c attempting
   to resolve an 8 byte hash key.
-  The bug existed from the first version of this source file.
+  The bug existed from the first version of this source file,
+  which was in 2017 as the data involved DWARF5, new in 2017.
 </description>
 
 <datefixed>2023-03-22</datefixed>
@@ -1044,6 +1093,7 @@
   fuzzed object file results in a memory leak when
   a particular error in the corrupted section is detected.
   The malloc was done by the line table reader code.
+  The bug was there for many years
 </description>
 
 <datefixed>2023-03-22</datefixed>
@@ -1162,6 +1212,7 @@
   due to a failure to
   precisely test for a too-short Compilation Unit header.
   Now a DW_DLV_ERROR is returned.
+  A very old bug.
 </description>
 
 <datefixed>2023-03-24</datefixed>
@@ -1223,17 +1274,18 @@
   A result of removing two functions from the API,
   dwarf_dnames_abbrev_by_code() and
   dwarf_dnames_abbrev_form_by_index().
+  Removed 2023-02-23.
   The test source no longer uses those two functions.
   The first was slow and hard to use. The second
   was unusable and never worked. The documentation
   (libdwarf.pdf) gives alternates in the library that work.
 </description>
 
-<datefixed>2023-03-08</datefixed>
+<datefixed>2023-03-20</datefixed>
 
 <references></references>
 
-<gitfixid></gitfixid>
+<gitfixid>2eced75af9903ab778c3b237ec7be3ddc93ea6ec</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -1373,6 +1425,8 @@
 <description> A memory leak in _dwarf_read_line_table()
   reading a particular corrupted object.
   One return failed to free a local malloc.
+  An very old bug, encountered reading corrupted
+  DWARF line tables.
 </description>
 
 <datefixed>2023-03-20</datefixed>
@@ -1401,6 +1455,7 @@
 
 <description> Stack buffer overflow in dwarf_dietype_offset.
   Reading a corrupted object file.
+  The bug was in the test code, not libdwarf.
 </description>
 
 <datefixed>2023-03-20</datefixed>
@@ -1429,6 +1484,8 @@
 
 <description> A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </description>
 
 <datefixed>2023-03-12</datefixed>
@@ -1457,6 +1514,8 @@
 
 <description> A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </description>
 
 <datefixed>2023-03-12</datefixed>
@@ -1485,6 +1544,8 @@
 
 <description> A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </description>
 
 <datefixed>2023-03-12</datefixed>
@@ -1513,6 +1574,8 @@
 
 <description> A heap buffer overflow reading
   a fuzzed object file
+  A revision of dwarf_str_offsets (which was
+  new in DWARF5) affected several source files
 </description>
 
 <datefixed>2023-03-12</datefixed>
@@ -1520,7 +1583,7 @@
 <references> regressiontests/ossfuzz56460/fuzz_str_offsets-5376904040677376-5240324382654464
 </references>
 
-<gitfixid>64eaaa58703258cab02896e798664a1bb11a3d5c</gitfixid>
+<gitfixid>0343c63bd04d387924974e6da60d8471fdf945a9</gitfixid>
 
 <tarrelease></tarrelease>
 
@@ -1541,6 +1604,8 @@
 
 <description> A heap buffer overflow reading
   a fuzzed object file
+  Code reading the gdbindex section was not
+  fully checking for valid offsets and pointers
 </description>
 
 <datefixed>2023-03-14</datefixed>
@@ -1569,6 +1634,10 @@
 
 <description> A null pointer dereference in
   reading a fuzzed object file.
+  This is related to checks for a correct
+  value from the READ_AREA_LENGTH macro.
+  The missing checks have been missing a very
+  long time.
 </description>
 
 <datefixed>2023-03-07</datefixed>
