@@ -1089,7 +1089,6 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     int res2 = 0;
     Dwarf_Unsigned index_to_addr = 0;
     Dwarf_Debug dbg = 0;
-    Dwarf_Unsigned addrtabsize = 0;
 
     /*  We get the index. It might apply here
         or in tied object. Checking that next. */
@@ -1099,8 +1098,9 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     if (res2 != DW_DLV_OK) {
         return res2;
     }
-    addrtabsize = dbg->de_debug_addr.dss_size;
 #if 0
+    Dwarf_Unsigned addrtabsize = 0;
+    addrtabsize = dbg->de_debug_addr.dss_size;
     If there is  no .debug_addr the error here should
     not be reported as will report that
     via _dwarf_look_in_local_and_tied_by_index
