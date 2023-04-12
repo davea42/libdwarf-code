@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-04-10 v0.7.0
+    @date 2023-04-12 v0.7.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -375,8 +375,8 @@
     table of a row per pc and a column per register.
 
     There is no time or space penalty in setting
-    Undefined_Value, Same_Value, and  CFA_Column
-    much larger than the Table_Size.
+    <b>Undefined_Value,</b> <b>Same_Value,</b> and  <b>CFA_Column</b>
+    much larger than the <b>Table_Size</b>.
 
     Here are the five values.
 
