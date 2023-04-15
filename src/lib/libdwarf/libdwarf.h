@@ -491,6 +491,10 @@ typedef struct Dwarf_Ranges_s {
             The expression length in bytes is given by
             block.bl_len.
         Other values of dw_value_type are an error.
+
+        Note that this definition can only deal correctly
+        with register numbers that fit in a 16 bit
+        unsigned value.
 */
 
 typedef struct Dwarf_Regtable_Entry3_s {
@@ -516,6 +520,11 @@ typedef struct Dwarf_Regtable_Entry3_s {
     contents rules array, you do not need to do so (though
     if you choose to initialize the array somehow that is ok:
     libdwarf will overwrite your initializations with its own).
+
+    Note that this definition can only deal correctly
+    with register table size that fits in a 16 bit
+    unsigned value.
+*/
 */
 typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
