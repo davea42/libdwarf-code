@@ -40,6 +40,14 @@ static void dump_block(char *prefix, Dwarf_Small *data, Dwarf_Unsigned len);
 #define CFA_VAL 2002
 #define INITIAL_VAL UNDEF_VAL
 
+/*  Because this code does exit() without
+    calling dwarf_finish() in case of certain
+    errors in corrupted objects, executing the program is
+    guaranteed to leak memory when that class
+    of errors is found in the object file being read.
+    
+    David Anderson */
+
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
   sprintf(filename, "/tmp/libfuzzer.%d", getpid());
@@ -365,8 +373,9 @@ static void print_fde_selected_regs(Dwarf_Fde fde) {
           curfde, selected_cols[k], jsave, &value_type, &offset_relevant, &reg,
           &offset, &block, &row_pc, &has_more_rows, &subsequent_pc, &oneferr);
       if (fires == DW_DLV_ERROR) {
-        printf("FAIL: reading reg err %" DW_PR_DUu " line %d",
-               dwarf_errno(oneferr), __LINE__);
+        printf("FAIL: dwarf_get_fde_info_for_reg3_b, "
+            "reading reg err %s line %d",
+               dwarf_errmsg(oneferr), __LINE__);
         exit(EXIT_FAILURE);
       }
       if (fires == DW_DLV_NO_ENTRY) {
