@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of April 2023</p>
-<p> Record count: 139 </p>
+<p> Record count: 140 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4853,6 +4853,41 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz57887/fuzz_die_cu-4866423964172288
 </p>
 <p>gitfixid: 1729d9af3f690bece912ae0f625b312566d0ae25
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202304-004">140) DW202304-004</h3>
+<p>id: DW202304-004
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 58026
+</p>
+<p>datereported: 2023-04-15
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Segv on unknown address reading frame data.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  On reading a corrupt frame register number
+  the library could crash with a segmentation violation.
+  This bug has been present in the code for 25 years.
+  The conversion of an impossibly large
+  (carefully constructed) register number
+  to a Dwarf_Half or unsigned int the result looked
+  reasonable, invalidating some tests for
+  reasonableness.   Now we do all the tests
+  on the full Dwarf_Unsigned register number(s)
+  and retain the value in the long form everywhere.
+</p>
+<p>datefixed: 2023-04-15
+</p>
+<p>references:  regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
+</p>
+<p>gitfixid: 76bf9444dfed876da987c2cfeac0d09dbe1a3fba
 </p>
 <p>tarrelease: 
 </p>
