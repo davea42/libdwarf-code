@@ -253,7 +253,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Frame table,
     Dwarf_Cie cie,
     Dwarf_Debug dbg,
-    Dwarf_Half reg_num_of_cfa,
+    Dwarf_Unsigned reg_num_of_cfa,
     Dwarf_Bool * has_more_rows,
     Dwarf_Addr * subsequent_pc,
     Dwarf_Frame_Instr_Head *ret_frame_instr_head,
@@ -263,7 +263,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 /*  The following macro depends on macreg and
     machigh_reg both being unsigned to avoid
     unintended behavior and to avoid compiler warnings when
-    high warning levels are turned on.  */
+    high warning levels are turned on.  To avoid
+    truncation turning a bogus large value into a smaller
+    sensible-seeming value we use Dwarf_Unsigned for register
+    numbers. */
 #define ERROR_IF_REG_NUM_TOO_HIGH(macreg,machigh_reg)        \
     do {                                                     \
         if ((macreg) >= (machigh_reg)) {                     \
@@ -294,9 +297,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Small *instr_ptr = 0;
     Dwarf_Frame_Instr dfi = 0;
 
-    /*  Register numbers not limited to just 255, thus not using
-        Dwarf_Small.  */
-    typedef unsigned reg_num_type;
+    /*  Register numbers not limited to just 255,
+        thus not using Dwarf_Small.  */
+    typedef Dwarf_Unsigned reg_num_type;
 
     Dwarf_Unsigned factored_N_value = 0;
     Dwarf_Signed signed_factored_N_value = 0;
@@ -307,7 +310,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     /*  Must be min de_pointer_size bytes and must be at least 4 */
     Dwarf_Unsigned adv_loc = 0;
 
-    unsigned reg_count = dbg->de_frame_reg_rules_entry_count;
+    Dwarf_Unsigned reg_count = dbg->de_frame_reg_rules_entry_count;
     struct Dwarf_Reg_Rule_s *localregtab = calloc(reg_count,
         sizeof(struct Dwarf_Reg_Rule_s));
 
@@ -2058,7 +2061,7 @@ static int
 _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
     Dwarf_Frame table,
-    Dwarf_Half cfa_reg_col_num,
+    Dwarf_Unsigned cfa_reg_col_num,
     Dwarf_Bool * has_more_rows,
     Dwarf_Addr * subsequent_pc,
     Dwarf_Error * error)

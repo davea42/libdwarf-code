@@ -744,14 +744,14 @@ struct Dwarf_Debug_s {
         so must elf_end() */
 
     /* Default is DW_FRAME_INITIAL_VALUE from header. */
-    Dwarf_Half de_frame_rule_initial_value;
+    Dwarf_Unsigned de_frame_rule_initial_value;
 
     /* Default is   DW_FRAME_LAST_REG_NUM. */
-    Dwarf_Half de_frame_reg_rules_entry_count;
+    Dwarf_Unsigned de_frame_reg_rules_entry_count;
 
-    Dwarf_Half de_frame_cfa_col_number;
-    Dwarf_Half de_frame_same_value_number;
-    Dwarf_Half de_frame_undefined_value_number;
+    Dwarf_Unsigned de_frame_cfa_col_number;
+    Dwarf_Unsigned de_frame_same_value_number;
+    Dwarf_Unsigned de_frame_undefined_value_number;
 
     unsigned char de_big_endian_object; /* Non-zero if
         object being read is big-endian. */

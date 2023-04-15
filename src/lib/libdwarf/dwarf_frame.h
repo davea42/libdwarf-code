@@ -169,7 +169,7 @@ struct Dwarf_Reg_Rule_s {
     /*  Register involved in this rule, real or non-real-register.
         ru_value_type is DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
     */
-    Dwarf_Half ru_register;
+    Dwarf_Unsigned ru_register;
 
     /*  Offset to add to register, if indicated by ru_is_offset.
         ru_value_type is DW_EXPR_OFFSET */
@@ -201,7 +201,7 @@ struct Dwarf_Frame_s {
 
     /*  fr_reg_count is the the number of
         entries of the fr_reg array. */
-    unsigned long            fr_reg_count;
+    Dwarf_Unsigned fr_reg_count;
     struct Dwarf_Reg_Rule_s *fr_reg;
 
     Dwarf_Frame fr_next;
@@ -448,7 +448,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Frame table,
     Dwarf_Cie cie,
     Dwarf_Debug dbg,
-    Dwarf_Half reg_num_of_cfa,
+    Dwarf_Unsigned reg_num_of_cfa,
     Dwarf_Bool * has_more_rows,
     Dwarf_Addr * subsequent_pc,
     Dwarf_Frame_Instr_Head *ret_frame_instr_head,
