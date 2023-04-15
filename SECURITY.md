@@ -11,13 +11,15 @@ release.
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 0.6.0   | :white_check_mark: |
 | 0.5.0   | :white_check_mark: |
 | < 0.5.0 | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
-One way to report is to add a Issue on the issues page for the project.
-Another is to email to dandelot -at- linuxmail -dot- org 
+One way to report is to add a Issue on the issues page for
+the project.
+Another is to email to libdwarf at linuxmail dot org 
 
 Normally we respond to a report within one day and provide
 fixes within a day or two.  We can provide the new version
