@@ -18,7 +18,7 @@ description: On reading a corrupt frame register number
   and retain the value in the long form everywhere.
 datefixed: 2023-04-15
 references: regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
-gitfixid: 76bf9444dfed876da987c2cfeac0d09dbe1a3fba
+gitfixid: 27e06267b2931cdfbbaf46492f88a3f9040abb20
 tarrelease:
 endrec: DW202304-004
 

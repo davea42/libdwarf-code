@@ -31,7 +31,7 @@
 <references> regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
 </references>
 
-<gitfixid>76bf9444dfed876da987c2cfeac0d09dbe1a3fba</gitfixid>
+<gitfixid>27e06267b2931cdfbbaf46492f88a3f9040abb20</gitfixid>
 
 <tarrelease></tarrelease>
 

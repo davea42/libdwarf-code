@@ -1,3 +1,113 @@
+2023-04-15:  David Anderson
+    commit 27e06267b2931cdfbbaf46492f88a3f9040abb20
+
+    Changed a register variable from int (!) to Dwarf_Unsigned
+    to match everywhere else.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    Fixed doubled comment end to a single */
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-04-15:  David Anderson
+    commit b4ac71c98292d7de32584358441dada59dff2944
+
+    Changed suggested email from libdwarf-list to libdwarf.
+            modified:   configure.ac
+
+2023-04-15:  David Anderson
+    commit 9972bef26da3c43fcc3e2ecd6621c09930b3bd06
+
+    Minor text change. Modified the email address
+    a little.
+            modified:   SECURITY.md
+
+2023-04-15:  David Anderson
+    commit 558bee0286dd422871715511161477dab746f135
+
+    Documenting DW202304-004 ossfuzz  58026
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-04-15:  David Anderson
+    commit 76bf9444dfed876da987c2cfeac0d09dbe1a3fba
+
+    Changed internal fields with register numbers into
+    Dwarf_Unsigned.  The previous use of Dwarf_Half
+    lead to a failure to detect some corrupt register
+    numbers read from DWARF.
+    Leading to a segmentation violation in libdwarf.
+    DW202304-004  ossfuzz 58026
+    The bugs the test object exposed have been present
+    for over 25 years.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    Changed register number data from Dwarf_Half to
+    Dwarf_Unsigned.
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2023-04-15:  David Anderson
+    commit 4f933efa3a73f09403910d7804fde4c9907de284
+
+    Added doxygen comments pointing out
+    where two public structs show register
+    number as 16 bits unsigned, restricting
+    the number of registers that can be handled
+    to that (currently reasonable) limit.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-04-15:  David Anderson
+    commit 1c8ad2fbbcecec257cbd8852bfa34af30a28752f
+
+    Added a comment documenting that the code
+    can leak memory as in case of certain
+    errors found in corrupt dwarf it immiately
+    exit()s and does not call dwarf_finish().
+    Arranged that in case of some errors the
+    code prints the error name, not the error
+    number.
+            modified:   fuzz/fuzz_set_frame_all.c
+
+2023-04-12:  David Anderson
+    commit 9f7b5cfc844fa1e462b86c42419e7d191fc9dcc0
+
+    Made three names bold (relating to frame registers).
+            modified:   doc/libdwarf.dox
+
+2023-04-12:  David Anderson
+    commit b87cf166362e21a575b2cccd0bc155977b514c9b
+
+    Removed redundant -W entries.
+            modified:   configure.ac
+
+2023-04-12:  David Anderson
+    commit f69bc261e4ccf6ff60741d3743ee96b697f1d4cc
+    Merge: a6ea699c e8aa1e4b
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    renameing branch did this.
+
+2023-04-12:  David Anderson
+    commit a6ea699ca78c04aa88a8ff3fe5c5a498d6693d07
+
+    Removing set-not-used local variable
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-04-12:  David Anderson
+    commit e8aa1e4bd25c3eeb1da20485a53462e7ac99b58d
+
+    Update scorecards.yml
+
+    Changing a comment to ref main instead of master
+
+2023-04-11:  David Anderson
+    commit 40c63f7190267964e7443920a60f5826986df109
+
+    Latest git log messages now present here.
+            modified:   ChangeLog
+
 2023-04-11:  David Anderson
     commit 78da6f683a34052b5a3c0ea11cfe774fc7ec6e84
 
