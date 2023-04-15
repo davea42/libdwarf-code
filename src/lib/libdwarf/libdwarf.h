@@ -523,9 +523,7 @@ typedef struct Dwarf_Regtable_Entry3_s {
 
     Note that this definition can only deal correctly
     with register table size that fits in a 16 bit
-    unsigned value.
-*/
-*/
+    unsigned value.  */
 typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
     Dwarf_Half                       rt3_reg_table_size;

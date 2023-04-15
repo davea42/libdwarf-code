@@ -2178,7 +2178,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     struct Dwarf_Reg_Rule_s *rule = NULL;
     struct Dwarf_Regtable_Entry3_s *out_rule = NULL;
     Dwarf_Debug dbg = 0;
-    int output_table_real_data_size = reg_table->rt3_reg_table_size;
+    Dwarf_Unsigned output_table_real_data_size = reg_table->rt3_reg_table_size;
 
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
 
