@@ -18,7 +18,7 @@ m4_define([lt_age], [v_min])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
-AC_INIT([libdwarf], [v_ver], [libdwarf-list -at- linuxmail -dot- org])
+AC_INIT([libdwarf], [v_ver], [libdwarf -at- linuxmail -dot- org])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
