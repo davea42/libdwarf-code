@@ -1172,6 +1172,9 @@ most-likely-useful name. */
 #define DW_LANG_Fortran18               0x002d /* DWARF6 */
 #define DW_LANG_Ada2005                 0x002e /* DWARF6 */
 #define DW_LANG_Ada2012                 0x002f /* DWARF6 */
+#define DW_LANG_HIP                     0x0030 /* DWARF6 */
+#define DW_LANG_Assembler               0x0031 /* DWARF6 */
+#define DW_LANG_C_sharp                 0x0032 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
