@@ -1000,6 +1000,7 @@ description: A heap buffer overflow reading
   a fuzzed object file
   Code reading the gdbindex section was not 
   fully checking for valid offsets and pointers
+  Duplicate of DW202303-006
 datefixed: 2023-03-14
 references: regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
@@ -1101,7 +1102,7 @@ endrec: DW202303-007
 
 id: DW202303-006
 cve:
-fuzzer: oss-fuzz id: 56676
+fuzzer: oss-fuzz id: 56456
 datereported: 2023-03-04
 reportedby: David Korczynski
 vulnerability:  Denial of service (crash) looking for gdbindex section.
@@ -1112,7 +1113,7 @@ description:  The logic was wrong in a couple places (fixed now)
   The bugs have been there since the code was written
   in 2014.
 datefixed: 2023-03-14
-references: regressiontests/ossfuzz56676/fuzz_gdbindex-5240324382654464
+references: regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
 tarrelease:
 endrec: DW202303-006

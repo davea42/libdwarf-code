@@ -1645,6 +1645,7 @@
   a fuzzed object file
   Code reading the gdbindex section was not
   fully checking for valid offsets and pointers
+  Duplicate of DW202303-006
 </description>
 
 <datefixed>2023-03-14</datefixed>
@@ -1816,7 +1817,7 @@
 <dwbug>
 <cve></cve>
 
-<fuzzer>oss-fuzz id: 56676</fuzzer>
+<fuzzer>oss-fuzz id: 56456</fuzzer>
 
 <datereported>2023-03-04</datereported>
 
@@ -1836,7 +1837,7 @@
 
 <datefixed>2023-03-14</datefixed>
 
-<references> regressiontests/ossfuzz56676/fuzz_gdbindex-5240324382654464
+<references> regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 </references>
 
 <gitfixid>e564c9350c104f16eb2223d7b29082e3deb5d2fb</gitfixid>
