@@ -5,6 +5,7 @@ build/
 cscope.files
 TAGS
 *.exe
+bugxml/__pycache__
 
 # autotools ignore
 *.lo
