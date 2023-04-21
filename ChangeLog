@@ -1,3 +1,67 @@
+2023-04-21:  David Anderson
+    commit b355024686bbc963f5bef9c09fb5f9470de3ae0d
+
+    Additional small modifications to extended elf
+    section counts, correcting earlier approximations.
+    Hopefully all now correct.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-04-20:  David Anderson
+    commit 8cbcf36da07d2f245af4bdc2a63f7e24552069c2
+
+    The correct new spelling is
+    DW_LANG_Assembly
+    (not Assembler).
+            modified:   dwarf.h
+
+2023-04-20:  Mateusz Janda
+    commit afb87c6d9f6f25bc652a871ac3074098e1d226c8
+
+    Support for large number of section headers (#160)
+
+2023-04-16:  David Anderson
+    commit 975430ca8c739f65aa6b458533cfb0e068d3d495
+
+    DW202303-006 and -012
+    were both assigned the same oss fuzz number,
+    which was disguized another mistake.
+            modified:   data.txt
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2023-04-16:  David Anderson
+    commit 09d2ea27346d8cf6076ee65d29f9bcde40daa9d3
+
+    Now with latest DW_LANG codes assigned.
+            modified:   dwarf.h
+
+2023-04-15:  David Anderson
+    commit 7d362787aba63d89857284169309acf612807034
+
+    Don't report in htmldoc.tar
+            modified:   .gitignore
+
+2023-04-15:  David Anderson
+    commit e4f01daf0f1bdaaa718dec4fcccf8be759e2695a
+
+    Don't report on bugxml/__pycache__
+            modified:   .gitignore
+
+2023-04-15:  David Anderson
+    commit 035db2b4f822d5395a10ab79279e6fbaa14d8087
+
+    Recent changes entered from git log
+            modified:   ChangeLog
+
+    Corrected the git commit id for 58026 ossfuxx
+            modified:   bugxml/data.txt
+
+    Regenerated:
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
 2023-04-15:  David Anderson
     commit 27e06267b2931cdfbbaf46492f88a3f9040abb20
 
