@@ -1,3 +1,15 @@
+2023-04-25:  David Anderson
+    commit 1cac955c5388e56f729184e1888e5aa69c207f2c
+
+    Now an earlier detection of some corrupt Elf headers.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-04-21:  David Anderson
+    commit 3d624ee882713938564ea30fc35683da418992ee
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
 2023-04-21:  David Anderson
     commit b355024686bbc963f5bef9c09fb5f9470de3ae0d
 
