@@ -533,7 +533,7 @@
         Dwarf_Obj_Access_Methods_a
     struct Dwarf_Obj_Access_Methods_a_s {
         int    (*om_get_section_info)(void* obj,
-            Dwarf_Half section_index,
+            Dwarf_Unsigned section_index,
             Dwarf_Obj_Access_Section_a* return_section,
             int* error);
         Dwarf_Small      (*om_get_byte_order)(void* obj);
@@ -543,10 +543,10 @@
     
         Dwarf_Unsigned   (*om_get_section_count)(void* obj);
         int              (*om_load_section)(void* obj,
-            Dwarf_Half section_index,
+            Dwarf_Unsigned section_index,
             Dwarf_Small** return_data, int* error);
         int              (*om_relocate_a_section)(void* obj,
-            Dwarf_Half section_index,
+            Dwarf_Unsigned section_index,
             Dwarf_Debug dbg,
             int* error);
     };
@@ -917,7 +917,8 @@
     om_relocate_a_section()
     now pass section indexes as Dwarf_Unsigned
     instead of Dwarf_Half.
-    Without this change large executable/objects cannot
+    Without this change executables/objects
+    with more than 64K sections cannot
     be read by libdwarf.
 
     Two functions have been removed from libdwarf.h
