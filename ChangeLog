@@ -1,3 +1,24 @@
+2023-04-27:  David Anderson
+    commit 055d0301be97d107c4098f65b1958f15ace25cfc
+
+    Updated to today date.
+    Changed dwarfstd.org link from http to https.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-04-27:  David Anderson
+    commit caa2ad7b9a4fbd6ec0c24518f6ff8342658bd971
+
+    Now documents the testing needed for
+    contributions.
+            modified:   CONTRIBUTING.md
+
+2023-04-25:  David Anderson
+    commit d1719d5c76d9bf19d69ec940ab92ffbac763e70f
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2023-04-25:  David Anderson
     commit 1cac955c5388e56f729184e1888e5aa69c207f2c
 
