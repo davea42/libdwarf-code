@@ -91,6 +91,16 @@ if (DO_TESTING)
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump")
     add_test(NAME selfhelpertree COMMAND selfhelpertree)
 endif()
+if (DO_TESTING)
+    set_source_group(IGNORESEC_SOURCES "Source Files"
+      ${PROJECT_SOURCE_DIR}/test/test_ignoresec.c
+      ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_secname_ck.c)
+    add_executable(selfignoresec ${IGNORESEC_SOURCES})
+    target_compile_options(selfignoresec PRIVATE ${DW_FWALL})
+    target_compile_options(selfignoresec PRIVATE
+        "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")
+    add_test(NAME selfignoresec COMMAND selfignoresec)
+endif()
 
 if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"

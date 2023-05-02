@@ -32,6 +32,7 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_extra_flag_strings.trs \
   test_helpertree.log  \
   test_helpertree.trs \
+  test_ignoresec.trs \
   test_linkedtopath.log \
   test_linkedtopath.trs \
   test_macrocheck.log \
@@ -59,6 +60,7 @@ TESTS = test_canonical  \
   test_extra_flag_strings \
   test_getnametest \
   test_helpertree \
+  test_ignoresec \
   test_linkedtopath \
   test_macrocheck \
   test_makenametest \
@@ -76,6 +78,7 @@ check_PROGRAMS = test_canonical \
   test_extra_flag_strings \
   test_getnametest \
   test_helpertree \
+  test_ignoresec \
   test_linkedtopath \
   test_macrocheck \
   test_makenametest \
@@ -154,6 +157,14 @@ test_helpertree_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_helpertree_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
+test_ignoresec_SOURCES = test_ignoresec.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_secname_ck.c
+test_ignoresec_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_ignoresec_CPPFLAGS = -DTESTING \
+-DLIBDWARF_BUILD \
+-I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
@@ -271,6 +282,7 @@ test_dwdiff.py \
 test_getname.c \
 test_getopt.c \
 test_helpertree.c \
+test_ignoresec.c \
 jitreader.base \
 test_jitreaderdiff.sh \
 test_makename.c \

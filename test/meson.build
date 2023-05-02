@@ -31,6 +31,10 @@ tests = [
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
+   'test_ignoresec.c',
+   '../src/lib/libdwarf/dwarf_secname_ck.c',
+  ],
+  [
    'test_esb.c',
    '../src/bin/dwarfdump/dd_esb.c',
    '../src/bin/dwarfdump/dd_tsearchbal.c'
