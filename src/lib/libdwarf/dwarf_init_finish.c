@@ -733,7 +733,8 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     irrelevant to libdwarf.  Maybe should use a hash
     table instead of sequential search? */
 int
-_dwarf_ignorethissection(const char *scn_name) {
+_dwarf_ignorethissection(const char *scn_name)
+{
     if (startswith(scn_name,".bss")) {
         return TRUE;
     }
