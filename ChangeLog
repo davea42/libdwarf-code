@@ -1,3 +1,54 @@
+2023-05-01:  David Anderson
+    commit a0872b2f09d2f9b034a8e8a1dd43a204ebbc2233
+
+    Minor update of the date (May now, not April).
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-01:  David Anderson
+    commit 6c667ab643f4a78d153b58bc3690047d9fca2f09
+
+    This fixes a problem due to the way one user
+    creates group sections for .text as an aid to
+    LTO (link time optimization), which pointlessly
+    cause libdwarf to issue an error.
+    Pointless because libdwarf pays no attention to
+    the sections causing an error, so we should ignore
+    them in section groups too.
+
+    In read_gs_section_group() use _dwarf_ignorethissection
+    to avoid putting section group entries with the unwanted
+    names in any group.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Changing _dwarf_ignorethissection() to use
+    startswith() instead of strcmp() in looking for
+    text etc that libdwarf is not interested in.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2023-04-27:  David Anderson
+    commit 1f84190bf84c68ac6d80d31a4e0b562659d4faf4
+
+    Added OSSF Best Practices badge.
+            modified:   README
+            modified:   README.md
+
+2023-04-27:  David Anderson
+    commit 545322e1897bbc15fa8f26943802b34c41f81274
+
+    Corrected the section on reading an object
+    with no file present (the section index is
+    now Dwarf_Unsigned per Changes after 0.6.0)
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2023-04-27:  David Anderson
+    commit da679e0148d04643dfc713f320272cd3dbdc6b40
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-04-27:  David Anderson
     commit 055d0301be97d107c4098f65b1958f15ace25cfc
 
