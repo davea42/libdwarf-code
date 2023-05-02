@@ -79,6 +79,7 @@ calls
 #include "dwarf_object_detector.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_util.h"
+#include "dwarf_secname_ck.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0

@@ -823,8 +823,6 @@ struct Dwarf_Chain_o {
 #define DISTINGUISHED_VALUE_ARRAY(x)  char (x)[4] = \
     { 0xff,0xff,0xff,0xff }
 
-int _dwarf_ignorethissection(const char *scn_name);
-
 /*  We don't load the sections until they are needed.
     This function is used to load the section.  */
 int _dwarf_load_section(Dwarf_Debug,

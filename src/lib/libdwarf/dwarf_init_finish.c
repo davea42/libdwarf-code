@@ -50,6 +50,7 @@
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_harmless.h"
 #include "dwarf_string.h"
+#include "dwarf_secname_ck.h"
 
 #ifdef HAVE_ZLIB_H
 #include "zlib.h"
@@ -116,17 +117,6 @@ dwarf_set_stringcheck(int newval)
 
     _dwarf_assume_string_in_bounds = newval;
     return oldval;
-}
-
-static int
-startswith(const char * input, char* ckfor)
-{
-    size_t cklen = strlen(ckfor);
-
-    if (! strncmp(input,ckfor,cklen)) {
-        return TRUE;
-    }
-    return FALSE;
 }
 
 /*  Unifies the basic duplicate/empty testing and section
@@ -729,81 +719,6 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     bother to backpatch the DWARF information for these.
 */
 
-/*  These help us ignore some sections that are
-    irrelevant to libdwarf.  Maybe should use a hash
-    table instead of sequential search? */
-int
-_dwarf_ignorethissection(const char *scn_name)
-{
-    if (startswith(scn_name,".bss")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".comment")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".sbss")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".jcr")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".init")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".fini_array")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".fini")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".fini_array")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".interp")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".text")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rela.text")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rel.text")) {
-        return TRUE;
-    }
-
-    if (startswith(scn_name,".plt")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rela.plt")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rel.plt")) {
-        return TRUE;
-    }
-
-    if (startswith(scn_name,".data")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rel.data")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rela.data")) {
-        return TRUE;
-    }
-
-    if (startswith(scn_name,".got")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rela.got")) {
-        return TRUE;
-    }
-    if (startswith(scn_name,".rel.got")) {
-        return TRUE;
-    }
-
-    return FALSE;
-}
 /*  For an object file with an incorrect rela section name,
     readelf prints correct debug information,
     as the tool takes the section type instead
@@ -812,12 +727,12 @@ _dwarf_ignorethissection(const char *scn_name)
 static int
 is_a_relx_section(const char *scn_name,int type,int *is_rela)
 {
-    if (startswith(scn_name,".rela.")) {
+    if (_dwarf_startswith(scn_name,".rela.")) {
 
         *is_rela = TRUE;
         return TRUE;
     }
-    if (startswith(scn_name,".rel.")) {
+    if (_dwarf_startswith(scn_name,".rel.")) {
         *is_rela = FALSE;
         return TRUE;
     }
@@ -852,8 +767,8 @@ this_section_dwarf_relevant(const char *scn_name,
     int *is_rela)
 {
     /* A small helper function for _dwarf_setup(). */
-    if (startswith(scn_name, ".zdebug_") ||
-        startswith(scn_name, ".debug_")) {
+    if (_dwarf_startswith(scn_name, ".zdebug_") ||
+        _dwarf_startswith(scn_name, ".debug_")) {
         /* standard debug */
         return TRUE;
     }
