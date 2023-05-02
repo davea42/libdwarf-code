@@ -1,3 +1,71 @@
+2023-05-02:  David Anderson
+    commit 685372749ce431fd5ba3b2fddfa7d0306b3c8a7f
+
+    Now the list of section names to ignore
+    is handled with binary search, so
+    cutting search time approximately in half.
+            modified:   src/lib/libdwarf/dwarf_secname_ck.c
+
+2023-05-02:  David Anderson
+    commit dd6093f5efbd57dbd2e8e2441093067e4313d9e2
+
+    Now all the builds use the new source file,
+    and the self tests all test the revised function.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+
+2023-05-02:  David Anderson
+    commit 394b353a25a0e3ecbe4b6bd21fa3d02d3798b772
+
+    Now include dwarf_secname_ck.h to get the moved functions.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+    Removed _dwarf_ignorethissection() prototype from here.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Factored out _dwarf_startswith and
+    _dwarf_ignorethissection
+    for simpler testing and smaller code.
+    Shortly  performance will be improved too,
+    since the refactoring makes that easy..
+            new file:   src/lib/libdwarf/dwarf_secname_ck.c
+            new file:   src/lib/libdwarf/dwarf_secname_ck.h
+
+    New test code for the factored out functions.
+            new file:   test/test_ignoresec.c
+
+2023-05-02:  David Anderson
+    commit 7432b7a9b1909cffca34fbace217bcbfc4d9bd45
+
+    Function definition had initial left brace
+    in the wrong place.
+            modified:   dwarf_init_finish.c
+
+2023-05-02:  David Anderson
+    commit 9e051d9f696244c3e794f2890778b29457bcfead
+
+    Adding new DW_LANG attribute names (new in DWARF6,
+    public on dwarfstd.org now).
+            modified:   dwarf_names.c
+
+2023-05-01:  David Anderson
+    commit aa97b2bc34eaeea619df6c39f93b4e190d93b1d6
+
+    One new line of code (prevous commit)
+    had incorrect indentation. Fixed. No logic change.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-05-01:  David Anderson
+    commit e41c8ead4db5bd6864354820d6b4cdd03119ae11
+
+    Latest change. Related to section groups.
+            modified:   ChangeLog
+
 2023-05-01:  David Anderson
     commit a0872b2f09d2f9b034a8e8a1dd43a204ebbc2233
 
