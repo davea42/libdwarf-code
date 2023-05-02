@@ -2805,6 +2805,15 @@ dwarf_get_LANG_name (unsigned int val,
     case DW_LANG_Ada2012:
         *s_out = "DW_LANG_Ada2012";
         return DW_DLV_OK;
+    case DW_LANG_HIP:
+        *s_out = "DW_LANG_HIP";
+        return DW_DLV_OK;
+    case DW_LANG_Assembly:
+        *s_out = "DW_LANG_Assembly";
+        return DW_DLV_OK;
+    case DW_LANG_C_sharp:
+        *s_out = "DW_LANG_C_sharp";
+        return DW_DLV_OK;
     case DW_LANG_lo_user:
         *s_out = "DW_LANG_lo_user";
         return DW_DLV_OK;
