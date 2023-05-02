@@ -40,10 +40,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#if 0
-#include "dwarf.h"
-#include "libdwarf.h"
-#endif
 #include "libdwarf_private.h" /* for TRUE FALSE */
 #include "dwarf_secname_ck.h"
 
@@ -60,45 +56,63 @@ _dwarf_startswith(const char * input,const char* ckfor)
     return FALSE;
 }
 
+static int
+_dwarf_startswithx(const char * input,const char* ckfor)
+{
+    size_t cklen =  strlen(ckfor);
+    int res = 0;
+
+    res = strncmp(input,ckfor,cklen);
+    return res;
+}
+/*  If one uses the 'sort' command it ignores the proper place
+    of . and _ so the output needs modification to get what we want. 
+    Here ensure _ and . before lowercase letters.
+    If any here someday have uppercase ensure _ above 
+    uppercase letter. */
+
 static const char *nonsec[] = { 
 ".bss",
 ".comment",
 ".data",
-".fini",
 ".fini_array",
-".got",
+".fini",
+".got", /* [5] */
 ".init",
 ".interp",
 ".jcr",
 ".plt",
-".rela.data",
-".rela.got",
-".rela.plt",
-".rela.text",
-".rel.data",
+".rel.data", /* 10 */
 ".rel.got",
 ".rel.plt",
 ".rel.text",
+".rela.data", 
+".rela.got", /* 15 */
+".rela.plt",
+".rela.text",
 ".sbss",
-".text",
-0
+".text", /* [19] */
 };
 
 /*  These help us ignore some sections that are
-    irrelevant to libdwarf.  Maybe should use a hash
-    table or binary search instead of sequential search? */
+    irrelevant to libdwarf.  */
 int
 _dwarf_ignorethissection(const char *scn_name)
 {
-#if 0
-    int tablen = sizeof(nonsec)/sizeof(const char *);
-    const char *cp = 0;
-#endif
-    int i = 0;
+    int l = 0;
+    int h = sizeof(nonsec)/sizeof(const char *) -1;
+    int res = 0;
 
-    for ( ; nonsec[i]; ++i) {
-        const char *s = nonsec[i];
-        if (_dwarf_startswith(scn_name,s)) {
+    while (l <= h) {
+        int m = (l+h)/2;
+        const char *s = nonsec[m];
+
+        res  = _dwarf_startswithx(scn_name,s);
+        if (res < 0) {
+            h =  m -1;
+        } else if (res > 0) {
+            l =  m + 1;
+        } else {
             return TRUE;
         }
     }
