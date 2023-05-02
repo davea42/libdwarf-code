@@ -734,70 +734,70 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     table instead of sequential search? */
 int
 _dwarf_ignorethissection(const char *scn_name) {
-    if (!strcmp(scn_name,".bss")) {
+    if (startswith(scn_name,".bss")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".comment")) {
+    if (startswith(scn_name,".comment")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".sbss")) {
+    if (startswith(scn_name,".sbss")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".jcr")) {
+    if (startswith(scn_name,".jcr")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".init")) {
+    if (startswith(scn_name,".init")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".fini_array")) {
+    if (startswith(scn_name,".fini_array")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".fini")) {
+    if (startswith(scn_name,".fini")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".fini_array")) {
+    if (startswith(scn_name,".fini_array")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".interp")) {
+    if (startswith(scn_name,".interp")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".text")) {
+    if (startswith(scn_name,".text")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".rela.text")) {
+    if (startswith(scn_name,".rela.text")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".rel.text")) {
-        return TRUE;
-    }
-
-    if (!strcmp(scn_name,".plt")) {
-        return TRUE;
-    }
-    if (!strcmp(scn_name,".rela.plt")) {
-        return TRUE;
-    }
-    if (!strcmp(scn_name,".rel.plt")) {
+    if (startswith(scn_name,".rel.text")) {
         return TRUE;
     }
 
-    if (!strcmp(scn_name,".data")) {
+    if (startswith(scn_name,".plt")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".rel.data")) {
+    if (startswith(scn_name,".rela.plt")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".rela.data")) {
+    if (startswith(scn_name,".rel.plt")) {
         return TRUE;
     }
 
-    if (!strcmp(scn_name,".got")) {
+    if (startswith(scn_name,".data")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".rela.got")) {
+    if (startswith(scn_name,".rel.data")) {
         return TRUE;
     }
-    if (!strcmp(scn_name,".rel.got")) {
+    if (startswith(scn_name,".rela.data")) {
+        return TRUE;
+    }
+
+    if (startswith(scn_name,".got")) {
+        return TRUE;
+    }
+    if (startswith(scn_name,".rela.got")) {
+        return TRUE;
+    }
+    if (startswith(scn_name,".rel.got")) {
         return TRUE;
     }
 

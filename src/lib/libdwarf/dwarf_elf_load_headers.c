@@ -2139,6 +2139,8 @@ read_gs_section_group(
             return DW_DLV_ERROR;
         }
         grouparray[0] = 1;
+        /*  A .group section will have 0 to G sections
+            listed */
         dp = dp + DWARF_32BIT_SIZE;
         for ( i = 1; i < count; ++i,dp += DWARF_32BIT_SIZE) {
             Dwarf_Unsigned gseca = 0;
@@ -2171,6 +2173,9 @@ read_gs_section_group(
                 grouparray[i] = gseca;
             }
             targpsh = ep->f_shdr + gseca;
+            if (_dwarf_ignorethissection(targpsh->gh_namestring)){
+               continue;
+            }
             if (targpsh->gh_section_group_number) {
                 /* multi-assignment to groups. Oops. */
                 free(data);
