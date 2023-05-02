@@ -2174,7 +2174,7 @@ read_gs_section_group(
             }
             targpsh = ep->f_shdr + gseca;
             if (_dwarf_ignorethissection(targpsh->gh_namestring)){
-               continue;
+                continue;
             }
             if (targpsh->gh_section_group_number) {
                 /* multi-assignment to groups. Oops. */
