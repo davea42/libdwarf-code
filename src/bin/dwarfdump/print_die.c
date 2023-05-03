@@ -8047,6 +8047,25 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         "outside of current CU");
                 }
             }
+        } else if (attr == DW_AT_abstract_origin) {
+            int lres = 0;
+            Dwarf_Die targ_die_a = 0;
+            int is_info_a = dwarf_get_die_infotypes_flag(die);
+
+            DWARF_CHECK_COUNT(type_offset_result,1);
+            lres = dwarf_offdie_b(dbg,off,is_info_a,
+                &targ_die_a,err);
+            if (lres == DW_DLV_OK) {
+                dwarf_dealloc_die(targ_die_a);
+            } else {
+                DWARF_CHECK_ERROR(type_offset_result,
+                    "DW_AT_abstract_origin DW_FORM_ref_addr "
+                    "offset of the DIE "
+                    "is not valid");
+                if (lres == DW_DLV_ERROR) {
+                    DROP_ERROR_INSTANCE(dbg,lres,*err);
+                }
+            }
         }
         }
         break;
