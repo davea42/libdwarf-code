@@ -69,7 +69,7 @@ struct generic_ehdr {
     /*  if ge_shnum >= 0xff00 SHN_LORESERVE
         Once section zero is read we put the sh_size
         member as the true count and set ge_shnum_in_shnum TRUE.
-        ge_shnum_extended is TRUE if the object used the extension 
+        ge_shnum_extended is TRUE if the object used the extension
         mechanism */
     Dwarf_Bool ge_shnum_in_shnum;
     Dwarf_Bool ge_shnum_extended;

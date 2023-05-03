@@ -295,7 +295,7 @@ void _dwarf_set_line_table_regs_default_values(
 
 /*
     This structure defines a row of the line table.
-    All of the fields 
+    All of the fields
     same meaning that is defined in Section 6.2.2
     of the Libdwarf Document.
 

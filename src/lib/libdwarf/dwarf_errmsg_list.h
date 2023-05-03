@@ -678,8 +678,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_INVALID_NULL_ARGUMENT(498) Argument must be a valid "
     "pointer and non-null"},
 {"DW_DLE_LINE_INDEX_WRONG(499) An index into a line table is "
-    "not valid. Corrupt data."}, 
+    "not valid. Corrupt data."},
 {"DW_DLE_LINE_COUNT_WRONG(500) A count in a line table is "
-    "not valid. Corrupt data."} 
+    "not valid. Corrupt data."}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

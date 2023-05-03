@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2023, David Anderson
 All rights reserved.
 
@@ -34,7 +33,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() strcmp() strncmp() strlen() */
-#include <stdio.h> /* debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -66,12 +64,12 @@ _dwarf_startswithx(const char * input,const char* ckfor)
     return res;
 }
 /*  If one uses the 'sort' command it ignores the proper place
-    of . and _ so the output needs modification to get what we want. 
+    of . and _ so the output needs modification to get what we want.
     Here ensure _ and . before lowercase letters.
-    If any here someday have uppercase ensure _ above 
+    If any here someday have uppercase ensure _ above
     uppercase letter. */
 
-static const char *nonsec[] = { 
+static const char *nonsec[] = {
 ".bss",
 ".comment",
 ".data",
@@ -86,7 +84,7 @@ static const char *nonsec[] = {
 ".rel.got",
 ".rel.plt",
 ".rel.text",
-".rela.data", 
+".rela.data",
 ".rela.got", /* 15 */
 ".rela.plt",
 ".rela.text",

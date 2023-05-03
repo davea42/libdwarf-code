@@ -1,4 +1,3 @@
-
 /* Copyright (c) 2023, David Anderson
 All rights reserved.
 
@@ -35,4 +34,3 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int _dwarf_startswith(const char * input,const char* ckfor);
 int _dwarf_ignorethissection(const char *scn_name);
-
