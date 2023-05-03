@@ -103,7 +103,7 @@ struct ts_entry {
     /*  treedepth is only set in the HEAD node,
         and in this implementation head->llink is
         always zero. */
-    size_t      treedepth;
+    int         treedepth;
     /*  balance only used in the tree proper, not in HEAD */
     int         balance; /* Knuth 6.2.3 algorithm A */
     struct ts_entry * llink;
