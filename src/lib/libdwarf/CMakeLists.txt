@@ -28,6 +28,7 @@ dwarf_query.c dwarf_ranges.c
 dwarf_rnglists.c
 dwarf_safe_strcpy.c
 dwarf_secname_ck.c
+dwarf_setup_sections.c
 dwarf_string.h dwarf_string.c
 dwarf_stringsection.c
 dwarf_tied.c 
@@ -56,7 +57,7 @@ dwarf_rnglists.h
 dwarf_safe_strcpy.h
 dwarf_tied_decls.h 
 dwarf_tsearch.h 
-dwarf_secname_ck.h
+dwarf_setup_sections.h
 dwarf_str_offsets.h
 dwarf_util.h 
 dwarf_xu_index.h libdwarf_private.h
