@@ -51,6 +51,7 @@
 #include "dwarf_harmless.h"
 #include "dwarf_string.h"
 #include "dwarf_secname_ck.h"
+#include "dwarf_setup_sections.h"
 
 #ifdef HAVE_ZLIB_H
 #include "zlib.h"
@@ -180,6 +181,7 @@ add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     secdata->dss_is_rela = is_rela;
 }
 
+#if 0
 /*  Used to add the specific information for a debug related section
     Called on each section of interest by section name.
     DWARF_MAX_DEBUG_SECTIONS must be large enough to allow
@@ -235,6 +237,7 @@ add_debug_section_info(Dwarf_Debug dbg,
     *err = DW_DLE_TOO_MANY_DEBUG;
     return DW_DLV_ERROR;
 }
+#endif
 
 #if 0
 static void
@@ -263,11 +266,12 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
 }
 #endif /*0*/
 
+#if 0
 /*  Return DW_DLV_OK etc.
     PRECONDITION: secname and targname are non-null
         pointers to strings. */
 static int
-set_up_section(Dwarf_Debug dbg,
+_dwarf_set_up_section(Dwarf_Debug dbg,
     /*  Section name from object format.
         Might start with .zdebug not .debug if compressed section. */
     const char *secname,
@@ -366,7 +370,7 @@ set_up_section(Dwarf_Debug dbg,
 #define SET_UP_SECTION(mdbg,mname,mtarg,mgrp,minfo,me1,me2,mdw,mer) \
     {                                           \
     int lerr = 0;                               \
-    lerr =  set_up_section((mdbg),              \
+    lerr =  _dwarf_set_up_section((mdbg),       \
         (mname),  /* actual section name */     \
         (mtarg),    /* std section name */      \
         /* scn_number from macro use context */ \
@@ -671,6 +675,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         FALSE,err);
     return DW_DLV_NO_ENTRY;
 }
+#endif /* 0 */
 static int
 is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
 {
@@ -1331,7 +1336,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
             }
             /* No entry: new-to-us section, the normal case. */
-            res = enter_section_in_de_debug_sections_array(dbg,
+            res = _dwarf_enter_section_in_de_debug_sections_array(dbg,
                 scn_name, obj_section_index, groupnumber,&err);
             if (res == DW_DLV_OK) {
                 section = &dbg->de_debug_sections[
