@@ -43,6 +43,8 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_objectaccess.trs \
   test_safestrcpy.log \
   test_safestrcpy.trs \
+  test_setupsections.trs \
+  test_setupsections.log \
   test_sanitized.log \
   test_sanitized.trs \
   test_testesb.log \
@@ -66,6 +68,7 @@ TESTS = test_canonical  \
   test_makenametest \
   test_regex \
   test_safestrcpy \
+  test_setupsections \
   test_testesb \
   test_sanitized \
   test_tied
@@ -84,6 +87,7 @@ check_PROGRAMS = test_canonical \
   test_makenametest \
   test_regex \
   test_safestrcpy \
+  test_setupsections \
   test_testesb \
   test_sanitized \
   test_tied
@@ -91,7 +95,6 @@ check_PROGRAMS = test_canonical \
 test_canonical_SOURCES = test_canonical.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_canonical_append.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
-    $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.h \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c
 test_canonical_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_canonical_CPPFLAGS = \
@@ -125,8 +128,7 @@ test_dwgetopt_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump
  
 test_errmsglist_SOURCES = test_errmsglist.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.h 
+   $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c
 test_errmsglist_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_errmsglist_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -209,14 +211,6 @@ test_regex_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_safestrcpy_SOURCES = test_safe_strcpy.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.h 
-test_safestrcpyCFLAGS = $(DWARF_CFLAGS_WARN)
-test_safestrcpy_CPPFLAGS = \
--I$(top_srcdir) -I$(top_builddir) \
--I$(top_srcdir)/src/lib/libdwarf
-
 test_testesb_SOURCES = test_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
@@ -233,6 +227,20 @@ test_sanitized_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_sanitized_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
+test_safestrcpy_SOURCES = test_safe_strcpy.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c
+test_safestrcpy_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_safestrcpy_CPPFLAGS = \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf
+
+test_setupsections_SOURCES = test_setupsections.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_setup_sections.c
+test_setupsections_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_setupsections_CPPFLAGS = \
+-I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_tied_SOURCES = test_dwarf_tied.c \
@@ -291,7 +299,9 @@ README.testcases \
 test_dwarfstring.c \
 test_errmsglist.c \
 test_esb.c \
+test_safestrcpy.c \
 test_sanitized.c \
+test_setupsections.c \
 test_extra_flag_strings.c \
 test_linkedtopath.c \
 test-mach-o-32.base \
