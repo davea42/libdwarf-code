@@ -218,6 +218,19 @@ if (DO_TESTING)
 endif()
 
 if (DO_TESTING)
+    set_source_group(SETUPSECLIST "Source Files"
+        ${PROJECT_SOURCE_DIR}/test/test_setupsections.c 
+        ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_setup_sections.c
+        )
+    add_executable(selfsetupsections ${SETUPSECLIST})
+    target_compile_options(selfsetupsections PRIVATE
+        "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
+        "-DLIBDWARF_BUILD")
+    target_compile_options(selfsetupsections PRIVATE ${DW_FWALL})
+    add_test(NAME selfsetupsections COMMAND selfsetupsections)
+endif()
+
+if (DO_TESTING)
     set_source_group(SAFESTRCPYLIST "Source Files"
         ${PROJECT_SOURCE_DIR}/test/test_safe_strcpy.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)

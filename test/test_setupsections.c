@@ -51,18 +51,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static int errcount;
 
-static void
-check_instance(const char *msg,int indx,
-    int expect,int got,int line)
-{
-    if (got == expect) {
-        return;
-    }
-    printf("FAIL [%d]  %s expected %d got %d test line %d\n",
-        indx,msg,expect,got,line);
-    ++errcount;
-}
-
 struct Dwarf_Debug_s dbgs;
 Dwarf_Debug dbg = &dbgs;
 struct basis_s {
@@ -111,13 +99,15 @@ test_adds(void)
 {
     unsigned i = 0;
     int err = 0;
-    memset(dbg,0,sizeof(*dbg));
     unsigned testcount = sizeof(basis)/sizeof(struct basis_s);
+
+    memset(dbg,0,sizeof(*dbg));
     for ( ; i < testcount; ++i) {
         struct basis_s *b = &basis[i];       
+        int res = 0;
 
         err = 0;
-        int res = _dwarf_enter_section_in_de_debug_sections_array(
+        res = _dwarf_enter_section_in_de_debug_sections_array(
             dbg,b->name,i,b->group_number,&err);
         if (res != DW_DLV_OK) {
             ++errcount;
@@ -130,7 +120,7 @@ test_adds(void)
 
 int main(int argc,char *argv[])
 {
-    int lim = 500000;
+    int lim = 1;
     int i = 0;
     int op = 1;
 
@@ -139,7 +129,7 @@ int main(int argc,char *argv[])
         opname = argv[op];
         if (!strcmp(opname,"--count")) {
             ++op;
-            if (op < argv) {
+            if (op < argc) {
                 opname = argv[op];
                 lim = atoi(opname);
             }

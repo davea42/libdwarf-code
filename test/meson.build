@@ -74,6 +74,10 @@ tests = [
    '../src/lib/libdwarf/dwarf_safe_strcpy.c',
   ],
   [
+   'test_setupsections.c',
+   '../src/lib/libdwarf/dwarf_setup_sections.c',
+  ],
+  [
    'test_regex.c',
    '../src/bin/dwarfdump/dd_regex.c',
   ]
