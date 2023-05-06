@@ -94,6 +94,31 @@ DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES,0, FALSE
 }
 };
 
+struct basis_s fails[] = {
+{".debug_infox",
+DW_GROUPNUMBER_BASE,
+offsetof(struct Dwarf_Debug_s,de_debug_info),
+DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,TRUE
+},
+
+{".debug_",
+DW_GROUPNUMBER_BASE,
+offsetof(struct Dwarf_Debug_s,de_debug_line),
+ DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+},
+{".rel",
+DW_GROUPNUMBER_BASE,
+offsetof(struct Dwarf_Debug_s,de_debug_line),
+ DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+},
+{".rela",
+DW_GROUPNUMBER_BASE,
+offsetof(struct Dwarf_Debug_s,de_debug_line),
+ DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+},
+};
+
+
 static void
 test_adds(void)
 {
@@ -117,6 +142,31 @@ test_adds(void)
         }
     }
 }
+static void
+test_fails(void)
+{
+    unsigned i = 0;
+    int err = 0;
+    unsigned testcount = sizeof(fails)/sizeof(struct basis_s);
+
+    memset(dbg,0,sizeof(*dbg));
+    for ( ; i < testcount; ++i) {
+        struct basis_s *b = &fails[i];       
+        int res = 0;
+
+        err = 0;
+        res = _dwarf_enter_section_in_de_debug_sections_array(
+            dbg,b->name,i,b->group_number,&err);
+        if (res == DW_DLV_OK) {
+            ++errcount;
+            printf("FAIL passed expected fail "
+                "enter index %u name %s\n",
+                i,
+                b->name);
+        }
+    }
+}
+
 
 int main(int argc,char *argv[])
 {
@@ -139,6 +189,9 @@ int main(int argc,char *argv[])
 
     for( ; i < lim; ++i) {
         test_adds();
+    }
+    for( ; i < lim; ++i) {
+        test_fails();
     }
     if (errcount) {
         exit(EXIT_FAILURE);
