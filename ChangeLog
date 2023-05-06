@@ -1,3 +1,94 @@
+2023-05-06:  David Anderson
+    commit a61867ee941ccfb5013e657b5c4a1f833bdeef47
+
+    Added tests to the test code.
+            modified:   test/test_setupsections.c
+
+2023-05-05:  David Anderson
+    commit c8c4b48f85141646f751be145e4cd9a66cddedcf
+
+    Now run the new test_setupsections test.
+            modified:   test/CMakeLists.txt
+            modified:   test/meson.build
+
+    Fix code mistakes, set standard iteration count to 1.
+            modified:   test/test_setupsections.c
+
+2023-05-05:  David Anderson
+    commit 47ef977174b17be9689951c44f0db9422a673a10
+
+    Testing the setupsections code.
+    Iterating this version loop 3Mn times
+    with the --count option
+    taks about 3 seconds (default is much smaller)
+            modified:   test/Makefile.am
+            new file:   test/test_setupsections.c
+
+2023-05-04:  David Anderson
+    commit 8312a88d5ed57f879ed6440a4df9e328db997d0c
+
+    Removing the #if 0 code that is now in
+    dwarf_setup_sections.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2023-05-04:  David Anderson
+    commit 40b7167da97544bdcf5a08050c90a1418cb3fbe6
+
+    Now supports the refactoring adding dwarf_setup_sections.c
+    and .h  for cmake & meson.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/meson.build
+
+2023-05-04:  David Anderson
+    commit 162803c76d46a163403d12ca47a3a939d9fa8c04
+
+    Refactored the setting up of section records
+    into dwarf_setup_sections.c so we can
+    get a timing baseline of what
+    _dwarf_enter_section_in_de_debug_sections_array
+    does and (in due course) replace its code with something faster.
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            new file:   src/lib/libdwarf/dwarf_setup_sections.c
+            new file:   src/lib/libdwarf/dwarf_setup_sections.h
+
+2023-05-03:  David Anderson
+    commit 81e5968d506aa50562aa3df64783f030d9e316cc
+
+    Modified ts_entry which saves 8 bytes that were
+    pointlessly wasted (counting padding no longer needed).
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+
+2023-05-03:  David Anderson
+    commit 2ae7b691cce0f99f1542cf3d32d565b76a98bf6f
+
+    Split one line into two to avoid too-long line.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    Remove trailing whitespace.
+    Remove leading/trailing blank lines.
+            modified:   src/lib/libdwarf/dwarf_elfread.h
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_line.h
+            modified:   src/lib/libdwarf/dwarf_secname_ck.h
+
+    removed include stdio.h, was for debug only.
+            modified:   src/lib/libdwarf/dwarf_secname_ck.c
+
+2023-05-03:  David Anderson
+    commit a6809f258fdd57d928daf7865bcc29cbc84522b8
+
+    Now checks that DW_AT_abstract_origin
+    with DW_FORM_ref_addr refers to a valid DIE
+    in .debug_info
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-05-02:  David Anderson
+    commit c779d667f7fc7c66cae371a1a9ae0bd780a8393b
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-05-02:  David Anderson
     commit 685372749ce431fd5ba3b2fddfa7d0306b3c8a7f
 
