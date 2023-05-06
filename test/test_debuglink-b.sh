@@ -81,4 +81,6 @@ r=$?
 echo "To update test_debuglink-b.sh  baseline:"
 echo " mv $testbin/${o}c $testsrc/debuglink2.base"
 chkres $r "running test_debuglink-b.sh  diff against baseline"
+rm -f $testbin/$o
+rm -f $testbin/${o}c
 exit 0

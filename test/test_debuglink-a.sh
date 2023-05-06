@@ -81,4 +81,6 @@ else
   echo "mv $testbin/${o}a $testsrc/debuglink.base"
   chkres $r "running test_debuglink-a.sh test1 diff against baseline"
 fi
+rm -f $testbin/$o
+rm -f $testbin/${o}a
 exit 0
