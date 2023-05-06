@@ -43,10 +43,12 @@
     commit 162803c76d46a163403d12ca47a3a939d9fa8c04
 
     Refactored the setting up of section records
-    into dwarf_setup_sections.c so we can
+    into dwarf_setup_sections.c 
+    (moved from dwarf_init_finish.c) so we can
     get a timing baseline of what
     _dwarf_enter_section_in_de_debug_sections_array
-    does and (in due course) replace its code with something faster.
+    does and (in due course) replace its code with something faster
+    and with much less code.
             modified:   src/lib/libdwarf/Makefile.am
             modified:   src/lib/libdwarf/dwarf_init_finish.c
             new file:   src/lib/libdwarf/dwarf_setup_sections.c
