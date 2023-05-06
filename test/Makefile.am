@@ -230,7 +230,8 @@ test_sanitized_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_safestrcpy_SOURCES = test_safe_strcpy.c \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c
+    $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.h
 test_safestrcpy_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_safestrcpy_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
