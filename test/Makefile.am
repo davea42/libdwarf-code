@@ -41,8 +41,8 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_makenametest.trs \
   test_objectaccess.log \
   test_objectaccess.trs \
-  test_safestrcpy.log \
-  test_safestrcpy.trs \
+  test_safe_strcpy.log \
+  test_safe_strcpy.trs \
   test_setupsections.trs \
   test_setupsections.log \
   test_sanitized.log \
@@ -67,7 +67,7 @@ TESTS = test_canonical  \
   test_macrocheck \
   test_makenametest \
   test_regex \
-  test_safestrcpy \
+  test_safe_strcpy \
   test_setupsections \
   test_testesb \
   test_sanitized \
@@ -86,7 +86,7 @@ check_PROGRAMS = test_canonical \
   test_macrocheck \
   test_makenametest \
   test_regex \
-  test_safestrcpy \
+  test_safe_strcpy \
   test_setupsections \
   test_testesb \
   test_sanitized \
@@ -229,11 +229,11 @@ test_sanitized_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_safestrcpy_SOURCES = test_safe_strcpy.c \
+test_safe_strcpy_SOURCES = test_safe_strcpy.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.h
-test_safestrcpy_CFLAGS = $(DWARF_CFLAGS_WARN)
-test_safestrcpy_CPPFLAGS = \
+test_safe_strcpy_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_safe_strcpy_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
@@ -300,7 +300,7 @@ README.testcases \
 test_dwarfstring.c \
 test_errmsglist.c \
 test_esb.c \
-test_safestrcpy.c \
+test_safe_strcpy.c \
 test_sanitized.c \
 test_setupsections.c \
 test_extra_flag_strings.c \
