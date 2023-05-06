@@ -238,7 +238,8 @@ test_safe_strcpy_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_setupsections_SOURCES = test_setupsections.c \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_setup_sections.c
+    $(top_srcdir)/src/lib/libdwarf/dwarf_setup_sections.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_setup_sections.h
 test_setupsections_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_setupsections_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
