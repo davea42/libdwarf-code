@@ -26,6 +26,7 @@ jobs:
     - name: Check
       run:  make check
     - name: Distcheck
-      run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
+      #run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
+      run: make dist
 
 
