@@ -51,8 +51,9 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_testesb.trs 
 
 clean-local:
-	rm -f junk.*
-	rm -f dwarfdump.conf
+	-rm -f junk.*
+	-rm -f dwarfdump.conf
+	-rm -f test_setupsections.exe.manifest
 
 TESTS = test_canonical  \
   test_dwarflebtest \
