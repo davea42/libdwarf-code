@@ -185,8 +185,7 @@ jobs:
     - name: Check
       run:  make check
     - name: Distcheck
-      # make distcheck May 2023 gets warning test_setupsections.exe.manifest 
-      run: make dist DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
+      run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
 
   msys2_cmake:
     runs-on: windows-latest
