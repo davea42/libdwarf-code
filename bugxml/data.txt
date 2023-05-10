@@ -17,7 +17,7 @@ description:  A fuzzed line table in the non-standard
   The code was in libdwarf starting in 2021.
 datefixed: 2023-05-09
 references: regressiontest/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
-gitfixid: 
+gitfixid: edc241bd0bf22c94d2d496f3cb761e60f066cd14 
 tarrelease:
 endrec: DW202305-001
 C
