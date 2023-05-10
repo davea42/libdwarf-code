@@ -1,3 +1,27 @@
+# Issue 58769 
+id: DW202305-001
+cve:
+fuzzer: ossfuzz id: 58769
+datereported: 2023-05-09
+reportedby: David Korczynski
+vulnerability: Excessive malloc reading experimental line table
+product: libdwarf
+description:  A fuzzed line table in the non-standard
+  (experimental) two-level line table format had
+  several unchecked values and one was larger than
+  made any sense.
+  The failure was due to oss-fuzz limiting malloc to 3GB.
+  The failure was appropriate as the fuzzed values were
+  inappropriate. We now check for sensible values.
+  See libdwarf/dwarf_line_table_reader_common.h
+  The code was in libdwarf starting in 2021.
+datefixed: 2023-05-09
+references: regressiontest/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
+gitfixid: 
+tarrelease:
+endrec: DW202305-001
+C
+
 
 id: DW202304-004
 cve:

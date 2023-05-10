@@ -125,6 +125,27 @@ read_uword_de(Dwarf_Small **lp,
     *out_p = out;
     return DW_DLV_OK;
 }
+
+/*  A bogus value read from a line table */
+static void
+IssueExpError(Dwarf_Debug dbg,
+    Dwarf_Error *err,
+    const char * msg, 
+    Dwarf_Unsigned val)
+{
+    dwarfstring m;
+    char buf[200];
+
+    dwarfstring_constructor_static(&m, buf,sizeof(buf));
+    dwarfstring_append(&m , "ERROR: ");
+    dwarfstring_append(&m ,(char *)msg);
+    dwarfstring_append_printf_u(&m , " Bad value: 0x%x",
+        val);
+    _dwarf_error_string(dbg, err, DW_DLE_LINE_TABLE_BAD,
+            dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
 static int
 read_sword_de(Dwarf_Small **lp,
     Dwarf_Signed *out_p,
@@ -683,6 +704,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     format_values = 0;
                     return dres;
                 }
+                /*  FIXME: what would be appropriate tests
+                    of this pair of values? */
             }
         }
         dres = read_uword_de(&line_ptr,&directories_count,
@@ -820,6 +843,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 free(filename_entry_pairs);
                 return dres;
             }
+            /*  FIXME: what would be appropriate tests
+                of this pair of values? */
         }
         /* DECODE_LEB128_UWORD_CK(line_ptr, files_count,
             dbg,err,line_ptr_end); */
@@ -1048,6 +1073,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
+        if (subprog_format_count > total_length) {
+            IssueExpError(dbg,err,
+                 "Subprog format count Count too "
+                 "large to be real",
+                 subprog_format_count);
+            return DW_DLV_ERROR;
+        }
         subprog_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
             subprog_format_count);
         if (subprog_entry_forms == NULL) {
@@ -1065,12 +1097,26 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 free(subprog_entry_forms);
                 return dres;
             }
+            if (subprog_entry_types[i] > total_length) {
+                IssueExpError(dbg,err,
+                    "Subprog entry_types[i] count Count too "
+                    "large to be real",
+                    subprog_entry_types[i]);
+                return DW_DLV_ERROR;
+            }
             dres=read_uword_de(&line_ptr,subprog_entry_forms+i,
                 dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
                 free(subprog_entry_types);
                 free(subprog_entry_forms);
                 return dres;
+            }
+            if (subprog_entry_forms[i] > total_length) {
+                IssueExpError(dbg,err,
+                    "Subprog entry_forms[i] count Count too "
+                    "large to be real",
+                    subprog_entry_forms[i]);
+                return DW_DLV_ERROR;
             }
         }
         dres=read_uword_de(&line_ptr,&subprogs_count,
@@ -1079,6 +1125,12 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             free(subprog_entry_types);
             free(subprog_entry_forms);
             return dres;
+        }
+        if (subprogs_count > total_length) {
+            IssueExpError(dbg,err,
+                "Subprogs Count too large to be real",
+                subprogs_count);
+            return DW_DLV_ERROR;
         }
         line_context->lc_subprogs =
             malloc(sizeof(struct Dwarf_Subprog_Entry_s) *
