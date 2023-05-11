@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2007-2023 David Anderson. All Rights Reserved.
    Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
    Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
@@ -1070,7 +1070,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         subprog_entry_types = malloc(sizeof(Dwarf_Unsigned) *
             subprog_format_count);
         if (subprog_entry_types == NULL) {
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+            _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                "DW_DLE_ALLOC_FAIL allocating subprog_entry_types");
             return DW_DLV_ERROR;
         }
         if (subprog_format_count > total_length) {
@@ -1078,6 +1079,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                  "Subprog format count Count too "
                  "large to be real",
                  subprog_format_count);
+            free(subprog_entry_types);
             return DW_DLV_ERROR;
         }
         subprog_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
@@ -1085,6 +1087,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         if (subprog_entry_forms == NULL) {
             free(subprog_entry_types);
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+            _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                "DW_DLE_ALLOC_FAIL allocating subprog_entry_forms");
             return DW_DLV_ERROR;
         }
 
@@ -1102,6 +1106,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     "Subprog entry_types[i] count Count too "
                     "large to be real",
                     subprog_entry_types[i]);
+                free(subprog_entry_types);
+                free(subprog_entry_forms);
                 return DW_DLV_ERROR;
             }
             dres=read_uword_de(&line_ptr,subprog_entry_forms+i,
@@ -1116,6 +1122,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     "Subprog entry_forms[i] count Count too "
                     "large to be real",
                     subprog_entry_forms[i]);
+                free(subprog_entry_types);
+                free(subprog_entry_forms);
                 return DW_DLV_ERROR;
             }
         }
@@ -1130,6 +1138,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             IssueExpError(dbg,err,
                 "Subprogs Count too large to be real",
                 subprogs_count);
+            free(subprog_entry_types);
+            free(subprog_entry_forms);
             return DW_DLV_ERROR;
         }
         line_context->lc_subprogs =
