@@ -1,6 +1,6 @@
 /*
 
-  Copyright (C) 2014-2014 David Anderson. All Rights Reserved.
+  Copyright (C) 2014-2023 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the

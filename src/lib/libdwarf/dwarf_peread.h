@@ -1,7 +1,7 @@
 #ifndef PE_GENERIC_H
 #define PE_GENERIC_H
 /*
-Copyright (c) 2018, David Anderson All rights reserved.
+Copyright (c) 2018-2023, David Anderson All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the

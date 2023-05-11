@@ -1,4 +1,4 @@
-/*  Copyright 2022 David Anderson
+/*  Copyright 2022, David Anderson
     This trivial set of defines is hereby placed in the public domain
     for all to use without restriction.
 */

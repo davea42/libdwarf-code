@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2023 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it

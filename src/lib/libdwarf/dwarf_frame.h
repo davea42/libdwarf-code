@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2000, 2004, 2006 Silicon Graphics, Inc.  All Rights Reserved.
-Portions Copyright (C) 2021 David Anderson. All Rights Reserved.
+Portions Copyright (C) 2021-2023 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the

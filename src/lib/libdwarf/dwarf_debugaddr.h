@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2022 David Anderson. All Rights Reserved.
+Copyright (C) 2022-2023 David Anderson. All Rights Reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
