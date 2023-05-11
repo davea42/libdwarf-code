@@ -1,4 +1,28 @@
-# Issue 58769 
+
+
+id: DW202305-002
+cve:
+fuzzer: ossfuzz id: 58797
+datereported: 2023-05-10
+reportedby: David Korczynski
+vulnerability: Memory Leak reading experimental line table
+product: libdwarf
+description:  A fuzzed line table in the non-standard
+  (experimental) two-level line table format had
+  several unchecked values and one was larger than
+  made any sense, and detecting the error revealed
+  a memory leak. Caused by the incomplete fix to
+  DW202305-001 (yesterday).
+  This is was a failure to run some crucial tests,
+  which would have exposed the problem before
+  DW202305-001 was completed. Incomplete testing.
+datefixed: 2023-05-10
+references: regressiontest/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
+gitfixid: eeb935200f78b8509e6b1837f6825b9d551b9f7d
+tarrelease:
+endrec: DW202305-002
+
+
 id: DW202305-001
 cve:
 fuzzer: ossfuzz id: 58769
