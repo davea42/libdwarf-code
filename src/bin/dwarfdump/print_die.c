@@ -1535,9 +1535,6 @@ print_a_die_stack(Dwarf_Debug dbg,
     int lev,
     Dwarf_Error *err)
 {
-    /*  Print_information TRUE means attribute_matched
-        will NOT be set by attribute name match.
-        Just print the die at the top of stack.*/
     Dwarf_Bool print_else_name_match = TRUE;
     Dwarf_Bool ignore_die_stack = FALSE;
     Dwarf_Bool attribute_matched = FALSE;
@@ -1718,6 +1715,59 @@ check_sibling_offset_list_count(Dwarf_Unsigned loop_iteration,
     }
 }
 
+/*  Here do pre-descent printing of the die
+    The die stack is a global static array
+    of a  struct. See DIE_STACK
+*/
+static int
+dd_print_die_and_die_stack(Dwarf_Debug dbg,
+    Dwarf_Die      in_die,
+    Dwarf_Unsigned dieprint_cu_goffset,
+    char         **srcfiles,
+    Dwarf_Signed   srcfilescount,
+    Dwarf_Error *  err)
+{
+    int pdres = 0;
+    Dwarf_Bool an_attribute_match_local = FALSE;
+    Dwarf_Bool ignore_die_stack = FALSE;
+
+    pdres = print_one_die(dbg, in_die,
+        dieprint_cu_goffset,
+        print_as_info_or_by_cuname(),
+        die_stack_indent_level, srcfiles, srcfilescount,
+        &an_attribute_match_local,
+        ignore_die_stack,
+        err);
+    if (pdres != DW_DLV_OK) {
+        return pdres;
+    }
+    validate_die_stack_siblings();
+    if (!print_as_info_or_by_cuname() &&
+        an_attribute_match_local) {
+        if (glflags.gf_display_parent_tree) {
+            pdres = print_die_stack(dbg,srcfiles,
+                srcfilescount, err);
+            if (pdres == DW_DLV_ERROR) {
+                return pdres;
+            }
+        } else {
+            if (glflags.gf_display_children_tree) {
+                pdres = print_a_die_stack(
+                    dbg,srcfiles,srcfilescount,
+                    die_stack_indent_level,err);
+                if (pdres == DW_DLV_ERROR) {
+                    return pdres;
+                }
+            }
+        }
+        if (glflags.gf_display_children_tree) {
+            glflags.gf_stop_indent_level = die_stack_indent_level;
+            glflags.gf_info_flag = TRUE;
+            glflags.gf_types_flag = TRUE;
+        }
+    }
+    return DW_DLV_OK;
+}
 
 static int
 dd_check_die_abbrevs(Dwarf_Debug dbg, Dwarf_Die in_die,
@@ -1783,9 +1833,9 @@ dd_check_die_abbrevs(Dwarf_Debug dbg, Dwarf_Die in_die,
     return DW_DLV_OK;
 }
 /*  Recursively follow the die tree.
-    For in_die and its siblings we loop here.
-    For children of in_die and
-    its siblings we recurse on this function.
+    For in_die and its siblings we loop here,
+    touching eash sibling of in_die.
+    For children of in_die we recurse on this function.
     We use a DIE_STACK to keep track of where
     we are in the current loop and in the recursion.
 */
@@ -1831,58 +1881,15 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             glflags.gf_check_verbose_mode) {
             glflags.gf_record_dwarf_error = FALSE;
         }
-        /* Here do pre-descent processing of the die. */
-        {
-            Dwarf_Bool an_attribute_match_local = FALSE;
-            Dwarf_Bool ignore_die_stack = FALSE;
-            int pdres = 0;
-            pdres = print_one_die(dbg, in_die,
-                dieprint_cu_goffset,
-                print_as_info_or_by_cuname(),
-                die_stack_indent_level, srcfiles, srcfilescount,
-                &an_attribute_match_local,
-                ignore_die_stack,
-                err);
-            if (pdres != DW_DLV_OK) {
-                if (in_die != in_die_in) {
-                    dwarf_dealloc_die(in_die);
-                }
-                return pdres;
+        res = dd_print_die_and_die_stack(dbg,in_die,
+            dieprint_cu_goffset, srcfiles,srcfilescount,
+            err);
+        if (res != DW_DLV_OK) {
+            if (in_die != in_die_in) {
+                dwarf_dealloc_die(in_die);
             }
-            validate_die_stack_siblings();
-            if (!print_as_info_or_by_cuname() &&
-                an_attribute_match_local) {
-                if (glflags.gf_display_parent_tree) {
-                    pdres = print_die_stack(dbg,srcfiles,
-                        srcfilescount, err);
-                    if (pdres == DW_DLV_ERROR) {
-                        if (in_die != in_die_in) {
-                            dwarf_dealloc_die(in_die);
-                        }
-                        return pdres;
-                    }
-                } else {
-                    if (glflags.gf_display_children_tree) {
-                        pdres = print_a_die_stack(
-                            dbg,srcfiles,srcfilescount,
-                            die_stack_indent_level,err);
-                        if (pdres == DW_DLV_ERROR) {
-                            if (in_die != in_die_in) {
-                                dwarf_dealloc_die(in_die);
-                            }
-                            return pdres;
-                        }
-                    }
-                }
-                if (glflags.gf_display_children_tree) {
-                    glflags.gf_stop_indent_level =
-                        die_stack_indent_level;
-                    glflags.gf_info_flag = TRUE;
-                    glflags.gf_types_flag = TRUE;
-                }
-            }
-        } /*  End pre-descent processing of in_die */
-
+            return res;
+        }
         cdres = dwarf_child(in_die, &child, err);
         if (cdres == DW_DLV_ERROR) {
             print_error_and_continue(
@@ -1901,9 +1908,12 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             cdares = dd_check_die_abbrevs(dbg, in_die,cdres);
             if (cdares != DW_DLV_OK) {
                 dwarf_dealloc_die(child);
+                if (in_die != in_die_in) {
+                    dwarf_dealloc_die(in_die);
+                }
                 return cdares;
             }
-        } 
+        }
         /* child first: we are doing depth-first walk */
         if (cdres == DW_DLV_OK) {
             /*  If the global offset of the (first) child is
