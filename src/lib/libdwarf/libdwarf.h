@@ -2232,7 +2232,8 @@ DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     This is used by dwarfdump (when
     dwarfdump is checking for valid DWARF but
     it depends on the caller to have done
-    precise setup. Ignore it. It has to change.
+    precise setup. Ignore it or read the comments
+    for this function in dwarf_die_deliv.c. 
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     Dwarf_Off* dw_offset);
