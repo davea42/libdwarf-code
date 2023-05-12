@@ -1718,6 +1718,70 @@ check_sibling_offset_list_count(Dwarf_Unsigned loop_iteration,
     }
 }
 
+
+static int
+dd_check_die_abbrevs(Dwarf_Debug dbg, Dwarf_Die in_die,
+    int childres)
+{
+    Dwarf_Half ab_has_child;
+    Dwarf_Bool bError = FALSE;
+    Dwarf_Half tag = 0;
+    int abtres = 0;
+
+    /* This does not return a Dwarf_Error value! */
+    abtres = dwarf_die_abbrev_children_flag(in_die,
+        &ab_has_child);
+    if (abtres == DW_DLV_OK) {
+        Dwarf_Error tagerr = 0;
+        int tagres = 0;
+
+        DWARF_CHECK_COUNT(abbreviations_result,1);
+        tagres = dwarf_tag(in_die, &tag, &tagerr);
+        if (tagres == DW_DLV_OK) {
+            switch (tag) {
+            case DW_TAG_array_type:
+            case DW_TAG_class_type:
+            case DW_TAG_compile_unit:
+            case DW_TAG_type_unit:
+            case DW_TAG_partial_unit:
+            case DW_TAG_enumeration_type:
+            case DW_TAG_lexical_block:
+            case DW_TAG_namespace:
+            case DW_TAG_structure_type:
+            case DW_TAG_subprogram:
+            case DW_TAG_subroutine_type:
+            case DW_TAG_union_type:
+            case DW_TAG_entry_point:
+            case DW_TAG_inlined_subroutine:
+                break;
+            default:
+                bError = (childres == DW_DLV_OK && !ab_has_child) ||
+                    (childres == DW_DLV_NO_ENTRY && ab_has_child);
+                if (bError) {
+                    DWARF_CHECK_ERROR(
+                        abbreviations_result,
+                        "check 'dw_children'"
+                        " flag combination.");
+                }
+                break;
+            }
+        } else if (tagres == DW_DLV_ERROR) {
+            print_error_and_continue(
+                "Unable to read die tag!",
+                tagres,tagerr);
+            dwarf_dealloc_error(dbg,tagerr);
+            return DW_DLV_NO_ENTRY;
+        }
+    } else if (abtres == DW_DLV_ERROR) {
+        glflags.gf_count_major_errors++;
+        printf("ERROR: Unable to read die children "
+            "flag.\n");
+        /*  return is unrelated to *error
+            but leaving *error NULL should be ok. */
+        return abtres;
+    }
+    return DW_DLV_OK;
+}
 /*  Recursively follow the die tree.
     For in_die and its siblings we loop here.
     For children of in_die and
@@ -1832,69 +1896,14 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         /* Check for specific compiler, gf_check_abbreviations */
         if (glflags.gf_check_abbreviations &&
             checking_this_compiler()) {
-            Dwarf_Half ab_has_child;
-            Dwarf_Bool bError = FALSE;
-            Dwarf_Half tag = 0;
-            int abtres = 0;
+            int cdares = 0;
 
-            /* This does not return a Dwarf_Error value! */
-            abtres = dwarf_die_abbrev_children_flag(in_die,
-                &ab_has_child);
-            if (abtres == DW_DLV_OK) {
-                Dwarf_Error tagerr = 0;
-                int tagres = 0;
-
-                DWARF_CHECK_COUNT(abbreviations_result,1);
-                tagres = dwarf_tag(in_die, &tag, &tagerr);
-                if (tagres == DW_DLV_OK) {
-                    switch (tag) {
-                    case DW_TAG_array_type:
-                    case DW_TAG_class_type:
-                    case DW_TAG_compile_unit:
-                    case DW_TAG_type_unit:
-                    case DW_TAG_partial_unit:
-                    case DW_TAG_enumeration_type:
-                    case DW_TAG_lexical_block:
-                    case DW_TAG_namespace:
-                    case DW_TAG_structure_type:
-                    case DW_TAG_subprogram:
-                    case DW_TAG_subroutine_type:
-                    case DW_TAG_union_type:
-                    case DW_TAG_entry_point:
-                    case DW_TAG_inlined_subroutine:
-                        break;
-                    default:
-                        bError =
-                            (cdres == DW_DLV_OK && !ab_has_child)
-                            ||
-                            (cdres == DW_DLV_NO_ENTRY &&
-                                ab_has_child);
-                        if (bError) {
-                            DWARF_CHECK_ERROR(
-                                abbreviations_result,
-                                "check 'dw_children'"
-                                " flag combination.");
-                        }
-                        break;
-                    }
-                } else if (tagres == DW_DLV_ERROR) {
-                    dwarf_dealloc_die(child);
-                    print_error_and_continue(
-                        "Unable to read die tag!",
-                        tagres,tagerr);
-                    dwarf_dealloc_error(dbg,tagerr);
-                    return DW_DLV_NO_ENTRY;
-                }
-            } else if (abtres == DW_DLV_ERROR) {
+            cdares = dd_check_die_abbrevs(dbg, in_die,cdres);
+            if (cdares != DW_DLV_OK) {
                 dwarf_dealloc_die(child);
-                glflags.gf_count_major_errors++;
-                printf("ERROR: Unable to read die children "
-                    "flag.\n");
-                /*  return is unrelated to *error
-                    but leaving *error NULL should be ok. */
-                return abtres;
+                return cdares;
             }
-        } /* end  gf_check_abbreviations */
+        } 
         /* child first: we are doing depth-first walk */
         if (cdres == DW_DLV_OK) {
             /*  If the global offset of the (first) child is
