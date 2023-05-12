@@ -1850,9 +1850,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     Dwarf_Unsigned   sibling_off_count,
     Dwarf_Error     *err)
 {
-    Dwarf_Die child = 0;
     Dwarf_Die sibling = 0;
-    int cdres = 0;
     Dwarf_Die in_die = in_die_in;
     Dwarf_Unsigned loop_iteration = 0;
 
@@ -1860,6 +1858,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     for (;;++loop_iteration) {
         int offres = 0;
         int res = 0;
+        int childres = 0;
+        int siblingres = 0;
+        Dwarf_Die child = 0;
 
         /* Get the CU offset for easy error reporting */
         offres = dwarf_die_offsets(in_die,
@@ -1890,22 +1891,22 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             }
             return res;
         }
-        cdres = dwarf_child(in_die, &child, err);
-        if (cdres == DW_DLV_ERROR) {
+        childres = dwarf_child(in_die, &child, err);
+        if (childres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "Call to dwarf_child failed printing die tree",
-                cdres,*err);
+                childres,*err);
             if (in_die != in_die_in) {
                 dwarf_dealloc_die(in_die);
             }
-            return cdres;
+            return childres;
         }
         /* Check for specific compiler, gf_check_abbreviations */
         if (glflags.gf_check_abbreviations &&
             checking_this_compiler()) {
             int cdares = 0;
 
-            cdares = dd_check_die_abbrevs(dbg, in_die,cdres);
+            cdares = dd_check_die_abbrevs(dbg, in_die,childres);
             if (cdares != DW_DLV_OK) {
                 dwarf_dealloc_die(child);
                 if (in_die != in_die_in) {
@@ -1915,27 +1916,28 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             }
         }
         /* child first: we are doing depth-first walk */
-        if (cdres == DW_DLV_OK) {
+        if (childres == DW_DLV_OK) {
             /*  If the global offset of the (first) child is
                 <= the parent DW_AT_sibling global-offset-value
                 then the compiler has made a mistake, and
                 the DIE tree is corrupt.  */
-            int pdacres = 0;
+            int       pdacires = 0;
+            int       childoffres = 0;
             Dwarf_Off child_overall_offset = 0;
-            int cores = dwarf_dieoffset(child,
-                &child_overall_offset, err);
 
-            if (cores == DW_DLV_ERROR) {
+            childoffres = dwarf_dieoffset(child,
+                &child_overall_offset, err);
+            if (childoffres == DW_DLV_ERROR) {
                 print_error_and_continue(
                     "Finding a DIE offset (dwarf_dieoffset())"
-                    "failed.",cores,*err);
+                    "failed.",childoffres,*err);
                 dwarf_dealloc_die(child);
                 if (in_die != in_die_in) {
                     dwarf_dealloc_die(in_die);
                 }
-                return cores;
+                return childoffres;
             }
-            if (cores == DW_DLV_OK) {
+            if (childoffres == DW_DLV_OK) {
                 Dwarf_Off parent_sib_val =
                     get_die_stack_sibling();
                 if (parent_sib_val &&
@@ -1999,7 +2001,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
                 dd_setup_die_check_functions(dbg,in_die,is_info,
                     &inner_offset_array, &inner_offset_count,err);
-                pdacres = print_die_and_children_internal(dbg, child,
+                pdacires = print_die_and_children_internal(dbg, child,
                     dieprint_cu_goffset,
                     is_info, srcfiles, srcfilescount,
                     inner_offset_array, inner_offset_count,
@@ -2012,17 +2014,17 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
             EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
             dwarf_dealloc_die(child);
+            child = 0;
             /*  Unwind DIE_STACK one level to get
                 back to our sibling list to process the
                 next sibling at our level. */
             die_stack_indent_level--;
-            if (pdacres == DW_DLV_ERROR) {
+            if (pdacires == DW_DLV_ERROR) {
                 if (in_die != in_die_in) {
                     dwarf_dealloc_die(in_die);
                 }
-                return pdacres;
+                return pdacires;
             }
-            child = 0;
         } /* End processing child */
         if (glflags.gf_display_children_tree &&
             (glflags.gf_info_flag || glflags.gf_types_flag) &&
@@ -2035,22 +2037,22 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         dwarf_dealloc_die(child);
         child = 0;
         /*  Find the next sibling or get DW_DLV_NO_ENTRY */
-        cdres = dwarf_siblingof_b(dbg, in_die,is_info,
+        siblingres = dwarf_siblingof_b(dbg, in_die,is_info,
             &sibling, err);
-        if (cdres == DW_DLV_ERROR) {
+        if (siblingres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "ERROR: dwarf_siblingof fails"
                 " tracing siblings of a DIE.",
-                cdres, *err);
+                siblingres, *err);
             if (in_die != in_die_in) {
                 dwarf_dealloc_die(in_die);
             }
-            return cdres;
+            return siblingres;
         }
         /*  If we have a sibling, verify that its offset
             is next to the last processed DIE;
             An incorrect sibling chain is a nasty bug.  */
-        if (cdres == DW_DLV_OK && sibling &&
+        if (siblingres == DW_DLV_OK && sibling &&
             glflags.gf_check_di_gaps &&
             checking_this_compiler()) {
 
@@ -2091,12 +2093,12 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             dwarf_dealloc_die(in_die);
             in_die = 0;
         }
-        if (cdres == DW_DLV_OK) {
+        if (siblingres == DW_DLV_OK) {
             /*  Set to process the sibling, loop again. */
             in_die = sibling;
             sibling = 0;
         } else {
-            /* ASSERT: cdres is DW_DLV_NO_ENTRY  */
+            /* ASSERT: siblingres is DW_DLV_NO_ENTRY  */
             sibling = 0;
             in_die = 0;
             /*  We are done, no more siblings at this level. */
