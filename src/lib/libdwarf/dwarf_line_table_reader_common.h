@@ -130,7 +130,7 @@ read_uword_de(Dwarf_Small **lp,
 static void
 IssueExpError(Dwarf_Debug dbg,
     Dwarf_Error *err,
-    const char * msg, 
+    const char * msg,
     Dwarf_Unsigned val)
 {
     dwarfstring m;
@@ -139,10 +139,9 @@ IssueExpError(Dwarf_Debug dbg,
     dwarfstring_constructor_static(&m, buf,sizeof(buf));
     dwarfstring_append(&m , "ERROR: ");
     dwarfstring_append(&m ,(char *)msg);
-    dwarfstring_append_printf_u(&m , " Bad value: 0x%x",
-        val);
+    dwarfstring_append_printf_u(&m , " Bad value: 0x%x", val);
     _dwarf_error_string(dbg, err, DW_DLE_LINE_TABLE_BAD,
-            dwarfstring_string(&m));
+        dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
 
@@ -1076,9 +1075,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         if (subprog_format_count > total_length) {
             IssueExpError(dbg,err,
-                 "Subprog format count Count too "
-                 "large to be real",
-                 subprog_format_count);
+                "Subprog format count Count too "
+                "large to be real",
+                subprog_format_count);
             free(subprog_entry_types);
             return DW_DLV_ERROR;
         }

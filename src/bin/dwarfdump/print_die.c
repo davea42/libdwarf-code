@@ -1833,7 +1833,7 @@ dd_check_die_abbrevs(Dwarf_Debug dbg, Dwarf_Die in_die,
     return DW_DLV_OK;
 }
 
-static int 
+static int
 dwarf_check_child_offset(Dwarf_Debug dbg,
     Dwarf_Die child,
     Dwarf_Error *err)
@@ -1907,14 +1907,13 @@ dd_validate_die_sibling(Dwarf_Debug dbg, Dwarf_Die sibling)
     }
     if (dwarf_validate_die_sibling(sibling,&glb_off) ==
         DW_DLV_ERROR) {
-        Dwarf_Off sib_off;
+        Dwarf_Off    sib_off;
         struct esb_s msg;
-        Dwarf_Error err = 0;
+        Dwarf_Error  err = 0;
         int          dores = 0;
 
         esb_constructor(&msg);
         dores = dwarf_dieoffset(sibling,&sib_off,&err);
-      
         if (dores == DW_DLV_OK) {
             esb_append_printf_u(&msg,
                 "GSIB = 0x%" DW_PR_XZEROS  DW_PR_DUx,
@@ -2034,7 +2033,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         /* child first: we are doing depth-first walk */
         if (childres == DW_DLV_OK) {
             int chkoffres = 0;
- 
+
             chkoffres = dwarf_check_child_offset(dbg,child,
                 err);
             if (chkoffres == DW_DLV_ERROR) {
