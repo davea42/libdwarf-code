@@ -83,7 +83,7 @@ jobs:
         usesh: true
         sync:  rsync
         copyback: false
-        prepare: pkg install -y python3 bash cmake ninja libtool pkgconf python3 gmake binutils lzlib
+        prepare: pkg install -y python3 bash cmake ninja libtool pkgconf gmake binutils lzlib
         run: |
           mkdir builddir && cd builddir
           cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
@@ -101,7 +101,7 @@ jobs:
         usesh: true
         sync:  rsync
         copyback: false
-        prepare: pkg install -y python3 bash meson ninja pkgconf python3 gmake binutils lzlib
+        prepare: pkg install -y python3 bash meson ninja pkgconf gmake binutils lzlib
         run: |
           mkdir build && cd build
           meson . ..  -Ddwarfexample=true
