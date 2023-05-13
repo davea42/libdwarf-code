@@ -1,3 +1,228 @@
+2023-05-13:  David Anderson
+    commit d24fe012b997e54638adea9ed2ce8747e0aeeda3
+
+    More refactoring print_die_and_children_internal().
+    The function traverses the DIE tree and is reduced
+    from ~300 to ~200 lines so the loop and recursion
+    are more understandable.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-05-12:  David Anderson
+    commit 334b0ca480c703cf1ae454bb1c421dfd37744b1a
+
+    Changing a select few local variables to
+    have more meaningful names, names not
+    easily confused with one another.
+    Im  print_die_and_children_internal()
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-05-12:  David Anderson
+    commit 74832091748da62e5973025a903c139ac2cba74d
+
+    Updated doxygen comments for
+    dwarf_validate_die_sibling() slightly.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-05-12:  David Anderson
+    commit 71b025de461274a7841118005a653b6b26c1b611
+
+     Refactor print_die_and_children_internal() as
+        the function is too long to be readily
+        understood. It's still too long though.
+            modified:   print_die.c
+
+2023-05-12:  David Anderson
+    commit 2624bea19ba106452d6880a32d772247d30afe8f
+
+    Refactor print_die_and_children_internal() as
+    the function is too long to be readily
+    understood. It's still too long though.
+            modified:   print_die.c
+
+2023-05-11:  David Anderson
+    commit 9dbf454b117a05591af0b8c7ac7db176aed2093a
+
+    Latest version
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-10:  David Anderson
+    commit 618980baf126e97c548018a2ce358a5d10a9f42e
+
+    Everywhere appropriate in local headers, updating copyright to 2023.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_abbrev.h
+            modified:   src/lib/libdwarf/dwarf_alloc.h
+            modified:   src/lib/libdwarf/dwarf_arange.h
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+            modified:   src/lib/libdwarf/dwarf_debugaddr.h
+            modified:   src/lib/libdwarf/dwarf_debuglink.h
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+            modified:   src/lib/libdwarf/dwarf_die_deliv.h
+            modified:   src/lib/libdwarf/dwarf_dsc.h
+            modified:   src/lib/libdwarf/dwarf_elf_access.h
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+            modified:   src/lib/libdwarf/dwarf_elf_rel_detector.h
+            modified:   src/lib/libdwarf/dwarf_elfstructs.h
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_error.h
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_gdbindex.h
+            modified:   src/lib/libdwarf/dwarf_global.h
+            modified:   src/lib/libdwarf/dwarf_gnu_index.h
+            modified:   src/lib/libdwarf/dwarf_harmless.h
+            modified:   src/lib/libdwarf/dwarf_line.h
+            modified:   src/lib/libdwarf/dwarf_loc.h
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+            modified:   src/lib/libdwarf/dwarf_macro5.h
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.h
+            modified:   src/lib/libdwarf/dwarf_object_read_common.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_pe_descr.h
+            modified:   src/lib/libdwarf/dwarf_peread.h
+            modified:   src/lib/libdwarf/dwarf_reading.h
+            modified:   src/lib/libdwarf/dwarf_rnglists.h
+            modified:   src/lib/libdwarf/dwarf_safe_strcpy.h
+            modified:   src/lib/libdwarf/dwarf_str_offsets.h
+            modified:   src/lib/libdwarf/dwarf_string.h
+            modified:   src/lib/libdwarf/dwarf_tied_decls.h
+            modified:   src/lib/libdwarf/dwarf_tsearch.h
+            modified:   src/lib/libdwarf/dwarf_util.h
+            modified:   src/lib/libdwarf/dwarf_xu_index.h
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+2023-05-10:  David Anderson
+    commit 87dd57f28467d4ccdb143c4ebb26fda9a4a41cfb
+
+    Documenting the fix to DW202305-002, oss fuzz58797
+            modified:   bugxml/data.txt
+
+2023-05-10:  David Anderson
+    commit eeb935200f78b8509e6b1837f6825b9d551b9f7d
+
+    Fixing DW202305-002, oss-fuzz 58797,
+    the Yesterday's fix was incomplete.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-05-10:  David Anderson
+    commit a8745ec7679fcf641f34e79c02a90950f1f98586
+
+    Changed yesterday. Up to date.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-09:  David Anderson
+    commit 8ef9846dbb0cde913f14cc20b6a44095fb88956c
+
+    Now with gitfixid for oss-fuzz issue 58769, DW202305-001
+            modified:   bugxml/data.txt
+
+2023-05-09:  David Anderson
+    commit 8337c03894048eb91061a4ae4e0f82ec7492b930
+
+    Added gitfixid for oss-fuzz issue 58769, DW202305-001
+            modified:   bugxml/data.txt
+
+2023-05-09:  David Anderson
+    commit edc241bd0bf22c94d2d496f3cb761e60f066cd14
+
+    Describing oss-fuzz issue 58769, DW202305-001
+            modified:   bugxml/data.txt
+
+    Small rearangement of dwarf_elf* headers.
+    New function IssueExpError()
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Detecting corrupt data relevant to  oss-fuzz issue 58769, DW202305-001
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-05-09:  David Anderson
+    commit c3832862d3d64c7134e7b9570a6e2c6abbec375d
+
+    For msys2 autotools, restore make distcheck
+            modified:   test.yml
+
+2023-05-09:  David Anderson
+    commit 9811823aa74d91d04630ae7a7aab7e527278f084
+
+    Restore the make distcheck
+            modified:   msys2_autotools.yml
+
+2023-05-09:  David Anderson
+    commit 4711f6d6fb2d220f55608ce615d9571ec7269264
+
+    Add a rm -f of something created
+    by Windows msys2 named test_setupsections.exe.manifest
+            modified:   test/Makefile.am
+
+2023-05-08:  David Anderson
+    commit f3b9197e7bb0d00592d0d75065afcc2b0875a8ad
+
+    Small change to msys2 autotools invocation to avoid a new warning
+            modified:   ../../configure.ac
+
+2023-05-08:  David Anderson
+    commit c952fc6bdb23f2835bd5a4d9747ed2b5518a05ee
+
+    Testing a change.
+            modified:   .github/workflows/msys2_autotools.yml
+
+2023-05-06:  David Anderson
+    commit c80b10bbcd42a1a7e6bf656b2a3850e7d6c10d65
+
+    comment out msys2 autotools while
+    we figure out whay test/test_setupsections.exe.manifest
+    is left after distclean.
+            modified:   test.yml
+
+2023-05-06:  David Anderson
+    commit 863e4a15cec5083714aff4ff109ccb90b165a2ba
+
+    For testing outside of the ci do-all test.
+
+            new file:   .github/workflows/msys2_autotools.yml
+
+    rm -f a couple temp files to be sure removed.
+            modified:   test/test_debuglink-a.sh
+    rm -f a couple temp files to be sure removed.
+            modified:   test/test_debuglink-b.sh
+
+2023-05-06:  David Anderson
+    commit 2efdc4fe1f79edb2edf7e98d2736ff50a997af46
+
+    Toward msys2 build in workflow
+            modified:   test/Makefile.am
+
+2023-05-06:  David Anderson
+    commit a0661718cc633dfaf15c58df7ec5c9c96ebbb836
+
+    Issues with the Makefile , hopefully all fixed.
+            modified:   test/Makefile.am
+
+2023-05-06:  David Anderson
+    commit b7bef5a3dd3389def940b8093bc974913620485c
+
+    Added a .h in safestrcpy rule
+            modified:   test/Makefile.am
+
+2023-05-06:  David Anderson
+    commit f7da67867e77ab767920ec1ec98d32ee055ff70d
+
+    Now with a better explanation of why we split out
+    dwarf_setup_sections.[ch]
+            modified:   ChangeLog
+
+2023-05-06:  David Anderson
+    commit 4b2691baaeb2c98d733d887fa59b6b9ea2ab0314
+
+    Updates from git log
+            modified:   ChangeLog
+
 2023-05-06:  David Anderson
     commit a61867ee941ccfb5013e657b5c4a1f833bdeef47
 
