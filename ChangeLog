@@ -1,4 +1,16 @@
 2023-05-13:  David Anderson
+    commit 53990846344a2e52df65481cd7405bf7e46aedea
+
+    Compiler found an unused local variable. Now removed.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-05-13:  David Anderson
+    commit d90f42ee6288997095b3bb041ed5f1c3675354b9
+
+    Brings ChangeLog up to date.
+            modified:   ChangeLog
+
+2023-05-13:  David Anderson
     commit d24fe012b997e54638adea9ed2ce8747e0aeeda3
 
     More refactoring print_die_and_children_internal().
