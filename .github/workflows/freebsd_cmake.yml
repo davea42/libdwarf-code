@@ -1,4 +1,4 @@
-name: ci_mac_meson
+name: freebsd_cmake
 
 on:
   workflow_dispatch:
