@@ -1842,7 +1842,6 @@ dwarf_check_child_offset(Dwarf_Debug dbg,
         <= the parent DW_AT_sibling global-offset-value
         then the compiler has made a mistake, and
         the DIE tree is corrupt.  */
-    int       pdacires = 0;
     int       childoffres = 0;
     Dwarf_Off child_overall_offset = 0;
 
