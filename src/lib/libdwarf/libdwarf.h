@@ -2227,13 +2227,25 @@ DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
 DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     Dwarf_Half * dw_ab_has_child);
 
-/*!  @brief Validate a sibling DIE.
+/*! @brief Validate a sibling DIE.
 
     This is used by dwarfdump (when
-    dwarfdump is checking for valid DWARF but
-    it depends on the caller to have done
-    precise setup. Ignore it or read the comments
-    for this function in dwarf_die_deliv.c.
+    dwarfdump is checking for valid DWARF)
+    to try to catch a corrupt DIE tree.
+
+    @see example_sibvalid
+
+    @param dw_sibling
+    Pass in a DIE returned by dwarf_siblingof_b().
+    @param dw_offset
+    Set to zero through the pointer.
+    @return
+    Returns DW_DLV_OK if the sibling is
+    at an appropriate place in the section. 
+    Otherwise it returns DW_DLV_ERROR indicating
+    the DIE tree is corrupt.
+
+
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     Dwarf_Off* dw_offset);

@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-04-27 v0.7.0
+    @date 2023-05-20 v0.7.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -907,6 +907,8 @@
 
     <b>Changes 0.6.0 to 0.7.0</b>
 
+    v0.7.0 released 2023-05-20 
+
     Elf section counts can exceed 16 bits 
     (on linux see <b>man 5 elf</b>)
     so some function prototype members 
@@ -919,7 +921,10 @@
     instead of Dwarf_Half.
     Without this change executables/objects
     with more than 64K sections cannot
-    be read by libdwarf.
+    be read by libdwarf.  This is unlikely
+    to affect your code since for most users
+    libdwarf takes care of this and dwarfdump
+    is aware of this change.
 
     Two functions have been removed from libdwarf.h
     and the library: dwarf_dnames_abbrev_by_code()
