@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2023</p>
-<p> Record count: 142 </p>
+<p> Record count: 143 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4957,6 +4957,38 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontest/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
 </p>
 <p>gitfixid: eeb935200f78b8509e6b1837f6825b9d551b9f7d
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-003">143) DW202305-003</h3>
+<p>id: DW202305-003
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59091
+</p>
+<p>datereported: 2023-05-19
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Incorrect section bound check
+</p>
+<p>product: libdwarf
+</p>
+<p>description:   A fuzzed line table in the non-standard
+  (experimental) two-level line table format
+  exposed a failure as the test was v &gt; sectionend
+  whereas it has to be v &gt;= sectionend as end pointers
+  are always one-past the end of the area.
+  This was incorrect since the experimental table support
+  was added in 2021.
+</p>
+<p>datefixed: 2023-05-19
+</p>
+<p>references:  regressiontest/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
+</p>
+<p>gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5
 </p>
 <p>tarrelease: 
 </p>

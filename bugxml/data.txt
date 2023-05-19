@@ -1,4 +1,22 @@
-
+id: DW202305-003
+cve:
+fuzzer: ossfuzz id: 59091
+datereported: 2023-05-19
+reportedby: David Korczynski
+vulnerability: Incorrect section bound check
+product: libdwarf
+description:  A fuzzed line table in the non-standard
+  (experimental) two-level line table format 
+  exposed a failure as the test was v > sectionend
+  whereas it has to be v >= sectionend as end pointers
+  are always one-past the end of the area.
+  This was incorrect since the experimental table support
+  was added in 2021.
+datefixed: 2023-05-19
+references: regressiontest/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
+gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
+tarrelease:
+endrec: DW202305-003
 
 id: DW202305-002
 cve:

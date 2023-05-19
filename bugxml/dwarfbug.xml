@@ -3,6 +3,39 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 59091</fuzzer>
+
+<datereported>2023-05-19</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Incorrect section bound check
+</vulnerability>
+
+<description>  A fuzzed line table in the non-standard
+  (experimental) two-level line table format
+  exposed a failure as the test was v &gt; sectionend
+  whereas it has to be v &gt;= sectionend as end pointers
+  are always one-past the end of the area.
+  This was incorrect since the experimental table support
+  was added in 2021.
+</description>
+
+<datefixed>2023-05-19</datefixed>
+
+<references> regressiontest/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
+</references>
+
+<gitfixid>4017ab8b92195641e6876b388cebe2d3307634f5</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 58797</fuzzer>
 
 <datereported>2023-05-10</datereported>
