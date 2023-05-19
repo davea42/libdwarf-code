@@ -234,7 +234,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     line_context->lc_section_offset = starting_line_ptr -
         dbg->de_debug_line.dss_data;
     /*  ASSERT: line_context->lc_length_field_length == line_ptr
-        -line_context->lc_line_ptr_start; */
+        -line_context->lc_line_ptr_start; 
+        The following test allows the == case too
+        as that is normal for the last CUs line table. */
     if (line_ptr_end > section_end) {
         dwarfstring m;
 
@@ -531,6 +533,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else {
         /* No old style directory entries. */
     }
+    /* Later tests will deal with the == case as required. */
     if (line_ptr > line_ptr_end) {
         _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
         return DW_DLV_ERROR;
@@ -621,6 +624,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else {
         /* No old style filenames entries. */
     }
+    /* Later tests will deal with the == case as required. */
     if (line_ptr > line_ptr_end) {
         _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
         return DW_DLV_ERROR;
@@ -654,6 +658,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             line_ptr, local_length_size,err,line_ptr_end);
         line_context->lc_actuals_table_offset = actuals_table_offset;
         line_ptr += local_length_size;
+        /* Later tests will deal with the == case as required. */
         if (line_ptr > line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
             return DW_DLV_ERROR;
@@ -786,6 +791,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     return DW_DLV_ERROR;
                 }
             }
+            /* Later tests will deal with the == case as required. */
             if (line_ptr > line_ptr_end) {
                 free(format_values);
                 format_values = 0;
@@ -1060,7 +1066,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned j = 0;
         int dres = 0;
 
-        if (line_ptr > line_ptr_end) {
+        /*  line_ptr_end is *after* the valid area */
+        if (line_ptr >= line_ptr_end) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
             return DW_DLV_ERROR;
         }
