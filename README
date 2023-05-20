@@ -9,9 +9,9 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
-Version 0.7.0 Released 20 May      2023
-Version 0.6.0 Released 20 February 2023
-Version 0.5.0 Released 22 November 2022.
+    Version 0.7.0 Released 20 May      2023
+    Version 0.6.0 Released 20 February 2023
+    Version 0.5.0 Released 22 November 2022.
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
