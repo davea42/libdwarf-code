@@ -15,7 +15,7 @@ description:  A fuzzed line table in the non-standard
 datefixed: 2023-05-19
 references: regressiontest/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
 gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-003
 
 id: DW202305-002
@@ -37,7 +37,7 @@ description:  A fuzzed line table in the non-standard
 datefixed: 2023-05-10
 references: regressiontest/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
 gitfixid: eeb935200f78b8509e6b1837f6825b9d551b9f7d
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-002
 
 
@@ -60,7 +60,7 @@ description:  A fuzzed line table in the non-standard
 datefixed: 2023-05-09
 references: regressiontest/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
 gitfixid: edc241bd0bf22c94d2d496f3cb761e60f066cd14
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-001
 
 id: DW202304-004
@@ -83,7 +83,7 @@ description: On reading a corrupt frame register number
 datefixed: 2023-04-15
 references: regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
 gitfixid: 27e06267b2931cdfbbaf46492f88a3f9040abb20
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202304-004
 
 
@@ -107,7 +107,7 @@ description:  Crash in libdwarf on reading
 datefixed: 2023-04-11
 references: regressiontests/ossfuzz57887/fuzz_die_cu-4866423964172288
 gitfixid: 1729d9af3f690bece912ae0f625b312566d0ae25
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202304-003
 
 id: DW202304-002
@@ -126,7 +126,7 @@ description:  Crash in libdwarf on reading an attribute
 datefixed: 2023-04-09
 references: regressiontests/ossfuzz57766/fuzz_die_cu_print-5295062170075136
 gitfixid: 761da806fc950c6b26c1763e8989a814e9b16a59  
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202304-002
 
 id: DW202304-001
@@ -149,7 +149,7 @@ description:  Crash in libdwarf on dwarf_srcfiles() call.
 datefixed: 2023-04-06
 references: regressiontests/ossfuzz57711/fuzz_srcfiles-4695324781576192
 gitfixid: da0d1efbeddcff23c25704bd9672e98314928b19
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202304-001
 
 
@@ -170,7 +170,7 @@ description:  Caller looping on dwarf_siblingof_b()
 datefixed: 2023-04-01
 references: regressiontests/ossfuzz57562/fuzz_findfuncbypc-6681114772373504
 gitfixid: 21b076f652992c03f145f6edeb623918e17693f8
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-059
 
 id: DW202303-058
@@ -189,7 +189,7 @@ description: A line table header truncated by a fuzzer
 datefixed: 2023-03-30
 references: regressiontests/ossfuzz57527/fuzz_srcfiles-4599045397282816
 gitfixid: 36e4063ade31c9ea6ea5df973d2045b36877885b
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-058
 
 id: DW202303-057
@@ -211,7 +211,7 @@ description: A section 2GB+ in size could not be
 datefixed: 2023-03-28
 references: 
 gitfixid: 8bf96199a0e130483cceca6bfacfbe4127441ab1
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-057
 
 
@@ -238,7 +238,7 @@ description: With a corrupted attribute
 datefixed: 2023-03-29
 references: regressiontests/ossfuzz57516/fuzz_die_cu_attrs-6171488289161216
 gitfixid: 5dc3de5ce70331692a2700b218fb79e0d4d81c23
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-056
 
 id: DW202303-055
@@ -254,7 +254,7 @@ description: Abort in fuzz_die_cu_attrs.c
 datefixed: 2023-03-28
 references: regressiontests/ossfuzz57485/
 gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-055
 
 
@@ -271,7 +271,7 @@ description: The fault was in test code.
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57463/fuzz_die_cu_attrs-5158380196200448
 gitfixid: e4053c9a0f25db0bed28372d9b77a50a0307dc10
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-054
 
 id: DW202303-053
@@ -289,7 +289,7 @@ description: The same bug seen earlier
 datefixed: 2023-03-28
 references: regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
 gitfixid: 25a14c3fd5522aff0b1d2a77d7ee66b7c529779
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-053
 
 
@@ -309,7 +309,7 @@ description: Corrupt .debug_rngslists leads to crash
 datefixed: 2023-03-28
 references: regressiontests/ossfuzz57442/fuzz_rng-5974595378479104
 gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810 
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-052
 
 
@@ -329,7 +329,7 @@ description: In a specific error case
 datefixed: 2023-03-28 
 references: regressiontests/ossfuzz57437/fuzz_srcfiles-5281689109921792
 gitfixid: c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-051
 
 id: DW202303-050
@@ -347,7 +347,7 @@ description: The test source violates libdwarf requirements.
 datefixed: 3023-03-28
 references: regressiontests/ossfuzz57429/fuzz_die_cu_attrs-4845537731149824 
 gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704 
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-050
 
 id: DW202303-049
@@ -366,7 +366,7 @@ description: involves find_sig8_target_as_global_offset()
 datefixed: 2023-03-26
 references: regressiontests/ossfuzz57408/fuzz_die_cu-4702098356043776
 gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-049
 
 
@@ -388,7 +388,7 @@ description: The  command:
 datefixed: 2023-03-24
 references: regressiontests/choi015/poc_file_03
 gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-048
 
 id: DW202303-047
@@ -409,7 +409,7 @@ description: The  command:
 datefixed: 2023-03-24
 references: regressiontests/choi015/poc_file_04
 gitfixid: df64db4740f1b480e602b1112107d51f0d269828
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-047
 
 
@@ -429,7 +429,7 @@ description: The  command:
 datefixed: 2023-03-26
 references:  regressiontests/choi012/poc_file_10
 gitfixid: 9eac0c8bbae3fadb2be3d5ee15b9c44f42d2f966
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-046
 
 
@@ -453,7 +453,7 @@ description: The  command:
 datefixed: 2023-03-25
 references:  regressiontests/baselines/choi014.base
 gitfixid: bb8fab9e5e4e40b1268b31d90882c2ab93653eaf
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-045
 
 
@@ -477,7 +477,7 @@ description: The  command:
 datefixed: 2023-03-25
 references:  regressiontests/baselines/choi013.base
 gitfixid: 3269f43d2a044bfcce71d30ce214a305473d1ea3
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-044
 
 id: DW202303-043
@@ -495,7 +495,7 @@ description: The  command:
 datefixed: 2023-03-25
 references:  refressiontests/choi012/poc_file_08
 gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-043
  
 id: DW202303-042
@@ -516,7 +516,7 @@ description: The  command:
 datefixed: 2023-03-25
 references:  refressiontests/choi012/poc_file_07
 gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-042
 
 id: DW202303-041
@@ -533,7 +533,7 @@ description: The  command:
 datefixed: 2023-03-25
 references:  refressiontests/choi012/poc_file_06
 gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-041
 
 id: DW202303-040
@@ -552,7 +552,7 @@ description: The  command: dwarfdump --file-abi=
 datefixed: 2023-03-25
 references:  refressiontests/choi011/README
 gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-040
 
 id: DW202303-039
@@ -576,7 +576,7 @@ description: Reading a DWARF compilation unit header
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56480/fuzz_die_cu_print-5264022485467136
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-039
 
 id: DW202303-038
@@ -595,7 +595,7 @@ description: Passing a null dw_return_bool pointer dereferenced
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57335/fuzz_die_cu_attrs-6235345560928256.fuzz
 gitfixid: e4053c9a0f25db0bed28372d9b77a50a0307dc10
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-038
 
 id: DW202303-037
@@ -611,7 +611,7 @@ description: Another case of the infinite loop
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
 gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-037
 
 id: DW202303-036
@@ -630,7 +630,7 @@ description: Another case of the infinite loop
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
 gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-036
 
 id: DW202303-035
@@ -646,7 +646,7 @@ description: Another case of the infinite loop
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57292/fuzz_die_cu_print-5412313393135616
 gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78 
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-035
 
 
@@ -670,7 +670,7 @@ description: The infinite loop reading a fuzzed object file
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57193/fuzz_die_cu_offset-5215024489824256
 gitfixid:  7165918c8594061c3f5ba7dd4df7c4555c68ec78
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-034
 
 id: DW202303-033
@@ -690,7 +690,7 @@ description: Infinite loop till out of memory
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57149/fuzz_srcfiles-6213793811398656
 gitfixid:  7165918c8594061c3f5ba7dd4df7c4555c68ec78
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-033
 
 
@@ -713,7 +713,7 @@ description: The infinite loop reading a fuzzed object file
 datefixed: 2023-03-23
 references: regressiontests/ossfuzz57107/fuzz_die_cu_attrs_loclist-4991396240293888
 gitfixid:  0c92ef5b66c5bbcacae03fbf355b12713151c098
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-032
 
 id: DW202303-031
@@ -732,7 +732,7 @@ description: Calling dwarf_next_cu_header_d() on a corrupted
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz57048/fuzz_findfuncbypc-4647942385696768
 gitfixid:  774f98e596df9dd8f3cb92ec76243caaa4287039
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-031
 
 id: DW202303-030
@@ -751,7 +751,7 @@ description: Calling dwarf_next_cu_header_d() on a corrupted
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz57027/fuzz_stack_frame_access-5123569972805632
 gitfixid:  774f98e596df9dd8f3cb92ec76243caaa4287039
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-030
 
 id: DW202303-029
@@ -769,7 +769,7 @@ description: Calling dwarf_get_macro_context on a particular
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz56993/fuzz_macro_dwarf5-5770464300761088
 gitfixid: 5fde5e404a98c6727889cf14d8f93ec2138a6fa
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-029
 
 id: DW202303-028
@@ -785,7 +785,7 @@ description: Failing to check for error conditions
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz56958/fuzz_stack_frame_access-6097292873826304
 gitfixid: b9393bb9b6399a34f8616a272d030bdd004a5ef5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-028
 
 
@@ -801,7 +801,7 @@ description:  Calling dwarf_get_rnglist_rle() on a corrupted
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz56906/fuzz_rng-6031783801257984.fuzz
 gitfixid: b9393bb9b6399a34f8616a272d030bdd004a5ef5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-027
 
 id: DW202303-026
@@ -818,7 +818,7 @@ description: dwarf_get_rnglist_offset_index_value() could fail
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz56897/fuzz_rng-5105415777288192
 gitfixid:  b9393bb9b6399a34f8616a272d030bdd004a5ef5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-026
 
 
@@ -838,7 +838,7 @@ description: Calling dwarf_next_cu_header_d() on the fuzzed test
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz56895/fuzz_macro_dwarf5-5080340952907776
 gitfixid:  771cfcca1ef6a4a7eb9595d700fc72020d0ed72e 
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-025
 
 id: DW202303-024
@@ -856,7 +856,7 @@ description: The fuzzed test object file resulted
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz56807/fuzz_srcfiles-4626047380619264
 gitfixid: 484f50ef8be0506be2e4b5fbad489868db5c7985
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-024
 
 
@@ -879,7 +879,7 @@ description: The fuzz_dnames.c testcase build failed.
 datefixed: 2023-03-20
 references: 
 gitfixid: 2eced75af9903ab778c3b237ec7be3ddc93ea6ec
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-023
 
 id: DW202303-022
@@ -895,7 +895,7 @@ description: The leak was due to the test driver fuzz/fuzz_rng.c
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56497/
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-022
 
 id: DW202303-021
@@ -911,7 +911,7 @@ description: The leak was due to the test driver fuzz/fuzz_rng.c
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56487/clusterfuzz-testcase-fuzz_rng-6655451078197248
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-021
 
 
@@ -931,7 +931,7 @@ description: The overflow encountered when
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56458/fuzz_findfuncbypc-5073632331431936
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-020
 
 id: DW202303-019
@@ -947,7 +947,7 @@ description: The overflow was in dwarf_get_version_of_die()
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56454/
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-019
 
 
@@ -966,7 +966,7 @@ description: A memory leak in _dwarf_read_line_table()
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56807fuzz_srcfiles-4626047380619264
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-018
 
 id: DW202303-017
@@ -982,7 +982,7 @@ description: Stack buffer overflow in dwarf_dietype_offset.
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56450/fuzz_die_cu_attrs-4953133005799424
 gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-017
 
 id: DW202303-016
@@ -999,7 +999,7 @@ description: A heap buffer overflow reading
 datefixed: 2023-03-12 
 references: regressiontests/ossfuzz56476/fuzz_rng-5008229349588992/
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-016
 
 id: DW202303-015
@@ -1016,7 +1016,7 @@ description: A heap buffer overflow reading
 datefixed: 2023-03-12 
 references: regressiontests/ossfuzz56489/fuzz_srcfiles-5091530466787328
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-015
 
 id: DW202303-014
@@ -1033,7 +1033,7 @@ description: A heap buffer overflow reading
 datefixed: 2023-03-12 
 references: regressiontests/ossfuzz56478/fuzz_rng-5030515398017024
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-014
 
 id: DW202303-013
@@ -1050,7 +1050,7 @@ description: A heap buffer overflow reading
 datefixed: 2023-03-12 
 references: regressiontests/ossfuzz56460/fuzz_str_offsets-5376904040677376-5240324382654464
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-013
 
 id: DW202303-012
@@ -1068,7 +1068,7 @@ description: A heap buffer overflow reading
 datefixed: 2023-03-14
 references: regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-012
 
 id: DW202303-011
@@ -1087,7 +1087,7 @@ description: A null pointer dereference in
 datefixed: 2023-03-07
 references: regressiontests/ossfuzz56453 
 gitfixid: 86671059c1c240ae56433fa94993dcd28df2ae7d
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-011
 
 id: DW202303-010
@@ -1107,7 +1107,7 @@ description: A wholly corrupted speically constructed
 datefixed: 2023-03-25
 references: regressiontests/choi010/poc_file
 gitfixid: cb8dd45770f2e1f440aab60adac0256f268fc16e
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-010
 
 id: DW202303-009
@@ -1126,7 +1126,7 @@ description: With any one of a small set of corrupted data
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
 gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-009
 
 
@@ -1146,7 +1146,7 @@ description: With a particular data corruption
 datefixed: 2023-03-02
 references: ossfuzz56530/fuzz_findfuncbypc-6272642689925120
 gitfixid: 948352178dc791796ed574a961191844d8322493
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-008
 
 id: DW202303-007
@@ -1161,7 +1161,7 @@ description: We were not checking .debug macro data for a
 datefixed: 2023-03-08
 references: regressiontests/ossfuzz56735/fuzz_macro_dwarf5-6718585377783808
 gitfixid: bb99fe7ddb2bc6601bcb0ee30ced6a8cc8cb0564
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-007
 
 id: DW202303-006
@@ -1179,7 +1179,7 @@ description:  The logic was wrong in a couple places (fixed now)
 datefixed: 2023-03-14
 references: regressiontests/ossfuzz56456/fuzz_gdbindex-5240324382654464
 gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-006
 
 
@@ -1196,7 +1196,7 @@ description:  A call to dwarf_expand_frame_instructions()
 datefixed: 2023-03-14
 references: regressiontests/ossfuzz56676/fuzz_set_frame_all-5081006119190528.fuzz
 gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
-tarrelease: 
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-005
 
 id: DW202303-004
@@ -1212,7 +1212,7 @@ description: A corrupted .debug_gnu_index header was not
 datefixed: 2023-03-08
 references: regressiontests/ossfuzz56666/fuzz_gnu_index-4803574417981440
 gitfixid: 64eaaa58703258cab02896e798664a1bb11a3d5c
-tarrelease: 
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-004
 
 id: DW202303-003
@@ -1230,7 +1230,7 @@ description: A corrupted .debug_addr header was not
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56636/fuzz_debug_addr_access-4801779658522624.fuzz
 gitfixid: a3ab3f16ab67f4d976561fe0d863e1ed8b71f3c6 
-tarrelease: 
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-003
 
 id: DW202303-002
@@ -1249,7 +1249,7 @@ description: With any one of a small set of corrupted data
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56548/fuzz_findfuncbypc-5073632331431936
 gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
-tarrelease: 
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-002
 
 id: DW202303-001
@@ -1266,7 +1266,7 @@ description: With a particular data corruption
 datefixed: 2023-03-02
 references: regressiontests/ossfuzz56465/fuzz_die_cu_offset-5866690199289856
 gitfixid: 948352178dc791796ed574a961191844d8322493
-tarrelease: 
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-001
 
 id: DW202301-001
@@ -1737,7 +1737,7 @@ description: If a DWARF5 line table header has an invalid
 datefixed: 2020-10-28
 references: regressiontests/c-sun2/nullpointer
 gitfixid: faf99408e3f9f706fc3809dd400e831f989778d3 
-tarrelease:
+tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202010-003
 
 
@@ -1768,7 +1768,7 @@ description: An object file where the DIEs depth of
 datefixed: 2020-10-28
 references: regressiontests/c-sun2/globaloverflow
 gitfixid: a7fa8edd640b74daf8e7a442dcec96640875b4fb 
-tarrelease:
+tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202010-002
 
 id: DW202010-001
@@ -1795,7 +1795,7 @@ description: A carefully crafted object with an
 datefixed: 2020-10-17
 references: regressiontests/c-sun/poc
 gitfixid:  95f634808c01f1c61bbec56ed2395af997f397ea
-tarrelease: 
+tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202010-001
 
 id: DW201801-001
@@ -1835,7 +1835,7 @@ description: A carefully crafted object with an
 datefixed: 2017-12-01
 references: sarubbo-10/1.crashes.bin
 gitfixid: 329ea8e56bc9550260cae6e2e9756bfbe7e2ff6d 
-tarrelease:
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201712-001
 
 
@@ -1855,7 +1855,7 @@ description: An carefully crafted object with a
 datefixed: 2017-11-08
 references: regressiontests/sarubbo-9/3.crashes.bin
 gitfixid: a1644f4dde7dd5990537ff7ad22a9e94b8723186
-tarrelease:
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201711-002
 
 id: DW201711-001
@@ -1874,7 +1874,7 @@ description: A carefully crafted object with a
 datefixed: 2017-11-02
 references: regressiontests/sarubbo-8/1.crashes.bin
 gitfixid: 44349d7991e44dd3751794f76537cabcf65ee28d
-tarrelease:
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201711-001
 
 
@@ -1894,7 +1894,7 @@ description: A fuzzed object with a
 datefixed: 2017-09-26
 references: regressiontests/sarubbo-3/1.crashes.bin
 gitfixid: bcc2e33908e669bacd397e3c941ffd1db3005d17
-tarrelease:
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201709-001
 
 
@@ -1920,7 +1920,7 @@ description: A fuzzed object with a
 datefixed: 2017-07-06
 references: regressiontests/wolff/POC1 
 gitfixid: e91681e8841291f57386f26a90897fd1dcf92a6e
-tarrelease: 
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201706-001
 
 
@@ -1962,7 +1962,7 @@ description:  7/7. A heap overflow in
 datefixed: 2017-07-06
 references: regressiontests/marcel/crash7
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-007
 
 
@@ -2000,7 +2000,7 @@ description:  6/7. A heap overflow in
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash6
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-006
 
 
@@ -2040,7 +2040,7 @@ description:  5/7. A heap overflow in
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash5
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-005
 
 id: DW201703-004
@@ -2080,7 +2080,7 @@ description:  4/7. An apparent heap overflow that
 datefixed:
 references: regressiontests/marcel/crash4
 gitfixid:
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-004
 
 
@@ -2124,7 +2124,7 @@ description:  3/7. An apparent heap overflow that
 datefixed: 
 references: regressiontests/marcel/crash3
 gitfixid:
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-003
 
 
@@ -2166,7 +2166,7 @@ description:  2/7. In _dwarf_decode_s_leb128_chk()
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash2
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-002
 
 
@@ -2208,7 +2208,7 @@ description:  1/7. In dwarf_formsdata() a few
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash1 
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-001
 
 id: DW201611-008
@@ -2229,7 +2229,7 @@ description: This is a weakness in libelf checking.
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-b/00011-elfutils-memalloc-allocate_elf 
 gitfixid:
-tarrelease:
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201611-008
 
 id: DW201611-007
@@ -2251,7 +2251,7 @@ description: This is a weakness in libelf checking.
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-a/00031-elfutils-memalloc-__libelf_set_rawdata_wrlock
 gitfixid:
-tarrelease:
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201611-007
 
   
@@ -2308,7 +2308,7 @@ description: An object with corrupt contents causes a memory reference
 datefixed: 2016-11-16
 references: regressiontests/puzzor/heap_buf_overflow.o
 gitfixid: 5dd64de047cd5ec479fb11fe7ff2692fd819e5e5
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec:
 
 
@@ -2325,7 +2325,7 @@ description: With the right bit pattern in a signed leb number
 datefixed: 2016-11-11
 references: regressiontests/sarubbo-2/00050-libdwarf-negate-itself
 gitfixid: 4f19e1050cd8e9ddf2cb6caa061ff2fec4c9b5f9
-tarrelease: libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec:
 
 id: DW201611-004
@@ -2342,6 +2342,7 @@ description: If a non-terminated string
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00027-libdwarf-heapoverflow-_dwarf_skim_forms
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
+tarrelease: libdwarf-20180129.tar.gz
 endrec:
 
 id: DW201611-003
@@ -2357,7 +2358,7 @@ description:  in dwarf_arange.c(dwarf_get_aranges_list) an aranges
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00026-libdwarf-heapoverflow-dwarf_get_aranges_list
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: libdwarf-20170416.tar.gz
+tarrelease: libdwarf-20180129.tar.gz
 endrec:
 
 
