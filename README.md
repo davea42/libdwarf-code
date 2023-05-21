@@ -223,6 +223,25 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
+### Comparing libdwarf-0.7.0 to libdwarf-0.6.0
+struct Dwarf\_Obj\_Access\_Methods\_a\_s  changed
+for extended ELF so the library can handle section count values
+larger than 16bits.
+dwarf\_dnames\_abbrev\_by\_code() and 
+dwarf\_dnames\_abbrev\_form\_by\_index()
+were removed from the API, better alternatives
+already existed.
+
+### Comparing libdwarf-0.6.0 to libdwarf-0.5.0
+The dealloc required by dwarf\_offset\_list()
+was wrong, use dwarf\_dealloc(dbg, offsetlistptr, DW_DLA_UARRAY).
+The function dwarf\_dietype\_offset() has a revised
+argument list so it can work correctly with DWARF4.
+dwarf\_get\_pubtypes() and similar changed
+to eliminate messy code duplication.
+Fixed memory leaks and treatment of DW\_FORM\_strx3
+and DW\_FORM\_addrx3.
+
 ### Comparing libdwarf-0.5.0 to libdwarf-0.4.2
 dwarf\_get\_globals() is compatible but it now
 returns data from .debug\_names in addition
