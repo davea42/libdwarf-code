@@ -52,6 +52,9 @@
 2023-05-19:  David Anderson
     commit 4017ab8b92195641e6876b388cebe2d3307634f5
 
+    This is the final code change for
+    release libdwarf-0.7.0
+
     When the experimental two-level line table
     support was written one test for '> sectionend'
     was wrong, it needs to be '>= sectionend'.
