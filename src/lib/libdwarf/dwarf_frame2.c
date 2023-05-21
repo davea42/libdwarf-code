@@ -374,6 +374,11 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     if (frame_ptr == 0) {
         return DW_DLV_NO_ENTRY;
     }
+    res = _dwarf_validate_register_numbers(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+
 
     /*  We create the fde and cie arrays.
         Processing each CIE as we come

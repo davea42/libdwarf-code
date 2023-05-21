@@ -369,6 +369,9 @@ struct Dwarf_Fde_s {
 };
 
 int
+_dwarf_validate_register_numbers(Dwarf_Debug dbg,Dwarf_Error *error);
+
+int
 _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
     Dwarf_Off ** offsetlist,
     Dwarf_Signed * returncount,

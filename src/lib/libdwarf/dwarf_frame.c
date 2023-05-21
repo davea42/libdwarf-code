@@ -101,6 +101,71 @@ static void _dwarf_init_reg_rules_dw3(
     struct Dwarf_Regtable_Entry3_s *base,
     unsigned first, unsigned last,int initial_value);
 
+/*  The rules for register settings are described
+    in libdwarf.pdf and the html version.
+    (see Special Frame Registers).
+*/
+static int
+regerror(Dwarf_Debug dbg,Dwarf_Error *error,
+   int enumber, 
+   const char *msg)
+{
+    _dwarf_error_string(dbg,error,enumber,(char *)msg);
+    return DW_DLV_ERROR;
+}
+int
+_dwarf_validate_register_numbers(
+    Dwarf_Debug dbg,
+    Dwarf_Error *error)
+{
+    if (dbg->de_frame_same_value_number ==
+        dbg->de_frame_undefined_value_number) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "same_value == undefined_value");
+    }
+    if (dbg->de_frame_cfa_col_number ==
+        dbg->de_frame_same_value_number) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "same_value == cfa_column_number ");
+    }
+    if (dbg->de_frame_cfa_col_number ==
+        dbg->de_frame_undefined_value_number) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "undefined_value == cfa_column_number ");
+    }
+    if ((dbg->de_frame_rule_initial_value !=
+        dbg->de_frame_same_value_number) &&
+        (dbg->de_frame_rule_initial_value !=
+        dbg->de_frame_undefined_value_number)) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "initial_value not set to "
+            " same_value or undefined_value");
+    }
+    if (dbg->de_frame_undefined_value_number <=
+        dbg->de_frame_reg_rules_entry_count) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "undefined_value less than number of registers");
+    }
+    if (dbg->de_frame_same_value_number <=
+        dbg->de_frame_reg_rules_entry_count) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "same_value  <= number of registers");
+    }
+    if (dbg->de_frame_cfa_col_number <=
+        dbg->de_frame_reg_rules_entry_count) {
+        return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
+            "DW_DLE_DEBUGFRAME_ERROR "
+            "cfa_column <= number of registers");
+    }
+    return DW_DLV_OK;
+}
+
 int
 dwarf_get_frame_section_name(Dwarf_Debug dbg,
     const char **sec_name,
@@ -1710,7 +1775,6 @@ dwarf_get_fde_list_eh(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
-
     res = _dwarf_get_fde_list_internal(dbg,
         cie_data,
         cie_element_count,
@@ -1751,7 +1815,6 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
-
     res = _dwarf_get_fde_list_internal(dbg, cie_data,
         cie_element_count,
         fde_data,
@@ -1834,6 +1897,10 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     fde_start_ptr = dbg->de_debug_frame.dss_data;
     fde_ptr = fde_start_ptr + fde_offset;
     fde_end_ptr = fde_start_ptr + dbg->de_debug_frame.dss_size;
+    res = _dwarf_validate_register_numbers(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
 
     /*  First read in the 'common prefix' to figure out
         what we are to do with this entry. */
