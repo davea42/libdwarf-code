@@ -1,3 +1,131 @@
+2023-05-21:  David Anderson
+    commit 0e0fb968c72ae14bd86183e0135051f3bb1ef3ef
+
+    Added checks of user-supplied FRAME register
+    choices (such as the number to use for the CFA
+    register) to guarantee the choices are
+    all in appropriate relationship as documented
+    in libdwarf.pdf and the html version of the document.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-05-21:  David Anderson
+    commit 0c8379bd854b22702623ac6b28fd178fd530e670
+
+    Documented changes after 0.5.0
+            modified:   README
+            modified:   README.md
+
+2023-05-20:  David Anderson
+    commit 2933193b2d7aef2ff2131f2f07bed1822ad08623
+
+    Fixing the format of release dates.
+            modified:   README
+            modified:   README.md
+
+2023-05-20:  David Anderson
+    commit 9e1fafeb8c3a0d3becc889a27eb4f1179959f7ad
+
+    Updated to show release.
+            modified:   README
+            modified:   README.md
+
+2023-05-20:  David Anderson
+    commit 424b789988dc27e3af0821df930e514917055ab7
+
+    Identifying tarrelease on all entries.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-19:  David Anderson
+    commit 60e572dbf7b4ded66b488f54773f66aaf6184321
+
+    Documenting DW202305-003 oss fuzz  59091
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-19:  David Anderson
+    commit 4017ab8b92195641e6876b388cebe2d3307634f5
+
+    When the experimental two-level line table
+    support was written one test for '> sectionend'
+    was wrong, it needs to be '>= sectionend'.
+    Written in 2021.
+    In some other cases '>' is ok.
+    Fixing DW202305-003 oss-fuzz 59091
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-05-19:  David Anderson
+    commit 2783706a87420d1902c03a3ec573d7775a0d408d
+
+    Adding memset to initialize a local struct instance
+    to avoid unpredictable behavior while running.
+    valgrind complained about it.
+            modified:   fuzz_findfuncbypc.c
+
+2023-05-17:  David Anderson
+    commit e75cc02e1d6b7d4e5148b015bbe0d8ed080dc0f3
+
+    Now has example of dwarf_validate_die_sibling()
+    even though that is not something one
+    needs to use.
+    This is all essentially documentation changes.
+    Ready for release.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-05-13:  David Anderson
+    commit 59b57abfe94c12e47175d433dcabe9b6ac3ed033
+
+    Fix indents and remove trailing whitespace
+    and remove one blank line.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-05-13:  David Anderson
+    commit 5120fcbad3e90eca2b9a2486c3bb125d5908e4be
+
+    freebsd cmake uses ninja so no need for libtool.
+            modified:   test.yml
+
+2023-05-13:  David Anderson
+    commit 4eca9a5d4f94f5b9e73510ecf0dce02e6fb2a704
+
+    Fixing the name
+            modified:   freebsd_cmake.yml
+
+2023-05-13:  David Anderson
+    commit 173f8641f9a20d823e00785b1646563310516e14
+
+    Separated out a possible improvement,
+    removing an install target
+            new file:   freebsd_cmake.yml
+    Removing duplicate pkg install targets.
+            modified:   test.yml
+
+2023-05-13:  David Anderson
+    commit 84db2e08a637d2dbcd4fbdbc4f759be4f429c7cf
+
+    Suplicate list of bash in pkg install command
+    for freebsd cases.
+    meson case failing oddly.
+    Another change somewhere in the background?
+            modified:   ../../../.github/workflows/test.yml
+
+2023-05-13:  David Anderson
+    commit 0c09ce5dc54800af173689662da7a58c5142f2f2
+
+    ChangeLog up to date ...again..
+            modified:   ChangeLog
+
 2023-05-13:  David Anderson
     commit 53990846344a2e52df65481cd7405bf7e46aedea
 
