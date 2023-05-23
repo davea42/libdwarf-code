@@ -1,3 +1,30 @@
+
+#56443 DW202303-009
+#56446 DW202305-004
+#56441
+#56442
+#56458 DW202303-020
+#56462
+#56472
+#56474
+
+id: DW202305-004
+cve:
+fuzzer: ossfuzz id: 56446
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Incorrect section bound check
+product: libdwarf test code
+description: The test program fuzz_dnames.c passed
+a non-null pointer containing garbage content.
+The fix is to initialize (in fuzz_dnames.c)
+the local variable to null (0).
+datefixed: 2023-05-23
+references: regressiontest/ossfuzz56446/fuzz_dnames-4784811358420992
+gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+tarrelease: 
+endrec: DW202305-004
+
 id: DW202305-003
 cve:
 fuzzer: ossfuzz id: 59091
