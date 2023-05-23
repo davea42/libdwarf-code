@@ -1136,11 +1136,11 @@ dwarf_lowpc(Dwarf_Die die,
     int version = 0;
     enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
     int res = 0;
-    Dwarf_CU_Context context = die->di_cu_context;
+    Dwarf_CU_Context context = 0;
     Dwarf_Small *die_info_end = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
-
+    context = die->di_cu_context;
     dbg = context->cc_dbg;
     address_size = context->cc_address_size;
     offset_size = context->cc_length_size;
