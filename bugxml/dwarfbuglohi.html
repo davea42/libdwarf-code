@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2023</p>
-<p> Record count: 143 </p>
+<p> Record count: 147 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4920,7 +4920,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-05-09
 </p>
-<p>references:  regressiontest/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
+<p>references:  regressiontests/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
 </p>
 <p>gitfixid: edc241bd0bf22c94d2d496f3cb761e60f066cd14
 </p>
@@ -4954,7 +4954,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-05-10
 </p>
-<p>references:  regressiontest/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
+<p>references:  regressiontests/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
 </p>
 <p>gitfixid: eeb935200f78b8509e6b1837f6825b9d551b9f7d
 </p>
@@ -4986,11 +4986,136 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-05-19
 </p>
-<p>references:  regressiontest/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
+<p>references:  regressiontests/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
 </p>
 <p>gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5
 </p>
 <p>tarrelease: libdwarf-0.7.0.tar.xz
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-004">144) DW202305-004</h3>
+<p>id: DW202305-004
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56446
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Incorrect section bound check
+</p>
+<p>product: libdwarf test code
+</p>
+<p>description:  The test program fuzz_dnames.c passed
+  a non-null pointer containing garbage content.
+  The fix is to initialize (in fuzz_dnames.c)
+  the local variable to null (0).
+</p>
+<p>datefixed: 2023-05-23
+</p>
+<p>references:  regressiontests/ossfuzz56446/fuzz_dnames-4784811358420992
+</p>
+<p>gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-005">145) DW202305-005</h3>
+<p>id: DW202305-005
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56462
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Unpredictable crash or erroneous data returned
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A call to dwarf_set_frame_undefined_value()
+  dwarf_set_frame_rule_initial_value() dwarf_set_frame_same_value()
+  dwarf_set_frame_cfa_value() dwarf_set_frame_rule_table_size()
+  with unusable values was not being caught.
+  Now if the set of values violates the required
+  relationships an error is returned on requesting
+  actual frame data.
+  The problem has existed for many years.
+</p>
+<p>datefixed: 2023-05-23
+</p>
+<p>references:  regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
+</p>
+<p>gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-006">146) DW202305-006</h3>
+<p>id: DW202305-006
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56472
+</p>
+<p>datereported: 2023-02-27
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Crash on null pointer argument.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A call to any dwarf_get_fission
+  or any API entry with _xu_ in the name
+  (functions for DWARF5 Debug Fission, called Split Dwarf
+  in DWARF5) would crash the caller if any relevant argument
+  was null.  The problem has existed since the code
+  was written in 2021.
+</p>
+<p>datefixed: 2023-05-23
+</p>
+<p>references:  regressiontests/ossfuzz56472/fuzz_simplereader_tu-6614412934119424
+</p>
+<p>gitfixid: 60c885a4db0a924b60e9830d238bf77bf8993de1
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-007">147) DW202305-007</h3>
+<p>id: DW202305-007
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56474
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  none
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The test code, fuzz/fuzz_die_cu_attrs_loclist.c,
+  calls dwarf_highpc_b() with a Dwarf_Die that is
+  uninitialized local variable (hence contents unpredictable).
+  C code has no way to catch such a caller error.
+  This is a bug in the test code, not the library.
+  We are changing the test code to be initialized
+  with the value 0.
+</p>
+<p>datefixed: 2023-05-23
+</p>
+<p>references:  regressiontests/ossfuzz56474/fuzz_die_cu_attrs_loclist-4719938125561856
+</p>
+<p>gitfixid: 448b8fb4f6e534b56a44b43f1653673fdf820e80
+</p>
+<p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>

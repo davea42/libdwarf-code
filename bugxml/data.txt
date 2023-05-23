@@ -1,12 +1,61 @@
 
-#56443 DW202303-009
-#56446 DW202305-004
-#56441
-#56442
-#56458 DW202303-020
-#56462
-#56472
-#56474
+id: DW202305-007
+fuzzer: ossfuzz id: 56474
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: none
+product: libdwarf
+description: The test code, fuzz/fuzz_die_cu_attrs_loclist.c,
+  calls dwarf_highpc_b() with a Dwarf_Die that is
+  uninitialized local variable (hence contents unpredictable).
+  C code has no way to catch such a caller error.
+  This is a bug in the test code, not the library.
+  We are changing the test code to be initialized
+  with the value 0.
+datefixed: 2023-05-23
+references: regressiontests/ossfuzz56474/fuzz_die_cu_attrs_loclist-4719938125561856
+gitfixid: 448b8fb4f6e534b56a44b43f1653673fdf820e80
+tarrelease:
+endrec: DW202305-007
+
+id: DW202305-006
+fuzzer: ossfuzz id: 56472
+datereported: 2023-02-27
+reportedby: David Korczynski
+vulnerability: Crash on null pointer argument.
+product: libdwarf
+description: A call to any dwarf_get_fission
+  or any API entry with _xu_ in the name
+  (functions for DWARF5 Debug Fission, called Split Dwarf
+  in DWARF5) would crash the caller if any relevant argument
+  was null.  The problem has existed since the code
+  was written in 2021.
+datefixed: 2023-05-23
+references: regressiontests/ossfuzz56472/fuzz_simplereader_tu-6614412934119424
+gitfixid: 60c885a4db0a924b60e9830d238bf77bf8993de1
+tarrelease:
+endrec: DW202305-006
+
+id: DW202305-005
+cve:
+fuzzer: ossfuzz id: 56462
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Unpredictable crash or erroneous data returned
+product: libdwarf
+description: A call to dwarf_set_frame_undefined_value()
+  dwarf_set_frame_rule_initial_value() dwarf_set_frame_same_value()
+  dwarf_set_frame_cfa_value() dwarf_set_frame_rule_table_size()
+  with unusable values was not being caught.
+  Now if the set of values violates the required 
+  relationships an error is returned on requesting
+  actual frame data.
+  The problem has existed for many years.
+datefixed: 2023-05-23 
+references: regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
+gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+tarrelease:
+endrec: DW202305-005
 
 id: DW202305-004
 cve:
@@ -16,11 +65,11 @@ reportedby: David Korczynski
 vulnerability: Incorrect section bound check
 product: libdwarf test code
 description: The test program fuzz_dnames.c passed
-a non-null pointer containing garbage content.
-The fix is to initialize (in fuzz_dnames.c)
-the local variable to null (0).
+  a non-null pointer containing garbage content.
+  The fix is to initialize (in fuzz_dnames.c)
+  the local variable to null (0).
 datefixed: 2023-05-23
-references: regressiontest/ossfuzz56446/fuzz_dnames-4784811358420992
+references: regressiontests/ossfuzz56446/fuzz_dnames-4784811358420992
 gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
 tarrelease: 
 endrec: DW202305-004
@@ -40,7 +89,7 @@ description:  A fuzzed line table in the non-standard
   This was incorrect since the experimental table support
   was added in 2021.
 datefixed: 2023-05-19
-references: regressiontest/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
+references: regressiontests/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
 gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-003
@@ -62,7 +111,7 @@ description:  A fuzzed line table in the non-standard
   which would have exposed the problem before
   DW202305-001 was completed. Incomplete testing.
 datefixed: 2023-05-10
-references: regressiontest/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
+references: regressiontests/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
 gitfixid: eeb935200f78b8509e6b1837f6825b9d551b9f7d
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-002
@@ -85,7 +134,7 @@ description:  A fuzzed line table in the non-standard
   See libdwarf/dwarf_line_table_reader_common.h
   The code was in libdwarf starting in 2021.
 datefixed: 2023-05-09
-references: regressiontest/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
+references: regressiontests/ossfuzz58769/fuzz_macro_dwarf5-5460713058205696
 gitfixid: edc241bd0bf22c94d2d496f3cb761e60f066cd14
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-001
