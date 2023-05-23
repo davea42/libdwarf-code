@@ -1154,6 +1154,10 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
 
     Only applies to DW_DLA_ERROR, and  making up an error record.
     The allocated space simply leaks.
+    
+    Because we leave cleanup to properly coded callers
+    who call dwarf_dealloc_error(dbg,err) where dbg is NULL,
+    there is no call to _dwarf_add_to_static_err_list() here.
 */
 struct Dwarf_Error_s *
 _dwarf_special_no_dbg_error_malloc(void)
