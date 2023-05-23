@@ -1,3 +1,33 @@
+2023-05-22:  David Anderson
+    commit 9d6b907f1a2f5fc10301909d188e176a054d5724
+
+    Updating version for new code to be added.
+    Now 0.7.1
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-05-21:  David Anderson
+    commit d8006304766b107f962e3b86c5f7699da68e40e0
+
+    Added comment about release.
+            modified:   ChangeLog
+
+2023-05-21:  David Anderson
+    commit 47bc8ccf5234f397d940878a237d62f2eab4e1bb
+
+    with latest from git log.
+            modified:   ChangeLog
+
 2023-05-21:  David Anderson
     commit 0e0fb968c72ae14bd86183e0135051f3bb1ef3ef
 
