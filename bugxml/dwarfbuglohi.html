@@ -5097,23 +5097,27 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:  none
+<p>vulnerability:  Null pointer dereference.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:  The test code, fuzz/fuzz_die_cu_attrs_loclist.c,
-  calls dwarf_highpc_b() with a Dwarf_Die that is
+<p>description:  Calling dwarf_highpc_b() lead to crash.
+  The function was dereferencing an argument before
+  the argument was checked. Now it is checked
+  for null before any dereference.
+  In addtion, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
+  called dwarf_highpc_b() with a Dwarf_Die that is
   uninitialized local variable (hence contents unpredictable).
   C code has no way to catch such a caller error.
-  This is a bug in the test code, not the library.
-  We are changing the test code to be initialized
-  with the value 0.
+  This is a bug in the test code.
+  We are changed the test code local data pointer variable
+  to be initialized with the value 0.
 </p>
 <p>datefixed: 2023-05-23
 </p>
 <p>references:  regressiontests/ossfuzz56474/fuzz_die_cu_attrs_loclist-4719938125561856
 </p>
-<p>gitfixid: 448b8fb4f6e534b56a44b43f1653673fdf820e80
+<p>gitfixid: b3df2530732ea515cda5a85438871e15c6723ead
 </p>
 <p>tarrelease: 
 </p>
