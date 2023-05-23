@@ -1770,7 +1770,9 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
     Dwarf_Bool is_primary = TRUE;
     unsigned k = 0;
 
-    for (;;) {
+    /*  Just call once each way to test both.
+        Really the second is just for imported units.*/
+    for (; k < 2 ;++k) {
         if (is_primary) {
             lres = dwarf_get_macro_context(cu_die,
                 &version,&macro_context,
