@@ -1,3 +1,22 @@
+#56492
+
+id: DW202305-008
+fuzzer: ossfuzz id: 56492
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Timeout (exceeds 50 seconds)
+product: fuzz testing
+description: The problem is a bug in the test source:
+  fuzz/fuzz_macro_dwarf5.c. One must not blame the
+  fuzzer author for examplep5(),
+  the code was based on doc/checkexamples.c
+  and there examplep() was really just a sketch. 
+  The testcase here no longer specifies an infinite loop.
+datefixed: 2023-05-23
+references: regressiontests/ossfuzz56492/clusterfuzz-testcase-fuzz_macro_dwarf5-6497277180248064
+gitfixid: 97a78122268c9a74701f2dd3115f902309e9a484
+tarrelease:
+endrec: DW202305-008
 
 id: DW202305-007
 fuzzer: ossfuzz id: 56474
