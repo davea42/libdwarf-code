@@ -58,7 +58,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     dwarf_dealloc_error(dbg, error);
   } else {
 
-    Dwarf_Dnames_Head dnames_h;
+    Dwarf_Dnames_Head dnames_h = 0;
     Dwarf_Off dw_offset_of_next_table = 0;
     res = dwarf_dnames_header(dbg, 0, &dnames_h, &dw_offset_of_next_table,
                               &error);
