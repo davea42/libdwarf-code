@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-05-20 v0.7.1
+    @date 2023-05-23 v0.7.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -130,26 +130,47 @@
     calls exit() under any circumstances.
 
     
-    @subsection dw_errorinit Error Handling at initialization
+    @subsection dw_errorinit Error Handling at Initialization
 
     Each initialization call (for example)
     @code
-    dwarf_init_path(args...)
+    Dwarf_Debug   dbg = 0;
+    const char   *path = "myobjectfile";
+    char         *true_path = 0;
+    unsigned int  true_pathlen = 0;
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr     errarg = 0;
+    Dwarf_Error   error = 0;
+    int           res = 0;
+
+    res = dwarf_init_path(path,true_path,true_pathlen,
+        DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,&error);
     @endcode
     has two arguments that appear nowhere
     else in the library.
     @code
-    Dwarf_Handler dw_errhand
-    Dwarf_Ptr dw_errarg
+    Dwarf_Handler errhand
+    Dwarf_Ptr     errarg
     @endcode
 
     If you use the suggested A) approach
     just pass NULL to both those arguments.
+    If the initialization call returns DW_DLV_ERROR
+    you must then call
+    @code
+    dwarf_dealloc_error(dbg,error);
+    @endcode
+    to free the Dwarf_Error data.
+    This works even though dbg will be NULL. 
 
-    Note that dw_errarg is a pointer so one could
+    So lets now move on to initialization for
+    code not using the
+    suggested A) approach.
+
+    Because dw_errarg is a general pointer one could
     create a struct with data of interest and use
-    that pointer as the dw_errarg.
-    Or one could put an integer in there or NULL,
+    a pointer to the struct as the dw_errarg.
+    Or one could use an integer or NULL,
     it just depends what you want to do in the
     Dwarf_Handler function you write.
 
@@ -167,11 +188,11 @@
     } 
     @endcode
     and pass bad_dw_errhandler (as a function pointer,
-    no parentheses. 
+    no parentheses). 
     The Dwarf_Ptr argument is the value you passed in as dw_errarg,
     and can be anything.
     By doing an exit() you guarantee that your application
-    abruptly stops.  This is only acceptable to toy
+    abruptly stops.  This is only acceptable in toy
     or practice programs.
 
     A better dw_errhand function is
@@ -189,7 +210,6 @@
     because it returns.  The DW_DLV_ERROR code
     is returned from @e libdwarf and your code
     can do what it likes with the error situation.
-    
 
     @code
     Dwarf_Ptr x = address of some struct I want in the errhandler;
@@ -203,11 +223,13 @@
 
     So let us examine a case where anything could
     happen.  And here we are taking the recommeded
-    method of using a non-null dwarf_Error*:
+    method of using a non-null Dwarf_Error*:
 
     @code
     int func(Dwarf_Dbg dbg,Dwarf_Die die, Dwarf_Error* error) {
         Dwarf_Die newdie = 0;
+        int       res = 0;
+
         res = dwarf_siblingof_b(die,&newdie,error);
         if (res != DW_DLV_OK) {
             return res;
@@ -234,8 +256,8 @@
     int ev = dwarf_errno(*error);
     or
     char * msg  = dwarf_errmsg(*error);
-    or both and report that somehow.
     @endcode
+    or both and report that somehow.
     
     If it's a decently large program then you want to
     free any local memory and return res. If a small
@@ -251,14 +273,23 @@
 
     Except in a special case involving function
     dwarf_set_de_alloc_flag() (which is not usually
-    called, any dwarf_dealloc() that is needed will
-    happen automatically when you call dwarf_finish()
-    ).  Very long running library access programs
-    using relevant appropriate dwarf_dealloc calls
-    should consider calling dwarf_set_de_alloc_flag()
-    to avoid memory bloat.
-
+    called), any dwarf_dealloc() that is needed will
+    happen automatically when you call dwarf_finish(). 
+    
     That's all there is to it.
+
+    @subsubsection A Slight Performance Enhancement
+    Very long running library access programs
+    using relevant appropriate dwarf_dealloc calls
+    should consider calling dwarf_set_de_alloc_flag(0).
+    Using this one could get a performance enhancement
+    of perhaps five percent in libdwarf CPU time and a
+    reduction in memory use.
+
+    Be sure to test using valgrind or -fsanitize to ensure your
+    code really does the extra dwarf_dealloc calls
+    needed since when using dwarf_set_de_alloc_flag(0)
+    dwarf_finish() only does limited cleanup. 
 
     @section dwsec_cuplan Extracting Data Per Compilation Unit
 
@@ -904,6 +935,11 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 0.7.0 to 0.7.1</b>
+    
+    Added some error checks in calls requesting
+    CIE/FDE data.
 
     <b>Changes 0.6.0 to 0.7.0</b>
 
