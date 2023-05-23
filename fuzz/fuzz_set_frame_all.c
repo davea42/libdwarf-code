@@ -152,7 +152,7 @@ static void read_frame_data(Dwarf_Debug dbg, const char *sect) {
     return;
   }
   if (res == DW_DLV_ERROR) {
-    printf("Error reading frame data ");
+    printf("Error reading frame data \n");
     exit(EXIT_FAILURE);
   }
   printf("%" DW_PR_DSd " cies present. "
