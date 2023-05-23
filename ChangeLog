@@ -1,3 +1,77 @@
+2023-05-23:  David Anderson
+    commit 8ea7e0d5ff1ca701716db87483e9c7264ea4ed70
+
+    Some vulnerabilies I was unaware of
+    came to light and are now fixed
+    as appropriate  and
+    documented in the vulnerabilities data.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-23:  David Anderson
+    commit e3c303bf760ff49a5cdb5f8ac78f53fc06218130
+
+    Making the error handling wording
+    more precise and clearer.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-05-23:  David Anderson
+    commit 448b8fb4f6e534b56a44b43f1653673fdf820e80
+
+    This is test code, not part of libdwarf.
+    An uninitialized local variable named 'die'
+    would crash the caller when passed to any
+    libdwarf function.
+    C code cannot check random pointers for
+    validity.
+    Fixed by initializing the variable to 0.
+            modified:   fuzz/fuzz_die_cu_attrs_loclist.c
+
+2023-05-23:  David Anderson
+    commit 60c885a4db0a924b60e9830d238bf77bf8993de1
+
+    DW202305-006  ossfuzz id: 56472
+    The API functions here all lacked any checks
+    on the arguments. Now they all check such
+    as much as is practical.
+    This problem existed when the code
+    was originally written in 2021.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-05-23:  David Anderson
+    commit b722aebd0d2b77309e0fe107bf56e14e513f6b4f
+
+    Updated DW202305-004
+            modified:   bugxml/data.txt
+
+2023-05-23:  David Anderson
+    commit 79d32a15dc6df082d01764660010400c7b269ff2
+
+    Added comments to _dwarf_special_no_dbg_error_malloc()
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2023-05-23:  David Anderson
+    commit 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+
+    oss fuzz 56446  DW202305-004
+    An local pointer initialized with
+    just 'stack trash'  (so no proper
+    initializer) was passed to
+    libdwarf. That is a mistake in the test code.
+    C cannot determine if a non-null value is a legitimate
+    value as a pointer.
+    Not a library bug.
+            modified:   fuzz/fuzz_dnames.c
+
+2023-05-22:  David Anderson
+    commit bf9c51326e2be6e3ee1b89b4767fa9c7120068e3
+
+    Now mentions version change to 0.7.1
+            modified:   ChangeLog
+
 2023-05-22:  David Anderson
     commit 9d6b907f1a2f5fc10301909d188e176a054d5724
 
