@@ -1,3 +1,99 @@
+2023-05-24:  David Anderson
+    commit a5d44c690636aa9c49ba4c6656f042c05f42c7ed
+
+    Removed the last references to elf.h, libelf.h, HAVE_ELF
+    and HAVE_LIBELF from libdwarf .
+    There are no references to these in dwarfdump.
+
+    libdwarfp and dwarfgen still use libelf and elf.h
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-05-23:  David Anderson
+    commit ce2d5456240aad4c7ebbf72632d5665c6b6190c7
+
+    With the fixed latest vulnerability reports.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-23:  David Anderson
+    commit d3bd3a7119f64c9b950e29fdf3a1ed8385e91086
+
+    Hopefully easier to understand Error Handling now.
+    New susubsections.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-05-23:  David Anderson
+    commit abaec0a1bb502bbb2e1fcf8f04aaabd231b9c1b3
+
+    Adding a comment instead of actually fixing the source.
+            modified:   fuzz/fuzz_crc_32.c
+
+2023-05-23:  David Anderson
+    commit c6fee564f36906537f08fb07dec43ce855bd131d
+
+    Latest reports dealt with.
+            modified:   bugxml/data.txt
+
+2023-05-23:  David Anderson
+    commit 4638617fc49bcda961105452db97919a7d33dad7
+
+    Restored to be the intended sketch.
+            modified:   doc/checkexamples.c
+
+2023-05-23:  David Anderson
+    commit 97a78122268c9a74701f2dd3115f902309e9a484
+
+    Repairing the examplep5() function which
+    specified an infinite loop.
+    The doc/checkexamples.c examplep5() code
+    was hard to understand.
+            modified:   fuzz/fuzz_macro_dwarf5.c
+
+2023-05-23:  David Anderson
+    commit abebda6e0e3e3f52cf55ee0da6b84d608e57f425
+
+    The examplep5() function was badly written
+    and had an infinite loop. oops.
+    It's not much better now, but at least
+    no infinite loop.
+            modified:   doc/checkexamples.c
+
+2023-05-23:  David Anderson
+    commit c6e4f105eccbedec3822a3f83a4f3a4fa9b2aa51
+
+    A printf in the test code was missing its
+    ending newline. That lead to annoying messages
+    when doing a diff of the program text output..
+    Now the printf has its newline.
+            modified:   fuzz/fuzz_set_frame_all.c
+
+2023-05-23:  David Anderson
+    commit 3bdf0b00f13187d9e689cb8cab6ed00c9591c53e
+
+    Updated to latest.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-23:  David Anderson
+    commit b3df2530732ea515cda5a85438871e15c6723ead
+
+    dwarf_highpc_b() was dereferencing a
+    pointer argument before checking the
+    argument.
+    Now we check before using.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-05-23:  David Anderson
+    commit a0bb79d65d00fb3e345e6101b52367d7ced8937a
+
+    Now up to date.
+            modified:   ChangeLog
+
 2023-05-23:  David Anderson
     commit 8ea7e0d5ff1ca701716db87483e9c7264ea4ed70
 
