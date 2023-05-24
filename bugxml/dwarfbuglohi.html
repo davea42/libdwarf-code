@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2023</p>
-<p> Record count: 147 </p>
+<p> Record count: 148 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5118,6 +5118,37 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz56474/fuzz_die_cu_attrs_loclist-4719938125561856
 </p>
 <p>gitfixid: b3df2530732ea515cda5a85438871e15c6723ead
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-008">148) DW202305-008</h3>
+<p>id: DW202305-008
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56492
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Timeout (exceeds 50 seconds)
+</p>
+<p>product: fuzz testing
+</p>
+<p>description:  The problem is a bug in the test source:
+  fuzz/fuzz_macro_dwarf5.c. One must not blame the
+  fuzzer author for examplep5(),
+  the code was based on doc/checkexamples.c
+  and there examplep() was really just a sketch.
+  The testcase here no longer specifies an infinite loop.
+</p>
+<p>datefixed: 2023-05-23
+</p>
+<p>references:  regressiontests/ossfuzz56492/clusterfuzz-testcase-fuzz_macro_dwarf5-6497277180248064
+</p>
+<p>gitfixid: 97a78122268c9a74701f2dd3115f902309e9a484
 </p>
 <p>tarrelease: 
 </p>
