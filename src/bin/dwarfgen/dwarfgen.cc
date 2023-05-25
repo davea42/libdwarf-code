@@ -806,11 +806,7 @@ main(int argc, char **argv)
             exit(EXIT_FAILURE);
         }
 
-        // We no longer use the libdwarf interfaces returning
-        // DW_DLV_BADADDR (though they still exist in libdwarf)
-        // as that sort of return (mixing returned-pointer with
-        // an error value) was ugly.
-        // We use the latest calls instead, returning
+        // We use the latest calls returning
         // DW_DLV_OK, DW_DLV_NO_ENTRY, or DW_DLV_ERROR
         // as an int.
         Dwarf_Ptr errarg = 0;
@@ -1121,6 +1117,11 @@ write_text_section(Elf * elf_w,unsigned elfclass)
 #endif // HAVE_ELF64_GETSHDR
     }
 }
+
+// Take the lists of data blocks and build a single
+// malloc block to contain it all pointing
+// to it with the public struct Elf_Data that
+// elf_newdata() creates.
 static void
 InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf_i)
 {
