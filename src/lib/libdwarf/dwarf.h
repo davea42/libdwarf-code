@@ -571,9 +571,6 @@ extern "C" {
 #define DW_AT_GNU_locviews                      0x2137 /* GNU */
 #define DW_AT_GNU_entry_view                    0x2138 /* GNU */
 
-/* See https://gcc.gnu.org/wiki/DW_AT_GNU_bias */
-#define DW_AT_GNU_bias                          0x2305
-
 /* Sun extensions */
 #define DW_AT_SUN_template                      0x2201 /* SUN */
 #define DW_AT_VMS_rtnbeg_pd_address             0x2201 /* VMS */
