@@ -47,25 +47,26 @@ _dwarf_elf_begin(int fd, int cmd, Dwarf_Elf **ret_de);
 /*
 elf_end()          Clean up allocated data.
 */
-int 
-_dwarf_elf_end(Dwarf_Elf);
+
+int _dwarf_elf_end(Dwarf_Elf*elf);
 
 /*
-elf_ndxscn()    Given an Elf_Scn return  return its section number in Elf
+elf_ndxscn()    return its section number in Elf
 */
 
-int
-_dwarf_elf_ndxscn( 
+/* Return DW_DLV_OK or DW_DLV_ERROR */
+int  _dwarf_elf_ndxscn(DW_Elf_Scn* sec, Dwarf_Unsigned*elf_sec_num);
 
-DW_Elf_Scn * _dwarf_elf_getscn(Dwarf_Elf*,Dwarf_Unsigned secindex);  
+dw_elf32_ehdr * _dwarf_elf32_newehdr(Dwarf_Elf *);
+dw_elf64_ehdr * _dwarf_elf64_newehdr(Dwarf_Elf *);
 
-dwarf_elf32_shdr * _dwarf_elf32_getshdr(DW_Elf_Scn *scn);  FIXME 
-dwarf_elf64_shdr * _dwarf_elf64_getshdr(DW_Elf_Scn *scn); FIXME  
+DW_Elf_Scn    * _dwarf_elf_getscn(Dwarf_Elf*,Dwarf_Unsigned secindex);  
 
-/*
-elf_getdata()    Retrieve section content data
-*/
-Dwarf_Elf_Data * _dwarf_elf_getdata(Dw_Elf_Scn *scn,
+dw_elf32_shdr * _dwarf_elf32_getshdr(DW_Elf_Scn *scn);  
+dw_elf64_shdr * _dwarf_elf64_getshdr(DW_Elf_Scn *scn); 
+
+/* elf_getdata()    Retrieve section content data */
+DW_Elf_Data * _dwarf_elf_getdata(DW_Elf_Scn *scn,DW_Elf_Data*prev);
 
 /* For adding Dwarf or text or whatever
    data, depending on section
@@ -73,7 +74,7 @@ Dwarf_Elf_Data * _dwarf_elf_getdata(Dw_Elf_Scn *scn,
 DW_Elf_Data * _dwarf_elf_newdata(DW_Elf_Scn* section);
 
 /*  Creating a new section header */
-Dwarf_Elf_Scn * _dwarf_elf_newscn(Dwarf_Elf *)   Creating a new section header
+DW_Elf_Scn * _dwarf_elf_newscn(Dwarf_Elf *);
 
 /*
 _dwarf elf_update()     create Elf and Section headers
@@ -81,8 +82,7 @@ _dwarf elf_update()     create Elf and Section headers
   blobs (one per section)
   and Write all to the output object file.
 */
-
-int _dwarf _dwarf_elf_update(DW_Elf *elf, Dwarf_Unsigned *sizefinal);
+int _dwarf_elf_update(Dwarf_Elf *elf, Dwarf_Unsigned *sizefinal);
 
 #ifdef __cplusplus
 }

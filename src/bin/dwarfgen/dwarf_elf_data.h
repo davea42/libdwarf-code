@@ -45,7 +45,7 @@ typedef struct DW_Elf_Data_s {
 } DW_Elf_Data;
 
 typedef struct DW_Elf_Scn_s {
-    FIXME internal only data
+    /* FIXME internal only data */
 } DW_Elf_Scn;
 
 

@@ -93,6 +93,10 @@
 #include "libdwarf.h"
 #include "libdwarfp.h"
 #include "libdwarf_private.h"
+#include "dwarf_elf_data.h"
+#include "dwarf_elfstructs.h"
+#include "dwarf_elf_defines.h"
+#include "dwarf_elf_interface.h"
 #include "irepresentation.h"
 #include "ireptodbg.h"
 #include "createirepfrombinary.h"
@@ -224,24 +228,34 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
             unsigned sbyte = 0;     \
             memset(op,0,ol);        \
             sbyte = ol - il;        \
+            const void * ipi =      \
+                (const void *)ip;   \
             _dwarf_memcpy_swap_bytes(((char *)(op))+sbyte,\
-                (const void *)(ip),il);\
+                ipi,il);\
         } else {                    \
             unsigned sbyte = 0;     \
             sbyte = il - ol;        \
+            const void * ipi =      \
+                ((Dwarf_Small*)ip) +sbyte; \
             _dwarf_memcpy_swap_bytes((char *)(op),      \
-                (const void *)(((const char *)(ip))+sbyte),ol);\
+                (const void *)ipi,  \
+                 ol);               \
         }                           \
     } while (0)
 #else // LITTLEENDIAN
 #define ASNX(op,ol,ip,il)           \
     do {                            \
         if (ol > il) {              \
+            const void *ipi =       \
+                (const void *)ip;   \
             memset(op,0,ol);        \
-            memcpy(((char *)(op)),(const void *)(ip),il);\
+            memcpy(((char *)(op)),  \
+               ipi,il);             \
         } else {                    \
-            memcpy((char *)(op),      \
-                (const void *)(((const char *)(ip))),ol);\
+            const void *ipi =       \
+                (const void *)ip;   \
+            memcpy((char *)(op),    \
+                ipi,ol);            \
         }                           \
     } while (0)
 #endif // ENDIANNESS
@@ -253,8 +267,8 @@ static void write_object_file(Dwarf_P_Debug dbg,
     unsigned long dwbitflags,
     void * user_data);
 
-static void write_text_section(Elf * elf,unsigned elfclass);
-static void write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,
+static void write_text_section(Dwarf_Elf * elf,unsigned elfclass);
+static void write_generated_dbg(Dwarf_P_Debug dbg,Dwarf_Elf * elf,
     IRepresentation &irep);
 
 static string outfile("testout.o");
@@ -273,7 +287,7 @@ void close_a_file(int f);
 // creatively we would not need a global.
 static IRepresentation Irep;
 
-static Elf * elf = 0;
+static Dwarf_Elf * elf = 0;
 static strtabdata secstrtab;
 
 CmdOptions cmdoptions = {
@@ -295,10 +309,10 @@ CmdOptions cmdoptions = {
 /*  See the Elf ABI for further definitions of these fields. */
 class SectionFromDwarf {
 public:
-    std::string name_;
+    std::string    name_;
     Dwarf_Unsigned section_name_itself_;
-    ElfSymIndex section_name_symidx_;
-    int size_;
+    ElfSymIndex    section_name_symidx_;
+    Dwarf_Unsigned size_;
     Dwarf_Unsigned type_;
     Dwarf_Unsigned flags_;
 
@@ -382,7 +396,7 @@ static int FindMySectionNum(const ElfSectIndex & elf_section_index)
     exit(1);
 }
 
-static unsigned
+static Dwarf_Unsigned
 createnamestr(unsigned strtabstroff,unsigned elfclass)
 {
     DW_Elf_Scn * strscn =_dwarf_elf_newscn(elf);
@@ -398,7 +412,7 @@ createnamestr(unsigned strtabstroff,unsigned elfclass)
         exit(1);
     }
     shstr->d_buf = secstrtab.exposedata();
-    shstr->d_type =  ELF_T_BYTE;
+    shstr->d_type =  DWARF_T_BYTE;
     shstr->d_size = secstrtab.exposelen();
     shstr->d_off = 0;
     shstr->d_align = 1;
@@ -412,37 +426,37 @@ createnamestr(unsigned strtabstroff,unsigned elfclass)
         }
         //strshdr->sh_name =  strtabstroff;
         ASNX(strshdr->sh_name,sizeof(strshdr->sh_name),
-             strtabstroff,sizeof(strtabstroff));
-        unsigned long type = SHTSTRTAB;
+             &strtabstroff,sizeof(strtabstroff));
+        unsigned long type = SHT_STRTAB;
         //strshdr->sh_type= SHT_STRTAB;
         ASNX(strshdr->sh_type,sizeof(strshdr->sh_type),
-             type,sizeof(type));
+             &type,sizeof(type));
         //strshdr->sh_flags = SHF_STRINGS;
         unsigned long flags = SHF_STRINGS;
         ASNX(strshdr->sh_flags,sizeof(strshdr->sh_flags),
-             flags,sizeof(flags));
+             &flags,sizeof(flags));
         unsigned long zero = 0;
         //strshdr->sh_addr = 0;
         ASNX(strshdr->sh_addr,sizeof(strshdr->sh_addr),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_offset = 0;
         ASNX(strshdr->sh_offset,sizeof(strshdr->sh_offset),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_size = 0;
         ASNX(strshdr->sh_size,sizeof(strshdr->sh_size),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_link  = 0;
         ASNX(strshdr->sh_link,sizeof(strshdr->sh_link),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_info = 0;
         ASNX(strshdr->sh_info,sizeof(strshdr->sh_info),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_addralign = 1;
         unsigned long align = 1;
         ASNX(strshdr->sh_addralign,sizeof(strshdr->sh_addralign),
-             align,sizeof(align));
+             &align,sizeof(align));
         ASNX(strshdr->sh_entsize,sizeof(strshdr->sh_entsize),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_entsize = 0;
     } else {
         dw_elf64_shdr * strshdr = _dwarf_elf64_getshdr(strscn);
@@ -453,36 +467,44 @@ createnamestr(unsigned strtabstroff,unsigned elfclass)
         }
         //strshdr->sh_name =  strtabstroff;
         ASNX(strshdr->sh_name,sizeof(strshdr->sh_name),
-             strtabstroff,sizeof(strtabstroff));
+             &strtabstroff,sizeof(strtabstroff));
         //strshdr->sh_flags = SHF_STRINGS;
         unsigned long flags = SHF_STRINGS;
         ASNX(strshdr->sh_flags,sizeof(strshdr->sh_flags),
-             flags,sizeof(flags));
+             &flags,sizeof(flags));
         unsigned long zero = 0;
         //strshdr->sh_addr = 0;
         ASNX(strshdr->sh_addr,sizeof(strshdr->sh_addr),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_offset = 0;
         ASNX(strshdr->sh_offset,sizeof(strshdr->sh_offset),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_size = 0;
         ASNX(strshdr->sh_size,sizeof(strshdr->sh_size),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_link  = 0;
         ASNX(strshdr->sh_link,sizeof(strshdr->sh_link),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_info = 0;
         ASNX(strshdr->sh_info,sizeof(strshdr->sh_info),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_addralign = 1;
         unsigned long align = 1;
         ASNX(strshdr->sh_addralign,sizeof(strshdr->sh_addralign),
-             align,sizeof(align));
+             &align,sizeof(align));
         ASNX(strshdr->sh_entsize,sizeof(strshdr->sh_entsize),
-             zero,sizeof(zero));
+             &zero,sizeof(zero));
         //strshdr->sh_entsize = 0;
     }
-    return  _dwarf_elf_ndxscn(strscn);
+
+    Dwarf_Unsigned retsecnum = 0;
+    int res = _dwarf_elf_ndxscn(strscn,&retsecnum);
+    if (res != DW_DLV_OK) {
+        cerr << " dwarf_ndxscn failed. " <<
+            " line " << __LINE__ << " " <<__FILE__ << endl;
+        exit(1);
+    }
+    return retsecnum;
 }
 
 // This functional interface is defined by libdwarf.
@@ -560,42 +582,93 @@ create_dw_elf(SectionFromDwarf  &ds,unsigned elfclass)
             ds.name_  << endl;
         exit(1);
     }
+    unsigned long zero = 0;
+    unsigned long  one = 1;
     if (elfclass == ELFCLASS32) {
-        Elf32_Shdr * shdr = elf32_getshdr(scn);
+        dw_elf32_shdr * shdr = _dwarf_elf32_getshdr(scn);
         if (!shdr) {
             cerr << "dwarfgen: Unable to elf32_getshdr() on "
                 << ds.name_ << endl;
             exit(1);
         }
-        shdr->sh_name   = ds.section_name_itself_;
-        shdr->sh_type   = ds.type_;
-        shdr->sh_flags  = ds.flags_;
-        shdr->sh_addr   = 0;
-        shdr->sh_offset = 0;
-        shdr->sh_size   = ds.size_;
-        shdr->sh_link   = ds.link_;
-        shdr->sh_info   = ds.info_;
-        shdr->sh_addralign = 1;
-        shdr->sh_entsize = 0;
+        //shdr->sh_name   = ds.section_name_itself_;
+        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
+            &ds.section_name_itself_,sizeof(ds.section_name_itself_));
+        //shdr->sh_type   = ds.type_;
+        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
+            &ds.type_,sizeof(ds.type_));
+        //shdr->sh_flags  = ds.flags_;
+        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
+            &ds.flags_,sizeof(ds.flags_));
+        //shdr->sh_addr   = 0;
+        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
+            &zero,sizeof(zero));
+        //shdr->sh_offset = 0;
+        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
+            &zero,sizeof(zero));
+
+        //shdr->sh_size   = ds.size_;
+        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
+            &ds.size_,sizeof(ds.size_));
+        //shdr->sh_link   = ds.link_;
+        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
+            &ds.link_,sizeof(ds.link_));
+        //shdr->sh_info   = ds.info_;
+        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
+            &ds.info_,sizeof(ds.info_));
+        //shdr->sh_addralign = 1;
+        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
+            &one,sizeof(one));
+        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
+            &zero,sizeof(zero));
     } else {
-        Elf64_Shdr * shdr = elf64_getshdr(scn);
+        dw_elf64_shdr * shdr = _dwarf_elf64_getshdr(scn);
         if (!shdr) {
             cerr << "dwarfgen: Unable to elf64_getshdr() on "
                 << ds.name_ << endl;
             exit(1);
         }
-        shdr->sh_name   = ds.section_name_itself_;
-        shdr->sh_type   = ds.type_;
-        shdr->sh_flags  = ds.flags_;
-        shdr->sh_addr   = 0;
-        shdr->sh_offset = 0;
-        shdr->sh_size   = ds.size_;
-        shdr->sh_link   = ds.link_;
-        shdr->sh_info   = ds.info_;
-        shdr->sh_addralign = 1;
-        shdr->sh_entsize = 0;
+        //shdr->sh_name   = ds.section_name_itself_;
+        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
+            &ds.section_name_itself_,sizeof(ds.section_name_itself_));
+        //shdr->sh_type   = ds.type_;
+        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
+            &ds.type_,sizeof(ds.type_));
+        //shdr->sh_flags  = ds.flags_;
+        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
+            &ds.flags_,sizeof(ds.flags_));
+        //shdr->sh_addr   = 0;
+        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
+            &zero,sizeof(zero));
+        //shdr->sh_offset = 0;
+        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
+            &zero,sizeof(zero));
+
+        //shdr->sh_size   = ds.size_;
+        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
+            &ds.size_,sizeof(ds.size_));
+        //shdr->sh_link   = ds.link_;
+        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
+            &ds.link_,sizeof(ds.link_));
+        //shdr->sh_info   = ds.info_;
+        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
+            &ds.info_,sizeof(ds.info_));
+
+        //shdr->sh_addralign = 1;
+        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
+            &one,sizeof(one));
+
+        //shdr->sh_entsize = 0;
+        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
+            &zero,sizeof(zero));
     }
-    ElfSectIndex si(elf_ndxscn(scn));
+    Dwarf_Unsigned retsecnum = 0;
+    int res = _dwarf_elf_ndxscn(scn,&retsecnum);
+    if (res != DW_DLV_OK) {
+        cerr << "dwarfgen:  dwarf_elf_ndxscn FAILs" << endl;
+        exit(1);
+    }
+    ElfSectIndex si(retsecnum);
 
     ds.setSectIndex(si);
     cout << "New Elf section: "<< ds.name_ <<
@@ -1002,16 +1075,15 @@ write_object_file(Dwarf_P_Debug dbg,
         exit(1);
     }
 
-    Dwarf_Elf elf = 0;
-    int cmd = ELF_C_WRITE;
-    int res = 0;
+    Dwarf_Elf *elf = 0;
+    int        cmd = ELF_C_WRITE;
+    int        res = 0;
     res = _dwarf_elf_begin(fd,cmd,&elf);
     if (res != DW_DLV_OK) {
         cerr << "dwarfgen: Unable to _dwarf_elf_begin() on " <<
             outfile << endl;
         exit(1);
     }
-FIXME
     if (elfclass == ELFCLASS32) {
         static dw_elf32_ehdr * ehp = 0;
         ehp = _dwarf_elf32_newehdr(elf);
@@ -1030,17 +1102,17 @@ FIXME
         //ehp->e_machine = machine;
 
         ASNX(ehp->e_machine,sizeof(ehp->e_machine),
-              machine,sizeof(machine));
+            &machine,sizeof(machine));
         //  We do not bother to create program headers, so
         //  mark this as ET_REL.
         //  ehp->e_type = ET_REL;
         unsigned long rel = ET_REL;
-        ASNX(ehp->e_type,sizeof(ehp->e_type),rel,sizeof(rel));
+        ASNX(ehp->e_type,sizeof(ehp->e_type),&rel,sizeof(rel));
 
         //ehp->e_version = EV_CURRENT;
         unsigned long version = EV_CURRENT;
         ASNX(ehp->e_version,sizeof(ehp->e_version),
-            version, sizeof(version));
+            &version, sizeof(version));
         unsigned  strtabstroff = secstrtab.addString(".shstrtab");
 
         // an object section with fake .text data
@@ -1051,7 +1123,7 @@ FIXME
         unsigned long shstrindex = 
             createnamestr(strtabstroff,elfclass);
         ASNX(ehp->e_shstrndx,sizeof(ehp->e_shstrndx),
-            shstrindex,sizeof(shstrindex));
+            &shstrindex,sizeof(shstrindex));
         // ehp->e_shstrndx = shstrindex; 
     } else {
         static dw_elf64_ehdr * ehp = 0;
@@ -1071,21 +1143,21 @@ FIXME
 
         unsigned long type = ET_REL;
         ASNX(ehp->e_type,sizeof(ehp->e_type),
-             type,sizeof(type));
+             &type,sizeof(type));
 
         ASNX(ehp->e_machine,sizeof(ehp->e_machine),
-              machine,sizeof(machine));
+              &machine,sizeof(machine));
         //  We do not bother to create program headers, so
         //  mark this as ET_REL.
         unsigned long rel = ET_REL;
         // ehp->e_type = ET_REL;
         ASNX(ehp->e_type,sizeof(ehp->e_type),
-             rel,sizeof(rel));
+             &rel,sizeof(rel));
        
         unsigned long ver = EV_CURRENT;
         //ehp->e_version = EV_CURRENT;
         ASNX(ehp->e_version,sizeof(ehp->e_version),
-             ver,sizeof(ver));
+             &ver,sizeof(ver));
         unsigned  strtabstroff = secstrtab.addString(".shstrtab");
 
         // an object section with fake .text data
@@ -1095,8 +1167,8 @@ FIXME
         // Create the section name string section.
         Dwarf_Unsigned shstrindex = 
             createnamestr(strtabstroff,elfclass);
-        ASNX(hep->e_shstrndx,sizeof(ehp->e_shstrndx),
-            shstrindex,sizeof(shstrindex));
+        ASNX(ehp->e_shstrndx,sizeof(ehp->e_shstrndx),
+            &shstrindex,sizeof(shstrindex));
         // ehp->e_shstrndx = shstrindex; 
     }
 
@@ -1108,16 +1180,16 @@ FIXME
             outfile << endl;
         exit(1);
     }
-    cout << " output image size in bytes " << finalsize endl;
+    cout << " output image size in bytes " << finalsize << endl;
     _dwarf_elf_end(elf);
     close_a_file(fd);
 }
 
 // an object section with fake .text data (just as an example).
 static void
-write_text_section(DW_Elf * elf_w,unsigned elfclass)
+write_text_section(Dwarf_Elf * elf_w,unsigned elfclass)
 {
-    unsigned  osecnameoff = secstrtab.addString(".text");
+    Dwarf_Unsigned  osecnameoff = secstrtab.addString(".text");
     DW_Elf_Scn * scn1 =_dwarf_elf_newscn(elf_w);
     if (!scn1) {
         cerr << "dwarfgen: Unable to _dwarf_elf_newscn() on " <<
@@ -1133,46 +1205,84 @@ write_text_section(DW_Elf * elf_w,unsigned elfclass)
     }
     const char *d = "data in section";
     ed1->d_buf = (void *)d;
-    ed1->d_type =  ELF_T_BYTE;
+    ed1->d_type =  DWARF_T_BYTE;
     ed1->d_size = strlen(d) +1;
     ed1->d_off = 0;
     ed1->d_align = 4;
     ed1->d_version = EV_CURRENT;
+    unsigned long zero = 0;
+    unsigned long one = 1;
 
     if (elfclass == ELFCLASS32) {
-        Elf32_Shdr * shdr1 = elf32_getshdr(scn1);
-        if (!shdr1) {
+        dw_elf32_shdr * shdr = _dwarf_elf32_getshdr(scn1);
+        if (!shdr) {
             cerr << "dwarfgen: Unable to elf32_getshdr() on " <<
                 outfile << endl;
             exit(1);
         }
-        shdr1->sh_name =  osecnameoff;
-        shdr1->sh_type= SHT_PROGBITS;
-        shdr1->sh_flags = 0;
-        shdr1->sh_addr = 0;
-        shdr1->sh_offset = 0;
-        shdr1->sh_size = 0;
-        shdr1->sh_link  = 0;
-        shdr1->sh_info = 0;
-        shdr1->sh_addralign = 1;
-        shdr1->sh_entsize = 0;
+        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
+             &osecnameoff,sizeof(osecnameoff));
+        unsigned long type = SHT_PROGBITS;
+        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
+             &type,sizeof(type));
+        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
+             &zero,sizeof(zero));
+        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
+             &zero,sizeof(zero));
+        //shdr->sh_offset = 0;
+        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
+             &zero,sizeof(zero));
+        //shdr->sh_size = 0;
+        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
+             &zero,sizeof(zero));
+        //shdr->sh_link  = 0;
+        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
+             &zero,sizeof(zero));
+        //shdr->sh_info = 0;
+        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
+             &zero,sizeof(zero));
+        //shdr->sh_addralign = 1;
+        unsigned long align = 1;
+        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
+             &align,sizeof(align));
+        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
+             &zero,sizeof(zero));
+        //shdr->sh_entsize = 0;
     } else {
-        Elf64_Shdr * shdr1 = elf64_getshdr(scn1);
-        if (!shdr1) {
+        dw_elf64_shdr * shdr = _dwarf_elf64_getshdr(scn1);
+        if (!shdr) {
             cerr << "dwarfgen: Unable to elf32_getshdr() on "
                 << outfile << endl;
             exit(1);
         }
-        shdr1->sh_name =  osecnameoff;
-        shdr1->sh_type= SHT_PROGBITS;
-        shdr1->sh_flags = 0;
-        shdr1->sh_addr = 0;
-        shdr1->sh_offset = 0;
-        shdr1->sh_size = 0;
-        shdr1->sh_link  = 0;
-        shdr1->sh_info = 0;
-        shdr1->sh_addralign = 1;
-        shdr1->sh_entsize = 0;
+        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
+            &osecnameoff,sizeof(osecnameoff));
+        unsigned long type = SHT_PROGBITS;
+        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
+            &type,sizeof(type));
+        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
+            &zero,sizeof(zero));
+        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
+            &zero,sizeof(zero));
+        //shdr->sh_offset = 0;
+        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
+            &zero,sizeof(zero));
+        //shdr->sh_size = 0;
+        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
+            &zero,sizeof(zero));
+        //shdr->sh_link  = 0;
+        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
+            &zero,sizeof(zero));
+        //shdr->sh_info = 0;
+        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
+            &zero,sizeof(zero));
+        //shdr->sh_addralign = 1;
+        unsigned long align = 1;
+        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
+            &align,sizeof(align));
+        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
+            &zero,sizeof(zero));
+        //shdr->sh_entsize = 0;
     }
 }
 
@@ -1213,7 +1323,7 @@ InsertDataIntoElf(Dwarf_Unsigned d,Dwarf_P_Debug dbg,Dwarf_Elf *elf_i)
         exit(1);
     }
     ed->d_buf = bytes;
-    ed->d_type =  ELF_T_BYTE;
+    ed->d_type =  DWARF_T_BYTE;
     ed->d_size = length;
     ed->d_off = sfd.getNextOffset();
     sfd.setNextOffset(ed->d_off + length);
@@ -1273,25 +1383,23 @@ dump_bytes(const char *msg,void *val,int len)
 /* Lets not assume that the quantities are aligned. */
 static void
 bitreplace(char *buf, unsigned int targlen, Dwarf_Unsigned newval,
-    size_t newvalsize);
+    size_t newvalsize)
 {
     (void)newvalsize;
-    if (length == 4) {
-FIXME
+    if (targlen == 4) {
         Dwarf_Unsigned my4 = newval;
         Dwarf_Unsigned oldval = 0;
-        ASNX(&oldval,sizeof(oldval),buf,(unsigned)length);
+        ASNX(&oldval,sizeof(oldval),buf,(unsigned)targlen);
         oldval += my4;
-        ASNX(buf,(unsigned)length,&oldval,sizeof(oldval));
-    } else if (length == 8) {
-FIXME
+        ASNX(buf,(unsigned)targlen,&oldval,sizeof(oldval));
+    } else if (targlen == 8) {
         Dwarf_Unsigned my8 = newval;
         Dwarf_Unsigned oldval = 0;
-        memcpy(&oldval,buf,length);
+        memcpy(&oldval,buf,targlen);
         oldval += my8;
-        memcpy(buf,&oldval,length);
+        memcpy(buf,&oldval,targlen);
     } else {
-        cerr << "dwarfgen:  Relocation is length " << length <<
+        cerr << "dwarfgen:  Relocation is length " << targlen <<
             " which we do not yet handle." << endl;
         exit(1);
     }

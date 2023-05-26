@@ -28,13 +28,13 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #ifndef DWARF_ELFSTRUCTS_H
-#define DWARF_ELF_ELFSTRUCTS_H
+#define DWARF_ELFSTRUCTS_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
 
 /*  Typed in from the SystemV Application Binary Interface
     but using char arrays instead of variables as
@@ -55,13 +55,6 @@ extern "C" {
     alignment-gaps.
 */
 
-#ifndef DW_ELFSTRUCTS_H
-#define DW_ELFSTRUCTS_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #ifndef EI_NIDENT
 #define EI_NIDENT 16
 #endif
@@ -72,9 +65,12 @@ extern "C" {
 
 struct Dwarf_Elf_s
 {
-FIXME
+      int  df_fd;
+      /* Array for sections */
+      /* Array for headers */
+
 };
-typedef Dwar_Elf_s * Dwarf_Elf;
+typedef Dwarf_Elf_s * Dwarf_Elf;
 
 typedef struct
 {
@@ -224,4 +220,4 @@ typedef struct
 }
 #endif /* __cplusplus */
 
-#endif /* DW_ELFSTRUCTS_H */
+#endif /* DWARF_ELFSTRUCTS_H */
