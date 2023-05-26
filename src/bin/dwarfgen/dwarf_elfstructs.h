@@ -28,6 +28,13 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef DWARF_ELFSTRUCTS_H
+#define DWARF_ELF_ELFSTRUCTS_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 
 /*  Typed in from the SystemV Application Binary Interface
     but using char arrays instead of variables as
@@ -62,6 +69,12 @@ extern "C" {
 #ifndef TYP
 #define TYP(n,l) char (n)[(l)]
 #endif
+
+struct Dwarf_Elf_s
+{
+FIXME
+};
+typedef Dwar_Elf_s * Dwarf_Elf;
 
 typedef struct
 {

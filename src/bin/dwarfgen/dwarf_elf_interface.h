@@ -29,22 +29,26 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef DWARF_ELF_INTERFACE_H
+#define DWARF_ELF_INTERFACE_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 
-/*   All these return DW_DLV_OK, DW_DLV_ERROR, or
-     DW_DLV_NO_ENTRY, just as libdwarfp itself does.
-*/
+/* A few return DW_DLV_OK, DW_DLV_OK, or DW_DLV_NO_ENTRY; */
 
 /*  elf_begin()   create a Dwarf_Elf header record.
 */
 int
-_dwarf_elf_begin(
+_dwarf_elf_begin(int fd, int cmd, Dwarf_Elf **ret_de);
 
 /*
 elf_end()          Clean up allocated data.
 */
 int 
-_dwarf_elf_end(
+_dwarf_elf_end(Dwarf_Elf);
 
 /*
 elf_ndxscn()    Given an Elf_Scn return  return its section number in Elf
@@ -53,42 +57,36 @@ elf_ndxscn()    Given an Elf_Scn return  return its section number in Elf
 int
 _dwarf_elf_ndxscn( 
 
-/*
-elf_getscn()     Retrieve section header data
-*/
-int
-_dwarf_elf_getscn(  
+DW_Elf_Scn * _dwarf_elf_getscn(Dwarf_Elf*,Dwarf_Unsigned secindex);  
+
+dwarf_elf32_shdr * _dwarf_elf32_getshdr(DW_Elf_Scn *scn);  FIXME 
+dwarf_elf64_shdr * _dwarf_elf64_getshdr(DW_Elf_Scn *scn); FIXME  
 
 /*
 elf_getdata()    Retrieve section content data
 */
-int
-_dwarf_elf_getdata(
+Dwarf_Elf_Data * _dwarf_elf_getdata(Dw_Elf_Scn *scn,
 
-/*
-elf_newdata()  For adding Dwarf or text or whatever
+/* For adding Dwarf or text or whatever
    data, depending on section
 */
-int
-_dwarf_elf_newdata(
+DW_Elf_Data * _dwarf_elf_newdata(DW_Elf_Scn* section);
+
+/*  Creating a new section header */
+Dwarf_Elf_Scn * _dwarf_elf_newscn(Dwarf_Elf *)   Creating a new section header
 
 /*
-elf_newscn()   Creating a new section header
-*/
-int
-_dwarf_elf_newscn()   Creating a new section header
-/*
-elf_errno()
-*/
-int
-_dwarf_elf_errno()
-
-/*
-elf_update()     create Elf and Section headers
+_dwarf elf_update()     create Elf and Section headers
   and turn internal DWARF etc into character
   blobs (one per section)
   and Write all to the output object file.
 */
 
-int
-_dwarf_elf_update(
+int _dwarf _dwarf_elf_update(DW_Elf *elf, Dwarf_Unsigned *sizefinal);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* DWARF_ELF_INTERFACE_H */
+

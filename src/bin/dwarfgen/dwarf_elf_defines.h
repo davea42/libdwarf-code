@@ -36,6 +36,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
+/* libelf enum, value 3, libelf called it type Elf_Cmd.
+   here just int */
+#define ELF_C_WRITE 3
+
 /* Standard Elf section types. */
 #ifndef SHT_NULL
 #define SHT_NULL 0

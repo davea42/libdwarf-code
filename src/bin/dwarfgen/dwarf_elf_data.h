@@ -27,15 +27,31 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef DWARF_ELF_DATA_H
+#define DWARF_ELF_DATA_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 
 typedef struct DW_Elf_Data_s {
     void *         d_buf;
-    unsigned int   d_type;
     Dwarf_Unsigned d_size;
     Dwarf_Off      d_off;
     Dwarf_Unsigned d_align;
+    unsigned int   d_type;
     unsigned int   d_version;
 } DW_Elf_Data;
 
+typedef struct DW_Elf_Scn_s {
+    FIXME internal only data
+} DW_Elf_Scn;
+
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* DWARF_ELF_DATA_H */
 
