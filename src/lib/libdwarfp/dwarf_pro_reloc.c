@@ -188,8 +188,7 @@ _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
 /*ARGSUSED*/
 int
 dwarf_get_relocation_info_count(Dwarf_P_Debug dbg,
-    Dwarf_Unsigned *
-    count_of_relocation_sections,
+    Dwarf_Unsigned * count_of_relocation_sections,
     int *drd_buffer_version,
     Dwarf_Error * error)
 {
@@ -214,8 +213,8 @@ dwarf_get_relocation_info_count(Dwarf_P_Debug dbg,
 
 int
 dwarf_get_relocation_info(Dwarf_P_Debug dbg,
-    Dwarf_Signed * elf_section_index,
-    Dwarf_Signed * elf_section_index_link,
+    Dwarf_Unsigned * elf_section_index,
+    Dwarf_Unsigned * elf_section_index_link,
     Dwarf_Unsigned * relocation_buffer_count,
     Dwarf_Relocation_Data * reldata_buffer,
     Dwarf_Error * error)
