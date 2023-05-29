@@ -69,6 +69,9 @@ private:
 //  with an array index in dwarfgen.
 //  So this class hold an elf section number
 //  and gives those a recognizable type.
+//  As of 2023 the ElfSectIndex is an index into
+//  <vector>SectionFromDwarf dwsectab
+//  whereas the libdwarfp arrays are of size NUM_DEBUG_SECTIONS
 class ElfSectIndex {
 public:
     ElfSectIndex():elfsect_(0) {};

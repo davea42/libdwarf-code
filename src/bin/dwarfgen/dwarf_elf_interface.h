@@ -39,22 +39,15 @@ extern "C" {
 
 /* A few return DW_DLV_OK, DW_DLV_OK, or DW_DLV_NO_ENTRY; */
 
-/*  elf_begin()   create a Dwarf_Elf header record.
-*/
-int
-_dwarf_elf_begin(int fd, int cmd, Dwarf_Elf **ret_de);
+/*  elf_begin()   create a Dwarf_Elf header record.  */
+int _dwarf_elf_begin(int fd, int cmd, Dwarf_Elf **ret_de);
 
-/*
-elf_end()          Clean up allocated data.
-*/
-
+/* elf_end()          Clean up allocated data.  */
 int _dwarf_elf_end(Dwarf_Elf*elf);
 
 /*
-elf_ndxscn()    return its section number in Elf
-*/
-
-/* Return DW_DLV_OK or DW_DLV_ERROR */
+elf_ndxscn() Get its section number in Elf
+Return DW_DLV_OK or DW_DLV_ERROR */
 int  _dwarf_elf_ndxscn(DW_Elf_Scn* sec, Dwarf_Unsigned*elf_sec_num);
 
 dw_elf32_ehdr * _dwarf_elf32_newehdr(Dwarf_Elf *);
@@ -68,25 +61,21 @@ dw_elf64_shdr * _dwarf_elf64_getshdr(DW_Elf_Scn *scn);
 /* elf_getdata()    Retrieve section content data */
 DW_Elf_Data * _dwarf_elf_getdata(DW_Elf_Scn *scn,DW_Elf_Data*prev);
 
-/* For adding Dwarf or text or whatever
-   data, depending on section
-*/
+/* For adding Dwarf or text or whatever data */
 DW_Elf_Data * _dwarf_elf_newdata(DW_Elf_Scn* section);
 
 /*  Creating a new section header */
 DW_Elf_Scn * _dwarf_elf_newscn(Dwarf_Elf *);
 
-/*
-_dwarf elf_update()     create Elf and Section headers
-  and turn internal DWARF etc into character
-  blobs (one per section)
-  and Write all to the output object file.
+/*  _dwarf elf_update()     create Elf and Section headers
+    and turn internal DWARF etc into character
+    blobs (one per section)
+    and Write all to the output object file.
 */
 int _dwarf_elf_update(Dwarf_Elf *elf, Dwarf_Unsigned *sizefinal);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
 #endif /* DWARF_ELF_INTERFACE_H */
 
