@@ -46,7 +46,11 @@ static void dump_block(char *prefix, Dwarf_Small *data, Dwarf_Unsigned len);
     guaranteed to leak memory when that class
     of errors is found in the object file being read.
     
-    David Anderson */
+    David Anderson 
+
+    As of 30 May 2023 all the exit() calls (other
+    than the open() call) are changed to
+    return; instead so we do not leak memory. */
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
@@ -153,7 +157,7 @@ static void read_frame_data(Dwarf_Debug dbg, const char *sect) {
   }
   if (res == DW_DLV_ERROR) {
     printf("Error reading frame data \n");
-    exit(EXIT_FAILURE);
+    return;
   }
   printf("%" DW_PR_DSd " cies present. "
          "%" DW_PR_DSd " fdes present. \n",
@@ -168,7 +172,7 @@ static void read_frame_data(Dwarf_Debug dbg, const char *sect) {
     if (res != DW_DLV_OK) {
       printf("Error accessing cie of fdenum %" DW_PR_DSd " to get its cie\n",
              fdenum);
-      exit(EXIT_FAILURE);
+      return;
     }
     printf("Print cie of fde %" DW_PR_DSd "\n", fdenum);
     print_cie_instrs(cie, &error);
@@ -222,7 +226,7 @@ static void print_cie_instrs(Dwarf_Cie cie, Dwarf_Error *error) {
                              &offset_size, error);
   if (res != DW_DLV_OK) {
     printf("Unable to get cie info!\n");
-    exit(EXIT_FAILURE);
+    return;
   }
 }
 
@@ -302,7 +306,7 @@ static void print_fde_col(Dwarf_Signed k, Dwarf_Addr jsave,
     break;
   default:
     printf("Internal error in libdwarf, value type %d\n", value_type);
-    exit(EXIT_FAILURE);
+    return;
   }
   printf(" more=%d", has_more_rows);
   printf(" next=0x%" DW_PR_DUx, subsequent_pc);
@@ -343,7 +347,7 @@ static void print_fde_selected_regs(Dwarf_Fde fde) {
   if (fres == DW_DLV_ERROR) {
     printf("FAIL: dwarf_get_fde_range err %" DW_PR_DUu " line %d\n",
            dwarf_errno(oneferr), __LINE__);
-    exit(EXIT_FAILURE);
+    return;
   }
   if (fres == DW_DLV_NO_ENTRY) {
     printf("No fde range data available\n");
@@ -352,7 +356,7 @@ static void print_fde_selected_regs(Dwarf_Fde fde) {
   res = dwarf_get_cie_of_fde(fde, &cie, &error);
   if (res != DW_DLV_OK) {
     printf("Error getting cie from fde\n");
-    exit(EXIT_FAILURE);
+    return;
   }
 
   high_addr = low_pc + func_length;
@@ -376,7 +380,7 @@ static void print_fde_selected_regs(Dwarf_Fde fde) {
         printf("FAIL: dwarf_get_fde_info_for_reg3_b, "
             "reading reg err %s line %d",
                dwarf_errmsg(oneferr), __LINE__);
-        exit(EXIT_FAILURE);
+        return;
       }
       if (fires == DW_DLV_NO_ENTRY) {
         continue;
@@ -577,7 +581,7 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
                             &fde_offset, error);
   if (res != DW_DLV_OK) {
     printf("Problem getting fde range \n");
-    exit(EXIT_FAILURE);
+    return;
   }
 
   arbitrary_addr = lowpc + (func_length / 2);
@@ -593,7 +597,7 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
       sizeof(struct Dwarf_Regtable_Entry3_s) * oldrulecount);
   if (!tab3.rt3_rules) {
     printf("Unable to malloc for %d rules\n", oldrulecount);
-    exit(EXIT_FAILURE);
+    return;
   }
 
   res = dwarf_get_fde_info_for_all_regs3(fde, arbitrary_addr, &tab3, &actual_pc,
@@ -602,19 +606,19 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
 
   if (res != DW_DLV_OK) {
     printf("dwarf_get_fde_info_for_all_regs3 failed!\n");
-    exit(EXIT_FAILURE);
+    return;
   }
   print_regtable(&tab3);
 
   res = dwarf_get_fde_instr_bytes(fde, &outinstrs, &instrslen, error);
   if (res != DW_DLV_OK) {
     printf("dwarf_get_fde_instr_bytes failed!\n");
-    exit(EXIT_FAILURE);
+    return;
   }
   res = dwarf_get_cie_of_fde(fde, &cie, error);
   if (res != DW_DLV_OK) {
     printf("Error getting cie from fde\n");
-    exit(EXIT_FAILURE);
+    return;
   }
 
   {
@@ -625,7 +629,7 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
                                           error);
     if (res != DW_DLV_OK) {
       printf("dwarf_expand_frame_instructions failed!\n");
-      exit(EXIT_FAILURE);
+      return;
     }
     printf("Frame op count: %" DW_PR_DUu "\n", frame_instr_count);
     print_frame_instrs(dbg, frame_instr_head, frame_instr_count, error);
