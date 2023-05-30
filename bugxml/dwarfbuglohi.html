@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2023</p>
-<p> Record count: 148 </p>
+<p> Record count: 149 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -3214,14 +3214,17 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   which could take a long time to succeed or fail.
   After that almost anything could happen.
   Same as ossfuzz 56548.
+  With  the bug in 56548 fixed, now we still have a bug,
+  there is a leak from _dwarf_special_no_dbg_error_malloc()
+  -fsanitize does not show the bug here, but valgrind does
 </p>
-<p>datefixed: 2023-03-03
+<p>datefixed: 2023-05-29
 </p>
 <p>references:  regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
 </p>
-<p>gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
+<p>gitfixid: 241fe0cb415569975c451d1f2d62fb2b2147cd72
 </p>
-<p>tarrelease: libdwarf-0.7.0.tar.xz
+<p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202303-010">87) DW202303-010</h3>
@@ -3451,14 +3454,20 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>description:  Stack buffer overflow in dwarf_dietype_offset.
   Reading a corrupted object file.
   The bug was in the test code, not libdwarf.
+  Having fixed that, valgrind finds that some memory is not
+  freed by dwarf_finish(). In dwarf_alloc.c  March 20
+  _dwarf_free_all_of_one_debug() if the Dwarf_Debug was normal
+  we failed to call _dwarf_free_static_errlist() and that
+  left memory allocated from a bogus earlier call to the
+  library (a situation libdwarf should handle and now does).
 </p>
-<p>datefixed: 2023-03-20
+<p>datefixed: 2023-05-30
 </p>
 <p>references:  regressiontests/ossfuzz56450/fuzz_die_cu_attrs-4953133005799424
 </p>
-<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+<p>gitfixid: 
 </p>
-<p>tarrelease: libdwarf-0.7.0.tar.xz
+<p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202303-018">95) DW202303-018</h3>
@@ -4883,14 +4892,20 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   reasonableness.   Now we do all the tests
   on the full Dwarf_Unsigned register number(s)
   and retain the value in the long form everywhere.
+  Fixed 2023-04-15.
+  Once that is fixed there is still a leak found by valgrind.
+  Tht test code fuzz/fuzz_set_frame_all.c does a local
+  malloc and in some cases returned without free-ing it
+  locally. Now that local malloc has the necessary
+  local free.
 </p>
-<p>datefixed: 2023-04-15
+<p>datefixed: 2023-05-30
 </p>
 <p>references:  regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
 </p>
-<p>gitfixid: 27e06267b2931cdfbbaf46492f88a3f9040abb20
+<p>gitfixid: 21b33d13024d18b09e32914ca5718a5c81d1ad67
 </p>
-<p>tarrelease: libdwarf-0.7.0.tar.xz
+<p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202305-001">141) DW202305-001</h3>
@@ -5044,13 +5059,18 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   Now if the set of values violates the required
   relationships an error is returned on requesting
   actual frame data.
-  The problem has existed for many years.
+  The problem has existed for many years (fixed May 23).
+  Once that is fixed valgrind shows leaks. That is because
+  fuzz/fuzz_set_frame_all.c fails to call dwarf_finish() and,
+  instead, simple exit()s at several places. Updated the
+  test source to return from its functions and only
+  exit() from main() after the dwarf_finish() call.
 </p>
-<p>datefixed: 2023-05-23
+<p>datefixed: 2023-05-30
 </p>
 <p>references:  regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
 </p>
-<p>gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+<p>gitfixid: 21b33d13024d18b09e32914ca5718a5c81d1ad67
 </p>
 <p>tarrelease: 
 </p>
@@ -5076,12 +5096,18 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   in DWARF5) would crash the caller if any relevant argument
   was null.  The problem has existed since the code
   was written in 2021.
+  Once that is fixed valgrind complains about using
+  an uninitialized value.
+  fuzz/fuzz_simplereader_tu.c calls libdwarf with
+  the declation being Dwarf_Die die; no initializer
+  present. Bad behavior, even a library crash is
+  likely.
 </p>
-<p>datefixed: 2023-05-23
+<p>datefixed: 2023-05-30
 </p>
 <p>references:  regressiontests/ossfuzz56472/fuzz_simplereader_tu-6614412934119424
 </p>
-<p>gitfixid: 60c885a4db0a924b60e9830d238bf77bf8993de1
+<p>gitfixid: 8b17d41a31c33e0b3b9727a8044e0093a754d6d7
 </p>
 <p>tarrelease: 
 </p>
@@ -5146,9 +5172,44 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-05-23
 </p>
-<p>references:  regressiontests/ossfuzz56492/clusterfuzz-testcase-fuzz_macro_dwarf5-6497277180248064
+<p>references:  regressiontests/ossfuzz56492/fuzz_macro_dwarf5-6497277180248064
 </p>
 <p>gitfixid: 97a78122268c9a74701f2dd3115f902309e9a484
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-009">149) DW202305-009</h3>
+<p>id: DW202305-009
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56451
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Write to memory fails
+</p>
+<p>product: fuzz testing
+</p>
+<p>description:  The problem is a bug in the test source:
+  fuzz/fuzz_dnames.c. It calls dwarf_dnames_abbrevtable()
+  incorrectly.  The caller is required to provide arrays
+  dw_idxattr_array and dw_form_array and pass a pointer to such.
+  The code was just passing in a pointer to nothing.
+  The library code has no possible way to determine the passed
+  in pointers are usable.
+  In addition, dwarf_dnames_abbrevtable() die it not
+  check that pointers passed in were non-null before
+  use, but now it does.
+</p>
+<p>datefixed: 2023-05-30
+</p>
+<p>references:  regressiontests/ossfuzz56451/fuzz_dnames-4986494365597696
+</p>
+<p>gitfixid: 12a612fc8db38fc26cd5e6064f09a6f825891c7c
 </p>
 <p>tarrelease: 
 </p>
