@@ -1,3 +1,104 @@
+2023-05-30:  David Anderson
+    commit 7be3a252da6df46c7afb50750f9f149c7319fc8f
+
+    Now showing all the latest vulnerability data.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-05-30:  David Anderson
+    commit d4f4361aa0d6819fb07598ab74ed31fd388f2393
+
+    Now fully up to date, hopefully all existent
+    oss fuzz issues addressed.
+            modified:   bugxml/data.txt
+
+2023-05-30:  David Anderson
+    commit 12a612fc8db38fc26cd5e6064f09a6f825891c7c
+
+    DW202305-009 ossfuzz id: 56451
+
+    Changed by adding initializers of zero
+    to local variables not previously initialized.
+            modified:   fuzz/fuzz_dnames.c
+
+    Added checks to dwarf_dnames_abbrevtable()
+    so required pointers are verified non-null before use.
+    Still never returns DW_DLV_ERROR. With required
+    input pointers missing it returns DW_DLV_NO_ENTRY.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2023-05-30:  David Anderson
+    commit 97d6310bd2b69e653db76cf02be51341190c39d9
+
+    Updated with latest update of known
+    bugs.
+            modified:   bugxml/data.txt
+
+2023-05-30:  David Anderson
+    commit 282126391c1c8aae5c6c1ad28e5e8c3dc4943940
+
+    ossfuzz 56450.  For a standard Dwarf_Debug
+    we failed to call _dwarf_free_static_errlist()
+    hence some code calling libdwarf
+    and encountering an error with a NULL Dwarf_Debug
+    passed in left behind malloc space.
+    The leak is quite small, but it has been present
+    for a very long time.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2023-05-30:  David Anderson
+    commit 21b33d13024d18b09e32914ca5718a5c81d1ad67
+
+    It was calling exit() early, not allowing
+    dwarf_finish() to be called.  ossfuzz 56462
+
+    And it was doing a local malloc and
+    failing to call free() on that local space
+    in some situations.
+    ossfuzz 58026
+
+            modified:   fuzz/fuzz_set_frame_all.c
+
+2023-05-30:  David Anderson
+    commit 8b17d41a31c33e0b3b9727a8044e0093a754d6d7
+
+    Document  DW202305-006 ossfuzz id: 56472
+    The test code as written here
+    gets an error from valgrind for calling libdwarf
+    with an uninitialized pointer.  The fix is to
+    initialize the Dwarf_Die instance by adding  = 0;
+    This was not a libdwarf bug (the original
+    fix actually fixed a libdwarf bug, and this
+    valgrind issue pointed out the need for the test case fix..
+            modified:   bugxml/data.txt
+            modified:   fuzz/fuzz_simplereader_tu.c
+
+2023-05-30:  David Anderson
+    commit 72a19f627b84fe4d2cb0942f5e6d70a0a615b440
+
+    Updating DW202305-005 ossfuzz id: 56462
+            modified:   bugxml/data.txt
+
+2023-05-30:  David Anderson
+    commit 5612eff9f1a40229690fd0e61083101df85e776b
+
+    DW202305-005 ossfuzz id: 56462
+    To avoid leaks the libdwarf calling program
+    MUST call dwarf_finish(). The code here
+    was failing to do that in a number of
+    error situations.
+    Now it just returns from functions on error
+    and lets main() call dwarf_finish(),
+    a call that has always been in main().
+            modified:   fuzz/fuzz_set_frame_all.c
+
+2023-05-29:  David Anderson
+    commit 7be3c6e4fc632a13c4901d5ea47eddf0fb599adf
+
+    now up to date with git log
+            modified:   ChangeLog
+
 2023-05-29:  David Anderson
     commit 8832094fa0b1ecca3ad8cbc6b47242d9ddab1183
 
