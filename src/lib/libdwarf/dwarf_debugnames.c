@@ -1294,6 +1294,8 @@ get_bucket_number(Dwarf_Dnames_Head dn,
     return DW_DLV_NO_ENTRY;
 }
 
+/*  We try to protect against bogus arguments,
+    but all we can do is check for null.  */
 int
 dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned index,
@@ -1309,6 +1311,12 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned abnumber          = 0;
     Dwarf_Unsigned abmax             = 0;
 
+    if (!dn) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (!idxattr_array || !form_array) {
+        return DW_DLV_NO_ENTRY;
+    }
     if (index >= dn->dn_abbrev_instance_count) {
         return DW_DLV_NO_ENTRY;
     }
@@ -1316,10 +1324,16 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     if (abbrev_offset) {
         *abbrev_offset = ab->da_abbrev_offset;
     }
-    *abbrev_code = ab->da_abbrev_code;
-    *abbrev_tag  = ab->da_tag;
-    abmax        = ab->da_pairs_count;
-    *attr_count = abmax;
+    if (abbrev_code) {
+        *abbrev_code = ab->da_abbrev_code;
+    }
+    if (abbrev_tag) {
+        *abbrev_tag  = ab->da_tag;
+    }
+    abmax       = ab->da_pairs_count;
+    if (attr_count) {
+        *attr_count = abmax;
+    }
     if (array_size < abmax) {
         abmax = array_size;
     }

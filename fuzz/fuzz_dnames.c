@@ -25,6 +25,13 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
+/*  This now initializes local variables to zero
+    rather than leaving them uninitialized.
+    When uninitialized consistent behavior is
+    unlikely, run-to-run.  And
+    crashes are likely.
+    David Anderson 30 May 2023.
+*/
 /*
  * A fuzzer that simulates a small part of the simplereader.c example.
  */
@@ -72,11 +79,19 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     }
 
     Dwarf_Unsigned dw_index = 1;
-    Dwarf_Unsigned dw_abbrev_offset, dw_abbrev_code, dw_abbrev_tag;
+    Dwarf_Unsigned dw_abbrev_offset = 0; 
+    Dwarf_Unsigned dw_abbrev_code = 0; 
+    Dwarf_Unsigned dw_abbrev_tag = 0;
     Dwarf_Unsigned dw_array_size = 256;
-    Dwarf_Half *dw_idxattr_array;
-    Dwarf_Half *dw_form_array;
-    Dwarf_Unsigned dw_idxattr_count;
+    /*  This test code originally passed in uninitialized
+        pointers dw_idxattr_array and dw_form_array, which
+        we cannot protect against. But we can check for NULL
+        so now the variables are initialilized.
+        In any case this code does not call the function correctly,
+        but we leave that as written. David Anderson 30 May 2023 */
+    Dwarf_Half *dw_idxattr_array = 0;
+    Dwarf_Half *dw_form_array = 0;
+    Dwarf_Unsigned dw_idxattr_count = 0;
 
     res = dwarf_dnames_abbrevtable(
         dnames_h, dw_index, &dw_abbrev_offset, &dw_abbrev_code, &dw_abbrev_tag,
@@ -84,18 +99,18 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     if (res == DW_DLV_NO_ENTRY) {
     }
 
-    Dwarf_Unsigned dw_comp_unit_count;
-    Dwarf_Unsigned dw_local_type_unit_count;
-    Dwarf_Unsigned dw_foreign_type_unit_count;
-    Dwarf_Unsigned dw_bucket_count;
-    Dwarf_Unsigned dw_name_count;
-    Dwarf_Unsigned dw_abbrev_table_size;
-    Dwarf_Unsigned dw_entry_pool_size;
-    Dwarf_Unsigned dw_augmentation_string_size;
-    char *dw_augmentation_string;
-    Dwarf_Unsigned dw_section_size;
-    Dwarf_Half dw_table_version;
-    Dwarf_Half dw_offset_size;
+    Dwarf_Unsigned dw_comp_unit_count = 0;
+    Dwarf_Unsigned dw_local_type_unit_count = 0;
+    Dwarf_Unsigned dw_foreign_type_unit_count = 0;
+    Dwarf_Unsigned dw_bucket_count = 0;
+    Dwarf_Unsigned dw_name_count = 0;
+    Dwarf_Unsigned dw_abbrev_table_size = 0;
+    Dwarf_Unsigned dw_entry_pool_size = 0;
+    Dwarf_Unsigned dw_augmentation_string_size = 0;
+    char *dw_augmentation_string = 0;
+    Dwarf_Unsigned dw_section_size = 0;
+    Dwarf_Half dw_table_version = 0;
+    Dwarf_Half dw_offset_size = 0;
     res = dwarf_dnames_sizes(
         dnames_h, &dw_comp_unit_count, &dw_local_type_unit_count,
         &dw_foreign_type_unit_count, &dw_bucket_count, &dw_name_count,
@@ -110,16 +125,16 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       return 0;
     }
 
-    Dwarf_Unsigned dw_header_offset;
-    Dwarf_Unsigned dw_cu_table_offset;
-    Dwarf_Unsigned dw_tu_local_offset;
-    Dwarf_Unsigned dw_foreign_tu_offset;
-    Dwarf_Unsigned dw_bucket_offset;
-    Dwarf_Unsigned dw_hashes_offset;
-    Dwarf_Unsigned dw_stringoffsets_offset;
-    Dwarf_Unsigned dw_entryoffsets_offset;
-    Dwarf_Unsigned dw_abbrev_table_offset;
-    Dwarf_Unsigned dw_entry_pool_offset;
+    Dwarf_Unsigned dw_header_offset = 0;
+    Dwarf_Unsigned dw_cu_table_offset = 0;
+    Dwarf_Unsigned dw_tu_local_offset = 0;
+    Dwarf_Unsigned dw_foreign_tu_offset = 0;
+    Dwarf_Unsigned dw_bucket_offset = 0;
+    Dwarf_Unsigned dw_hashes_offset = 0;
+    Dwarf_Unsigned dw_stringoffsets_offset = 0;
+    Dwarf_Unsigned dw_entryoffsets_offset = 0;
+    Dwarf_Unsigned dw_abbrev_table_offset = 0;
+    Dwarf_Unsigned dw_entry_pool_offset = 0;
     res = dwarf_dnames_offsets(
         dnames_h, &dw_header_offset, &dw_cu_table_offset, &dw_tu_local_offset,
         &dw_foreign_tu_offset, &dw_bucket_offset, &dw_hashes_offset,
@@ -133,7 +148,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       return 0;
     }
 
-    Dwarf_Unsigned dw_offset;
+    Dwarf_Unsigned dw_offset = 0;
     Dwarf_Sig8 dw_sig;
     res = dwarf_dnames_cu_table(dnames_h, "cu", 0, &dw_offset, &dw_sig, &error);
     if (res != DW_DLV_OK) {
@@ -155,13 +170,13 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       return 0;
     }
 
-    Dwarf_Unsigned dw_bucket_number;
-    Dwarf_Unsigned dw_hash_value;
-    Dwarf_Unsigned dw_offset_to_debug_str;
-    char *dw_ptrtostr;
-    Dwarf_Unsigned dw_offset_in_entrypool;
-    Dwarf_Unsigned dw_abbrev_number;
-    Dwarf_Half abbrev_tg;
+    Dwarf_Unsigned dw_bucket_number = 0;
+    Dwarf_Unsigned dw_hash_value = 0;
+    Dwarf_Unsigned dw_offset_to_debug_str = 0;
+    char *dw_ptrtostr = 0;
+    Dwarf_Unsigned dw_offset_in_entrypool = 0;
+    Dwarf_Unsigned dw_abbrev_number = 0;
+    Dwarf_Half abbrev_tg = 0;
     dw_array_size = 10;
     Dwarf_Half idxattr_array[10];
     Dwarf_Half form_array[10];
