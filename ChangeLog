@@ -1,3 +1,44 @@
+2023-05-29:  David Anderson
+    commit 8832094fa0b1ecca3ad8cbc6b47242d9ddab1183
+
+    Added text to ossfuzz 56443  DW202303-009
+    Now have the real fix.
+            modified:   bugxml/data.txt
+
+2023-05-29:  David Anderson
+    commit 241fe0cb415569975c451d1f2d62fb2b2147cd72
+
+    The actual fix to ossfuzz56443
+    DW202303-053
+    Unfortunately -fsanitize does not show the bug,
+    only valgrind does.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_alloc.h
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+2023-05-29:  David Anderson
+    commit 443ccb173513bf68beaf9f9a1fbf305cbb41610d
+
+    Added comments on unfixed issues
+            modified:   bugxml/data.txt
+
+2023-05-29:  David Anderson
+    commit e2ef9556567e13cf7b7fee50a9bc87f577fb9101
+
+    Amplified comment.
+            modified:   fuzz/fuzz_crc_32.c
+
+2023-05-25:  Mateusz Janda
+    commit 9b26105456ee9a09cc02c7c58f343338e92c1b2e
+
+    DW_AT_GNU_bias duplicate removed (#165)
+
+2023-05-24:  David Anderson
+    commit 5cd5372b6761c38980527a06aa7a84537a72b130
+
+    Updated to bring up to date.
+            modified:   ChangeLog
+
 2023-05-24:  David Anderson
     commit a5d44c690636aa9c49ba4c6656f042c05f42c7ed
 
