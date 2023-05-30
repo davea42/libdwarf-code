@@ -1,4 +1,11 @@
-#56492
+
+#sherifbot claim not fixed
+# 56443
+# 56451 ? Never heard of it
+# 56458 ? Never heard of it
+# 56462
+# 56492
+# 56562 ? Never heard of it
 
 id: DW202305-008
 fuzzer: ossfuzz id: 56492
@@ -1223,10 +1230,12 @@ description: With any one of a small set of corrupted data
   which could take a long time to succeed or fail.
   After that almost anything could happen.
   Same as ossfuzz 56548.
-datefixed: 2023-03-03
+  With  the bug in 56548 fixed, now we still have a bug,
+  there is a leak from _dwarf_special_no_dbg_error_malloc()
+datefixed: 
 references: regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
-gitfixid: 89d3beccd161657760585967255bbabf67e5b4c9
-tarrelease: libdwarf-0.7.0.tar.xz
+gitfixid: 
+tarrelease: 
 endrec: DW202303-009
 
 
