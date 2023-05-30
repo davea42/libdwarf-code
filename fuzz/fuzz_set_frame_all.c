@@ -50,7 +50,9 @@ static void dump_block(char *prefix, Dwarf_Small *data, Dwarf_Unsigned len);
 
     As of 30 May 2023 all the exit() calls (other
     than the open() call) are changed to
-    return; instead so we do not leak memory. */
+    return; instead so we do not leak memory. 
+    In addition the tab3.rt3_rules the code mallocs
+    here is always freed here now. */
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
@@ -606,17 +608,20 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
 
   if (res != DW_DLV_OK) {
     printf("dwarf_get_fde_info_for_all_regs3 failed!\n");
+    free(tab3.rt3_rules);
     return;
   }
   print_regtable(&tab3);
 
   res = dwarf_get_fde_instr_bytes(fde, &outinstrs, &instrslen, error);
   if (res != DW_DLV_OK) {
+    free(tab3.rt3_rules);
     printf("dwarf_get_fde_instr_bytes failed!\n");
     return;
   }
   res = dwarf_get_cie_of_fde(fde, &cie, error);
   if (res != DW_DLV_OK) {
+    free(tab3.rt3_rules);
     printf("Error getting cie from fde\n");
     return;
   }
@@ -628,6 +633,7 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
                                           &frame_instr_head, &frame_instr_count,
                                           error);
     if (res != DW_DLV_OK) {
+      free(tab3.rt3_rules);
       printf("dwarf_expand_frame_instructions failed!\n");
       return;
     }
