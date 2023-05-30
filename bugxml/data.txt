@@ -4,7 +4,7 @@
 # 56450 valgrind fail
 # 56451 ? Never heard of it
 # 56458 ? Never heard of it
-# 56462 valgrind fail. Problem in fuzz/fuzz_set_frame_all
+# 56462 valgrind fail. Problem in fuzz/fuzz_set_frame_all.fixed now.
 # 56472 valgrind fail
 # 56492
 # 56562 ? Never heard of it
@@ -64,9 +64,15 @@ description: A call to any dwarf_get_fission
   in DWARF5) would crash the caller if any relevant argument
   was null.  The problem has existed since the code
   was written in 2021.
-datefixed: 2023-05-23
+  Once that is fixed valgrind complains about using
+  an uninitialized value.
+  fuzz/fuzz_simplereader_tu.c calls libdwarf with
+  the declation being Dwarf_Die die; so no initializer
+  present. Bad behavior, even a library crash is
+  likely.
+datefixed: 2023-05-30
 references: regressiontests/ossfuzz56472/fuzz_simplereader_tu-6614412934119424
-gitfixid: 60c885a4db0a924b60e9830d238bf77bf8993de1
+gitfixid: 
 tarrelease:
 endrec: DW202305-006
 
@@ -92,7 +98,7 @@ description: A call to dwarf_set_frame_undefined_value()
   exit() from main() after the dwarf_finish() call.
 datefixed: 2023-05-30 
 references: regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
-gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
+gitfixid: 5612eff9f1a40229690fd0e61083101df85e776b
 tarrelease:
 endrec: DW202305-005
 

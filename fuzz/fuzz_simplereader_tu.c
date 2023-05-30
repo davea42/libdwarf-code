@@ -40,7 +40,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Sig8 hash8;
   Dwarf_Sig8 hash8_2;
   Dwarf_Error *errp = 0;
-  Dwarf_Die die;
+  Dwarf_Die die = 0;
   Dwarf_Attribute attr = 0;
 
   fuzz_fd = open(filename, O_RDONLY);
