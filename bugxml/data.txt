@@ -1232,9 +1232,10 @@ description: With any one of a small set of corrupted data
   Same as ossfuzz 56548.
   With  the bug in 56548 fixed, now we still have a bug,
   there is a leak from _dwarf_special_no_dbg_error_malloc()
-datefixed: 
+  -fsanitize does not show the bug here, but valgrind does
+datefixed: 2023-05-29
 references: regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
-gitfixid: 
+gitfixid: 241fe0cb415569975c451d1f2d62fb2b2147cd72 
 tarrelease: 
 endrec: DW202303-009
 
