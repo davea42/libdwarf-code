@@ -1,17 +1,25 @@
 
-#sherifbot claim not fixed
-# 56443 Fixed May 29
-# 56450 valgrind fail. Earlier left out _dwarf_free_static_errlist()
-#   for a standard dbg (case where caller called something
-#   with a NULL dbg)
-# 56451 ? Never heard of it
-# 56458 ? Never heard of it
-# 56462 valgrind fail. Problem in fuzz/fuzz_set_frame_all.fixed now.
-# 56472 valgrind fail problem in fuzz/fuzz_simplereader_tu.c. Fixed.
-# 56492
-# 56562 ? Never heard of it
-# 58026 valgrind fail. Calling program does local malloc
-#   and sometimes fails to free its local malloc.fuzz?set_frame_all.c
+id: DW202305-009
+fuzzer: ossfuzz id: 56451
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability:  Write to memory fails
+product: fuzz testing
+description: The problem is a bug in the test source:
+  fuzz/fuzz_dnames.c. It calls dwarf_dnames_abbrevtable()
+  incorrectly.  The caller is required to provide arrays
+  dw_idxattr_array and dw_form_array and pass a pointer to such.
+  The code was just passing in a pointer to nothing.
+  The library code has no possible way to determine the passed
+  in pointers are usable.
+  In addition, dwarf_dnames_abbrevtable() die it not
+  check that pointers passed in were non-null before
+  use, but now it does.
+datefixed: 2023-05-30
+references: regressiontests/ossfuzz56451/fuzz_dnames-4986494365597696
+gitfixid: 12a612fc8db38fc26cd5e6064f09a6f825891c7c
+tarrelease:
+endrec: DW202305-009
 
 id: DW202305-008
 fuzzer: ossfuzz id: 56492
@@ -26,7 +34,7 @@ description: The problem is a bug in the test source:
   and there examplep() was really just a sketch. 
   The testcase here no longer specifies an infinite loop.
 datefixed: 2023-05-23
-references: regressiontests/ossfuzz56492/clusterfuzz-testcase-fuzz_macro_dwarf5-6497277180248064
+references: regressiontests/ossfuzz56492/fuzz_macro_dwarf5-6497277180248064
 gitfixid: 97a78122268c9a74701f2dd3115f902309e9a484
 tarrelease:
 endrec: DW202305-008
@@ -70,12 +78,12 @@ description: A call to any dwarf_get_fission
   Once that is fixed valgrind complains about using
   an uninitialized value.
   fuzz/fuzz_simplereader_tu.c calls libdwarf with
-  the declation being Dwarf_Die die; so no initializer
+  the declation being Dwarf_Die die; no initializer
   present. Bad behavior, even a library crash is
   likely.
 datefixed: 2023-05-30
 references: regressiontests/ossfuzz56472/fuzz_simplereader_tu-6614412934119424
-gitfixid: 
+gitfixid: 8b17d41a31c33e0b3b9727a8044e0093a754d6d7
 tarrelease:
 endrec: DW202305-006
 
