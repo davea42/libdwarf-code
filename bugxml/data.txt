@@ -1,11 +1,14 @@
 
 #sherifbot claim not fixed
-# 56443
+# 56443 Fixed May 29
+# 56450 valgrind fail
 # 56451 ? Never heard of it
 # 56458 ? Never heard of it
-# 56462
+# 56462 valgrind fail. Problem in fuzz/fuzz_set_frame_all
+# 56472 valgrind fail
 # 56492
 # 56562 ? Never heard of it
+# 58026 valgrind fail
 
 id: DW202305-008
 fuzzer: ossfuzz id: 56492
@@ -81,8 +84,13 @@ description: A call to dwarf_set_frame_undefined_value()
   Now if the set of values violates the required 
   relationships an error is returned on requesting
   actual frame data.
-  The problem has existed for many years.
-datefixed: 2023-05-23 
+  The problem has existed for many years (fixed May 23).
+  Once that is fixed valgrind shows leaks. That is because
+  fuzz/fuzz_set_frame_all.c fails to call dwarf_finish() and,
+  instead, simple exit()s at several places. Updated the
+  test source to return from its functions and only
+  exit() from main() after the dwarf_finish() call.
+datefixed: 2023-05-30 
 references: regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
 gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
 tarrelease:
