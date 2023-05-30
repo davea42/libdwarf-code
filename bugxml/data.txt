@@ -1,14 +1,17 @@
 
 #sherifbot claim not fixed
 # 56443 Fixed May 29
-# 56450 valgrind fail
+# 56450 valgrind fail. Earlier left out _dwarf_free_static_errlist()
+#   for a standard dbg (case where caller called something
+#   with a NULL dbg)
 # 56451 ? Never heard of it
 # 56458 ? Never heard of it
 # 56462 valgrind fail. Problem in fuzz/fuzz_set_frame_all.fixed now.
-# 56472 valgrind fail
+# 56472 valgrind fail problem in fuzz/fuzz_simplereader_tu.c. Fixed.
 # 56492
 # 56562 ? Never heard of it
-# 58026 valgrind fail
+# 58026 valgrind fail. Calling program does local malloc
+#   and sometimes fails to free its local malloc.fuzz?set_frame_all.c
 
 id: DW202305-008
 fuzzer: ossfuzz id: 56492
@@ -98,7 +101,7 @@ description: A call to dwarf_set_frame_undefined_value()
   exit() from main() after the dwarf_finish() call.
 datefixed: 2023-05-30 
 references: regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
-gitfixid: 5612eff9f1a40229690fd0e61083101df85e776b
+gitfixid: 21b33d13024d18b09e32914ca5718a5c81d1ad67
 tarrelease:
 endrec: DW202305-005
 
@@ -201,10 +204,16 @@ description: On reading a corrupt frame register number
   reasonableness.   Now we do all the tests 
   on the full Dwarf_Unsigned register number(s)
   and retain the value in the long form everywhere.
-datefixed: 2023-04-15
+  Fixed 2023-04-15.
+  Once that is fixed there is still a leak found by valgrind.
+  Tht test code fuzz/fuzz_set_frame_all.c does a local
+  malloc and in some cases returned without free-ing it
+  locally. Now that local malloc has the necessary
+  local free.
+datefixed: 2023-05-30
 references: regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
-gitfixid: 27e06267b2931cdfbbaf46492f88a3f9040abb20
-tarrelease: libdwarf-0.7.0.tar.xz
+gitfixid: 21b33d13024d18b09e32914ca5718a5c81d1ad67
+tarrelease: 
 endrec: DW202304-004
 
 
@@ -1100,10 +1109,16 @@ product: libdwarf
 description: Stack buffer overflow in dwarf_dietype_offset.
   Reading a corrupted object file.
   The bug was in the test code, not libdwarf.
-datefixed: 2023-03-20
+  Having fixed that, valgrind finds that some memory is not
+  freed by dwarf_finish(). In dwarf_alloc.c  March 20
+  _dwarf_free_all_of_one_debug() if the Dwarf_Debug was normal
+  we failed to call _dwarf_free_static_errlist() and that
+  left memory allocated from a bogus earlier call to the
+  library (a situation libdwarf should handle and now does).
+datefixed: 2023-05-30
 references: regressiontests/ossfuzz56450/fuzz_die_cu_attrs-4953133005799424
-gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease: libdwarf-0.7.0.tar.xz
+gitfixid: 
+tarrelease: 
 endrec: DW202303-017
 
 id: DW202303-016
