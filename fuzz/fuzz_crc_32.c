@@ -54,7 +54,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     dwarf_init_b(fuzz_fd, DW_GROUPNUMBER_ANY, errhand, errarg, &dbg, &error);
     /*  By not checking the return code, on a failed in we
         cannot dealloc the error field, so
-        there is a leak  */
+        there is a leak from 
+        _dwarf_special_no_dbg_error_malloc()  */
     res = dwarf_crc32(dbg, crcbuf, &error);
      
     dwarf_finish(dbg);
