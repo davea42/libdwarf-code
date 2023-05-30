@@ -428,6 +428,7 @@ int
 dwarf_finish(Dwarf_Debug dbg)
 {
     if (!dbg) {
+        _dwarf_free_static_errlist();
         return DW_DLV_OK;
     }
     if (dbg->de_obj_file) {

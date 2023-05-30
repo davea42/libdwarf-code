@@ -42,3 +42,4 @@ void _dwarf_error_destructor(void *);
 
 void _dwarf_add_to_static_err_list(Dwarf_Error err);
 void _dwarf_flush_static_error_list(void);
+void _dwarf_free_static_errlist(void);
