@@ -1143,7 +1143,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
         dbg->de_alloc_tree = 0;
     }
-    /*_dwarf_free_static_errlist(); */
+    _dwarf_free_static_errlist();
     /*  first, walk the search and free()
         contents. */
     /*  Now  do the search tree itself */
