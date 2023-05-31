@@ -340,8 +340,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     } /*CONSTCOND */ while (0)
 #define FREELOCALMALLOC                  \
         _dwarf_free_dfi_list(ilisthead); \
-        free(dfi);                       \
-        free(localregtab);
+        ilisthead =0;                    \
+        free(dfi); dfi = 0;              \
+        free(localregtab); localregtab = 0;
 /* SER === SIMPLE_ERROR_RETURN */
 #define SER(code)                     \
         FREELOCALMALLOC;              \
@@ -708,8 +709,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             instr_ptr,  DWARF_32BIT_SIZE,
             final_instr_ptr,error);
             if (adres != DW_DLV_OK) {
-            free(localregtab);
-            return adres;
+                FREELOCALMALLOC;
+                return adres;
             }
             instr_ptr += DWARF_32BIT_SIZE;
             if (need_augmentation) {
@@ -1214,7 +1215,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 &instr_ptr,final_instr_ptr,
                 &lreg,error);
             if (adres != DW_DLV_OK) {
-                free(localregtab);
+                FREELOCALMALLOC;
                 return adres;
             }
             reg_no = (reg_num_type) lreg;
@@ -1223,7 +1224,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 &instr_ptr,final_instr_ptr,
                 &signed_factored_N_value,error);
             if (adres != DW_DLV_OK) {
-                free(localregtab);
+                FREELOCALMALLOC;
                 return adres;
             }
             if (need_augmentation) {
@@ -1288,7 +1289,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 &instr_ptr,final_instr_ptr,
                 &lreg,error);
             if (adres != DW_DLV_OK) {
-                free(localregtab);
+                FREELOCALMALLOC;
                 return adres;
             }
             reg_no = (reg_num_type) lreg;
@@ -1297,7 +1298,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 &instr_ptr,final_instr_ptr,
                 &factored_N_value,error);
             if (adres != DW_DLV_OK) {
-                free(localregtab);
+                FREELOCALMALLOC;
                 return adres;
             }
             if (need_augmentation) {
@@ -1446,7 +1447,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 &instr_ptr,final_instr_ptr,
                 &asize,error);
             if (adres != DW_DLV_OK) {
-                free(localregtab);
+                FREELOCALMALLOC;
                 return adres;
             }
             /*  Currently not put into ru_* reg rules, not
@@ -1673,7 +1674,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             *returned_frame_instr_count = 0;
         }
     }
-    free(localregtab);
+    FREELOCALMALLOC;
     return DW_DLV_OK;
 #undef ERROR_IF_REG_NUM_TOO_HIGH
 #undef FREELOCALMALLOC
