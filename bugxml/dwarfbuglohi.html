@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2023</p>
-<p> Record count: 149 </p>
+<p> Record count: 150 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5210,6 +5210,42 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz56451/fuzz_dnames-4986494365597696
 </p>
 <p>gitfixid: 12a612fc8db38fc26cd5e6064f09a6f825891c7c
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202305-010">150) DW202305-010</h3>
+<p>id: DW202305-010
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59478
+</p>
+<p>datereported: 2023-05-31
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Memory leak in dwarf_expand_frame_instructions()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Fuzzing provoked one of four error cases that
+  could leak locally allocated memory from _dwarf_exec_frame_instructor()
+  (called by dwarf_expand_frame_instructions).
+  The code did free(localregtab) but
+  needed to do FREELOCALMALLOC, a macro specific
+  to this function which cleans up all local allocations.
+  All four places have been corrected.
+  Called enough times with fuzzed data could result
+  in filling memory leading to the library being unable
+  to work for the caller and instead just returning errors.
+  This bug has been present in the code for many years.
+</p>
+<p>datefixed: 2023-05-31
+</p>
+<p>references:  regressiontests/ossfuzz59478/fuzz_set_frame_all-5300774457180160
+</p>
+<p>gitfixid: 8ef9c8fb613e59f534e789e91a73088eaa5b8a5a
 </p>
 <p>tarrelease: 
 </p>

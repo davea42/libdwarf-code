@@ -1,3 +1,25 @@
+id: DW202305-010
+fuzzer: ossfuzz id: 59478
+datereported: 2023-05-31
+reportedby: David Korczynski
+vulnerability: Memory leak in dwarf_expand_frame_instructions()
+product: libdwarf
+description: Fuzzing provoked one of four error cases that
+  could leak locally allocated memory from _dwarf_exec_frame_instructor()
+  (called by dwarf_expand_frame_instructions).
+  The code did free(localregtab) but
+  needed to do FREELOCALMALLOC, a macro specific
+  to this function which cleans up all local allocations.
+  All four places have been corrected.
+  Called enough times with fuzzed data could result
+  in filling memory leading to the library being unable
+  to work for the caller and instead just returning errors.
+  This bug has been present in the code for many years. 
+datefixed: 2023-05-31
+references: regressiontests/ossfuzz59478/fuzz_set_frame_all-5300774457180160
+gitfixid: 8ef9c8fb613e59f534e789e91a73088eaa5b8a5a 
+tarrelease:
+endrec: DW202305-010
 
 id: DW202305-009
 fuzzer: ossfuzz id: 56451
