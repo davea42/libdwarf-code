@@ -1347,8 +1347,6 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_GNU_bias:
         *s_out = "DW_AT_GNU_bias";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x2305. DW_AT_GNU_bias */
     case DW_AT_go_kind:
         *s_out = "DW_AT_go_kind";
         return DW_DLV_OK;
