@@ -48,7 +48,7 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Newest First</H2>
-</p>as of May 2023</p>
+</p>as of June 2023</p>
 <p> Record count: 150 </p>
 <h3 id="DW202305-010">1) DW202305-010</h3>
 <p>id: DW202305-010
@@ -99,16 +99,16 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>vulnerability:   Write to memory fails
 </p>
-<p>product: fuzz testing
+<p>product: libdwarf
 </p>
-<p>description:  The problem is a bug in the test source:
+<p>description:  One problem is a bug in the test source:
   fuzz/fuzz_dnames.c. It calls dwarf_dnames_abbrevtable()
   incorrectly.  The caller is required to provide arrays
   dw_idxattr_array and dw_form_array and pass a pointer to such.
   The code was just passing in a pointer to nothing.
   The library code has no possible way to determine the passed
   in pointers are usable.
-  In addition, dwarf_dnames_abbrevtable() die it not
+  In addition, dwarf_dnames_abbrevtable() did not
   check that pointers passed in were non-null before
   use, but now it does.
 </p>

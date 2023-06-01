@@ -46,19 +46,19 @@
 
 <reportedby>David Korczynski</reportedby>
 
-<product>fuzz testing</product>
+<product>libdwarf</product>
 
 <vulnerability>  Write to memory fails
 </vulnerability>
 
-<description> The problem is a bug in the test source:
+<description> One problem is a bug in the test source:
   fuzz/fuzz_dnames.c. It calls dwarf_dnames_abbrevtable()
   incorrectly.  The caller is required to provide arrays
   dw_idxattr_array and dw_form_array and pass a pointer to such.
   The code was just passing in a pointer to nothing.
   The library code has no possible way to determine the passed
   in pointers are usable.
-  In addition, dwarf_dnames_abbrevtable() die it not
+  In addition, dwarf_dnames_abbrevtable() did not
   check that pointers passed in were non-null before
   use, but now it does.
 </description>
