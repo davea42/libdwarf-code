@@ -380,7 +380,7 @@ static void print_fde_selected_regs(Dwarf_Fde fde) {
           &offset, &block, &row_pc, &has_more_rows, &subsequent_pc, &oneferr);
       if (fires == DW_DLV_ERROR) {
         printf("FAIL: dwarf_get_fde_info_for_reg3_b, "
-            "reading reg err %s line %d",
+            "reading reg err %s line %d\n",
                dwarf_errmsg(oneferr), __LINE__);
         return;
       }
@@ -582,6 +582,9 @@ static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
                             &fde_byte_length, &cie_offset, &cie_index,
                             &fde_offset, error);
   if (res != DW_DLV_OK) {
+    /*  So nothing clears the error record here,
+        the caller does not know the call failed.
+        Terrible code, but interesting testcase. */
     printf("Problem getting fde range \n");
     return;
   }
