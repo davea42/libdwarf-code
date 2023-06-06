@@ -448,7 +448,7 @@ description: The same bug seen earlier
   gitfixid is more recent than truly required.
 datefixed: 2023-03-28
 references: regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
-gitfixid: 25a14c3fd5522aff0b1d2a77d7ee66b7c529779
+gitfixid: c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-053
 
