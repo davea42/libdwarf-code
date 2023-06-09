@@ -975,7 +975,6 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-
     sres = _dwarf_load_debug_info(dbg,error);
     if (sres == DW_DLV_ERROR) {
         return sres;
