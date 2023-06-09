@@ -186,7 +186,7 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     Dwarf_Unsigned * result, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
-    if (x > (ULLONG_MAX/y)) {
+    if (y && (x > (ULLONG_MAX/y))) {
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
