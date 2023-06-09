@@ -192,12 +192,12 @@ endif()
 
 if (DO_TESTING) 
     set_source_group(OBJINT64TEST "Source Files"
-        ${PROJECT_SOURCE_DIR}/test/test_int64_test.c 
+        ${PROJECT_SOURCE_DIR}/test/test_int64_test.c )
     add_executable(selfintobj64test ${OBJINT64TEST})
     target_compile_options(selfintobj64test PRIVATE
-        "-I${OBJINT64TEST}/src/lib/libdwarf" )
+        "-I${PROJECT_SOURCEDIR}/src/lib/libdwarf" )
     target_compile_options(selfintobj64test PRIVATE ${DW_FWALL})
-    add_test(NAME selferrmsglist COMMAND 
+    add_test(NAME selfintobj64test COMMAND 
         selfintobj64test -f "${PROJECT_SOURCE_DIR}")
 endif()
 
