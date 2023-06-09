@@ -64,6 +64,7 @@ TESTS = test_canonical  \
   test_getnametest \
   test_helpertree \
   test_ignoresec \
+  test_int64_test \
   test_linkedtopath \
   test_macrocheck \
   test_makenametest \
@@ -83,6 +84,7 @@ check_PROGRAMS = test_canonical \
   test_getnametest \
   test_helpertree \
   test_ignoresec \
+  test_int64_test \
   test_linkedtopath \
   test_macrocheck \
   test_makenametest \
@@ -107,6 +109,15 @@ test_dwarflebtest_SOURCES = test_dwarf_leb.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_leb.c
 test_dwarflebtest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_dwarflebtest_CPPFLAGS = -DTESTING \
+-DLIBDWARF_BUILD \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
+
+test_int64_test_SOURCES = test_int64_test.c 
+test_int64_test_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_int64_test_CPPFLAGS = -DTESTING \
 -DLIBDWARF_BUILD \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \

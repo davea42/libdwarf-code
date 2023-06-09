@@ -70,6 +70,9 @@ tests = [
    '../src/bin/dwarfdump/dd_esb.c'
   ],
   [
+   'test_int64_test.c'
+  ],
+  [
    'test_safe_strcpy.c',
    '../src/lib/libdwarf/dwarf_safe_strcpy.c',
   ],

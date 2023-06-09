@@ -191,6 +191,17 @@ if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
 endif()
 
 if (DO_TESTING) 
+    set_source_group(OBJINT64TEST "Source Files"
+        ${PROJECT_SOURCE_DIR}/test/test_int64_test.c 
+    add_executable(selfintobj64test ${OBJINT64TEST})
+    target_compile_options(selfintobj64test PRIVATE
+        "-I${OBJINT64TEST}/src/lib/libdwarf" )
+    target_compile_options(selfintobj64test PRIVATE ${DW_FWALL})
+    add_test(NAME selferrmsglist COMMAND 
+        selfintobj64test -f "${PROJECT_SOURCE_DIR}")
+endif()
+
+if (DO_TESTING) 
     set_source_group(OBJERRMSGLIST "Source Files"
         ${PROJECT_SOURCE_DIR}/test/test_errmsglist.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)
