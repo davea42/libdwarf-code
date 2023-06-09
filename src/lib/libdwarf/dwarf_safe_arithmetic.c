@@ -1,9 +1,58 @@
 /*
+Copyright (c) 2023, David Anderson All rights reserved.
 
+Redistribution and use in source and binary forms, with
+or without modification, are permitted provided that the
+following conditions are met:
+
+    Redistributions of source code must retain the above
+    copyright notice, this list of conditions and the following
+    disclaimer.
+
+    Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimer in the documentation and/or other materials
+    provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <config.h>
 
+#include <stdlib.h> /* calloc() free() */
+#include <string.h> /* memset() */
+#include <stdio.h> /* memset(), printf */
 
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dwarf_base_types.h"
+#include "dwarf_opaque.h"
+#include "dwarf_alloc.h"
+#include "dwarf_error.h"
+#include "dwarf_util.h"
+#include "dwarf_string.h"
+#include "dwarf_safe_arithmetic.h"
 
 #ifndef LLONG_MAX
 #define LLONG_MAX    9223372036854775807LL
@@ -15,38 +64,36 @@
 #define ULLONG_MAX   18446744073709551615ULL
 #endif
 
-
-
 /* See:
-https://stackoverflow.com/questions/3944505/detecting-signed-overflow-in-c-c
+https://stackoverflow.com/questions/3944505/
+detecting-signed-overflow-in-c-c
 */
-static
-int _dwarf_add_check(Dwarf_Signed l, Dwarf_Signed r, 
+int _dwarf_add_check(Dwarf_Signed l, Dwarf_Signed r,
     Dwarf_Signed *sum, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
-     if (l >= 0) {
-         if ((0x7fffffffffffffffLL - l) < r) {
-             _dwarf_error_string(dbg,error,
+    if (l >= 0) {
+        if ((0x7fffffffffffffffLL - l) < r) {
+            _dwarf_error_string(dbg,error,
                 DW_DLE_ARITHMETIC_OVERFLOW,
                 "DW_DLE_ARITHMETIC_OVERFLOW: "
                 "Adding integers l+r (l >= 0) overflows");
-             return DW_DLV_ERROR;
-         }
-     } else {
-         if (r < (0x7ffffffffffffffeLL -l))
-         {
-             _dwarf_error_string(dbg,error,
+            return DW_DLV_ERROR;
+        }
+    } else {
+        if (r < (0x7ffffffffffffffeLL -l))
+        {
+            _dwarf_error_string(dbg,error,
                 DW_DLE_ARITHMETIC_OVERFLOW,
                 "DW_DLE_ARITHMETIC_OVERFLOW: "
                 "Adding integers l+r (l < 0) overflows");
-             return DW_DLV_ERROR;
-         }
-     }
-     if (sum) {
-         *sum = l + r;
-     } 
-     return DW_DLV_OK;
+            return DW_DLV_ERROR;
+        }
+    }
+    if (sum) {
+        *sum = l + r;
+    }
+    return DW_DLV_OK;
 }
 
 /*  Thanks to David Grayson/
@@ -54,13 +101,19 @@ codereview.stackexchange.com/questions/98791/
 safe-multiplication-of-two-64-bit-signed-integers
 */
 
-static int 
-_dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y, 
+int
+_dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     Dwarf_Signed * result, Dwarf_Debug dbg,
     Dwarf_Error*error)
 {
     *result = 0;
     if (sizeof(Dwarf_Signed) != 8) {
+#if 0
+printf("int64 mult fail "
+"DW_DLE_ARITHMETIC_OVERFLOW "
+"Signed 64bit multiply overflow(a)");
+fflush(stdout);
+#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -68,6 +121,12 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
         return DW_DLV_ERROR;
     }
     if (x > 0 && y > 0 && x > INT64_MAX / y)  {
+#if 0
+printf("int64 mult fail "
+"DW_DLE_ARITHMETIC_OVERFLOW "
+"Signed 64bit multiply overflow(b)");
+fflush(stdout);
+#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -75,6 +134,12 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
         return DW_DLV_ERROR;
     }
     if (x < 0 && y > 0 && x < LLONG_MIN / y) {
+#if 0
+printf("int64 mult fail "
+"DW_DLE_ARITHMETIC_OVERFLOW "
+"Signed 64bit multiply overflow(c)");
+fflush(stdout);
+#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -82,16 +147,28 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
         return DW_DLV_ERROR;
     }
     if (x > 0 && y < 0 && y < LLONG_MIN / x) {
+#if 0
+printf("int64 mult fail "
+"DW_DLE_ARITHMETIC_OVERFLOW "
+"Signed 64bit multiply overflow(d)");
+fflush(stdout);
+#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
             "Signed 64bit multiply overflow(d)");
         return DW_DLV_ERROR;
     }
-    if (x < 0 && y < 0 && 
-        (x <= LLONG_MIN || 
-        y <= LLONG_MIN || 
+    if (x < 0 && y < 0 &&
+        (x <= LLONG_MIN ||
+        y <= LLONG_MIN ||
         -x > LLONG_MAX / -y)) {
+#if 0
+printf("int64 mult fail "
+"DW_DLE_ARITHMETIC_OVERFLOW "
+"Signed 64bit multiply overflow(e)");
+fflush(stdout);
+#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -104,20 +181,16 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     return DW_DLV_OK;
 }
 
-static int
+int
 _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     Dwarf_Unsigned * result, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned a = (x >> 32U) * (y & 0xFFFFFFFFU);
-    Dwarf_Unsigned b = (x & 0xFFFFFFFFU) * (y >> 32U);
-    int overflow = ((x >> 32U) * (y >> 32U)) +
-        (a >> 32U) + (b >> 32U);
-    if (overflow) {
+    if (x > (ULLONG_MAX/y)) {
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
-            "unsigned 64bit multiply overflow(e)");
+            "unsigned 64bit multiply overflow");
         return DW_DLV_ERROR;
     }
     if (result) {
@@ -125,4 +198,3 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     }
     return DW_DLV_OK;
 }
-
