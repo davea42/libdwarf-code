@@ -3,6 +3,41 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 59517</fuzzer>
+
+<datereported>2023-06-01</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Signed Integer Overflow
+</vulnerability>
+
+<description> Nine different places in dwarf_frame.c
+  multiplied a factored value by a (usually) small integer
+  without checking if the factored value read from
+  the object could possibly be real.  So the
+  factored value when multiplied by the factor
+  could overflow. In some of the cases the factored value
+  is signed, some it is unsigned.
+  This sanity checking of factored
+  values never existed before in the library.
+</description>
+
+<datefixed>2023-06-04</datefixed>
+
+<references> regressiontests/ossfuzz59517/fuzz_set_frame_all
+</references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 59478</fuzzer>
 
 <datereported>2023-05-31</datereported>
@@ -718,7 +753,7 @@
 <references> regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
 </references>
 
-<gitfixid>25a14c3fd5522aff0b1d2a77d7ee66b7c529779</gitfixid>
+<gitfixid>c25a14c3fd5522aff0b1d2a77d7ee66b7c529779</gitfixid>
 
 <tarrelease>libdwarf-0.7.0.tar.xz</tarrelease>
 

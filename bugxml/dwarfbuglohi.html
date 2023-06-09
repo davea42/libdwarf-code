@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of June 2023</p>
-<p> Record count: 150 </p>
+<p> Record count: 151 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -4573,7 +4573,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>references:  regressiontests/ossfuzz57443/fuzz_srcfiles-6015429578719232
 </p>
-<p>gitfixid: 25a14c3fd5522aff0b1d2a77d7ee66b7c529779
+<p>gitfixid: c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 </p>
 <p>tarrelease: libdwarf-0.7.0.tar.xz
 </p>
@@ -5246,6 +5246,40 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz59478/fuzz_set_frame_all-5300774457180160
 </p>
 <p>gitfixid: 8ef9c8fb613e59f534e789e91a73088eaa5b8a5a
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-001">151) DW202306-001</h3>
+<p>id: DW202306-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59517
+</p>
+<p>datereported: 2023-06-01
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Signed Integer Overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Nine different places in dwarf_frame.c
+  multiplied a factored value by a (usually) small integer
+  without checking if the factored value read from
+  the object could possibly be real.  So the
+  factored value when multiplied by the factor
+  could overflow. In some of the cases the factored value
+  is signed, some it is unsigned.
+  This sanity checking of factored
+  values never existed before in the library.
+</p>
+<p>datefixed: 2023-06-04
+</p>
+<p>references:  regressiontests/ossfuzz59517/fuzz_set_frame_all
+</p>
+<p>gitfixid: 
 </p>
 <p>tarrelease: 
 </p>
