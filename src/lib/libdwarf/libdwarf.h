@@ -506,6 +506,18 @@ typedef struct Dwarf_Regtable_Entry3_s {
     Dwarf_Block         dw_block;
 } Dwarf_Regtable_Entry3;
 
+/*  The same as Dwarf_Regtable_Entry3 except the offset
+    in val_offset(N) rules is signed as it should
+    always have been. */
+typedef struct Dwarf_Regtable_Entry3_s_c {
+    Dwarf_Small         dw_offset_relevant;
+    Dwarf_Small         dw_value_type;
+    Dwarf_Half          dw_regnum;
+    Dwarf_Signed        dw_offset; /* N in val_offset(N) */
+    Dwarf_Unsigned      dw_args_size; /* Not dealt with.  */
+    Dwarf_Block         dw_block;
+} Dwarf_Regtable_Entry3_a;
+
 /*! @typedef  Dwarf_Regtable3
     This structs provides a way for applications
     to select the number of frame registers
@@ -529,6 +541,14 @@ typedef struct Dwarf_Regtable3_s {
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
+/*  The same as Dwarf_Regtable3 except the offset
+    in val_offset(N) rules is signed as it should
+    always have been. */
+typedef struct Dwarf_Regtable3_s_c {
+    struct Dwarf_Regtable_Entry3_s_c   rt3_cfa_rule;
+    Dwarf_Half                         rt3_reg_table_size;
+    struct Dwarf_Regtable_Entry3_s_c * rt3_rules;
+} Dwarf_Regtable3_c;
 
 /* Opaque types for Consumer Library. */
 /*! @typedef Dwarf_Error
@@ -1382,9 +1402,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_INVALID_NULL_ARGUMENT           498
 #define DW_DLE_LINE_INDEX_WRONG                499
 #define DW_DLE_LINE_COUNT_WRONG                500
+#define DW_DLE_ARITHMETIC_OVERFLOW             501
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        500
+#define DW_DLE_LAST        501
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
@@ -2241,10 +2262,9 @@ DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     Set to zero through the pointer.
     @return
     Returns DW_DLV_OK if the sibling is
-    at an appropriate place in the section. 
+    at an appropriate place in the section.
     Otherwise it returns DW_DLV_ERROR indicating
     the DIE tree is corrupt.
-
 
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
@@ -5322,6 +5342,8 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     On success returns a register number.
     @param dw_offset
     On success returns a register offset value.
+    In principle these are signed, but historically
+    in libdwarf it is typed unsigned.
     @param dw_block_content
     On success returns a pointer to a block.
     For example, for DW_EXPR_EXPRESSION the block
@@ -5357,6 +5379,21 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Addr     * dw_subsequent_pc,
     Dwarf_Error    * dw_error);
 
+/*  Same as dwarf_get_fde_info_for_reg3_b but with
+    dw_offset Signed. */
+DW_API int dwarf_get_fde_info_for_reg3_c(Dwarf_Fde dw_fde,
+    Dwarf_Half       dw_table_column,
+    Dwarf_Addr       dw_pc_requested,
+    Dwarf_Small    * dw_value_type,
+    Dwarf_Unsigned * dw_offset_relevant,
+    Dwarf_Unsigned * dw_register,
+    Dwarf_Signed   * dw_offset,
+    Dwarf_Block    * dw_block_content,
+    Dwarf_Addr     * dw_row_pc_out,
+    Dwarf_Bool     * dw_has_more_rows,
+    Dwarf_Addr     * dw_subsequent_pc,
+    Dwarf_Error    * dw_error);
+
 /*! @brief Get the value of the CFA for a particular pc value
 
     @see dwarf_get_fde_info_for_reg3_b
@@ -5372,6 +5409,20 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Unsigned* dw_offset_relevant,
     Dwarf_Unsigned* dw_register,
     Dwarf_Unsigned* dw_offset,
+    Dwarf_Block   * dw_block,
+    Dwarf_Addr    * dw_row_pc_out,
+    Dwarf_Bool    * dw_has_more_rows,
+    Dwarf_Addr    * dw_subsequent_pc,
+    Dwarf_Error   * dw_error);
+
+/*  The same as dwarf_get_fde_info_for_cfa_reg3_b() but
+    dw_offset is Signed. */
+DW_API int dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde dw_fde,
+    Dwarf_Addr      dw_pc_requested,
+    Dwarf_Small   * dw_value_type,
+    Dwarf_Unsigned* dw_offset_relevant,
+    Dwarf_Unsigned* dw_register,
+    Dwarf_Signed  * dw_offset,
     Dwarf_Block   * dw_block,
     Dwarf_Addr    * dw_row_pc_out,
     Dwarf_Bool    * dw_has_more_rows,
@@ -5568,7 +5619,7 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
     and content. The dw_fields parameter is set to
     a pointer to
     a short string with some set of the letters
-    s,u,r,d,c,b which enables determining exactly
+    s,u,r,d,c,b,a which enables determining exactly
     which values the call sets.
     Some examples:
     A @c s in fields[0] means s0 is a signed number.
@@ -5581,8 +5632,16 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
     A @c d in fields means data_alignment_factor is set
 
     A @c c in fields means code_alignment_factor is set
-    There are just nine strings possible and together they
-    describe all possible frame instructions.
+
+    An @c a in fields means an LLVM address space value and
+    only exists if calling dwarf_get_frame_instruction_a().
+
+    The possible frame instruction formats are:
+    @code
+    "" "b" "r" "rb" "rr" "rsd" "rsda" "ru" "rua" "rud"
+    "sd" "u" "uc"
+    @endcode
+    are the possible frame instruction formats.
 */
 DW_API int dwarf_get_frame_instruction(
     Dwarf_Frame_Instr_Head  dw_head,
@@ -5611,7 +5670,8 @@ DW_API int dwarf_get_frame_instruction(
     (DW_CFA_LLVM_def_aspace_cfa and DW_CFA_LLVM_def_aspace_cfa_sf)
 
     The return values are the same except here we have:
-    an @c a in fields[2] means dw_u2 is an address-space
+    an @c a in fields[2] or fields[3] means
+    dw_u2 is an address-space
     identifier for the LLVM CFA instruction.
 */
 DW_API int dwarf_get_frame_instruction_a(

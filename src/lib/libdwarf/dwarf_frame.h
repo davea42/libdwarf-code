@@ -173,6 +173,7 @@ struct Dwarf_Reg_Rule_s {
 
     /*  Offset to add to register, if indicated by ru_is_offset.
         ru_value_type is DW_EXPR_OFFSET */
+    Dwarf_Signed ru_soffset;
     Dwarf_Unsigned ru_offset;
     Dwarf_Unsigned ru_args_size; /* DW_CFA_GNU_args_size */
     /*  If ru_value_type is DW_EXPR_EXPRESSION
