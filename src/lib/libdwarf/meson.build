@@ -46,6 +46,7 @@ libdwarf_src = [
   'dwarf_peread.c',
   'dwarf_print_lines.c',
   'dwarf_query.c',
+  'dwarf_safe_arithmetic.c',
   'dwarf_safe_strcpy.c',
   'dwarf_secname_ck.c',
   'dwarf_setup_sections.c',

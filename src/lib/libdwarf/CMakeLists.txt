@@ -26,6 +26,7 @@ dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_peread.c 
 dwarf_query.c dwarf_ranges.c 
 dwarf_rnglists.c
+dwarf_safe_arithmetic.c
 dwarf_safe_strcpy.c
 dwarf_secname_ck.c
 dwarf_setup_sections.c
@@ -54,6 +55,7 @@ dwarf_object_detector.h dwarf_opaque.h
 dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h
 dwarf_rnglists.h
+dwarf_safe_arithmetic.h
 dwarf_safe_strcpy.h
 dwarf_tied_decls.h 
 dwarf_tsearch.h 

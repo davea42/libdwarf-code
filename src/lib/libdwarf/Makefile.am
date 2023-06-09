@@ -88,6 +88,8 @@ dwarf_peread.c \
 dwarf_peread.h \
 dwarf_print_lines.c \
 dwarf_query.c \
+dwarf_safe_arithmetic.c \
+dwarf_safe_arithmetic.h \
 dwarf_safe_strcpy.c \
 dwarf_safe_strcpy.h \
 dwarf_secname_ck.c \
