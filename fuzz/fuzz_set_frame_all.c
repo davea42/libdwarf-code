@@ -381,7 +381,7 @@ static void print_fde_selected_regs(Dwarf_Fde fde) {
       if (fires == DW_DLV_ERROR) {
         printf("FAIL: dwarf_get_fde_info_for_reg3_b, "
             "reading reg err %s line %d\n",
-               dwarf_errmsg(oneferr), __LINE__);
+            dwarf_errmsg(oneferr), __LINE__);
         return;
       }
       if (fires == DW_DLV_NO_ENTRY) {
