@@ -379,7 +379,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         return res;
     }
 
-
     /*  We create the fde and cie arrays.
         Processing each CIE as we come
         to it or as an FDE refers to it.
