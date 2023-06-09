@@ -1259,8 +1259,8 @@ print_one_fde(Dwarf_Debug dbg,
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: on getting fde details for "
                     "fde row for address 0x%"
-                    DW_PR_XZEROS DW_PR_DUx "\n",
-                    j);
+                    DW_PR_XZEROS DW_PR_DUx ": %s\n",
+                    j,dwarf_errmsg(*err));
                 return fires;
             }
             if (fires == DW_DLV_NO_ENTRY) {
@@ -1492,6 +1492,7 @@ print_one_fde(Dwarf_Debug dbg,
                     cie_offset_size,
                     cie_version, config_data);
                 dwarf_dealloc_frame_instr_head(ihead);
+                ihead = 0;
             }
         }
     }
@@ -1653,6 +1654,7 @@ print_one_cie(Dwarf_Debug dbg,
                 address_size,
                 offset_size,version,config_data);
             dwarf_dealloc_frame_instr_head(ihead);
+            ihead = 0;
         }
     }
     return DW_DLV_OK;
