@@ -21,16 +21,16 @@
   factored value when multiplied by the factor
   could overflow. In some of the cases the factored value
   is signed, some it is unsigned.
-  This sanity checking of factored
+  This sanity checking of factored frame offset
   values never existed before in the library.
 </description>
 
-<datefixed>2023-06-04</datefixed>
+<datefixed>2023-06-08</datefixed>
 
 <references> regressiontests/ossfuzz59517/fuzz_set_frame_all
 </references>
 
-<gitfixid></gitfixid>
+<gitfixid>f664f93d456284130afbd3c2e35b39e5f2740366</gitfixid>
 
 <tarrelease></tarrelease>
 
