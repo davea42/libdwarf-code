@@ -245,7 +245,7 @@ void
 _dwarf_free_static_errlist(void)
 {
     unsigned i = 0;
-    
+
     for ( ; i <static_used; ++i) {
         Dwarf_Error e = staticerrlist[i];
         if (e) {
@@ -1171,7 +1171,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     Something with the prefix (prefix space hidden from caller).
 
     Only applies to DW_DLA_ERROR, and  making up an error record.
-    
+
     dwarf_error.c calls this and it adds to the staticerrlist
     all of which is freed by free_static_errlist();
 */

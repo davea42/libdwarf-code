@@ -1926,7 +1926,7 @@ validate_struct_sizes(int*errcode)
     (void)errcode;
 #if 0
     /*  This is a sanity check when we have an elf.h
-        to check against. 
+        to check against.
         As of 0.7.1  we skip this entirely (here). */
     if (sizeof(Elf32_Ehdr) != sizeof(dw_elf32_ehdr)) {
         *errcode = DW_DLE_BAD_TYPE_SIZE;
