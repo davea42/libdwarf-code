@@ -4,12 +4,16 @@ id: DW202306-008
 fuzzer: ossfuzz id: 59699
 datereported: 2023-06-08
 reportedby: David Korczynski
-vulnerability:  
+vulnerability: Read past end of section 
 product: libdwarf
-description:
-datefixed: 
-references: 
-gitfixid: 
+description: In reading a CIE prefix
+  of a fuzzed object we read past the end
+  of the section due to a failure
+  to check a byte pointer before we dereference it
+  in _dwarf_read_cie_fde_prefix().
+datefixed: 2023-05-10 
+references: ossfuzz59699/fuzz_stack_frame_access-6523659305746432
+gitfixid: c5b909630bb566cdbf68fae4091f049f3b22ff11
 tarrelease:
 endrec: DW202306-008
 
