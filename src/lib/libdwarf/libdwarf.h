@@ -5634,6 +5634,11 @@ DW_API int dwarf_get_frame_instruction(
     frame instructions defined by LLVM
     (DW_CFA_LLVM_def_aspace_cfa and DW_CFA_LLVM_def_aspace_cfa_sf)
 
+    Where multiplication is called for (via dw_code_alignment_factor
+    or dw_data_alignment_factor) to produce an offset there
+    is no need to check for overflow as libdwarf has already
+    verified there is no overflow.
+
     The return values are the same except here we have:
     an @c a in fields[2] or fields[3] means
     dw_u2 is an address-space
@@ -8552,11 +8557,11 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     On success returns DW_DLV_OK
 */
 DW_API int dwarf_sec_group_sizes(Dwarf_Debug dw_dbg,
-    Dwarf_Unsigned * dw_section_count_out,
-    Dwarf_Unsigned * dw_group_count_out,
-    Dwarf_Unsigned * dw_selected_group_out,
-    Dwarf_Unsigned * dw_map_entry_count_out,
-    Dwarf_Error    * dw_error);
+    Dwarf_Unsigned *dw_section_count_out,
+    Dwarf_Unsigned *dw_group_count_out,
+    Dwarf_Unsigned *dw_selected_group_out,
+    Dwarf_Unsigned *dw_map_entry_count_out,
+    Dwarf_Error    *dw_error);
 
 /*! @brief Return a map between group numbers and section numbers
 
@@ -8589,36 +8594,45 @@ DW_API int dwarf_sec_group_sizes(Dwarf_Debug dw_dbg,
     On success returns DW_DLV_OK
 */
 DW_API int dwarf_sec_group_map(Dwarf_Debug dw_dbg,
-    Dwarf_Unsigned   dw_map_entry_count,
-    Dwarf_Unsigned * dw_group_numbers_array,
-    Dwarf_Unsigned * dw_sec_numbers_array,
-    const char    ** dw_sec_names_array,
-    Dwarf_Error    * dw_error);
+    Dwarf_Unsigned  dw_map_entry_count,
+    Dwarf_Unsigned *dw_group_numbers_array,
+    Dwarf_Unsigned *dw_sec_numbers_array,
+    const char    **dw_sec_names_array,
+    Dwarf_Error    *dw_error);
 /*! @} */
 
 /*! @defgroup leb LEB Encode and Decode
     @{
+
+    These are LEB/ULEB reading and writing
+    functions heavily used inside libdwarf.
+
+    While the DWARF Standard does not mention
+    allowing extra insignificant trailing bytes
+    in a ULEB these functions allow a few such
+    for compilers using extras for alignment
+    in DWARF.
 */
-DW_API int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
-    int * /*nbytes*/,
-    char * /*space*/,
-    int /*splen*/);
-DW_API int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
-    int * /*nbytes*/,
-    char * /*space*/,
-    int /*splen*/);
+DW_API int dwarf_encode_leb128(Dwarf_Unsigned dw_val,
+    int  *dw_nbytes,
+    char *dw_space,
+    int   dw_splen);
+DW_API int dwarf_encode_signed_leb128(Dwarf_Signed dw_val,
+    int  *dw_nbytes,
+    char *dw_space,
+    int   dw_splen);
 /*  Same for LEB decoding routines.
     caller sets endptr to an address one past the last valid
     address the library should be allowed to
     access. */
-DW_API int dwarf_decode_leb128(char * /*leb*/,
-    Dwarf_Unsigned * /*leblen*/,
-    Dwarf_Unsigned * /*outval*/,
-    char           * /*endptr*/);
-DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
-    Dwarf_Unsigned * /*leblen*/,
-    Dwarf_Signed   * /*outval*/,
-    char           * /*endptr*/);
+DW_API int dwarf_decode_leb128(char *dw_leb,
+    Dwarf_Unsigned *dw_leblen,
+    Dwarf_Unsigned *dw_outval,
+    char           *dw_endptr);
+DW_API int dwarf_decode_signed_leb128(char *dw_leb,
+    Dwarf_Unsigned *dw_leblen,
+    Dwarf_Signed   *dw_outval,
+    char           *dw_endptr);
 /*! @} */
 
 /*! @defgroup miscellaneous Miscellaneous Functions
@@ -8775,37 +8789,37 @@ DW_API Dwarf_Small dwarf_set_default_address_size(
 /*! @defgroup objectdetector Determine Object Type of a File
     @{
 */
-DW_API int dwarf_object_detector_path_b(const char * /*path*/,
-    char         *   /* outpath_buffer*/,
-    unsigned long    /* outpathlen*/,
-    char **          /* gl_pathnames*/,
-    unsigned int     /* gl_pathcount*/,
-    unsigned int *   /* ftype*/,
-    unsigned int *   /* endian*/,
-    unsigned int *   /* offsetsize*/,
-    Dwarf_Unsigned * /* filesize*/,
-    unsigned char *  /* pathsource*/,
-    int * /*errcode*/);
+DW_API int dwarf_object_detector_path_b(const char * dw_path,
+    char           *dw_outpath_buffer,
+    unsigned long   dw_outpathlen,
+    char **         dw_gl_pathnames,
+    unsigned int    dw_gl_pathcount,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_filesize,
+    unsigned char  *dw_pathsource,
+    int * dw_errcode);
 
 /* Solely looks for dSYM */
-DW_API int dwarf_object_detector_path_dSYM(const char * /*path*/,
-    char *         /* outpath*/,
-    unsigned long  /* outpath_len*/,
-    char **        /* gl_pathnames*/,
-    unsigned int   /* gl_pathcount*/,
-    unsigned int * /* ftype*/,
-    unsigned int * /* endian*/,
-    unsigned int * /* offsetsize*/,
-    Dwarf_Unsigned  * /* filesize*/,
-    unsigned char  *  /* pathsource*/,
-    int *             /* errcode*/);
+DW_API int dwarf_object_detector_path_dSYM(const char * dw_path,
+    char *          dw_outpath,
+    unsigned long   dw_outpath_len,
+    char **         dw_gl_pathnames,
+    unsigned int    dw_gl_pathcount,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_filesize,
+    unsigned char  *dw_pathsource,
+    int *           dw_errcode);
 
-DW_API int dwarf_object_detector_fd(int /*fd*/,
-    unsigned int * /*ftype*/,
-    unsigned int * /*endian*/,
-    unsigned int * /*offsetsize*/,
-    Dwarf_Unsigned  * /*filesize*/,
-    int *  /*errcode*/);
+DW_API int dwarf_object_detector_fd(int dw_fd,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_filesize,
+    int            *dw_errcode);
 
 /*! @}
 */
