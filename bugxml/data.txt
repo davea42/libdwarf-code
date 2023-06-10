@@ -1,7 +1,35 @@
 
 # 59519
-# 59602
 # 59595
+# 59602
+# 59699
+# 59727
+
+id: DW202306-003
+fuzzer: shinibufa
+datereported: 2023-06-09
+reportedby: shinibufa (github)
+vulnerability: use after free
+product: libdwarf
+description: Heap use-after-free dwarf_query.c 
+datefixed: 
+references: regressiontests/shinibufa/fuzzed_input_file 
+gitfixid: 
+tarrelease:
+endrec: DW202306-003
+
+id: DW202306-002
+fuzzer: ossfuzz id: 59519
+datereported: 2023-06-01
+reportedby: David Korczynski
+vulnerability: 
+product: libdwarf
+description: 
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202306-002
 
 id: DW202306-001
 fuzzer: ossfuzz id: 59517
@@ -23,7 +51,6 @@ references: regressiontests/ossfuzz59517/fuzz_set_frame_all
 gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
 tarrelease:
 endrec: DW202306-001
-
 
 id: DW202305-010
 fuzzer: ossfuzz id: 59478
