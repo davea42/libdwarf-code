@@ -492,9 +492,15 @@ static int print_frame_instrs(Dwarf_Debug dbg,
       }
       if (fields[1] == 's') {
         if (fields[2] == 'd') {
-          Dwarf_Signed final = s1 * data_alignment_factor;
+          Dwarf_Signed final = 0;
           printf("r%" DW_PR_DUu "\n", u0);
+          final = s1 * data_alignment_factor;
           printf("%" DW_PR_DSd, final);
+          /*  The original did not do this check for 'a'
+              but it's harmless to the testing, so added. 2023-06-10 */
+          if (fields[3] == 'a') {
+            printf(" addrspace %" DW_PR_DUu ,u2);
+          }
 #if 0
                     if (glflags.verbose) {
                         printf("  (%" DW_PR_DSd " * %" DW_PR_DSd,
