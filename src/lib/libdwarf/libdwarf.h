@@ -494,7 +494,7 @@ typedef struct Dwarf_Ranges_s {
 
         Note that this definition can only deal correctly
         with register numbers that fit in a 16 bit
-        unsigned value.
+        unsigned value. And it is difficult to alter
 */
 
 typedef struct Dwarf_Regtable_Entry3_s {
@@ -505,18 +505,6 @@ typedef struct Dwarf_Regtable_Entry3_s {
     Dwarf_Unsigned      dw_args_size; /* Not dealt with.  */
     Dwarf_Block         dw_block;
 } Dwarf_Regtable_Entry3;
-
-/*  The same as Dwarf_Regtable_Entry3 except the offset
-    in val_offset(N) rules is signed as it should
-    always have been. */
-typedef struct Dwarf_Regtable_Entry3_s_c {
-    Dwarf_Small         dw_offset_relevant;
-    Dwarf_Small         dw_value_type;
-    Dwarf_Half          dw_regnum;
-    Dwarf_Signed        dw_offset; /* N in val_offset(N) */
-    Dwarf_Unsigned      dw_args_size; /* Not dealt with.  */
-    Dwarf_Block         dw_block;
-} Dwarf_Regtable_Entry3_a;
 
 /*! @typedef  Dwarf_Regtable3
     This structs provides a way for applications
@@ -541,14 +529,6 @@ typedef struct Dwarf_Regtable3_s {
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
-/*  The same as Dwarf_Regtable3 except the offset
-    in val_offset(N) rules is signed as it should
-    always have been. */
-typedef struct Dwarf_Regtable3_s_c {
-    struct Dwarf_Regtable_Entry3_s_c   rt3_cfa_rule;
-    Dwarf_Half                         rt3_reg_table_size;
-    struct Dwarf_Regtable_Entry3_s_c * rt3_rules;
-} Dwarf_Regtable3_c;
 
 /* Opaque types for Consumer Library. */
 /*! @typedef Dwarf_Error
@@ -5373,21 +5353,6 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Unsigned * dw_offset_relevant,
     Dwarf_Unsigned * dw_register,
     Dwarf_Unsigned * dw_offset,
-    Dwarf_Block    * dw_block_content,
-    Dwarf_Addr     * dw_row_pc_out,
-    Dwarf_Bool     * dw_has_more_rows,
-    Dwarf_Addr     * dw_subsequent_pc,
-    Dwarf_Error    * dw_error);
-
-/*  Same as dwarf_get_fde_info_for_reg3_b but with
-    dw_offset Signed. */
-DW_API int dwarf_get_fde_info_for_reg3_c(Dwarf_Fde dw_fde,
-    Dwarf_Half       dw_table_column,
-    Dwarf_Addr       dw_pc_requested,
-    Dwarf_Small    * dw_value_type,
-    Dwarf_Unsigned * dw_offset_relevant,
-    Dwarf_Unsigned * dw_register,
-    Dwarf_Signed   * dw_offset,
     Dwarf_Block    * dw_block_content,
     Dwarf_Addr     * dw_row_pc_out,
     Dwarf_Bool     * dw_has_more_rows,
