@@ -1,4 +1,53 @@
 2023-06-10:  David Anderson
+    commit d4ba6ab340f3309e05851886f046315143110534
+
+    regenerated
+            modified:   doc/libdwarf.pdf
+    Altering to match project codingstyle (trailing spaces, for and if format)
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+    A bug introduced a few minutes ago now fixed.
+    we now pass CoverityScan with no issues.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+2023-06-10:  David Anderson
+    commit 2a898d863c312bbf453d443986df76d35e60d648
+
+    Nearly up to date now.
+            modified:   ChangeLog
+
+2023-06-10:  David Anderson
+    commit 435347714549485d9500cffb58451af0f932ee42
+
+    Revised date to today and removed
+    wording on 0.7.1 that no longer applies.
+            modified:   doc/libdwarf.dox
+
+2023-06-10:  David Anderson
+    commit 56a1c79cbf61b898ddb168ffbca52e2c13b78df0
+
+    Some function prototypes used /*name*/
+    and now use doxygen-friendly dw_name
+    instead.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-06-10:  David Anderson
+    commit 1b3fcc3dfe643c959b66e6825671884984d2d9e8
+
+    Fixed conflicts with the codingstandard.
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+2023-06-10:  David Anderson
+    commit 4ac01464970b2f4427ab363e9702308eb294f84e
+
+    In dwarf_decode_leb128() the function was inconsistent
+    about testing outval and len128_length pointers before
+    dereferencing them.  Now it is fully consistent
+    and always allows for NULL for those.
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+2023-06-10:  David Anderson
     commit abb50656598c42dd4629e878642e68029f3dbc32
 
     Regenerated.
