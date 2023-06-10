@@ -1,3 +1,61 @@
+2023-06-10:  David Anderson
+    commit abb50656598c42dd4629e878642e68029f3dbc32
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-10:  David Anderson
+    commit eb0f40c4158227b15fd083ba15d49cb08c47f510
+
+    Updated with latest fix
+            modified:   bugxml/data.txt
+
+2023-06-10:  David Anderson
+    commit c5b909630bb566cdbf68fae4091f049f3b22ff11
+
+    Added a comment where we call _dwarf_read_cie_fde_prefix()
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    DW202306-008 ossfuzz id: 59699
+    Check a byte pointer before we dereference it
+    in _dwarf_read_cie_fde_prefix().
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-06-10:  David Anderson
+    commit 6119e36058a82c7207cd6199bd59cfd5f1c6b0af
+
+    Latest.
+            modified:   bugxml/data.txt
+
+2023-06-10:  David Anderson
+    commit c8c54ba5c79b0a2687f0fa2ac331479506c3210f
+
+     DW202306-007
+    ossfuzz id: 59602
+            modified:   bugxml/data.txt
+    In two particular cases the necessary check for
+    reading-past-end was missing.
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+
+2023-06-10:  David Anderson
+    commit e8c726e2be644df2706342b7a80633d07ecd7fb4
+
+    Adding printing of DW_CFA_LLVM_def_aspace_cfa_sf
+    address space
+            modified:   fuzz/fuzz_set_frame_all.c
+
+    DW202306-004
+    fuzzer: ossfuzz id: 59595
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-06-09:  David Anderson
+    commit 616d6e93cb24434e112f03e5a313b1207e549854
+
+    Now up to latest git log
+            modified:   ChangeLog
+
 2023-06-09:  David Anderson
     commit 9181a0ef691c392561d3efffc322d06c66d18627
 
