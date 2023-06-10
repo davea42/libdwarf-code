@@ -1,9 +1,79 @@
 
-# 59519
-# 59595
 # 59602
 # 59699
-# 59727
+
+id: DW202306-007
+fuzzer: ossfuzz id: 59602
+datereported: 2023-06-04
+reportedby: David Korczynski
+vulnerability:  Buffer overflow read
+product: libdwarf
+description: In _dwarf_read_loc_expr_op()
+  we read one byte past available data
+  as the required check for past-end
+  was missing.
+datefixed: 2023-06-10
+references: ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
+gitfixid: 
+tarrelease:
+endrec: DW202306-007
+
+id: DW202306-006
+fuzzer: ossfuzz id: 59727
+datereported: 2023-06-01
+reportedby: David Korczynski
+vulnerability:  Integer Overflow
+product: libdwarf
+description: Integer Overflow in
+  _dwarf_exec_frame_instr() called by
+  dwarf_expand_frame_instructions.
+  We now check for overflows in add and
+  multiply here.
+  Similar to ossfuzz 59517
+datefixed: 2023-06-08
+references: 
+gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
+tarrelease:
+endrec: DW202306-006
+
+id: DW202306-005
+fuzzer: ossfuzz id: 59717
+datereported: 2023-06-01
+reportedby: David Korczynski
+vulnerability:  Integer Overflow
+product: libdwarf
+description: Integer Overflow in
+  _dwarf_exec_frame_instr() called by
+  dwarf_expand_frame_instructions.
+  We now check for overflows in add and
+  multiply here.
+  Similar to ossfuzz 59517
+datefixed: 2023-06-08
+references: 
+gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
+tarrelease:
+endrec: DW202306-005
+
+
+id: DW202306-004
+fuzzer: ossfuzz id: 59595
+datereported: 2023-06-09
+reportedby: shinibufa (github)
+vulnerability:  Signed Integer overflow
+product: libdwarf
+description: Signed Integer Overflow.
+  In _dwarf_exec_frame_instr(),
+  called by dwarf_expand_frame_instructions(),
+  there was a DW_CFA_LLVM_def_aspace_cfa_sf
+  and we failed to check for overflow. 
+  The test case had a overflow.
+  Now we do that check.
+datefixed: 2023-06-10
+references: regressiontests/ossfuzz59595/fuzz_set_frame_all-5319697747542016
+gitfixid:  e8c726e2be644df2706342b7a80633d07ecd7fb4 
+tarrelease: 
+endrec: DW202306-004
+
 
 id: DW202306-003
 fuzzer: shinibufa
@@ -12,22 +82,27 @@ reportedby: shinibufa (github)
 vulnerability: use after free
 product: libdwarf
 description: Heap use-after-free dwarf_query.c 
-datefixed: 
+datefixed: 2023-05-19 
 references: regressiontests/shinibufa/fuzzed_input_file 
 gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
-tarrelease:
+tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202306-003
 
 id: DW202306-002
 fuzzer: ossfuzz id: 59519
 datereported: 2023-06-01
 reportedby: David Korczynski
-vulnerability: 
+vulnerability:  Integer Overflow 
 product: libdwarf
-description: 
-datefixed: 
-references: 
-gitfixid: 
+description: Integer Overflow in
+  _dwarf_exec_frame_instr() called by
+  dwarf_expand_frame_instructions.
+  We now check for overflows in add and
+  multiply here.
+  Similar to ossfuzz 59517
+datefixed: 2023-06-08
+references: regressiontests/ossfuzz59519/fuzz_set_frame_all-4670829255065600
+gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
 tarrelease:
 endrec: DW202306-002
 
@@ -47,7 +122,7 @@ description: Nine different places in dwarf_frame.c
   This sanity checking of factored frame offset
   values never existed before in the library.
 datefixed: 2023-06-08
-references: regressiontests/ossfuzz59517/fuzz_set_frame_all
+references: regressiontests/ossfuzz59517/fuzz_set_frame_all-5741671019839488
 gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
 tarrelease:
 endrec: DW202306-001

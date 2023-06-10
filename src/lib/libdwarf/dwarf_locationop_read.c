@@ -696,6 +696,13 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             dbg,error,section_end);
         offset = offset + leb128_length;
 
+        if (loc_ptr >= section_end) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_LOCEXPR_OFF_SECTION_END,
+                "DW_DLE_LOCEXPR_OFF_SECTION_END: Error reading "
+                "DW_OP_const_type/DW_OP_GNU_const_type content");
+            return DW_DLV_ERROR;
+        }
         /*  Next byte is size of following data block.  */
         operand2 = *loc_ptr;
         loc_ptr = loc_ptr + 1;
@@ -743,6 +750,13 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         READ_UNALIGNED_CK(dbg, operand1, Dwarf_Unsigned, loc_ptr, 4,
             error,section_end);;
         loc_ptr = loc_ptr + 4;
+        if (loc_ptr > section_end) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_LOCEXPR_OFF_SECTION_END,
+                "DW_DLE_LOCEXPR_OFF_SECTION_END: Error reading "
+                "DW_OP_GNU_parameter_ref.");
+            return DW_DLV_ERROR;
+        }
         offset = offset + 4;
         break;
     case DW_OP_addrx :           /* DWARF5 */
