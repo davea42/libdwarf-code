@@ -106,7 +106,9 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     Dwarf_Signed * result, Dwarf_Debug dbg,
     Dwarf_Error*error)
 {
-    *result = 0;
+    if (result) {
+        *result = 0;
+    }
     if (sizeof(Dwarf_Signed) != 8) {
 #if 0
 printf("int64 mult fail "

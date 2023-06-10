@@ -1299,7 +1299,7 @@ _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
         _dwarf_error_string(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD,
             "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
             "The frame point given _dwarf_read_cie_fde_prefix() "
-            "is invalid"); 
+            "is invalid");
         return DW_DLV_ERROR;
     }
     if (section_end < (frame_ptr +4)) {

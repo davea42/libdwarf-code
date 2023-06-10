@@ -2146,7 +2146,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /*  This is the only situation this is set. */
     new_fde->fd_fde_owns_cie = TRUE;
     /*  Now read the cie corresponding to the fde,
-        _dwarf_read_cie_fde_prefix checks 
+        _dwarf_read_cie_fde_prefix checks
         cie_ptr for being within the section. */
     cie_ptr = new_fde->fd_section_ptr + cie_id;
     res = _dwarf_read_cie_fde_prefix(dbg, cie_ptr,
@@ -2536,7 +2536,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
         Dwarf_Unsigned j = 0;
         Dwarf_Regtable_Entry3 *targ = &reg_table->rt3_rules[0];
         Dwarf_Regtable_Entry3_i *src = &reg_table_i.rt3_rules[0];
-        for( ; j < reg_table->rt3_reg_table_size;
+        for ( ; j < reg_table->rt3_reg_table_size;
             ++j, targ++,src++) {
             targ->dw_offset_relevant = src->dw_offset_relevant;
             targ->dw_args_size = src->dw_args_size;
