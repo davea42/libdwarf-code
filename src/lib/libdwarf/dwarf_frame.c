@@ -2145,7 +2145,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
 
     /*  This is the only situation this is set. */
     new_fde->fd_fde_owns_cie = TRUE;
-    /* now read the cie corresponding to the fde */
+    /*  Now read the cie corresponding to the fde,
+        _dwarf_read_cie_fde_prefix checks 
+        cie_ptr for being within the section. */
     cie_ptr = new_fde->fd_section_ptr + cie_id;
     res = _dwarf_read_cie_fde_prefix(dbg, cie_ptr,
         dbg->de_debug_frame.dss_data,

@@ -1294,6 +1294,14 @@ _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Unsigned cie_id = 0;
     Dwarf_Small *section_end = section_ptr_in + section_length_in;
 
+    if (frame_ptr_in < section_ptr_in ||
+        frame_ptr_in >= section_end) {
+        _dwarf_error_string(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
+            "The frame point given _dwarf_read_cie_fde_prefix() "
+            "is invalid"); 
+        return DW_DLV_ERROR;
+    }
     if (section_end < (frame_ptr +4)) {
         dwarfstring m;
         Dwarf_Unsigned u =
