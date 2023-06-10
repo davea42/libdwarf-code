@@ -157,7 +157,7 @@ dwarf_decode_leb128(char * leb128,
         if (leb128_length) {
             *leb128_length = 1;
         }
-        if(outval) {
+        if (outval) {
             *outval = byte;
         }
         return DW_DLV_OK;
@@ -173,7 +173,7 @@ dwarf_decode_leb128(char * leb128,
             }
             word_number = byte & 0x7f;
             word_number |= (byte2 & 0x7f) << 7;
-            if(outval) {
+            if (outval) {
                 *outval = word_number;
             }
             return DW_DLV_OK;
@@ -214,7 +214,7 @@ dwarf_decode_leb128(char * leb128,
                         }
                         if (outval) {
                             *outval = number;
-                        } 
+                        }
                         return DW_DLV_OK;
                     }
                     return DW_DLV_ERROR;
