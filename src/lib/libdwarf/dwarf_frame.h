@@ -145,7 +145,7 @@ struct Dwarf_Frame_Instr_Head_s {
 struct Dwarf_Reg_Rule_s {
 
     /*  Is a flag indicating whether the rule includes the offset
-        field, ie whether the ru_offset field is valid or not.
+        field, ie whether the ru_soffset field is valid or not.
         Applies only if DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
         It is important, since reg+offset (offset of 0)
         is different from
@@ -173,14 +173,30 @@ struct Dwarf_Reg_Rule_s {
 
     /*  Offset to add to register, if indicated by ru_is_offset.
         ru_value_type is DW_EXPR_OFFSET */
-    Dwarf_Signed ru_soffset;
-    Dwarf_Unsigned ru_offset;
+    Dwarf_Signed ru_offset;
     Dwarf_Unsigned ru_args_size; /* DW_CFA_GNU_args_size */
     /*  If ru_value_type is DW_EXPR_EXPRESSION
         or DW_EXPR_VAL_EXPRESSION this is filled in. */
     Dwarf_Block    ru_block;
 
 };
+/* Internal use only */
+typedef struct Dwarf_Regtable_Entry3_s_i {
+    Dwarf_Small     dw_offset_relevant;
+    Dwarf_Small     dw_value_type;
+    Dwarf_Unsigned  dw_regnum;
+    Dwarf_Unsigned  dw_offset;
+    Dwarf_Unsigned  dw_args_size; /* Not dealt with.  */
+    Dwarf_Block     dw_block;
+} Dwarf_Regtable_Entry3_i;
+/* Internal use only */
+typedef struct Dwarf_Regtable3_s_i {
+    Dwarf_Regtable_Entry3_i  rt3_cfa_rule;
+    Dwarf_Unsigned           rt3_reg_table_size;
+    Dwarf_Regtable_Entry3_i *rt3_rules;
+} Dwarf_Regtable3_i;
+
+
 
 typedef struct Dwarf_Frame_s *Dwarf_Frame;
 
