@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of June 2023</p>
-<p> Record count: 153 </p>
+<p> Record count: 158 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5277,7 +5277,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-06-08
 </p>
-<p>references:  regressiontests/ossfuzz59517/fuzz_set_frame_all
+<p>references:  regressiontests/ossfuzz59517/fuzz_set_frame_all-5741671019839488
 </p>
 <p>gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
 </p>
@@ -5295,14 +5295,22 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:</p>
+<p>vulnerability:   Integer Overflow
+</p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed: 
+<p>description:  Integer Overflow in
+  _dwarf_exec_frame_instr() called by
+  dwarf_expand_frame_instructions.
+  We now check for overflows in add and
+  multiply here.
+  Similar to ossfuzz 59517
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>datefixed: 2023-06-08
+</p>
+<p>references:  regressiontests/ossfuzz59519/fuzz_set_frame_all-4670829255065600
+</p>
+<p>gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
 </p>
 <p>tarrelease: 
 </p>
@@ -5324,11 +5332,162 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description:  Heap use-after-free dwarf_query.c
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-05-19
 </p>
 <p>references:  regressiontests/shinibufa/fuzzed_input_file
 </p>
 <p>gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5
+</p>
+<p>tarrelease: libdwarf-0.7.0.tar.xz
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-004">154) DW202306-004</h3>
+<p>id: DW202306-004
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59595
+</p>
+<p>datereported: 2023-06-09
+</p>
+<p>reportedby: shinibufa (github)
+</p>
+<p>vulnerability:   Signed Integer overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Signed Integer Overflow.
+  In _dwarf_exec_frame_instr(),
+  called by dwarf_expand_frame_instructions(),
+  there was a DW_CFA_LLVM_def_aspace_cfa_sf
+  and we failed to check for overflow.
+  The test case had a overflow.
+  Now we do that check.
+</p>
+<p>datefixed: 2023-06-10
+</p>
+<p>references:  regressiontests/ossfuzz59595/fuzz_set_frame_all-5319697747542016
+</p>
+<p>gitfixid: e8c726e2be644df2706342b7a80633d07ecd7fb4
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-005">155) DW202306-005</h3>
+<p>id: DW202306-005
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59717
+</p>
+<p>datereported: 2023-06-01
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Integer Overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Integer Overflow in
+  _dwarf_exec_frame_instr() called by
+  dwarf_expand_frame_instructions.
+  We now check for overflows in add and
+  multiply here.
+  Similar to ossfuzz 59517
+</p>
+<p>datefixed: 2023-06-08
+</p>
+<p>references:</p>
+<p>gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-006">156) DW202306-006</h3>
+<p>id: DW202306-006
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59727
+</p>
+<p>datereported: 2023-06-01
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Integer Overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Integer Overflow in
+  _dwarf_exec_frame_instr() called by
+  dwarf_expand_frame_instructions.
+  We now check for overflows in add and
+  multiply here.
+  Similar to ossfuzz 59517
+</p>
+<p>datefixed: 2023-06-08
+</p>
+<p>references:</p>
+<p>gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-007">157) DW202306-007</h3>
+<p>id: DW202306-007
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59602
+</p>
+<p>datereported: 2023-06-04
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:   Buffer overflow read
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  In _dwarf_read_loc_expr_op()
+  we read one byte past available data
+  as the required check for past-end
+  was missing.
+</p>
+<p>datefixed: 2023-06-10
+</p>
+<p>references:  ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
+</p>
+<p>gitfixid: c8c54ba5c79b0a2687f0fa2ac331479506c3210f
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-008">158) DW202306-008</h3>
+<p>id: DW202306-008
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59699
+</p>
+<p>datereported: 2023-06-08
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Read past end of section
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  In reading a CIE prefix
+  of a fuzzed object we read past the end
+  of the section due to a failure
+  to check a byte pointer before we dereference it
+  in _dwarf_read_cie_fde_prefix().
+</p>
+<p>datefixed: 2023-05-10
+</p>
+<p>references:  ossfuzz59699/fuzz_stack_frame_access-6523659305746432
+</p>
+<p>gitfixid: c5b909630bb566cdbf68fae4091f049f3b22ff11
 </p>
 <p>tarrelease: 
 </p>
