@@ -14,7 +14,7 @@ product: libdwarf
 description: Heap use-after-free dwarf_query.c 
 datefixed: 
 references: regressiontests/shinibufa/fuzzed_input_file 
-gitfixid: 
+gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
 tarrelease:
 endrec: DW202306-003
 

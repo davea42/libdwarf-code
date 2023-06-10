@@ -3,6 +3,57 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>shinibufa</fuzzer>
+
+<datereported>2023-06-09</datereported>
+
+<reportedby>shinibufa (github)</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> use after free
+</vulnerability>
+
+<description> Heap use-after-free dwarf_query.c
+</description>
+
+<datefixed></datefixed>
+
+<references> regressiontests/shinibufa/fuzzed_input_file
+</references>
+
+<gitfixid>4017ab8b92195641e6876b388cebe2d3307634f5</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 59519</fuzzer>
+
+<datereported>2023-06-01</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability></vulnerability>
+
+<description></description>
+
+<datefixed></datefixed>
+
+<references></references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 59517</fuzzer>
 
 <datereported>2023-06-01</datereported>
