@@ -157,7 +157,9 @@ dwarf_decode_leb128(char * leb128,
         if (leb128_length) {
             *leb128_length = 1;
         }
-        *outval = byte;
+        if(outval) {
+            *outval = byte;
+        }
         return DW_DLV_OK;
     } else {
         unsigned       byte2        = 0;
@@ -171,7 +173,9 @@ dwarf_decode_leb128(char * leb128,
             }
             word_number = byte & 0x7f;
             word_number |= (byte2 & 0x7f) << 7;
-            *outval = word_number;
+            if(outval) {
+                *outval = word_number;
+            }
             return DW_DLV_OK;
         }
         /* Gets messy to hand-inline more byte checking. */
@@ -205,8 +209,12 @@ dwarf_decode_leb128(char * leb128,
                 if (leb128 >=endptr ) {
                     if (leb128 == endptr && !byte) {
                         /* Meaning zero bits a padding byte */
-                        *leb128_length = byte_length;
-                        *outval = number;
+                        if (leb128_length) {
+                            *leb128_length = byte_length;
+                        }
+                        if (outval) {
+                            *outval = number;
+                        } 
                         return DW_DLV_OK;
                     }
                     return DW_DLV_ERROR;
@@ -224,7 +232,9 @@ dwarf_decode_leb128(char * leb128,
             if (leb128_length) {
                 *leb128_length = byte_length;
             }
-            *outval = number;
+            if (outval) {
+                *outval = number;
+            }
             return DW_DLV_OK;
         }
         shift += 7;
