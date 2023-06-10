@@ -12,6 +12,12 @@ for anyone to use for any purpose.
         make
         ./frame1 frame1
 
+    This uses public structs from libdwarf.h so it is
+    stuck with limitations for compatibility.
+
+    There needs to be a more flexible alternative, one
+    can be updated when DWARF changes.
+
     gcc/clang may produce .eh_frame without .debug_frame.
     To read .eh_frame call dwarf_get_fde_list_eh()
     below instead of dwarf_get_fde_list() .
