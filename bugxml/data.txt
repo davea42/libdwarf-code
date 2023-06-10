@@ -1,6 +1,17 @@
 
-# 59602
-# 59699
+
+id: DW202306-008
+fuzzer: ossfuzz id: 59699
+datereported: 2023-06-08
+reportedby: David Korczynski
+vulnerability:  
+product: libdwarf
+description:
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202306-008
 
 id: DW202306-007
 fuzzer: ossfuzz id: 59602
@@ -14,7 +25,7 @@ description: In _dwarf_read_loc_expr_op()
   was missing.
 datefixed: 2023-06-10
 references: ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
-gitfixid: 
+gitfixid: c8c54ba5c79b0a2687f0fa2ac331479506c3210f
 tarrelease:
 endrec: DW202306-007
 
