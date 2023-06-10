@@ -1,3 +1,284 @@
+2023-06-09:  David Anderson
+    commit 9181a0ef691c392561d3efffc322d06c66d18627
+
+    Now we use a non-public struct in dwarf_frame to build up data on
+    register state. And we only copy to the public
+    Frame structs when we must (to return data).
+    And we comment a bit to explain how it works.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-06-09:  David Anderson
+    commit 4f95239b05afd4df0599aa669b5b3eefece7d2d2
+
+    New private struct for internal use in dwarf_frame.c
+    Now offset is Dwarf_Signed for internal use
+    in dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+
+2023-06-09:  David Anderson
+    commit 113261071d93ba00b1abaee9b4b50b3f2fb6bb9f
+
+    Removed declarations involving struct Dwarf_Regtable3_s_c
+    and struct Dwarf_Regtable_Entry3_s_c
+    as we abandon that additional set of structs.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-06-09:  David Anderson
+    commit 88455911f2e656ce2473ed83b0a0c163ffd8ca8e
+
+    Added comentary about the test.
+            modified:   src/bin/dwarfexample/frame1.c
+
+2023-06-09:  David Anderson
+    commit 30c420a9e6d3a7a1b18fdc9e8ea880a5492994a2
+
+    Updated with latest.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-09:  David Anderson
+    commit 149e60a9424712090a1a0cd44675226bf37a5f0d
+
+    comments with new bugs added at top of file.
+            modified:   bugxml/data.txt
+
+2023-06-09:  David Anderson
+    commit f200830719316fec4f84ce34f0754a38c802954e
+
+    Omitted a test for y not zero, leading to division
+    by zero. Fixed.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+2023-06-09:  David Anderson
+    commit 9e83da53c8ce3506229dcdd719bff019b6092fcc
+
+    DW_LANG_Mojo has been added to the languages list
+    by the DWARF committee with value 0x0033
+            modified:   dwarf.h
+
+2023-06-08:  David Anderson
+    commit c72cd15329751086838f2b15bcad4d25b5075857
+
+    Fixing cmake build of test
+            modified:   test/CMakeLists.txt
+    Proper declaration of main() to make
+    meson build work.
+            modified:   test/test_int64_test.c
+
+2023-06-08:  David Anderson
+    commit 4b540c4a0150d86c60e7be155c05087ad7656ef3
+
+    Now with git fix id for ossfuzz 59517
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-08:  David Anderson
+    commit c9caa16bf69b24db6c3f13e269deb826a4a4bb3a
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+            modified:   doc/libdwarf.pdf
+
+2023-06-08:  David Anderson
+    commit f664f93d456284130afbd3c2e35b39e5f2740366
+
+    Adding support for the new int64 safe multiply
+    source files dwarf_safe_arithmetic.[hc]
+    And adding a new test for safe multiply.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+
+2023-06-08:  David Anderson
+    commit d9cd2592337d99f44dd6ccb6f4cdee6c3a7bf822
+
+    Now uses safe arithmetic where it matters.
+
+    Adds
+    dwarf_get_fde_info_for_reg3_c()
+    dwarf_get_fde_info_for_cfa_reg3_c()
+    as alternatives to
+    dwarf_get_fde_info_for_reg3_b()
+    Cdwarf_get_fde_info_for_cfa_reg3_b()
+
+    The difference is the newer ones have a Signed
+    offset, which properly matches the text of
+    the DWARF standard(s).
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    Added a new file ru_soffset to support new functions
+    dwarf_get_fde_info_for_reg3_c()
+    dwarf_get_fde_info_for_cfa_reg3_c()
+    which provide a signed offset for certain
+    operations (as stated above).
+
+            modified:   src/lib/libdwarf/dwarf_frame.h
+    Adds two new functions and two new structs
+    to support the new signed offset while
+    keeping the versions that already existed.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    In other words there new functions and structs,
+    but the previously existing ones are still supported.
+
+2023-06-08:  David Anderson
+    commit 0012b38dd66632d458c6dfd99186c04fb77490b1
+
+    Added a new DW_DLE  error 501, for arithmetic overflows.
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+2023-06-08:  David Anderson
+    commit 3f0431c7ea563e1ed30896b123aceae9338cba5c
+
+    Cleaning up indents and removing unused code.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+
+2023-06-08:  David Anderson
+    commit 89773e02ef509c07db4095c47c1f71509aee2892
+
+    This is the new test related to safe 64bit multiply
+            new file:   test/test_int64_test.c
+
+2023-06-08:  David Anderson
+    commit 354d936634ed42b64ed55e72849ac4ac1170fad1
+
+    Added a new test.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+
+2023-06-08:  David Anderson
+    commit 342ff0ca5590625e5372a4b122bbd25331471be3
+
+    Removed one blank line.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-06-08:  David Anderson
+    commit 2e23d5442322aa69f2561d71c631c7f2d4846d62
+
+    Modified indent on one line.
+            modified:   fuzz/fuzz_set_frame_all.c
+
+2023-06-08:  David Anderson
+    commit 092dafadcc604ce9aa0f1041cfbcb31b9c98d141
+
+    Modified an error message to have more details printed.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+2023-06-08:  David Anderson
+    commit 5f3c2e9fb6c438d3b6f8ed1000e06d2f235352e8
+
+    Remove one blank line.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-06-08:  David Anderson
+    commit f57e0222da1b788c0aabaf1a218b7bd186adad33
+
+    Fixing indents, removing trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Functions that check 64bit multiplify using always-safe
+    operations.
+            new file:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+            new file:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+
+2023-06-06:  David Anderson
+    commit 384e75950953a81e741f1f5b9430c5577967881e
+    Merge: 65cb55b6 f7269c0f
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    Fix to  commit id.
+
+2023-06-06:  David Anderson
+    commit 65cb55b6cf325a86beffbf68173a5176d3956c8c
+
+    New bugs noted
+            modified:   bugxml/data.txt
+
+2023-06-07:  sungbin
+    commit f7269c0f5c53a7fe2288e431156b860dbd9cdfa1
+
+    Fix Typo in bugxml/data.txt (#166)
+
+2023-06-04:  David Anderson
+    commit 643f5c9fe4868e67f1df3574c044207c9d4e50e2
+
+    Documenting vulnerability DW202306-001
+    ossfuzz id: 59517
+    _dwarf_exec_frame_instr() was missing some sanity
+    checks and in one case(DW_CFA_val_offset)
+    a request to show the instruction details got the
+    wrong value
+            modified:   bugxml/data.txt
+
+2023-06-04:  David Anderson
+    commit cf16fa633b7d73efbd85146cce7b363800440b8e
+
+    A printf was lacking a newline, making the
+    output very odd-looking for no good reason.
+    Added a newline to the printf.
+            modified:   fuzz/fuzz_set_frame_all.c
+
+2023-06-01:  David Anderson
+    commit 8b475cea946fe571571ec01702291e38616ad5f9
+
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-01:  David Anderson
+    commit 436bdb809020e219710f4ee9ecc179980f3c86cc
+
+    The description of fuzzer: ossfuzz id: 56451
+    said it was a test program function, but
+    actually it is ALSO an omission in libdwarf.
+    So attributed to libdwarf now and the
+    wording made clearer.
+            modified:   bugxml/data.txt
+
+2023-05-31:  David Anderson
+    commit 18fec5f25d4c84c756e038dde6f658f78a10b399
+
+    Document DW202305-010, a new report of a vulnerability.
+       (use "git push" to publish your local commits)
+
+2023-05-31:  David Anderson
+    commit 8ef9c8fb613e59f534e789e91a73088eaa5b8a5a
+
+    Vulnerability DW202305-010 ossfuzz id: 59478
+    Fuzzing provoked one of four error cases that
+    could leak locally allocated memory from
+    _dwarf_exec_frame_instructor()
+    (called by dwarf_expand_frame_instructions).
+    Called enough times with fuzzed data could result
+    in filling memory leading to the library being unable
+    to work for the caller and instead just returning errors.
+
+    This bug has been present in the code for many years.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-05-31:  David Anderson
+    commit 60d6143347e5eee87a6533d7394d3969d2c90d74
+
+    Regeneration ('make rebuild') removed a comment as in dwarf.h
+    a duplicated DW_AT entry no longer has the duplicate.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-05-30:  David Anderson
+    commit 87990cf881e72cd10314c68cc69670d0e05946d0
+
+    Now with latest from git log.
+            modified:   ChangeLog
+
 2023-05-30:  David Anderson
     commit 7be3a252da6df46c7afb50750f9f149c7319fc8f
 
