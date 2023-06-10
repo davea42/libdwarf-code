@@ -5,6 +5,8 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   linux_autotools:
     runs-on: ubuntu-latest

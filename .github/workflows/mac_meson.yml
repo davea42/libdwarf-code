@@ -1,5 +1,7 @@
 name: ci_mac_meson
 
+permissions: read-all
+
 on:
   workflow_dispatch:
 

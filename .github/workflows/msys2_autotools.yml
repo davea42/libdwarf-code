@@ -1,6 +1,8 @@
 
 name: msys2autotool
 
+permissions: read-all
+
 on: 
   workflow_dispatch:
 
