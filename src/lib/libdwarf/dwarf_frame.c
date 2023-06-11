@@ -2465,9 +2465,6 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     /* Internal-only struct. */
     Dwarf_Regtable_Entry3_i *rule_i = NULL;
 
-    /* Public struct */
-    Dwarf_Regtable_Entry3 *out_rule = NULL;
-
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned output_table_real_data_size = 0;
     Dwarf_Regtable3_i reg_table_i;
