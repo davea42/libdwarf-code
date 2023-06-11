@@ -44,7 +44,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* See:
 https://stackoverflow.com/questions/3944505/detecting-signed-overflow-in-c-c
 */
-int _dwarf_add_check(Dwarf_Signed l, Dwarf_Signed r,
+int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
     Dwarf_Signed *sum, Dwarf_Debug dbg,
     Dwarf_Error *error);
 

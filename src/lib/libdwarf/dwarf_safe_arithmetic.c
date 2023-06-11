@@ -39,10 +39,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -66,7 +62,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 https://stackoverflow.com/questions/3944505/
 detecting-signed-overflow-in-c-c
 */
-int _dwarf_add_check(Dwarf_Signed l, Dwarf_Signed r,
+int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
     Dwarf_Signed *sum, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
@@ -108,25 +104,13 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
         *result = 0;
     }
     if (sizeof(Dwarf_Signed) != 8) {
-#if 0
-printf("int64 mult fail "
-"DW_DLE_ARITHMETIC_OVERFLOW "
-"Signed 64bit multiply overflow(a)");
-fflush(stdout);
-#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
             "Signed 64bit multiply overflow(a)");
         return DW_DLV_ERROR;
     }
-    if (x > 0 && y > 0 && x > INT64_MAX / y)  {
-#if 0
-printf("int64 mult fail "
-"DW_DLE_ARITHMETIC_OVERFLOW "
-"Signed 64bit multiply overflow(b)");
-fflush(stdout);
-#endif
+    if (x > 0 && y > 0 && x > LLONG_MAX / y)  {
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -134,12 +118,6 @@ fflush(stdout);
         return DW_DLV_ERROR;
     }
     if (x < 0 && y > 0 && x < LLONG_MIN / y) {
-#if 0
-printf("int64 mult fail "
-"DW_DLE_ARITHMETIC_OVERFLOW "
-"Signed 64bit multiply overflow(c)");
-fflush(stdout);
-#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -147,12 +125,6 @@ fflush(stdout);
         return DW_DLV_ERROR;
     }
     if (x > 0 && y < 0 && y < LLONG_MIN / x) {
-#if 0
-printf("int64 mult fail "
-"DW_DLE_ARITHMETIC_OVERFLOW "
-"Signed 64bit multiply overflow(d)");
-fflush(stdout);
-#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -163,12 +135,6 @@ fflush(stdout);
         (x <= LLONG_MIN ||
         y <= LLONG_MIN ||
         -x > LLONG_MAX / -y)) {
-#if 0
-printf("int64 mult fail "
-"DW_DLE_ARITHMETIC_OVERFLOW "
-"Signed 64bit multiply overflow(e)");
-fflush(stdout);
-#endif
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
             "DW_DLE_ARITHMETIC_OVERFLOW "
