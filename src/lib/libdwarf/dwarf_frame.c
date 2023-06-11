@@ -2433,22 +2433,6 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
     return DW_DLV_OK;
 }
 
-#if 0
-/*  A consumer call for efficiently getting the register info
-    for all registers in one call.
-
-*/
-int
-dwarf_get_fde_info_for_all_regs3_c(Dwarf_Fde fde,
-    Dwarf_Addr pc_requested,
-    Dwarf_Regtable3 * reg_table,
-    Dwarf_Addr * row_pc,
-    Dwarf_Error * error)
-{
-    return DW_DLV_NO_ENTRY;
-}
-#endif
-
 int
 dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
