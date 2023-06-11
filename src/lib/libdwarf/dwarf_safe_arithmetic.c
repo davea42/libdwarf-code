@@ -50,8 +50,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
-#include "dwarf_util.h"
-#include "dwarf_string.h"
 #include "dwarf_safe_arithmetic.h"
 
 #ifndef LLONG_MAX
