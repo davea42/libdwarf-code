@@ -58,40 +58,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ULLONG_MAX   18446744073709551615ULL
 #endif
 
-#if 0
-/* See:
-https://stackoverflow.com/questions/3944505/
-detecting-signed-overflow-in-c-c
-*/
-int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
-    Dwarf_Signed *sum, Dwarf_Debug dbg,
-    Dwarf_Error *error)
-{
-    if (l >= 0) {
-        if ((0x7fffffffffffffffLL - l) < r) {
-            _dwarf_error_string(dbg,error,
-                DW_DLE_ARITHMETIC_OVERFLOW,
-                "DW_DLE_ARITHMETIC_OVERFLOW: "
-                "Adding integers l+r (l >= 0) overflows");
-            return DW_DLV_ERROR;
-        }
-    } else {
-        if (r < (0x7ffffffffffffffeLL -l))
-        {
-            _dwarf_error_string(dbg,error,
-                DW_DLE_ARITHMETIC_OVERFLOW,
-                "DW_DLE_ARITHMETIC_OVERFLOW: "
-                "Adding integers l+r (l < 0) overflows");
-            return DW_DLV_ERROR;
-        }
-    }
-    if (sum) {
-        *sum = l + r;
-    }
-    return DW_DLV_OK;
-}
-#endif /* 0 */
-
 /*  Thanks to David Grayson/
 codereview.stackexchange.com/questions/98791/
 safe-multiplication-of-two-64-bit-signed-integers
@@ -165,3 +131,38 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     }
     return DW_DLV_OK;
 }
+
+#if 0
+/* See:
+https://stackoverflow.com/questions/3944505/
+detecting-signed-overflow-in-c-c
+*/
+int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
+    Dwarf_Signed *sum, Dwarf_Debug dbg,
+    Dwarf_Error *error)
+{
+    if (l >= 0) {
+        if ((0x7fffffffffffffffLL - l) < r) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_ARITHMETIC_OVERFLOW,
+                "DW_DLE_ARITHMETIC_OVERFLOW: "
+                "Adding integers l+r (l >= 0) overflows");
+            return DW_DLV_ERROR;
+        }
+    } else {
+        if (r < (0x7ffffffffffffffeLL -l))
+        {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_ARITHMETIC_OVERFLOW,
+                "DW_DLE_ARITHMETIC_OVERFLOW: "
+                "Adding integers l+r (l < 0) overflows");
+            return DW_DLV_ERROR;
+        }
+    }
+    if (sum) {
+        *sum = l + r;
+    }
+    return DW_DLV_OK;
+}
+#endif /* 0 */
+
