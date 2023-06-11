@@ -58,6 +58,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ULLONG_MAX   18446744073709551615ULL
 #endif
 
+#if 0
 /* See:
 https://stackoverflow.com/questions/3944505/
 detecting-signed-overflow-in-c-c
@@ -89,12 +90,12 @@ int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
     }
     return DW_DLV_OK;
 }
+#endif /* 0 */
 
 /*  Thanks to David Grayson/
 codereview.stackexchange.com/questions/98791/
 safe-multiplication-of-two-64-bit-signed-integers
 */
-
 int
 _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     Dwarf_Signed * result, Dwarf_Debug dbg,
