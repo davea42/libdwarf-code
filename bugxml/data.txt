@@ -1,4 +1,20 @@
 
+id: DW202306-009
+fuzzer: ossfuzz id: 59775
+datereported: 2023-06-11
+reportedby: David Korczynski
+vulnerability: Fuzzed object results in read past end of section.
+product: libdwarf
+description: A fuzzed object results in reading one byte
+  past the end of a .eh_frame section
+  in internal function _dwarf_read_loc_expr-op().
+  Now we check for that before we dereference a pointer
+  (to read the particular single-byte field).
+datefixed: 2023-06-13
+references: ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
+gitfixid: 9cae1be75ec333d2b8ab8800df4850ed77a8b025
+tarrelease:
+endrec: DW202306-009
 
 id: DW202306-008
 fuzzer: ossfuzz id: 59699
