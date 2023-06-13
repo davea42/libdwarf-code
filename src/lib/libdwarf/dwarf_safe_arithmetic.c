@@ -165,4 +165,3 @@ int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
     return DW_DLV_OK;
 }
 #endif /* 0 */
-
