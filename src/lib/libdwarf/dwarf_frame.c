@@ -2569,7 +2569,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     if the pointer is null).
     Otherwise *has_more_rows and *subsequent_pc
     are not set.
-    */
+*/
 int
 dwarf_get_fde_info_for_reg3_b(Dwarf_Fde fde,
     Dwarf_Half      table_column,
