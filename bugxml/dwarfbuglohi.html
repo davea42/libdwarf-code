@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of June 2023</p>
-<p> Record count: 158 </p>
+<p> Record count: 159 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5488,6 +5488,36 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  ossfuzz59699/fuzz_stack_frame_access-6523659305746432
 </p>
 <p>gitfixid: c5b909630bb566cdbf68fae4091f049f3b22ff11
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-009">159) DW202306-009</h3>
+<p>id: DW202306-009
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59775
+</p>
+<p>datereported: 2023-06-11
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Fuzzed object results in read past end of section.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A fuzzed object results in reading one byte
+  past the end of a .eh_frame section
+  in internal function _dwarf_read_loc_expr-op().
+  Now we check for that before we dereference a pointer
+  (to read the particular single-byte field).
+</p>
+<p>datefixed: 2023-06-13
+</p>
+<p>references:  ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
+</p>
+<p>gitfixid: 9cae1be75ec333d2b8ab8800df4850ed77a8b025
 </p>
 <p>tarrelease: 
 </p>

@@ -3,6 +3,37 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 59775</fuzzer>
+
+<datereported>2023-06-11</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Fuzzed object results in read past end of section.
+</vulnerability>
+
+<description> A fuzzed object results in reading one byte
+  past the end of a .eh_frame section
+  in internal function _dwarf_read_loc_expr-op().
+  Now we check for that before we dereference a pointer
+  (to read the particular single-byte field).
+</description>
+
+<datefixed>2023-06-13</datefixed>
+
+<references> ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
+</references>
+
+<gitfixid>9cae1be75ec333d2b8ab8800df4850ed77a8b025</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 59699</fuzzer>
 
 <datereported>2023-06-08</datereported>
