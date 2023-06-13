@@ -1,3 +1,122 @@
+2023-06-13:  David Anderson
+    commit 29f771024891fced11439bfab88ab25b6f60a912
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+    Added a note that in 0.7.1 there are vulnerabilities
+    fixed (reading corrupt object files).
+            modified:   doc/libdwarf.dox
+
+2023-06-13:  David Anderson
+    commit 28d88b7081d79db13472d112d790eabff9950633
+
+    Added gitfixid for DW202306-009.
+            modified:   bugxml/data.txt
+
+2023-06-13:  David Anderson
+    commit 9cae1be75ec333d2b8ab8800df4850ed77a8b025
+
+    Fixing DW202306-009 ossfuzz id: 59775
+    
+    A carefully fuzzed object could read one
+    byte past the end of a frame section
+    If the last thing in a frame section
+    is DW_OP_GNU_encoded_addr (data is
+    supposed to follow such). Corrupt Dwarf.
+    Now we check and return an error.
+    This vulnerability involved DW_OP_GNU_encoded_addr.
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+
+2023-06-13:  David Anderson
+    commit 44dbfe78d6586281ef76761fb6b3e6eaf18fcc21
+
+    Add doxygen commentary clarifying aspects of
+    reading defailed Frame data.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-06-13:  David Anderson
+    commit 7c3df3000529e0c199163ab44f1c4108a97f22ae
+
+    Remove a blank last line.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+2023-06-13:  David Anderson
+    commit ffe2f9b786f32d6033e9d4570d7b2d9367196e21
+
+    minor change in a comment format for consistency.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-06-11:  David Anderson
+    commit 0978c6c29a5dd88f2eaf0cd1ce7c88e4912de322
+
+    Moving the not-used-yet code to the end of this
+    source file. It is in #if 0
+    so is not compiled. Leaving the important code first.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+2023-06-11:  David Anderson
+    commit f6137eb8a14fe3576cdeb5f09cbe446b0cc0c0da
+
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+    Removed unused defines and put the declaration
+    inside #if 0 region last.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+
+2023-06-11:  David Anderson
+    commit d84d88b48abd673db1b5c161769401cd589260f2
+
+    Removing a function that is not used.
+    It was in #if 0 #endif and is now gone.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-06-11:  David Anderson
+    commit e851ca8323ef7ba2de76dd6219a462706286b8a3
+
+    Renamed
+    _dwarf_add_check
+    to
+    _dwarf_signed_add_check
+
+    Removed another #include.
+    Removed debugging printf (which were #if 0)
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+    Just has the renaming aspect.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+
+2023-06-11:  David Anderson
+    commit 3dc465cda402fe6c761b5df6ee3d98168b08117f
+
+    Removed two #include lines -- they are not required here.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+2023-06-11:  David Anderson
+    commit f19a9557f8205b15b0d021ad543bd18f213dbdad
+
+    Removed an unused local variable.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-06-10:  David Anderson
+    commit 73a955d6c04f87321fe41057af26ee31e613d3dc
+
+    Adding
+    permissions: read-all
+            modified:   freebsd_cmake.yml
+            modified:   mac_autotools.yml
+            modified:   mac_meson.yml
+            modified:   msys2_autotools.yml
+            modified:   test.yml
+
+2023-06-10:  David Anderson
+    commit 6483e44afa743c5abff9fee5930f5dca58c933da
+
+    Now up to date.
+            modified:   ChangeLog
+
 2023-06-10:  David Anderson
     commit d4ba6ab340f3309e05851886f046315143110534
 
