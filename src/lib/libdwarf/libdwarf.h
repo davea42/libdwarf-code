@@ -5305,6 +5305,13 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Instead call dwarf_get_fde_info_for_all_regs3()
     and index into the table it fills in.
 
+    If dw_value_type == DW_EXPR_EXPRESSION or
+    DW_EXPR_VALUE_EXPRESSION dw_offset
+    is not set and the caller must
+    evaluate the expression, which usually depends
+    on runtime frame data which cannot be calculated
+    without a stack frame including registers (etc).
+
     @param dw_fde
     Pass in the FDE of interest.
     @param dw_table_column
@@ -5323,7 +5330,9 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     @param dw_offset
     On success returns a register offset value.
     In principle these are signed, but historically
-    in libdwarf it is typed unsigned.
+    in libdwarf it is typed unsigned. 
+    Cast the returned value to Dwarf_Signed to
+    get the correct meaning.
     @param dw_block_content
     On success returns a pointer to a block.
     For example, for DW_EXPR_EXPRESSION the block
@@ -5366,7 +5375,18 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
     This has essentially the same return values but
     it refers to the CFA (which is not part of the register
     table)
+    In principle the value returned throuth
+    dw_offset is signed, but historically
+    in libdwarf it is typed unsigned.
+    Cast the returned dw_offset value to Dwarf_Signed to
+    get the correct meaning.
 
+    If dw_value_type == DW_EXPR_EXPRESSION or
+    DW_EXPR_VALUE_EXPRESSION dw_offset
+    is not set and the caller must
+    evaluate the expression, which usually depends
+    on runtime frame data which cannot be calculated
+    without a stack frame including registers (etc).
 */
 DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Addr      dw_pc_requested,
@@ -5374,20 +5394,6 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Unsigned* dw_offset_relevant,
     Dwarf_Unsigned* dw_register,
     Dwarf_Unsigned* dw_offset,
-    Dwarf_Block   * dw_block,
-    Dwarf_Addr    * dw_row_pc_out,
-    Dwarf_Bool    * dw_has_more_rows,
-    Dwarf_Addr    * dw_subsequent_pc,
-    Dwarf_Error   * dw_error);
-
-/*  The same as dwarf_get_fde_info_for_cfa_reg3_b() but
-    dw_offset is Signed. */
-DW_API int dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde dw_fde,
-    Dwarf_Addr      dw_pc_requested,
-    Dwarf_Small   * dw_value_type,
-    Dwarf_Unsigned* dw_offset_relevant,
-    Dwarf_Unsigned* dw_register,
-    Dwarf_Signed  * dw_offset,
     Dwarf_Block   * dw_block,
     Dwarf_Addr    * dw_row_pc_out,
     Dwarf_Bool    * dw_has_more_rows,
@@ -5511,6 +5517,15 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde dw_fde,
     dwarf_get_cie_info_b() to get the initial instruction bytes
     and instructions byte count you wish to expand.
 
+    Combined with dwarf_get_frame_instruction()
+    or dwarf_get_frame_instruction_a()
+    (the second is like the first but adds an argument for LLVM
+    address space numbers) it enables detailed access to
+    frame instruction fields for evaluation or printing.
+
+    Free allocated memory with
+    dwarf_dealloc_frame_instr_head().
+
     @see examples
 
     @param dw_cie
@@ -5582,8 +5597,7 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
 
     Frame expressions have a variety of formats
     and content. The dw_fields parameter is set to
-    a pointer to
-    a short string with some set of the letters
+    a pointer to a short string with some set of the letters
     s,u,r,d,c,b,a which enables determining exactly
     which values the call sets.
     Some examples:
