@@ -333,9 +333,9 @@ int main()
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
 # libdwarf  
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+option(BUILD_NON_SHARED "build archive library libdwarf[p].a" FALSE)
 option(BUILD_SHARED 
-    "build shared library libdwarf[p].so and use it" FALSE)
+    "build shared library libdwarf[p].so and use it" TRUE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
@@ -365,6 +365,8 @@ find_package(LibElf REQUIRED)
 list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})
 
 configure_file(cmake/config.h.cmake config.h)
+message(STATUS "Build Static ... ${BUILD_NON_SHARED}")
+message(STATUS "Build Shared ... ${BUILD_SHARED}")
 
 if(BUILD_NON_SHARED)
 	set(DWARF_TARGETS dwarf-static)
