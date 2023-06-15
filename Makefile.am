@@ -91,7 +91,7 @@ README.cmake \
 libdwarf.pc.in \
 libdwarfp.pc.in \
 meson.build \
-meson_options \
+meson_options.txt \
 scripts/buildandreleasetest.sh \
 scripts/run-all-tests.sh \
 scripts/ChangeLog \
