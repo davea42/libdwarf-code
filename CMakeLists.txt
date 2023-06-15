@@ -333,9 +333,9 @@ int main()
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
 # libdwarf  
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" FALSE)
+option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 option(BUILD_SHARED 
-    "build shared library libdwarf[p].so and use it" TRUE)
+	"build shared library libdwarf[p].so and use it" FALSE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
