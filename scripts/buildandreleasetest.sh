@@ -246,7 +246,11 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
-  cmake $genoptb -DWALL=ON -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON $blibsrc
+  cmake $genoptb -DWALL=ON \
+       -DBUILD_NON_SHARED=ON \
+       -DBUILD_SHARED=OFF \
+       -DBUILD_DWARFEXAMPLE=ON\
+       -DDO_TESTING=ON $blibsrc
   chkres $? "FAIL C10b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL C10c  cmake make in $ecmakebld"
@@ -272,7 +276,11 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $fcmakebld"
-  cmake $genoptb -DWALL=ON -DDWARF_WITH_LIBELF=OFF -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON $blibsrc
+  cmake $genoptb \
+    -DBUILD_SHARED=OFF \
+    -DBUILD_NON_SHARED=ON \
+    -DWALL=ON \
+    -DDWARF_WITH_LIBELF=OFF -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL Sec F C11c  cmake make in $fcmakebld"
@@ -297,8 +305,13 @@ then
 fi
 if [ $havecmake = "y" ]
 then
-  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake $genoptb  -DWALL=ON -DBUILD_NON_SHARED=OFF -DDO_TESTING=ON -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  echo "TEST: Now cmake sharedlib from source dir $blibsrc/ in build dir  $gcmakebld"
+  echo " lidwarfp expects to see hidden symbols. "
+  cmake $genoptb  -DWALL=ON \
+    -DBUILD_SHARED=ON \
+    -DBUILD_NON_SHARED=NO -DDO_TESTING=ON \
+    -DBUILD_DWARFGEN=ON \
+    -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $gcmakdbld"
   make
   chkres $? "FAIL Sec F C11d cmake  make in $gcmakebld"
@@ -325,7 +338,10 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON -DDO_TESTING=ON -DBUILD_SHARED=OFF -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON \
+    -DBUILD_SHARED=OFF \
+    -DDO_TESTING=ON  \
+    -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec H C12b  cmake in $hcmakdbld"
   make
   chkres $? "FAIL Sec H C12d  cmake make test in $hcmakebld"
@@ -360,7 +376,7 @@ fi
 if [ $havemeson = "y" ]
 then
   echo "TEST: Now meson from source dir $blibsrc/ in build dir $imesonbld"
-  meson $wd  --prefix=$imesonbld-dist
+  meson $wd  --prefix=$imesonbld-dist --default-library static
   if [ $haveninja = "y" ]
   then
     ninja -j8 install
