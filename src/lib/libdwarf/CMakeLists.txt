@@ -69,6 +69,20 @@ dwarf_memcpy_swap.h)
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
     ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake 
     ${PROJECT_BINARY_DIR}/config.h)
+
+# The -DPIC is so we find the right DW_API value in libdwarf.h
+# with cmake with Linux.
+# Dwarfgen requires all symbols in .so to be visible, so
+# do not say hidden on libdwarf in that case.
+if (BUILD_SHARED)
+    if(NOT BUILD_DWARFGEN)
+      set(CMAKE_C_VISIBILITY_PRESET hidden)
+    endif()
+    set(COMPILER_FLAGS -DLIBDWARF_BUILD -DPIC)
+else()
+    set(COMPILER_FLAGS -DLIBDWARF_STATIC)
+endif()
+
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
@@ -88,7 +102,7 @@ foreach(i RANGE ${targetCount})
 	set_folder(${target} src/lib/libdwarf)
 	target_include_directories(${target} PUBLIC 
             ${LIBELF_INCLUDE_DIRS})
-    target_compile_options(${target} PRIVATE -DLIBDWARF_BUILD
+    target_compile_options(${target} PRIVATE ${COMPILER_FLAGS}
             ${DW_FWALL})
 	msvc_posix(${target})
 
@@ -106,7 +120,6 @@ foreach(i RANGE ${targetCount})
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
 
-# add_library(libdwarf)
 configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY )
 
 # The install has to be here, not in
