@@ -9,6 +9,8 @@ v_maj = v_arr[0]
 v_min = v_arr[1]
 v_mic = v_arr[2]
 
+lib_type = get_option('default_library')
+
 # install paths
 dir_prefix = get_option('prefix')
 dir_include = join_paths(dir_prefix, get_option('includedir'))

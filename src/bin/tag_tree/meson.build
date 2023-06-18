@@ -18,11 +18,15 @@ tag_tree_args = [
   '-DBUILD_NONLIB_SOURCE',
 ]
 
+if (lib_type == 'static')
+  tag_tree_args += ['-DLIBDWARF_STATIC']
+endif
+
 localinclude = include_directories('../dwarfdump')
 
 executable('tag_tree', tag_tree_src,
   c_args : [ dev_cflags, libdwarf_args, tag_tree_args ],
   dependencies : libdwarf,
-  include_directories : [config_dir,localinclude],
+  include_directories : [config_dir, localinclude],
   install : false
 )
