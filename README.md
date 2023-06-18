@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 20 May 2023
+Updated 18 June 2023
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -9,6 +9,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
+    Version 0.7.1 in development
     Version 0.7.0 Released 20 May      2023
     Version 0.6.0 Released 20 February 2023
     Version 0.5.0 Released 22 November 2022.
@@ -185,7 +186,7 @@ With
     --enable-shared --disable-static
 
 appended to the configure command
-libdwarf.so is built and used but libdwarf.a is not built.
+libdwarf.so is built and used.  libdwarf.a is not built.
 
 Other options of possible interest:
 
@@ -202,15 +203,28 @@ gcc has some checks that can be done at runtime.
 ### Options to meson on Windows (Msys2)
 
 All libdwarf builds are automatically shared object (dll)
-builds. No static library libdwarf.a for installation
-is supported.
+builds as of 0.7.1. 
+
+With
+
+    --default-library static
+
+on the meson command line
+one can build libdwarf as an archive and dwarfdump and the
+programs built will use the static library.
+
+The default is shared and can be explicitly
+chosen by:
+
+    --default-library shared
 
 Has the same meson setup reporting as on Linux (above).
 
 ### Options to configure on Windows (Msys2)
 
 All libdwarf builds are automatically shared object (dll)
-builds. No static libdwarf.a can be installed.
+builds. No static libdwarf.a can be built.
+If you need static libdwarf.a use meson or cmake.
 
 Has the same meson setup reporting as on Linux (above).
 
@@ -222,6 +236,18 @@ a build and then
     make distcheck
 
 # INCOMPATIBILITIES. Changes to interfaces
+
+### Comparing libdwarf-0.7.1 to libdwarf-0.7.0
+The default build (with meson) is shared-library.
+to build with static (archive) libdwarf
+add 
+
+    --default-library static 
+
+to the meson command line (applies to meson
+builds in Linux,Macos, and Windows-mingw).
+
+See Options to meson on Windows (Msys2) above.
 
 ### Comparing libdwarf-0.7.0 to libdwarf-0.6.0
 struct Dwarf\_Obj\_Access\_Methods\_a\_s  changed

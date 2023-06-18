@@ -14,6 +14,10 @@ CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
 and
 USING MSYS2 (WINDOWS) CMAKE.
 
+Unless a non-shared library (libdwarf.a) 
+is specifically requested cmake builds a shared
+library: libdwarf.so or libdwarf.dll(Windows)
+
 ============================
 CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
 For cmake, ignore the autogen.sh
