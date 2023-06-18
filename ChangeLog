@@ -1,3 +1,121 @@
+2023-06-18:  David Anderson
+    commit 277e4f718e0061a068a74287291a4d8e8d18e94a
+
+    Non-shared builds and shared-lib builds
+    result in libdwarf.so (or .dll) having
+    only the intended API functions visible to callers.
+    Modified to match up with the altered #defines
+    near the start of libdwarf.h .
+            modified:   meson.build
+            modified:   src/bin/attr_form/meson.build
+            modified:   src/bin/buildopstab/meson.build
+            modified:   src/bin/builduritable/meson.build
+            modified:   src/bin/dwarfdump/meson.build
+            modified:   src/bin/dwarfexample/meson.build
+            modified:   src/bin/dwarfgen/meson.build
+            modified:   src/bin/gennames/meson.build
+            modified:   src/bin/tag_attr/meson.build
+            modified:   src/bin/tag_tree/meson.build
+            modified:   src/lib/libdwarf/meson.build
+
+2023-06-18:  David Anderson
+    commit 9a856a4bee90c1b7cc3f4e8cf6c2dd8ce6b02848
+
+    Non-shared builds and shared-lib builds
+    result in libdwarf.so (or .dll) having
+    only the intended API functions visible to callers.
+            modified:   CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+
+2023-06-18:  David Anderson
+    commit c05c2e4b1295358df4bec45253e8ee3d446aa823
+
+    Minor (one line) change to make this work properly with
+    the build and libdwarf.h changes.
+            modified:   libdwarf.pc.in
+
+2023-06-18:  David Anderson
+    commit f3ef97144dff49b647bb2f3734a7c11f951a9dc7
+
+    A small change was required to match up
+    as desired with
+    the default settings of meson and cmake
+    builds.
+            modified:   scripts/buildandreleasetest.sh
+
+2023-06-18:  David Anderson
+    commit c3b42421059bffbdecdb7250c8e58cb90f20c4b2
+
+    Revising the list of #defines allows
+    building of correct shared library libdwarf
+    in all environments while
+    allowing non-shared (static library)
+    builds with cmake and meson.
+    For linux static library builds
+    can be done.
+    The #defines are slightly easier to
+    understand with this revision.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-06-18:  David Anderson
+    commit 9f725d0ed099cb0b5692cf1f635d05dc3d418e25
+
+    Updates reflecting a new meson option
+    --default-library
+    and the ability to do correct
+    shared library builds (meaning
+    library-internal functions are invisible
+    to callers) with all three
+    build systems.
+            modified:   README
+            modified:   README.cmake
+            modified:   README.md
+
+2023-06-18:  David Anderson
+    commit e5c5f33db75bea03e20e7ca4fb0cb8e4f14b99f6
+
+    Adding ChangeLog2021 and 2022 to the distribution.
+    Omitted by accident.
+            modified:   Makefile.am
+
+2023-06-15:  David Anderson
+    commit ae1d1070163785a4f6aeded7f8084eae2898c684
+
+    the meson documentation on line wasy wrong.
+    plain mason_options does not work.
+            modified:   Makefile.am
+            renamed:    meson_options -> meson_options.txt
+
+2023-06-15:  David Anderson
+    commit 6b65d0eccec28aefeaef4c5a14c9c775802eb38d
+
+    Now matches the rename of meson_options.txt to meson_options
+    to agree with what the meson doc says.
+            modified:   Makefile.am
+
+2023-06-15:  David Anderson
+    commit a39c5668dbb03ad1e5b1ee0b190f951cf24a3e58
+
+    According to meson official documentation
+    any meason after 1.1 should name the file
+    meson_options, not the original
+    meson_options.txt. We cannot use meson below
+    1.45.
+            renamed:    meson_options.txt -> meson_options
+
+2023-06-15:  David Anderson
+    commit 0d5bc0612af062850da4102d5259913ea55fbec8
+
+    Now with DW_LANG for Mojo, new this month in DWARF.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-06-13:  David Anderson
+    commit 1320701ac56f35dbefb01be7857553fbd3e90106
+
+    Updated.
+            modified:   ChangeLog
+
 2023-06-13:  David Anderson
     commit 29f771024891fced11439bfab88ab25b6f60a912
 
