@@ -1,9 +1,9 @@
 name: freebsd_cmake
 
-permissions: read-all
-
 on:
   workflow_dispatch:
+
+permissions: read-all
 
 jobs:
   freebsd_cmake:

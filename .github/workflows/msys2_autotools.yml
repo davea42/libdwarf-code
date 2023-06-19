@@ -1,10 +1,10 @@
 
 name: msys2autotool
 
-permissions: read-all
-
 on: 
   workflow_dispatch:
+
+permissions: read-all
 
 jobs:
  msys2_autotools:

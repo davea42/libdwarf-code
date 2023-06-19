@@ -1,9 +1,9 @@
 name: ci_mac_meson
 
-permissions: read-all
-
 on:
   workflow_dispatch:
+
+permissions: read-all
 
 jobs:
   macos_meson:
