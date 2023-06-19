@@ -1185,7 +1185,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             _dwarf_error_string(dbg,error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
                 "DW_DLE_DEBUG_FRAME_LENGTH_BAD "
-                "frame does not fit in the DWARF section");
+                "irix:frame does not fit in the DWARF section");
             return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg, offset_into_exception_tables,
@@ -1193,10 +1193,16 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             error,section_ptr_end);
         SIGN_EXTEND(offset_into_exception_tables,
             DWARF_32BIT_SIZE);
-        if (offset_into_exception_tables >= dbg->de_filesize) {
-            _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
-            return DW_DLV_ERROR;
-        }
+        if (offset_into_exception_tables > 0) { 
+            if ((Dwarf_Unsigned)offset_into_exception_tables >= 
+                dbg->de_filesize) {
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                    "DW_DLE_DEBUG_FRAME_LENGTH_BAD "
+                    "Irix offset into exception tables");
+                return DW_DLV_ERROR;
+            }
+        } /* nobody uses irix anyway now */
         frame_ptr = saved_frame_ptr + length_of_augmented_fields;
         }
         break;
