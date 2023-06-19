@@ -55,6 +55,10 @@ dwarfdump_src = [
 pkgdwarfdump = join_paths(dir_data, 'dwarfdump')
 dwarfdump_conf_args = '-DCONFPREFIX=' + pkgdwarfdump
 
+if (lib_type == 'static')
+  dwarfdump_conf_args += ['-DLIBDWARF_STATIC']
+endif
+
 executable('dwarfdump', dwarfdump_src,
   c_args : [ dev_cflags, libdwarf_args, dwarfdump_conf_args ],
   dependencies : libdwarf,
