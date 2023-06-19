@@ -1,4 +1,24 @@
 
+id: DW202306-010
+fuzzer: ossfuzz id: 59950
+datereported: 2023-06-18
+reportedby: David Korczynski
+vulnerability:library reads outside frame section
+product: libdwarf
+description: A fuzzed object results in 
+  adding a too large value processing CIE
+  frame augmentation data. That overflows in
+  adding to a pointer so dereferencing the
+  pointer in dwarf_frame.c could lead to a crash
+  in the library or getting nonsense information
+  returned to the caller.
+  This bug has been present for many years.
+datefixed: 2023-06-19
+references: ossfuzz59950/fuzz_set_frame_all-6613067367317504
+gitfixid: b7437c9e4923906e9b3f3860a0c8a8289cff0a91
+tarrelease:
+endrec: DW202306-010
+
 id: DW202306-009
 fuzzer: ossfuzz id: 59775
 datereported: 2023-06-11

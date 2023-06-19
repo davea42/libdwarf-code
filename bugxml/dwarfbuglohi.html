@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of June 2023</p>
-<p> Record count: 159 </p>
+<p> Record count: 160 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5518,6 +5518,39 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
 </p>
 <p>gitfixid: 9cae1be75ec333d2b8ab8800df4850ed77a8b025
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-010">160) DW202306-010</h3>
+<p>id: DW202306-010
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 59950
+</p>
+<p>datereported: 2023-06-18
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: library reads outside frame section
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A fuzzed object results in
+  adding a too large value processing CIE
+  frame augmentation data. That overflows in
+  adding to a pointer so dereferencing the
+  pointer in dwarf_frame.c could lead to a crash
+  in the library or getting nonsense information
+  returned to the caller.
+  This bug has been present for many years.
+</p>
+<p>datefixed: 2023-06-19
+</p>
+<p>references:  ossfuzz59950/fuzz_set_frame_all-6613067367317504
+</p>
+<p>gitfixid: b7437c9e4923906e9b3f3860a0c8a8289cff0a91
 </p>
 <p>tarrelease: 
 </p>
