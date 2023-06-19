@@ -855,6 +855,14 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,
             dbg,error,section_ptr_end);
         length_of_augmented_fields = (Dwarf_Unsigned) lreg;
+        if (length_of_augmented_fields < dbg->de_filesize) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
+                "The irix exception table length is too large "
+                "to be real");
+            return DW_DLV_ERROR;
+        }
         /* set the frame_ptr to point at the instruction start. */
         frame_ptr += length_of_augmented_fields;
         }
@@ -933,8 +941,10 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             &gnu_personality_handler_addr,
             error);
         if (resz != DW_DLV_OK) {
-            _dwarf_error(dbg, error,
-                DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_FRAME_AUGMENTATION_UNKNOWN,
+                "DW_DLE_FRAME_AUGMENTATION_UNKNOWN "
+                " Reading gnu aug encodings failed");
             return resz;
         }
         frame_ptr += adlen;
@@ -967,7 +977,10 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     new_cie = (Dwarf_Cie) _dwarf_get_alloc(dbg, DW_DLA_CIE, 1);
     if (new_cie == NULL) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL "
+            "attempting to allocate a Dwarf_Cie");
         return DW_DLV_ERROR;
     }
 
@@ -1066,7 +1079,6 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         cieptr = cie_ptr_in;
         augt = cieptr->ci_augmentation_type;
     }
-
     if (augt == aug_gcc_eh_z) {
         /*  If z augmentation this is eh_frame,
             and initial_location and
@@ -1158,11 +1170,22 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             dbg,error,section_ptr_end);
         length_of_augmented_fields = (Dwarf_Unsigned) lreg;
 
+        if (length_of_augmented_fields >= dbg->de_filesize) {
+            _dwarf_error_string(dbg, error, 
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD "
+                "in irix exception table length of augmented "
+                "fields is too large to be real");
+            return DW_DLV_ERROR;
+        }
         saved_frame_ptr = frame_ptr;
         /*  The first word is an offset into exception tables.
             Defined as a 32bit offset even for CC -64. */
         if ((frame_ptr + DWARF_32BIT_SIZE) > section_ptr_end) {
-            _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD "
+                "frame does not fit in the DWARF section");
             return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg, offset_into_exception_tables,
@@ -1170,6 +1193,10 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             error,section_ptr_end);
         SIGN_EXTEND(offset_into_exception_tables,
             DWARF_32BIT_SIZE);
+        if (offset_into_exception_tables >= dbg->de_filesize) {
+            _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
+        }
         frame_ptr = saved_frame_ptr + length_of_augmented_fields;
         }
         break;
@@ -1217,6 +1244,13 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     }                           /* End switch on augmentation type */
     if ( frame_ptr > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+        return DW_DLV_ERROR;
+    }
+    if ( frame_ptr < initloc) {
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_DF_FRAME_DECODING_ERROR,
+            "DW_DLE_DF_FRAME_DECODING_ERROR "
+            "frame pointer decreased.Impossible. arithmetic overflow");
         return DW_DLV_ERROR;
     }
 
@@ -1329,6 +1363,10 @@ _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
             sections (in a.out). Take this as meaning no more CIE/FDE
             data. We should be very close to end of section. */
         return DW_DLV_NO_ENTRY;
+    }
+    if (length >= dbg->de_filesize) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
     }
     if (length > section_length_in ||
         (length +local_length_size + local_extension_size) >

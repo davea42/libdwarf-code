@@ -512,8 +512,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 "Following instruction bytes we find impossible "
                 "decrease in a pointer");
         }
-
         fp_instr_offset = instr_ptr - start_instr_ptr;
+        if (instr_ptr >= final_instr_ptr) {
+            _dwarf_error(NULL, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+            return DW_DLV_ERROR;
+        }
         instr = *(Dwarf_Small *) instr_ptr;
         instr_ptr += sizeof(Dwarf_Small);
         base_instr_ptr = instr_ptr;
@@ -2411,7 +2414,6 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
             return DW_DLV_ERROR;
         }
-
         res = _dwarf_exec_frame_instr( /* make_instr= */ false,
             /* search_pc */ true,
             /* search_pc_val */ pc_requested,
