@@ -1,11 +1,5 @@
 Created 26 April 2019
-Updated 24 August 2022
-
-Now we are using a new source structure and using semantic
-versioning for tar.xz names (earlier we used tar.gz).
-The assumption is that you usually download an appropriate
-libdwarf-0.4.1.tar.gz (or a later one)
-You may find README or README.md useful to read.
+Updated 19 June 2023
 
 Consider switching entirely to meson for your build.
 
@@ -14,9 +8,8 @@ CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
 and
 USING MSYS2 (WINDOWS) CMAKE.
 
-Unless a non-shared library (libdwarf.a) 
-is specifically requested cmake builds a shared
-library: libdwarf.so or libdwarf.dll(Windows)
+Unless a shared library is specifically requested
+cmake builds a static library: libdwarf.a
 
 ============================
 CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
