@@ -15,9 +15,11 @@
 </vulnerability>
 
 <description> A fuzzed object results in
-  adding a too large value processing CIE
-  frame augmentation data. That overflows in
-  adding to a pointer so dereferencing the
+  adding a too large value (from CIE
+  frame augmentation data) to a pointer,
+  having failed to check the value for
+  reasonableness.  That add overflows
+  so dereferencing the
   pointer in dwarf_frame.c could lead to a crash
   in the library or getting nonsense information
   returned to the caller.
