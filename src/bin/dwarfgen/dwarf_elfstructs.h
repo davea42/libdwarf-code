@@ -63,15 +63,6 @@ extern "C" {
 #define TYP(n,l) char (n)[(l)]
 #endif
 
-struct Dwarf_Elf_s
-{
-      int  df_fd;
-      /* Array for sections */
-      /* Array for headers */
-
-};
-typedef Dwarf_Elf_s * Dwarf_Elf;
-
 typedef struct
 {
     unsigned char e_ident[EI_NIDENT];
