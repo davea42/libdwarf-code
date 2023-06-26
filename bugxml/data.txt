@@ -1,4 +1,25 @@
 
+id: DW202306-011
+fuzzer: ossfuzz id: 60090
+datereported: 2023-06-24
+reportedby: David Korczynski
+vulnerability: Read from invalid memory address
+product: libdwarf
+description: A fuzzed object results in
+  an addition overflow in reading CIE data
+  leading to a read from an invalid address.
+  An almost-correct check for an overflow
+  in case of a fuzzed aug_irix_exception_table
+  augmentation leads to a crash.
+  The bug was incorrect coding of a test
+  (for an absurd value) written a few weeks ago.
+datefixed: 2023-06-26
+references: ossfuzz60090/fuzz_set_frame_all-5757752673435648
+gitfixid: 6f75899f1f90fa87e52da0df09ddaa2e5be778f9
+tarrelease:
+endrec: DW202306-011
+
+
 id: DW202306-010
 fuzzer: ossfuzz id: 59950
 datereported: 2023-06-18

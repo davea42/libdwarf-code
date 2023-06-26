@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of June 2023</p>
-<p> Record count: 160 </p>
+<p> Record count: 161 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5553,6 +5553,39 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  ossfuzz59950/fuzz_set_frame_all-6613067367317504
 </p>
 <p>gitfixid: b7437c9e4923906e9b3f3860a0c8a8289cff0a91
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202306-011">161) DW202306-011</h3>
+<p>id: DW202306-011
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 60090
+</p>
+<p>datereported: 2023-06-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Read from invalid memory address
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A fuzzed object results in
+  an addition overflow in reading CIE data
+  leading to a read from an invalid address.
+  An almost-correct check for an overflow
+  in case of a fuzzed aug_irix_exception_table
+  augmentation leads to a crash.
+  The bug was incorrect coding of a test
+  (for an absurd value) written a few weeks ago.
+</p>
+<p>datefixed: 2023-06-26
+</p>
+<p>references:  ossfuzz60090/fuzz_set_frame_all-5757752673435648
+</p>
+<p>gitfixid: 6f75899f1f90fa87e52da0df09ddaa2e5be778f9
 </p>
 <p>tarrelease: 
 </p>
