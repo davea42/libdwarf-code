@@ -855,7 +855,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,
             dbg,error,section_ptr_end);
         length_of_augmented_fields = (Dwarf_Unsigned) lreg;
-        if (length_of_augmented_fields < dbg->de_filesize) {
+        if (length_of_augmented_fields >= dbg->de_filesize) {
             _dwarf_error_string(dbg,error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
                 "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
@@ -1005,7 +1005,6 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     new_cie->ci_cie_instr_start = frame_ptr;
-
     new_cie->ci_dbg = dbg;
     new_cie->ci_augmentation_type = augt;
     new_cie->ci_gnu_eh_augmentation_len = cie_aug_data_len;
