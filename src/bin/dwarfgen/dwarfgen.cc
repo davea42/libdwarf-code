@@ -284,6 +284,8 @@ int open_a_file(const char * name);
 void close_a_file(int f);
 Dwarf_Unsigned write_to_object(void);
 
+static const Dwarf_Unsigned zero = 0;
+static const Dwarf_Unsigned one  = 1;
 // This is a global so thet CallbackFunc can get to it
 // If we used the dwarf_producer_init_c() user_data pointer
 // creatively we would not need a global.
@@ -406,8 +408,8 @@ public:
     Dwarf_Unsigned e_shnum_;
     Dwarf_Unsigned e_shstrndx_;
     bool           e_dwarf_32bit_; // 
-    //dw_elf32_header e_32_;
-    //dw_elf64_header e_64_;
+    dw_elf32_ehdr e_32_;
+    dw_elf64_ehdr e_64_;
     unsigned  char  e_ptrbytesize_;
     Dwarf_Unsigned  e_hdrlen_;
     bool elf_is_64bit() { return e_ptrbytesize_ == 8;};
@@ -415,6 +417,8 @@ public:
     bool dwarf_is_64bit() {return !e_dwarf_32bit_;};
     bool dwarf_is_32bit() {return e_dwarf_32bit_;};
     ElfHeaderForDwarf() {
+        memset(&e_32_,0,sizeof(e_32_));
+        memset(&e_64_,0,sizeof(e_64_));
         memset(e_ident_,0,sizeof(e_ident_)); 
         e_type_= 0; e_machine_= 0;; e_version_= 0;; e_entry_= 0;
         e_phoff_= 0; e_shoff_= 0; e_flags_= 0; e_ehsize_= 0;
@@ -454,6 +458,8 @@ public:
     unsigned int elf_sect_index_;
     Dwarf_Unsigned lengthWrittenToElf_;
 
+    dw_elf64_shdr shdr64_;
+    dw_elf32_shdr shdr32_;
     // Blobs are not tiny, libdwarfp aggregates many blocks
     vector<ByteBlob> sectioncontent_;   // All content (but not header)
     Dwarf_Unsigned   sectioncontentlen_;// Total over all blobs
@@ -1164,55 +1170,6 @@ write_object_file(Dwarf_P_Debug dbg,
     dwelfheader.e_dwarf_32bit_ = dwarfoffset32;
     dwelfheader.e_ptrbytesize_ =  elfpointer64?8:4;
     
-#if 0
-    if (elfclass == ELFCLASS32) {
-        dw_elf32 *ehp = &dwelfheadr.e_32_;
-        if (!ehp) {
-            cerr << "dwarfgen: Unable to elf32_newehdr() on " <<
-                outfile << endl;
-            exit(1);
-        }
-        dwelfheader.e_ptrbytesize = 4;
-        ehp->e_ident[EI_MAG0] = ELFMAG0;
-        ehp->e_ident[EI_MAG1] = ELFMAG1;
-        ehp->e_ident[EI_MAG2] = ELFMAG2;
-        ehp->e_ident[EI_MAG3] = ELFMAG3;
-        ehp->e_ident[EI_CLASS] = elfclass;
-        ehp->e_ident[EI_DATA] = elfendian;
-        ehp->e_ident[EI_VERSION] = EV_CURRENT;
-
-        ASNX(ehp->e_machine,sizeof(ehp->e_machine),
-            &machine,sizeof(machine));
-        ASNX(ehp->e_type,sizeof(ehp->e_type),
-            &dwelfheader.e_type,sizeof(elfheader.e_type));
-        ASNX(ehp->e_version,sizeof(ehp->e_version),
-            &dwelfheader.e_version, sizeof(elfheader.e_version));
-        unsigned  strtabstroff = secstrtab.addString(".shstrtab");
-        datalen = sizeof(dw_elf32_ehdr) 
-
-    } else {
-        dw_elf64_ehdr *ehp = &dwelfheadr.e_64_;
-        if (!ehp) {
-            cerr << "dwarfgen: Unable to elf64_newehdr() on " <<
-                outfile << endl;
-            exit(1);
-        }
-        dwelfheader.e_ptrbytesize_ = 8;
-        ehp->e_ident[EI_MAG0] = ELFMAG0;
-        ehp->e_ident[EI_MAG1] = ELFMAG1;
-        ehp->e_ident[EI_MAG2] = ELFMAG2;
-        ehp->e_ident[EI_MAG3] = ELFMAG3;
-        ehp->e_ident[EI_CLASS] = elfclass;
-        ehp->e_ident[EI_DATA] = elfendian;
-        ehp->e_ident[EI_VERSION] = EV_CURRENT;
-        ASNX(ehp->e_version,sizeof(ehp->e_version),
-            &dwelfheader.e_version, sizeof(dwelfheader.e_version));
-        unsigned  strtabstroff = secstrtab.addString(".shstrtab");
-        // an object section with fake .text data
-        // (just as an example).
-        datalen = sizeof(dw_elf64_ehdr)
-    }
-#endif
     create_initial_section();
     create_text_section();
 
@@ -1612,11 +1569,169 @@ write_generated_dbg(Dwarf_P_Debug dbg,
     }
 }
 
+void
+write_elf_header(void)
+{
+    unsigned char *datap = 0;
+
+    if (dwelfheader.elf_is_32bit()) {
+        dw_elf32_ehdr &ehp =  dwelfheader.e_32_;
+        memset(&ehp,0,sizeof(ehp));
+        ehp.e_ident[EI_MAG0] = dwelfheader.e_ident_[EI_MAG0];
+        ehp.e_ident[EI_MAG1] = dwelfheader.e_ident_[EI_MAG1];
+        ehp.e_ident[EI_MAG2] = dwelfheader.e_ident_[EI_MAG2];
+        ehp.e_ident[EI_MAG3] = dwelfheader.e_ident_[EI_MAG3];
+        ehp.e_ident[EI_CLASS] = dwelfheader.e_ident_[EI_CLASS];
+        ehp.e_ident[EI_DATA] = dwelfheader.e_ident_[EI_DATA];
+        ehp.e_ident[EI_VERSION] = dwelfheader.e_ident_[EI_VERSION];
+        ASNX(ehp.e_machine,sizeof(ehp.e_machine),
+            &dwelfheader.e_machine_,
+            sizeof(dwelfheader.e_machine_));
+        ASNX(ehp.e_type,sizeof(ehp.e_type),
+            &dwelfheader.e_type_,sizeof(dwelfheader.e_type_));
+        ASNX(ehp.e_version,sizeof(ehp.e_version),
+            &dwelfheader.e_version_, 
+            sizeof(dwelfheader.e_version_));
+        datap = (unsigned char *)&dwelfheader.e_32_;
+    } else {
+        dw_elf64_ehdr &ehp =  dwelfheader.e_64_;
+        ehp.e_ident[EI_MAG0] = dwelfheader.e_ident_[EI_MAG0];
+        ehp.e_ident[EI_MAG1] = dwelfheader.e_ident_[EI_MAG1];
+        ehp.e_ident[EI_MAG2] = dwelfheader.e_ident_[EI_MAG2];
+        ehp.e_ident[EI_MAG3] = dwelfheader.e_ident_[EI_MAG3];
+        ehp.e_ident[EI_CLASS] = dwelfheader.e_ident_[EI_CLASS];
+        ehp.e_ident[EI_DATA] = dwelfheader.e_ident_[EI_DATA];
+        ehp.e_ident[EI_VERSION] = dwelfheader.e_ident_[EI_VERSION];
+        ASNX(ehp.e_machine,sizeof(ehp.e_machine),
+            &dwelfheader.e_machine_,
+            sizeof(dwelfheader.e_machine_));
+        ASNX(ehp.e_type,sizeof(ehp.e_type),
+            &dwelfheader.e_type_,sizeof(dwelfheader.e_type_));
+        ASNX(ehp.e_version,sizeof(ehp.e_version),
+            &dwelfheader.e_version_, 
+            sizeof(dwelfheader.e_version_));
+        datap = (unsigned char *)&dwelfheader.e_64_;
+     }
+     cout << "Writing Elf header content "
+        " at offset 0"  << endl;
+     dwwriter.wwrite(0,dwelfheader.e_hdrlen_,datap);
+}
+
+
+
+// Returns pointer to the content, len of each is
+// dwelfheader.e_shentsize_
+unsigned char * copy_section_hdr_data (SectionForDwarf&sec)
+{
+    if (dwelfheader.elf_is_32bit()) 
+    {
+        dw_elf32_shdr * shdr = &sec.shdr32_;
+        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
+            &sec.section_name_itself_,
+            sizeof(sec.section_name_itself_));
+        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
+            &sec.type_, sizeof(sec.type_));
+        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
+            &sec.flags_, sizeof(sec.flags_));
+        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
+            &zero,sizeof(zero));
+        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
+            &zero,sizeof(zero));
+        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
+            &sec.size_,sizeof(sec.size_));
+        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
+            &sec.link_,sizeof(sec.link_));
+        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
+            &sec.link_,sizeof(sec.link_));
+        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
+            &one,sizeof(one));
+        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
+            &zero,sizeof(zero));
+        return (unsigned char *)shdr;
+    } else {
+        dw_elf64_shdr * shdr = &sec.shdr64_;
+        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
+            &sec.section_name_itself_,
+            sizeof(sec.section_name_itself_));
+        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
+            &sec.type_, sizeof(sec.type_));
+        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
+            &sec.flags_, sizeof(sec.flags_));
+        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
+            &zero,sizeof(zero));
+        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
+            &zero,sizeof(zero));
+        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
+            &sec.size_,sizeof(sec.size_));
+        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
+            &sec.link_,sizeof(sec.link_));
+        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
+            &sec.link_,sizeof(sec.link_));
+        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
+            &one,sizeof(one));
+        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
+            &zero,sizeof(zero));
+        return (unsigned char *)shdr; 
+    }
+    /* not reached */
+}
+
+void
+write_section_contents()
+{
+    unsigned long i = 0;
+    for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
+        it != dwsectab.end();
+        it++) {
+        SectionForDwarf &sec = *it;
+        Dwarf_Unsigned curoff = sec.sectionoutoffset_;
+
+        for (vector<ByteBlob>::iterator itb =
+            sec.sectioncontent_.begin();
+            itb != sec.sectioncontent_.end();
+            itb++) {
+            ByteBlob &bb = *itb;
+
+            cout << "Writing section content " <<i <<
+                " at offset "  << curoff << endl;
+            dwwriter.wwrite(curoff,bb.len_,bb.bytes_); 
+            curoff += bb.len_;
+        }
+    }
+
+}
+void
+write_section_headers()
+{
+    Dwarf_Unsigned headeroff = dwelfheader.e_shoff_;
+    unsigned long i = 0;
+    for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
+        it != dwsectab.end();
+        it++) {
+        cout << "Writing section header " <<i <<
+            " at offset "  << headeroff << endl;
+        SectionForDwarf &sec = *it;
+        Dwarf_Unsigned hdrlen = dwelfheader.e_shentsize_;
+
+        unsigned char *data = copy_section_hdr_data(sec);
+        dwwriter.wwrite(headeroff,dwelfheader.e_shentsize_,
+            data);
+        headeroff += dwelfheader.e_shentsize_; 
+    }
+}
+
+
+//  We write  elf header, sections, section headers.
 Dwarf_Unsigned
 write_to_object(void)
 {
-// FIXME
-    return 0;
+    write_elf_header();
+    write_section_contents();
+    write_section_headers();
+    
+    Dwarf_Unsigned len = dwelfheader.e_shoff_+
+        dwelfheader.e_shnum_* dwelfheader.e_shentsize_;
+    return len;
 }
 
 int
