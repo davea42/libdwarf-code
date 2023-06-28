@@ -162,7 +162,6 @@ bitreplace(char *outbuf, unsigned int buflen,
 
 using std::string;
 using std::cout;
-using std::cerr;
 using std::endl;
 using std::vector;
 extern "C" {
@@ -326,21 +325,21 @@ public:
         Dwarf_Unsigned length,
         const void *bytes) {
         if (fd_ == -1) {
-            cerr << "dwarfgen: write with fd_ -1" << endl;
+            cout << "dwarfgen: write with fd_ -1" << endl;
             exit(1);
         }
         if (curoffset_ != offset) {
             off_t v = lseek(fd_,offset,SEEK_SET);
             if (v == (off_t)-1) {
-               cerr << "dwarfgen: fseek to " << offset<<
-                   "fails " << endl;
+               cout << "dwarfgen: fseek to " << offset<<
+                   " fails " << endl;
                exit(1);
             }
             curoffset_ = v;
         }
         ssize_t wrote = write(fd_,bytes,(size_t)length);
         if (wrote == -1) {
-               cerr << "dwarfgen: write length " << length<<
+               cout << "dwarfgen: write length " << length<<
                    "fails " << endl;
                exit(1);
         }
@@ -361,7 +360,7 @@ public:
         fd_ =  open(name_.c_str(), O_CREAT|O_WRONLY | O_BINARY,
             00777);
         if (fd_ ==-1) {
-            cerr << "dwarfgen: open " << name_ << " fails" << endl;
+            cout << "dwarfgen: open " << name_ << " fails" << endl;
             exit(1);
         }
         curoffset_ =0;
@@ -379,7 +378,7 @@ public:
     Dwarf_Unsigned getFileOffset() { return fileoffset_;};
     void setBlob(unsigned char *bytes,size_t len) {
        if (len_) {
-           cerr << "dwarfgen: Duplicate ByteBlob setting " <<
+           cout << "dwarfgen: Duplicate ByteBlob setting " <<
               "for length "<< len_ << " to length" 
               <<  len << endl;
            exit(1); 
@@ -439,65 +438,70 @@ public:
         Dwarf_Unsigned flags,
         Dwarf_Unsigned link,
         Dwarf_Unsigned info) {
-        size_ = size;
-        type_ = type;
-        flags_ = flags;
-        info_ = info;
+        sh_size_ = size;
+        sh_type_ = type;
+        sh_flags_ = flags;
+        sh_info_ = info;
     };
     ~SectionForDwarf() { };
     string    name_;
-    Dwarf_Unsigned section_name_itself_;
+    Dwarf_Unsigned sh_name_; /* section_name_itself */
     ElfSymIndex    section_name_symidx_;
-    Dwarf_Unsigned size_;
-    Dwarf_Unsigned type_;
-    Dwarf_Unsigned flags_;
-    Dwarf_Unsigned sectionoutoffset_; //Offset in the output object.
+    Dwarf_Unsigned sh_type_;
+    Dwarf_Unsigned sh_addr_;
+    Dwarf_Unsigned sh_offset_;
+    Dwarf_Unsigned sh_flags_;
+    Dwarf_Unsigned sh_size_;
+    Dwarf_Unsigned sh_link_;
+    Dwarf_Unsigned sh_info_;
+    Dwarf_Unsigned sh_addralign_;
+    Dwarf_Unsigned sh_entsize_;
 
     /*  type: SHT_REL, RELA: Section header index of the section
         relocation applies to.
         SHT_SYMTAB: Section header index of the
         associated string table. */
-    Dwarf_Unsigned link_;
-    Dwarf_Unsigned info_;
     unsigned int elf_sect_index_;
-    Dwarf_Unsigned lengthWrittenToElf_;
 
     dw_elf64_shdr shdr64_;
     dw_elf32_shdr shdr32_;
     // Blobs are not tiny, libdwarfp aggregates many blocks
     vector<ByteBlob> sectioncontent_;   // All content (but not header)
-    Dwarf_Unsigned   sectioncontentlen_;// Total over all blobs
+    // content size is sh_size_ (over all blobs)
     
     void add_section_content(unsigned char *data,
         Dwarf_Unsigned datalen) {
         ByteBlob x = ByteBlob(data,datalen);  
         sectioncontent_.push_back(x);
-        sectioncontentlen_ += datalen;
+        sh_size_ += datalen;
     }
     Dwarf_Unsigned getSectionNameSymidx() {
         return section_name_symidx_.getSymIndex(); };
-    SectionForDwarf():section_name_itself_(0),
+    SectionForDwarf():sh_name_(0),
         section_name_symidx_(0),
-        size_(0),type_(0),flags_(0),
-        link_(0), info_(0), elf_sect_index_(0),
-        lengthWrittenToElf_(0) {} ;
+        sh_size_(0),sh_type_(0),sh_flags_(0),
+        sh_link_(0), sh_info_(0), elf_sect_index_(0),
+        sh_offset_(0),sh_addralign_(0),
+        sh_addr_(0),
+        sh_entsize_(0) {} ;
     void setSectIndex(unsigned v) { elf_sect_index_ = v; };
     Dwarf_Unsigned getSectIndex() const { return elf_sect_index_;};
     SectionForDwarf(const string name,
-        Dwarf_Unsigned size,Dwarf_Unsigned type,
+        Dwarf_Unsigned type,
         Dwarf_Unsigned flags, Dwarf_Unsigned link,
         Dwarf_Unsigned info): 
         name_(name),
-        size_(size),type_(type),flags_(flags),
-        link_(link), info_(info), elf_sect_index_(0),
-        lengthWrittenToElf_(0) {
-            // Now create section name string section.
-            section_name_itself_ = 
-                secstrtab.addString(name.c_str());
+        sh_size_(0),sh_type_(type),sh_flags_(flags),
+        sh_link_(link), sh_info_(info), elf_sect_index_(0),
+        sh_offset_(0),sh_addralign_(0),
+        sh_addr_(0),
+        sh_entsize_(0) {
+            // Now create section name string section .
+            sh_name_ = secstrtab.addString(name.c_str());
             ElfSymbols& es = Irep.getElfSymbols();
             // Now creat a symbol for the section name.
             // (which has its own string table)
-            section_name_symidx_  = es.addElfSymbol(0,name);
+            section_name_symidx_ = es.addElfSymbol(0,name);
         };
 }; // SectionForDwarf
 
@@ -526,7 +530,7 @@ static SectionForDwarf & FindMySection(
         }
         return dwsectab[i];
     }
-    cerr << "dwarfgen: Unable to find my dw sec data "
+    cout << "dwarfgen: Unable to find my dw sec data "
         "for elf section " <<
         elf_section_index.getSectIndex() << endl;
     exit(1);
@@ -542,7 +546,7 @@ static int FindMySectionNum(const ElfSectIndex & elf_section_index)
         }
         return i;
     }
-    cerr << "dwarfgen: Unable to find my dw sec index "
+    cout << "dwarfgen: Unable to find my dw sec index "
         "for elf section " <<
         elf_section_index.getSectIndex() << endl;
     exit(1);
@@ -560,7 +564,6 @@ create_namestr_section(void)
     unsigned long sectindex = dwsectab.size();
     SectionForDwarf ds = SectionForDwarf(
         ".shstrtab",
-        secstrtab.exposelen(),
         DWARF_T_BYTE,
         SHT_STRTAB,
         0,0);
@@ -607,9 +610,8 @@ static int CallbackFunc(
         return 0;
     }
     unsigned new_sect_index = dwsectab.size();
-    SectionForDwarf ds(name,size,type,flags,link,info) ;
+    SectionForDwarf ds(name,type,flags,link,info) ;
     ds.setSectIndex(new_sect_index);
-    *sect_name_symbol_index = ds.getSectionNameSymidx();
 
     // In Elf, each section gets an elf symbol table entry.
     // So that relocations have an address to refer to.
@@ -625,99 +627,6 @@ static int CallbackFunc(
     // is the same as dwsectab vector index;
     return ds.getSectIndex();
 }
-
-#if 0
-{
-    {
-        //shdr->sh_name   = ds.section_name_itself_;
-        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
-            &ds.section_name_itself_,sizeof(ds.section_name_itself_));
-        //shdr->sh_type   = ds.type_;
-        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
-            &ds.type_,sizeof(ds.type_));
-        //shdr->sh_flags  = ds.flags_;
-        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
-            &ds.flags_,sizeof(ds.flags_));
-        //shdr->sh_addr   = 0;
-        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
-            &zero,sizeof(zero));
-        //shdr->sh_offset = 0;
-        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
-            &zero,sizeof(zero));
-
-        //shdr->sh_size   = ds.size_;
-        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
-            &ds.size_,sizeof(ds.size_));
-        //shdr->sh_link   = ds.link_;
-        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
-            &ds.link_,sizeof(ds.link_));
-        //shdr->sh_info   = ds.info_;
-        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
-            &ds.info_,sizeof(ds.info_));
-        //shdr->sh_addralign = 1;
-        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
-            &one,sizeof(one));
-        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
-            &zero,sizeof(zero));
-    } else {
-        dw_elf64_shdr * shdr = _dwarf_elf64_getshdr(scn);
-        if (!shdr) {
-            cerr << "dwarfgen: Unable to elf64_getshdr() on "
-                << ds.name_ << endl;
-            exit(1);
-        }
-        //shdr->sh_name   = ds.section_name_itself_;
-        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
-            &ds.section_name_itself_,sizeof(ds.section_name_itself_));
-        //shdr->sh_type   = ds.type_;
-        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
-            &ds.type_,sizeof(ds.type_));
-        //shdr->sh_flags  = ds.flags_;
-        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
-            &ds.flags_,sizeof(ds.flags_));
-        //shdr->sh_addr   = 0;
-        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
-            &zero,sizeof(zero));
-        //shdr->sh_offset = 0;
-        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
-            &zero,sizeof(zero));
-
-        //shdr->sh_size   = ds.size_;
-        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
-            &ds.size_,sizeof(ds.size_));
-        //shdr->sh_link   = ds.link_;
-        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
-            &ds.link_,sizeof(ds.link_));
-        //shdr->sh_info   = ds.info_;
-        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
-            &ds.info_,sizeof(ds.info_));
-
-        //shdr->sh_addralign = 1;
-        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
-            &one,sizeof(one));
-
-        //shdr->sh_entsize = 0;
-        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
-            &zero,sizeof(zero));
-    }
-    Dwarf_Unsigned retsecnum = 0;
-    int res = _dwarf_elf_ndxscn(scn,&retsecnum);
-    if (res != DW_DLV_OK) {
-        cerr << "dwarfgen:  dwarf_elf_ndxscn FAILs" << endl;
-        exit(1);
-    }
-    ElfSectIndex si(retsecnum);
-
-    ds.setSectIndex(si);
-    cout << "New Elf section: "<< ds.name_ <<
-        " Type="<< ds.type_ <<
-        " Flags="<< ds.flags_ <<
-        " Elf secnum="<< si.getSectIndex() <<
-        " link section=" << ds.link_<<
-        " info=" << ds.info_ << endl ;
-    return  si;
-}
-#endif
 
 static void
 setinput(enum  WhichInputSource *src,
@@ -809,7 +718,7 @@ main(int argc, char **argv)
                     // libdwarf reading is thus testable.
                     cmdoptions.adddata16 = true;
                 } else {
-                    cerr << "dwarfgen: Invalid lnogoption input " <<
+                    cout << "dwarfgen: Invalid lnogoption input " <<
                         longindex << endl;
                     exit(1);
                 }
@@ -869,7 +778,7 @@ main(int argc, char **argv)
                     ptrsizeflagbit = DW_DLC_POINTER64;
                     elfoffsetsizeflagbit = DW_DLC_ELF_OFFSET_SIZE_64;
                 } else {
-                    cerr << "dwarfgen: Invalid p option input " <<
+                    cout << "dwarfgen: Invalid p option input " <<
                         dwoptarg << endl;
                     exit(1);
                 }
@@ -880,7 +789,7 @@ main(int argc, char **argv)
                 } else if (!strcmp("8",dwoptarg)) {
                     dwarfoffsetsizeflagbit = DW_DLC_OFFSET64;
                 } else {
-                    cerr << "dwarfgen: Invalid f option input " <<
+                    cout << "dwarfgen: Invalid f option input " <<
                         dwoptarg << endl;
                     exit(1);
                 }
@@ -895,7 +804,7 @@ main(int argc, char **argv)
                 } else if (!strcmp("2",dwoptarg)) {
                     dwarf_version = "V2";
                 } else {
-                    cerr << "dwarfgen: Invalid v option input " <<
+                    cout << "dwarfgen: Invalid v option input " <<
                         dwoptarg << endl;
                     exit(1);
                 }
@@ -910,16 +819,16 @@ main(int argc, char **argv)
                 outfile = dwoptarg;
                 break;
             case '?':
-                cerr << "dwarfgen: Invalid quest? option input "
+                cout << "dwarfgen: Invalid quest? option input "
                     << endl;
                 exit(1);
             default:
-                cerr << "dwarfgen: Invalid option input " << endl;
+                cout << "dwarfgen: Invalid option input " << endl;
                 exit(1);
             }
         }
         if ( (dwoptind >= argc) && pathrequired) {
-            cerr << "dwarfgen: Expected argument after options!"
+            cout << "dwarfgen: Expected argument after options!"
                 " Giving up."
                 << endl;
             exit(EXIT_FAILURE);
@@ -944,14 +853,14 @@ main(int argc, char **argv)
         if (whichinput == OptReadBin) {
             createIrepFromBinary(infile,Irep);
         } else if (whichinput == OptReadText) {
-            cerr << "dwarfgen: dwarfgen: text read not supported yet"
+            cout << "dwarfgen: dwarfgen: text read not supported yet"
                 << endl;
             exit(EXIT_FAILURE);
         } else if (whichinput == OptPredefined) {
-            cerr << "dwarfgen: predefined not supported yet" << endl;
+            cout << "dwarfgen: predefined not supported yet" << endl;
             exit(EXIT_FAILURE);
         } else {
-            cerr << "dwarfgen: Impossible: unknown input style."
+            cout << "dwarfgen: Impossible: unknown input style."
                 << endl;
             exit(EXIT_FAILURE);
         }
@@ -990,20 +899,20 @@ main(int argc, char **argv)
             &dbg,
             &err);
         if (res == DW_DLV_NO_ENTRY) {
-            cerr << "dwarfgen: Failed dwarf_producer_init() NO_ENTRY"
+            cout << "dwarfgen: Failed dwarf_producer_init() NO_ENTRY"
                 << endl;
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_ERROR) {
-            cerr << "dwarfgen: Failed dwarf_producer_init() ERROR"
+            cout << "dwarfgen: Failed dwarf_producer_init() ERROR"
                 << endl;
-            cerr << "dwarfgen errmsg " << dwarf_errmsg(err)<<endl;
+            cout << "dwarfgen errmsg " << dwarf_errmsg(err)<<endl;
             exit(EXIT_FAILURE);
         }
         res = dwarf_pro_set_default_string_form(dbg,
             cmdoptions.defaultInfoStringForm,&err);
         if (res != DW_DLV_OK) {
-            cerr << "dwarfgen: Failed " <<
+            cout << "dwarfgen: Failed " <<
                 "dwarf_pro_set_default_string_form" << endl;
             exit(EXIT_FAILURE);
         }
@@ -1011,7 +920,7 @@ main(int argc, char **argv)
             /*  Fills out a default dnames for testing. */
             res = dwarf_force_dnames(dbg,0,&err);
             if (res != DW_DLV_OK) {
-                cerr << "dwarfgen: "
+                cout << "dwarfgen: "
                     "Failed dwarf_force_debug_names"
                     << endl;
                 exit(EXIT_FAILURE);
@@ -1110,15 +1019,18 @@ calculate_all_offsets(void)
         total_length += ehdr_length;
         offset_to_contents = ehdr_length;
      }
+     dwelfheader.e_shentsize_ = sechdr_length;
      dwelfheader.e_hdrlen_ = ehdr_length;
+     dwelfheader.e_shnum_ = dwsectab.size();
+     dwelfheader.e_ehsize_ = ehdr_length;
 
      for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
         it != dwsectab.end();
         it++) {
         SectionForDwarf &sec = *it;
-        sec.sectionoutoffset_ = total_length;
-        section_content_len += sec.sectioncontentlen_;
-        total_length += sec.sectioncontentlen_;
+        sec.sh_offset_ = total_length;
+        section_content_len += sec.sh_size_;
+        total_length += sec.sh_size_;
      }
 
      section_headers_length = sechdr_length*dwsectab.size();
@@ -1130,8 +1042,8 @@ calculate_all_offsets(void)
         it != dwsectab.end();
         it++) {
         SectionForDwarf &sec = *it;
-        sec.sectionoutoffset_= curoff;
-        curoff += sec.sectioncontentlen_;
+        sec.sh_offset_= curoff;
+        curoff += sec.sh_size_;
      }
      Dwarf_Unsigned offset_to_secheaders = curoff;
      dwelfheader.e_shoff_ = ehdr_length + section_content_len;  
@@ -1183,22 +1095,6 @@ write_object_file(Dwarf_P_Debug dbg,
     // set e_shstrndx.
     unsigned long shstrindex =
         create_namestr_section();
-#if 0
-    if (dwelfheader.is_32bit(){
-        dw_elf32_ehdr *ehp = &dwelfheadr.e_32_;
-        ASNX(ehp->e_shstrndx,sizeof(ehp->e_shstrndx),
-            &shstrindex,sizeof(shstrindex));
-    } else if dwelfheader.is_32bit {
-        dw_elf64_ehdr *ehp = &dwelfheadr.e_64_;
-        ASNX(ehp->e_shstrndx,sizeof(ehp->e_shstrndx),
-            &shstrindex,sizeof(shstrindex));
-    } else {
-        cerr << "dwarfgen: 32/64 not set in elf header " << endl;
-        exit(1);
-    }
-
-    // Get it all written to the output file.
-#endif
     calculate_all_offsets();
     Dwarf_Unsigned finalsize = write_to_object();
     cout << " output image size in bytes " << finalsize << endl;
@@ -1214,90 +1110,15 @@ create_text_section(void)
 {
     string s(".text");
     unsigned sectindex = dwsectab.size();
-    Dwarf_Unsigned  osecnameoff = secstrtab.addString(".text");
-    SectionForDwarf ds(s,(Dwarf_Unsigned)DWARF_T_BYTE,
-        (Dwarf_Unsigned)0,(Dwarf_Unsigned)0,(Dwarf_Unsigned)0,
+
+    SectionForDwarf ds(s,
+        (Dwarf_Unsigned)SHT_PROGBITS,
+        (Dwarf_Unsigned)0,(Dwarf_Unsigned)0,
         (Dwarf_Unsigned) 0);
     ds.add_section_content(text,sizeof(text));
     ds.setSectIndex(sectindex);
     dwsectab.push_back(ds); 
 }
-
-#if 0
-{
-    if (elfclass == ELFCLASS32) {
-        dw_elf32_shdr * shdr = _dwarf_elf32_getshdr(scn1);
-        if (!shdr) {
-            cerr << "dwarfgen: Unable to elf32_getshdr() on " <<
-                outfile << endl;
-            exit(1);
-        }
-        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
-             &osecnameoff,sizeof(osecnameoff));
-        unsigned long type = SHT_PROGBITS;
-        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
-             &type,sizeof(type));
-        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
-             &zero,sizeof(zero));
-        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
-             &zero,sizeof(zero));
-        //shdr->sh_offset = 0;
-        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
-             &zero,sizeof(zero));
-        //shdr->sh_size = 0;
-        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
-             &zero,sizeof(zero));
-        //shdr->sh_link  = 0;
-        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
-             &zero,sizeof(zero));
-        //shdr->sh_info = 0;
-        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
-             &zero,sizeof(zero));
-        //shdr->sh_addralign = 1;
-        unsigned long align = 1;
-        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
-             &align,sizeof(align));
-        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
-             &zero,sizeof(zero));
-        //shdr->sh_entsize = 0;
-    } else {
-        dw_elf64_shdr * shdr = _dwarf_elf64_getshdr(scn1);
-        if (!shdr) {
-            cerr << "dwarfgen: Unable to elf32_getshdr() on "
-                << outfile << endl;
-            exit(1);
-        }
-        ASNX(shdr->sh_name,sizeof(shdr->sh_name),
-            &osecnameoff,sizeof(osecnameoff));
-        unsigned long type = SHT_PROGBITS;
-        ASNX(shdr->sh_type,sizeof(shdr->sh_type),
-            &type,sizeof(type));
-        ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
-            &zero,sizeof(zero));
-        ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
-            &zero,sizeof(zero));
-        //shdr->sh_offset = 0;
-        ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
-            &zero,sizeof(zero));
-        //shdr->sh_size = 0;
-        ASNX(shdr->sh_size,sizeof(shdr->sh_size),
-            &zero,sizeof(zero));
-        //shdr->sh_link  = 0;
-        ASNX(shdr->sh_link,sizeof(shdr->sh_link),
-            &zero,sizeof(zero));
-        //shdr->sh_info = 0;
-        ASNX(shdr->sh_info,sizeof(shdr->sh_info),
-            &zero,sizeof(zero));
-        //shdr->sh_addralign = 1;
-        unsigned long align = 1;
-        ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
-            &align,sizeof(align));
-        ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
-            &zero,sizeof(zero));
-        //shdr->sh_entsize = 0;
-    }
-}
-#endif
 
 // Take the lists of data blocks and build a single
 // malloc block to contain it all pointing
@@ -1315,7 +1136,7 @@ InsertDataIntoElf(Dwarf_Unsigned d,Dwarf_P_Debug dbg)
     res = dwarf_get_section_bytes_a(dbg,d,
         &dw_section_index,&length,&bytes,0);
     if (res != DW_DLV_OK) {
-        cerr << "dwarfgen: get_section_bytes_a problem " << d
+        cout << "dwarfgen: get_section_bytes_a problem " << d
             << endl;
         exit(1);
     }
@@ -1330,7 +1151,7 @@ InsertDataIntoElf(Dwarf_Unsigned d,Dwarf_P_Debug dbg)
 #if 0
 {
     if (!scn) {
-        cerr << "dwarfgen: Unable to _dwarf_elf_getscn on disk transform # "
+        cout << "dwarfgen: Unable to _dwarf_elf_getscn on disk transform # "
             << d << endl;
         exit(1);
     }
@@ -1340,7 +1161,7 @@ InsertDataIntoElf(Dwarf_Unsigned d,Dwarf_P_Debug dbg)
 
     DW_Elf_Data* ed = _dwarf_elf_newdata(scn);
     if (!ed) {
-        cerr << "dwarfgen: _dwarf_elf_newdata died on transformed index "
+        cout << "dwarfgen: _dwarf_elf_newdata died on transformed index "
             << d << endl;
         exit(1);
     }
@@ -1422,7 +1243,7 @@ bitreplace(char *buf, unsigned int targlen, Dwarf_Unsigned newval,
         oldval += my8;
         memcpy(buf,&oldval,targlen);
     } else {
-        cerr << "dwarfgen:  Relocation is length " << targlen <<
+        cout << "dwarfgen:  Relocation is length " << targlen <<
             " which we do not yet handle." << endl;
         exit(1);
     }
@@ -1448,7 +1269,7 @@ findelfbuf(SectionForDwarf &scn,
         }
         Dwarf_Unsigned localoff = offset - bloboff;
         if ((localoff + length) > bb.len_) {
-            cerr << "dwarfgen:  Relocation at offset  " <<
+            cout << "dwarfgen:  Relocation at offset  " <<
                 offset << " cannot be accomplished, no buffer. "
                 << endl;
             exit(1);
@@ -1457,7 +1278,7 @@ findelfbuf(SectionForDwarf &scn,
              localoff;
         return lclptr;
     }
-    cerr << " Relocation at offset  " << offset  <<
+    cout << " Relocation at offset  " << offset  <<
         " cannot be accomplished,  past end of buffers" << endl;
     return 0;
 }
@@ -1478,11 +1299,11 @@ write_generated_dbg(Dwarf_P_Debug dbg,
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
             string msg(dwarf_errmsg(err));
-            cerr << "Dwarfgen fails: " << msg << endl;
+            cout << "Dwarfgen fails: " << msg << endl;
             exit(1);
         }
         /* ASSERT: rex == DW_DLV_NO_ENTRY */
-        cerr << "Dwarfgen fails, some internal error " << endl;
+        cout << "Dwarfgen fails, some internal error " << endl;
         exit(1);
     }
     Dwarf_Unsigned d = 0;
@@ -1500,7 +1321,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,
     res = dwarf_get_relocation_info_count(dbg,&reloc_sections_count,
         &drd_version,&err);
     if (res != DW_DLV_OK) {
-        cerr << "dwarfgen: Error getting relocation info count."
+        cout << "dwarfgen: Error getting relocation info count."
             << endl;
         exit(1);
 
@@ -1531,7 +1352,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,
         // elf_section_index_link
         // refers to the output section numbers, not to dwsectab.
         if (res != DW_DLV_OK) {
-            cerr << "dwarfgen: Error getting relocation record " <<
+            cout << "dwarfgen: Error getting relocation record " <<
                 ct << "."  << endl;
             exit(1);
         }
@@ -1596,6 +1417,21 @@ write_elf_header(void)
         ASNX(ehp.e_version,sizeof(ehp.e_version),
             &dwelfheader.e_version_, 
             sizeof(dwelfheader.e_version_));
+        ASNX(ehp.e_shnum,sizeof(ehp.e_shnum),
+            &dwelfheader.e_shnum_, 
+            sizeof(dwelfheader.e_shnum_));
+        ASNX(ehp.e_shentsize,sizeof(ehp.e_shentsize),
+            &dwelfheader.e_shentsize_, 
+            sizeof(dwelfheader.e_shentsize_));
+        ASNX(ehp.e_shstrndx,sizeof(ehp.e_shstrndx),
+            &dwelfheader.e_shstrndx_, 
+            sizeof(dwelfheader.e_shstrndx_));
+        ASNX(ehp.e_shoff,sizeof(ehp.e_shoff),
+            &dwelfheader.e_shoff_, 
+            sizeof(dwelfheader.e_shoff_));
+        ASNX(ehp.e_ehsize,sizeof(ehp.e_ehsize),
+            &dwelfheader.e_ehsize_, 
+            sizeof(dwelfheader.e_ehsize_));
         datap = (unsigned char *)&dwelfheader.e_32_;
     } else {
         dw_elf64_ehdr &ehp =  dwelfheader.e_64_;
@@ -1614,6 +1450,21 @@ write_elf_header(void)
         ASNX(ehp.e_version,sizeof(ehp.e_version),
             &dwelfheader.e_version_, 
             sizeof(dwelfheader.e_version_));
+        ASNX(ehp.e_shnum,sizeof(ehp.e_shnum),
+            &dwelfheader.e_shnum_, 
+            sizeof(dwelfheader.e_shnum_));
+        ASNX(ehp.e_shentsize,sizeof(ehp.e_shentsize),
+            &dwelfheader.e_shentsize_, 
+            sizeof(dwelfheader.e_shentsize_));
+        ASNX(ehp.e_shstrndx,sizeof(ehp.e_shstrndx),
+            &dwelfheader.e_shstrndx_, 
+            sizeof(dwelfheader.e_shstrndx_));
+        ASNX(ehp.e_shoff,sizeof(ehp.e_shoff),
+            &dwelfheader.e_shoff_, 
+            sizeof(dwelfheader.e_shoff_));
+        ASNX(ehp.e_ehsize,sizeof(ehp.e_ehsize),
+            &dwelfheader.e_ehsize_, 
+            sizeof(dwelfheader.e_ehsize_));
         datap = (unsigned char *)&dwelfheader.e_64_;
      }
      cout << "Writing Elf header content "
@@ -1631,50 +1482,50 @@ unsigned char * copy_section_hdr_data (SectionForDwarf&sec)
     {
         dw_elf32_shdr * shdr = &sec.shdr32_;
         ASNX(shdr->sh_name,sizeof(shdr->sh_name),
-            &sec.section_name_itself_,
-            sizeof(sec.section_name_itself_));
+            &sec.sh_name_,
+            sizeof(sec.sh_name_));
         ASNX(shdr->sh_type,sizeof(shdr->sh_type),
-            &sec.type_, sizeof(sec.type_));
+            &sec.sh_type_, sizeof(sec.sh_type_));
         ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
-            &sec.flags_, sizeof(sec.flags_));
+            &sec.sh_flags_, sizeof(sec.sh_flags_));
         ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
-            &zero,sizeof(zero));
+            &sec.sh_addr_, sizeof(sec.sh_addr_));
         ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
-            &zero,sizeof(zero));
+            &sec.sh_offset_,sizeof(sec.sh_offset_));
         ASNX(shdr->sh_size,sizeof(shdr->sh_size),
-            &sec.size_,sizeof(sec.size_));
+            &sec.sh_size_,sizeof(sec.sh_size_));
         ASNX(shdr->sh_link,sizeof(shdr->sh_link),
-            &sec.link_,sizeof(sec.link_));
+            &sec.sh_link_,sizeof(sec.sh_link_));
         ASNX(shdr->sh_info,sizeof(shdr->sh_info),
-            &sec.link_,sizeof(sec.link_));
+            &sec.sh_info_,sizeof(sec.sh_info_));
         ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
-            &one,sizeof(one));
+            &sec.sh_addralign_,sizeof(sec.sh_addralign_));
         ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
-            &zero,sizeof(zero));
+            &sec.sh_entsize_,sizeof(sec.sh_entsize_));
         return (unsigned char *)shdr;
     } else {
         dw_elf64_shdr * shdr = &sec.shdr64_;
         ASNX(shdr->sh_name,sizeof(shdr->sh_name),
-            &sec.section_name_itself_,
-            sizeof(sec.section_name_itself_));
+            &sec.sh_name_,
+            sizeof(sec.sh_name_));
         ASNX(shdr->sh_type,sizeof(shdr->sh_type),
-            &sec.type_, sizeof(sec.type_));
+            &sec.sh_type_, sizeof(sec.sh_type_));
         ASNX(shdr->sh_flags,sizeof(shdr->sh_flags),
-            &sec.flags_, sizeof(sec.flags_));
+            &sec.sh_flags_, sizeof(sec.sh_flags_));
         ASNX(shdr->sh_addr,sizeof(shdr->sh_addr),
-            &zero,sizeof(zero));
+            &sec.sh_addr_, sizeof(sec.sh_addr_));
         ASNX(shdr->sh_offset,sizeof(shdr->sh_offset),
-            &zero,sizeof(zero));
+            &sec.sh_offset_,sizeof(sec.sh_offset_));
         ASNX(shdr->sh_size,sizeof(shdr->sh_size),
-            &sec.size_,sizeof(sec.size_));
+            &sec.sh_size_,sizeof(sec.sh_size_));
         ASNX(shdr->sh_link,sizeof(shdr->sh_link),
-            &sec.link_,sizeof(sec.link_));
+            &sec.sh_link_,sizeof(sec.sh_link_));
         ASNX(shdr->sh_info,sizeof(shdr->sh_info),
-            &sec.link_,sizeof(sec.link_));
+            &sec.sh_link_,sizeof(sec.sh_link_));
         ASNX(shdr->sh_addralign,sizeof(shdr->sh_addralign),
-            &one,sizeof(one));
+            &sec.sh_addralign_,sizeof(sec.sh_addralign_));
         ASNX(shdr->sh_entsize,sizeof(shdr->sh_entsize),
-            &zero,sizeof(zero));
+            &sec.sh_entsize_,sizeof(sec.sh_entsize_));
         return (unsigned char *)shdr; 
     }
     /* not reached */
@@ -1688,7 +1539,7 @@ write_section_contents()
         it != dwsectab.end();
         it++) {
         SectionForDwarf &sec = *it;
-        Dwarf_Unsigned curoff = sec.sectionoutoffset_;
+        Dwarf_Unsigned curoff = sec.sh_offset_;
 
         for (vector<ByteBlob>::iterator itb =
             sec.sectioncontent_.begin();
@@ -1701,6 +1552,7 @@ write_section_contents()
             dwwriter.wwrite(curoff,bb.len_,bb.bytes_); 
             curoff += bb.len_;
         }
+        i++;
     }
 
 }
@@ -1721,6 +1573,7 @@ write_section_headers()
         dwwriter.wwrite(headeroff,dwelfheader.e_shentsize_,
             data);
         headeroff += dwelfheader.e_shentsize_; 
+        i++;
     }
 }
 
