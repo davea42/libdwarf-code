@@ -93,10 +93,10 @@ public:
     ElfSymIndex():elfsym_(0) {};
     ~ElfSymIndex() {};
     ElfSymIndex(unsigned v):elfsym_(v) {};
-    unsigned getSymIndex() const { return elfsym_; }
+    Dwarf_Unsigned getSymIndex() const { return elfsym_; }
     void setSymIndex(unsigned v) { elfsym_ = v; }
 private:
-    unsigned elfsym_;
+    Dwarf_Unsigned elfsym_;
 };
 
 class ElfSymbols {
@@ -113,8 +113,10 @@ public:
         baseTextAddressSymbol_.setSymIndex(elfSymbols_.size()-1);
         }
     ~ElfSymbols() {};
-    ElfSymIndex getBaseTextSymbol() const {return baseTextAddressSymbol_;};
-    ElfSymIndex addElfSymbol(Dwarf_Unsigned val, const std::string&name) {
+    ElfSymIndex getBaseTextSymbol() const {
+        return baseTextAddressSymbol_;};
+    ElfSymIndex addElfSymbol(Dwarf_Unsigned val, 
+        const std::string&name) {
         elfSymbols_.push_back(ElfSymbol(val,name,symstrtab_));
         ElfSymIndex indx(elfSymbols_.size()-1);
         return indx;
