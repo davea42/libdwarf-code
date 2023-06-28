@@ -433,6 +433,7 @@ public:
 
 class SectionForDwarf {
 public:
+#if 0
     SectionForDwarf(Dwarf_Unsigned size,
         Dwarf_Unsigned type,
         Dwarf_Unsigned flags,
@@ -443,6 +444,31 @@ public:
         sh_flags_ = flags;
         sh_info_ = info;
     };
+#endif
+    SectionForDwarf():sh_name_(0),
+        section_name_symidx_(0),
+        sh_size_(0),sh_type_(0),sh_flags_(0),
+        sh_link_(0), sh_info_(0), elf_sect_index_(0),
+        sh_offset_(0),sh_addralign_(1),
+        sh_addr_(0),
+        sh_entsize_(0) {} ;
+    SectionForDwarf(const string name,
+        Dwarf_Unsigned type,
+        Dwarf_Unsigned flags, Dwarf_Unsigned link,
+        Dwarf_Unsigned info):
+        name_(name),
+        sh_size_(0),sh_type_(type),sh_flags_(flags),
+        sh_link_(link), sh_info_(info), elf_sect_index_(0),
+        sh_offset_(0),sh_addralign_(1),
+        sh_addr_(0),
+        sh_entsize_(0) {
+            // Now create section name string section .
+            sh_name_ = secstrtab.addString(name.c_str());
+            ElfSymbols& es = Irep.getElfSymbols();
+            // Now creat a symbol for the section name.
+            // (which has its own string table)
+            section_name_symidx_ = es.addElfSymbol(0,name);
+        };
     ~SectionForDwarf() { };
     string    name_;
     Dwarf_Unsigned sh_name_; /* section_name_itself */
@@ -462,11 +488,10 @@ public:
         SHT_SYMTAB: Section header index of the
         associated string table. */
     unsigned int elf_sect_index_;
-
     dw_elf64_shdr shdr64_;
     dw_elf32_shdr shdr32_;
     // Blobs are not tiny, libdwarfp aggregates many blocks
-    vector<ByteBlob> sectioncontent_;   // All content (but not header)
+    vector<ByteBlob> sectioncontent_;   // All (but not header)
     // content size is sh_size_ (over all blobs)
     
     void add_section_content(unsigned char *data,
@@ -477,32 +502,8 @@ public:
     }
     Dwarf_Unsigned getSectionNameSymidx() {
         return section_name_symidx_.getSymIndex(); };
-    SectionForDwarf():sh_name_(0),
-        section_name_symidx_(0),
-        sh_size_(0),sh_type_(0),sh_flags_(0),
-        sh_link_(0), sh_info_(0), elf_sect_index_(0),
-        sh_offset_(0),sh_addralign_(0),
-        sh_addr_(0),
-        sh_entsize_(0) {} ;
     void setSectIndex(unsigned v) { elf_sect_index_ = v; };
     Dwarf_Unsigned getSectIndex() const { return elf_sect_index_;};
-    SectionForDwarf(const string name,
-        Dwarf_Unsigned type,
-        Dwarf_Unsigned flags, Dwarf_Unsigned link,
-        Dwarf_Unsigned info): 
-        name_(name),
-        sh_size_(0),sh_type_(type),sh_flags_(flags),
-        sh_link_(link), sh_info_(info), elf_sect_index_(0),
-        sh_offset_(0),sh_addralign_(0),
-        sh_addr_(0),
-        sh_entsize_(0) {
-            // Now create section name string section .
-            sh_name_ = secstrtab.addString(name.c_str());
-            ElfSymbols& es = Irep.getElfSymbols();
-            // Now creat a symbol for the section name.
-            // (which has its own string table)
-            section_name_symidx_ = es.addElfSymbol(0,name);
-        };
 }; // SectionForDwarf
 
 // The elf header, with native integers 
@@ -612,6 +613,11 @@ static int CallbackFunc(
     unsigned new_sect_index = dwsectab.size();
     SectionForDwarf ds(name,type,flags,link,info) ;
     ds.setSectIndex(new_sect_index);
+    cout << "New Elf section: " << name <<
+        " Type=" <<type << " Flags=" << flags <<
+        " Elf secnum=" << new_sect_index <<
+        " link section=" << link <<
+        " info="<< info << endl;
 
     // In Elf, each section gets an elf symbol table entry.
     // So that relocations have an address to refer to.
@@ -1115,6 +1121,7 @@ create_text_section(void)
         (Dwarf_Unsigned)SHT_PROGBITS,
         (Dwarf_Unsigned)0,(Dwarf_Unsigned)0,
         (Dwarf_Unsigned) 0);
+    ds.sh_addralign_ = dwelfheader.elf_is_64bit()?8:4;
     ds.add_section_content(text,sizeof(text));
     ds.setSectIndex(sectindex);
     dwsectab.push_back(ds); 
@@ -1467,8 +1474,8 @@ write_elf_header(void)
             sizeof(dwelfheader.e_ehsize_));
         datap = (unsigned char *)&dwelfheader.e_64_;
      }
-     cout << "Writing Elf header content "
-        " at offset 0"  << endl;
+     //cout << "Writing Elf header content "
+     //   " at offset 0"  << endl;
      dwwriter.wwrite(0,dwelfheader.e_hdrlen_,datap);
 }
 
@@ -1547,8 +1554,8 @@ write_section_contents()
             itb++) {
             ByteBlob &bb = *itb;
 
-            cout << "Writing section content " <<i <<
-                " at offset "  << curoff << endl;
+            //cout << "Writing section content " <<i <<
+            //    " at offset "  << curoff << endl;
             dwwriter.wwrite(curoff,bb.len_,bb.bytes_); 
             curoff += bb.len_;
         }
@@ -1564,8 +1571,8 @@ write_section_headers()
     for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
         it != dwsectab.end();
         it++) {
-        cout << "Writing section header " <<i <<
-            " at offset "  << headeroff << endl;
+        //cout << "Writing section header " <<i <<
+        //    " at offset "  << headeroff << endl;
         SectionForDwarf &sec = *it;
         Dwarf_Unsigned hdrlen = dwelfheader.e_shentsize_;
 
