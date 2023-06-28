@@ -69,6 +69,9 @@ private:
 //  with an array index in dwarfgen.
 //  So this class hold an elf section number
 //  and gives those a recognizable type.
+//  As of 2023 the ElfSectIndex is an index into
+//  <vector>SectionForDwarf dwsectab
+//  whereas the libdwarfp arrays are fixed values (see NUM_DEBUG_SECTIONS)
 class ElfSectIndex {
 public:
     ElfSectIndex():elfsect_(0) {};
@@ -90,10 +93,10 @@ public:
     ElfSymIndex():elfsym_(0) {};
     ~ElfSymIndex() {};
     ElfSymIndex(unsigned v):elfsym_(v) {};
-    unsigned getSymIndex() const { return elfsym_; }
+    Dwarf_Unsigned getSymIndex() const { return elfsym_; }
     void setSymIndex(unsigned v) { elfsym_ = v; }
 private:
-    unsigned elfsym_;
+    Dwarf_Unsigned elfsym_;
 };
 
 class ElfSymbols {
@@ -110,8 +113,10 @@ public:
         baseTextAddressSymbol_.setSymIndex(elfSymbols_.size()-1);
         }
     ~ElfSymbols() {};
-    ElfSymIndex getBaseTextSymbol() const {return baseTextAddressSymbol_;};
-    ElfSymIndex addElfSymbol(Dwarf_Unsigned val, const std::string&name) {
+    ElfSymIndex getBaseTextSymbol() const {
+        return baseTextAddressSymbol_;};
+    ElfSymIndex addElfSymbol(Dwarf_Unsigned val, 
+        const std::string&name) {
         elfSymbols_.push_back(ElfSymbol(val,name,symstrtab_));
         ElfSymIndex indx(elfSymbols_.size()-1);
         return indx;

@@ -59,6 +59,9 @@ public:
         nexttouse_ += nsz;
         return newstrindex;
     };
+    std::string asString(unsigned offset) {
+        return std::string(data_+ offset);
+    }
     void *exposedata() {return (void *)data_;};
     unsigned exposelen() const {return nexttouse_;};
 private:

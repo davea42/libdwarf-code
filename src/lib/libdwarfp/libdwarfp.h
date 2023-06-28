@@ -199,13 +199,13 @@ DWP_API int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
 
 /*  New September 2016. The preferred interface. */
 DWP_API int dwarf_transform_to_disk_form_a(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Signed *   /*nbufs_out*/,
+    Dwarf_Unsigned *   /*nbufs_out*/,
     Dwarf_Error*     /*error*/);
 
 /* New September 2016. Preferred. */
 DWP_API int dwarf_get_section_bytes_a(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Signed     /*dwarf_section*/,
-    Dwarf_Signed*    /*elf_section_index*/,
+    Dwarf_Unsigned   /*dwarf_section*/,
+    Dwarf_Unsigned*  /*elf_section_index*/,
     Dwarf_Unsigned*  /*length*/,
     Dwarf_Ptr     *  /*section_bytes*/,
     Dwarf_Error*     /*error*/);
@@ -217,9 +217,9 @@ DWP_API int  dwarf_get_relocation_info_count(
     Dwarf_Error*     /*error*/);
 
 DWP_API int dwarf_get_relocation_info(
-    Dwarf_P_Debug           /*dbg*/,
-    Dwarf_Signed          * /*elf_section_index*/,
-    Dwarf_Signed          * /*elf_section_index_link*/,
+    Dwarf_P_Debug         /*dbg*/,
+    Dwarf_Unsigned        * /*elf_section_index*/,
+    Dwarf_Unsigned        * /*elf_section_index_link*/,
     Dwarf_Unsigned        * /*relocation_buffer_count*/,
     Dwarf_Relocation_Data * /*reldata_buffer*/,
     Dwarf_Error*            /*error*/);
