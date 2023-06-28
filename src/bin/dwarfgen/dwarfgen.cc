@@ -83,6 +83,9 @@
 #include <map>
 #include <vector>
 #include <string.h> /* for strchr etc */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>  /* For open() S_IRUSR etc */
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>  /* For open() S_IRUSR etc */
 #endif /* HAVE_SYS_STAT_H */
@@ -355,7 +358,8 @@ public:
     };
     void openFile(string & name) {
         name_ = name;
-        fd_ =  open(name_.c_str(), O_RDONLY | O_BINARY);
+        fd_ =  open(name_.c_str(), O_CREAT|O_WRONLY | O_BINARY,
+            00777);
         if (fd_ ==-1) {
             cerr << "dwarfgen: open " << name_ << " fails" << endl;
             exit(1);
