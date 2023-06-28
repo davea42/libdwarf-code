@@ -358,7 +358,7 @@ public:
     void openFile(string & name) {
         name_ = name;
         fd_ =  open(name_.c_str(), O_CREAT|O_WRONLY | O_BINARY,
-            00777);
+            00666);
         if (fd_ ==-1) {
             cout << "dwarfgen: open " << name_ << " fails" << endl;
             exit(1);
