@@ -38,10 +38,6 @@ extern "C" {
 
 #define DWARF_T_BYTE 1
 
-/* libelf enum, value 3, libelf called it type Elf_Cmd.
-   here just int */
-#define ELF_C_WRITE 3
-
 #define SHF_STRINGS (1 << 5)
 
 /* Standard Elf section types. */
