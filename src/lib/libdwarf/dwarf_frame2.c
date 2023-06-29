@@ -579,7 +579,9 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     }
     if (!head_cie_ptr) {
         /*  Should be impossible. */
-        _dwarf_error(dbg, error,DW_DLE_DEBUGFRAME_ERROR);
+        _dwarf_error_string(dbg, error,DW_DLE_DEBUGFRAME_ERROR,
+             "DW_DLE_DEBUGFRAME_ERROR" 
+             "Impossible no head_cie_ptr");
         return DW_DLV_ERROR;
     }
     cur_cie_ptr = head_cie_ptr;
@@ -594,6 +596,14 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     if (fde_count > 0) {
         fde_list_ptr = (Dwarf_Fde *)
             _dwarf_get_alloc(dbg, DW_DLA_LIST, fde_count);
+        if (!fde_list_ptr) {
+            _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+                head_cie_ptr);
+            _dwarf_error_string(dbg, error,DW_DLE_ALLOC_FAIL,
+                "DW_DLE_ALLOC_FAIL" 
+                "getting DW_DLA_LIST given fde_count");
+            return DW_DLV_ERROR;
+        }
     }
 
     /* It is ok if fde_list_ptr is NULL, we just have no fdes. */
