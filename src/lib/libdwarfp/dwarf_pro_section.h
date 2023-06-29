@@ -90,7 +90,7 @@ Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,
 }
 
 int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error);
 
 /*  These are for creating ELF section type codes.

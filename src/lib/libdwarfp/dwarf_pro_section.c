@@ -161,19 +161,19 @@ struct Dwarf_P_Rel_Head_s {
 };
 
 static int _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_dnames(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error);
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error);
 
 #if 0
 static void
@@ -1274,7 +1274,7 @@ calculate_size_of_line_header4(Dwarf_P_Debug dbg,
 */
 static int
 _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
-    Dwarf_Signed * nbufs,
+    Dwarf_Unsigned * nbufs,
     Dwarf_Error * error)
 {
     Dwarf_P_F_Entry curdir = 0;
@@ -1883,7 +1883,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
     Generate debug_frame section  */
 static int
 _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     int elfsectno = 0;
@@ -3004,7 +3004,7 @@ sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
 
 static int
 _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     int elfsectno = 0;
@@ -3058,7 +3058,7 @@ _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
 
 static int
 _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     int elfsectno_of_debug_info = 0;
@@ -3509,7 +3509,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
 static int
 _dwarf_pro_generate_dnames(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     int elfsectno_of_debug_names =  dbg->de_elf_sects[DEBUG_NAMES];
@@ -3522,7 +3522,7 @@ _dwarf_pro_generate_dnames(Dwarf_P_Debug dbg,
 
 static int
 _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     int elfsectno_of_debug_str = 0;
@@ -3538,7 +3538,7 @@ _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
 }
 static int
 _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     int elfsectno_of_debug_line_str = 0;
