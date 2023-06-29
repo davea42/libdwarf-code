@@ -63,15 +63,6 @@ AC_ARG_ENABLE([sanitize],
    ],
    [enable_sanitize="no"])
 
-AC_ARG_ENABLE([libelf],
-   [AS_HELP_STRING([--disable-libelf],
-     [disable use of libelf (default is enable (libdwarf does not use libelf)) @<:@default=yes@:>@])],
-   [ AS_IF(
-        [test "x${enableval}" = "xyes"],
-        [dwarf_with_libelf="yes"],
-        [dwarf_with_libelf="no"])
-   ],
-   [dwarf_with_libelf="yes"])
 
 AC_ARG_ENABLE([wall],
    [AS_HELP_STRING([--enable-wall],
@@ -210,36 +201,6 @@ AC_TYPE_UINT32_T dnl Needed for hash calculation
 ### Now we know uintptr_t is either in stdint.h or
 ### is defined in config.h by configure.
 
-# test Elf headers in the preprocessor path search
-# We need Elf.h defines like Ehdr32 and relocations
-# to read them with our local elf-section reader code.
-# On Solaris libelf.h has relocation defines we need.
-# so we check for libelf.h too.
-CPPFLAGS_save=${CPPFLAGS}
-# dwarfgen needs an actual libelf else it cannot be built.
-### we set $dwarf_with_libelf above.
-
-if test  "$dwarf_with_libelf" = "yes" ; then
-  AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
-  AC_CHECK_HEADERS([elf.h])
-
-  ### if no libelf.h add no -lelf and turn off
-  ### libelf recognition.
-  ### if no dwarfgen do not add -lelf
-  AS_IF([test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes" ],
-    [ dwarf_with_libelf="no"
-      AC_MSG_NOTICE(["no libelf headers, so no libelf"]) ],
-    [ AS_IF([ test "x${enable_dwarfgen}" != "xyes" ],
-      [ dwarf_with_libelf="no"
-        AC_MSG_NOTICE(["dwarfgen not needed, so no libelf"])],
-      [ DWARFGEN_LIBS="${DWARFGEN_LIBS} -ldwarf -lelf"
-        dwarf_with_libelf="yes"
-        AC_MSG_NOTICE(["Allowing use of libelf for dwarfgen."])
-        AC_DEFINE([DWARF_WITH_LIBELF],[1],
-          [Set to 1 as we are building dwarfgen with libelf])])
-    ])
-fi
-
 ### Checks for compiler characteristics
 
 AC_C_BIGENDIAN
@@ -355,31 +316,6 @@ AC_FUNC_ALLOCA
 
 have_getehdr="no"
 have_getshdr="no"
-CPPFLAGS_save=${CPPFLAGS}
-CPPFLAGS="${CPPFLAGS}"
-LIBS_save=${LIBS}
-LIBS="${LIBS} ${DWARF_LIBS}"
-AC_SEARCH_LIBS(
-    [elf64_getehdr], [elf],
-    [
-     have_getehdr="yes"
-     AC_DEFINE(
-         [HAVE_ELF64_GETEHDR], [1],
-         [Set to 1 if the elf64_getehdr function is in libelf.])
-     ],
-     [have_getehdr="no"])
-AC_SEARCH_LIBS(
-    [elf64_getshdr], [elf],
-    [
-     have_getshdr="yes"
-     AC_DEFINE(
-         [HAVE_ELF64_GETSHDR], [1],
-         [Set to 1 if the elf64_getshdr function is in libelf.])
-     ],
-     [have_getshdr="no"])
-CPPFLAGS=${CPPFLAGS_save}
-LIBS=${LIBS_save}
-
 
 requirements_libdwarf_libs=
 AS_IF(
@@ -465,9 +401,6 @@ echo "  documentation........: ${enable_doc}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
-echo "    elf64_getehdr......: ${have_getehdr}"
-echo "    elf64_getshdr......: ${have_getshdr}"
-echo "    libelf.............: ${dwarf_with_libelf}"
 echo "  dwarfdump............: always"
 echo "  dwarfgen.............: ${enable_dwarfgen}"
 echo "  dwarfexample.........: ${enable_dwarfexample}"

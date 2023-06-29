@@ -81,7 +81,6 @@ endmacro()
 # view folders on supported IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# used when finding libelf
 # tells cmake to look in 64bit first (cmake
 # would probably do this anyway).
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
@@ -122,10 +121,7 @@ check_include_file( "stdint.h"        HAVE_STDINT_H   )
 check_include_file( "unistd.h"        HAVE_UNISTD_H   )
 check_include_file( "sgidefs.h"       HAVE_SGIDEFS_H  )
 check_include_file( "stdafx.h"        HAVE_STDAFX_H   )
-check_include_file( "elf.h"           HAVE_ELF_H      ) 
-check_include_file( "libelf.h"        HAVE_LIBELF_H   ) 
 check_include_file( "fcntl.h"         HAVE_FCNTL_H   ) 
-check_include_file( "libelf/libelf.h" HAVE_LIBELF_LIBELF_H) 
 
 ### cmake provides no way to guarantee uint32_t present.
 ### configure does guarantee that.
@@ -171,60 +167,6 @@ else()
 endif()
 
 
-#  It's not really setting the location of libelfheader, 
-#  it is really #  either elf.h, or if that is missing 
-#  it is assuming  elf.h data is in the supplied libelf.
-
-if(HAVE_ELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<elf.h>")
-elseif(HAVE_LIBELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf.h>")
-elseif(HAVE_LIBELF_LIBELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf/libelf.h>")
-endif()
-
-if(HAVE_LIBELF_H)
-    set(JUST_LIBELF "<libelf.h>")
-    set(PLAIN_JUST_LIBELF "libelf.h")
-elseif(HAVE_LIBELF_LIBELF_H)
-    set(JUST_LIBELF "<libelf/libelf.h>")
-    set(PLAIN_JUST_LIBELF "libelf/libelf.h")
-endif()
-
-if (HAVE_LIBELF_H OR HAVE_LIBELF_LIBELF_H)
-  set (CMAKE_REQUIRED_LIBRARIES elf)
-  message(STATUS "libelf header ${PLAIN_JUST_LIBELF} checking for elf64_getehdr")
-  check_symbol_exists( elf64_getehdr ${PLAIN_JUST_LIBELF} HAVE_ELF64_GETEHDR)
-  message(STATUS "libelf header ${PLAIN_JUST_LIBELF} checking for elf64_getshdr")
-  check_symbol_exists( elf64_getshdr ${PLAIN_JUST_LIBELF} HAVE_ELF64_GETSHDR)
-  set (CMAKE_REQUIRED_LIBRARIES)
-endif()
-
-option(DWARF_WITH_LIBELF "Use libelf (default is YES)" TRUE)
-message(STATUS "Building using libelf... ${DWARF_WITH_LIBELF}")
-if (DWARF_WITH_LIBELF AND 
-    NOT HAVE_LIBELF_H AND 
-    NOT HAVE_LIBELF_LIBELF_H)
-    set(DWARF_WITH_LIBELF OFF)
-    set(HAVE_ELF_H OFF)
-endif ()
-# HAVE_ELF64_GETEHDR and HAVE_ELF64_GETSHDR matter to dwarfgen.
-# Do not turn them off.
-
-if (DWARF_WITH_LIBELF)
-  message(STATUS "checking using HAVE_ELF_H ... ${HAVE_ELF_H}")
-  message(STATUS "checking using elf header ... ${HAVE_LOCATION_OF_LIBELFHEADER}")
-  message(STATUS "checking using libelf header ... ${JUST_LIBELF}")
-
-check_c_source_compiles("
-  #include ${HAVE_LOCATION_OF_LIBELFHEADER}
-  int main()
-  {
-      int p; p = 0;
-      return 0;
-  }" HAVE_RAW_LIBELF_OK)
-else()
-endif()
 check_c_source_compiles("
   static unsigned foo( unsigned x, 
       __attribute__ ((unused)) int y)
@@ -362,7 +304,6 @@ message(STATUS "Building api tests   ... ${DOTESTS}")
 
 # This references cmake/FindLibElf.cmake. See cmake documentation.
 find_package(LibElf REQUIRED)
-list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})
 
 configure_file(cmake/config.h.cmake config.h)
 
@@ -395,13 +336,9 @@ add_subdirectory(test)
 endif()
 
 if ( BUILD_DWARFGEN )
-	if ( DWARF_WITH_LIBELF )
-            set(LIBDWARF_INCLUDE_DIR ../libdwarf)
-	    add_subdirectory(src/lib/libdwarfp)
-	    add_subdirectory(src/bin/dwarfgen)
-        else ()
-            message(STATUS "Not building dwarfgen because libelf is not available" )
-        endif ()
+     set(LIBDWARF_INCLUDE_DIR ../libdwarf)
+     add_subdirectory(src/lib/libdwarfp)
+     add_subdirectory(src/bin/dwarfgen)
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
