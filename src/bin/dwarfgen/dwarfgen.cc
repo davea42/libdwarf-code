@@ -156,10 +156,6 @@
 #endif
 #endif /* _WIN32 */
 
-static void
-bitreplace(char *outbuf, unsigned int buflen,
-    Dwarf_Unsigned newval, unsigned int newvalsize);
-
 using std::string;
 using std::cout;
 using std::endl;
@@ -388,7 +384,7 @@ public:
     };
     unsigned char *bytes_;
     Dwarf_Unsigned len_;
-    Dwarf_Unsigned fileoffset_;;
+    Dwarf_Unsigned fileoffset_;
     ~ByteBlob() { bytes_ = 0; len_= 0; };
 };
 
@@ -433,35 +429,39 @@ public:
 
 class SectionForDwarf {
 public:
-#if 0
-    SectionForDwarf(Dwarf_Unsigned size,
-        Dwarf_Unsigned type,
-        Dwarf_Unsigned flags,
-        Dwarf_Unsigned link,
-        Dwarf_Unsigned info) {
-        sh_size_ = size;
-        sh_type_ = type;
-        sh_flags_ = flags;
-        sh_info_ = info;
-    };
-#endif
     SectionForDwarf():sh_name_(0),
         section_name_symidx_(0),
-        sh_size_(0),sh_type_(0),sh_flags_(0),
-        sh_link_(0), sh_info_(0), elf_sect_index_(0),
-        sh_offset_(0),sh_addralign_(1),
+        sh_type_(0),
         sh_addr_(0),
-        sh_entsize_(0) {} ;
+        sh_offset_(0),
+        sh_flags_(0),
+        sh_size_(0),
+        sh_link_(0), sh_info_(0), 
+        sh_addralign_(1),
+        sh_entsize_(0),
+        elf_sect_index_(0)
+        {
+            memset(&shdr64_,0,sizeof(shdr64_));
+            memset(&shdr32_,0,sizeof(shdr32_));
+        };
     SectionForDwarf(const string name,
         Dwarf_Unsigned type,
         Dwarf_Unsigned flags, Dwarf_Unsigned link,
         Dwarf_Unsigned info):
         name_(name),
-        sh_size_(0),sh_type_(type),sh_flags_(flags),
-        sh_link_(link), sh_info_(info), elf_sect_index_(0),
-        sh_offset_(0),sh_addralign_(1),
+        sh_type_(type),
         sh_addr_(0),
-        sh_entsize_(0) {
+        sh_offset_(0),
+        sh_flags_(flags),
+        sh_size_(0),
+        sh_link_(link), 
+        sh_info_(info),
+        sh_addralign_(1),
+        sh_entsize_(0),
+        elf_sect_index_(0)
+        {
+            memset(&shdr64_,0,sizeof(shdr64_));
+            memset(&shdr32_,0,sizeof(shdr32_));
             // Now create section name string section .
             sh_name_ = secstrtab.addString(name.c_str());
             ElfSymbols& es = Irep.getElfSymbols();
@@ -517,9 +517,6 @@ vector<SectionForDwarf> dwsectab;
 
 Writer                  dwwriter;
 
-static ElfSectIndex create_dw_elf(SectionForDwarf  &ds,
-    unsigned elfclass);
-
 #if 0
 static SectionForDwarf & FindMySection(
     const ElfSectIndex & elf_section_index)
@@ -556,15 +553,22 @@ static int FindMySectionNum(const ElfSectIndex & elf_section_index)
 void
 create_initial_section(void)
 {
+    unsigned sectindex = dwsectab.size();
     dwsectab.push_back(SectionForDwarf());
+    cout << "New Elf section: " << "" <<
+        " Type=" << 0 << " Flags=" << 0 <<
+        " Elf secnum=" << sectindex <<
+        " link section=" << 0 <<
+        " info="<< 0 << endl;
 }
 
 static Dwarf_Unsigned
 create_namestr_section(void)
 {
     unsigned long sectindex = dwsectab.size();
+    string s(".shstrtab");
     SectionForDwarf ds = SectionForDwarf(
-        ".shstrtab",
+        s,
         DWARF_T_BYTE,
         SHT_STRTAB,
         0,0);
@@ -574,6 +578,11 @@ create_namestr_section(void)
         secstrtab.exposelen());
     dwelfheader.e_shstrndx_ = sectindex;
     dwsectab.push_back(ds);
+    cout << "New Elf section: " << s <<
+        " Type=" << DWARF_T_BYTE << " Flags=" << SHT_STRTAB <<
+        " Elf secnum=" << sectindex <<
+        " link section=" << 0 <<
+        " info="<< 0 << endl;
     return sectindex;
 }
 
@@ -600,11 +609,9 @@ static int CallbackFunc(
     // ourself (fine for dwarfgen but would
     // be really surprising for a normal compiler
     // back end using the producer code).
-
-    // The section name appears both in the section strings
-    // .shstrtab and
-    // in the elf symtab .symtab and its strings .strtab.
-    unsigned elfclass = 0;
+    (void)error;
+    (void)size;
+    (void)user_data;
 
     if (0 == strncmp(name,".rel",4))  {
         // It is relocation, create no section!
@@ -1005,7 +1012,7 @@ create_debug_sup_content(Dwarf_P_Debug dbg)
 }
 
 // Layout is Elf Hdr, Section content, section headers
-void
+static void
 calculate_all_offsets(void)
 { 
      Dwarf_Unsigned total_length = 0;
@@ -1013,7 +1020,6 @@ calculate_all_offsets(void)
      Dwarf_Unsigned section_headers_length = 0;
      Dwarf_Unsigned sechdr_length = 0;
      Dwarf_Unsigned section_content_len = 0;
-     Dwarf_Unsigned offset_to_contents = 0;
 
      if (dwelfheader.elf_is_32bit()) {
         ehdr_length = sizeof(dw_elf32_ehdr);
@@ -1023,7 +1029,6 @@ calculate_all_offsets(void)
         ehdr_length += sizeof(dw_elf64_ehdr);
         sechdr_length = sizeof(dw_elf64_shdr);
         total_length += ehdr_length;
-        offset_to_contents = ehdr_length;
      }
      dwelfheader.e_shentsize_ = sechdr_length;
      dwelfheader.e_hdrlen_ = ehdr_length;
@@ -1051,7 +1056,6 @@ calculate_all_offsets(void)
         sec.sh_offset_= curoff;
         curoff += sec.sh_size_;
      }
-     Dwarf_Unsigned offset_to_secheaders = curoff;
      dwelfheader.e_shoff_ = ehdr_length + section_content_len;  
      dwelfheader.e_shnum_ = dwsectab.size();
 }
@@ -1074,8 +1078,6 @@ write_object_file(Dwarf_P_Debug dbg,
         ELFDATA2MSB;
     bool dwarfoffset32 = (dwbitflags&DW_DLC_OFFSET64)?true:false;
     bool elfpointer64  = (dwbitflags&DW_DLC_POINTER64)?true:false; 
-    bool elfoffsetsize64  = 
-        (dwbitflags&DW_DLC_ELF_OFFSET_SIZE_64)?true:false; 
     *(unsigned *)user_data = elfclass;
     dwwriter.openFile(outfile);
     dwelfheader = ElfHeaderForDwarf();
@@ -1099,8 +1101,7 @@ write_object_file(Dwarf_P_Debug dbg,
     write_generated_dbg(dbg,irep);
     // Create the section name string section,
     // set e_shstrndx.
-    unsigned long shstrindex =
-        create_namestr_section();
+    create_namestr_section();
     calculate_all_offsets();
     Dwarf_Unsigned finalsize = write_to_object();
     cout << " output image size in bytes " << finalsize << endl;
@@ -1121,6 +1122,11 @@ create_text_section(void)
         (Dwarf_Unsigned)SHT_PROGBITS,
         (Dwarf_Unsigned)0,(Dwarf_Unsigned)0,
         (Dwarf_Unsigned) 0);
+    cout << "New Elf section: " << s <<
+        " Type=" <<SHT_PROGBITS << " Flags=" << 0 <<
+        " Elf secnum=" << sectindex <<
+        " link section=" << 0 <<
+        " info="<< 0 << endl;
     ds.sh_addralign_ = dwelfheader.elf_is_64bit()?8:4;
     ds.add_section_content(text,sizeof(text));
     ds.setSectIndex(sectindex);
@@ -1401,7 +1407,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,
     }
 }
 
-void
+static void
 write_elf_header(void)
 {
     unsigned char *datap = 0;
@@ -1483,7 +1489,8 @@ write_elf_header(void)
 
 // Returns pointer to the content, len of each is
 // dwelfheader.e_shentsize_
-unsigned char * copy_section_hdr_data (SectionForDwarf&sec)
+static unsigned char *
+copy_section_hdr_data (SectionForDwarf&sec)
 {
     if (dwelfheader.elf_is_32bit()) 
     {
@@ -1538,8 +1545,9 @@ unsigned char * copy_section_hdr_data (SectionForDwarf&sec)
     /* not reached */
 }
 
-void
-write_section_contents()
+
+static void
+write_section_contents(void)
 {
     unsigned long i = 0;
     for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
@@ -1563,7 +1571,7 @@ write_section_contents()
     }
 
 }
-void
+static void
 write_section_headers()
 {
     Dwarf_Unsigned headeroff = dwelfheader.e_shoff_;
@@ -1577,8 +1585,7 @@ write_section_headers()
         Dwarf_Unsigned hdrlen = dwelfheader.e_shentsize_;
 
         unsigned char *data = copy_section_hdr_data(sec);
-        dwwriter.wwrite(headeroff,dwelfheader.e_shentsize_,
-            data);
+        dwwriter.wwrite(headeroff,hdrlen,data);
         headeroff += dwelfheader.e_shentsize_; 
         i++;
     }
