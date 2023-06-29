@@ -222,7 +222,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
 #define ASNX(op,ol,ip,il)           \
     do {                            \
         if (ol > il) {              \
-            unsigned sbyte = 0;     \
+            Dwarf_Unsigned sbyte = 0;\
             memset(op,0,ol);        \
             sbyte = ol - il;        \
             const void * ipi =      \
@@ -230,7 +230,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
             _dwarf_memcpy_swap_bytes(((char *)(op))+sbyte,\
                 ipi,il);\
         } else {                    \
-            unsigned sbyte = 0;     \
+            Dwarf_Unsigned sbyte = 0;\
             sbyte = il - ol;        \
             const void * ipi =      \
                 ((Dwarf_Small*)ip) +sbyte; \
