@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 18 June 2023
+Updated 29 June 2023
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -19,6 +19,11 @@ using configure,cmake, and meson.
 Mentioning some that might not be automatically
 in your base OS release. Restricting attention
 here to just building libdwarf and dwarfdump. 
+
+Nothing in the project requires or references
+elf.h, libelf.h, or libelf as of 29 June 2023,
+version 0.7.1.
+
 
 If the objects you work with do not have
 section content compressed

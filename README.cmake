@@ -38,16 +38,11 @@ For example:
 
 
 The above will build libdwarf.dll or libdwarf-0.dll 
-and dwarfdump (linking to that dll).  If there is
-no libelf.h present during cmake/build then dwarfdump won't
-read archives or honor requests to print elf headers.
+and dwarfdump (linking to that dll). 
 
 To show all the available cmake options for 'code':
 
     cmake -L /path/to/code
-
-For this case any attempt to compile dwarfgen will be
-overridden: dwarfgen requires libelf.
 
 For dwarfexample:
 
@@ -55,8 +50,6 @@ For dwarfexample:
     make
     
 
-If libelf is missing -DBUILD_DWARFGEN=ON will not be honored
-as dwarfgen will not build without libelf.
 
     cmake -DDO_TESTING=ON /path/to/code
     make
