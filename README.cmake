@@ -1,11 +1,5 @@
 Created 26 April 2019
-Updated 24 August 2022
-
-Now we are using a new source structure and using semantic
-versioning for tar.xz names (earlier we used tar.gz).
-The assumption is that you usually download an appropriate
-libdwarf-0.4.1.tar.gz (or a later one)
-You may find README or README.md useful to read.
+Updated 19 June 2023
 
 Consider switching entirely to meson for your build.
 
@@ -13,6 +7,9 @@ There are two parts of this file:
 CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
 and
 USING MSYS2 (WINDOWS) CMAKE.
+
+Unless a shared library is specifically requested
+cmake builds a static library: libdwarf.a
 
 ============================
 CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
@@ -41,16 +38,11 @@ For example:
 
 
 The above will build libdwarf.dll or libdwarf-0.dll 
-and dwarfdump (linking to that dll).  If there is
-no libelf.h present during cmake/build then dwarfdump won't
-read archives or honor requests to print elf headers.
+and dwarfdump (linking to that dll). 
 
 To show all the available cmake options for 'code':
 
     cmake -L /path/to/code
-
-For this case any attempt to compile dwarfgen will be
-overridden: dwarfgen requires libelf.
 
 For dwarfexample:
 
@@ -58,8 +50,6 @@ For dwarfexample:
     make
     
 
-If libelf is missing -DBUILD_DWARFGEN=ON will not be honored
-as dwarfgen will not build without libelf.
 
     cmake -DDO_TESTING=ON /path/to/code
     make

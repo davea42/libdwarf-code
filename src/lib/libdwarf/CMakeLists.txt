@@ -26,7 +26,10 @@ dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_peread.c 
 dwarf_query.c dwarf_ranges.c 
 dwarf_rnglists.c
+dwarf_safe_arithmetic.c
 dwarf_safe_strcpy.c
+dwarf_secname_ck.c
+dwarf_setup_sections.c
 dwarf_string.h dwarf_string.c
 dwarf_stringsection.c
 dwarf_tied.c 
@@ -52,9 +55,11 @@ dwarf_object_detector.h dwarf_opaque.h
 dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h
 dwarf_rnglists.h
+dwarf_safe_arithmetic.h
 dwarf_safe_strcpy.h
 dwarf_tied_decls.h 
 dwarf_tsearch.h 
+dwarf_setup_sections.h
 dwarf_str_offsets.h
 dwarf_util.h 
 dwarf_xu_index.h libdwarf_private.h
@@ -64,6 +69,20 @@ dwarf_memcpy_swap.h)
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
     ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake 
     ${PROJECT_BINARY_DIR}/config.h)
+
+# The -DPIC is so we find the right DW_API value in libdwarf.h
+# with cmake with Linux.
+# Dwarfgen requires all symbols in .so to be visible, so
+# do not say hidden on libdwarf in that case.
+if (BUILD_SHARED)
+    if(NOT BUILD_DWARFGEN)
+      set(CMAKE_C_VISIBILITY_PRESET hidden)
+    endif()
+    set(COMPILER_FLAGS -DLIBDWARF_BUILD -DPIC)
+else()
+    set(COMPILER_FLAGS -DLIBDWARF_STATIC)
+endif()
+
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
@@ -83,7 +102,7 @@ foreach(i RANGE ${targetCount})
 	set_folder(${target} src/lib/libdwarf)
 	target_include_directories(${target} PUBLIC 
             ${LIBELF_INCLUDE_DIRS})
-    target_compile_options(${target} PRIVATE -DLIBDWARF_BUILD
+    target_compile_options(${target} PRIVATE ${COMPILER_FLAGS}
             ${DW_FWALL})
 	msvc_posix(${target})
 
@@ -101,7 +120,6 @@ foreach(i RANGE ${targetCount})
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
 
-# add_library(libdwarf)
 configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY )
 
 # The install has to be here, not in

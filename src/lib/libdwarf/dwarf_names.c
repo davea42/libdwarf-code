@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 0.7.0 */
+/* Generated for source version 0.7.1 */
 
 /* BEGIN FILE */
 
@@ -1347,8 +1347,6 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_GNU_bias:
         *s_out = "DW_AT_GNU_bias";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x2305. DW_AT_GNU_bias */
     case DW_AT_go_kind:
         *s_out = "DW_AT_go_kind";
         return DW_DLV_OK;
@@ -2804,6 +2802,18 @@ dwarf_get_LANG_name (unsigned int val,
         return DW_DLV_OK;
     case DW_LANG_Ada2012:
         *s_out = "DW_LANG_Ada2012";
+        return DW_DLV_OK;
+    case DW_LANG_HIP:
+        *s_out = "DW_LANG_HIP";
+        return DW_DLV_OK;
+    case DW_LANG_Assembly:
+        *s_out = "DW_LANG_Assembly";
+        return DW_DLV_OK;
+    case DW_LANG_C_sharp:
+        *s_out = "DW_LANG_C_sharp";
+        return DW_DLV_OK;
+    case DW_LANG_Mojo:
+        *s_out = "DW_LANG_Mojo";
         return DW_DLV_OK;
     case DW_LANG_lo_user:
         *s_out = "DW_LANG_lo_user";

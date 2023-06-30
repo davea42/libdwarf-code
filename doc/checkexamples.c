@@ -384,6 +384,109 @@ void example5(Dwarf_Die in_die)
 }
 /*! @endcode */
 
+/*! @defgroup example_sibvalid using dwarf_validate_die_sibling
+    @brief A DIE tree validation.
+
+    Here we show how one uses
+    dwarf_validate_die_sibling().
+    Dwarfdump uses this function as a part of its
+    valdation of DIE trees.
+
+    It is not something you need to use.
+    But one must use it in a specific pattern
+    for it to work properly.
+
+    dwarf_validate_die_sibling() depends on data set
+    by dwarf_child() preceeding dwarf_siblingof_b() .
+    dwarf_child() records a little bit
+    of information invisibly in the Dwarf_Debug data.
+
+    @code
+*/
+
+int example_sibvalid(Dwarf_Debug dbg,
+    Dwarf_Die in_die,
+    Dwarf_Error*error)
+{
+    int        cres = DW_DLV_OK;
+    int        sibres = DW_DLV_OK;
+    Dwarf_Die  die = 0;
+    Dwarf_Die  sibdie = 0;
+    Dwarf_Die  child = 0;
+    Dwarf_Bool is_info = dwarf_get_die_infotypes_flag(die);
+
+    die = in_die;
+    for ( ; die ; die = sibdie) {
+        int vres = 0;
+        Dwarf_Unsigned offset = 0;
+
+        /* Maybe print something you extract from the DIE */
+        cres = dwarf_child(die,&child,error);
+        if (cres == DW_DLV_ERROR) {
+            if (die != in_die) {
+                dwarf_dealloc_die(die);
+            }
+            printf("dwarf_child ERROR\n");
+            return DW_DLV_ERROR;
+        }
+        if (cres == DW_DLV_OK) {
+            int lres = 0;
+
+            child = 0;
+            lres = example_sibvalid(dbg,child,error);
+            if (lres == DW_DLV_ERROR) {
+                if (die != in_die) {
+                    dwarf_dealloc_die(die);
+                }
+                dwarf_dealloc_die(child);
+                printf("example_sibvalid ERROR\n");
+                return lres;
+            }
+        }
+        sibdie = 0;
+        sibres = dwarf_siblingof_b(dbg,die,is_info,
+            &sibdie,error);
+        if (sibres == DW_DLV_ERROR) {
+            if (die != in_die) {
+                dwarf_dealloc_die(die);
+            }
+            if (child) {
+                dwarf_dealloc_die(child);
+            }
+            printf("dwarf_siblinof_b ERROR\n");
+            return DW_DLV_ERROR;
+        }
+        if (sibres == DW_DLV_NO_ENTRY) {
+            if (die != in_die) {
+                dwarf_dealloc_die(die);
+            }
+            if (child) {
+                dwarf_dealloc_die(child);
+            }
+            return DW_DLV_OK;
+        }
+        vres = dwarf_validate_die_sibling(sibdie,&offset);
+        if (vres == DW_DLV_ERROR) {
+            if (die != in_die) {
+                dwarf_dealloc_die(die);
+            }
+            if (child) {
+                dwarf_dealloc_die(child);
+            }
+            dwarf_dealloc_die(sibdie);
+            printf("Invalid sibling DIE\n");
+            return DW_DLV_ERROR;
+        }
+        /*  loop again */
+        if (die != in_die) {
+            dwarf_dealloc_die(die);
+        }
+        die = 0;
+    }
+    return DW_DLV_OK;
+}
+/*! @endcode */
+
 /*! @defgroup examplecuhdr Example walking CUs
 
     @brief Accessing all CUs looking for specific items.
@@ -824,7 +927,7 @@ int example_discr_list(Dwarf_Debug dbg,
     This example simply *assumes* the attribute
     has a form which relates to location lists
     or location expressions. Use dwarf_get_form_class()
-    to determine if this attribute fits. 
+    to determine if this attribute fits.
     Use dwarf_get_version_of_die() to help get the
     data you need.
     @see dwarf_get_form_class
@@ -1293,7 +1396,7 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
-    You 
+    You
 
     @code
 */
@@ -1305,7 +1408,7 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
     int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_WEAKS,
-        &weaks,&count,error); 
+        &weaks,&count,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1333,7 +1436,7 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
     int fres = 0;
 
     fres = dwarf_globals_by_type(dbg,DW_GL_FUNCS,
-            &funcs,&count,error);
+        &funcs,&count,error);
     if (fres != DW_DLV_OK) {
         return fres;
     }
@@ -1361,7 +1464,7 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
     int res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_TYPES,
-            &types,&count,error);
+        &types,&count,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1389,7 +1492,7 @@ int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
     int res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_VARS,
-            &vars,&count,error);
+        &vars,&count,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1665,9 +1768,10 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
     Dwarf_Unsigned number_of_ops = 0;
     Dwarf_Unsigned ops_total_byte_len = 0;
     Dwarf_Bool is_primary = TRUE;
-    unsigned k = 0;
 
-    for (;;) {
+    /*  Just call once each way to test both.
+        Really the second is just for imported units.*/
+    for ( ; ; ) {
         if (is_primary) {
             lres = dwarf_get_macro_context(cu_die,
                 &version,&macro_context,
@@ -2448,9 +2552,9 @@ int examplehighpc(Dwarf_Die die,
     enum Dwarf_Form_Class formclass = DW_FORM_CLASS_UNKNOWN;
 
     res = dwarf_highpc_b(die,&localhighpc,
-         &form,&formclass, error);
+        &form,&formclass, error);
     if (res != DW_DLV_OK) {
-         return res;
+        return res;
     }
     if (form != DW_FORM_addr &&
         !dwarf_addr_form_is_indexed(form)) {
@@ -2460,7 +2564,7 @@ int examplehighpc(Dwarf_Die die,
             DW_AT_low_pc. */
         res = dwarf_lowpc(die,&low_pc,error);
         if (res != DW_DLV_OK) {
-            return res; 
+            return res;
         } else  {
             localhighpc += low_pc;
         }
@@ -2469,7 +2573,6 @@ int examplehighpc(Dwarf_Die die,
     return DW_DLV_OK;
 }
 /*! @endcode */
-
 
 /*! @defgroup exampleza Reading Split Dwarf (Debug Fission) data
     @brief Example getting cu/tu name, offset

@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
 Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-Portions Copyright 2007-2021 David Anderson. All rights reserved.
+Portions Copyright 2007-2023 David Anderson. All rights reserved.
 
 This program is free software; you can redistribute it
 and/or modify it under the terms of version 2.1 of the
@@ -570,9 +570,6 @@ extern "C" {
 #define DW_AT_GNU_discriminator                 0x2136 /* GNU */
 #define DW_AT_GNU_locviews                      0x2137 /* GNU */
 #define DW_AT_GNU_entry_view                    0x2138 /* GNU */
-
-/* See https://gcc.gnu.org/wiki/DW_AT_GNU_bias */
-#define DW_AT_GNU_bias                          0x2305
 
 /* Sun extensions */
 #define DW_AT_SUN_template                      0x2201 /* SUN */
@@ -1172,6 +1169,10 @@ most-likely-useful name. */
 #define DW_LANG_Fortran18               0x002d /* DWARF6 */
 #define DW_LANG_Ada2005                 0x002e /* DWARF6 */
 #define DW_LANG_Ada2012                 0x002f /* DWARF6 */
+#define DW_LANG_HIP                     0x0030 /* DWARF6 */
+#define DW_LANG_Assembly                0x0031 /* DWARF6 */
+#define DW_LANG_C_sharp                 0x0032 /* DWARF6 */
+#define DW_LANG_Mojo                    0x0033 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */

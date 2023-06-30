@@ -3,6 +3,8 @@ name: ci_mac_meson
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   macos_meson:
     runs-on: macos-latest

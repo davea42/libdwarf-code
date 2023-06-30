@@ -91,6 +91,16 @@ if (DO_TESTING)
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump")
     add_test(NAME selfhelpertree COMMAND selfhelpertree)
 endif()
+if (DO_TESTING)
+    set_source_group(IGNORESEC_SOURCES "Source Files"
+      ${PROJECT_SOURCE_DIR}/test/test_ignoresec.c
+      ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_secname_ck.c)
+    add_executable(selfignoresec ${IGNORESEC_SOURCES})
+    target_compile_options(selfignoresec PRIVATE ${DW_FWALL})
+    target_compile_options(selfignoresec PRIVATE
+        "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")
+    add_test(NAME selfignoresec COMMAND selfignoresec)
+endif()
 
 if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"
@@ -181,6 +191,17 @@ if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
 endif()
 
 if (DO_TESTING) 
+    set_source_group(OBJINT64TEST "Source Files"
+        ${PROJECT_SOURCE_DIR}/test/test_int64_test.c )
+    add_executable(selfintobj64test ${OBJINT64TEST})
+    target_compile_options(selfintobj64test PRIVATE
+        "-I${PROJECT_SOURCEDIR}/src/lib/libdwarf" )
+    target_compile_options(selfintobj64test PRIVATE ${DW_FWALL})
+    add_test(NAME selfintobj64test COMMAND 
+        selfintobj64test -f "${PROJECT_SOURCE_DIR}")
+endif()
+
+if (DO_TESTING) 
     set_source_group(OBJERRMSGLIST "Source Files"
         ${PROJECT_SOURCE_DIR}/test/test_errmsglist.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)
@@ -205,6 +226,19 @@ if (DO_TESTING)
         "-DLIBDWARF_BUILD")
     target_compile_options(selfcanonical PRIVATE ${DW_FWALL})
     add_test(NAME selfcanonical COMMAND selfcanonical)
+endif()
+
+if (DO_TESTING)
+    set_source_group(SETUPSECLIST "Source Files"
+        ${PROJECT_SOURCE_DIR}/test/test_setupsections.c 
+        ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_setup_sections.c
+        )
+    add_executable(selfsetupsections ${SETUPSECLIST})
+    target_compile_options(selfsetupsections PRIVATE
+        "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
+        "-DLIBDWARF_BUILD")
+    target_compile_options(selfsetupsections PRIVATE ${DW_FWALL})
+    add_test(NAME selfsetupsections COMMAND selfsetupsections)
 endif()
 
 if (DO_TESTING)

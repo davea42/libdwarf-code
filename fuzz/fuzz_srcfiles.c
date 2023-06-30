@@ -130,8 +130,8 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
     return sres;
   }
 
-  Dwarf_Line *dw_linebuf_actuals;
-  Dwarf_Signed dw_linecount_actuals;
+  Dwarf_Line *dw_linebuf_actuals = 0;  /* init by davea*/
+  Dwarf_Signed dw_linecount_actuals = 0;  /* init by davea*/
 
   sres = dwarf_srclines_two_level_from_linecontext(
       context, &linebuf, &count, &dw_linebuf_actuals, &dw_linecount_actuals,
@@ -141,7 +141,7 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
     return sres;
   }
 
-  Dwarf_Unsigned dw_context_section_offset;
+  Dwarf_Unsigned dw_context_section_offset = 0;  /* init by davea*/
   sres =
       dwarf_srclines_table_offset(context, &dw_context_section_offset, error);
   if (sres != DW_DLV_OK) {
@@ -149,40 +149,43 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
     return sres;
   }
 
-  const char *dw_compilation_directory;
+  const char *dw_compilation_directory = 0;  /* init by davea*/
   sres = dwarf_srclines_comp_dir(context, &dw_compilation_directory, error);
   if (sres != DW_DLV_OK) {
     dwarf_srclines_dealloc_b(context);
     return sres;
   }
 
-  Dwarf_Signed subprogram_count;
-  sres = dwarf_srclines_subprog_count(context, &subprogram_count, error);
+  Dwarf_Signed subprogram_count = 0;  /* init by davea*/
+  sres = dwarf_srclines_subprog_count(context, 
+      &subprogram_count, error);
   if (sres != DW_DLV_OK) {
     dwarf_srclines_dealloc_b(context);
     return sres;
   }
 
-  Dwarf_Unsigned version_2;
-  Dwarf_Small table_count_2;
+  Dwarf_Unsigned version_2 = 0;  /* init by davea*/
+  Dwarf_Small table_count_2 = 0;  /* init by davea*/
   dwarf_srclines_version(context, &version_2, &table_count_2, error);
 
-  Dwarf_Signed dw_baseindex;
-  Dwarf_Signed dw_count;
-  Dwarf_Signed dw_endindex;
-  sres = dwarf_srclines_files_indexes(context, &dw_baseindex, &dw_count,
-                                      &dw_endindex, error);
+  Dwarf_Signed dw_baseindex = 0;  /* init by davea*/
+  Dwarf_Signed dw_count = 0;  /* init by davea*/
+  Dwarf_Signed dw_endindex = 0; /* init by davea*/
+  sres = dwarf_srclines_files_indexes(context, 
+      &dw_baseindex, &dw_count,
+      &dw_endindex, error);
   if (sres != DW_DLV_OK) {
     dwarf_srclines_dealloc_b(context);
     return sres;
   }
 
   for (i = 0; i < subprogram_count; i++) {
-    const char *dw_name;
-    Dwarf_Unsigned dw_decl_file;
-    Dwarf_Unsigned dw_decl_line;
-    sres = dwarf_srclines_subprog_data(context, i + 1, &dw_name, &dw_decl_file,
-                                       &dw_decl_line, error);
+    const char *dw_name = 0;  /* init by davea*/
+    Dwarf_Unsigned dw_decl_file = 0;  /* init by davea*/
+    Dwarf_Unsigned dw_decl_line = 0;  /* init by davea*/
+    sres = dwarf_srclines_subprog_data(context, i + 1,
+        &dw_name, &dw_decl_file,
+        &dw_decl_line, error);
     if (sres != DW_DLV_OK) {
       continue;
     }
@@ -191,8 +194,8 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
   for (i = 0; i < count; ++i) {
     line = linebuf[i];
 
-    Dwarf_Bool ans;
-    Dwarf_Unsigned linenum;
+    Dwarf_Bool ans = 0; /* init by davea */
+    Dwarf_Unsigned linenum = 0; /* init by davea */
     dwarf_linebeginstatement(line, &ans, error);
     dwarf_lineendsequence(line, &ans, error);
     dwarf_line_is_addr_set(line, &ans, error);
@@ -201,19 +204,24 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
     dwarf_line_srcfileno(line, &linenum, error);
     dwarf_lineoff_b(line, &linenum, error);
 
-    char *linesrc;
+    char *linesrc = 0; /* INIT by davea */
+
     dwarf_linesrc(line, &linesrc, error);
 
-    Dwarf_Bool prologue_end, epilogue_begin;
-    Dwarf_Unsigned isa, discriminator;
+    Dwarf_Bool prologue_end = 0;  /* init by davea*/
+    Dwarf_Bool epilogue_begin = 0;  /* init by davea*/
+    Dwarf_Unsigned isa = 0; /* init by davea*/
+    Dwarf_Unsigned discriminator = 0; /* init by davea*/
     dwarf_prologue_end_etc(line, &prologue_end, &epilogue_begin, &isa,
                            &discriminator, error);
 
-    Dwarf_Unsigned l_logical;
+#if 1 /* this is problematic and does not work */
+    Dwarf_Unsigned l_logical = 0;  /* init by davea*/
     dwarf_linelogical(line, &l_logical, error);
 
-    Dwarf_Unsigned subprog_no;
+    Dwarf_Unsigned subprog_no = 0;  /* init by davea*/
     dwarf_line_subprogno(line, &subprog_no, error);
+#endif
   }
   dwarf_srclines_dealloc_b(context);
   return DW_DLV_OK;

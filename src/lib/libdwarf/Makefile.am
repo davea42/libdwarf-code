@@ -88,8 +88,14 @@ dwarf_peread.c \
 dwarf_peread.h \
 dwarf_print_lines.c \
 dwarf_query.c \
+dwarf_safe_arithmetic.c \
+dwarf_safe_arithmetic.h \
 dwarf_safe_strcpy.c \
 dwarf_safe_strcpy.h \
+dwarf_secname_ck.c \
+dwarf_secname_ck.h \
+dwarf_setup_sections.c \
+dwarf_setup_sections.h \
 dwarf_ranges.c \
 dwarf_rnglists.c \
 dwarf_rnglists.h \

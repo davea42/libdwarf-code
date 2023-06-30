@@ -401,7 +401,7 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
 
 int
 _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error)
 {
     /* Total num of bytes in .debug_macinfo section. */

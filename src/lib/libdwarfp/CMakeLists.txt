@@ -28,7 +28,12 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
     ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake 
     ${PROJECT_BINARY_DIR}/config.h)
 
-	
+if (BUILD_SHARED)
+    set(COMPILER_FLAGS -DLIBDWARF_BUILD -DPIC)
+else()
+    set(COMPILER_FLAGS -DLIBDWARF_STATIC)
+endif()
+
 list(LENGTH DWARFP_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
 list(APPEND DWARFP_LIBS ${LIBELF_LIBRARIES})
@@ -43,7 +48,8 @@ foreach(i RANGE ${targetCount})
             ${LIBELF_INCLUDE_DIRS} )
 	target_include_directories(${target} PRIVATE 
             ${LIBDWARF_INCLUDE_DIR} )
-        target_compile_options(${target} PRIVATE ${DW_FWALL})
+    target_compile_options(${target} PRIVATE ${DW_COMPILER_FLAGS}
+            ${DW_FWALL})
 	msvc_posix(${target})
 
 	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})

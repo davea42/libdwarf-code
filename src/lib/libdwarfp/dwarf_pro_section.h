@@ -38,13 +38,15 @@ extern const char *_dwarf_sectnames[];
     whole into the relocation section. Whether its 32 bit or
     64 bit will be obtained from Dwarf_Debug pointer.  */
 
-/* struct stores a chunk of data pertaining to a section */
+/* struct stores a chunk of data pertaining to a section.
+   Following ds_next we find the rest of the data for
+   the section.  */
 struct Dwarf_P_Section_Data_s {
-    int ds_elf_sect_no; /* elf section number */
-    char *ds_data;      /* data contained in section */
-    unsigned long ds_nbytes; /* bytes of data used so far */
-    unsigned long ds_orig_alloc; /* bytes allocated originally */
-    Dwarf_P_Section_Data ds_next; /* next on the list */
+    int            ds_elf_sect_no; /* elf section number */
+    char          *ds_data;        /* data contained in section */
+    unsigned long  ds_nbytes;      /* bytes of data used so far */
+    unsigned long  ds_orig_alloc;  /* bytes allocated originally */
+    Dwarf_P_Section_Data ds_next;  /* next on the list */
 };
 
 /* Used to allow a dummy initial struct (which we
@@ -88,7 +90,7 @@ Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,
 }
 
 int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    Dwarf_Unsigned *nbufs,
     Dwarf_Error * error);
 
 /*  These are for creating ELF section type codes.

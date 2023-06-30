@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2000, 2004, 2006 Silicon Graphics, Inc.  All Rights Reserved.
-Portions Copyright (C) 2021 David Anderson. All Rights Reserved.
+Portions Copyright (C) 2021-2023 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -145,7 +145,7 @@ struct Dwarf_Frame_Instr_Head_s {
 struct Dwarf_Reg_Rule_s {
 
     /*  Is a flag indicating whether the rule includes the offset
-        field, ie whether the ru_offset field is valid or not.
+        field, ie whether the ru_soffset field is valid or not.
         Applies only if DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
         It is important, since reg+offset (offset of 0)
         is different from
@@ -169,17 +169,34 @@ struct Dwarf_Reg_Rule_s {
     /*  Register involved in this rule, real or non-real-register.
         ru_value_type is DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
     */
-    Dwarf_Half ru_register;
+    Dwarf_Unsigned ru_register;
 
     /*  Offset to add to register, if indicated by ru_is_offset.
         ru_value_type is DW_EXPR_OFFSET */
-    Dwarf_Unsigned ru_offset;
+    Dwarf_Signed ru_offset;
     Dwarf_Unsigned ru_args_size; /* DW_CFA_GNU_args_size */
     /*  If ru_value_type is DW_EXPR_EXPRESSION
         or DW_EXPR_VAL_EXPRESSION this is filled in. */
     Dwarf_Block    ru_block;
 
 };
+/* Internal use only */
+typedef struct Dwarf_Regtable_Entry3_s_i {
+    Dwarf_Small     dw_offset_relevant;
+    Dwarf_Small     dw_value_type;
+    Dwarf_Unsigned  dw_regnum;
+    Dwarf_Unsigned  dw_offset;
+    Dwarf_Unsigned  dw_args_size; /* Not dealt with.  */
+    Dwarf_Block     dw_block;
+} Dwarf_Regtable_Entry3_i;
+/* Internal use only */
+typedef struct Dwarf_Regtable3_s_i {
+    Dwarf_Regtable_Entry3_i  rt3_cfa_rule;
+    Dwarf_Unsigned           rt3_reg_table_size;
+    Dwarf_Regtable_Entry3_i *rt3_rules;
+} Dwarf_Regtable3_i;
+
+
 
 typedef struct Dwarf_Frame_s *Dwarf_Frame;
 
@@ -201,7 +218,7 @@ struct Dwarf_Frame_s {
 
     /*  fr_reg_count is the the number of
         entries of the fr_reg array. */
-    unsigned long            fr_reg_count;
+    Dwarf_Unsigned fr_reg_count;
     struct Dwarf_Reg_Rule_s *fr_reg;
 
     Dwarf_Frame fr_next;
@@ -369,6 +386,9 @@ struct Dwarf_Fde_s {
 };
 
 int
+_dwarf_validate_register_numbers(Dwarf_Debug dbg,Dwarf_Error *error);
+
+int
 _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
     Dwarf_Off ** offsetlist,
     Dwarf_Signed * returncount,
@@ -448,7 +468,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Frame table,
     Dwarf_Cie cie,
     Dwarf_Debug dbg,
-    Dwarf_Half reg_num_of_cfa,
+    Dwarf_Unsigned reg_num_of_cfa,
     Dwarf_Bool * has_more_rows,
     Dwarf_Addr * subsequent_pc,
     Dwarf_Frame_Instr_Head *ret_frame_instr_head,

@@ -31,6 +31,10 @@ tests = [
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
+   'test_ignoresec.c',
+   '../src/lib/libdwarf/dwarf_secname_ck.c',
+  ],
+  [
    'test_esb.c',
    '../src/bin/dwarfdump/dd_esb.c',
    '../src/bin/dwarfdump/dd_tsearchbal.c'
@@ -66,8 +70,15 @@ tests = [
    '../src/bin/dwarfdump/dd_esb.c'
   ],
   [
+   'test_int64_test.c'
+  ],
+  [
    'test_safe_strcpy.c',
    '../src/lib/libdwarf/dwarf_safe_strcpy.c',
+  ],
+  [
+   'test_setupsections.c',
+   '../src/lib/libdwarf/dwarf_setup_sections.c',
   ],
   [
    'test_regex.c',

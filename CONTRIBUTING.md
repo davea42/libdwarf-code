@@ -4,6 +4,16 @@ development or documentation!
 Any and all email mentions here mean send to
 libdwarf -at- linuxmail -dot- org.
 
+## Testing
+Contributions should provide open-source (small)
+test cases and instructions to
+prove the change is correct, or should
+mention what existing tests show correctness,
+or should explain how to test the change.
+It's not necessary to actually modify
+libdwarf-regressiontests, but documenting
+(in some way) how this change can be tested is important.
+
 ## Formalities 
 If your contribution is just a few lines
 there is no paperwork to deal with.

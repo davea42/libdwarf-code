@@ -280,7 +280,8 @@ def writeheader(file,headname):
         write_line(file,l)
     hl='<H2>%s</H2>'%(headname)
     write_line(file,hl)
-    tm='</p>as of %s %s</p>'%(dt.strftime("%Y-%m-%d %H:%M "),mytz)
+    #tm='</p>as of %s %s</p>'%(dt.strftime("%Y-%m-%d %H:%M "),mytz)
+    tm='</p>as of %s</p>'%(dt.strftime("%B %Y"))
     write_line(file,tm)
 
 def generatehtml(list2,headname, name):

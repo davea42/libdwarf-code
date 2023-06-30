@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2022 David Anderson. All rights reserved.
+  Portions Copyright 2008-2023 David Anderson. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
@@ -50,28 +50,28 @@
 #undef DW_API
 #endif /* DW_API */
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-# ifdef LIBDWARF_BUILD
-#  define DW_API __declspec(dllexport)
-# else /* !LIBDWARF_BUILD */
-#  define DW_API __declspec(dllimport)
-# endif /* LIBDWARF_BUILD */
-#elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
-# if defined(PIC) || defined(__PIC__)
-#  define DW_API __global
-# else /* !PIC __PIC__ */
-#  define DW_API
-# endif /* PIC */
-#elif (defined(__GNUC__) && __GNUC__ >= 4) || \
-    defined(__INTEL_COMPILER)
-# if defined(PIC) || defined(__PIC__)
-#  define DW_API __attribute__ ((visibility("default")))
-# else /* !PIC __PIC__ */
-#  define DW_API
-# endif /* PIC */
-#else /* !LIBDWARF_BUILD !SUPRO !GNUC */
-# define DW_API
-#endif /* _WIN32 || __CYGWIN__ */
+#ifndef LIBDWARF_STATIC
+# if defined(_WIN32) || defined(__CYGWIN__)
+#  ifdef LIBDWARF_BUILD
+#   define DW_API __declspec(dllexport)
+#  else /* !LIBDWARF_BUILD */
+#   define DW_API __declspec(dllimport)
+#  endif /* LIBDWARF_BUILD */
+# elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
+#  if defined(PIC) || defined(__PIC__)
+#   define DW_API __global
+#  endif  /* __PIC__ */
+# elif (defined(__GNUC__) && __GNUC__ >= 4) || \
+     defined(__INTEL_COMPILER)
+#  if defined(PIC) || defined(__PIC__)
+#   define DW_API __attribute__ ((visibility("default")))
+#  endif /* PIC */
+# endif /* WIN32 SUNPRO GNUC  */
+#endif /* !LIBDWARF_STATIC */
+
+#ifndef DW_API
+#define DW_API
+#endif /* DW_API */
 
 #ifdef __cplusplus
 extern "C" {
@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "0.7.0"
+#define DW_LIBDWARF_VERSION "0.7.1"
 #define DW_LIBDWARF_VERSION_MAJOR 0
 #define DW_LIBDWARF_VERSION_MINOR 7
-#define DW_LIBDWARF_VERSION_MICRO 0
+#define DW_LIBDWARF_VERSION_MICRO 1
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -491,6 +491,10 @@ typedef struct Dwarf_Ranges_s {
             The expression length in bytes is given by
             block.bl_len.
         Other values of dw_value_type are an error.
+
+        Note that this definition can only deal correctly
+        with register numbers that fit in a 16 bit
+        unsigned value. And it is difficult to alter
 */
 
 typedef struct Dwarf_Regtable_Entry3_s {
@@ -516,7 +520,10 @@ typedef struct Dwarf_Regtable_Entry3_s {
     contents rules array, you do not need to do so (though
     if you choose to initialize the array somehow that is ok:
     libdwarf will overwrite your initializations with its own).
-*/
+
+    Note that this definition can only deal correctly
+    with register table size that fits in a 16 bit
+    unsigned value.  */
 typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
     Dwarf_Half                       rt3_reg_table_size;
@@ -670,9 +677,12 @@ typedef struct Dwarf_Obj_Access_Methods_a_s
     Dwarf_Obj_Access_Methods_a;
 
 /*! @typedef Dwarf_Obj_Access_Section_a
-    Used for access to and settint up special data
+    Used for access to and setting up special data
     allowing access to DWARF even with no object
-    files present
+    files present.
+    The fields match up with Elf section headers,
+    but for non-Elf many of the fields can be set
+    to zero.
 */
 typedef struct Dwarf_Obj_Access_Section_a_s
     Dwarf_Obj_Access_Section_a;
@@ -696,7 +706,7 @@ struct Dwarf_Obj_Access_Section_a_s {
 */
 struct Dwarf_Obj_Access_Methods_a_s {
     int    (*om_get_section_info)(void* obj,
-        Dwarf_Half                  section_index,
+        Dwarf_Unsigned              section_index,
         Dwarf_Obj_Access_Section_a* return_section,
         int                       * error);
     Dwarf_Small      (*om_get_byte_order)(void* obj);
@@ -705,11 +715,11 @@ struct Dwarf_Obj_Access_Methods_a_s {
     Dwarf_Unsigned   (*om_get_filesize)(void* obj);
     Dwarf_Unsigned   (*om_get_section_count)(void* obj);
     int              (*om_load_section)(void* obj,
-        Dwarf_Half    section_index,
+        Dwarf_Unsigned    section_index,
         Dwarf_Small** return_data,
         int         * error);
     int              (*om_relocate_a_section)(void* obj,
-        Dwarf_Half  section_index,
+        Dwarf_Unsigned  section_index,
         Dwarf_Debug dbg,
         int       * error);
 };
@@ -1370,9 +1380,12 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_BAD_SECTION_FLAGS               496
 #define DW_DLE_IMPROPER_SECTION_ZERO           497
 #define DW_DLE_INVALID_NULL_ARGUMENT           498
+#define DW_DLE_LINE_INDEX_WRONG                499
+#define DW_DLE_LINE_COUNT_WRONG                500
+#define DW_DLE_ARITHMETIC_OVERFLOW             501
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        498
+#define DW_DLE_LAST        501
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
@@ -2215,12 +2228,24 @@ DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
 DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     Dwarf_Half * dw_ab_has_child);
 
-/*!  @brief Validate a sibling DIE.
+/*! @brief Validate a sibling DIE.
 
     This is used by dwarfdump (when
-    dwarfdump is checking for valid DWARF but
-    it depends on the caller to have done
-    precise setup. Ignore it. It has to change.
+    dwarfdump is checking for valid DWARF)
+    to try to catch a corrupt DIE tree.
+
+    @see example_sibvalid
+
+    @param dw_sibling
+    Pass in a DIE returned by dwarf_siblingof_b().
+    @param dw_offset
+    Set to zero through the pointer.
+    @return
+    Returns DW_DLV_OK if the sibling is
+    at an appropriate place in the section.
+    Otherwise it returns DW_DLV_ERROR indicating
+    the DIE tree is corrupt.
+
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     Dwarf_Off* dw_offset);
@@ -5280,6 +5305,13 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Instead call dwarf_get_fde_info_for_all_regs3()
     and index into the table it fills in.
 
+    If dw_value_type == DW_EXPR_EXPRESSION or
+    DW_EXPR_VALUE_EXPRESSION dw_offset
+    is not set and the caller must
+    evaluate the expression, which usually depends
+    on runtime frame data which cannot be calculated
+    without a stack frame including registers (etc).
+
     @param dw_fde
     Pass in the FDE of interest.
     @param dw_table_column
@@ -5297,6 +5329,10 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     On success returns a register number.
     @param dw_offset
     On success returns a register offset value.
+    In principle these are signed, but historically
+    in libdwarf it is typed unsigned. 
+    Cast the returned value to Dwarf_Signed to
+    get the correct meaning.
     @param dw_block_content
     On success returns a pointer to a block.
     For example, for DW_EXPR_EXPRESSION the block
@@ -5339,7 +5375,18 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
     This has essentially the same return values but
     it refers to the CFA (which is not part of the register
     table)
+    In principle the value returned throuth
+    dw_offset is signed, but historically
+    in libdwarf it is typed unsigned.
+    Cast the returned dw_offset value to Dwarf_Signed to
+    get the correct meaning.
 
+    If dw_value_type == DW_EXPR_EXPRESSION or
+    DW_EXPR_VALUE_EXPRESSION dw_offset
+    is not set and the caller must
+    evaluate the expression, which usually depends
+    on runtime frame data which cannot be calculated
+    without a stack frame including registers (etc).
 */
 DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Addr      dw_pc_requested,
@@ -5470,6 +5517,15 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde dw_fde,
     dwarf_get_cie_info_b() to get the initial instruction bytes
     and instructions byte count you wish to expand.
 
+    Combined with dwarf_get_frame_instruction()
+    or dwarf_get_frame_instruction_a()
+    (the second is like the first but adds an argument for LLVM
+    address space numbers) it enables detailed access to
+    frame instruction fields for evaluation or printing.
+
+    Free allocated memory with
+    dwarf_dealloc_frame_instr_head().
+
     @see examples
 
     @param dw_cie
@@ -5541,9 +5597,8 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
 
     Frame expressions have a variety of formats
     and content. The dw_fields parameter is set to
-    a pointer to
-    a short string with some set of the letters
-    s,u,r,d,c,b which enables determining exactly
+    a pointer to a short string with some set of the letters
+    s,u,r,d,c,b,a which enables determining exactly
     which values the call sets.
     Some examples:
     A @c s in fields[0] means s0 is a signed number.
@@ -5556,8 +5611,16 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
     A @c d in fields means data_alignment_factor is set
 
     A @c c in fields means code_alignment_factor is set
-    There are just nine strings possible and together they
-    describe all possible frame instructions.
+
+    An @c a in fields means an LLVM address space value and
+    only exists if calling dwarf_get_frame_instruction_a().
+
+    The possible frame instruction formats are:
+    @code
+    "" "b" "r" "rb" "rr" "rsd" "rsda" "ru" "rua" "rud"
+    "sd" "u" "uc"
+    @endcode
+    are the possible frame instruction formats.
 */
 DW_API int dwarf_get_frame_instruction(
     Dwarf_Frame_Instr_Head  dw_head,
@@ -5585,8 +5648,14 @@ DW_API int dwarf_get_frame_instruction(
     frame instructions defined by LLVM
     (DW_CFA_LLVM_def_aspace_cfa and DW_CFA_LLVM_def_aspace_cfa_sf)
 
+    Where multiplication is called for (via dw_code_alignment_factor
+    or dw_data_alignment_factor) to produce an offset there
+    is no need to check for overflow as libdwarf has already
+    verified there is no overflow.
+
     The return values are the same except here we have:
-    an @c a in fields[2] means dw_u2 is an address-space
+    an @c a in fields[2] or fields[3] means
+    dw_u2 is an address-space
     identifier for the LLVM CFA instruction.
 */
 DW_API int dwarf_get_frame_instruction_a(
@@ -8502,11 +8571,11 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     On success returns DW_DLV_OK
 */
 DW_API int dwarf_sec_group_sizes(Dwarf_Debug dw_dbg,
-    Dwarf_Unsigned * dw_section_count_out,
-    Dwarf_Unsigned * dw_group_count_out,
-    Dwarf_Unsigned * dw_selected_group_out,
-    Dwarf_Unsigned * dw_map_entry_count_out,
-    Dwarf_Error    * dw_error);
+    Dwarf_Unsigned *dw_section_count_out,
+    Dwarf_Unsigned *dw_group_count_out,
+    Dwarf_Unsigned *dw_selected_group_out,
+    Dwarf_Unsigned *dw_map_entry_count_out,
+    Dwarf_Error    *dw_error);
 
 /*! @brief Return a map between group numbers and section numbers
 
@@ -8539,36 +8608,45 @@ DW_API int dwarf_sec_group_sizes(Dwarf_Debug dw_dbg,
     On success returns DW_DLV_OK
 */
 DW_API int dwarf_sec_group_map(Dwarf_Debug dw_dbg,
-    Dwarf_Unsigned   dw_map_entry_count,
-    Dwarf_Unsigned * dw_group_numbers_array,
-    Dwarf_Unsigned * dw_sec_numbers_array,
-    const char    ** dw_sec_names_array,
-    Dwarf_Error    * dw_error);
+    Dwarf_Unsigned  dw_map_entry_count,
+    Dwarf_Unsigned *dw_group_numbers_array,
+    Dwarf_Unsigned *dw_sec_numbers_array,
+    const char    **dw_sec_names_array,
+    Dwarf_Error    *dw_error);
 /*! @} */
 
 /*! @defgroup leb LEB Encode and Decode
     @{
+
+    These are LEB/ULEB reading and writing
+    functions heavily used inside libdwarf.
+
+    While the DWARF Standard does not mention
+    allowing extra insignificant trailing bytes
+    in a ULEB these functions allow a few such
+    for compilers using extras for alignment
+    in DWARF.
 */
-DW_API int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
-    int * /*nbytes*/,
-    char * /*space*/,
-    int /*splen*/);
-DW_API int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
-    int * /*nbytes*/,
-    char * /*space*/,
-    int /*splen*/);
+DW_API int dwarf_encode_leb128(Dwarf_Unsigned dw_val,
+    int  *dw_nbytes,
+    char *dw_space,
+    int   dw_splen);
+DW_API int dwarf_encode_signed_leb128(Dwarf_Signed dw_val,
+    int  *dw_nbytes,
+    char *dw_space,
+    int   dw_splen);
 /*  Same for LEB decoding routines.
     caller sets endptr to an address one past the last valid
     address the library should be allowed to
     access. */
-DW_API int dwarf_decode_leb128(char * /*leb*/,
-    Dwarf_Unsigned * /*leblen*/,
-    Dwarf_Unsigned * /*outval*/,
-    char           * /*endptr*/);
-DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
-    Dwarf_Unsigned * /*leblen*/,
-    Dwarf_Signed   * /*outval*/,
-    char           * /*endptr*/);
+DW_API int dwarf_decode_leb128(char *dw_leb,
+    Dwarf_Unsigned *dw_leblen,
+    Dwarf_Unsigned *dw_outval,
+    char           *dw_endptr);
+DW_API int dwarf_decode_signed_leb128(char *dw_leb,
+    Dwarf_Unsigned *dw_leblen,
+    Dwarf_Signed   *dw_outval,
+    char           *dw_endptr);
 /*! @} */
 
 /*! @defgroup miscellaneous Miscellaneous Functions
@@ -8725,37 +8803,37 @@ DW_API Dwarf_Small dwarf_set_default_address_size(
 /*! @defgroup objectdetector Determine Object Type of a File
     @{
 */
-DW_API int dwarf_object_detector_path_b(const char * /*path*/,
-    char         *   /* outpath_buffer*/,
-    unsigned long    /* outpathlen*/,
-    char **          /* gl_pathnames*/,
-    unsigned int     /* gl_pathcount*/,
-    unsigned int *   /* ftype*/,
-    unsigned int *   /* endian*/,
-    unsigned int *   /* offsetsize*/,
-    Dwarf_Unsigned * /* filesize*/,
-    unsigned char *  /* pathsource*/,
-    int * /*errcode*/);
+DW_API int dwarf_object_detector_path_b(const char * dw_path,
+    char           *dw_outpath_buffer,
+    unsigned long   dw_outpathlen,
+    char **         dw_gl_pathnames,
+    unsigned int    dw_gl_pathcount,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_filesize,
+    unsigned char  *dw_pathsource,
+    int * dw_errcode);
 
 /* Solely looks for dSYM */
-DW_API int dwarf_object_detector_path_dSYM(const char * /*path*/,
-    char *         /* outpath*/,
-    unsigned long  /* outpath_len*/,
-    char **        /* gl_pathnames*/,
-    unsigned int   /* gl_pathcount*/,
-    unsigned int * /* ftype*/,
-    unsigned int * /* endian*/,
-    unsigned int * /* offsetsize*/,
-    Dwarf_Unsigned  * /* filesize*/,
-    unsigned char  *  /* pathsource*/,
-    int *             /* errcode*/);
+DW_API int dwarf_object_detector_path_dSYM(const char * dw_path,
+    char *          dw_outpath,
+    unsigned long   dw_outpath_len,
+    char **         dw_gl_pathnames,
+    unsigned int    dw_gl_pathcount,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_filesize,
+    unsigned char  *dw_pathsource,
+    int *           dw_errcode);
 
-DW_API int dwarf_object_detector_fd(int /*fd*/,
-    unsigned int * /*ftype*/,
-    unsigned int * /*endian*/,
-    unsigned int * /*offsetsize*/,
-    Dwarf_Unsigned  * /*filesize*/,
-    int *  /*errcode*/);
+DW_API int dwarf_object_detector_fd(int dw_fd,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_filesize,
+    int            *dw_errcode);
 
 /*! @}
 */

@@ -2,6 +2,9 @@ name: macautotool
 
 on: 
   workflow_dispatch:
+
+permissions: read-all
+
 jobs:
  macos_autotools:
     runs-on: macos-latest

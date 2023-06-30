@@ -195,6 +195,19 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     Dwarf_Unsigned section_sizes_tab_offset = 0;
     unsigned datalen32 = SIZEOFT32;
     Dwarf_Small *section_end = 0;
+/* FIXME */
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: Dwarf_Debug pointer "
+            "is not valid");
+        return DW_DLV_ERROR;
+    }
+    if (!section_type || !xuptr) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: section type or header "
+            "return pointer is not valid");
+        return DW_DLV_ERROR;
+    }
 
     if (!strcmp(section_type,"cu") ) {
         sect = &dbg->de_debug_cu_index;
@@ -518,8 +531,21 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Error    *error)
 {
     Dwarf_Unsigned sec_num = 0;
-    Dwarf_Debug dbg = xuhdr->gx_dbg;
-
+    Dwarf_Debug dbg = 0;
+    if (!xuhdr) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: "
+            "Dwarf_Xu_Index_Header is NULL");
+        return DW_DLV_ERROR;
+    }
+    dbg = xuhdr->gx_dbg;
+/* FIXME */
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: Dwarf_Debug pointer "
+            "from Dwarf_Xu_Index_Header is not valid");
+        return DW_DLV_ERROR;
+    }
     if ( column_index >= xuhdr->gx_column_count_sections) {
         dwarfstring s;
 
@@ -562,20 +588,38 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
 {
     /* We use zero origin in the arrays, Users see
         one origin from the hash table. */
-    Dwarf_Debug dbg = xuhdr->gx_dbg;
+    Dwarf_Debug dbg = 0;
     /* get to base of tables first. */
-    Dwarf_Small *offsetrow =  xuhdr->gx_section_offsets_offset +
-        xuhdr->gx_section_data;
-    Dwarf_Small *sizerow =  xuhdr->gx_section_sizes_offset +
-        xuhdr->gx_section_data;
+    Dwarf_Small *offsetrow =  0;
+    Dwarf_Small *sizerow =  0;
     Dwarf_Small *offsetentry = 0;
     Dwarf_Small *sizeentry =  0;
     Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned size = 0;
-    Dwarf_Unsigned column_count = xuhdr->gx_column_count_sections;
-    Dwarf_Small *section_end = xuhdr->gx_section_data +
-        xuhdr->gx_section_length;
+    Dwarf_Unsigned column_count = 0;
+    Dwarf_Small *section_end = 0;
     Dwarf_Unsigned row_index = irow_index-1;
+
+    if (!xuhdr) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: "
+            "Dwarf_Xu_Index_Header pointer is null");
+        return DW_DLV_ERROR;
+    }
+/* FIXME */
+    dbg = xuhdr->gx_dbg;
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: Dwarf_Debug pointer "
+            "from Dwarf_Xu_Index_Header is not valid");
+        return DW_DLV_ERROR;
+    }
+    sizerow =  xuhdr->gx_section_sizes_offset +
+        xuhdr->gx_section_data;
+    offsetrow =  xuhdr->gx_section_offsets_offset +
+        xuhdr->gx_section_data;
+    column_count = xuhdr->gx_column_count_sections;
+    section_end = xuhdr->gx_section_data + xuhdr->gx_section_length;
 
     if (!irow_index) {
         dwarfstring s;
@@ -915,6 +959,21 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
     int sres = 0;
     Dwarf_Unsigned percu_index = 0;
     Dwarf_Xu_Index_Header xuhdr = 0;
+
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: Dwarf_Debug pointer "
+            "is not valid");
+        return DW_DLV_ERROR;
+/*FIXME */
+    }
+    if (!key || !key_type || !percu_out) {
+        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: dw_key, dw_keytype, or "
+            "Dwarf_Debug_Fission_Per_CU pointer* to return "
+            "is not valid");
+        return DW_DLV_ERROR;
+    }
 
     sres = _dwarf_load_debug_info(dbg,error);
     if (sres == DW_DLV_ERROR) {

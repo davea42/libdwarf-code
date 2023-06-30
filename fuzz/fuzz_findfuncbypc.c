@@ -112,6 +112,10 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char real_path[PATH_LEN];
   struct target_data_s target_data;
 
+  /*  Added 19 May 2023 so valgrind will not complain
+      about testing uninitialized values in
+      check_coup_dir (for example). */
+  memset(&target_data,0,sizeof(target_data));
   int res =
       dwarf_init_path(filepath, 0, 0, DW_GROUPNUMBER_ANY, 0, 0, &dbg, &error);
   if (res == DW_DLV_ERROR) {

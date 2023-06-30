@@ -131,7 +131,7 @@ static special_filedata_internals_t base_internals =
 
 static
 int gsinfo(void* obj,
-    Dwarf_Half section_index,
+    Dwarf_Unsigned section_index,
     Dwarf_Obj_Access_Section_a* return_section,
     int* error )
 {
@@ -194,7 +194,7 @@ Dwarf_Unsigned gseccount(void* obj)
 }
 static
 int gloadsec(void * obj,
-    Dwarf_Half secindex,
+    Dwarf_Unsigned secindex,
     Dwarf_Small**rdata,
     int *error)
 {

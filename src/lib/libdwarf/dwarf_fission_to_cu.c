@@ -99,8 +99,8 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  ASSERT: cc_str_offsets_base_present FALSE
-    ASSERT: cc_str_offsets_header_length_present  FALSE
+/*
+
     ASSERT: dbg,cu_context, and fsd are non-NULL
     as the caller ensured that.
     If .debug_cu_index or
@@ -166,11 +166,11 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
         /*  See dwarf_opaque.h for comments. */
         cu_context->cc_str_offsets_tab_present = TRUE;
         cu_context->cc_str_offsets_header_offset = soff_hdroffset;
-        cu_context->cc_str_offsets_tab_to_array_present = TRUE;
         cu_context->cc_str_offsets_tab_to_array =
             local_offset_to_array;
-        cu_context->cc_str_offsets_offset_size = offset_size;
+        cu_context->cc_str_offsets_table_size = total_table_length;
         cu_context->cc_str_offsets_version = version;
+        cu_context->cc_str_offsets_offset_size = offset_size;
     }
     return DW_DLV_OK;
 }

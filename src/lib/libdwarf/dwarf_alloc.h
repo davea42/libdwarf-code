@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2000,2005 Silicon Graphics, Inc.  All Rights Reserved.
-   Portions Copyright (C) 2008-2011  David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2008-2023  David Anderson. All Rights Reserved.
 
    This program is free software; you can redistribute it
    and/or modify it under the terms of version 2.1 of the
@@ -42,3 +42,4 @@ void _dwarf_error_destructor(void *);
 
 void _dwarf_add_to_static_err_list(Dwarf_Error err);
 void _dwarf_flush_static_error_list(void);
+void _dwarf_free_static_errlist(void);

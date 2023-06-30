@@ -91,7 +91,7 @@ dwarf_add_arange_c(Dwarf_P_Debug dbg,
 
 int
 _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs, Dwarf_Error * error)
+    Dwarf_Unsigned *nbufs, Dwarf_Error * error)
 {
     /* Total num of bytes in .debug_aranges section. */
     Dwarf_Unsigned arange_num_bytes = 0;

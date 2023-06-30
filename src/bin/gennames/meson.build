@@ -4,9 +4,14 @@ gennames_src = [
   'gennames.c'
 ]
 
+gennames_args = ['-I.']
+if (lib_type == 'static')
+  gennames_args += ['-DLIBDWARF_STATIC']
+endif
+
 localinclude = include_directories('../dwarfdump')
 executable('gennames', gennames_src,
-  c_args : [ dev_cflags, libdwarf_args, '-I.' ],
+  c_args : [ dev_cflags, libdwarf_args, gennames_args ],
   dependencies : libdwarf,
   include_directories : [ config_dir, localinclude],
   install : false

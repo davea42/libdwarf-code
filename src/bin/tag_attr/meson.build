@@ -18,6 +18,10 @@ tag_attr_args = [
   '-DBUILD_NONLIB_SOURCE',
 ]
 
+if (lib_type == 'static')
+  tag_attr_args += ['-DLIBDWARF_STATIC']
+endif
+
 localinclude = include_directories('../dwarfdump')
 
 executable('tag_attr', tag_attr_src,

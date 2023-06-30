@@ -239,6 +239,21 @@ _dwarf_add_to_static_err_list(Dwarf_Error error)
         ++static_used;
     }
 }
+/*  This will free everything in the staticerrlist,
+    but that is ok */
+void
+_dwarf_free_static_errlist(void)
+{
+    unsigned i = 0;
+
+    for ( ; i <static_used; ++i) {
+        Dwarf_Error e = staticerrlist[i];
+        if (e) {
+            dw_empty_errlist_item(e);
+            staticerrlist[i] = 0;
+        }
+    }
+}
 
 static const
 struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
@@ -1055,9 +1070,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     unsigned g = 0;
 
     if (dbg == NULL) {
+        _dwarf_free_static_errlist();
         return DW_DLV_NO_ENTRY;
     }
     if (dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_free_static_errlist();
         return DW_DLV_NO_ENTRY;
     }
     /*  To do complete validation that we have no surprising
@@ -1126,6 +1143,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
         dbg->de_alloc_tree = 0;
     }
+    _dwarf_free_static_errlist();
     /*  first, walk the search and free()
         contents. */
     /*  Now  do the search tree itself */
@@ -1153,7 +1171,9 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     Something with the prefix (prefix space hidden from caller).
 
     Only applies to DW_DLA_ERROR, and  making up an error record.
-    The allocated space simply leaks.
+
+    dwarf_error.c calls this and it adds to the staticerrlist
+    all of which is freed by free_static_errlist();
 */
 struct Dwarf_Error_s *
 _dwarf_special_no_dbg_error_malloc(void)

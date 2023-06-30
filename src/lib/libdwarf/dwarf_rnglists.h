@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020, David Anderson
+Copyright (c) 2020-2023, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with

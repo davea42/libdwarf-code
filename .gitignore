@@ -5,6 +5,8 @@ build/
 cscope.files
 TAGS
 *.exe
+bugxml/__pycache__
+doc/libhtmldoc.tar
 
 # autotools ignore
 *.lo

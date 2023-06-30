@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
-Portions Copyright (C) 2008-2020 David Anderson.  All Rights Reserved.
+Portions Copyright (C) 2008-2023 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -676,6 +676,12 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_IMPROPER_SECTION_ZERO(497) Section zero header contents "
     "incorrect. See Elf ABI.  Unsafe object."},
 {"DW_DLE_INVALID_NULL_ARGUMENT(498) Argument must be a valid "
-    "pointer and non-null"}
+    "pointer and non-null"},
+{"DW_DLE_LINE_INDEX_WRONG(499) An index into a line table is "
+    "not valid. Corrupt data."},
+{"DW_DLE_LINE_COUNT_WRONG(500) A count in a line table is "
+    "not valid. Corrupt data."},
+{"DW_DLE_ARITHMETIC_OVERFLOW(501) Arithmetic overflow. "
+    " Corrupt Dwarf." }
 };
 #endif /* DWARF_ERRMSG_LIST_H */

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2023 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -264,24 +264,36 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_loclists_base_present;
     Dwarf_Bool     cc_loclists_header_length_present;
 
-    /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs
-        DW_AT_str_offsets_base (table array offset) .
-        Here cc_str_offsets_tab_present
-        paired with cc_str_offsets_header_offset
-        which is what the offset means */
+    /* ======= str_offsets table data  =======*/
+    /*  header_offset is global offset in str_offsets section
+        of an array of string offsets. Not a header offset
+        at all.
+        from DW_AT_str_offsets_base DW5 page 66 item 13.
+        Not related to the Name Table */
+    /*  Set from DW_AT_str_offsets_base. Global offset. */
+    Dwarf_Bool     cc_str_offsets_array_offset_present;
+    Dwarf_Unsigned cc_str_offsets_array_offset;
+
+    /*  Set from str_offsets header, means all the relevant
+        data from the header is present. Does not mean
+        the data from DW_AT_str_offsets_base is present */
     Dwarf_Bool     cc_str_offsets_tab_present;
-    /*  Without tab_to_array present we cannot do much. */
-    Dwarf_Bool     cc_str_offsets_tab_to_array_present;
+    /*  Set from str_offsets header. */
+    Dwarf_Unsigned cc_str_offsets_header_offset;
 
-    /*  header_offset is global offset in str_offsets section. */
-    Dwarf_Unsigned cc_str_offsets_header_offset; /* cu/tu etc*/
-    Dwarf_Unsigned cc_str_offsets_table_size;
-
-    /*  to get from the start of a str_offsets table to the
-        offsets array entries. */
+    /*  Set by reading str_offsets header. Local offset
+        from header to its array. */
     Dwarf_Unsigned cc_str_offsets_tab_to_array;
+
+    /*  The following three set but not used. Might
+        be useful for error checking. */
     Dwarf_Unsigned cc_str_offsets_offset_size;
+    /*  The size of the table from table header
+        to end of this table. Not the size of array
+        in the table */
+    Dwarf_Unsigned cc_str_offsets_table_size;
     Dwarf_Half     cc_str_offsets_version;
+    /* ======= end str_offsets table data  =======*/
 
     /*  DW_SECT_MACRO */
     Dwarf_Unsigned cc_macro_base;    /*DW5 */
@@ -395,7 +407,7 @@ struct Dwarf_Section_s {
     Dwarf_Unsigned     dss_link;
     /*  The following is used when reading .rela sections
         (such sections appear in some .o files). */
-    Dwarf_Half     dss_reloc_index; /* Zero means ignore
+    Dwarf_Unsigned     dss_reloc_index; /* Zero means ignore
         the reloc fields. */
     Dwarf_Small *  dss_reloc_data;
     Dwarf_Unsigned dss_reloc_size;
@@ -732,14 +744,14 @@ struct Dwarf_Debug_s {
         so must elf_end() */
 
     /* Default is DW_FRAME_INITIAL_VALUE from header. */
-    Dwarf_Half de_frame_rule_initial_value;
+    Dwarf_Unsigned de_frame_rule_initial_value;
 
     /* Default is   DW_FRAME_LAST_REG_NUM. */
-    Dwarf_Half de_frame_reg_rules_entry_count;
+    Dwarf_Unsigned de_frame_reg_rules_entry_count;
 
-    Dwarf_Half de_frame_cfa_col_number;
-    Dwarf_Half de_frame_same_value_number;
-    Dwarf_Half de_frame_undefined_value_number;
+    Dwarf_Unsigned de_frame_cfa_col_number;
+    Dwarf_Unsigned de_frame_same_value_number;
+    Dwarf_Unsigned de_frame_undefined_value_number;
 
     unsigned char de_big_endian_object; /* Non-zero if
         object being read is big-endian. */
@@ -810,8 +822,6 @@ struct Dwarf_Chain_o {
 #define DISTINGUISHED_VALUE_OFFSET_SIZE 8
 #define DISTINGUISHED_VALUE_ARRAY(x)  char (x)[4] = \
     { 0xff,0xff,0xff,0xff }
-
-int _dwarf_ignorethissection(const char *scn_name);
 
 /*  We don't load the sections until they are needed.
     This function is used to load the section.  */

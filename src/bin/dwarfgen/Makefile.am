@@ -11,6 +11,8 @@ createirepformfrombinary.cc \
 createirepfrombinary.h \
 createirepfrombinary.cc \
 dwarfgen.cc \
+dwarf_elf_defines.h  \
+dwarf_elfstructs.h \
 general.h \
 irepattrtodbg.cc \
 irepattrtodbg.h \

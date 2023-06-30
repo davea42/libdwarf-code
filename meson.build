@@ -1,5 +1,5 @@
 project('libdwarf', ['c','cpp'],
-  version: '0.7.0',
+  version: '0.7.1',
   default_options : ['buildtype=debugoptimized', 'warning_level=3', 'werror=true'],
   meson_version : '>=0.53'
 )
@@ -8,6 +8,8 @@ v_arr = meson.project_version().split('.')
 v_maj = v_arr[0]
 v_min = v_arr[1]
 v_mic = v_arr[2]
+
+lib_type = get_option('default_library')
 
 # install paths
 dir_prefix = get_option('prefix')
@@ -130,29 +132,10 @@ foreach t : [ 'uint64_t', 'uintptr_t', 'intptr_t' ]
   endif
 endforeach
 
-have_libelf = false
-if get_option('libelf') == true
-  header_elf_checks = [ 'libelf.h', 'libelf/libelf.h' ]
-  foreach header : header_elf_checks
-    if cc.has_header(header)
-      config_h.set10('HAVE_'+header.underscorify().to_upper(), true)
-      have_libelf = true
-    endif
-  endforeach
-  if have_libelf == true
-    if cc.has_header('elf.h')
-      config_h.set10('HAVE_ELF_H', true)
-      if get_option('dwarfgen') == true
-        config_h.set10('DWARF_WITH_LIBELF', true)
-      endif
-    endif
-  endif
-endif
-
 subdir('src/lib/libdwarf')
 subdir('src/bin/dwarfdump')
 have_libdwarfp = false
-if have_libelf == true and get_option('dwarfgen') == true
+if get_option('dwarfgen') == true
   subdir('src/lib/libdwarfp')
   subdir('src/bin/dwarfgen')
   have_libdwarfp = true
@@ -210,7 +193,6 @@ endif
 
 summary({'OS': host_os,
          'BuildOS-BigEndian': host_machine.endian() == 'big' ? 'yes' : 'no',
-         'libelf support': have_libelf ? 'yes' : 'no',
          'libdwarf': libdwarf_output,
          'dwarfdump': 'always',
          'libdwarfp': libdwarfp_output,

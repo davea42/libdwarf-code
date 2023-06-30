@@ -1,6 +1,6 @@
 #ifndef DWARF_TSEARCH_H
 #define DWARF_TSEARCH_H
-/* Copyright (c) 2013-2021, David Anderson
+/* Copyright (c) 2013-2023, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with

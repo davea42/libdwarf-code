@@ -80,6 +80,8 @@ ChangeLog \
 ChangeLog2018 \
 ChangeLog2019 \
 ChangeLog2020 \
+ChangeLog2021 \
+ChangeLog2022 \
 cmake \
 CMakeLists.txt \
 CODINGSTYLE.md \

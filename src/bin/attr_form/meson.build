@@ -19,6 +19,11 @@ attr_form_args = [
   '-DBUILD_NONLIB_SOURCE',
   '-DSKIP_AF_CHECK',
 ]
+
+if (lib_type == 'static')
+  attr_form_args += ['-DLIBDWARF_STATIC']
+endif
+
 localinclude = include_directories('../dwarfdump')
 
 executable('attr_form', attr_form_src,
