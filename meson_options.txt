@@ -1,10 +1,4 @@
 
-option('libelf',
-  type : 'boolean',
-  value : true,
-  description : 'enable libelf support'
-)
-
 option('dwarfgen',
   type : 'boolean',
   value : false,
