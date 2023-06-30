@@ -1,3 +1,233 @@
+2023-06-29:  David Anderson
+    commit 5b2ba5649702d5ad7b5fbe11a48af704885eafb0
+
+    Remove libelf references except
+    to say it is never referenced as of now.
+            modified:   README
+            modified:   README.cmake
+            modified:   README.md
+
+2023-06-29:  David Anderson
+    commit 4270e7d4f3f0b36b10861dbc90d0127837136d97
+
+    Completely missed a test for an alloc fail in one place,
+    and failed to return useful error text in the case where
+    a correct check for alloc fail was done.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-06-29:  David Anderson
+    commit cfecc8d526d3c66ede35c0e4cfaec7da5e30535c
+
+    The ASNX macro needed a tiny change
+    to avoid compiler warnings on big-endian
+    machine.  Due to the change of how
+    things like sh_type_ (for example)
+    are defined.
+            modified:   dwarfgen.cc
+
+2023-06-29:  David Anderson
+    commit 77d9cad797963942497d004103b602d55f5a7882
+
+    Remove all references to libelf and to elf.h
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   meson.build
+
+2023-06-29:  David Anderson
+    commit fd3c0b9593801941924da35fcf0642e149c0c21b
+
+    Fix compiler warnings about unused variables
+    etc.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+
+2023-06-29:  David Anderson
+    commit a3c918dd60eeed229e7841e35f189a4bcf672e5f
+
+    Remove an uused #define (was for libelf use).
+            modified:   src/bin/dwarfgen/dwarf_elf_defines.h
+
+2023-06-29:  David Anderson
+    commit 12781997e08d74aaf0df42c7fc60d8491db4f436
+
+    Finish up changing nbufs from Dwarf_Signed to
+    Dwarf_Unsigned.
+            modified:   src/lib/libdwarfp/dwarf_pro_arange.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.h
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.h
+            modified:   src/lib/libdwarfp/dwarf_pro_types.c
+            modified:   src/lib/libdwarfp/dwarf_pro_types.h
+
+2023-06-28:  David Anderson
+    commit ca199e529e17dd4747c0e209a05711f68d4f5d03
+    Merge: 0bf73a21 6087df9e
+
+    Merge branch 'wr-elf'
+
+    Now with no need for libelf anywhere..
+
+2023-06-28:  David Anderson
+    commit 6087df9e17df47095f55314aa4be6d9745cc683b
+
+    tiny tweak setting sh_addralign.
+            modified:   dwarfgen.cc
+
+2023-06-28:  David Anderson
+    commit dc4c5049940d1ecbec351d0688824a5acc4ee247
+
+    generated object now with mode
+    read/write for all (not execute for anyone).
+            modified:   dwarfgen.cc
+
+2023-06-28:  David Anderson
+    commit cfd65e1c94e5a21cdc8c37f58bbece1f3fa81f3b
+
+    Now seems to generate our limited elf
+    as created by dwarfgen ...
+    correctly.
+            modified:   dwarfgen.cc
+
+2023-06-28:  David Anderson
+    commit 7f6bc8c1d49af2f52e94bed368474493d15a28ea
+
+    Changed a type from unsigned to Dwarf_Unsigned.
+            modified:   irepresentation.h
+
+2023-06-28:  David Anderson
+    commit c6e459e00dfeee00be7f32ab7589cf6e3bd07f37
+
+    Almost works. DO NOT USE THIS COMMIT
+            modified:   dwarfgen.cc
+
+2023-06-27:  David Anderson
+    commit 3c6a9a538f6682d45f40b0bed8e93c4a19b5dfec
+
+    Now also writes.
+    DO NOT USE THIS COMMIT.
+            modified:   dwarfgen.cc
+
+2023-06-27:  David Anderson
+    commit 32a769c9d98ab744674cb4b2d26baea922299d9c
+
+    DO NOT USE THIS COMMIT.
+    Compiles, but is incomplete.
+            modified:   dwarfgen.cc
+
+2023-06-26:  David Anderson
+    commit 0bf73a21035510aaa51d508670c7e6d02bef76a7
+
+    Completing records on DW202306-011
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-26:  David Anderson
+    commit 6f75899f1f90fa87e52da0df09ddaa2e5be778f9
+
+    Correction to a sanity test.
+    DW202306-011  ossfuzz 60090
+    The test was < yet was supposed to be >= .
+    The test itself is just a few weeks old.
+    Near line 855.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-06-25:  David Anderson
+    commit c10644be2f21737ac2b20e586c65e79f9ae8aedc
+
+    DO NOT USE THIS COMMIT.
+    It's a work in progress.
+            modified:   Makefile.am
+            modified:   dwarfgen.cc
+            modified:   irepresentation.h
+            modified:   strtabdata.h
+
+2023-06-24:  David Anderson
+    commit 6753a63c4dae4b71908fb446fcb93e986e536289
+
+    Now just char arrays.
+            modified:   dwarf_elfstructs.h
+
+2023-06-24:  David Anderson
+    commit 0609f2efe2a501f331f265c491a2f9c1d8783d1e
+
+    Not needed
+            deleted:    dwarf_elf_data.h
+
+2023-06-24:  David Anderson
+    commit 53744098650689bcfcf5441525b1634798c39c2c
+
+    Not wanted now.
+            deleted:    dwarf_elf_interface.h
+
+2023-06-22:  David Anderson
+    commit 680d91ea3dfd4def97ea7119621ab2f58d21481e
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-19:  David Anderson
+    commit fe967a59a203ab08376d416c6eba754ea0ba111c
+
+    Correctly states the default library
+    for cmake is a static library, libdwarf.a
+            modified:   README.cmake
+
+2023-06-19:  David Anderson
+    commit 53463eff32b9ee59bf94915286f89a4f6301b6cb
+
+    Latest bug has improved comments.
+            modified:   bugxml/data.txt
+
+2023-06-19:  David Anderson
+    commit 08cfa285846d7c4a2da011c944927a0d55847987
+
+    Comparing a signed value to unsigned in one
+    new test was a mistake. Now properly qualified
+    to avoid a mistaken if()
+    (this is a test only applicable to IRIX. )
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-06-19:  David Anderson
+    commit 9479e68b4734f27679d36297a3a04b0a213b4934
+
+    Have fixed DW202306-010.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-06-19:  David Anderson
+    commit b7437c9e4923906e9b3f3860a0c8a8289cff0a91
+
+    Vulnerability DW202306-010 ossfuzz id: 59950.
+    Now we check for bad augmentation data
+    (like field lengths) where checking was
+    inadequate.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-06-19:  David Anderson
+    commit 72f3333e2646f350f0c9ee2e342bb4809aab051d
+
+            modified:   .github/workflows/freebsd_cmake.yml
+            modified:   .github/workflows/mac_autotools.yml
+            modified:   .github/workflows/mac_meson.yml
+            modified:   .github/workflows/msys2_autotools.yml
+
+    Now all the workflows have the permissions:
+    line in the standard position following an on:
+    (rather than before the on:)
+
+2023-06-18:  David Anderson
+    commit cee6ad7da45827aeee00f93b622066264f041600
+
+    Bringing ChangeLog up to date.
+            modified:   ChangeLog
+
 2023-06-18:  David Anderson
     commit 277e4f718e0061a068a74287291a4d8e8d18e94a
 
