@@ -186,10 +186,6 @@ libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
-if have_libdwarfp
-  libdwarfp_output += ' (elf64_getehdr: ' + (have_getehdr ? 'yes' : 'no')
-  libdwarfp_output += ', elf64_getshdr: ' + (have_getshdr ? 'yes' : 'no') + ')'
-endif
 
 summary({'OS': host_os,
          'BuildOS-BigEndian': host_machine.endian() == 'big' ? 'yes' : 'no',
