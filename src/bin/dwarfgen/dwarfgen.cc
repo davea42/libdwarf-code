@@ -370,8 +370,6 @@ public:
        bytes_ = bytes;
        len_ = len;
     };
-    void setFileOffset(Dwarf_Unsigned b) {fileoffset_=b;};
-    Dwarf_Unsigned getFileOffset() { return fileoffset_;};
     void setBlob(unsigned char *bytes,size_t len) {
        if (len_) {
            cout << "dwarfgen: Duplicate ByteBlob setting " <<
@@ -384,7 +382,6 @@ public:
     };
     unsigned char *bytes_;
     Dwarf_Unsigned len_;
-    Dwarf_Unsigned fileoffset_;
     ~ByteBlob() { bytes_ = 0; len_= 0; };
 };
 
@@ -406,7 +403,7 @@ public:
     Dwarf_Unsigned e_shentsize_;
     Dwarf_Unsigned e_shnum_;
     Dwarf_Unsigned e_shstrndx_;
-    bool           e_dwarf_32bit_; // 
+    bool           e_dwarf_32bit_; 
     dw_elf32_ehdr e_32_;
     dw_elf64_ehdr e_64_;
     unsigned  char  e_ptrbytesize_;
@@ -422,7 +419,9 @@ public:
         e_type_= 0; e_machine_= 0;; e_version_= 0;; e_entry_= 0;
         e_phoff_= 0; e_shoff_= 0; e_flags_= 0; e_ehsize_= 0;
         e_phentsize_= 0; e_phnum_= 0; e_shentsize_= 0; e_shnum_= 0;
-        e_shstrndx_ = 0; e_ptrbytesize_=0; e_hdrlen_ = 0;
+        e_shstrndx_ = 0; 
+        e_dwarf_32bit_ = true;
+        e_ptrbytesize_=0; e_hdrlen_ = 0;
     };
 };
 
@@ -496,10 +495,10 @@ public:
     
     void add_section_content(unsigned char *data,
         Dwarf_Unsigned datalen) {
-        ByteBlob x = ByteBlob(data,datalen);  
+        ByteBlob x(data,datalen);  
         sectioncontent_.push_back(x);
         sh_size_ += datalen;
-    }
+    };
     Dwarf_Unsigned getSectionNameSymidx() {
         return section_name_symidx_.getSymIndex(); };
     void setSectIndex(unsigned v) { elf_sect_index_ = v; };
