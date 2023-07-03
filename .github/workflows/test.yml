@@ -131,7 +131,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: tools
-      run:  |
+      run: 
         brew install cmake ninja
     - name:
      run:  |
