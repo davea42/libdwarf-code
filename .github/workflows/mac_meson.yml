@@ -12,7 +12,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: tools
       run:  |
-        brew install pkgconf meson ninja
+        brew install meson ninja
+        brew install --overwrite pkgconf
 #        brew install --overwrite python@3.11
 #        brew install --overwrite pkgconf
 #        brew install  python@3.11
