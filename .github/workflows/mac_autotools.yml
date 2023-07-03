@@ -12,8 +12,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: tools
       run:  |
-        brew install autoconf automake libtool pkgconf
-#        brew install --overwrite pkgconf
+        brew install autoconf automake libtool
+        brew install --overwrite pkgconf
     - name: autoreconf
       run: autoreconf --warnings=all  -vif
     - name: config
