@@ -130,10 +130,10 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: tools
+    - name: brew
       run: 
         brew install cmake ninja
-    - name:
+    - name: cmake
      run:  |
         mkdir builddir && cd builddir
         cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
@@ -144,12 +144,12 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: tools
+    - name: brew
       run:  |
         brew install meson ninja
         brew install --overwrite pkgconf
         #brew install --overwrite python@3.11
-    - name:
+    - name: meson
       run:  |
         mkdir builddir && cd builddir
         meson . .. -Ddwarfexample=true
