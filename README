@@ -252,6 +252,11 @@ add
 to the meson command line (applies to meson
 builds in Linux,Macos, and Windows-mingw).
 
+On Windows-mingw one can build static libdwarf
+when using cmake or meson (configure will
+not allow a static libdwarf to be built
+on Windows).
+
 See Options to meson on Windows (Msys2) above.
 
 ### Comparing libdwarf-0.7.0 to libdwarf-0.6.0
