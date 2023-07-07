@@ -1,9 +1,15 @@
 # Libdwarf/dwarfdump etc  coding style.
 
-Latest update: 17 December 2021
+Latest update (minor clarifications): 7 July 2023
+
 Adapted from the Cairo coding style document
 
 Libdwarf/dwarfdump etc  coding style.
+
+In "Tools that help" we provide a tool (dicheck)
+that enforces some parts of the coding style.
+Please don't submit changes (longer
+than a few lines) that cause messages from dicheck.
 
 This document is intended to be a short description of the
 preferred coding style for the libdwarf and
@@ -17,12 +23,15 @@ some of the specific details seem trivial. If nothing else,
 this document gives a place to put consistent answers for
 issues that would otherwise be arbitrary.
 
+We avoid using features of C standardised
+after ANSI C89,ISO C90.
+
 Most of the guidelines here are demonstrated by examples,
 (which means this document is quicker to read than it might
 appear given its length). Most of the examples are positive
 examples that you should imitate. The few negative examples
 are clearly marked with a comment of /* Yuck! */. Please
-don't submit code for libdwarf that looks like any of these.
+don't submit code for libdwarf that looks like any Yuck!
 
 Section list:
 
@@ -45,7 +54,7 @@ Section list:
     Argument Lists
     Tools that help
 
-###Indentation
+### Indentation
 Each new level is indented 4 more spaces than the previous level,
 and an if is followed by a space and a left-parenthesis:
 
