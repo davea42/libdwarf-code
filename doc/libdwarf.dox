@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-06-13 v0.7.1
+    @date 2023-07-07 v0.7.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -389,6 +389,7 @@
     @link string Strings can be read independently @endlink
 
     @link str_offsets String Offsets can be read independently @endlink
+    @link debug_addr The addr table can be read independently @endlink
 
     Those functions allow starting at byte 0 of the
     section and provide a length so you can calculate
