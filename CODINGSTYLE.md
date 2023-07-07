@@ -122,7 +122,7 @@ with blank lines:
 
     struct _Dwarf_Data_s {
         struct Something_s  op;
-        double tolerance;
+        double         tolerance;
         Dwarf_Unsigned line_width;
         Dwarf_Unsigned line_height;
         Dwarf_Unsigned line_thickness;
@@ -132,7 +132,7 @@ with blank lines:
             and the blank line above this comment to
             make it clear the comment applies to fill_rule. */
         struct Reg_Struct_s  fill_rule;
-        Dwarf_Signed distance_from_end;
+        Dwarf_Signed   distance_from_end;
         ...
     };
 
