@@ -140,15 +140,15 @@ Having both CamelCase in names and _ in the names
 used by the library
 is perhaps unusual, but it's been that way
 in the libdwarf source since the library was
-first written.
-so we sitck with it in most cases.
+first written.  
+So we stick with it in most cases.
 
 Never use a space before a function-call left parenthesis
 or a macro-call left parenthesis. 
 
-Don't eliminate newlines just because things would still fit
-on one line if it breaks the expected visual structure of
-the code making it harder to read and understand:
+Don't remove newlines just because things would still fit
+on one line if removal breaks the expected visual structure of
+the code.  
 
 Eliminate trailing whitespace on any line. Also, avoid putting
 initial or final blank lines into any file, and never use
