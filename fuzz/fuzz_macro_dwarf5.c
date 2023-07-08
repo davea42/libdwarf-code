@@ -107,7 +107,9 @@ int examplep5(Dwarf_Die cu_die, Dwarf_Error *error) {
   unsigned k = 0;
 
   /*  Just call once each way to test both.
-      Really the second is just for imported units.*/
+      Really the second is just for imported units,
+      but this is a  way to get testing of both calls.
+  */
   for (; k < 2 ;++k) {
     if (is_primary) {
       lres = dwarf_get_macro_context(cu_die, &version, &macro_context,

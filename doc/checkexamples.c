@@ -1745,20 +1745,23 @@ int exampledebugnames(Dwarf_Debug dbg,
 
     This example does not actually do the import at
     the correct time as this is just checking
-    import offsets, not creating
-    a proper full list (in the proper order) of the
+    import offsets, not creating a proper full 
+    list (in the proper order) of the
     macros with the imports inserted.
-
-    A candidate set of hypothetical functions that
-    callers would write for this special checking
-    purpose:
+    Here we find the macro context for a DIE,
+       report those macro entries, noting
+       any macro_import in a list
+       loop extracting unchecked macro offsets from the list
+          note any import in a list
+    Of course some functions are not implemented here...
 
     @code
 */
-int  has_unchecked_import_in_list(void);
+int            has_unchecked_import_in_list(void);
 Dwarf_Unsigned get_next_import_from_list(void);
-void mark_this_offset_as_examined(Dwarf_Unsigned macro_unit_offset);
-void add_offset_to_list(Dwarf_Unsigned offset);
+void           mark_this_offset_as_examined(
+                  Dwarf_Unsigned macro_unit_offset);
+void           add_offset_to_list(Dwarf_Unsigned offset);
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
