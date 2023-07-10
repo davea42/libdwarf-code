@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.3)
 
 project(libdwarf C CXX)
 
+# export all symbol for msvc
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include_directories( ${PROJECT_BINARY_DIR} )
 
