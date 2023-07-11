@@ -28,6 +28,7 @@
    Fifth Floor, Boston MA 02110-1301, USA.
 
 */
+#include <stdio.h>
 
 /*  This is #included twice. Once for
     libdwarf callers and one for dwarfdump which prints
@@ -660,7 +661,24 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_ptr += local_length_size;
         /* Later tests will deal with the == case as required. */
         if (line_ptr > line_ptr_end) {
-            _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+                "DW_DLE_LINE_OFFSET_BAD "
+                "The line table pointer points past end "
+                "of line table.");
+            return DW_DLV_ERROR;
+        }
+        if (actuals_table_offset > dbg->de_filesize) {
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+                "DW_DLE_LINE_OFFSET_BAD "
+                "The line table actuals offset is larger than "
+                " the size of the object file. Corrupt DWARF");
+            return DW_DLV_ERROR;
+        }
+        if ((line_ptr+actuals_table_offset) > line_ptr_end) {
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+                "DW_DLE_LINE_OFFSET_BAD "
+                "The line table actuals offset is too large "
+                "to be real."); 
             return DW_DLV_ERROR;
         }
     }
