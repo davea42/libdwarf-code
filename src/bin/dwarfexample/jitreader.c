@@ -221,7 +221,7 @@ const Dwarf_Obj_Access_Methods_a methods = {
     gloadsec,
     0 /* no relocating anything */
     };
-struct Dwarf_Obj_Access_Interface_a_s interface =
+struct Dwarf_Obj_Access_Interface_a_s dw_interface =
 { &base_internals,&methods };
 
 static const Dwarf_Sig8 zerosignature;
@@ -432,7 +432,7 @@ int main(int argc, char **argv)
     }
     /*  Fill in interface before this call.
         We are using a static area, see above. */
-    res = dwarf_object_init_b(&interface,
+    res = dwarf_object_init_b(&dw_interface,
         0,0,DW_GROUPNUMBER_ANY,&dbg,
         &error);
     if (res == DW_DLV_NO_ENTRY) {
