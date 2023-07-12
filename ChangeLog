@@ -1,3 +1,209 @@
+2023-07-12:  David Anderson
+    commit 81c4c9b69fc8f7a7fe41b321659d6165fc3b5491
+
+    The side effect of changing some attribute
+    printing is these baselines for 'make check'
+    have to be updated. Done.
+            modified:   test/test-mach-o-32.base
+            modified:   test/testobjLE32PE.base
+            modified:   test/testuriLE64ELf.base
+
+2023-07-12:  David Anderson
+    commit 9ba4501eff0e21422b3986f36d6d8b7df43ad911
+
+    Remove a couple special cases, unifying
+    under a commot version
+    The visible side effect is that things like address_size
+    print as 4 instead of 0x00000004 in most cases.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-07-12:  David Anderson
+    commit f3c20004f7a0857e711e2528c1a7b1d210734b05
+
+    Changing the name of a local variable for the convenience
+    of a Windows user. See github issue 173
+            modified:   src/bin/dwarfexample/jitreader.c
+
+2023-07-11:  David Anderson
+    commit fb90950e8146a81b8b0fe68fe971a655fd592f24
+
+    Adding  DW202307-001
+    Also, ensuring that
+    references to regressiontests start
+    with regressiontests/ (A few such
+    were left off).
+            modified:   bugxml/data.txt
+
+2023-07-11:  David Anderson
+    commit c8c5073f35b1efdcc610ecf369c78f87fdd34714
+
+    Vulnerability DW202307-001 ossfuzz id: 60506
+    Reading a fuzzed object with a corrupted
+    experimental (non-standard) line table format
+    could result in a crash/out-of-bounds-read.
+    Present since October 2015 when support for this
+    form of line table was added.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-07-08:  David Anderson
+    commit c95f0584878e9443f940930bb26ec5e3a4de5815
+
+    Added clarifying comments about printing
+    macro data and handling of macro import.
+    No logic change.
+            modified:   doc/checkexamples.c
+            modified:   fuzz/fuzz_macro_dwarf5.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2023-07-07:  David Anderson
+    commit d075037bfa6e679cb217c7b432ced42aca3c5132
+
+    A tiny appearance tweak.
+            modified:   CODINGSTYLE.md
+
+2023-07-07:  David Anderson
+    commit 879fd06d2091b4154fcef31ebc370bf8f525126d
+
+    Corrected typo and
+    made another minor change.
+            modified:   CODINGSTYLE.md
+    Up to date again.
+            modified:   doc/libdwarf.pdf
+
+2023-07-07:  David Anderson
+    commit 236a416ff8a0261b82056119e68f3078a55fd16c
+
+    Small clarifications.
+    Fixed a ###Indentation  line
+            modified:   CODINGSTYLE.md
+
+2023-07-07:  David Anderson
+    commit 1f89bb177df7781b5fd7aaf07bc35378d262a371
+
+    The list of sections that can be read
+    independently of other sections now
+    includes .debug_addr (left out by accident).
+            modified:   doc/libdwarf.dox
+
+2023-07-04:  David Anderson
+    commit 2af70c5b8dc4f84d58da25b6978e5894994876be
+
+    Clarifying (see Changes here)
+    builds on Windows: which build
+    systems allow static (non-shared) libdwarf.
+            modified:   README
+            modified:   README.md
+
+2023-07-03:  David Anderson
+    commit a3e20ef181d021286d16dc3730b8a66ff48695a6
+
+    Fixed indent mistake
+    modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit ab810163a6198914817c1589e49ba7cb65737248
+
+            modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit 00419b2134482ff624f58c97363c78bf0acc5f26
+
+    tweak macos
+            modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit fd86cfb3abcfc211bd98875feb35fdd2a0ee077a
+
+    Should work for macos now
+            modified:   mac_meson.yml
+            modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit 64d346fd2a48135be49d259a0992de082a5668c6
+
+    add back --overwrite
+            modified:   mac_autotools.yml
+
+2023-07-03:  David Anderson
+    commit 3f589d710b72efa059fefcd5c4c6b82d6903fdba
+
+    mac no longer do bash curl of homebrew
+            modified:   mac_autotools.yml
+            modified:   mac_meson.yml
+            modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit b0d9843546697243cb1783867602771c250ff46d
+
+    Remove install of homebrew
+            modified:   mac_autotools.yml
+
+2023-07-03:  David Anderson
+    commit 98d8eebb1541c3319c30d490538aa758080b2138
+
+    Commented macos-meson out too
+            modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit ea27e3621ab65ae837662b2d822e0817103530c4
+
+    comment out non-working macos
+    autotools and macos cmake
+            modified:   test.yml
+
+2023-07-03:  David Anderson
+    commit 1a4cfb616bfef89e116efe6a96a9802c11fdf9f2
+
+    New test, now with brew cleanup
+            modified:   mac_autotools.yml
+
+2023-07-02:  David Anderson
+    commit ed22079d91d49c6ffc232f8b3cf4cf310bb9dc6b
+
+    Another trial.
+            modified:   mac_autotools.yml
+
+2023-07-02:  David Anderson
+    commit 9750dff047cb5641583fd36e6e5a82b0c981e845
+
+    Another test.
+            modified:   mac_autotools.yml
+
+2023-07-02:  David Anderson
+    commit 4ff3c19b23a2d1c7aa66d4fcfcdd65cd739a07b8
+
+    A problem with homebrew, diagnosis added..
+            modified:   mac_autotools.yml
+            modified:   test.yml
+
+2023-07-02:  David Anderson
+    commit f47918226d58322e0541ccfdeb0fbe57d6876162
+
+    Now with July date.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-07-02:  David Anderson
+    commit ce532787c19522f2aec1001c6afdee89c8c9a214
+
+    Fixed four real-but-minor issues found by coverity scan.
+    Has no effect on the output of dwarfgen.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+
+2023-06-30:  David Anderson
+    commit 72d509693c7b53f0a7db17a7b5e6858dfdb22132
+
+    Removing two small blocks referring to libelf.
+            modified:   meson.build
+            modified:   meson_options.txt
+
+2023-06-29:  David Anderson
+    commit fe76278480a3e8ae25bdfcceb863568038b13a53
+
+    Latest git data. no more libelf
+    references.
+            modified:   ChangeLog
+
 2023-06-29:  David Anderson
     commit 5b2ba5649702d5ad7b5fbe11a48af704885eafb0
 
