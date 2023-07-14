@@ -139,10 +139,11 @@ install(
     FILES cmake/libdwarf-config.cmake
     DESTINATION lib/cmake/libdwarf
 )
-install(DIRECTORY libdwarf DESTINATION include/
-    FILES_MATCHING PATTERN "*.h")
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarf.h
+    DESTINATION include/libdwarf)
+install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/dwarf.h
     DESTINATION include/libdwarf)
 install( FILES ${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc
     DESTINATION lib/pkgconfig
