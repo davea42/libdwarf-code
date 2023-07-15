@@ -302,9 +302,6 @@ option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
 
-# This references cmake/FindLibElf.cmake. See cmake documentation.
-find_package(LibElf REQUIRED)
-
 configure_file(cmake/config.h.cmake config.h)
 
 if(BUILD_NON_SHARED)

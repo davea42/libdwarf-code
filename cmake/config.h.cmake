@@ -7,35 +7,14 @@
    */
 #cmakedefine CRAY_STACKSEG_END 1
 
-/* Set to 1 as we are building with libelf */
-#cmakedefine DWARF_WITH_LIBELF
-
-/* Define 1 if including a custom libelf library */
-#cmakedefine HAVE_CUSTOM_LIBELF 1
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H 1
-
-/* Set to 1 if the elf64_getehdr function is in libelf. */
-#cmakedefine HAVE_ELF64_GETEHDR 1
-
-/* Set to 1 if the elf64_getshdr function is in libelf. */
-#cmakedefine HAVE_ELF64_GETSHDR 1
-
-/* Define to 1 if you have the <elf.h> header file. */
-#cmakedefine HAVE_ELF_H 1
 
 /* Define to 1 if you have the <libelf.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
 
-/* Define to 1 if you have the <libelf.h> header file. */
-#cmakedefine HAVE_LIBELF_H 1
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine HAVE_FCNTL_H 1
-
-/* Define to 1 if you have the <libelf/libelf.h> header file. */
-#cmakedefine HAVE_LIBELF_LIBELF_H 1
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #cmakedefine HAVE_MALLOC_H 1
