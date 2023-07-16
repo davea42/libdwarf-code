@@ -1,3 +1,62 @@
+2023-07-16:  David Anderson
+    commit 83e6f04c5b5060b43424de76e024cf73412ac607
+
+    Now we check that the number of files
+    that
+      cmake install
+    installs matches the number
+    we know is right. TEST F does this check.
+            modified:   scripts/buildandreleasetest.sh
+
+2023-07-15:  David Anderson
+    commit a44e9c03c45b3164d16885aa821618dc0f34338f
+
+    Needed so the new libdwarf.pc.cmake
+    is in the distr.
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2023-07-15:  David Anderson
+    commit 831b634c19898cf99ca240cd26b83dc3be6d96b2
+
+    cmake only:
+    If (for some reason) one wanted to install libdwarfp
+    and dwarfgen ...the install would not be complete
+    if using -DBUILD_DWARFGEN:BOOL=YES
+    or -DBUILD_DWARFGEN=YES
+
+    Various small mistakes lead to an incomplete install.
+    No-one should be using -DBUILD_DWARFGEN:BOOL=YES
+    one thinks, but it is unfortunate this option's
+    install was done incorrectly till now.
+
+            modified:   CMakeLists.txt
+            modified:   cmake/config.h.cmake
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+            new file:   src/lib/libdwarfp/libdwarfp.pc.cmake
+
+    Obsolete now libelf not used.
+            deleted:    cmake/FindLibElf.cmake
+
+2023-07-14:  David Anderson
+    commit f213254afe916b4c7e51fdd88aec4e062d97b470
+
+    cmake install
+    was not installing dwarf.h.
+    The bug was introduced in 2021 when
+    the source files were moved around to the
+    current layout and the base CMakeLists.txt
+    install lines were copied to the libdwarf dir.
+
+    This deletes 2 useless lines and adds a specific
+    line to get dwarf.h installed.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+2023-07-12:  David Anderson
+    commit 26e807bd6edb7dd45b9faaebccc340d7278beb4e
+
+    Bringing up to date with git log
+            modified:   ChangeLog
+
 2023-07-12:  David Anderson
     commit 81c4c9b69fc8f7a7fe41b321659d6165fc3b5491
 
