@@ -21,7 +21,8 @@
 # Then dwarfgen (being c++) will not build
 # Use --disable-libelf to disable reliance on libelf
 # and dwarfgen.
-# To just eliminate dwarfgen build/test/install use --disable-dwarfgen.
+# To just eliminate dwarfgen build/test/install use 
+# --disable-dwarfgen.
 
 genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
@@ -115,6 +116,7 @@ cinstrelp=$bart/c-installrelp
 dbigend=$bart/d-bigendian
 ecmakebld=$bart/e-cmakebld
 fcmakebld=$bart/f-cmakebld
+fcmakeinst=$bart/f-cmakeinstalltarg
 gcmakebld=$bart/g-cmakebld
 hcmakebld=$bart/h-cmakebld
 imesonbld=$bart/i-mesonbld
@@ -124,6 +126,7 @@ mdirs $hcmakebld $imesonbld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
+ftfout=$bart/f-tarftout
 rm -rf $bart/a-dwrelease
 rm -rf $blibsrc
 
@@ -245,7 +248,7 @@ then
 fi
 if [ $havecmake = "y" ]
 then
-  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
+  echo "TEST E: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
   cmake $genoptb -DWALL=ON \
        -DBUILD_NON_SHARED=ON \
        -DBUILD_SHARED=OFF \
@@ -271,25 +274,48 @@ which cmake >/dev/null
 if [ $? -eq 0 ]
 then
   havecmake=y
-  echo "We have cmake and can test it."
+  echo "We have cmake and can test it: test F."
 fi
-if [ $havecmake = "y" ]
+if [ x$havecmake = "xy" ]
 then
-  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $fcmakebld"
+  echo "TEST F: Now cmake from source dir $blibsrc/ in build dir  $fcmakebld"
+  # We are doing -DBUILD_DWARFGEN=ON as a sanity check.
+  # Building lidwarfp and dwarfgen.
+  # You should not be building or installing dwarfgen
+  # or libdwarfp, it is unlikely you have a use
+  # for lidwarfp and dwarfgen. 
   cmake $genoptb \
+    -DCMAKE_INSTALL_PREFIX=$fcmakeinst \
     -DBUILD_SHARED=OFF \
     -DBUILD_NON_SHARED=ON \
+    -DBUILD_DWARFGEN=ON  \
     -DWALL=ON \
-    -DDWARF_WITH_LIBELF=OFF -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON $blibsrc
+    -DBUILD_DWARFEXAMPLE=ON \
+    -DDO_TESTING=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL Sec F C11c  cmake make in $fcmakebld"
   make test
   chkres $? "FAIL Sec F C11d  cmake make test in $fcmakebld"
+  make install
+  chkres $? "FAIL Sec F C11d  cmake install in $fcmakebld"
+  find $fcmakeinst -type f -print >$ftfout
+  len=`wc -l <$ftfout`
+  exp=18
+  echo "Examine contents of cmake install dir $fcmakeinst"
+  echo "Number of files in installtarg: $len"
+  echo "Number of files expected      : $exp" 
+  if [ $len -ne $exp ]
+  then
+    echo "Contents of failing $ftfout"
+    cat $ftfout
+    echo "FAIL Sec F C11inst install loc contents want $exp got $len"
+    exit 1
+  fi
   ctest -R self
   chkres $? "FAIL Sec F C11e  ctest -R self in $fcmakebld"
 else
-  echo "cmake not installed so -DDWARF_WITH_LIBELF=OFF (sec. F) not tested."
+  echo "cmake not installed (sec. F) not tested."
 fi
 echo " End Section F  $bart (ls output follows)"
 ls  $bart
@@ -338,7 +364,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON \
+  cmake -DWALL=ON -DBUILD_NON_SHARED=ON \
     -DBUILD_SHARED=OFF \
     -DDO_TESTING=ON  \
     -DBUILD_DWARFEXAMPLE=ON $blibsrc
