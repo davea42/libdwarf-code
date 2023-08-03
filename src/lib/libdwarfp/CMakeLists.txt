@@ -63,6 +63,6 @@ install(TARGETS dwarfp EXPORT libdwarfpTargets)
 install(EXPORT libdwarfpTargets FILE libdwarfp-targets.cmake NAMESPACE libdwarfp:: DESTINATION lib/cmake/libdwarfp)
 
 include(CMakePackageConfigHelpers)
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/libdwarfp-config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/libdwarfp-config.cmake" INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarfp")
+configure_package_config_file(cmake/libdwarfp-config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/libdwarfp-config.cmake" INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarfp")
 write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/libdwarfp-config-version.cmake" COMPATIBILITY SameMinorVersion)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libdwarfp-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libdwarfp-config-version.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarfp")
