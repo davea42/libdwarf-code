@@ -87,25 +87,11 @@ set_source_group(HEADERS "Header Files"
         dd_uri.h
 )
 
-set_source_group(CONFIGURATION_FILES "Configuration Files" ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake ${PROJECT_BINARY_DIR}/config.h)
-
+set_source_group(CONFIGURATION_FILES "Configuration Files" "${PROJECT_SOURCE_DIR}/cmake/config.h.cmake" "${PROJECT_BINARY_DIR}/config.h")
 add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
-target_include_directories(dwarfdump PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/lib/libdwarf> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/libdwarf>)
-
-target_link_directories(dwarfdump PUBLIC libdwarf::libdwarf)
-
 set_folder(dwarfdump src/bin/dwarfdump)
-
-
 target_compile_definitions(dwarfdump PRIVATE "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib")
-target_compile_options(dwarfdump PRIVATE ${DW_FWALL})
-
-
-if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-    set(SUFFIX 64)
-endif ()
-set(LIBDIR lib${SUFFIX})
-set(BINDIR bin${SUFFIX})
-
-install(TARGETS dwarfdump DESTINATION RUNTIME DESTINATION ${BINDIR} LIBRARY DESTINATION ${LIBDIR} ARCHIVE DESTINATION ${LIBDIR})
-install(FILES dwarfdump.conf DESTINATION ${LIBDIR})
+target_link_libraries(dwarfdump PUBLIC libdwarf::libdwarf)
+target_link_directories(dwarfdump PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>)
+install(TARGETS dwarfdump)
+install(FILES dwarfdump.conf TYPE LIB)
