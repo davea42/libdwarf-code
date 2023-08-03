@@ -143,6 +143,6 @@ install(TARGETS dwarf EXPORT libdwarfTargets)
 install(EXPORT libdwarfTargets FILE libdwarf-targets.cmake NAMESPACE libdwarf:: DESTINATION lib/cmake/libdwarf)
 
 include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/libdwarf-config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/libdwarf-config.cmake" INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/libdwarf-config.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/libdwarf-config.cmake" INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
 write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/libdwarf-config-version.cmake" COMPATIBILITY SameMinorVersion)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libdwarf-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libdwarf-config-version.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
