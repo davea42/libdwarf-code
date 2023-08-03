@@ -243,6 +243,7 @@ if (BUILD_DWARFEXAMPLE)
 endif ()
 if (DO_TESTING)
     include(CTest)
+    add_subdirectory(src/lib/libdwarfp)
     add_subdirectory(test)
 endif ()
 
