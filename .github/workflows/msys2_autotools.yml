@@ -16,7 +16,7 @@ jobs:
       PYTHONIOENCODING: "utf-8"
     steps:
     - uses: actions/checkout@master
-    - uses: msys2/setup-msys2@v2
+    - uses: msys2/setup-msys2@v3
       with:
         msystem: MINGW64
         update: true

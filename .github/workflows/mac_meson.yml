@@ -9,7 +9,7 @@ jobs:
   macos_meson:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
     - name: tools
       run:  |
         brew install meson ninja
@@ -24,4 +24,3 @@ jobs:
         meson . .. -Ddwarfexample=true
         ninja
         ninja test
-
