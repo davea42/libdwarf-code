@@ -167,7 +167,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
+          install: base-devel autoconf automake libtool mingw-w64-x86_64-gcc mingw-w64-x86_64-zlib
       - name: Configure
         run: autoreconf -vif && ./configure --disable-static --enable-shared
       - name: Build
@@ -190,7 +190,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-zlib
+          install: base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake mingw-w64-x86_64-zlib
       - name: Build libdwarf
         run: |
           mkdir builddir && cd builddir
@@ -212,7 +212,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: base-devel git mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib
+          install: base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib
       - name: Build libdwarf
         run: |
           mkdir builddir && cd builddir
