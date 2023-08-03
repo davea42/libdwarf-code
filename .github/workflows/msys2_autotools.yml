@@ -16,15 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
-    - name: Configure
-      run: autoreconf -vif && ./configure --disable-static --enable-shared
-    - name: Build
-      run:  make
-    - name: Check
-      run:  make check
-    - name: Distcheck
-      run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
+        with:
+          msystem: MINGW64
+          update: true
+          install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
+      - name: Configure
+        run: autoreconf -vif && ./configure --disable-static --enable-shared
+      - name: Build
+        run: make
+      - name: Check
+        run: make check
+      - name: Distcheck
+        run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
