@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.3)
 
-project(libdwarf C CXX)
+project(libdwarf VERSION 0.7.1 DESCRIPTION "A library for reading DWARF2 and later DWARF" HOMEPAGE_URL "https://github.com/davea42/libdwarf-code" LANGUAGES C)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include_directories( ${PROJECT_BINARY_DIR} )
+#include_directories( ${PROJECT_BINARY_DIR} )
+
+include(GNUInstallDirs)
 
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
@@ -85,11 +87,11 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # would probably do this anyway).
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
-enable_testing()
+
 
 # always include project's folder to includes
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
+#set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 ### begin what was configure.cmake
 # cmake macros
@@ -99,10 +101,9 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 0.7.1)
-set(PACKAGE_VERSION "\"${VERSION}\"") 
-set(PACKAGE_NAME "libdwarf" )
-set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
+set(PACKAGE_VERSION "\"${PROJECT_VERSION}\"")
+set(PACKAGE_NAME "${PROJECT_NAME}")
+set(PACKAGE_STRING "\"${PROJECT_NAME} ${PROJECT_VERSION}\"")
 string(REGEX REPLACE "[\"]" "" tarname1 "${PACKAGE_STRING}" )
 string(REGEX REPLACE "[^a-zA-Z0-9_]" "-" tarname "${tarname1}" )
 set(PACKAGE_TARNAME "\"${tarname}\"" )
@@ -191,77 +192,8 @@ check_c_source_compiles([=[
   }]=] HAVE_STDAFX_H)
 #message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
 
-set(CMAKE_REQUIRED_LIBRARIES z)
-check_c_source_compiles( [=[
-  #include "zlib.h"
-  int main()
-  {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZLIB )
-check_c_source_compiles( [=[
-  #include "zlib.h"
-  int main()
-  {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZLIB_H )
-set(CMAKE_REQUIRED_LIBRARIES)
-if (HAVE_ZLIB) 
-  # For linking in libz
-  set(DW_FZLIB "z")
-endif()
-
-set(CMAKE_REQUIRED_LIBRARIES zstd )
-check_c_source_compiles( [=[
-  #include "zstd.h"
-  int main()
-  {
-      char * dest[100];
-      size_t destlen = 100;
-      char *src = 0;
-      size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
-      if (res == destlen) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZSTD )
-check_c_source_compiles( [=[
-  #include "zstd.h"
-  int main()
-  {
-      char * dest[100];
-      size_t destlen = 100;
-      char *src = 0;
-      size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
-      if (res == destlen) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZSTD_H )
-set(CMAKE_REQUIRED_LIBRARIES)
-if (HAVE_ZSTD)
-  # For linking in libzstd
-  set(DW_FZSTD "zstd")
-endif()
-
-
+find_package(ZLIB)
+find_package(ZSTD)
 
 check_c_source_compiles([=[
 #include <stdint.h>
@@ -275,9 +207,8 @@ int main()
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
 # libdwarf  
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
-option(BUILD_SHARED 
-    "build shared library libdwarf[p].so and use it" FALSE)
+#option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+option(BUILD_SHARED "build shared library libdwarf[p].so and use it" TRUE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
@@ -328,8 +259,10 @@ add_subdirectory(src/bin/dwarfdump)
 if ( BUILD_DWARFEXAMPLE )
 	add_subdirectory(src/bin/dwarfexample)
 endif()
+
 if (DO_TESTING)
-add_subdirectory(test)
+    enable_testing()
+    add_subdirectory(test)
 endif()
 
 if ( BUILD_DWARFGEN )
