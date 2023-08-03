@@ -15,7 +15,7 @@ set_source_group(TESTEXTRASTRING "Source Files"
         "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c"
         "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h")
 add_executable(selftestextrastring ${TESTEXTRASTRING})
-target_link_libraries(selftestextrastring PRIVATE libdwarf::libdwarf libdwarfp::libdwarfp)
+target_link_libraries(selftestextrastring PRIVATE libdwarf::libdwarf dwarfp)
 add_test(NAME selftestextrastring COMMAND selftestextrastring)
 
 set_source_group(TESTLINKEDTOPATH "Source Files"
@@ -28,14 +28,14 @@ set_source_group(TESTLINKEDTOPATH "Source Files"
         "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.c"
         "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_error.h")
 add_executable(selftest_linkedtopath ${TESTEXTRASTRING})
-target_link_libraries(selftest_linkedtopath PRIVATE libdwarf::libdwarf libdwarfp::libdwarfp)
+target_link_libraries(selftest_linkedtopath PRIVATE libdwarf::libdwarf dwarfp)
 add_test(NAME selftest_linkedtopath COMMAND selftest_linkedtopath)
 
 set_source_group(GETOPTEST_SOURCES "Source Files" test_getopt.c
         "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.h"
         "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.c")
 add_executable(selfgetopttest ${GETOPTEST_SOURCES})
-target_link_libraries(selfgetopttest PRIVATE libdwarf::libdwarf libdwarfp::libdwarfp dwarfdump_h)
+target_link_libraries(selfgetopttest PRIVATE libdwarf::libdwarf dwarfp dwarfdump_h)
 add_test(NAME selfgetopttest COMMAND selfgetopttest)
 
 set_source_group(MAKENAME_SOURCES "Source Files" test_makename.c
@@ -43,14 +43,14 @@ set_source_group(MAKENAME_SOURCES "Source Files" test_makename.c
         "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_makename.c"
         "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c")
 add_executable(selfmakename ${MAKENAME_SOURCES})
-target_link_libraries(selfmakename PUBLIC libdwarf::libdwarf libdwarfp::libdwarfp dwarfdump_h)
+target_link_libraries(selfmakename PUBLIC libdwarf::libdwarf dwarfp dwarfdump_h)
 add_test(NAME selfmakename COMMAND selfmakename)
 
 set_source_group(HELPERTREE_SOURCES "Source Files" test_helpertree.c
         "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_helpertree.c"
         "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c")
 add_executable(selfhelpertree ${HELPERTREE_SOURCES})
-target_link_libraries(selfhelpertree PUBLIC libdwarf::libdwarf libdwarfp::libdwarfp dwarfdump_h)
+target_link_libraries(selfhelpertree PUBLIC libdwarf::libdwarf dwarfp dwarfdump_h)
 add_test(NAME selfhelpertree COMMAND selfhelpertree)
 
 set_source_group(IGNORESEC_SOURCES "Source Files" test_ignoresec.c "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_secname_ck.c")
@@ -61,7 +61,7 @@ add_test(NAME selfignoresec COMMAND selfignoresec)
 set_source_group(SELFMC_SOURCES "Source Files" test_macrocheck.c "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c" "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c")
 add_executable(selfmacrocheck ${SELFMC_SOURCES})
 target_compile_options(selfmacrocheck PRIVATE "-DTESTING")
-target_link_libraries(selfmacrocheck PRIVATE libdwarf::libdwarf libdwarfp::libdwarfp dwarfdump_h)
+target_link_libraries(selfmacrocheck PRIVATE libdwarf::libdwarf dwarfp dwarfdump_h)
 add_test(NAME selfmacrocheck COMMAND selfmacrocheck)
 
 set_source_group(TESTESB_SOURCES "Source Files" test_esb.c "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c" "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c")
