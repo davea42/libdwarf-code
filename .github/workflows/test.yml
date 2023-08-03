@@ -12,148 +12,147 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-    - name: autoreconf
-      run:  autoreconf -vif
-    - name: configure
-      run:  ./configure --enable-dwarfexample
-    - name: make -j
-      run:  make
-    - name: make -j check
-      run:  make check
-    - name: make distcheck
-      run:  make distcheck
+      - name: autoreconf
+        run: autoreconf -vif
+      - name: configure
+        run: ./configure --enable-dwarfexample
+      - name: make -j
+        run: make
+      - name: make -j check
+        run: make check
+      - name: make distcheck
+        run: make distcheck
+
   linux_cmake:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-    - name: Install cmake
-      run: |
-        sudo apt-get -qq update
-        sudo apt install build-essential cmake
-    - name: Build libdwarf
-      run: |
-        mkdir builddir && cd builddir
-        cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-        make
-        ctest -R self
+      - name: Install cmake
+        run: |
+          sudo apt-get -qq update
+          sudo apt install build-essential cmake
+      - name: Build libdwarf
+        run: |
+          mkdir builddir && cd builddir
+          cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+          make
+          ctest -R self
+
   linux_meson:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-    - name: Install meson / ninja
-      run: |
-        sudo apt-get -qq update
-        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
-        pip3 install --upgrade pip
-        pip3 install meson --user
-    - name: Install doxygen
-      run: | 
-        sudo apt install doxygen
-    - name: Build libdwarf
-      run: |
-        mkdir builddir && cd builddir
-        meson . .. -Ddwarfexample=true
-        ninja
-        ninja test                       
+      - name: Install meson / ninja
+        run: |
+          sudo apt-get -qq update
+          sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+          pip3 install --upgrade pip
+          pip3 install meson --user
+      - name: Build libdwarf
+        run: |
+          mkdir builddir && cd builddir
+          meson . .. -Ddwarfexample=true
+          ninja
+          ninja test                       
 
   freebsd_autotools:
     runs-on: macos-12
     name: FreeBSD
     steps:
       - uses: actions/checkout@v3
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
-      with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash autoconf automake libtool pkgconf gmake binutils lzlib
-        run: |
-          sh ./autogen.sh
-          ./configure
-          make
-          make check
+      - name: FreeBSD VM
+        uses: vmactions/freebsd-vm@v0
+        with:
+          usesh: true
+          sync: rsync
+          copyback: false
+          prepare: pkg install -y python3 bash autoconf automake libtool pkgconf gmake binutils lzlib
+          run: |
+            sh ./autogen.sh
+            ./configure
+            make
+            make check
 
   freebsd_cmake:
     runs-on: macos-12
     name: FreeBSD
     steps:
       - uses: actions/checkout@v3
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
-      with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
-        run: |
-          mkdir builddir && cd builddir
-          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-          ninja 
-          ninja test
+      - name: FreeBSD VM
+        uses: vmactions/freebsd-vm@v0
+        with:
+          usesh: true
+          sync: rsync
+          copyback: false
+          prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
+          run: |
+            mkdir builddir && cd builddir
+            cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON ../CMakeLists.txt
+            ninja 
+            ninja test
 
   freebsd_meson:
     runs-on: macos-12
     name: FreeBSD
     steps:
       - uses: actions/checkout@v3
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
-      with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash meson ninja pkgconf gmake binutils lzlib
-        run: |
-          mkdir build && cd build
-          meson . ..  -Ddwarfexample=true
-          ninja
-          ninja test
+      - name: FreeBSD VM
+        uses: vmactions/freebsd-vm@v0
+        with:
+          usesh: true
+          sync: rsync
+          copyback: false
+          prepare: pkg install -y python3 bash meson ninja pkgconf gmake binutils lzlib
+          run: |
+            mkdir build && cd build
+            meson . ..  -Ddwarfexample=true
+            ninja
+            ninja test
 
   macos_autotools:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-    - name: tools
-      run:  |
-        brew install autoconf automake libtool
-        brew install --overwrite pkgconf
-    - name: autoreconf
-      run: autoreconf --warnings=all  -vif
-    - name: config
-      run: ./configure --enable-dwarfexample --enable-wall
-    - name: make
-      run:  |
-        make
-        make check
+      - name: tools
+        run: |
+          brew install autoconf automake libtool
+          brew install --overwrite pkgconf
+      - name: autoreconf
+        run: autoreconf --warnings=all  -vif
+      - name: config
+        run: ./configure --enable-dwarfexample --enable-wall
+      - name: make
+        run: |
+          make
+          make check
 
   macos_cmake:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-    - name: brew
-      run: brew install cmake ninja
-    - name: cmake
-      run:  |
-        mkdir builddir && cd builddir
-        cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON ../CMakeLists.txt
-        ninja
-        ninja test
+      - name: brew
+        run: brew install cmake ninja
+      - name: cmake
+        run: |
+          mkdir builddir && cd builddir
+          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON ../CMakeLists.txt
+          ninja
+          ninja test
 
   macos_meson:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-    - name: brew
-      run:  |
-        brew install meson ninja
-        brew install --overwrite pkgconf
-    - name: meson
-      run:  |
-        mkdir builddir && cd builddir
-        meson . .. -Ddwarfexample=true
-        ninja
-        ninja test
+      - name: brew
+        run: |
+          brew install meson ninja
+          brew install --overwrite pkgconf
+      - name: meson
+        run: |
+          mkdir builddir && cd builddir
+          meson . .. -Ddwarfexample=true
+          ninja
+          ninja test
 
   msys2_autotools:
     runs-on: windows-latest
@@ -164,19 +163,19 @@ jobs:
       PYTHONIOENCODING: "utf-8"
     steps:
       - uses: actions/checkout@v3
-    - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
-    - name: Configure
-      run: autoreconf -vif && ./configure --disable-static --enable-shared
-    - name: Build
-      run:  make
-    - name: Check
-      run:  make check
-    - name: Distcheck
-      run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
+      - name: Configure
+        run: autoreconf -vif && ./configure --disable-static --enable-shared
+      - name: Build
+        run: make
+      - name: Check
+        run: make check
+      - name: Distcheck
+        run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
 
   msys2_cmake:
     runs-on: windows-latest
@@ -187,18 +186,18 @@ jobs:
       PYTHONIOENCODING: "utf-8"
     steps:
       - uses: actions/checkout@v3
-    - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen
-    - name: Build libdwarf
-      run: |
-        mkdir builddir && cd builddir
-        cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DBUILD_DWARFEXAMPLE=ON -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE -DDWARF_WITH_LIBELF:BOOL=FALSE  ../CMakeLists.txt
-        ninja 
-        ninja install
-        ninja test
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-zlib
+      - name: Build libdwarf
+        run: |
+          mkdir builddir && cd builddir
+          cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DBUILD_DWARFEXAMPLE=ON -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE -DDWARF_WITH_LIBELF:BOOL=FALSE  ../CMakeLists.txt
+          ninja 
+          ninja install
+          ninja test
 
   msys2_meson:
     runs-on: windows-latest
@@ -208,16 +207,16 @@ jobs:
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-      - uses: actions/checkout@master
-    - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen
-    - name: Build libdwarf
-      run: |
-        mkdir builddir && cd builddir
-        meson . ..  --default-library shared -Ddwarfexample=true -Ddwarfgen=false
-        ninja 
-        ninja install
-        ninja test
+      - uses: actions/checkout@v3
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: base-devel git mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib
+      - name: Build libdwarf
+        run: |
+          mkdir builddir && cd builddir
+          meson . ..  --default-library shared -Ddwarfexample=true -Ddwarfgen=false
+          ninja 
+          ninja install
+          ninja test

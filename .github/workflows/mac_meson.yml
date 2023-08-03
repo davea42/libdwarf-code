@@ -10,17 +10,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-    - name: tools
-      run:  |
-        brew install meson ninja
-        brew install --overwrite pkgconf
-#        brew install --overwrite python@3.11
+      - name: tools
+        run: |
+          brew install meson ninja
+          brew install --overwrite pkgconf
+      #         brew install --overwrite python@3.11
 #        brew install --overwrite pkgconf
 #        brew install  python@3.11
 #        brew install meson ninja
-    - name: 
-      run:  |
-        mkdir builddir && cd builddir
-        meson . .. -Ddwarfexample=true
-        ninja
-        ninja test
+      - name:
+        run: |
+          mkdir builddir && cd builddir
+          meson . .. -Ddwarfexample=true
+          ninja
+          ninja test

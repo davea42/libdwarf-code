@@ -11,15 +11,15 @@ jobs:
     name: FreeBSD
     steps:
       - uses: actions/checkout@v3
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
-      with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
-        run: |
-          mkdir builddir && cd builddir
-          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-          ninja
-          ninja test
+      - name: FreeBSD VM
+        uses: vmactions/freebsd-vm@v0
+        with:
+          usesh: true
+          sync: rsync
+          copyback: false
+          prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
+          run: |
+            mkdir builddir && cd builddir
+            cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+            ninja
+            ninja test
