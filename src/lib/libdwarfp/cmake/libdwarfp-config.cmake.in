@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+set(LIBDWARF_SHARED @BUILD_SHARED@)
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(libdwarf)
+
+check_required_components(dwarfp)
