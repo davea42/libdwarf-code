@@ -200,10 +200,13 @@ int main()
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P})
 
 # libdwarf
-option(BUILD_SHARED "build shared library libdwarf[p].so and use it" TRUE)
-if (BUILD_SHARED)
+option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+option(BUILD_SHARED "build shared library libdwarf[p].so and use it" FALSE)
+if (BUILD_NON_SHARED)
+    set(BUILD_SHARED FALSE)
     set(LIBDWARF_BUILD_TYPE "SHARED")
 else ()
+    set(BUILD_SHARED TRUE)
     set(LIBDWARF_BUILD_TYPE "STATIC")
 endif ()
 
