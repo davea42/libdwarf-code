@@ -223,13 +223,13 @@ else ()
     message(STATUS "Compiler warning options... NO")
 endif ()
 
-option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" TRUE)
+option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
 message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
 
-option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" TRUE)
+option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
 message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
 
-option(DO_TESTING "Do certain api tests (default is NO)" TRUE)
+option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
 
