@@ -208,7 +208,7 @@ jobs:
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
