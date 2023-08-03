@@ -77,7 +77,7 @@ COPYING \
 ChangeLog \
 CMakeLists.txt \
 libdwarfp.pc.cmake \
-cmake/libdwarfp-config.cmake \
+cmake/libdwarfp-config.cmake.in \
 meson.build \
 NEWS \
 README
