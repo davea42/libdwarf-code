@@ -20,6 +20,6 @@ jobs:
           prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
           run: |
             mkdir builddir && cd builddir
-            cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+            cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON ../CMakeLists.txt
             ninja
             ninja test
