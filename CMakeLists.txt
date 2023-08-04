@@ -247,7 +247,7 @@ option(WALL "Add -Wall" FALSE)
 add_library(libdwarfWarnings INTERFACE)
 # DW_FWALLXX are gnu C++ options.
 if (WALL)
-    set(GCC_CXX_WARNINGS
+    set(GCC_LIKE_WARNINGS
         -Wall -Wextra -Wno-unused-private-field -Wpointer-arith
         -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized
         -Wshadow -Wno-long-long -Werror
