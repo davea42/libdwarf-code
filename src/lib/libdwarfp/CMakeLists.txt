@@ -60,7 +60,7 @@ target_include_directories(dwarfp
                            PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                   $<INSTALL_INTERFACE:include/libdwarfp>
                            )
-target_link_libraries(dwarfp PUBLIC libdwarf::libdwarf)
+target_link_libraries(dwarfp PUBLIC libdwarf::libdwarf PRIVATE libdwarfWarnings)
 set_folder(dwarfp src/lib/libdwarfp)
 msvc_posix(dwarfp)
 add_library(libdwarfp::libdwarfp ALIAS dwarfp)
