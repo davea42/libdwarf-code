@@ -247,37 +247,29 @@ option(WALL "Add -Wall" FALSE)
 add_library(libdwarfWarnings INTERFACE)
 # DW_FWALLXX are gnu C++ options.
 if (WALL)
-    set(GCC_LIKE_WARNINGS
-        -Wall -Wextra -Wno-unused-private-field -Wpointer-arith
-        -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized
-        -Wshadow -Wno-long-long -Werror
-        )
-    set(GCC_LIKE_CXX_WARNINGS
-        ${GCC_CXX_WARNINGS} -Wpointer-arith -Wmissing-declarations
-        -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment
-        -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror
-        )
-    message(STATUS "Compiler warning options... YES ${DW_FWALL}")
+    set(GCC_LIKE_WARNINGS -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wcomment -Wformat
+            -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror) # C nd C++ warnings
+    set(GCC_LIKE_C_WARNINGS ${GCC_LIKE_WARNINGS} -Wmissing-prototypes -Wdeclaration-after-statement)
+    set(GCC_LIKE_CXX_WARNINGS ${GCC_LIKE_WARNINGS} -Wmissing-declarations)
+    message(STATUS "Compiler warning options... YES")
+    message(STATUS "C : \"${GCC_LIKE_C_WARNINGS}\"")
+    message(STATUS "CXX : \"${GCC_LIKE_CXX_WARNINGS}\"")
 else ()
-    unset(DW_FWALL)
     message(STATUS "Compiler warning options... NO")
 endif ()
 target_compile_options(
     libdwarfWarnings
     INTERFACE
-        "$<$<C_COMPILER_ID:MSVC>:${MSVC_WARNINGS}>"
-        "$<$<C_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_LIKE_WARNINGS}>"
-        "$<$<C_COMPILER_ID:GNU>:${GCC_WARNINGS}>"
-        "$<$<C_COMPILER_ID:Clang,AppleClang>:${CLANG_LIKE_WARNINGS}>"
-        "$<$<C_COMPILER_ID:Intel,IntelLLVM>:$<IF:$<PLATFORM_ID:Windows>,${INTEL_WARNINGS_WINDOWS},${INTEL_WARNINGS}>>"
-        "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_WARNINGS}>"
-        "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_LIKE_WARNINGS}>"
-        "$<$<CXX_COMPILER_ID:GNU>:${GCC_WARNINGS}>"
-        "$<$<CXX_COMPILER_ID:Clang,AppleClang>:${CLANG_LIKE_WARNINGS}>"
-        "$<$<OR:$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>,$<COMPILE_LANG_AND_ID:OBJCXX,Clang,AppleClang,GNU>>:${GCC_LIKE_CXX_WARNINGS}>"
-        "$<$<OR:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<COMPILE_LANG_AND_ID:OBJCXX,GNU>>:${GCC_CXX_WARNINGS}>"
-        "$<$<OR:$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>,$<COMPILE_LANG_AND_ID:OBJCXX,Clang,AppleClang>>:${CLANG_CXX_WARNINGS}>"
-        "$<$<CXX_COMPILER_ID:Intel,IntelLLVM>:$<IF:$<PLATFORM_ID:Windows>,${INTEL_WARNINGS_WINDOWS},${INTEL_WARNINGS}>>"
+        "$<$<C_COMPILER_ID:MSVC>:${MSVC_C_WARNINGS}>"
+        "$<$<C_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_LIKE_C_WARNINGS}>"
+        "$<$<C_COMPILER_ID:GNU>:${GCC_C_WARNINGS}>"
+        "$<$<C_COMPILER_ID:Clang,AppleClang>:${CLANG_LIKE_C_WARNINGS}>"
+        "$<$<C_COMPILER_ID:Intel,IntelLLVM>:$<IF:$<PLATFORM_ID:Windows>,${INTEL_C_WARNINGS_WINDOWS},${INTEL_C_WARNINGS}>>"
+        "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_CXX_WARNINGS}>"
+        "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_LIKE_CXX_WARNINGS}>"
+        "$<$<CXX_COMPILER_ID:GNU>:${GCC_CXX_WARNINGS}>"
+        "$<$<CXX_COMPILER_ID:Clang,AppleClang>:${CLANG_LIKE_CXX_WARNINGS}>"
+        "$<$<CXX_COMPILER_ID:Intel,IntelLLVM>:$<IF:$<PLATFORM_ID:Windows>,${INTEL_CXX_WARNINGS_WINDOWS},${INTEL_CXX_WARNINGS}>>"
     )
 
 option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
