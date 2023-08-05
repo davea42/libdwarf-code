@@ -126,7 +126,7 @@ target_include_directories(
            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
            $<INSTALL_INTERFACE:include/libdwarf>
     )
-target_link_libraries(dwarf PRIVATE libdwarfWarnings)
+target_link_libraries(dwarf PRIVATE libdwarfWarningsC)
 msvc_posix(dwarf)
 if (ZLIB_FOUND)
     target_link_libraries(dwarf PRIVATE ZLIB::ZLIB)
@@ -163,7 +163,7 @@ install(FILES "${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc"
 install(FILES "${PROJECT_SOURCE_DIR}/cmake/FindZSTD.cmake"
         DESTINATION lib/cmake/libdwarf
         )
-install(TARGETS dwarf libdwarfWarnings EXPORT libdwarfTargets)
+install(TARGETS dwarf libdwarfWarningsC EXPORT libdwarfTargets)
 install(EXPORT libdwarfTargets FILE libdwarf-targets.cmake NAMESPACE libdwarf::
         DESTINATION lib/cmake/libdwarf
         )

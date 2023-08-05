@@ -244,10 +244,11 @@ endif ()
 # This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
 
-add_library(libdwarfWarnings INTERFACE)
+add_library(libdwarfWarningsC INTERFACE)
+add_library(libdwarfWarningsCXX INTERFACE)
 # DW_FWALLXX are gnu C++ options.
 if (WALL)
-    set(GCC_LIKE_WARNINGS -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wcomment -Wformat
+    set(GCC_LIKE_WARNINGS -Wall -Wextra -Wpointer-arith -Wcomment -Wformat
             -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror) # C nd C++ warnings
     set(GCC_LIKE_C_WARNINGS ${GCC_LIKE_WARNINGS} -Wmissing-prototypes -Wdeclaration-after-statement)
     set(GCC_LIKE_CXX_WARNINGS ${GCC_LIKE_WARNINGS} -Wmissing-declarations)
@@ -258,19 +259,23 @@ else ()
     message(STATUS "Compiler warning options... NO")
 endif ()
 target_compile_options(
-    libdwarfWarnings
+    libdwarfWarningsC
     INTERFACE
         "$<$<C_COMPILER_ID:MSVC>:${MSVC_C_WARNINGS}>"
         "$<$<C_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_LIKE_C_WARNINGS}>"
         "$<$<C_COMPILER_ID:GNU>:${GCC_C_WARNINGS}>"
         "$<$<C_COMPILER_ID:Clang,AppleClang>:${CLANG_LIKE_C_WARNINGS}>"
         "$<$<C_COMPILER_ID:Intel,IntelLLVM>:$<IF:$<PLATFORM_ID:Windows>,${INTEL_C_WARNINGS_WINDOWS},${INTEL_C_WARNINGS}>>"
+    )
+target_compile_options(
+        libdwarfWarningsCXX
+        INTERFACE
         "$<$<CXX_COMPILER_ID:MSVC>:${MSVC_CXX_WARNINGS}>"
         "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:${GCC_LIKE_CXX_WARNINGS}>"
         "$<$<CXX_COMPILER_ID:GNU>:${GCC_CXX_WARNINGS}>"
         "$<$<CXX_COMPILER_ID:Clang,AppleClang>:${CLANG_LIKE_CXX_WARNINGS}>"
         "$<$<CXX_COMPILER_ID:Intel,IntelLLVM>:$<IF:$<PLATFORM_ID:Windows>,${INTEL_CXX_WARNINGS_WINDOWS},${INTEL_CXX_WARNINGS}>>"
-    )
+)
 
 option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
 message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")

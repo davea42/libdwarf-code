@@ -16,10 +16,10 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
 add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 set_folder(dwarfgen src/bin/dwarfgen)
 set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE CXX)
-target_compile_options(dwarfgen PRIVATE -fpermissive)
 target_include_directories(
     dwarfgen PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                      $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
     )
-target_link_libraries(dwarfgen PRIVATE libdwarf::libdwarf libdwarfp::libdwarfp)
+target_link_libraries(dwarfgen PRIVATE libdwarf::libdwarf libdwarfp::libdwarfp libdwarfWarningsCXX)
+target_compile_options(dwarfgen PRIVATE -fpermissive)
 install(TARGETS dwarfgen)
