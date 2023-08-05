@@ -248,7 +248,7 @@ add_library(libdwarfWarningsC INTERFACE)
 add_library(libdwarfWarningsCXX INTERFACE)
 # DW_FWALLXX are gnu C++ options.
 if (WALL)
-    set(GCC_LIKE_WARNINGS -Wall -Wextra -Wpointer-arith -Wcomment -Wformat
+    set(GCC_LIKE_WARNINGS -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wcomment -Wformat
             -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror) # C nd C++ warnings
     set(GCC_LIKE_C_WARNINGS ${GCC_LIKE_WARNINGS} -Wmissing-prototypes -Wdeclaration-after-statement)
     set(GCC_LIKE_CXX_WARNINGS ${GCC_LIKE_WARNINGS} -Wmissing-declarations)
