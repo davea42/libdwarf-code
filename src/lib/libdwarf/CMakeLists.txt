@@ -100,13 +100,11 @@ foreach(i RANGE ${targetCount})
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
 	set_folder(${target} src/lib/libdwarf)
-	target_include_directories(${target} PUBLIC 
-            ${LIBELF_INCLUDE_DIRS})
     target_compile_options(${target} PRIVATE ${COMPILER_FLAGS}
             ${DW_FWALL})
 	msvc_posix(${target})
 
-	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES} ${DW_FZLIB} ${DW_FZSTD} ) 
+	target_link_libraries(${target} PUBLIC  ${DW_FZLIB} ${DW_FZSTD} ) 
 	
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
 
