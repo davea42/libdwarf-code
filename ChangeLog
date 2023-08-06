@@ -1,3 +1,18 @@
+2023-08-06:  David Anderson
+    commit 822021b5caa50c07ebc229ef3e66506db4352598
+
+    Removed references to LIBELF_LIBRARIES
+    and LIBELF_INCLUDE_DIRS
+    as those are no longer relevant.
+    We don't use libelf as of version 0.7.1.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+2023-07-16:  David Anderson
+    commit 61fb3beeb9f871794719208743218bac8d34b870
+
+    Up to date from git log
+            modified:   ChangeLog
+
 2023-07-16:  David Anderson
     commit 83e6f04c5b5060b43424de76e024cf73412ac607
 
