@@ -52,10 +52,15 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
                  ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
                  ${PROJECT_BINARY_DIR}/config.h
                  )
-
-add_library(dwarfp ${LIBDWARF_BUILD_TYPE} ${SOURCES} ${HEADERS}
-                   ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES}
-            )
+if (BUILD_SHARED)
+    add_library(dwarfp SHARED ${SOURCES} ${HEADERS}
+            ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES}
+    )
+else ()
+    add_library(dwarfp STATIC ${SOURCES} ${HEADERS}
+            ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES}
+    )
+endif ()
 target_include_directories(dwarfp
                            PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                   $<INSTALL_INTERFACE:include/libdwarfp>

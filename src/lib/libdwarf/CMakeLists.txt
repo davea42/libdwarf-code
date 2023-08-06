@@ -116,9 +116,15 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
 
 configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY)
 
-add_library(dwarf ${LIBDWARF_BUILD_TYPE} ${SOURCES} ${HEADERS}
+if (BUILD_SHARED)
+add_library(dwarf SHARED ${SOURCES} ${HEADERS}
                   ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES}
             )
+else ()
+    add_library(dwarf STATIC ${SOURCES} ${HEADERS}
+            ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES}
+    )
+endif ()
 set_folder(dwarf src/lib/libdwarf)
 target_include_directories(
     dwarf
@@ -147,6 +153,8 @@ if (BUILD_SHARED)
     endif ()
     target_compile_definitions(dwarf PUBLIC LIBDWARF_BUILD)
     set_target_properties(dwarf PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+else ()
+    target_compile_definitions(dwarf PUBLIC LIBDWARF_STATIC)
 endif ()
 add_library(libdwarf::libdwarf ALIAS dwarf)
 
