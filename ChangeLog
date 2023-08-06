@@ -1,4 +1,20 @@
 2023-08-06:  David Anderson
+    commit e9f5561052fd5553172705f81491a258c7892f2a
+
+    Updated to reflect recent identification
+    of example code as PUBLIC DOMAIN.
+            modified:   COPYING
+    Now marked PUBLIC DOMAIN.
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2023-08-06:  David Anderson
+    commit 028862dc4373b26448250eeecb12689f0fb00849
+
+    Updated reflecting the removal of LIBELF
+    references in libdwarf/CMakeLists.txt
+            modified:   ChangeLog
+
+2023-08-06:  David Anderson
     commit 822021b5caa50c07ebc229ef3e66506db4352598
 
     Removed references to LIBELF_LIBRARIES
