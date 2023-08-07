@@ -55,7 +55,7 @@
 #include <stdlib.h> /* for exit() */
 #include "dg_getopt.h"
 
-#define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
+#define STRIP_OFF_CONSTNESS(a)  ((char *)(a))
 
 int dwopterr = 1,    /* if error message should be printed */
     dwoptind = 1,    /* index into parent argv vector */
@@ -317,7 +317,7 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
         dwoptopt = *place++;
     }
     /* See if option letter is one the caller wanted... */
-    if (dwoptopt == ':' || (oli = strchr(ostr, dwoptopt)) == NULL) {
+    if (dwoptopt == ':' || (oli = strchr((char *)ostr, dwoptopt)) == NULL) {
         if (*place == 0) {
             ++dwoptind;
         }

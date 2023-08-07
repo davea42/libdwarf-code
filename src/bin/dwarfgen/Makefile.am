@@ -25,7 +25,7 @@ ireppubnames.h \
 irepresentation.h \
 ireptodbg.cc \
 ireptodbg.h \
-dg_getopt.c \
+dg_getopt.cc \
 dg_getopt.h \
 strtabdata.h
 
