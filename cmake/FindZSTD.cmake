@@ -1,8 +1,13 @@
 # Copyright (C) 1995-2019, Rene Brun and Fons Rademakers.
 # All rights reserved.
 #
-# For the licensing terms see $ROOTSYS/LICENSE.
-# For the list of contributors see $ROOTSYS/README/CREDITS.
+# This is licensed as LGPL 2.1 by the authors.
+# For the licensing terms see COPYING and
+# libdwarf/LIBDWARFCOPYRIGHT
+# or https://github.com/root-project/root/blob/master/LICENSE
+# For the list of contributors in the project that
+# created this cmake file see 
+# https://github.com/root-project/root/blob/master/README/CREDITS
 
 #.rst:
 # FindZSTD

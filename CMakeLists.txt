@@ -5,6 +5,8 @@ project(libdwarf C CXX)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include_directories( ${PROJECT_BINARY_DIR} )
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
     if(MSVC AND ("${MSVC_VERSION}" LESS 1900))
@@ -328,14 +330,15 @@ add_subdirectory(src/bin/dwarfdump)
 if ( BUILD_DWARFEXAMPLE )
 	add_subdirectory(src/bin/dwarfexample)
 endif()
-if (DO_TESTING)
-add_subdirectory(test)
-endif()
 
 if ( BUILD_DWARFGEN )
      set(LIBDWARF_INCLUDE_DIR ../libdwarf)
      add_subdirectory(src/lib/libdwarfp)
      add_subdirectory(src/bin/dwarfgen)
+endif()
+
+if (DO_TESTING)
+add_subdirectory(test)
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
