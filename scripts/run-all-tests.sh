@@ -6,10 +6,8 @@
 start=`date`
 echo "start run-all-tests.sh at $start"
 echo "This removes and recreates /tmp/dw-regression"
-# Use --disable-libelf to turn off all reference to
-# libelf and to also eliminate reliance on dwarfgen.
-# Use --enable-nonstandardprintf to use Windows specific long long
-# printf formats.
+echo "Use --enable-nonstandardprintf to use Windows long long"
+echo "  printf formats."
 # Removes and recreates /tmp/dwtestalldd directory
 # for the regression tests.
 
@@ -60,11 +58,8 @@ chkres () {
 while [ $# -ne 0 ]
 do
   case $1 in
-   --enable-libelf ) argval=$1 ; shift ;;
-   --disable-libelf ) argval=$1 ; shift ;;
    --enable-nonstandardprintf ) nonstdprintf=$1 ; shift ;;
-   * ) echo "Only --enable-libelf or --disable-libelf "
-       echo "or --enable-nonstandardprintf allowed."
+   * ) echo "Only  --enable-nonstandardprintf allowed."
        echo "No action taken. Exit"
        exit 1 ;;
   esac
@@ -95,7 +90,6 @@ then
 fi
 
 
-# If we have no libelf we must not attempt to build dwarfgen.
 # ========
 builddwarfdump() {
   echo "Build dwarfdump source: $here builddir: $ddbld nonstdprintf $nonstdprintf"
@@ -125,12 +119,7 @@ rundistcheck()
   echo "Now rundistcheck"
   cd $here
   chkres $? "Q FAIL: scripts/buildandreleasetest.sh FAIL"
-  if  [ x$1 = "--disable-libelf" ]
-  then
-      sh scripts/buildandreleasetest.sh $1 --disable-dwarfgen $nonstdprintf
-  else
-      sh scripts/buildandreleasetest.sh $1 $nonstdprintf
-  fi
+  sh scripts/buildandreleasetest.sh $1 $nonstdprintf
   chkres $? "R FAIL: scripts/buildandreleasetest.sh FAIL"
   if [ $failcount -eq 0 ]
   then
@@ -189,8 +178,10 @@ runfullddtest() {
   chkres $? "I FAIL: configure in $ddtestdir failed , giving up."
   make
   chkres $? "J FAIL make: tests failed in $ddtestdir. giving up."
+  # Just show the fails, if any.
   grep FAIL <$ddtestdir/ALLdd
-  grep "FAIL 0" $ddtestdir/ALLdd
+  # Now actually check result against the 'PASS' result.
+  grep "FAIL     count: 0" $ddtestdir/ALLdd
   chkres $? "Q FAIL: something failed in $ddtestdir."
   tail -40 $ddtestdir/ALLdd
   if [ $failcount -eq 0 ]

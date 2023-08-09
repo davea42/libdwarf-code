@@ -3,8 +3,7 @@
 # This test script is in the public domain for use
 # by anyone for any purpose.
 # buildandrelease test [--savebart]
-# [--disable-libelf]
-# [--enable-libelf] [--disable-dwarfgen] 
+# [--disable-dwarfgen] 
 # [--enable-nonstandardprintf] 
 #  scripts/buildandreleasetest.sh
 #  A script verifying the distribution gets all needed files
@@ -19,14 +18,11 @@
 # First, get the current configure.ac version into v:
 # if stdint.h does not define uintptr_t and intptr_t
 # Then dwarfgen (being c++) will not build
-# Use --disable-libelf to disable reliance on libelf
-# and dwarfgen.
 # To just eliminate dwarfgen build/test/install use 
 # --disable-dwarfgen.
 
 genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
-libelfopt=''
 wd=`pwd`
 # If passes, remove the /tmp/bart working directory.
 # Useful to consider if all intended files actually present,
@@ -36,9 +32,6 @@ while [ $# -ne 0 ]
 do
   case $1 in
    --savebart ) savebart=y ; shift  ;;
-   --disable-libelf ) genopta='' ; genoptb='' 
-        libelfopt=$1 ; shift ;;
-   --enable-libelf )  shift  ;;
    --disable-dwarfgen ) genopta='' ; genoptb='' ; shift  ;;
    --enable-nonstandardprintf ) nonstdprintf=$1 ; shift  ;;
    * ) echo "Unknown buildandreleasetest.sh option $1. Error." ; exit 1 ;;
@@ -138,8 +131,8 @@ echo "dirs created empty"
 
 echo cd $abld
 safecd $abld "FAIL A cd failed"
-echo "now: $configloc --prefix=$ainstall $libelfopt $nonstdprintf"
-$configloc --prefix=$ainstall $libelfopt $nonstdprintf
+echo "now: $configloc --prefix=$ainstall  $nonstdprintf"
+$configloc --prefix=$ainstall $nonstdprintf
 chkres $? "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make
@@ -168,7 +161,7 @@ echo "TEST Section B: now cd $binstrelbld for second build install"
 safecd $binstrelbld "FAIL B cd"
 echo "TEST: now second install install, prefix $binstrelp"
 echo "TEST: Expecting src in $blibsrc"
-$blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $libelfopt $nonstdprintf
+$blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $nonstdprintf
 chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
 make
@@ -209,8 +202,8 @@ echo "TEST Section C: now cd $dbigend for big-endian build (not runnable) "
 safecd $dbigend "FAIL C be1 "
 echo "TEST: now second install install, prefix $crelbld"
 echo "TEST: Expecting src in $blibsrc"
-echo "TEST: $blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$crelbld $libelfopt $nonstdprintf"
-$blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$cinstrelp $libelfopt $nonstdprintf
+echo "TEST: $blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$crelbld $nonstdprintf"
+$blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$cinstrelp  $nonstdprintf
 chkres $? "FAIL be2  configure fail"
 echo "#define WORDS_BIGENDIAN 1" >> config.h
 echo "TEST: Compile In $dbigend make from $blibsrc/configure"
