@@ -199,8 +199,7 @@ ret_simple_full_path(Dwarf_Debug dbg,
 }
 
 static void
-_dwarf_dirno_string(Dwarf_Debug dbg,
-    Dwarf_Line_Context line_context,
+_dwarf_dirno_string(Dwarf_Line_Context line_context,
     Dwarf_Unsigned dirno,
     unsigned include_dir_offset,
     dwarfstring *dwstr_out)
@@ -269,7 +268,6 @@ create_fullest_file_path(Dwarf_Debug dbg,
     /*  Large enough that almost never will any malloc
         be needed by dwarfstring.  Arbitrary size. */
     dwarfstring targ;
-    dwarfstring nxt;
     unsigned linetab_version = line_context->lc_version_number;
 
     file_name = (char *) fe->fi_file_name;
@@ -344,7 +342,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if (need_dir ) {
-            _dwarf_dirno_string(dbg,line_context,dirno,
+            _dwarf_dirno_string(line_context,dirno,
                 include_dir_offset,&incdir);
         }
         dwarfstring_append(&filename,file_name);
@@ -370,7 +368,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
                     was zero, doing 0 here will
                     duplicate the comp dir */
                 dwarfstring_reset(&compdir);
-                _dwarf_dirno_string(dbg,line_context,0,
+                _dwarf_dirno_string(line_context,0,
                     include_dir_offset,&compdir);
                 if (dwarfstring_strlen(&compdir) > 0) {
                     _dwarf_pathjoinl(&targ,&compdir);
