@@ -227,9 +227,16 @@ c_common_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
     [
-       cxx_compiler_flags="$c_common_flags -Wno-unused-private-field"
+       cxx_compiler_flags="$c_common_flags "
 
-       c_compiler_flags="$c_common_flags -Wnostringop-overread -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs  -Wnull-dereference -Wredundant-decls"
+       c_compiler_flags="$c_common_flags -Wmissing-prototypes -Wdeclaration-after-statement -Wmissing-parameter-type -Wnested-externs -Wredundant-decls -Wsign-compare"
+
+#-Wnull-dereference causes bogus warnings.
+#-Wbad-function-cast removes useful warnings
+#-Wnostringop-overread  removes useful warnings
+#-Wbad-function-cast  removes useful warnings
+#-Wmissing-parameter-type removes useful warnings
+
     ]
     )
 AS_IF(
