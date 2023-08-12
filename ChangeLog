@@ -1,4 +1,38 @@
 2023-08-12:  David Anderson
+    commit ebcee1385334882c20f375d75302cd3d4bc13798
+
+    removing duplicate declarations.
+    One such suffices.
+
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.h
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.h
+
+2023-08-12:  David Anderson
+    commit 8c3812dad14d7a1e9e8b49fb56d3d96ffd2fdc08
+
+    Having realized some options used in configure were
+    suppressing some very valuable warnings,  discovered
+    that the following were only in configure.ac (not
+    cmake or meson) and verified each suppresses simple
+    warnings such as 'unused local variable'.
+    Removed the following warnings:
+     -Wnull-dereference causes bogus warnings.
+     -Wbad-function-cast removes useful warnings
+     -Wnostringop-overread  removes useful warnings
+     -Wbad-function-cast  removes useful warnings
+     -Wmissing-parameter-type removes useful warnings
+            modified:   configure.ac
+
+2023-08-12:  David Anderson
+    commit 158ab5c9d4aa115ad502d8ce7dd37008ce649dc0
+
+    With latest trivial fix.
+            modified:   ChangeLog
+
+2023-08-12:  David Anderson
     commit d2c5705953613961b4edde069fb545f4be639f0a
 
     Refactoring left in an unused local variable
