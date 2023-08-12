@@ -1,3 +1,69 @@
+2023-08-11:  David Anderson
+    commit ffa552d3af71d8ff40dd0aa63d36a4dfbb6f811f
+
+    Minor change to a comment.
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+
+    Now correctly uses the DWARF5 includes array
+    in the line table header to get the compilation
+    directory (when required) to produce the
+    fullest file path possible.
+    It nearly always gave the right answer, but
+    in the special case where  a file index of N
+    in the table had a directory index of 0
+    the full path came out wrong (duplicate directory
+    names).
+
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2023-08-09:  David Anderson
+    commit 336ad49af6f2bb9554ab87ac2ea95981737e12ae
+
+    Removed mention of libelf (because it is no longer
+    used).
+            modified:   scripts/buildandreleasetest.sh
+
+    Fixed the check for errors on running regression tests:
+    some time ago the final count emitted
+    by libdwarf-regressiontests was changed from
+    FAIL 0
+    to
+    FAIL     count: 0
+    and run-all-tests.sh was not adjusted to match.
+    Now these match.
+            modified:   scripts/run-all-tests.sh
+
+2023-08-07:  David Anderson
+    commit 340b0e131922943f00dacd4ee4d3389fbcbd2e76
+
+    Now the last .c file in dwarfgen renamed:
+    dg_getopt.c -> dg_getopt.cc
+    and simplified  to avoid warnings.
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+            modified:   src/bin/dwarfgen/Makefile.am
+            renamed:    src/bin/dwarfgen/dg_getopt.c -> src/bin/dwarfgen/dg_getopt.cc
+            modified:   src/bin/dwarfgen/meson.build
+
+2023-08-07:  David Anderson
+    commit 7965d07fd52d4a81a43d82061099cefd5f207e81
+
+    Added a cmake module path entry. Not sure it is necessary.
+            modified:   CMakeLists.txt
+    Not clear this is being used, but harmless if not.
+            modified:   cmake/FindZSTD.cmake
+
+2023-08-07:  David Anderson
+    commit af9463ed62919f7c1199fd9c4ce039b9ca03c653
+
+    useful, I hope.
+            new file:   cmake/FindZSTD.cmake
+
+2023-08-06:  David Anderson
+    commit 861853c6c0ca3a20859d5387e0d02716c3e7e742
+
+    Documenting another LIBELF mention removed (CMakeLists.txt).
+            modified:   ChangeLog
+
 2023-08-06:  David Anderson
     commit e9f5561052fd5553172705f81491a258c7892f2a
 
