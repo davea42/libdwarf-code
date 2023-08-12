@@ -123,11 +123,6 @@ extern int print_line_numbers_this_cu (Dwarf_Debug dbg,
     Dwarf_Signed cnt,
     Dwarf_Error *err);
 
-extern int print_frames (Dwarf_Debug dbg,int want_eh,
-    struct dwconf_s *,
-    Dwarf_Die * cu_die_for_current_frame,
-    void **, void **,Dwarf_Error *);
-extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges(Dwarf_Debug dbg);
 extern int print_raw_all_rnglists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_raw_all_loclists(Dwarf_Debug dbg, Dwarf_Error *err);

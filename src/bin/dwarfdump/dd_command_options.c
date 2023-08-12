@@ -57,8 +57,6 @@ static const char *remove_quotes_pair(const char *text);
 static char *special_program_name(char *n);
 static void suppress_check_dwarf(void);
 
-extern char *dwoptarg;
-
 /*  These configure items are for the
     frame data.  We're flexible in
     the path to dwarfdump.conf .
