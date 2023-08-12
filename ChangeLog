@@ -1,3 +1,16 @@
+2023-08-12:  David Anderson
+    commit d2c5705953613961b4edde069fb545f4be639f0a
+
+    Refactoring left in an unused local variable
+    and an unused argument.  Removed unused.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2023-08-12:  David Anderson
+    commit 99cb7a9b11c85b7a14be6b381b57f284a613b7d1
+
+    Update with latest git log
+            modified:   ChangeLog
+
 2023-08-11:  David Anderson
     commit ffa552d3af71d8ff40dd0aa63d36a4dfbb6f811f
 
