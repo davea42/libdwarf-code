@@ -251,6 +251,40 @@ AS_IF(
 DWARF_CHECK_CXX_COMPILER_FLAGS([${cxx_compiler_flags}])
 DWARF_CHECK_C_COMPILER_FLAGS([${c_compiler_flags}])
 
+# If we can compile then the runtime can do the
+# setlocal itself.
+# We do not run this since the C compiler needs
+# the C locale to compile correctly.
+AC_COMPILE_IFELSE(
+  [ AC_LANG_PROGRAM(
+    [[
+    #include <langinfo.h>
+    #include <locale.h>
+    #include <string.h>
+    #include <stdio.h>
+    ]],
+    [[
+    char * langinfo = 0;
+    setlocale(LC_CTYPE, "");
+    setlocale(LC_NUMERIC, "");
+    langinfo = nl_langinfo(CODESET);
+    printf("Lang: %s\n",langinfo);
+    if (strcmp(langinfo,"UTF-8") && strcmp(langinfo,"UTF8")) {
+        return 1;
+    }
+    ]]
+    )
+  ],
+  [ have_utf8="yes"
+    AC_DEFINE(
+      [HAVE_UTF8], [1],
+      [Set to 1 as utf8 is fully printable])
+  ],
+  [ have_utf8="no"
+    AC_MSG_WARN([utf8 printed uri-style])
+  ]
+)
+
 # unused attribute
 AC_COMPILE_IFELSE(
     [AC_LANG_PROGRAM(
@@ -409,6 +443,7 @@ echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
 echo "  dwarfdump............: always"
+echo "  dwarfdump print utf-8: ${have_utf8}"
 echo "  dwarfgen.............: ${enable_dwarfgen}"
 echo "  dwarfexample.........: ${enable_dwarfexample}"
 echo

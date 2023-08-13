@@ -55,6 +55,12 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h> /* O_RDONLY open() */
 #endif /* HAVE_FCNTL_H */
+#ifdef HAVE_UTF8
+/*  locale.h is guaranteed in C90 and later,
+    but langinfo.h might not be present. */
+#include "locale.h"
+#include "langinfo.h"
+#endif /* HAVE_UTF8 */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -298,6 +304,8 @@ main(int argc, char *argv[])
     /* path_source will be DW_PATHSOURCE_basic  */
     unsigned char   path_source = DW_PATHSOURCE_unspecified;
 
+    
+
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */
     if (!esb_open_null_device()) {
@@ -347,6 +355,20 @@ main(int argc, char *argv[])
     /*  No more redirect needed. We only use stdout */
 #endif /* _WIN32 */
 
+#ifdef HAVE_UTF8
+    {
+        char *langinf = 0;
+
+        setlocale(LC_CTYPE, "");
+        setlocale(LC_NUMERIC, "");
+        langinf = nl_langinfo(CODESET);
+        if (strcmp(langinf,"UTF-8") && strcmp(langinf,"UTF8")) {
+            glflags.gf_print_utf8_flag = FALSE;
+        }else {
+            glflags.gf_print_utf8_flag = TRUE;
+        }
+    }
+#endif /* HAVE_UTF8 */
     file_name = process_args(argc, argv);
     /*  print_version_details already done in
         dd_command_options.c */
