@@ -34,6 +34,9 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 #ifndef TESTING
 #include "dd_glflags.h"
 #endif
+#ifdef HAVE_UTF8
+#include "dd_utf8.h"
+#endif /* HAVE_UTF8 */
 #include "dd_sanitized.h"
 
 /*  This does a uri-style conversion of control characters.
@@ -105,8 +108,12 @@ we turn all non-ASCII to %xx below.
 #define SANBUF_SIZE 400
 /*  Allocates as esb_constructor_fixed() would,
     so below SANBUF_SIZE bytes no malloc needed. */
-static char sanbuf[SANBUF_SIZE];
-static struct esb_s localesb = {sanbuf,
+static char sanbufa[SANBUF_SIZE];
+static char sanbufb[SANBUF_SIZE];
+static int usebufa = TRUE;
+static struct esb_s localesba = {sanbufa,
+    SANBUF_SIZE,0,1,0};
+static struct esb_s localesbb = {sanbufb,
     SANBUF_SIZE,0,1,0};
 
 /* dwarfdump-sanitize table */
@@ -236,13 +243,23 @@ no_questionable_chars(const char *s) {
 void
 sanitized_string_destructor(void)
 {
-    esb_destructor(&localesb);
+    esb_destructor(&localesba);
+    esb_destructor(&localesbb);
 }
 
+/*  Because we reuse static esb's this MUST NOT
+    be called a third time before printing
+    out the initial returns.  It is rarely
+    a problem.  But it is up to the caller to
+    behave correctly to avoid getting
+    incorect strings. 
+*/
 const char *
 sanitized(const char *s)
 {
     const char *sout = 0;
+    struct esb_s *lsp = 0; 
+
 
 #ifndef TESTING
     if (glflags.gf_no_sanitize_strings) {
@@ -259,8 +276,15 @@ sanitized(const char *s)
         One reason it's expensive is that we do the appends
         in such small batches in do_sanity-insert().
         */
-    esb_empty_string(&localesb);
-    do_sanity_insert(s,&localesb);
-    sout = esb_get_string(&localesb);
+#ifdef HAVE_UTF8
+    if (DW_DLV_OK == dd_utf8_checkCodePoints((unsigned char *)s)) {
+        return s;
+    }
+#endif
+    lsp = usebufa? &localesba: &localesbb;
+    usebufa = !usebufa;
+    esb_empty_string(lsp);
+    do_sanity_insert(s,lsp);
+    sout = esb_get_string(lsp);
     return sout;
 }

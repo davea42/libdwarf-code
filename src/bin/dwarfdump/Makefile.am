@@ -90,7 +90,8 @@ dd_strstrnocase.c \
 dd_true_section_name.c \
 dd_tag_common.h \
 dd_uri.c \
-dd_uri.h
+dd_uri.h \
+dd_utf8.c 
 
 dwarfdump_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/libdwarf \
