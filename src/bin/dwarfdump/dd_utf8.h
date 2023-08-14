@@ -25,8 +25,12 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
 
 */
+#ifndef DD_UTF8_H
+#define DD_UTF8_H
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 Dwarf_Unsigned
 dd_utf8_decode(Dwarf_Unsigned* state, Dwarf_Unsigned* codep,
@@ -37,6 +41,7 @@ int dd_utf8_checkCodePoints(unsigned char * s);
 int dd_utf8_countCodePoints(unsigned char * s,
     Dwarf_Unsigned* count);
 
-
-
-
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* DD_UTF8_H */

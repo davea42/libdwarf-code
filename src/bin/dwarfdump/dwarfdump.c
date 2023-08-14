@@ -304,8 +304,6 @@ main(int argc, char *argv[])
     /* path_source will be DW_PATHSOURCE_basic  */
     unsigned char   path_source = DW_PATHSOURCE_unspecified;
 
-    
-
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */
     if (!esb_open_null_device()) {

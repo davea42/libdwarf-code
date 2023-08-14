@@ -262,6 +262,11 @@ uri_data_destructor(void)
     from makename are destructed at dwarf_finish.
     makename() never returns NULL, so
     do_uri_translation() never does so either.
+
+    If the user were to type dangerous (for the
+    terminal session) characters this prints them
+    out as such! So don't put such in the
+    dwarfdump command line.
 */
 const char *
 do_uri_translation(const char *s,const char *context)
@@ -348,6 +353,7 @@ static void arg_format_suppress_offsets(void);
 static void arg_format_suppress_sanitize(void);
 static void arg_format_suppress_uri(void);
 static void arg_format_suppress_uri_msg(void);
+static void arg_format_suppress_utf8(void);
 
 static void arg_format_file(void);
 static void arg_format_gcc(void);
@@ -568,10 +574,17 @@ static const char *usage_long_text[] = {
 "-D   --format-suppress-offsets Do not show offsets",
 "-x nosanitizestrings",
 "     --format-suppress-sanitize Arbitrary string characters",
-"                               come thru printf",
-"-U   --format-suppress-uri     Suppress uri-translate",
+"                               come thru printf. Can be dangerous",
+"                               to your terminal window.",
+"-U   --format-suppress-uri     Suppress uri-translate ",
+"                               meaning do not translate %xx",
+"                               into the byte it represents in uri",
 "-q   --format-suppress-uri-msg Suppress uri-did-translate",
-"                               notification",
+"                               notification: by default prints a",
+"                               note about each detected uri",
+"                               translation.",
+"     --format-suppress-utf8    Suppress printing of utf8 as utf8 by",
+"                               always using uri-style printing",
 "-C   --format-extensions       Print (with -ki) warnings",
 "                               for some common DWARF extensions",
 "                               (by default extensions accepted",
@@ -725,6 +738,8 @@ OPT_FORMAT_SUPPRESS_SANITIZE,
 OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri    */
 OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg  */
 
+OPT_FORMAT_SUPPRESS_UTF8,     /*  --format-suppress-utf8 */
+
 /* Print Output Limiters    */
 OPT_FORMAT_FILE,              /* -u<file> --format-file=<file> */
 OPT_FORMAT_GCC,               /* -cg      --format-gcc         */
@@ -870,6 +885,8 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
     OPT_FORMAT_SUPPRESS_URI     },
 {"format-suppress-uri-msg",  dwno_argument, 0,
     OPT_FORMAT_SUPPRESS_URI_MSG },
+{"format-suppress-utf8",  dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_UTF8 },
 
 /* Print Output Limiters. */
 {"format-file",         dwrequired_argument, 0, OPT_FORMAT_FILE },
@@ -1701,6 +1718,12 @@ void arg_format_suppress_uri_msg(void)
     /* Suppress uri-did-translate notification */
     glflags.gf_do_print_uri_in_input = FALSE;
 }
+/*  Option '--format-suppress-utf8' */
+void arg_format_suppress_utf8(void)
+{
+    /* Suppress uri-did-translate notification */
+    glflags.gf_print_utf8_flag = FALSE;
+}
 
 /*  Option '-Q' */
 void arg_format_suppress_data(void)
@@ -2480,6 +2503,8 @@ set_command_options(int argc, char *argv[])
             arg_format_suppress_uri();     break;
         case OPT_FORMAT_SUPPRESS_URI_MSG:
             arg_format_suppress_uri_msg(); break;
+        case OPT_FORMAT_SUPPRESS_UTF8:
+            arg_format_suppress_utf8(); break;
 
         /* Print Output Limiters. */
         case OPT_FORMAT_FILE:         arg_format_file();       break;
