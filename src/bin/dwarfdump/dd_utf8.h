@@ -28,8 +28,9 @@ See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
 
 
 
-int dd_utf8_decode(Dwarf_Unsigned* state, 
-    Dwarf_Unsigned * codep, Dwarf_Unsigned byte);
+Dwarf_Unsigned
+dd_utf8_decode(Dwarf_Unsigned* state, Dwarf_Unsigned* codep,
+    unsigned char byte);
 
 int dd_utf8_checkCodePoints(unsigned char * s);
 

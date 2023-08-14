@@ -33,6 +33,7 @@ See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_sanitized.h"
+#include "dd_utf8.h"
 
 #ifdef HAVE_UTF8
 
