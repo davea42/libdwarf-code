@@ -44,6 +44,7 @@ extern "C" {
     and only once per printf! */
 const char * sanitized(const char *s);
 void sanitized_string_destructor(void);
+extern char dwarfdump_sanitize_table[256];
 
 #ifdef __cplusplus
 }
