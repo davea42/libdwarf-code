@@ -277,7 +277,7 @@ sanitized(const char *s)
     }
 #endif
     if (no_questionable_chars(s)) {
-        /*  The original string is safe as is. */
+        /*  The original string is safe ASCII as is. */
         return s;
     }
     /*  Using esb_destructor is quite expensive in cpu time
