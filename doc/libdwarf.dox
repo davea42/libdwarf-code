@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-07-07 v0.7.1
+    @date 2023-08-17 v0.7.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -898,6 +898,15 @@
     dw_true_path_out_buffer contains the
     object path.
 
+    @section dwsec_static Linking against libdwarf.a
+
+    - If you are building an application 
+    - And are linking your application against a static library libdwarf.a
+    - Then you rmust ensure that each source file compilation with an include of libdwarf.h has the macro LIBDWARF_STATIC defined to your source compilation. 
+
+    When compiling to link against a shared library libdwarf.so
+    or libdwarf.dll you must not define LIBDWARF_STATIC.
+
     @section dwsec_dbglink Suppressing CRC calculation for debuglink
 
     GNU Debuglink-specific issue:
@@ -952,7 +961,7 @@
     Several vulnerabilities involving reading
     corrupt object files (created by fuzzing)
     have been fixed.
-    
+
     <b>Changes 0.6.0 to 0.7.0</b>
 
     v0.7.0 released 2023-05-20 
