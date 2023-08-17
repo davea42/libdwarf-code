@@ -1,3 +1,106 @@
+2023-08-17:  David Anderson
+    commit 0c707a68bbda59e53fd703a53ce73107b3d6049e
+
+    Documented the #define of LIBDWARF_STATIC required to
+    link your code to a static library libdwarf.a
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-08-17:  David Anderson
+    commit d59251b6eb644265689e2e839a5947c5dbbba3c0
+
+    Clarified how one links against a
+    static library libdwarf.a
+
+            modified:   README
+            modified:   README.md
+
+2023-08-15:  David Anderson
+    commit ef63115fb2b4c0b4d44bdbb215fe873057d674c1
+
+    Clarifying a comment.
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+
+2023-08-14:  David Anderson
+    commit 2c314f3cb2b67346aab727dd92c79dad79cb8661
+
+    Small typos/omissions in updates today.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/meson.build
+            modified:   test/CMakeLists.txt
+            modified:   test/meson.build
+
+2023-08-14:  David Anderson
+    commit fc57075d4d937171fea9dc2fec61f7ec120dd2ed
+
+    We have a working version with utf-8 variable names
+    shown correctly.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_utf8.c
+            modified:   src/bin/dwarfdump/dd_utf8.h
+
+    New option --format-suppress-utf8 that unconditionally turns
+    off utf-8 output, reverting to uri-style
+    output.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-08-14:  David Anderson
+    commit 8b4b34476c96d6aeff11b8a5252fdeedd38ff722
+
+    So builds with dd_utf8.c
+            modified:   test/Makefile.am
+
+2023-08-14:  David Anderson
+    commit 4d313420f101a95c8a10b6eac6d6a0dc72590075
+
+    Now mostly builds with configure
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/dwarfdump/dd_utf8.c
+            modified:   src/bin/dwarfdump/dd_utf8.h
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+
+2023-08-14:  David Anderson
+    commit 67220e29afbcd85cdbbb86ea0fa00a799373c985
+
+    With utf8 mods
+            modified:   dd_sanitized.h
+
+2023-08-13:  David Anderson
+    commit 1a61a88486b91309897e252889323e81f3498f64
+
+    More for utf8.
+            new file:   dd_utf8.h
+
+2023-08-13:  David Anderson
+    commit 467bd43c895a6fa1b231483a7161776502a5e74f
+
+    Importing utf8 changes from other branch.
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            new file:   src/bin/dwarfdump/dd_utf8.c
+
+2023-08-13:  David Anderson
+    commit 9bd68f2f9b9a76e87b903a810bf4874f108bfce0
+
+    A new internal flag:
+    gf_print_utf8_flag
+    If TRUE we will attempt to print utf8 characters
+    as they should, not uri-style.
+            modified:   ../../../configure.ac
+            modified:   dd_glflags.c
+            modified:   dd_glflags.h
+            modified:   dwarfdump.c
+
+2023-08-12:  David Anderson
+    commit 9cb10d3a553a215016e3fa150528f62af3d9b986
+
+    Now with latest changes.
+            modified:   ChangeLog
+
 2023-08-12:  David Anderson
     commit ebcee1385334882c20f375d75302cd3d4bc13798
 
