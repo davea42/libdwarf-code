@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 29 June 2023
+Updated 17 August 2023
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -13,6 +13,14 @@ using configure,cmake, and meson.
     Version 0.7.0 Released 20 May      2023
     Version 0.6.0 Released 20 February 2023
     Version 0.5.0 Released 22 November 2022.
+
+## NOTE on linking against libdwarf.a
+
+If you are not using one of these build systems
+and are linking code against a static library libdwarf.a
+You must arrange
+to  define the macro BUILD_LIBDWARF in compiling
+your code that does #include "libdwarf.h".
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
