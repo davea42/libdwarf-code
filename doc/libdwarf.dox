@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-08-17 v0.7.1
+    @date 2023-08-19 v0.7.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -902,10 +902,21 @@
 
     - If you are building an application 
     - And are linking your application against a static library libdwarf.a
-    - Then you rmust ensure that each source file compilation with an include of libdwarf.h has the macro LIBDWARF_STATIC defined to your source compilation. 
+    - Then you rmust ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
 
     When compiling to link against a shared library libdwarf.so
     or libdwarf.dll you must not define LIBDWARF_STATIC.
+
+    To pass <b>LIBDWARF_STATIC</b> to the preprocessor with Visual
+    Studio:
+
+    - Right click on a project name
+    - In the contextual menu, click on <b>Properties</b> at the very bottom.
+    - In the new window, double click on <b>C/C++</b>
+    - On the right, click on <b>Preprocessor definitions</b>
+    - There is a small down arrow on the right, click on it then click on <b>Modify</b>
+    - Add L<b>IBDWARF_STATIC</b> to the values
+    - Click on <b>OK</b> to close the windows
 
     @section dwsec_dbglink Suppressing CRC calculation for debuglink
 
