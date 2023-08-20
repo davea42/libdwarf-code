@@ -1,3 +1,44 @@
+2023-08-20:  David Anderson
+    commit 2c47b4816685d6e2b9f097a718b155baaa587899
+
+    Fixed modification date
+            modified:   README
+            modified:   README.md
+
+2023-08-20:  David Anderson
+    commit da6765e589073f7defc94e200ce20db46a56500d
+
+    The correct define for linking against libdwarf.a
+    (static library) is LIBDWARF_STATIC
+            modified:   README
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-08-20:  David Anderson
+    commit cb22caf8c914ba28866d5e7305191af8b4ca9f2f
+
+    Misspelled:  BUILD_LIBDWARF -> LIBDWARF_BUILD
+            modified:   README
+            modified:   README.md
+    Latest version
+            modified:   doc/libdwarf.pdf
+
+2023-08-19:  David Anderson
+    commit 405c669f6d1abe9aa9737bdce3c10163fe4ad17e
+
+    Documents how to properly deal with linking
+    to libdwarf.a in Visual Studio
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2023-08-17:  David Anderson
+    commit d0aaf31b3d81344f9e830adff27c54b2f0129367
+
+    Up to date.
+            modified:   ChangeLog
+
 2023-08-17:  David Anderson
     commit 0c707a68bbda59e53fd703a53ce73107b3d6049e
 
