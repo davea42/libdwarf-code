@@ -16,11 +16,11 @@ using configure,cmake, and meson.
 
 ## NOTE on linking against libdwarf.a
 
-If you are not using one of these build systems
-and are linking code against a static library libdwarf.a
-You must arrange
-to  define the macro BUILD_LIBDWARF in compiling
-your code that does #include "libdwarf.h".
+If you are not using one of the three build systems
+provided and are linking code against a static 
+library libdwarf.a You must arrange to  define the
+macro LIBDWARF_BUILD in compiling your code that 
+does a #include "libdwarf.h".
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
