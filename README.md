@@ -19,7 +19,7 @@ using configure,cmake, and meson.
 If you are not using one of the three build systems
 provided and are linking code against a static 
 library libdwarf.a You must arrange to  define the
-macro LIBDWARF_BUILD in compiling your code that 
+macro LIBDWARF_STATIC in compiling your code that 
 does a #include "libdwarf.h".
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
