@@ -1,3 +1,17 @@
+2023-08-23:  David Anderson
+    commit 96bd161d41050ed367716cdcb249a9e55bfe60a9
+
+    An executable with relocations exposed
+    the mistake of running relocations on
+    non-relocatable objects.
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2023-08-20:  David Anderson
+    commit b6e314cd78a79c36252dd4948529f0c2e58605ff
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-08-20:  David Anderson
     commit 2c47b4816685d6e2b9f097a718b155baaa587899
 
