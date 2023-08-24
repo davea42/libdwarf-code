@@ -366,7 +366,6 @@ update_entry(Dwarf_Debug dbg,
         *error = DW_DLE_RELOC_INVALID;
         return DW_DLV_ERROR;
     }
-
     /* Determine relocation size */
     if (_dwarf_is_32bit_abs_reloc(type, machine)) {
         reloc_size = 4;
@@ -442,6 +441,10 @@ apply_rela_entries(
     }
     rels_shp = obj->f_shdr + r_section_index;
     relcount = rels_shp->gh_relcount;
+    if (obj->f_ehdr->ge_type != ET_REL) {
+        /* No relocations to do */
+        return DW_DLV_OK;
+    }
     if (!relcount) {
         /*  Nothing to do. */
         return DW_DLV_OK;
