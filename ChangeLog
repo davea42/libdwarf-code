@@ -4,6 +4,8 @@
     An executable with relocations exposed
     the mistake of running relocations on
     non-relocatable objects.
+    Now we test the elf header e_type field and if
+    the e_type is not ET_REL we do no relocations.
             modified:   src/lib/libdwarf/dwarf_elfread.c
 
 2023-08-20:  David Anderson
