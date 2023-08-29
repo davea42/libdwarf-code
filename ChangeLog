@@ -1,3 +1,39 @@
+2023-08-28:  David Anderson
+    commit d6dba09a400c2360c441e997bc7a9196c6341efd
+
+    Logging ossfuzz59576 vulnerability and fix.
+            modified:   bugxml/data.txt
+
+2023-08-28:  David Anderson
+    commit e53adc90ffd6d5d0fad61546b0041990aefd970b
+
+    ossfuzz 59576.
+    A test in case 'L' of augmentations had
+    the wrong test for out of bounds.
+    Changed > to >= .
+    Around line 1615
+    We lost track that this was an open bug.
+    Now fixed.  
+    It has been in existence for years.
+            modified:   dwarf_frame2.c
+
+2023-08-25:  David Anderson
+    commit 4442d453370b50b943331e359e40dd981668175c
+
+    Expanded the desctiption of the
+    bug fix where an ET_EXEC object
+    was having relocations applied
+    (linkers do not normally produce
+    a non-relocatable object with
+    relocation sections).
+            modified:   ChangeLog
+
+2023-08-23:  David Anderson
+    commit 5bdbcf570cc3f999528a7421c6d4bc0e31fb3565
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-08-23:  David Anderson
     commit 96bd161d41050ed367716cdcb249a9e55bfe60a9
 
