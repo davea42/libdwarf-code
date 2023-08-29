@@ -1609,9 +1609,12 @@ _dwarf_gnu_aug_encodings(Dwarf_Debug dbg, char *augmentation,
             break;
 
         case 'L':
-            if (cur_aug_p > end_aug_p) {
-                _dwarf_error(dbg, error,
-                    DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
+            if (cur_aug_p >= end_aug_p) {
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_FRAME_AUGMENTATION_UNKNOWN,
+                    "DW_DLE_FRAME_AUGMENTATION_UNKNOWN: "
+                    " Augmentation L runs off the end"
+                    " of augmentation bytes");
                 return DW_DLV_ERROR;
             }
             *lsda_enc_out = *(unsigned char *) cur_aug_p;
