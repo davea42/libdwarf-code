@@ -1,3 +1,25 @@
+
+
+id: DW202308-001
+fuzzer: ossfuzz id: 60506
+datereported: 2023-06-04
+reportedby: David Korczynski
+vulnerability: Read from outside frame section
+product: libdwarf
+description: A fuzzed object results in
+  reading outside a frame section due to a comparison
+  being > when it should have bin >= at about
+  line 1615 in dwarf_frame2.
+  Could result in crash or incorrect frame data returned.
+  Somehow we lost track of this open bug.
+  The bug has been in the code since the augmentation
+  was first implemented in the library.
+datefixed: 2023-08-26
+references: regressiontests/ossfuzz59576/fuzz_set_frame_all-5867083595120640
+gitfixid: e53adc90ffd6d5d0fad61546b0041990aefd970b
+tarrelease:
+endrec: DW202308-001
+
 id: DW202307-001
 fuzzer: ossfuzz id: 60506
 datereported: 2023-07-09
