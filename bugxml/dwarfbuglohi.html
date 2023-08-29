@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of July 2023</p>
-<p> Record count: 161 </p>
+</p>as of August 2023</p>
+<p> Record count: 163 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5455,7 +5455,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-06-10
 </p>
-<p>references:  ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
+<p>references:  regressiontests/ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
 </p>
 <p>gitfixid: c8c54ba5c79b0a2687f0fa2ac331479506c3210f
 </p>
@@ -5485,7 +5485,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-05-10
 </p>
-<p>references:  ossfuzz59699/fuzz_stack_frame_access-6523659305746432
+<p>references:  regressiontests/ossfuzz59699/fuzz_stack_frame_access-6523659305746432
 </p>
 <p>gitfixid: c5b909630bb566cdbf68fae4091f049f3b22ff11
 </p>
@@ -5515,7 +5515,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-06-13
 </p>
-<p>references:  ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
+<p>references:  regressiontests/ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
 </p>
 <p>gitfixid: 9cae1be75ec333d2b8ab8800df4850ed77a8b025
 </p>
@@ -5550,7 +5550,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-06-19
 </p>
-<p>references:  ossfuzz59950/fuzz_set_frame_all-6613067367317504
+<p>references:  regressiontests/ossfuzz59950/fuzz_set_frame_all-6613067367317504
 </p>
 <p>gitfixid: b7437c9e4923906e9b3f3860a0c8a8289cff0a91
 </p>
@@ -5583,9 +5583,73 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-06-26
 </p>
-<p>references:  ossfuzz60090/fuzz_set_frame_all-5757752673435648
+<p>references:  regressiontests/ossfuzz60090/fuzz_set_frame_all-5757752673435648
 </p>
 <p>gitfixid: 6f75899f1f90fa87e52da0df09ddaa2e5be778f9
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202307-001">162) DW202307-001</h3>
+<p>id: DW202307-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 60506
+</p>
+<p>datereported: 2023-07-09
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Read from outside section
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A fuzzed object results in
+  reading outside a line table due to a corruption
+  in a non-standard (experimental) line table format.
+  A corrupted offset was not checked for sanity.
+  The bug has been in the code since the experimental
+  line table support was added in 2015.
+</p>
+<p>datefixed: 2023-07-11
+</p>
+<p>references:  regressiontests/ossfuzz60506/fuzz_srcfiles-6494439909228544.fuzz
+</p>
+<p>gitfixid: c8c5073f35b1efdcc610ecf369c78f87fdd34714
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202308-001">163) DW202308-001</h3>
+<p>id: DW202308-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 60506
+</p>
+<p>datereported: 2023-06-04
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Read from outside frame section
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A fuzzed object results in
+  reading outside a frame section due to a comparison
+  being &gt; when it should have bin &gt;= at about
+  line 1615 in dwarf_frame2.
+  Could result in crash or incorrect frame data returned.
+  Somehow we lost track of this open bug.
+  The bug has been in the code since the augmentation
+  was first implemented in the library.
+</p>
+<p>datefixed: 2023-08-26
+</p>
+<p>references:  regressiontests/ossfuzz59576/fuzz_set_frame_all-5867083595120640
+</p>
+<p>gitfixid: e53adc90ffd6d5d0fad61546b0041990aefd970b
 </p>
 <p>tarrelease: 
 </p>

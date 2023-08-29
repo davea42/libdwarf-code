@@ -39,8 +39,6 @@ tarrelease:
 endrec: DW202307-001
 
 
-id: DW202306-010
-
 id: DW202306-011
 fuzzer: ossfuzz id: 60090
 datereported: 2023-06-24

@@ -3,6 +3,72 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 60506</fuzzer>
+
+<datereported>2023-06-04</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Read from outside frame section
+</vulnerability>
+
+<description> A fuzzed object results in
+  reading outside a frame section due to a comparison
+  being &gt; when it should have bin &gt;= at about
+  line 1615 in dwarf_frame2.
+  Could result in crash or incorrect frame data returned.
+  Somehow we lost track of this open bug.
+  The bug has been in the code since the augmentation
+  was first implemented in the library.
+</description>
+
+<datefixed>2023-08-26</datefixed>
+
+<references> regressiontests/ossfuzz59576/fuzz_set_frame_all-5867083595120640
+</references>
+
+<gitfixid>e53adc90ffd6d5d0fad61546b0041990aefd970b</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 60506</fuzzer>
+
+<datereported>2023-07-09</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Read from outside section
+</vulnerability>
+
+<description> A fuzzed object results in
+  reading outside a line table due to a corruption
+  in a non-standard (experimental) line table format.
+  A corrupted offset was not checked for sanity.
+  The bug has been in the code since the experimental
+  line table support was added in 2015.
+</description>
+
+<datefixed>2023-07-11</datefixed>
+
+<references> regressiontests/ossfuzz60506/fuzz_srcfiles-6494439909228544.fuzz
+</references>
+
+<gitfixid>c8c5073f35b1efdcc610ecf369c78f87fdd34714</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 60090</fuzzer>
 
 <datereported>2023-06-24</datereported>
@@ -26,7 +92,7 @@
 
 <datefixed>2023-06-26</datefixed>
 
-<references> ossfuzz60090/fuzz_set_frame_all-5757752673435648
+<references> regressiontests/ossfuzz60090/fuzz_set_frame_all-5757752673435648
 </references>
 
 <gitfixid>6f75899f1f90fa87e52da0df09ddaa2e5be778f9</gitfixid>
@@ -62,7 +128,7 @@
 
 <datefixed>2023-06-19</datefixed>
 
-<references> ossfuzz59950/fuzz_set_frame_all-6613067367317504
+<references> regressiontests/ossfuzz59950/fuzz_set_frame_all-6613067367317504
 </references>
 
 <gitfixid>b7437c9e4923906e9b3f3860a0c8a8289cff0a91</gitfixid>
@@ -93,7 +159,7 @@
 
 <datefixed>2023-06-13</datefixed>
 
-<references> ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
+<references> regressiontests/ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
 </references>
 
 <gitfixid>9cae1be75ec333d2b8ab8800df4850ed77a8b025</gitfixid>
@@ -124,7 +190,7 @@
 
 <datefixed>2023-05-10</datefixed>
 
-<references> ossfuzz59699/fuzz_stack_frame_access-6523659305746432
+<references> regressiontests/ossfuzz59699/fuzz_stack_frame_access-6523659305746432
 </references>
 
 <gitfixid>c5b909630bb566cdbf68fae4091f049f3b22ff11</gitfixid>
@@ -154,7 +220,7 @@
 
 <datefixed>2023-06-10</datefixed>
 
-<references> ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
+<references> regressiontests/ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
 </references>
 
 <gitfixid>c8c54ba5c79b0a2687f0fa2ac331479506c3210f</gitfixid>
