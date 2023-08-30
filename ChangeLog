@@ -1,3 +1,34 @@
+2023-08-30:  David Anderson
+    commit de3f4a471cf013d1feb39f13e4325d41ab35f7ff
+
+    Added ossfuzz id to the bug fix entry.
+            modified:   ChangeLog
+
+    A typo here on the DW202308-001 entry, the
+    oss fuzz id is dwarfbug*sh
+            modified:   bugxml/data.txt
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-08-29:  David Anderson
+    commit 03ae18dc3220ac5630637fa67e399d0c3ad4cb8f
+
+    Fixing a typo.
+            modified:   bugxml/data.txt
+    regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-08-28:  David Anderson
+    commit 27c0e022346ad93418d15adee0893b31059a75c4
+
+    Incorporated git log and added
+    commentary on this vulnerability.
+            modified:   ChangeLog
+
 2023-08-28:  David Anderson
     commit d6dba09a400c2360c441e997bc7a9196c6341efd
 
