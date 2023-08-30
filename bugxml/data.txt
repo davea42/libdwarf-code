@@ -1,7 +1,7 @@
 
 
 id: DW202308-001
-fuzzer: ossfuzz id: 60506
+fuzzer: ossfuzz id: 59576
 datereported: 2023-06-04
 reportedby: David Korczynski
 vulnerability: Read from outside frame section
