@@ -1,3 +1,41 @@
+2023-09-03:  David Anderson
+    commit b43d17fab5246ffb3376ae2151beaafb4138c15a
+
+    Now mentioning O_CLOEXEC flag
+    on open().
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2023-09-03:  David Anderson
+    commit 3328b9460b13db261200e72e06ce518152bb24d2
+
+    In all open() calls we or O_CLOEXEC to the flags
+    bits (when O_CLOEXEC exists).
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2023-09-03:  David Anderson
+    commit 51f2329e577f186681d6ae4d1c6e52fa8049a24f
+
+    Current month is now September...regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-08-31:  David Anderson
+    commit cea3a4e239f8360bfaa52a55624d72feb1711aa5
+
+    Changes now lists the vulerabilities
+    fixed since the 20 May release of 0.7.0
+            modified:   doc/libdwarf.dox
+
+2023-08-30:  David Anderson
+    commit b1c64d4198a14725ad26c41da8c4b02e3be9e963
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-08-30:  David Anderson
     commit de3f4a471cf013d1feb39f13e4325d41ab35f7ff
 
