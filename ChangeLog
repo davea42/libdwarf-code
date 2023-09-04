@@ -89,7 +89,7 @@
 2023-08-25:  David Anderson
     commit 4442d453370b50b943331e359e40dd981668175c
 
-    Expanded the desctiption of the
+    Expanded the description of the
     bug fix where an ET_EXEC object
     was having relocations applied
     (linkers do not normally produce
