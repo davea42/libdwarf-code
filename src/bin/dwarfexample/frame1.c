@@ -773,7 +773,7 @@ print_one_regentry(const char *prefix,
         printf(" offset_rel? %d ",entry->dw_offset_relevant);
         if (entry->dw_offset_relevant) {
             printf(" offset  %" DW_PR_DSd " " ,
-                entry->dw_offset);
+                (Dwarf_Signed)entry->dw_offset);
             if (is_cfa) {
                 printf("defines cfa value");
             } else {
@@ -789,7 +789,7 @@ print_one_regentry(const char *prefix,
     case DW_EXPR_VAL_OFFSET:
         print_reg(entry->dw_regnum);
         printf(" offset  %" DW_PR_DSd " " ,
-            entry->dw_offset);
+            (Dwarf_Signed)entry->dw_offset);
         if (is_cfa) {
             printf("does this make sense? No?");
         } else {
@@ -801,9 +801,15 @@ print_one_regentry(const char *prefix,
         break;
     case DW_EXPR_EXPRESSION:
         print_reg(entry->dw_regnum);
-        printf(" offset_rel? %d ",entry->dw_offset_relevant);
-        printf(" offset  %" DW_PR_DUu " " ,
-            entry->dw_offset);
+        if (entry->dw_offset_relevant) {
+            printf(" FAIL. ERROR: a DW_EXPR_EXPRESSION "
+               "must not have the dw_offset marked as "
+               "offset_relevant \n");
+            printf(" offset_rel  ERROR: %d ",
+                entry->dw_offset_relevant);
+            printf(" offset  %" DW_PR_DSd " " ,
+                (Dwarf_Signed)entry->dw_offset);
+        }
         printf("Block ptr set? %s ",
             entry->dw_block.bl_data?"yes":"no");
         printf(" Value is at address given by expr val ");
@@ -815,6 +821,15 @@ print_one_regentry(const char *prefix,
             entry->dw_block.bl_len);
         printf("Block ptr set? %s ",
             entry->dw_block.bl_data?"yes":"no");
+        if (entry->dw_offset_relevant) {
+            printf(" FAIL. ERROR: a DW_EXPR_VAL_EXPRESSION "
+               "must not have the dw_offset marked as "
+               "offset_relevant \n");
+            printf(" offset_rel  ERROR: %d ",
+                entry->dw_offset_relevant);
+            printf(" offset  %" DW_PR_DSd " " ,
+                (Dwarf_Signed)entry->dw_offset);
+        }
         printf(" Value is expr val ");
         if (!entry->dw_block.bl_data) {
             printf("Compiler or libdwarf botch, "
