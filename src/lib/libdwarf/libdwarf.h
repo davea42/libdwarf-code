@@ -60,9 +60,9 @@
 # elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
 #  if defined(PIC) || defined(__PIC__)
 #   define DW_API __global
-#  endif  /* __PIC__ */
+#  endif /* __PIC__ */
 # elif (defined(__GNUC__) && __GNUC__ >= 4) || \
-     defined(__INTEL_COMPILER)
+    defined(__INTEL_COMPILER)
 #  if defined(PIC) || defined(__PIC__)
 #   define DW_API __attribute__ ((visibility("default")))
 #  endif /* PIC */

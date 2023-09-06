@@ -196,8 +196,6 @@ typedef struct Dwarf_Regtable3_s_i {
     Dwarf_Regtable_Entry3_i *rt3_rules;
 } Dwarf_Regtable3_i;
 
-
-
 typedef struct Dwarf_Frame_s *Dwarf_Frame;
 
 /*

@@ -67,7 +67,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 #ifndef O_CLOEXEC
 #define O_CLOEXEC 0
-#endif  /* O_CLOEXEC */
+#endif /* O_CLOEXEC */
 
 /*  TYP, SIZEOFT32 and ASNAR
     mean we can use correctly-sized arrays of char for the

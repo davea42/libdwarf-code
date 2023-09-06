@@ -580,8 +580,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     if (!head_cie_ptr) {
         /*  Should be impossible. */
         _dwarf_error_string(dbg, error,DW_DLE_DEBUGFRAME_ERROR,
-             "DW_DLE_DEBUGFRAME_ERROR" 
-             "Impossible no head_cie_ptr");
+            "DW_DLE_DEBUGFRAME_ERROR"
+            "Impossible no head_cie_ptr");
         return DW_DLV_ERROR;
     }
     cur_cie_ptr = head_cie_ptr;
@@ -600,7 +600,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
                 head_cie_ptr);
             _dwarf_error_string(dbg, error,DW_DLE_ALLOC_FAIL,
-                "DW_DLE_ALLOC_FAIL" 
+                "DW_DLE_ALLOC_FAIL"
                 "getting DW_DLA_LIST given fde_count");
             return DW_DLV_ERROR;
         }
@@ -987,7 +987,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     new_cie = (Dwarf_Cie) _dwarf_get_alloc(dbg, DW_DLA_CIE, 1);
     if (new_cie == NULL) {
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_ALLOC_FAIL,
             "DW_DLE_ALLOC_FAIL "
             "attempting to allocate a Dwarf_Cie");
@@ -1180,7 +1180,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         length_of_augmented_fields = (Dwarf_Unsigned) lreg;
 
         if (length_of_augmented_fields >= dbg->de_filesize) {
-            _dwarf_error_string(dbg, error, 
+            _dwarf_error_string(dbg, error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
                 "DW_DLE_DEBUG_FRAME_LENGTH_BAD "
                 "in irix exception table length of augmented "
@@ -1202,8 +1202,8 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             error,section_ptr_end);
         SIGN_EXTEND(offset_into_exception_tables,
             DWARF_32BIT_SIZE);
-        if (offset_into_exception_tables > 0) { 
-            if ((Dwarf_Unsigned)offset_into_exception_tables >= 
+        if (offset_into_exception_tables > 0) {
+            if ((Dwarf_Unsigned)offset_into_exception_tables >=
                 dbg->de_filesize) {
                 _dwarf_error_string(dbg,error,
                     DW_DLE_DEBUG_FRAME_LENGTH_BAD,
@@ -1262,10 +1262,11 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     if ( frame_ptr < initloc) {
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_DF_FRAME_DECODING_ERROR,
             "DW_DLE_DF_FRAME_DECODING_ERROR "
-            "frame pointer decreased.Impossible. arithmetic overflow");
+            "frame pointer decreased.Impossible. "
+            "arithmetic overflow");
         return DW_DLV_ERROR;
     }
 
