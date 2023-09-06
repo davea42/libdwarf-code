@@ -1,3 +1,75 @@
+2023-09-06:  David Anderson
+    commit ebc892ec98f7003a5b47fecc67d2596f2ca9e7ca
+
+    Removing trailing whitespace, fixing indents.
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2023-09-06:  David Anderson
+    commit e15af5c57dbfc9c9be6fe6f890dc0abb6aec10c4
+
+    Removing trailing whitespace, fixing indent mistakes,
+    and shortening too-long lines.
+    Per codingstandard.
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.h
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-06:  David Anderson
+    commit 1e0d6e36dfad997a01fcb48586568fad4f042b4d
+
+    Added a sanity check and explicitly cast
+    the dw_offset to Dwarf_Signed (previously
+    it was implicit in two calls).
+            modified:   src/bin/dwarfexample/frame1.c
+
+2023-09-06:  David Anderson
+    commit 0dbbbdf876dd5a9bab692d93ef56c60c5980910e
+
+    Added commentary,  on frame register data and
+    added explicit cast to use of the dw_offset value
+    used in print_one_fde()
+    Added a sanity check for a library error.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+2023-09-06:  David Anderson
+    commit f2b487fbc062d2703f9938bf4c1cb5ed4b464461
+
+    Fixed a typo in doxygen comment.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-06:  David Anderson
+    commit 27efdf020621e67a3c913da66b8975c4cc1bf7e8
+
+    Refined comments that point out a very old error
+    in the data type of DWARF frame expression
+    content in  return arguments.
+    In struct Dwarf_Regtable_Entry3_s
+    (accessible via dwarf_get_fde_info_for_all_regs3()),
+    and returned by functions
+    dwarf_get_fde_info_for_reg3_b(),
+    and dwarf_get_fde_info_for_cfa_reg3_b().
+
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-04:  David Anderson
+    commit 911c0b01f5a4cba92b0b1b99dde9fd5889034e2f
+
+    Correcting a misspelling in the text.
+            modified:   ChangeLog
+
+2023-09-03:  David Anderson
+    commit dc2095a8618c02476d7a21cb08e3c827b76e97b4
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2023-09-03:  David Anderson
     commit b43d17fab5246ffb3376ae2151beaafb4138c15a
 
