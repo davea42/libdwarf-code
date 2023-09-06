@@ -803,8 +803,8 @@ print_one_regentry(const char *prefix,
         print_reg(entry->dw_regnum);
         if (entry->dw_offset_relevant) {
             printf(" FAIL. ERROR: a DW_EXPR_EXPRESSION "
-               "must not have the dw_offset marked as "
-               "offset_relevant \n");
+                "must not have the dw_offset marked as "
+                "offset_relevant \n");
             printf(" offset_rel  ERROR: %d ",
                 entry->dw_offset_relevant);
             printf(" offset  %" DW_PR_DSd " " ,
@@ -823,8 +823,8 @@ print_one_regentry(const char *prefix,
             entry->dw_block.bl_data?"yes":"no");
         if (entry->dw_offset_relevant) {
             printf(" FAIL. ERROR: a DW_EXPR_VAL_EXPRESSION "
-               "must not have the dw_offset marked as "
-               "offset_relevant \n");
+                "must not have the dw_offset marked as "
+                "offset_relevant \n");
             printf(" offset_rel  ERROR: %d ",
                 entry->dw_offset_relevant);
             printf(" offset  %" DW_PR_DSd " " ,

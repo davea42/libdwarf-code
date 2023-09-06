@@ -5,7 +5,6 @@
   placed into the public domain to be copied or
   used by anyone for any purpose without restriction.
 
-
 */
 /*  simplereader.c
     This is an example of code reading dwarf .debug_info.
