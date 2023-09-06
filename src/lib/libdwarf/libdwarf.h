@@ -5371,7 +5371,7 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
 
 /*! @brief Get the value of the CFA for a particular pc value
 
-    @see dwarf_get_fde_info_for_reg3_b
+    @see dwarf_get_fde_info_for_cfa_reg3_b
 
     This has essentially the same return values but
     it refers to the CFA (which is not part of the register
