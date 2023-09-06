@@ -458,11 +458,11 @@ typedef struct Dwarf_Ranges_s {
         possible case for dwarf2):
             If dw_offset_relevant is non-zero, then
                 the value is stored at at the address
-                CFA+N where N is a signed offset.
+                CFA+N where N (dw_offset) is a signed offset,
+                (not unsigned) and must be cast to Dwarf_Signed
+                before use.
                 dw_regnum is the cfa register rule which means
                 one ignores dw_regnum and uses the CFA appropriately.
-                So dw_offset is a signed value, really,
-                and must be printed/evaluated as such.
                 Rule: Offset(N)
             If dw_offset_relevant is zero, then the
                 value of the register
@@ -470,7 +470,8 @@ typedef struct Dwarf_Ranges_s {
                 Rule: register(R)
         If dw_value_type  == DW_EXPR_VAL_OFFSET
             the  value of this register is CFA +N where
-            N is a signed offset.
+            N (dw_offset) is a signed offset (not unsigned)
+            and must be cast to Dwarf_Signed before use.
             dw_regnum is the cfa register rule which means
             one ignores dw_regnum and uses the CFA appropriately.
             Rule: val_offset(N)
@@ -501,8 +502,8 @@ typedef struct Dwarf_Regtable_Entry3_s {
     Dwarf_Small         dw_offset_relevant;
     Dwarf_Small         dw_value_type;
     Dwarf_Half          dw_regnum;
-    Dwarf_Unsigned      dw_offset;
-    Dwarf_Unsigned      dw_args_size; /* Not dealt with.  */
+    Dwarf_Unsigned      dw_offset; /* Should be Dwarf_Signed */
+    Dwarf_Unsigned      dw_args_size; /* Always zero. */
     Dwarf_Block         dw_block;
 } Dwarf_Regtable_Entry3;
 
@@ -5330,7 +5331,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     @param dw_offset
     On success returns a register offset value.
     In principle these are signed, but historically
-    in libdwarf it is typed unsigned. 
+    in libdwarf it is typed unsigned.
     Cast the returned value to Dwarf_Signed to
     get the correct meaning.
     @param dw_block_content
