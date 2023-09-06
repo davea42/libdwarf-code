@@ -1236,6 +1236,11 @@ print_one_fde(Dwarf_Debug dbg,
             Dwarf_Unsigned reg = 0;
             Dwarf_Unsigned offset_relevant = 0;
             Dwarf_Small  value_type = 0;
+            /*  DWARF has always said the offset is signed
+                in an offset(n) or val_offset(N) register rule.
+                the API functions here are formally
+                incorrect. So we cast the value returned
+                to us to Dwarf_Signed at point of use. */
             Dwarf_Unsigned offset = 0;
             Dwarf_Block block;
             Dwarf_Addr   row_pc = 0;
@@ -1290,7 +1295,7 @@ print_one_fde(Dwarf_Debug dbg,
                 address_size,
                 offset_size,version,
                 config_data,
-                offset_relevant, offset, &block);
+                offset_relevant, (Dwarf_Signed)offset, &block);
         }
         for (k = 0; k < config_data->cf_table_entry_count; k++) {
             Dwarf_Unsigned reg = 0;
@@ -1350,7 +1355,7 @@ print_one_fde(Dwarf_Debug dbg,
                 address_size,
                 offset_size,version,
                 config_data,
-                offset_relevant, offset, &block);
+                offset_relevant, (Dwarf_Signed)offset, &block);
         }
         if (printed_intro_addr) {
             printf("\n");
@@ -2141,9 +2146,15 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         if (print_type_title) {
             printf("<%s ", type_title);
         }
+        if (offset_relevant) {
+            printf("ERROR: frame register type %s "
+                "marked as offset_relevant "
+                "but that is impossible, it has no such "
+                "field.",type_title);
+            glflags.gf_count_major_errors++;
+        }
         printreg(rule_id, config_data);
         printf("=");
-        /*  Here 'offset' is actually block length. */
         printf("expr-block-len=%" DW_PR_DUu , block->bl_len);
         if (print_type_title) {
             printf("> ");
@@ -2156,7 +2167,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 libdwarf so libdwarf validated it. */
             dump_block("", block->bl_data, block->bl_len);
             printf("> ");
-            if (glflags.verbose) {
+            {
                 struct esb_s exprstring;
                 char local_buf[300];
                 int gres = 0;
@@ -2164,7 +2175,6 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 
                 esb_constructor_fixed(&exprstring,local_buf,
                     sizeof(local_buf));
-                /*  Here 'offset' is actually block length. */
                 gres = print_expression_operations(dbg,
                     die,
                     /* indent */ 1,
