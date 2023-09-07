@@ -282,8 +282,6 @@ int open_a_file(const char * name);
 void close_a_file(int f);
 Dwarf_Unsigned write_to_object(void);
 
-static const Dwarf_Unsigned zero = 0;
-static const Dwarf_Unsigned one  = 1;
 // This is a global so thet CallbackFunc can get to it
 // If we used the dwarf_producer_init_c() user_data pointer
 // creatively we would not need a global.
