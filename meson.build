@@ -1,5 +1,5 @@
 project('libdwarf', ['c','cpp'],
-  version: '0.7.1',
+  version: '0.8.0',
   default_options : ['buildtype=debugoptimized', 'warning_level=3', 'werror=true'],
   meson_version : '>=0.53'
 )
