@@ -495,7 +495,8 @@ typedef struct Dwarf_Ranges_s {
 
         Note that this definition can only deal correctly
         with register numbers that fit in a 16 bit
-        unsigned value. And it is difficult to alter
+        unsigned value.  Changing this would be an incompatible
+        change to several functions in the libdwarf API.
 */
 
 typedef struct Dwarf_Regtable_Entry3_s {
@@ -5314,7 +5315,8 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     without a stack frame including registers (etc).
 
     dwarf_get_fde_info_for_reg3_c() is new in Septmber 2023
-    to correct the incorrect type in  dwarf_get_fde_info_for_reg3_b().
+    to correct the incorrect type of the dw_offset
+    argument in  dwarf_get_fde_info_for_reg3_b().
     Both versions operate correctly.
 
     @param dw_fde
@@ -5401,7 +5403,7 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
  
     New in September 2023.
     dwarf_get_fde_info_for_cfa_reg3_c() returns dw_offset
-    as a signed type
+    as a signed type.
     dwarf_get_fde_info_for_cfa_reg3_b() returns dw_offset
     as an unsigned type, requiring the caller to cast
     to Dwarf_Signed before using the value.
