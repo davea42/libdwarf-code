@@ -2551,8 +2551,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     return DW_DLV_OK;
 }
 
-/*  In this interface, table_column of DW_FRAME_CFA_COL
-    is not meaningful.
+/*  Table_column DW_FRAME_CFA_COL is not meaningful.
     Use  dwarf_get_fde_info_for_cfa_reg3_b() to get the CFA.
     Call dwarf_set_frame_cfa_value() to set the correct column
     after calling dwarf_init()
@@ -2571,15 +2570,49 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     if the pointer is null).
     Otherwise *has_more_rows and *subsequent_pc
     are not set.
+
+    The offset returned is Unsigned, which was
+    always wrong. Cast to Dwarf_Signed to use it.
 */
 int
 dwarf_get_fde_info_for_reg3_b(Dwarf_Fde fde,
+    Dwarf_Half      table_column,
+    Dwarf_Addr      requested,
+    Dwarf_Small    *value_type,
+    Dwarf_Unsigned *offset_relevant,
+    Dwarf_Unsigned *register_num,
+    Dwarf_Unsigned *offset,
+    Dwarf_Block    *block,
+    Dwarf_Addr     *row_pc_out,
+    Dwarf_Bool     *has_more_rows,
+    Dwarf_Addr     *subsequent_pc,
+    Dwarf_Error    *error)
+{
+    Dwarf_Signed soff = 0;
+    int res = 0;
+
+    res = dwarf_get_fde_info_for_reg3_c(
+        fde,table_column,requested,
+        value_type,offset_relevant,
+        register_num,&soff,
+        block,row_pc_out,has_more_rows,
+        subsequent_pc,error);
+    if (offset) {
+        *offset = (Dwarf_Unsigned)soff;
+    }
+    return res;
+}
+/*  New September 2023.
+    The same as dwarf_get_fde_info_for_reg3_b() but here
+*/
+int
+dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
     Dwarf_Half      table_column,
     Dwarf_Addr      pc_requested,
     Dwarf_Small    *value_type,
     Dwarf_Unsigned *offset_relevant,
     Dwarf_Unsigned *register_num,
-    Dwarf_Unsigned *offset,
+    Dwarf_Signed   *offset,
     Dwarf_Block    *block,
     Dwarf_Addr     *row_pc_out,
     Dwarf_Bool     *has_more_rows,
@@ -2671,6 +2704,37 @@ dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
     Dwarf_Unsigned *offset_relevant,
     Dwarf_Unsigned *register_num,
     Dwarf_Unsigned *offset,
+    Dwarf_Block    *block,
+    Dwarf_Addr     *row_pc_out,
+    Dwarf_Bool     *has_more_rows,
+    Dwarf_Addr     *subsequent_pc,
+    Dwarf_Error    *error)
+{
+    Dwarf_Signed soff = 0;
+    int res = 0;
+
+    res = dwarf_get_fde_info_for_cfa_reg3_c(fde,
+        pc_requested, value_type,offset_relevant,
+        register_num,&soff,block, row_pc_out,
+        has_more_rows,subsequent_pc,error);
+    if (offset) {
+        *offset = (Dwarf_Unsigned)soff;
+    }
+    return res;
+}
+/*
+    New September 2023. With the offset argument
+    a signed value.  This is more correct, so
+    convert from dwarf_get_fde_info_for_cfa_reg3_b
+    when convenient.
+*/
+int
+dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde fde,
+    Dwarf_Addr      pc_requested,
+    Dwarf_Small    *value_type,
+    Dwarf_Unsigned *offset_relevant,
+    Dwarf_Unsigned *register_num,
+    Dwarf_Signed   *offset,
     Dwarf_Block    *block,
     Dwarf_Addr     *row_pc_out,
     Dwarf_Bool     *has_more_rows,
