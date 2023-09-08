@@ -4,13 +4,15 @@
 Tested on MacOS Ventura
 
 ## Getting set up
-Install Mac Command Line Tools from Apple.
+Install Mac Command Line Tools from Apple if
+you do not have compilers installed.
 
-From macports.org install the port command
-by downloading a .pkg file, click on the downloaded
-package, and follow the instructions.
+Point your browser to macports.org and
+install the port command
+by downloading a .pkg file, clicking on the downloaded
+package, and following the instructions.
 
-Close Terminal (if open)
+Close Terminal (if open).
 
 Open a terminal window (at this point
 the port program will be in your $PATH ).
@@ -24,6 +26,11 @@ the port program will be in your $PATH ).
 
 At this point normal configure/cmake/meson
 builds should work and 'make check' works too.
+
+From the source directory one can run:
+
+    sh scripts/buildandreleasetest.sh
+
 
 
 

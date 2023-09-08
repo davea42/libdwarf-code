@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-09-06 v0.8.0
+    @date 2023-09-08 v0.8.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -972,7 +972,7 @@
     New functions dwarf_get_fde_info_for_reg3_c(),
     dwarf_get_fde_info_for_cfa_reg3_c() are defined.
     The original _b() versions continue to exist and work
-    so there is no need to immediately change your calls.
+    so there is no need to change your calls
     The advantage of the new versions is they correctly
     type the dw_offset argument return value
     as Dwarf_Signed instead of the earlier and incorrect type
