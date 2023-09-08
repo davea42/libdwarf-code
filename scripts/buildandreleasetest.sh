@@ -21,6 +21,11 @@
 # To just eliminate dwarfgen build/test/install use 
 # --disable-dwarfgen.
 
+# accomodate differences in cmake install file count:
+# 16 is for 32bit build
+# 18 is for 64bit build
+expectlen32=16
+expectlen64=18
 genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
 wd=`pwd`
@@ -297,13 +302,18 @@ then
   exp=18
   echo "Examine contents of cmake install dir $fcmakeinst"
   echo "Number of files in installtarg: $len"
-  echo "Number of files expected      : $exp" 
-  if [ $len -ne $exp ]
+  echo "Number of files expected      : $expectcmakelen" 
+  if [ $len -ne $expectlen64 ]
   then
-    echo "Contents of failing $ftfout"
-    cat $ftfout
-    echo "FAIL Sec F C11inst install loc contents want $exp got $len"
-    exit 1
+    if [ $len -ne $expectlen32 ]
+    then 
+      echo "Contents of failing $ftfout"
+      cat $ftfout
+      echo "FAIL Sec F C11inst install loc contents want $expectlen32"
+      echo "FAIL Sec F C11inst or $expectlen64 "
+      echo "FAIL Sec F C11inst got $len"
+      exit 1
+    fi
   fi
   ctest -R self
   chkres $? "FAIL Sec F C11e  ctest -R self in $fcmakebld"
