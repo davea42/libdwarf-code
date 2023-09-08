@@ -47,7 +47,7 @@
 #include "dd_minimal.h"
 
 /* works around ref to this via dd_getopt */
-void dd_minimal_count_global_error() {}
+void dd_minimal_count_global_error(void) {}
 
 /*  gennames.c
     Prints routines to return constant name for the associated value
@@ -419,7 +419,6 @@ GenerateOneSet(void)
     unsigned u;
     unsigned prev_value = 0;
     char *prefix_id = prefix + prefix_root_len;
-    unsigned actual_array_count = 0;
 
 #ifdef TRACE_ARRAY
     printf("List before sorting:\n");
@@ -468,7 +467,6 @@ GenerateOneSet(void)
         fprintf(f_names_c,"        *s_out = \"%s_%s\";\n",
             prefix,group_array[u].name);
         fprintf(f_names_c,"        return DW_DLV_OK;\n");
-        ++actual_array_count;
     }
 
     /* Closing entries for 'dwarf_names.h' */

@@ -722,7 +722,6 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
         Dwarf_Unsigned length           = 0;
         Dwarf_Unsigned last_abbrev_code = 0;
         Dwarf_Bool bMore                = TRUE;
-        Dwarf_Unsigned CU_abbrev_count  = 0;
 
         if (abbrev_array == NULL) {
             /* Allocate initial abbreviation array info */
@@ -804,7 +803,6 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                             abbrev_entry_count;
                     }
                 }
-                ++CU_abbrev_count;
                 offset += length;
             }
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);

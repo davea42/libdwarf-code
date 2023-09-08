@@ -203,9 +203,8 @@ validate_op_listed(char *curdefname,unsigned long v,
     unsigned int linenum)
 {
     struct ops_table_s * ops = optabsource ;
-    unsigned int i = 0;
 
-    for (i = 0; ; ++i,++ops) {
+    for ( ; ; ++ops) {
         unsigned int j = 0;
         if (!ops->ot_first &&
             !ops->ot_last &&

@@ -636,7 +636,6 @@ print_split_macro_value(const char *m_in)
     char typbuf[400];
     char    *local = (char *)m_in;
     char    *valstart = 0;
-    size_t   namelen = 0;
     char    *cur = local;
     char     lastchar = 0;
     struct esb_s m;
@@ -655,7 +654,7 @@ print_split_macro_value(const char *m_in)
     /*  Has name<space>value
         or name(operands)<space>value */
     lastchar = 0;
-    for ( ;*cur && cur != valstart; ++namelen,++cur) {
+    for ( ;*cur && cur != valstart; ++cur) {
         esb_appendn(&m,cur,1);
         lastchar = *cur;
     }
