@@ -971,12 +971,15 @@
 
     New functions dwarf_get_fde_info_for_reg3_c(),
     dwarf_get_fde_info_for_cfa_reg3_c() are defined.
-    The original _b() versions continue to exist and work
-    so there is no need to change your calls
     The advantage of the new versions is they correctly
     type the dw_offset argument return value
     as Dwarf_Signed instead of the earlier and incorrect type
     Dwarf_Unsigned.
+
+    The original functions dwarf_get_fde_info_for_reg3_b() and
+    dwarf_get_fde_info_for_cfa_reg3_b()
+    continue to exist and work for compatibility with
+    the previous release.
 
     For all open() calls for which the O_CLOEXEC flag exists
     we now add that flag to the open() call.
