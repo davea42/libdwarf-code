@@ -1,3 +1,141 @@
+2023-09-09:  David Anderson
+    commit 6759e3b4e9f6169d8f0ab34c457efc39394989ec
+
+    Refining the wording now we have
+    successfully run libdwarf-regressiontests.
+            modified:   READMEmacos.md
+
+2023-09-08:  David Anderson
+    commit 68daec433fc7f72ab0b66115e9aae1aa3f91c21f
+
+    Small clarification of the two new
+    functions.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-09-08:  David Anderson
+    commit 1ac73812595632be4a60715958b7ee126b2619dc
+
+    Tweaking wording.
+            modified:   READMEmacos.md
+    Clearer now that continuing to use
+    dwarf_get_fde_info_for_reg3_b(),
+    and dwarf_get_fde_info_for_cfa_reg3_b()
+    versions for frame register access is
+    ok. Lets one use current or earlier
+    libdwarf shared objects.
+    the new _c() versions simply return
+    one argument as the correct type (Dwarf_Signed).
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-09-08:  David Anderson
+    commit 29f9aa527b21926c772f4563ab90747fa3ff2c34
+
+    A compiler warned of instances of set-but-not-used
+    variables and a couple imprecise declarations.
+    All now fixed.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_tied.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2023-09-08:  David Anderson
+    commit bac3cc0e4987c2850103b1b467d366e46c32678e
+
+    Now we test on MacOS
+            new file:   READMEmacos.md
+
+    For a 32bit system the count of files created by
+    a cmake install of libdwaff differs (lower by two)
+    than for a 64 bit system. So allow either count.
+            modified:   scripts/buildandreleasetest.sh
+
+2023-09-07:  David Anderson
+    commit 9c615e942d972f5a18856ac37c9c8ec421240b09
+
+    Compiler found two unused const variables. Removed them.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+
+2023-09-07:  David Anderson
+    commit bfcfbc61d783771298edeaa6c4398bc95e34ae20
+
+    Small comment changes for doxygen related
+    to the Frame dw_offset argments.
+            modified:   libdwarf.h
+
+2023-09-07:  David Anderson
+    commit f3fa1d61b60763855c093bcc2ee8c473247f77d7
+
+    Now set for 0.8.0
+            modified:   doc/libdwarf.pdf
+
+2023-09-07:  David Anderson
+    commit 3d770bf3441ea646351373d297627dba27a4f70e
+
+    Regenerated for 0.8.0
+            modified:   doc/libdwarf.pdf
+
+2023-09-07:  David Anderson
+    commit 2d3c064780a07f1b1e1d9844325d7ad281fdf248
+
+    Regenerated with 'make rebuild' to get the correct version
+    in these headers.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-09-07:  David Anderson
+    commit afa59adc34f3446402a63a44bfbe651ad6b6a029
+
+    Updating version. No change to libdwarfp.
+            modified:   doc/libdwarfp.mm
+
+2023-09-07:  David Anderson
+    commit 6251f4b8a0543f31d707ad4a3e88b637fe9956a5
+
+    Version changed to 0.8.0 for the next release,
+    reflecting the addition of two new functions.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   meson.build
+
+2023-09-07:  David Anderson
+    commit b052c88512369771ff946f824d83064656673695
+
+    Added new functions
+    dwarf_get_fde_info_for_reg3_c()
+    dwarf_get_fde_info_for_cfa_reg3_c()
+    which correctly return a Dwarf_Signed
+    value for the dw_offset argument.
+
+    dwarf_get_fde_info_for_reg3_b()
+    dwarf_get_fde_info_for_cfa_reg3_b()
+    remain unchanged. These return a Dwarf_Unsigned
+    dw_offset value, which callers must
+    cast to Dwarf_Signed for correct use
+    on DWARF frame information,
+    as has been true since the first libdwarf.
+
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-06:  David Anderson
+    commit 687af9c6f9305f433f4fb94435c75a6e7c3a37cd
+
+    Up to date with git diff
+            modified:   ChangeLog
+
 2023-09-06:  David Anderson
     commit ebc892ec98f7003a5b47fecc67d2596f2ca9e7ca
 
