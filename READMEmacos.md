@@ -1,7 +1,7 @@
-
 ## MacOS builds of libdwarf and dwarfdump 
 
-Tested on MacOS Ventura
+Tested on up to date MacOS Ventura
+September 8, 2023
 
 ## Getting set up
 Install Mac Command Line Tools from Apple if
@@ -31,6 +31,11 @@ From the source directory one can run:
 
     sh scripts/buildandreleasetest.sh
 
+if one wants a test using all the build
+mechanisms.
 
+The full libdwarf-regressiontests suite
+runs successfully. There is no
+reason for you to run that testsuite.
 
 
