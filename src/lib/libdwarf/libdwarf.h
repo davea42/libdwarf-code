@@ -5374,7 +5374,7 @@ DW_API int dwarf_get_fde_info_for_reg3_c(Dwarf_Fde dw_fde,
 
 /*! @brief Return details about a particular pc and register.
 
-    Identical to dwarf_get_fde_info_for_reg3_c except that
+    Identical to dwarf_get_fde_info_for_reg3_c() except that
     this returns dw_offset as a Dwarf_Unsigned, which
     was never appropriate, and required you to
     cast that value to Dwarf_Signed to use it properly..
@@ -5396,12 +5396,13 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
 
 /*! @brief Get the value of the CFA for a particular pc value
 
-    @see dwarf_get_fde_info_for_cfa_reg3_c
-    This has essentially the same return values but
+    @see dwarf_get_fde_info_for_reg3_c
+    has essentially the same return values  as
+    dwarf_get_fde_info_for_reg3_c but
     it refers to the CFA (which is not part of the register
-    table)
+    table) so function has no table column argument.
  
-    New in September 2023.
+    New in September 2023, release 0.8.0.
     dwarf_get_fde_info_for_cfa_reg3_c() returns dw_offset
     as a signed type.
     dwarf_get_fde_info_for_cfa_reg3_b() returns dw_offset
@@ -5414,7 +5415,7 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
     is not set and the caller must
     evaluate the expression, which usually depends
     on runtime frame data which cannot be calculated
-    without a stack frame including registers (etc).
+    without a stack frame including register values (etc).
 */
 DW_API int dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde dw_fde,
     Dwarf_Addr      dw_pc_requested,
@@ -5429,12 +5430,11 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde dw_fde,
     Dwarf_Error   * dw_error);
 /*! @brief Get the value of the CFA for a particular pc value(obsolete)
 
+    @see dwarf_get_fde_info_for_cfa_reg3_c
     This is the earlier version that returns a dw_offset
     of Dwarf_Unsigned, requiring you to cast to Dwarf_Signed
     to work  with the value.
 
-    This function continues to work as always.
-    Please change your code to call dwarf_get_fde_info_for_cfa_reg3_c()
 
 */
 DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
