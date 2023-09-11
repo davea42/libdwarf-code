@@ -49,9 +49,9 @@ libdwarf/dwarfdump.
     optional add: cmake meson ninja doxygen 
 
     FreeBSD:
-    pkg install bash python3 gmake binutils pkgconf lzlib zstd 
+    pkg install bash python3 gmake binutils pkgconf liblz4 zstd 
     # libzstd is likely in /usr/local/lib and zstd.h
-    # in /usr/local/include and the compiler will not look there
+    # in /usr/local/include and the compiler may not look there
     # by default. All will still build fine without it and
     # without lzib too, though compressed DWARF sections
     # may not be readable.
@@ -129,8 +129,16 @@ For a faster build, adding additional checks:
 
 Ignore this section if using meson (or cmake).
 
-This is not recommended as it requires you have
-GNU autotools and pkg-config installed.
+This is not recommended as it requires you have more
+software installed.
+
+for configure install at least:
+
+    automake
+    libtool
+    pkg-config
+    xz
+
 Here we assume the source is in  a directory named
 /path/to/code
 
