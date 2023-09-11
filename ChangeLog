@@ -1,3 +1,44 @@
+2023-09-11:  David Anderson
+    commit f6941ef1254d72c621fbe8d2f8c1abe9a60262db
+
+    On FreeBSD 13.2 clang 14 -fsanitize catches certain errors before
+    adding to pointers or before having unsigned
+    add/subtract wrap around (whereas before
+    such were ignored and we could test afterwards
+    for invalid results).
+    So we check before doing the arithmetic now
+    and return error if appropriate.
+
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2023-09-11:  David Anderson
+    commit 407236514e8c0addac26949db75e4ca7fc56e0fe
+
+    Minor changes in doxygen comments on frame access
+    functions.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    regeneratid
+            modified:   doc/libdwarf.pdf
+
+2023-09-11:  David Anderson
+    commit 21984aa2874a65bb8919b2bdb025dfc0336ee2d3
+
+    Minor update on building from git source.
+            modified:   README
+            modified:   README.md
+
+2023-09-09:  David Anderson
+    commit f34e0065c6c8f6081b536c23753f2e53c55c71ed
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2023-09-09:  David Anderson
     commit 6759e3b4e9f6169d8f0ab34c457efc39394989ec
 
