@@ -1246,6 +1246,13 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 dfi->fi_expr.bl_len = block_len;
                 dfi->fi_expr.bl_data = instr_ptr;
             }
+            if (block_len >= instr_area_length) {
+                SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
+                    "DW_DLE_DF_FRAME_DECODING_ERROR: "
+                    "DW_CFA_def_cfa_expression "
+                    "block len overflows instructions "
+                    "available range.");
+            }
             instr_ptr += block_len;
             if (instr_area_length < block_len ||
                 instr_ptr < base_instr_ptr) {
@@ -2127,14 +2134,21 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     }
     fde_ptr = prefix.cf_addr_after_prefix;
     cie_id = prefix.cf_cie_id;
+    if (cie_id  >=  dbg->de_debug_frame.dss_size ) {
+        _dwarf_error_string(dbg, error, DW_DLE_NO_CIE_FOR_FDE,
+            "DW_DLE_NO_CIE_FOR_FDE: "
+            "dwarf_get_fde_for_die fails as the CIE id "
+            "offset is impossibly large");
+        return DW_DLV_ERROR;
+    }
     /*  Pass NULL, not section pointer, for 3rd argument.
         de_debug_frame.dss_data has no eh_frame relevance. */
     res = _dwarf_create_fde_from_after_start(dbg, &prefix,
         fde_start_ptr,
+        dbg->de_debug_frame.dss_size,
         fde_ptr,
         fde_end_ptr,
         /* use_gnu_cie_calc= */ 0,
-
         /* Dwarf_Cie = */ 0,
         address_size,
         &new_fde, error);
@@ -2151,7 +2165,24 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /*  Now read the cie corresponding to the fde,
         _dwarf_read_cie_fde_prefix checks
         cie_ptr for being within the section. */
+    if (cie_id  >=  dbg->de_debug_frame.dss_size ) {
+        _dwarf_error_string(dbg, error, DW_DLE_NO_CIE_FOR_FDE,
+            "DW_DLE_NO_CIE_FOR_FDE: "
+            "dwarf_get_fde_for_die fails as the CIE id "
+            "offset is impossibly large");
+        return DW_DLV_ERROR;
+    }
     cie_ptr = new_fde->fd_section_ptr + cie_id;
+    if ((Dwarf_Unsigned)cie_ptr  < (Dwarf_Unsigned) new_fde->fd_section_ptr ||
+        (Dwarf_Unsigned)cie_ptr <  cie_id) {
+        dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
+        new_fde = 0;
+        _dwarf_error_string(dbg, error, DW_DLE_NO_CIE_FOR_FDE,
+            "DW_DLE_NO_CIE_FOR_FDE: "
+            "dwarf_get_fde_for_die fails as the CIE id "
+            "offset is impossibly large");
+        return DW_DLV_ERROR;
+    }
     res = _dwarf_read_cie_fde_prefix(dbg, cie_ptr,
         dbg->de_debug_frame.dss_data,
         dbg->de_debug_frame.dss_index,
@@ -2193,7 +2224,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     } else {
         dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
         new_fde = 0;
-        _dwarf_error(dbg, error, DW_DLE_NO_CIE_FOR_FDE);
+        _dwarf_error_string(dbg, error, DW_DLE_NO_CIE_FOR_FDE,
+            "DW_DLE_NO_CIE_FOR_FDE: "
+            "The CIE id is not a true cid id. Corrupt DWARF.");
         return DW_DLV_ERROR;
     }
     *ret_fde = new_fde;

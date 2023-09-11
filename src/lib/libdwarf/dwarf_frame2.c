@@ -301,25 +301,41 @@ print_prefix(struct cie_fde_prefix_s *prefix, int line)
     ambiguous, but this calculation is correct.
 */
 
-static Dwarf_Small *
-get_cieptr_given_offset(Dwarf_Unsigned cie_id_value,
+static int
+get_cieptr_given_offset(Dwarf_Debug dbg,
+    Dwarf_Unsigned cie_id_value,
     int use_gnu_cie_calc,
     Dwarf_Small * section_ptr,
-    Dwarf_Small * cie_id_addr)
+    Dwarf_Unsigned section_length,
+    Dwarf_Small * cie_id_addr,
+    Dwarf_Small ** ret_cieptr,
+    Dwarf_Error *error)
 {
-    Dwarf_Small *cieptr = 0;
-
+    if (cie_id_value >= section_length) {
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: in eh_frame "
+            " cie_id value makes no sense. Corrupt DWARF");
+        return DW_DLV_ERROR;
+    }
     if (use_gnu_cie_calc) {
         /*  cie_id value is offset, in section, of the
             cie_id itself, to
             use vm ptr of the value,
             less the value, to get to the cie header.  */
-        cieptr = cie_id_addr - cie_id_value;
+        if ((Dwarf_Unsigned)cie_id_addr <= cie_id_value) {
+            _dwarf_error_string(dbg, error,
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: in eh_frame "
+                " cie_id makes no sense. Corrupt DWARF");
+            return DW_DLV_ERROR;
+        }
+        *ret_cieptr = cie_id_addr - cie_id_value;
     } else {
         /*  Traditional dwarf section offset is in cie_id */
-        cieptr = section_ptr + cie_id_value;
+        *ret_cieptr = section_ptr + cie_id_value;
     }
-    return cieptr;
+    return DW_DLV_OK;
 }
 
 /*  Internal function called from various places to create
@@ -410,7 +426,9 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         if (frame_ptr >= section_ptr_end) {
             _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
                 head_cie_ptr);
+#if 0
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+#endif
             _dwarf_error_string(dbg, error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
                 "DW_DLE_DEBUG_FRAME_LENGTH_BAD: following "
@@ -473,10 +491,15 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             Dwarf_Fde fde_ptr_to_use = 0;
             Dwarf_Small *cieptr_val = 0;
 
-            cieptr_val = get_cieptr_given_offset(prefix.cf_cie_id,
+            resf = get_cieptr_given_offset(dbg,
+                prefix.cf_cie_id,
                 use_gnu_cie_calc,
                 section_ptr,
-                prefix.cf_cie_id_addr);
+                section_length,
+                prefix.cf_cie_id_addr,&cieptr_val,error);
+            if (resf != DW_DLV_OK) {
+                return resf;
+            }
             resf = _dwarf_find_existing_cie_ptr(cieptr_val,
                 cur_cie_ptr,
                 &cie_ptr_to_use,
@@ -516,6 +539,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             resf = _dwarf_create_fde_from_after_start(dbg,
                 &prefix,
                 section_ptr,
+                section_length,
                 frame_ptr,
                 section_ptr_end,
                 use_gnu_cie_calc,
@@ -1057,6 +1081,7 @@ int
 _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     struct cie_fde_prefix_s *prefix,
     Dwarf_Small *section_pointer,
+    Dwarf_Unsigned section_length,
     Dwarf_Small *frame_ptr,
     Dwarf_Small *section_ptr_end,
     int          use_gnu_cie_calc,
@@ -1133,6 +1158,41 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
                 dbg,error,section_ptr_end);
             fde_aug_data_len = adlen;
             fde_aug_data = frame_ptr;
+            if (frame_ptr < section_ptr_end) {
+                Dwarf_Unsigned remaininglen = 0;
+                remaininglen = (Dwarf_Unsigned) (section_ptr_end - frame_ptr);
+                if (remaininglen <= adlen) {
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_AUG_DATA_LENGTH_BAD,
+                        "DW_DLE_AUG_DATA_LENGTH_BAD: The "
+                        "augmentation length is too large for "
+                        "the frame section, corrupt DWARF");
+                    return DW_DLV_ERROR;
+                }
+            } else {
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_AUG_DATA_LENGTH_BAD,
+                    "DW_DLE_AUG_DATA_LENGTH_BAD: The "
+                    "frame pointer has stepped off the end "
+                    "of the frame section on reading augmentation "
+                    "length. Corrupt DWARF");
+                return DW_DLV_ERROR;
+            }
+            if ( adlen >= section_length) {
+               dwarfstring m;
+   
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_AUG_DATA_LENGTH_BAD: The "
+                    "gcc .eh_frame augmentation data "
+                    "length of %" DW_PR_DUu " is too long to"
+                    " fit in the section.",adlen);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_AUG_DATA_LENGTH_BAD,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                return DW_DLV_ERROR;
+            }
             frame_ptr += adlen;
             if (adlen) {
                 if (frame_ptr < fde_aug_data ||
