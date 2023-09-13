@@ -1,3 +1,21 @@
+2023-09-12:  David Anderson
+    commit ecb2d773f166b7c322d91c312f207d3684d76a6f
+    Merge: 4c48d4cf 320e86eb
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    Fixing a typo in a doxygen comment
+
+2023-09-12:  Jeremy Rifkin
+    commit 320e86eb126ef0c5f99370d7dd093c1343e2f7e5
+
+    Fix small typo (#182)
+
+2023-09-11:  David Anderson
+    commit 4c48d4cfe66674f9c1c6023ceec5d9491670f6d9
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-09-11:  David Anderson
     commit f6941ef1254d72c621fbe8d2f8c1abe9a60262db
 
