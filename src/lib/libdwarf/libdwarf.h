@@ -2585,7 +2585,7 @@ DW_API int dwarf_attrlist(Dwarf_Die dw_die,
     Dwarf_Signed * dw_attrcount,
     Dwarf_Error*   dw_error);
 
-/*! @brief Sets TRUE of a Dwarf_Attribute has the indicated FORM
+/*! @brief Sets TRUE if a Dwarf_Attribute has the indicated FORM
     @param dw_attr
     The Dwarf_Attribute of interest.
     @param dw_form
