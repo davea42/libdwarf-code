@@ -1160,7 +1160,8 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             fde_aug_data = frame_ptr;
             if (frame_ptr < section_ptr_end) {
                 Dwarf_Unsigned remaininglen = 0;
-                remaininglen = (Dwarf_Unsigned) (section_ptr_end - frame_ptr);
+                remaininglen = (Dwarf_Unsigned)
+                    (section_ptr_end - frame_ptr);
                 if (remaininglen <= adlen) {
                     _dwarf_error_string(dbg, error,
                         DW_DLE_AUG_DATA_LENGTH_BAD,
@@ -1179,8 +1180,8 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
             if ( adlen >= section_length) {
-               dwarfstring m;
-   
+                dwarfstring m;
+
                 dwarfstring_constructor(&m);
                 dwarfstring_append_printf_u(&m,
                     "DW_DLE_AUG_DATA_LENGTH_BAD: The "

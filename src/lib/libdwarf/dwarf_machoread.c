@@ -948,7 +948,7 @@ _dwarf_macho_object_access_internals_init(
     if (intfc->mo_dwarf_sections) {
         sp = intfc->mo_dwarf_sections+1;
     } else {
-        /*  There are no dwarf sections, 
+        /*  There are no dwarf sections,
             count better be zero. */
         if (intfc->mo_dwarf_sectioncount) {
             _dwarf_destruct_macho_access(localdoas);
