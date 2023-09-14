@@ -3964,7 +3964,8 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     @param dw_attr
     The attribute referring to .debug_rnglists
     @param dw_theform
-    The form number.
+    The form number, DW_FORM_sec_offset or
+    DW_FORM_rnglistx.
     @param dw_index_or_offset_value
     If the form is an index, pass it here.
     If the form is an offset, pass that here.
