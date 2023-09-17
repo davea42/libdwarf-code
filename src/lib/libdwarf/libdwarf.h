@@ -5429,13 +5429,13 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde dw_fde,
     Dwarf_Bool    * dw_has_more_rows,
     Dwarf_Addr    * dw_subsequent_pc,
     Dwarf_Error   * dw_error);
-/*! @brief Get the value of the CFA for a particular pc value(obsolete)
+/*! @brief Get the value of the CFA for a particular pc value
 
     @see dwarf_get_fde_info_for_cfa_reg3_c
-    This is the earlier version that returns a dw_offset
-    of Dwarf_Unsigned, requiring you to cast to Dwarf_Signed
-    to work  with the value.
 
+    This is the earlier version that returns a dw_offset
+    of type Dwarf_Unsigned, requiring you to cast to Dwarf_Signed
+    to work  with the value.
 
 */
 DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
