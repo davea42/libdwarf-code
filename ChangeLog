@@ -1,3 +1,49 @@
+2023-09-18:  David Anderson
+    commit 25ddab93a059ea8ecce088c73d3b4c66a14dbc23
+
+    Documentation issues corrected/updated.
+            modified:   README
+            modified:   README.md
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+            modified:   doc/libdwarf.dox
+
+2023-09-17:  David Anderson
+    commit 81d80f9eb1605046cd4f75c49335d9d1542e3af6
+
+    Small changes in a coupld doxygen comments for clarity.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-14:  David Anderson
+    commit 77b4280522ca87df6a6c6f63776d889d2b5c2bc8
+
+    Added clarifying comentary about an argument
+    to dwarf_rnglists_get_rle_head().
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2023-09-14:  David Anderson
+    commit 7ae36936197bbd3c7f2772f790cf9ed9d14b4a84
+
+    Added commentary about an argment to dwarf_rnglists_get_rle_head()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-12:  David Anderson
+    commit f8cde1b5c811565cc6de994687a698ae59498b1f
+
+    Remove trailing whitespace and fix
+    indent and fix too-long lines.
+            modified:   dwarf_frame.c
+            modified:   dwarf_frame2.c
+            modified:   dwarf_machoread.c
+
+2023-09-12:  David Anderson
+    commit 9d25bfd2868a2baea83c761fa6d38e0a7229e4ee
+
+    latest git log
+            modified:   ChangeLog
+
 2023-09-12:  David Anderson
     commit ecb2d773f166b7c322d91c312f207d3684d76a6f
     Merge: 4c48d4cf 320e86eb
