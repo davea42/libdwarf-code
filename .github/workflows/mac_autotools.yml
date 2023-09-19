@@ -12,7 +12,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: tools
       run:  |
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         brew install autoconf automake libtool
         brew install --overwrite pkgconf
     - name: autoreconf

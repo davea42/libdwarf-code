@@ -636,7 +636,6 @@ print_split_macro_value(const char *m_in)
     char typbuf[400];
     char    *local = (char *)m_in;
     char    *valstart = 0;
-    size_t   namelen = 0;
     char    *cur = local;
     char     lastchar = 0;
     struct esb_s m;
@@ -655,7 +654,7 @@ print_split_macro_value(const char *m_in)
     /*  Has name<space>value
         or name(operands)<space>value */
     lastchar = 0;
-    for ( ;*cur && cur != valstart; ++namelen,++cur) {
+    for ( ;*cur && cur != valstart; ++cur) {
         esb_appendn(&m,cur,1);
         lastchar = *cur;
     }
@@ -995,6 +994,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 printf("%s",sanitized(esb_get_string(&mtext)));
             }
             if (descend_into_import) {
+                /*  not do_print_dwarf */
                 macfile_entry *mac_e = 0;
                 mac_e = macfile_from_array_index(
                     macfile_array_next_to_use-1);
@@ -1355,8 +1355,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
             dwarf_srcfiles,
             srcfiles_count,
             macro_context,number_of_ops,
-
-            do_print_dwarf /*not relying on gf_do_print_dwarf here*/,
+            do_print_dwarf /*not gf_do_print_dwarf here*/,
             descend_into_import /* TRUE means follow imports */,
             by_offset /* if TRUE is an imported macro set */,
             macro_unit_offset,
@@ -1409,15 +1408,26 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
     }
     return DW_DLV_OK;
 }
+
+/*  descend_into_import is TRUE if we are supposed to
+    run through the import trees when imported versus
+    running through imported later by stacking import offsets.
+    It is passed as the value of do_check_dwarf(), so
+    we could have left off the argument and used
+    do_check_dwarf() here.
+*/
 int
 print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     char **dwarf_srcfiles,
     Dwarf_Signed srcfiles_count,
     int do_print_dwarf /* not relying on gf_do_print_dwarf here */,
     int descend_into_import /* TRUE means follow imports */,
-    int by_offset /* if TRUE is an imported macro unit
-        so the offset is relevant.
-        If false is the set for the CU itself.  */,
+
+        /*  if TRUE is an imported macro unit
+            so the offset is relevant.
+            If false is for the CU itself, offset not relevant. */
+    int by_offset ,
+
     Dwarf_Unsigned offset,
     Dwarf_Error *err)
 {

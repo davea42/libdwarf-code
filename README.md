@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 29 June 2023
+Updated 20 September 2023
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -9,10 +9,18 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
-    Version 0.7.1 in development
-    Version 0.7.0 Released 20 May      2023
-    Version 0.6.0 Released 20 February 2023
+    Version 0.8.0 Released 20 September 2023.
+    Version 0.7.0 Released 20 May      2023.
+    Version 0.6.0 Released 20 February 2023.
     Version 0.5.0 Released 22 November 2022.
+
+## NOTE on linking against libdwarf.a
+
+If you are not using one of the three build systems
+provided and are linking code against a static 
+library libdwarf.a You must arrange to  define the
+macro LIBDWARF_STATIC in compiling your code that 
+does a #include "libdwarf.h".
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
@@ -22,7 +30,7 @@ here to just building libdwarf and dwarfdump.
 
 Nothing in the project requires or references
 elf.h, libelf.h, or libelf as of 29 June 2023,
-version 0.7.1.
+version 0.8.0.
 
 
 If the objects you work with do not have
@@ -33,7 +41,7 @@ are required for building/using
 libdwarf/dwarfdump.
 
     Ubuntu: 
-    sudo apt install pkgconf zlib1g zlib1g-dev libzstd1
+    sudo apt install xz pkgconf zlib1g zlib1g-dev libzstd1
     # Use of libzstd1 is new in 0.4.3
     # zlib1g zlib1g-dev libzstd1 are all optional but
     # are required to read any DWARF data in compressed
@@ -41,18 +49,21 @@ libdwarf/dwarfdump.
     optional add: cmake meson ninja doxygen 
 
     FreeBSD:
-    pkg install bash python3 gmake binutils pkgconf lzlib zstd 
+    pkg install bash xz python3 gmake liblz4 zstd 
     # libzstd is likely in /usr/local/lib and zstd.h
-    # in /usr/local/include and the compiler will not look there
+    # in /usr/local/include and the compiler may not look there
     # by default. All will still build fine without it and
     # without lzib too, though compressed DWARF sections
     # may not be readable.
-    # lzlib zstd all optional, but needed to read compressed
-    # DWARF sections. 
-    optional add: cmake meson ninja doxygen
+    # example:
+    CPPFLAGS="-I/usr/local/include/" LDFLAGS="-L/usr/local/lib" ./configure
+    optional add: binutils cmake meson ninja doxygen
 
     Ensure that all the needed programs are in $PATH,
     including python3.  
+    # candidate commane to make python3 visible (as root)
+    # something like:
+    cd /usr/local/bin ; ln -s python3.9 python3
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
@@ -121,8 +132,22 @@ For a faster build, adding additional checks:
 
 Ignore this section if using meson (or cmake).
 
-This is not recommended as it requires you have
-GNU autotools and pkg-config installed.
+This is not recommended as it requires you have more
+software installed.
+
+For Ubuntu configure, install additional packages:
+
+    autoconf
+    automake
+    libtool
+    pkg-config
+
+For FreeBSD configure, install additional packages:
+    autoconf
+    automake
+    libtool
+    pkgconf
+
 Here we assume the source is in  a directory named
 /path/to/code
 
@@ -208,7 +233,7 @@ gcc has some checks that can be done at runtime.
 ### Options to meson on Windows (Msys2)
 
 All libdwarf builds are automatically shared object (dll)
-builds as of 0.7.1. 
+builds as of 0.8.0. 
 
 With
 
@@ -242,7 +267,8 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
-### Comparing libdwarf-0.7.1 to libdwarf-0.7.0
+### Comparing libdwarf-0.8.0 to libdwarf-0.7.0
+
 The default build (with meson) is shared-library.
 to build with static (archive) libdwarf
 add 
@@ -251,6 +277,11 @@ add
 
 to the meson command line (applies to meson
 builds in Linux,Macos, and Windows-mingw).
+
+On Windows-mingw one can build static libdwarf
+when using cmake or meson (configure will
+not allow a static libdwarf to be built
+on Windows).
 
 See Options to meson on Windows (Msys2) above.
 

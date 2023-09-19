@@ -138,7 +138,9 @@ if (DO_TESTING)
     set_source_group(TESTSANITIZED_SOURCES "Source Files"
        ${PROJECT_SOURCE_DIR}/test/test_sanitized.c
        ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
-       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_sanitized.c)
+       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_sanitized.c
+       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_utf8.c
+    )
     add_executable(selftestsanitized ${TESTESB_SOURCES})
     target_compile_options(selftestsanitized PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")

@@ -2,7 +2,7 @@
 dwarfgen_src = [
   'createirepformfrombinary.cc',
   'createirepfrombinary.cc',
-  'dg_getopt.c',
+  'dg_getopt.cc',
   'dwarfgen.cc',
   'irepattrtodbg.cc',
   'ireptodbg.cc'

@@ -1,7 +1,7 @@
 set_source_group(SOURCES "Source Files" createirepformfrombinary.cc
     createirepfrombinary.cc
     dwarfgen.cc irepattrtodbg.cc ireptodbg.cc
-    dg_getopt.c)
+    dg_getopt.cc)
     
 set_source_group(HEADERS "Header Files" createirepfrombinary.h
     general.h irepattrtodbg.h 

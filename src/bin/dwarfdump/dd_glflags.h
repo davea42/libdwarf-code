@@ -147,6 +147,8 @@ struct glflags_s {
     Dwarf_Bool gf_types_flag; /* .debug_types, not all CU types */
     Dwarf_Bool gf_weakname_flag;   /* SGI only */
 
+    Dwarf_Bool gf_print_utf8_flag;
+
     Dwarf_Bool gf_header_flag; /* Control printing of Elf header. */
     Dwarf_Bool gf_section_groups_flag;
 

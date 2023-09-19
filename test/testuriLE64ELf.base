@@ -36,11 +36,11 @@ LOCAL_SYMBOLS:
                       DW_AT_decl_column           0x0000001c
                       DW_AT_type                  <0x0000003a>
 < 1><0x0000003a>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  long long unsigned int
 < 1><0x00000041>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_encoding              DW_ATE_signed
                       DW_AT_name                  long long int
 < 1><0x00000048>    DW_TAG_typedef <abbrev 6>
@@ -62,39 +62,39 @@ LOCAL_SYMBOLS:
                       DW_AT_decl_column           0x0000001c
                       DW_AT_type                  <0x0000006c>
 < 1><0x0000006c>    DW_TAG_base_type <abbrev 23>
-                      DW_AT_byte_size             0x00000004
+                      DW_AT_byte_size             4
                       DW_AT_encoding              DW_ATE_signed
                       DW_AT_name                  int
 < 1><0x00000073>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000002
+                      DW_AT_byte_size             2
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  short unsigned int
 < 1><0x0000007a>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000001
+                      DW_AT_byte_size             1
                       DW_AT_encoding              DW_ATE_unsigned_char
                       DW_AT_name                  unsigned char
 < 1><0x00000081>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000004
+                      DW_AT_byte_size             4
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  unsigned int
 < 1><0x00000088>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  long unsigned int
 < 1><0x0000008f>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000001
+                      DW_AT_byte_size             1
                       DW_AT_encoding              DW_ATE_signed_char
                       DW_AT_name                  char
 < 1><0x00000096>    DW_TAG_const_type <abbrev 24>
                       DW_AT_type                  <0x0000008f>
 < 1><0x0000009b>    DW_TAG_pointer_type <abbrev 5>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_type                  <0x00000096>
 < 1><0x000000a0>    DW_TAG_pointer_type <abbrev 5>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_type                  <0x0000008f>
 < 1><0x000000a5>    DW_TAG_structure_type <abbrev 17>
-                      DW_AT_byte_size             0x00000030
+                      DW_AT_byte_size             48
                       DW_AT_decl_file             0x00000003
                       DW_AT_decl_line             0x00000029
                       DW_AT_decl_column           0x00000009
@@ -149,7 +149,7 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x000000a5>
 < 1><0x00000103>    DW_TAG_structure_type <abbrev 25>
                       DW_AT_name                  bucket
-                      DW_AT_byte_size             0x00017e98
+                      DW_AT_byte_size             97944
                       DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
                       DW_AT_decl_line             0x0000003d
                       DW_AT_decl_column           0x00000010
@@ -189,7 +189,7 @@ LOCAL_SYMBOLS:
                         DW_AT_type                  <0x00000088>
                         DW_AT_upper_bound           2039
 < 1><0x0000015c>    DW_TAG_pointer_type <abbrev 5>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_type                  <0x00000103>
 < 1><0x00000161>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Bucket
@@ -198,7 +198,7 @@ LOCAL_SYMBOLS:
                       DW_AT_decl_column           0x00000005
                       DW_AT_type                  <0x00000103>
 < 1><0x0000016d>    DW_TAG_structure_type <abbrev 17>
-                      DW_AT_byte_size             0x00000040
+                      DW_AT_byte_size             64
                       DW_AT_decl_file             0x00000003
                       DW_AT_decl_line             0x00000046
                       DW_AT_decl_column           0x00000009
@@ -260,10 +260,10 @@ LOCAL_SYMBOLS:
                         DW_AT_type                  <0x000001e2>
                         DW_AT_data_member_location  56
 < 1><0x000001dd>    DW_TAG_pointer_type <abbrev 5>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_type                  <0x000000f7>
 < 1><0x000001e2>    DW_TAG_pointer_type <abbrev 5>
-                      DW_AT_byte_size             0x00000008
+                      DW_AT_byte_size             8
                       DW_AT_type                  <0x00000161>
 < 1><0x000001e7>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Bucket_Group
@@ -274,7 +274,7 @@ LOCAL_SYMBOLS:
 < 1><0x000001f3>    DW_TAG_enumeration_type <abbrev 27>
                       DW_AT_name                  line_flag_type_e
                       DW_AT_encoding              DW_ATE_unsigned
-                      DW_AT_byte_size             0x00000004
+                      DW_AT_byte_size             4
                       DW_AT_type                  <0x00000081>
                       DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
                       DW_AT_decl_line             0x00000025
@@ -294,7 +294,7 @@ LOCAL_SYMBOLS:
                         DW_AT_const_value           3
 < 1><0x0000021e>    DW_TAG_structure_type <abbrev 20>
                       DW_AT_name                  section_high_offsets_s
-                      DW_AT_byte_size             0x000000a0
+                      DW_AT_byte_size             160 (-96)
                       DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
                       DW_AT_decl_line             0x00000052
                       DW_AT_decl_column           0x00000008
@@ -441,7 +441,7 @@ LOCAL_SYMBOLS:
                         DW_AT_data_member_location  152 (-104)
 < 1><0x0000032f>    DW_TAG_structure_type <abbrev 29>
                       DW_AT_name                  glflags_s
-                      DW_AT_byte_size             0x000008e0
+                      DW_AT_byte_size             2272
                       DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
                       DW_AT_decl_line             0x0000006c
                       DW_AT_decl_column           0x00000008

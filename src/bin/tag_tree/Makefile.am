@@ -32,6 +32,7 @@ $(top_srcdir)/src/bin/dwarfdump/dd_makename.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_naming.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_utf8.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
 $(top_srcdir)/src/bin/tag_tree/tag_common.c
 tagtree_CPPFLAGS = -DTRIVIAL_NAMING \

@@ -100,13 +100,11 @@ foreach(i RANGE ${targetCount})
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
 	set_folder(${target} src/lib/libdwarf)
-	target_include_directories(${target} PUBLIC 
-            ${LIBELF_INCLUDE_DIRS})
     target_compile_options(${target} PRIVATE ${COMPILER_FLAGS}
             ${DW_FWALL})
 	msvc_posix(${target})
 
-	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES} ${DW_FZLIB} ${DW_FZSTD} ) 
+	target_link_libraries(${target} PUBLIC  ${DW_FZLIB} ${DW_FZSTD} ) 
 	
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
 
@@ -139,10 +137,11 @@ install(
     FILES cmake/libdwarf-config.cmake
     DESTINATION lib/cmake/libdwarf
 )
-install(DIRECTORY libdwarf DESTINATION include/
-    FILES_MATCHING PATTERN "*.h")
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarf.h
+    DESTINATION include/libdwarf)
+install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/dwarf.h
     DESTINATION include/libdwarf)
 install( FILES ${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc
     DESTINATION lib/pkgconfig

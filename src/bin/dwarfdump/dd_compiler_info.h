@@ -56,18 +56,9 @@ typedef struct {
 } Compiler;
 
 /*  Compiler statistics. */
-extern void update_compiler_target(const char *producer_name);
-extern void add_cu_name_compiler_target(char *name);
 extern void clean_up_compilers_detected(void);
-extern Dwarf_Bool checking_this_compiler(void);
 extern void reset_compiler_entry(Compiler *compiler);
 extern void print_checks_results(void);
-
-extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category,
-    int inc);
-extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category,
-    int inc);
-
 extern Dwarf_Bool record_producer(char *name);
 
 #ifdef __cplusplus

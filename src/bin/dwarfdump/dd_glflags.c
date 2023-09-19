@@ -111,6 +111,7 @@ init_global_flags(void)
     glflags.gf_header_flag = FALSE;
 
     glflags.gf_gdbindex_flag = FALSE;
+    glflags.gf_print_utf8_flag = FALSE;
 
     /* List of CUs per compiler */
     glflags.gf_producer_children_flag = FALSE;

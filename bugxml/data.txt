@@ -1,4 +1,42 @@
 
+id: DW202308-001
+fuzzer: ossfuzz id: 59576
+datereported: 2023-06-04
+reportedby: David Korczynski
+vulnerability: Read from outside frame section
+product: libdwarf
+description: A fuzzed object results in
+  reading outside a frame section due to a comparison
+  being > when it should have bin >= at about
+  line 1615 in dwarf_frame2.
+  Could result in crash or incorrect frame data returned.
+  Somehow we lost track of this open bug.
+  The bug has been in the code since the augmentation
+  was first implemented in the library.
+datefixed: 2023-08-26
+references: regressiontests/ossfuzz59576/fuzz_set_frame_all-5867083595120640
+gitfixid: e53adc90ffd6d5d0fad61546b0041990aefd970b
+tarrelease: libdwarf-0.8.0.tar.xz
+endrec: DW202308-001
+
+id: DW202307-001
+fuzzer: ossfuzz id: 60506
+datereported: 2023-07-09
+reportedby: David Korczynski
+vulnerability: Read from outside section
+product: libdwarf
+description: A fuzzed object results in
+  reading outside a line table due to a corruption
+  in a non-standard (experimental) line table format.
+  A corrupted offset was not checked for sanity.
+  The bug has been in the code since the experimental
+  line table support was added in 2015.
+datefixed: 2023-07-11
+references: regressiontests/ossfuzz60506/fuzz_srcfiles-6494439909228544.fuzz
+gitfixid: c8c5073f35b1efdcc610ecf369c78f87fdd34714
+tarrelease: libdwarf-0.8.0.tar.xz
+endrec: DW202307-001
+
 id: DW202306-011
 fuzzer: ossfuzz id: 60090
 datereported: 2023-06-24
@@ -14,11 +52,10 @@ description: A fuzzed object results in
   The bug was incorrect coding of a test
   (for an absurd value) written a few weeks ago.
 datefixed: 2023-06-26
-references: ossfuzz60090/fuzz_set_frame_all-5757752673435648
+references: regressiontests/ossfuzz60090/fuzz_set_frame_all-5757752673435648
 gitfixid: 6f75899f1f90fa87e52da0df09ddaa2e5be778f9
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-011
-
 
 id: DW202306-010
 fuzzer: ossfuzz id: 59950
@@ -26,9 +63,9 @@ datereported: 2023-06-18
 reportedby: David Korczynski
 vulnerability:library reads outside frame section
 product: libdwarf
-description: A fuzzed object results in 
+description: A fuzzed object results in
   adding a too large value (from CIE
-  frame augmentation data) to a pointer, 
+  frame augmentation data) to a pointer,
   having failed to check the value for
   reasonableness.  That add overflows
   so dereferencing the
@@ -37,9 +74,9 @@ description: A fuzzed object results in
   returned to the caller.
   This bug has been present for many years.
 datefixed: 2023-06-19
-references: ossfuzz59950/fuzz_set_frame_all-6613067367317504
+references: regressiontests/ossfuzz59950/fuzz_set_frame_all-6613067367317504
 gitfixid: b7437c9e4923906e9b3f3860a0c8a8289cff0a91
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-010
 
 id: DW202306-009
@@ -54,26 +91,26 @@ description: A fuzzed object results in reading one byte
   Now we check for that before we dereference a pointer
   (to read the particular single-byte field).
 datefixed: 2023-06-13
-references: ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
+references: regressiontests/ossfuzz59775/fuzz_die_cu_attrs_loclist-4504718844755968
 gitfixid: 9cae1be75ec333d2b8ab8800df4850ed77a8b025
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-009
 
 id: DW202306-008
 fuzzer: ossfuzz id: 59699
 datereported: 2023-06-08
 reportedby: David Korczynski
-vulnerability: Read past end of section 
+vulnerability: Read past end of section
 product: libdwarf
 description: In reading a CIE prefix
   of a fuzzed object we read past the end
   of the section due to a failure
   to check a byte pointer before we dereference it
   in _dwarf_read_cie_fde_prefix().
-datefixed: 2023-05-10 
-references: ossfuzz59699/fuzz_stack_frame_access-6523659305746432
+datefixed: 2023-05-10
+references: regressiontests/ossfuzz59699/fuzz_stack_frame_access-6523659305746432
 gitfixid: c5b909630bb566cdbf68fae4091f049f3b22ff11
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-008
 
 id: DW202306-007
@@ -87,9 +124,9 @@ description: In _dwarf_read_loc_expr_op()
   as the required check for past-end
   was missing.
 datefixed: 2023-06-10
-references: ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
+references: regressiontests/ossfuzz59602/fuzz_die_cu_attrs_loclist-6737086749999104
 gitfixid: c8c54ba5c79b0a2687f0fa2ac331479506c3210f
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-007
 
 id: DW202306-006
@@ -105,9 +142,9 @@ description: Integer Overflow in
   multiply here.
   Similar to ossfuzz 59517
 datefixed: 2023-06-08
-references: 
+references:
 gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-006
 
 id: DW202306-005
@@ -123,11 +160,10 @@ description: Integer Overflow in
   multiply here.
   Similar to ossfuzz 59517
 datefixed: 2023-06-08
-references: 
+references:
 gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-005
-
 
 id: DW202306-004
 fuzzer: ossfuzz id: 59595
@@ -139,15 +175,14 @@ description: Signed Integer Overflow.
   In _dwarf_exec_frame_instr(),
   called by dwarf_expand_frame_instructions(),
   there was a DW_CFA_LLVM_def_aspace_cfa_sf
-  and we failed to check for overflow. 
+  and we failed to check for overflow.
   The test case had a overflow.
   Now we do that check.
 datefixed: 2023-06-10
 references: regressiontests/ossfuzz59595/fuzz_set_frame_all-5319697747542016
-gitfixid:  e8c726e2be644df2706342b7a80633d07ecd7fb4 
-tarrelease: 
+gitfixid:  e8c726e2be644df2706342b7a80633d07ecd7fb4
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-004
-
 
 id: DW202306-003
 fuzzer: shinibufa
@@ -155,10 +190,10 @@ datereported: 2023-06-09
 reportedby: shinibufa (github)
 vulnerability: use after free
 product: libdwarf
-description: Heap use-after-free dwarf_query.c 
-datefixed: 2023-05-19 
-references: regressiontests/shinibufa/fuzzed_input_file 
-gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
+description: Heap use-after-free dwarf_query.c
+datefixed: 2023-05-19
+references: regressiontests/shinibufa/fuzzed_input_file
+gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202306-003
 
@@ -166,7 +201,7 @@ id: DW202306-002
 fuzzer: ossfuzz id: 59519
 datereported: 2023-06-01
 reportedby: David Korczynski
-vulnerability:  Integer Overflow 
+vulnerability:  Integer Overflow
 product: libdwarf
 description: Integer Overflow in
   _dwarf_exec_frame_instr() called by
@@ -177,7 +212,7 @@ description: Integer Overflow in
 datefixed: 2023-06-08
 references: regressiontests/ossfuzz59519/fuzz_set_frame_all-4670829255065600
 gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-002
 
 id: DW202306-001
@@ -198,7 +233,7 @@ description: Nine different places in dwarf_frame.c
 datefixed: 2023-06-08
 references: regressiontests/ossfuzz59517/fuzz_set_frame_all-5741671019839488
 gitfixid: f664f93d456284130afbd3c2e35b39e5f2740366
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202306-001
 
 id: DW202305-010
@@ -217,11 +252,11 @@ description: Fuzzing provoked one of four error cases that
   Called enough times with fuzzed data could result
   in filling memory leading to the library being unable
   to work for the caller and instead just returning errors.
-  This bug has been present in the code for many years. 
+  This bug has been present in the code for many years.
 datefixed: 2023-05-31
 references: regressiontests/ossfuzz59478/fuzz_set_frame_all-5300774457180160
-gitfixid: 8ef9c8fb613e59f534e789e91a73088eaa5b8a5a 
-tarrelease:
+gitfixid: 8ef9c8fb613e59f534e789e91a73088eaa5b8a5a
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-010
 
 id: DW202305-009
@@ -243,7 +278,7 @@ description: One problem is a bug in the test source:
 datefixed: 2023-05-30
 references: regressiontests/ossfuzz56451/fuzz_dnames-4986494365597696
 gitfixid: 12a612fc8db38fc26cd5e6064f09a6f825891c7c
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-009
 
 id: DW202305-008
@@ -256,12 +291,12 @@ description: The problem is a bug in the test source:
   fuzz/fuzz_macro_dwarf5.c. One must not blame the
   fuzzer author for examplep5(),
   the code was based on doc/checkexamples.c
-  and there examplep() was really just a sketch. 
+  and there examplep() was really just a sketch.
   The testcase here no longer specifies an infinite loop.
 datefixed: 2023-05-23
 references: regressiontests/ossfuzz56492/fuzz_macro_dwarf5-6497277180248064
 gitfixid: 97a78122268c9a74701f2dd3115f902309e9a484
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-008
 
 id: DW202305-007
@@ -284,8 +319,8 @@ description: Calling dwarf_highpc_b() lead to crash.
   to be initialized with the value 0.
 datefixed: 2023-05-23
 references: regressiontests/ossfuzz56474/fuzz_die_cu_attrs_loclist-4719938125561856
-gitfixid:  b3df2530732ea515cda5a85438871e15c6723ead 
-tarrelease:
+gitfixid:  b3df2530732ea515cda5a85438871e15c6723ead
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-007
 
 id: DW202305-006
@@ -309,7 +344,7 @@ description: A call to any dwarf_get_fission
 datefixed: 2023-05-30
 references: regressiontests/ossfuzz56472/fuzz_simplereader_tu-6614412934119424
 gitfixid: 8b17d41a31c33e0b3b9727a8044e0093a754d6d7
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-006
 
 id: DW202305-005
@@ -323,7 +358,7 @@ description: A call to dwarf_set_frame_undefined_value()
   dwarf_set_frame_rule_initial_value() dwarf_set_frame_same_value()
   dwarf_set_frame_cfa_value() dwarf_set_frame_rule_table_size()
   with unusable values was not being caught.
-  Now if the set of values violates the required 
+  Now if the set of values violates the required
   relationships an error is returned on requesting
   actual frame data.
   The problem has existed for many years (fixed May 23).
@@ -332,10 +367,10 @@ description: A call to dwarf_set_frame_undefined_value()
   instead, simple exit()s at several places. Updated the
   test source to return from its functions and only
   exit() from main() after the dwarf_finish() call.
-datefixed: 2023-05-30 
+datefixed: 2023-05-30
 references: regressiontests/ossfuzz56462/fuzz_set_frame_all-5424385441005568
 gitfixid: 21b33d13024d18b09e32914ca5718a5c81d1ad67
-tarrelease:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-005
 
 id: DW202305-004
@@ -352,7 +387,7 @@ description: The test program fuzz_dnames.c passed
 datefixed: 2023-05-23
 references: regressiontests/ossfuzz56446/fuzz_dnames-4784811358420992
 gitfixid: 6fac1021c67d72da6b65f99ad815978d40b4c1e8
-tarrelease: 
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202305-004
 
 id: DW202305-003
@@ -363,7 +398,7 @@ reportedby: David Korczynski
 vulnerability: Incorrect section bound check
 product: libdwarf
 description:  A fuzzed line table in the non-standard
-  (experimental) two-level line table format 
+  (experimental) two-level line table format
   exposed a failure as the test was v > sectionend
   whereas it has to be v >= sectionend as end pointers
   are always one-past the end of the area.
@@ -371,7 +406,7 @@ description:  A fuzzed line table in the non-standard
   was added in 2021.
 datefixed: 2023-05-19
 references: regressiontests/ossfuzz59091/fuzz_macro_dwarf5-5135813562990592
-gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5 
+gitfixid: 4017ab8b92195641e6876b388cebe2d3307634f5
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-003
 
@@ -396,7 +431,6 @@ references: regressiontests/ossfuzz58797/fuzz_macro_dwarf5-4872686367801344
 gitfixid: eeb935200f78b8509e6b1837f6825b9d551b9f7d
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202305-002
-
 
 id: DW202305-001
 cve:
@@ -434,7 +468,7 @@ description: On reading a corrupt frame register number
   (carefully constructed) register number
   to a Dwarf_Half or unsigned int the result looked
   reasonable, invalidating some tests for
-  reasonableness.   Now we do all the tests 
+  reasonableness.   Now we do all the tests
   on the full Dwarf_Unsigned register number(s)
   and retain the value in the long form everywhere.
   Fixed 2023-04-15.
@@ -446,9 +480,8 @@ description: On reading a corrupt frame register number
 datefixed: 2023-05-30
 references: regressiontests/ossfuzz58026/fuzz_set_frame_all-4582976972521472.fuzz
 gitfixid: 21b33d13024d18b09e32914ca5718a5c81d1ad67
-tarrelease: 
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202304-004
-
 
 id: DW202304-003
 cve:
@@ -484,11 +517,11 @@ description:  Crash in libdwarf on reading an attribute
   due to failing to check that an index into .debug_str_offsets
   is sane. So we read far outside the relevant table.
   The checks have been incomplete since this DWARF5 section
-  code was written.  Two functions in libdwarf 
-  dwarf_form.c had the same problem. 
+  code was written.  Two functions in libdwarf
+  dwarf_form.c had the same problem.
 datefixed: 2023-04-09
 references: regressiontests/ossfuzz57766/fuzz_die_cu_print-5295062170075136
-gitfixid: 761da806fc950c6b26c1763e8989a814e9b16a59  
+gitfixid: 761da806fc950c6b26c1763e8989a814e9b16a59
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202304-002
 
@@ -500,9 +533,9 @@ reportedby: David Korczynski
 vulnerability: dereference null pointer
 product: libdwarf
 description:  Crash in libdwarf on dwarf_srcfiles() call.
-  A dereference off a null pointer due to corrupt 
+  A dereference off a null pointer due to corrupt
   file numbers not being noticed. Any such crash left an
-  incomplete and misleading stack trace. 
+  incomplete and misleading stack trace.
   The large numbers treated as Dwarf_Signed were part of the problem.
   Now in libdwarf we check Dwarf_Signed for negative values and issue
   an error if the value less than 0. So later casts to
@@ -514,7 +547,6 @@ references: regressiontests/ossfuzz57711/fuzz_srcfiles-4695324781576192
 gitfixid: da0d1efbeddcff23c25704bd9672e98314928b19
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202304-001
-
 
 id: DW202303-059
 cve:
@@ -541,7 +573,7 @@ cve:
 fuzzer: ossfuzz id: 57527
 datereported: 2023-03-29
 reportedby: David Korczynski
-vulnerability: reading off end of valid data can crash library 
+vulnerability: reading off end of valid data can crash library
 product: libdwarf
 description: A line table header truncated by a fuzzer
   to just the right length (anywhere within a 12 byte area)
@@ -557,7 +589,7 @@ endrec: DW202303-058
 
 id: DW202303-057
 cve:
-fuzzer: 
+fuzzer:
 datereported: 2023-03-26
 reportedby: Pedro Navarro
 vulnerability: Unable to read large object sections
@@ -572,11 +604,10 @@ description: A section 2GB+ in size could not be
   we had not noticed before now.
   Few object files are so large.
 datefixed: 2023-03-28
-references: 
+references:
 gitfixid: 8bf96199a0e130483cceca6bfacfbe4127441ab1
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-057
-
 
 id: DW202303-056
 cve:
@@ -589,7 +620,7 @@ description: With a corrupted attribute
   dwarf_hasattr() could try to access
   an implicit_const abbrev value indexing
   off of a NULL library internal pointer.
-  
+
   Because the abbrev section had no actual implicit
   const value due to the corruption, so the internal
   array for holding such was not present.
@@ -619,7 +650,6 @@ references: regressiontests/ossfuzz57485/
 gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-055
-
 
 id: DW202303-054
 cve:
@@ -655,7 +685,6 @@ gitfixid: c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-053
 
-
 id: DW202303-052
 cve:
 fuzzer: ossfuzz id: 57442
@@ -671,25 +700,24 @@ description: Corrupt .debug_rngslists leads to crash
   was added to the library.
 datefixed: 2023-03-28
 references: regressiontests/ossfuzz57442/fuzz_rng-5974595378479104
-gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810 
+gitfixid: 271b9b8367a8151fcd98723d73382ec56f05c810
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-052
-
 
 id: DW202303-051
 cve:
 fuzzer: ossfuzz id: 57437
 datereported: 2023-03-24
 reportedby: David Korczynski
-vulnerability: Heap double free 
+vulnerability: Heap double free
 product: libdwarf
 description: In a specific error case
   reading a fuzzed object and calling
   dwarf_srcfiles local data was
   freed twice. The bug was
-  fixed earlier, and involved 
+  fixed earlier, and involved
    src/lib/libdwarf/dwarf_line_table_reader_common.h.
-datefixed: 2023-03-28 
+datefixed: 2023-03-28
 references: regressiontests/ossfuzz57437/fuzz_srcfiles-5281689109921792
 gitfixid: c25a14c3fd5522aff0b1d2a77d7ee66b7c529779
 tarrelease: libdwarf-0.7.0.tar.xz
@@ -708,8 +736,8 @@ description: The test source violates libdwarf requirements.
   states that pointer should not have a free() done.
   fix id below is fixing the test source.
 datefixed: 3023-03-28
-references: regressiontests/ossfuzz57429/fuzz_die_cu_attrs-4845537731149824 
-gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704 
+references: regressiontests/ossfuzz57429/fuzz_die_cu_attrs-4845537731149824
+gitfixid: 2b19bc239f3cedd1b2461e4265d90633277ce704
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-050
 
@@ -732,8 +760,6 @@ gitfixid: 24f5697aecd77092de20f0f7e7d91fbc1f2b3da0
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-049
 
-
-
 id: DW202303-048
 cve:
 fuzzer: ossfuzz
@@ -741,7 +767,7 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability:  Memory leak (was double free).
 product: dwarfdump
-description: The  command: 
+description: The  command:
   dwarfdump --file-name=<file> -kG -ka <objectfile>
   results in a a memory leak.
   In certain error cases we failed to fclose()
@@ -761,10 +787,10 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability:  Double Free
 product: dwarfdump
-description: The  command: 
-  dwarfdump --check-unique --check-abbrev 
+description: The  command:
+  dwarfdump --check-unique --check-abbrev
   results in a double free.
-  The table of unique errors contained 
+  The table of unique errors contained
   makename() data, so that aspect caused
   a double free as makename gets destructed
   independently. Fixed now,letting makename
@@ -775,8 +801,6 @@ gitfixid: df64db4740f1b480e602b1112107d51f0d269828
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-047
 
-
-
 id: DW202303-046
 cve:
 fuzzer: ossfuzz
@@ -784,7 +808,7 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability:  global buffer overflow
 product: dwarfdump
-description: The  command: 
+description: The  command:
   dwarfdump --search-regex=t[ą--]e
   Note the non-ascii character.
   The dwarfdump regex only allows ascii
@@ -795,8 +819,6 @@ gitfixid: 9eac0c8bbae3fadb2be3d5ee15b9c44f42d2f966
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-046
 
-
-
 id: DW202303-045
 cve:
 fuzzer: ossfuzz
@@ -804,7 +826,7 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability:  Heap buffer overflow, regex
 product: dwarfdump
-description: The  command: 
+description: The  command:
   dwarfdump --search-regex=
   with a simple, really long, string.
   (with no file named)
@@ -819,7 +841,6 @@ gitfixid: bb8fab9e5e4e40b1268b31d90882c2ab93653eaf
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-045
 
-
 id: DW202303-044
 cve:
 fuzzer: ossfuzz
@@ -827,7 +848,7 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability:  Heap buffer overflow
 product: dwarfdump
-description: The  command: 
+description: The  command:
   dwarfdump --search-regex=\\
   (with no file named)
   resulted in a heap use after free.
@@ -850,7 +871,7 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability:  Heap Use After Free
 product: libdwarf
-description: The  command: 
+description: The  command:
   dwarfdump choi012/poc_file_08
   was resulting in a heap use after free.
   It no longer does, due to earlier
@@ -860,7 +881,7 @@ references:  refressiontests/choi012/poc_file_08
 gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-043
- 
+
 id: DW202303-042
 cve:
 fuzzer: ossfuzz
@@ -868,12 +889,12 @@ datereported: 2023-03-08
 reportedby: Youngseok Choi
 vulnerability: Memory Leak
 product: dwarfdump
-description: The  command: 
+description: The  command:
   dwarfdump --check-all choi012/poc_file_07
   leaked memory in dwarfdump.
   A single instance of print_error_and_continue()
   failed to return DW_DLV_ERROR when libdwarf
-  reported an error. 
+  reported an error.
   Before recent fixes to libdwarf this would
   also generate heap-use-after-free.
 datefixed: 2023-03-25
@@ -887,11 +908,11 @@ cve:
 fuzzer: ossfuzz
 datereported: 2023-03-08
 reportedby: Youngseok Choi
-vulnerability: Heap Use after Free 
+vulnerability: Heap Use after Free
 product: dwarfdump
-description: The  command: 
+description: The  command:
   dwarfdump --check-frame-extended choi012/poc_file_06
-  is now working, apparently fixed by earlier 
+  is now working, apparently fixed by earlier
   bug fixes in libdwarf.
 datefixed: 2023-03-25
 references:  refressiontests/choi012/poc_file_06
@@ -949,7 +970,7 @@ datereported: 2023-03-22
 reportedby: David Korczynski
 vulnerability:  Null dereference in dwarf_hasform()
 product: libdwarf
-description: Passing a null dw_return_bool pointer dereferenced 
+description: Passing a null dw_return_bool pointer dereferenced
   zero, but now, instead we return DW_DLV_ERROR with error code
   DW_DLE_INVALID_NULL_ARGUMENT
   The test driver fuzz_die_cu_attrs.c passed in a NULL
@@ -966,7 +987,7 @@ cve:
 fuzzer: ossfuzz id: 57300
 datereported: 2023-03-21
 reportedby: David Korczynski
-vulnerability: Out of Memory 
+vulnerability: Out of Memory
 product: libdwarf
 description: Another case of the infinite loop
   due to _dwarf_find_CU_Context_given_sig().
@@ -982,14 +1003,14 @@ cve:
 fuzzer: ossfuzz id: 57300
 datereported: 2023-03-15
 reportedby: David Korczynski
-vulnerability: Out of Memory 
+vulnerability: Out of Memory
 product: libdwarf
 description: Another case of the infinite loop
   due to _dwarf_find_CU_Context_given_sig().
-  See DW202303-034 57193 
-  See DW202303-034 57149 
-  See DW202303-034 57193 
-  See DW202303-034 57292 
+  See DW202303-034 57193
+  See DW202303-034 57149
+  See DW202303-034 57193
+  See DW202303-034 57292
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57300/fuzz_die_cu-4752724662288384
 gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
@@ -1001,24 +1022,23 @@ cve:
 fuzzer: ossfuzz id: 57292
 datereported: 2023-03-15
 reportedby: David Korczynski
-vulnerability: Out of Memory 
+vulnerability: Out of Memory
 product: libdwarf
 description: Another case of the infinite loop
   due to _dwarf_find_CU_Context_given_sig().
   See DW202303-034 57193 and others listed here.
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz57292/fuzz_die_cu_print-5412313393135616
-gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78 
+gitfixid: 7165918c8594061c3f5ba7dd4df7c4555c68ec78
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-035
-
 
 id: DW202303-034
 cve:
 fuzzer: ossfuzz id: 57193
 datereported: 2023-03-15
 reportedby: David Korczynski
-vulnerability: Infinite loop till out of memory. 
+vulnerability: Infinite loop till out of memory.
 product: libdwarf
 description: The infinite loop reading a fuzzed object file
   was caused by letting internal function
@@ -1056,13 +1076,12 @@ gitfixid:  7165918c8594061c3f5ba7dd4df7c4555c68ec78
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-033
 
-
 id: DW202303-032
 cve:
 fuzzer: ossfuzz id: 57107
 datereported: 2023-03-14
 reportedby: David Korczynski
-vulnerability: Infinite loop till out of memory. 
+vulnerability: Infinite loop till out of memory.
 product: libdwarf
 description: The infinite loop reading a fuzzed object file
   was caused by letting internal function
@@ -1084,7 +1103,7 @@ cve:
 fuzzer: ossfuzz id: 57048
 datereported: 2023-03-14
 reportedby: David Korczynski
-vulnerability: 
+vulnerability:
 product: libdwarf
 description: Calling dwarf_next_cu_header_d() on a corrupted
   object file results in an infinite loop
@@ -1106,7 +1125,7 @@ reportedby: David Korczynski
 vulnerability: Infinite loop reading a gnu index section.
 product: libdwarf
 description: Calling dwarf_next_cu_header_d() on a corrupted
-  object file results in an infinite loop 
+  object file results in an infinite loop
   and (eventually) a crash in dwarf_xu_index.c attempting
   to resolve an 8 byte hash key.
   The bug existed from the first version of this source file,
@@ -1144,20 +1163,19 @@ vulnerability: Out of memory crash.
 product: libdwarf
 description: Failing to check for error conditions
   in a fuzzed object correctly lead to a giant malloc
-  that could not succeed. 
+  that could not succeed.
 datefixed: 2023-03-22
 references: regressiontests/ossfuzz56958/fuzz_stack_frame_access-6097292873826304
 gitfixid: b9393bb9b6399a34f8616a272d030bdd004a5ef5
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-028
 
-
 id: DW202303-027
 cve:
 fuzzer: ossfuzz id: 56906
 datereported: 2023-03-09
 reportedby: David Korczynski
-vulnerability: Heap Buffer overflow reading rnglists section. 
+vulnerability: Heap Buffer overflow reading rnglists section.
 product: libdwarf
 description:  Calling dwarf_get_rnglist_rle() on a corrupted
   object file could result in a library crash.
@@ -1184,7 +1202,6 @@ gitfixid:  b9393bb9b6399a34f8616a272d030bdd004a5ef5
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-026
 
-
 id: DW202303-025
 cve:
 fuzzer: ossfuzz id: 56895
@@ -1192,15 +1209,15 @@ datereported: 2023-02-28
 reportedby: David Korczynski
 vulnerability: Heap buffer overflow reading compilation unit header.
 product: libdwarf
-description: Calling dwarf_next_cu_header_d() on the fuzzed test 
+description: Calling dwarf_next_cu_header_d() on the fuzzed test
   object results in a library crash in fuzz_die_cu_attrs_loclist.c
-  due to a failure to 
+  due to a failure to
   precisely test for a too-short Compilation Unit header.
   Now a DW_DLV_ERROR is returned.
   A very old bug.
 datefixed: 2023-03-24
 references: regressiontests/ossfuzz56895/fuzz_macro_dwarf5-5080340952907776
-gitfixid:  771cfcca1ef6a4a7eb9595d700fc72020d0ed72e 
+gitfixid:  771cfcca1ef6a4a7eb9595d700fc72020d0ed72e
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-025
 
@@ -1222,7 +1239,6 @@ gitfixid: 484f50ef8be0506be2e4b5fbad489868db5c7985
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-024
 
-
 id: DW202303-023
 cve:
 fuzzer: ossfuzz id: 56568
@@ -1240,7 +1256,7 @@ description: The fuzz_dnames.c testcase build failed.
   was unusable and never worked. The documentation
   (libdwarf.pdf) gives alternates in the library that work.
 datefixed: 2023-03-20
-references: 
+references:
 gitfixid: 2eced75af9903ab778c3b237ec7be3ddc93ea6ec
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-023
@@ -1277,8 +1293,6 @@ gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-021
 
-
-
 id: DW202303-020
 cve:
 fuzzer: ossfuzz id: 56458
@@ -1302,7 +1316,7 @@ cve:
 fuzzer: ossfuzz id: 56454
 datereported: 2023-02-28
 reportedby: David Korczynski
-vulnerability: Stack buffer overflow  
+vulnerability: Stack buffer overflow
 product: libdwarf
 description: The overflow was in dwarf_get_version_of_die()
   One return failed to free a local malloc due to the
@@ -1313,7 +1327,6 @@ gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-019
 
-
 id: DW202303-018
 cve:
 fuzzer: ossfuzz id: 56807
@@ -1321,10 +1334,10 @@ datereported: 2023-02-28
 reportedby: David Korczynski
 vulnerability:  Memory leak reading line table
 product: libdwarf
-description: A memory leak in _dwarf_read_line_table() 
+description: A memory leak in _dwarf_read_line_table()
   reading a particular corrupted object.
   One return failed to free a local malloc.
-  An very old bug, encountered reading corrupted 
+  An very old bug, encountered reading corrupted
   DWARF line tables.
 datefixed: 2023-03-20
 references: regressiontests/ossfuzz56807fuzz_srcfiles-4626047380619264
@@ -1350,8 +1363,8 @@ description: Stack buffer overflow in dwarf_dietype_offset.
   library (a situation libdwarf should handle and now does).
 datefixed: 2023-05-30
 references: regressiontests/ossfuzz56450/fuzz_die_cu_attrs-4953133005799424
-gitfixid: 
-tarrelease: 
+gitfixid:
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202303-017
 
 id: DW202303-016
@@ -1362,10 +1375,10 @@ reportedby: David Korczynski
 vulnerability:  Heap Buffer Overflow in dwarf_get_rnglist_offset_value
 product: libdwarf
 description: A heap buffer overflow reading
-  a fuzzed object file 
+  a fuzzed object file
   A revision of dwarf_str_offsets (which was
   new in DWARF5) affected several source files
-datefixed: 2023-03-12 
+datefixed: 2023-03-12
 references: regressiontests/ossfuzz56476/fuzz_rng-5008229349588992/
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
 tarrelease: libdwarf-0.7.0.tar.xz
@@ -1379,10 +1392,10 @@ reportedby: David Korczynski
 vulnerability:  Heap Buffer Overflow in read_single_rle_entry
 product: libdwarf
 description: A heap buffer overflow reading
-  a fuzzed object file 
+  a fuzzed object file
   A revision of dwarf_str_offsets (which was
   new in DWARF5) affected several source files
-datefixed: 2023-03-12 
+datefixed: 2023-03-12
 references: regressiontests/ossfuzz56489/fuzz_srcfiles-5091530466787328
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
 tarrelease: libdwarf-0.7.0.tar.xz
@@ -1396,10 +1409,10 @@ reportedby: David Korczynski
 vulnerability:  Heap Buffer Overflow in read_single_rle_entry
 product: libdwarf
 description: A heap buffer overflow reading
-  a fuzzed object file 
+  a fuzzed object file
   A revision of dwarf_str_offsets (which was
   new in DWARF5) affected several source files
-datefixed: 2023-03-12 
+datefixed: 2023-03-12
 references: regressiontests/ossfuzz56478/fuzz_rng-5030515398017024
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
 tarrelease: libdwarf-0.7.0.tar.xz
@@ -1413,10 +1426,10 @@ reportedby: David Korczynski
 vulnerability:  Heap Buffer Overflow
 product: libdwarf
 description: A heap buffer overflow reading
-  a fuzzed object file 
+  a fuzzed object file
   A revision of dwarf_str_offsets (which was
   new in DWARF5) affected several source files
-datefixed: 2023-03-12 
+datefixed: 2023-03-12
 references: regressiontests/ossfuzz56460/fuzz_str_offsets-5376904040677376-5240324382654464
 gitfixid: 0343c63bd04d387924974e6da60d8471fdf945a9
 tarrelease: libdwarf-0.7.0.tar.xz
@@ -1431,7 +1444,7 @@ vulnerability:  Heap Buffer Overflow
 product: libdwarf
 description: A heap buffer overflow reading
   a fuzzed object file
-  Code reading the gdbindex section was not 
+  Code reading the gdbindex section was not
   fully checking for valid offsets and pointers
   Duplicate of DW202303-006
 datefixed: 2023-03-14
@@ -1445,7 +1458,7 @@ cve:
 fuzzer: ossfuzz id: 56453
 datereported: 2023-02-28
 reportedby: David Korczynski
-vulnerability:  Null pointer dereference  
+vulnerability:  Null pointer dereference
 product: libdwarf
 description: A null pointer dereference in
   reading a fuzzed object file.
@@ -1454,7 +1467,7 @@ description: A null pointer dereference in
   The missing checks have been missing a very
   long time.
 datefixed: 2023-03-07
-references: regressiontests/ossfuzz56453 
+references: regressiontests/ossfuzz56453
 gitfixid: 86671059c1c240ae56433fa94993dcd28df2ae7d
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-011
@@ -1497,15 +1510,13 @@ description: With any one of a small set of corrupted data
   -fsanitize does not show the bug here, but valgrind does
 datefixed: 2023-05-29
 references: regressiontests/ossfuzz56443/fuzz_crc_32-4750941179215872
-gitfixid: 241fe0cb415569975c451d1f2d62fb2b2147cd72 
-tarrelease: 
+gitfixid: 241fe0cb415569975c451d1f2d62fb2b2147cd72
+tarrelease: libdwarf-0.8.0.tar.xz
 endrec: DW202303-009
-
-
 
 id: DW202303-008
 cve:
-fuzzer: oss-fuzz id: 56530 
+fuzzer: oss-fuzz id: 56530
 datereported: 2023-03-01
 reportedby: David Korczynski
 vulnerability: Denial of Service with corrupt attribute
@@ -1554,8 +1565,6 @@ gitfixid: e564c9350c104f16eb2223d7b29082e3deb5d2fb
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-006
 
-
-
 id: DW202303-005
 cve:
 fuzzer: oss-fuzz id: 56676
@@ -1601,13 +1610,13 @@ description: A corrupted .debug_addr header was not
   application.
 datefixed: 2023-03-03
 references: regressiontests/ossfuzz56636/fuzz_debug_addr_access-4801779658522624.fuzz
-gitfixid: a3ab3f16ab67f4d976561fe0d863e1ed8b71f3c6 
+gitfixid: a3ab3f16ab67f4d976561fe0d863e1ed8b71f3c6
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-003
 
 id: DW202303-002
 cve:
-fuzzer: oss-fuzz id: 56548 
+fuzzer: oss-fuzz id: 56548
 datereported: 2023-03-01
 reportedby: David Korczynski
 vulnerability:  Denial of service with corrupt line table header
@@ -1626,7 +1635,7 @@ endrec: DW202303-002
 
 id: DW202303-001
 cve:
-fuzzer: oss-fuzz id: 56465 
+fuzzer: oss-fuzz id: 56465
 datereported: 2023-03-01
 reportedby: David Korczynski
 vulnerability: Denial of Service with corrupt attribute
@@ -1643,10 +1652,10 @@ endrec: DW202303-001
 
 id: DW202301-001
 cve:
-fuzzer: 
+fuzzer:
 datereported: 2023-01-24
 reportedby: Steve Kaufmann
-vulnerability: Denial of Service with DW_FORM_strx3 
+vulnerability: Denial of Service with DW_FORM_strx3
 product: libdwarf
 description: Any use of DW_FORM_strx3 or
   DW_FORM_addrx3 would get libdwarf very confused
@@ -1657,7 +1666,6 @@ references: regressiontests/kaufmann2/ct-bad.o
 gitfixid: 97e90eb7ab98df60b8da0bdc2ac855711c4db804
 tarrelease: libdwarf-0.6.0.tar.xz
 endrec: DW202301-001
-
 
 id: DW202212-001
 cve:
@@ -1672,7 +1680,7 @@ description: The fuzzed testcase has at least four major
   including crashing the calling program.
   Things not noticed before the fix (and now resulting
   in error being reported):
-  A) The object has just 2 sections, 
+  A) The object has just 2 sections,
   too few to be real.  at least 3 sections are needed
   to contain DWARF information of any kind.
   B) Section zero has non-zero contents, in violation
@@ -1720,7 +1728,7 @@ product: libdwarf
 description: A carefully corrupted string
   would cause libdwarf to read outside of a buffer containing
   the string (one past the end) when checking the string
-  to determine if it is a full path in processing 
+  to determine if it is a full path in processing
   a .gnu.debuglink section.
   That could cause a segmentation violation or other
   major error, terminating the calling application and
@@ -1733,7 +1741,7 @@ endrec: DW202207-001
 
 id: DW202206-001
 cve:
-fuzzer: 
+fuzzer:
 datereported: 2022-06-15
 reportedby: Casper Sun
 vulnerability: buffer overflow in dwarf_form.c
@@ -1754,7 +1762,7 @@ endrec: DW202206-001
 
 id: DW202205-001
 cve:
-fuzzer: 
+fuzzer:
 datereported: 2022-05-26
 reportedby: Casper Sun
 vulnerability: buffer overflow in dwarf_globals.c
@@ -1791,7 +1799,7 @@ description: A corrupted object.
   </pre>
 datefixed: 2021-11-21
 references: regressiontests/ ossfuzz41240/clusterfuzz-testcase-minimized-fuzz_init_path-5929343686148096
-gitfixid: a120c808234060c3c9b1872ab9a059aa1ac70b1d 
+gitfixid: a120c808234060c3c9b1872ab9a059aa1ac70b1d
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-016
 
@@ -1834,7 +1842,6 @@ gitfixid: b7a119dc07c502c1334bcbf8dd04ca0e4d5f6ab6
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-014
 
-
 id: DW201907-001
 cve: CVE-2019-14249
 fuzzer:
@@ -1842,9 +1849,9 @@ datereported: 2019-07-23
 reportedby: unknown
 vulnerability: Denial of service with zero size section group
 product: libdwarf
-description: dwarf_elf_load_headers.c in libdwarf before 2019-07-05 allows attackers to cause a denial of service (division by zero) via an ELF file with a zero-size section group (SHT_GROUP), as demonstrated by dwarfdump. 
+description: dwarf_elf_load_headers.c in libdwarf before 2019-07-05 allows attackers to cause a denial of service (division by zero) via an ELF file with a zero-size section group (SHT_GROUP), as demonstrated by dwarfdump.
 datefixed: 2019-07-05
-references: 
+references:
 gitfixid: cb7198abde46c2ae29957ad460da6886eaa606ba
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW201907-001
@@ -1856,7 +1863,7 @@ datereported: 2021-11-07
 reportedby: David Korczynski
 vulnerability: Null-dereference READ in dwarf_object_init_b
 product: libdwarf
-description: A corrupted object. 
+description: A corrupted object.
   The error handling code in  dwarf_object_init_b
   was not properly dealing with a NULL pointer
   Dwarf_Error *errp in the test code.
@@ -1870,8 +1877,6 @@ references: regressiontests/ossfuzz40802/ clusterfuzz-testcase-fuzz_init_binary-
 gitfixid: adf4dae25b39039f1821b095688c00f3010e1d37
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-013
-
-
 
 id: DW202111-012
 cve:
@@ -1890,7 +1895,6 @@ references: regressiontests/ossfuzz801/clusterfuzz-testcase-fuzz_init_path-54435
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-012
-
 
 id: DW202111-011
 cve:
@@ -1912,8 +1916,6 @@ references: regressiontests/ossfuzz40799/clusterfuzz-testcase-fuzz_init_path-524
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-011
-
-
 
 id: DW202111-010
 cve:
@@ -1974,9 +1976,8 @@ gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-008
 
-
 id: DW202111-005
-cve: 
+cve:
 fuzzer: oss-fuzz-40674
 datereported: 2021-11-03
 reportedby: David Korczynski
@@ -1994,11 +1995,11 @@ tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-005
 
 id: DW202111-004
-cve: 
+cve:
 fuzzer: oss-fuzz-40673
 datereported: 2021-11-03
 reportedby: David Korczynski
-vulnerability: Null-dereference READ in dwarf_object_init_b 
+vulnerability: Null-dereference READ in dwarf_object_init_b
 product: libdwarf
 description: The macho object has corrupted headers
   and now mentions that and stops.
@@ -2007,13 +2008,13 @@ description: The macho object has corrupted headers
   https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40673
   </pre>
 datefixed: 2021-11-05
-references: regressiontests/ossfuzz40673/clusterfuzz-testcase-minimized-fuzz_init_path-6240961391362048.fuzz 
+references: regressiontests/ossfuzz40673/clusterfuzz-testcase-minimized-fuzz_init_path-6240961391362048.fuzz
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-004
 
 id: DW202111-003
-cve: 
+cve:
 fuzzer: oss-fuzz-40671
 datereported: 2021-11-03
 reportedby: David Korczynski
@@ -2035,9 +2036,8 @@ gitfixid: b40f7e291216e771185f62292dd6304b5a662926
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-003
 
-
 id: DW202111-002
-cve: 
+cve:
 fuzzer: oss-fuzz-40669
 datereported: 2021-11-03
 reportedby: David Korczynski
@@ -2059,10 +2059,8 @@ gitfixid: b40f7e291216e771185f62292dd6304b5a662926
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-002
 
-
-
 id: DW202111-001
-cve: 
+cve:
 fuzzer: oss-fuzz-40663
 datereported: 2021-11-03
 reportedby: David Korczynski
@@ -2081,10 +2079,9 @@ description:  Corrupted MachO object can crash caller
   </pre>
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40663/clusterfuzz-testcase-minimized-fuzz_init_path-6122542432124928
-gitfixid: b40f7e291216e771185f62292dd6304b5a662926 
+gitfixid: b40f7e291216e771185f62292dd6304b5a662926
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202111-001
-
 
 id: DW202010-003
 cve: CVE-2020-28163
@@ -2101,17 +2098,16 @@ description: If a DWARF5 line table header has an invalid
   and for the form code we print the value and <unknown form>
   so there are no unpredictable effects.
   <pre>
-  
+
   This should be visible after redhat makes it public.
   Filed on bugzilla.redhat 23 November 2021.
   bugzilla.redhat.com/show_bug.cgi?id=2026000
   </pre>
 datefixed: 2020-10-28
 references: regressiontests/c-sun2/nullpointer
-gitfixid: faf99408e3f9f706fc3809dd400e831f989778d3 
+gitfixid: faf99408e3f9f706fc3809dd400e831f989778d3
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202010-003
-
 
 id: DW202010-002
 cve: CVE-2020-28162
@@ -2121,7 +2117,7 @@ vulnerability: dwarfdump crashes if the nest of C scopes is too deep
 product: dwarfdump
 description: An object file where the DIEs depth of
   nesting exceeds the limit of 800 levels
-  due to corruption or a compiler bug 
+  due to corruption or a compiler bug
   can result in exhausting the die stack array and
   writing past its end.
   A segmentation fault is possible.
@@ -2139,7 +2135,7 @@ description: An object file where the DIEs depth of
   </pre>
 datefixed: 2020-10-28
 references: regressiontests/c-sun2/globaloverflow
-gitfixid: a7fa8edd640b74daf8e7a442dcec96640875b4fb 
+gitfixid: a7fa8edd640b74daf8e7a442dcec96640875b4fb
 tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202010-002
 
@@ -2153,7 +2149,7 @@ description: A carefully crafted object with an
   invalid line table could cause libdwarf
   to dereference a pointer reading a single byte outside of
   the intended .debug_line section and potentially
-  outside of memory visible to the library.  
+  outside of memory visible to the library.
   A segmentation fault is possible.
   The code testing for the error was coded incorrectly
   so an invalid dereference could occur.
@@ -2189,7 +2185,6 @@ gitfixid:  7af0ecddfafed88446969cbf8c888356ad485d99
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201801-001
 
-
 id: DW201712-001
 cve:
 datereported: 2017-12-01
@@ -2198,19 +2193,17 @@ vulnerability: Incorrect frame section could let caller crash
 product: libdwarf
 description: A carefully crafted object with an
   invalid frame section
-  can result in passing back data to a caller of 
+  can result in passing back data to a caller of
   dwarf_get_fde_augmentation_data()
-  is erroneous and will result in the 
-  caller reference off the end of the frame 
-  section.  
+  is erroneous and will result in the
+  caller reference off the end of the frame
+  section.
   A segmentation-fault/core-dump is possible.
 datefixed: 2017-12-01
 references: sarubbo-10/1.crashes.bin
-gitfixid: 329ea8e56bc9550260cae6e2e9756bfbe7e2ff6d 
+gitfixid: 329ea8e56bc9550260cae6e2e9756bfbe7e2ff6d
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201712-001
-
-
 
 id: DW201711-002
 cve:
@@ -2222,7 +2215,7 @@ description: An carefully crafted object with a
   invalid line table section crafted to
   end early at a particular point resulted in
   dereferencing outside the line table from
-  libdwarf/dwarf_line_table_reader_common.c . 
+  libdwarf/dwarf_line_table_reader_common.c .
   A segmentation-fault/core-dump is possible.
 datefixed: 2017-11-08
 references: regressiontests/sarubbo-9/3.crashes.bin
@@ -2249,11 +2242,8 @@ gitfixid: 44349d7991e44dd3751794f76537cabcf65ee28d
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201711-001
 
-
-
-
 id: DW201709-001
-cve: 
+cve:
 datereported: 2017-09-19
 reportedby: Agostino Sarubbo
 vulnerability: Incorrect abbrev section could crash caller.
@@ -2269,18 +2259,17 @@ gitfixid: bcc2e33908e669bacd397e3c941ffd1db3005d17
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201709-001
 
-
 id: DW201706-001
 cve: CVE-2017-9998
 datereported: 2017-06-28
 reportedby: team OWL337
-vulnerability: Addition overflow in libdwarf leads to segmentation violation 
+vulnerability: Addition overflow in libdwarf leads to segmentation violation
 product: libdwarf
-description: A fuzzed object with a 
+description: A fuzzed object with a
   resulting invalid value can overflow
   when added to a valid pointer
-  (depending on how the runtime memory is laid out) 
-  and thereafter a dereference results in a 
+  (depending on how the runtime memory is laid out)
+  and thereafter a dereference results in a
   segmentation violation).
 
  <pre> see
@@ -2290,12 +2279,10 @@ description: A fuzzed object with a
   the link to the web page.
  </pre>
 datefixed: 2017-07-06
-references: regressiontests/wolff/POC1 
+references: regressiontests/wolff/POC1
 gitfixid: e91681e8841291f57386f26a90897fd1dcf92a6e
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201706-001
-
-
 
 id: DW201703-007
 cve:
@@ -2313,8 +2300,8 @@ description:  7/7. A heap overflow in
 
  <pre>
  A portion of sanitizer output with Ubuntu 14.04:
- ==180133==ERROR: AddressSanitizer: heap-buffer-overflow 
-   on address 0x60d00000cff1 at pc 0x0000004476f4 
+ ==180133==ERROR: AddressSanitizer: heap-buffer-overflow
+   on address 0x60d00000cff1 at pc 0x0000004476f4
    bp 0x7fff87dd7dd0 sp 0x7fff87dd7590
  READ of size 8 at 0x60d00000cff1 thread T0
     #0 0x4476f3 in __interceptor_strncmp (/home/ubuntu/subjects/
@@ -2327,7 +2314,7 @@ description:  7/7. A heap overflow in
        build-asan/libdwarf/libdwarf/dwarf_init_finish.c:922:20
 
  With Ubuntu 16.04 libelf dwarfdump gets:
- ERROR:  dwarf_elf_init:  DW_DLE_ELF_STRPTR_ERROR (30) 
+ ERROR:  dwarf_elf_init:  DW_DLE_ELF_STRPTR_ERROR (30)
  a call to elf_strptr() failed trying to get a section name
  </pre>
  Fix date is irrelevant, libdwarf no longer uses libelf.
@@ -2337,12 +2324,11 @@ gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-007
 
-
 id: DW201703-006
 cve: CVE-2017-9052
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
-vulnerability: Heap overflow in dwarf_formsdata 
+vulnerability: Heap overflow in dwarf_formsdata
 product: libdwarf
 description:  6/7. A heap overflow in
   dwarf_formsdata() is due to a failure to check
@@ -2352,8 +2338,8 @@ description:  6/7. A heap overflow in
 
  <pre>
  A portion of sanitizer output with Ubuntu 14.04:
- ==180130==ERROR: AddressSanitizer: heap-buffer-overflow 
-  on address 0x61100000589c at pc 0x0000006cab95 
+ ==180130==ERROR: AddressSanitizer: heap-buffer-overflow
+  on address 0x61100000589c at pc 0x0000006cab95
   bp 0x7fff749aab10 sp 0x7fff749aab08
  READ of size 1 at 0x61100000589c thread T0
     #0 0x6cab94 in dwarf_formsdata /home/ubuntu/subjects/
@@ -2375,15 +2361,13 @@ gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-006
 
-
-
 id: DW201703-005
 cve: CVE-2017-9053
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
 vulnerability: Heap overflow in _dwarf_read_loc_expr_op()
 product: libdwarf
-description:  5/7. A heap overflow in 
+description:  5/7. A heap overflow in
   _dwarf_read_loc_expr_op() is due to a failure to check
   a  pointer for being in bounds (in a few places in this
   function).
@@ -2391,8 +2375,8 @@ description:  5/7. A heap overflow in
 
  <pre>
  A portion of sanitizer output with Ubuntu 14.04:
- ==180112==ERROR: AddressSanitizer: heap-buffer-overflow 
-  on address 0x60800000bf72 at pc 0x00000084dd52 
+ ==180112==ERROR: AddressSanitizer: heap-buffer-overflow
+  on address 0x60800000bf72 at pc 0x00000084dd52
   bp 0x7ffc12136fd0 sp 0x7ffc12136fc8
  READ of size 1 at 0x60800000bf72 thread T0
     #0 0x84dd51 in _dwarf_read_loc_expr_op /home/ubuntu/subjects/
@@ -2405,7 +2389,7 @@ description:  5/7. A heap overflow in
        build-asan/libdwarf/dwarfdump/print_die.c:3812:16
 
  After fixes applied dwarfdump says:
- ERROR:  dwarf_get_loclist_c:  DW_DLE_LOCEXPR_OFF_SECTION_END 
+ ERROR:  dwarf_get_loclist_c:  DW_DLE_LOCEXPR_OFF_SECTION_END
  (343) Corrupt dwarf
  </pre>
 
@@ -2429,11 +2413,11 @@ description:  4/7. An apparent heap overflow that
   The test object is intentionally corrupted (fuzzed).
   The submission was with Ubuntu 14.04. With Ubuntu
   16.04 there is no sanitizer error report.
- <pre>
-
+  As of 2023 libdwarf no longer calls or references libelf.
+  <pre>
  A portion of sanitizer output with Ubuntu 14.04:
- ==180109==ERROR: AddressSanitizer: heap-buffer-overflow 
-   on address 0x60b00000b000 at pc 0x00000048fd12 
+ ==180109==ERROR: AddressSanitizer: heap-buffer-overflow
+   on address 0x60b00000b000 at pc 0x00000048fd12
    bp 0x7fff4ad31ef0 sp 0x7fff4ad316b0
  READ of size 16 at 0x60b00000b000 thread T0
     #0 0x48fd11 in __interceptor_strlen (/home/ubuntu/
@@ -2446,7 +2430,7 @@ description:  4/7. An apparent heap overflow that
        subjects/build-asan/libdwarf/libdwarf/dwarf_init_finish.c:746:19
 
  With Ubuntu 16.04 libelf one gets:
- ERROR:  dwarf_elf_init:  DW_DLE_ELF_STRPTR_ERROR (30) 
+ ERROR:  dwarf_elf_init:  DW_DLE_ELF_STRPTR_ERROR (30)
  a call to elf_strptr() failed trying to get a section name
  </pre>
 datefixed:
@@ -2455,27 +2439,26 @@ gitfixid:
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-004
 
-
-
 id: DW201703-003
 cve:
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
-vulnerability: Heap overflow in strcmp 
+vulnerability: Heap overflow in strcmp
 product: libdwarf (libelf)
 description:  3/7. An apparent heap overflow that
   gives the appearance of being in libdwarf is due to
-  libelf call elf_strptr() failing to fully check 
+  libelf call elf_strptr() failing to fully check
   that its arguments make sense.
   This is not a bug in libdwarf, it is a libelf bug.
   The test object is intentionally corrupted (fuzzed).
   The submission was with Ubuntu 14.04. With Ubuntu
   16.04 there is no sanitizer error report.
- <pre>
 
+ 
  A portion of sanitizer output with Ubuntu 14.04:
-  ==180106==ERROR: AddressSanitizer: heap-buffer-overflow 
-    on address 0x60f00000ef09 at pc 0x000000447300 
+ <pre>
+  ==180106==ERROR: AddressSanitizer: heap-buffer-overflow
+    on address 0x60f00000ef09 at pc 0x000000447300
     bp 0x7ffc667dce10 sp 0x7ffc667dc5d0
   READ of size 4 at 0x60f00000ef09 thread T0
     #0 0x4472ff in __interceptor_strcmp (/home/ubuntu/
@@ -2487,18 +2470,17 @@ description:  3/7. An apparent heap overflow that
     #3 0x77d59c in dwarf_object_init /home/ubuntu/
        subjects/build-asan/libdwarf/libdwarf/dwarf_init_finish.c:922:20
     #4 0x899d4f in dwarf_elf_init_file_ownership /
-
+ </pre>
   With Ubuntu 16.04 libelf one gets:
-  ERROR:  dwarf_elf_init:  DW_DLE_ELF_STRPTR_ERROR (30) 
+  ERROR:  dwarf_elf_init:  DW_DLE_ELF_STRPTR_ERROR (30)
   a call to elf_strptr() failed trying to get a section name
-  </pre>
+
   Fix date is irrelevant, libdwarf no longer uses libelf.
-datefixed: 
+datefixed:
 references: regressiontests/marcel/crash3
 gitfixid:
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-003
-
 
 id: DW201703-002
 cve: CVE-2017-9054
@@ -2514,8 +2496,8 @@ description:  2/7. In _dwarf_decode_s_leb128_chk()
 
  A portion of sanitizer output:
   .debug_line: line number info for a single cu
-  ==180103==ERROR: AddressSanitizer: heap-buffer-overflow 
-    on address 0x610000007ffc at pc 0x0000007b0f5b 
+  ==180103==ERROR: AddressSanitizer: heap-buffer-overflow
+    on address 0x610000007ffc at pc 0x0000007b0f5b
     bp 0x7ffe06bbf510 sp 0x7ffe06bbf508
   READ of size 1 at 0x610000007ffc thread T0
     #0 0x7b0f5a in _dwarf_decode_s_leb128_chk /home/ubuntu/
@@ -2531,7 +2513,7 @@ description:  2/7. In _dwarf_decode_s_leb128_chk()
        subjects/build-asan/libdwarf/dwarfdump/print_lines.c:762:16
 
   After fix applied one gets:
-  ERROR:  dwarf_srclines:  DW_DLE_LEB_IMPROPER (329) 
+  ERROR:  dwarf_srclines:  DW_DLE_LEB_IMPROPER (329)
   Runs off end of section or CU
  </pre>
 
@@ -2540,7 +2522,6 @@ references: regressiontests/marcel/crash2
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-002
-
 
 id: DW201703-001
 cve: CVE-2017-9055
@@ -2557,8 +2538,8 @@ description:  1/7. In dwarf_formsdata() a few
  LOCAL_SYMBOLS:
  < 1><0x0000002f>    DW_TAG_subprogram
 
- ==180088==ERROR: AddressSanitizer: heap-buffer-overflow on 
-  address 0x60800000bf72 at pc 0x0000006cab95 bp 
+ ==180088==ERROR: AddressSanitizer: heap-buffer-overflow on
+  address 0x60800000bf72 at pc 0x0000006cab95 bp
   0x7fff31425830 sp 0x7fff31425828
   READ of size 1 at 0x60800000bf72 thread T0
     #0 0x6cab94 in dwarf_formsdata /home/ubuntu/subjects/
@@ -2578,7 +2559,7 @@ description:  1/7. In dwarf_formsdata() a few
   ERROR:  dwarf_attrlist:  DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION(281)
  </pre>
 datefixed: 2017-03-21
-references: regressiontests/marcel/crash1 
+references: regressiontests/marcel/crash1
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201703-001
@@ -2595,11 +2576,11 @@ description: This is a weakness in libelf checking.
   The CVE mentions libdwarf.
   <pre>
   blogs.gentoo.org/ago/2016/11/04/elfutils-memory-allocation-failure-in-allocate_elf-common-h/
-  www.openwall.com/lists/oss-security/2017/03/22/2 
+  www.openwall.com/lists/oss-security/2017/03/22/2
   </pre>
   Fixed in gentoo libelf by Agostino Sarubbo.
 datefixed: 2016-11-04
-references: regressiontests/sarubbo-b/00011-elfutils-memalloc-allocate_elf 
+references: regressiontests/sarubbo-b/00011-elfutils-memalloc-allocate_elf
 gitfixid:
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201611-008
@@ -2615,9 +2596,9 @@ description: This is a weakness in libelf checking.
   though it was never a bug in libdwarf.
   The CVE mentions libdwarf.
   <pre>
-  bugzilla.redhat.com/show_bug.cgi?id=1387584 
-  www.openwall.com/lists/oss-security/2017/03/22/1 
-  blogs.gentoo.org/ago/2016/11/04/elfutils-memory-allocation-failure-in-__libelf_set_rawdata_wrlock-elf_getdata-c/ 
+  bugzilla.redhat.com/show_bug.cgi?id=1387584
+  www.openwall.com/lists/oss-security/2017/03/22/1
+  blogs.gentoo.org/ago/2016/11/04/elfutils-memory-allocation-failure-in-__libelf_set_rawdata_wrlock-elf_getdata-c/
   </pre>
   Fixed in gentoo libelf by Agostino Sarubbo.
 datefixed: 2016-11-04
@@ -2625,8 +2606,6 @@ references: regressiontests/sarubbo-a/00031-elfutils-memalloc-__libelf_set_rawda
 gitfixid:
 tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201611-007
-
-  
 
 id: DW201611-006
 cve: CVE-2016-9480
@@ -2643,12 +2622,11 @@ description: An object with corrupt contents causes a memory reference
  bb9a3492ac5713bed9cf3ae58ddb7afa6e9e98f8
  (in regression tests here named  heap_buf_overflow.o)
 
-
  # ASAN Output
  <0> tag: 17 DW_TAG_compile_unit  name: "strstrnocase.c" FORM 0xe "DW_FORM_strp"
  <1> tag: 46 DW_TAG_subprogram  name: "is_strstrnocase" FORM 0xe "DW_FORM_strp"
  =================
- ==1666==ERROR: AddressSanitizer: heap-buffer-overflow on address 
+ ==1666==ERROR: AddressSanitizer: heap-buffer-overflow on address
    0xb5846db9 at p
  c 0x080b3a1b bp 0xbfa75d18 sp 0xbfa75d08
  READ of size 1 at 0xb5846db9 thread T0
@@ -2666,7 +2644,7 @@ description: An object with corrupt contents causes a memory reference
     #8 0x80491c0  (/home/puzzor/libdwarf-code/dwarfexample/simplereader+
          0x80491c 0)
 
- 0xb5846db9 is located 0 bytes to the right of 249-byte region 
+ 0xb5846db9 is located 0 bytes to the right of 249-byte region
     [0xb5846cc0,0xb5846db9)
  allocated by thread T0 here:
     #0 0xb727fae4 in __interceptor_malloc (/usr/lib/i386-linux-gnu/libasan.so.
@@ -2683,12 +2661,11 @@ gitfixid: 5dd64de047cd5ec479fb11fe7ff2692fd819e5e5
 tarrelease: libdwarf-20180129.tar.gz
 endrec:
 
-
 id: DW201611-005
 cve: CVE-2016-9558
 datereported: 2016-11-11
 reportedby: Agostino Sarubbo
-vulnerability: negation of -9223372036854775808 cannot be represented in type 
+vulnerability: negation of -9223372036854775808 cannot be represented in type
 product: libdwarf
 description: With the right bit pattern in a signed leb number
  the signed leb decode would execute an unary minus with undefined
@@ -2706,8 +2683,8 @@ datereported: 2016-11-02
 reportedby: Agostino Sarubbo
 vulnerability: Heap overflow in dwarf_skim_forms()
 product: libdwarf
-description: If a non-terminated string 
-  in a DWARF5 macro section 
+description: If a non-terminated string
+  in a DWARF5 macro section
   ends a section it can result in accessing memory not
   in the application (out of bounds read).
   dwarf_macro5.c(in _dwarf_skim_forms()).
@@ -2733,7 +2710,6 @@ gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: libdwarf-20180129.tar.gz
 endrec:
 
-
 id: DW201611-002
 cve:
 datereported: 2016-11-02
@@ -2746,18 +2722,18 @@ description: Libdwarf failed to check for a bogus
  region.  Anything could happen in the subsequent
  use of the bogus pointer.
  <pre>
- 0x61300000de1c is located 0 bytes to the right of 348-byte region 
- [0x61300000dcc0,0x61300000de1c) 
- allocated by thread T0 here: 
+ 0x61300000de1c is located 0 bytes to the right of 348-byte region
+ [0x61300000dcc0,0x61300000de1c)
+ allocated by thread T0 here:
    #0 0x4c0ad8 in malloc /var/tmp/portage/sys-devel/llvm-3.8.1-
- r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:52 
+ r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:52
    #1 0x7f883cfc6206 in __libelf_set_rawdata_wrlock /tmp/portage/dev-
  libs/elfutils-0.166/work/elfutils-0.166/libelf/elf_getdata.c:318
  </pre>
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00025-libdwarf-heapoverflow-get_attr_value
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: libdwarf-20170416.tar.gz 
+tarrelease: libdwarf-20170416.tar.gz
 endrec:
 
 id: DW201611-001
@@ -2788,7 +2764,7 @@ r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:53
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00024-libdwarf-memalloc-do_decompress_zlib
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: libdwarf-20170416.tar.gz 
+tarrelease: libdwarf-20170416.tar.gz
 endrec: DW201611-001
 
 id: DW201610-003
@@ -2797,11 +2773,11 @@ datereported: 2016-10-02
 reportedby: agostino
 vulnerability: dwarf_get_size_of_val out of bounds read
 product: libdwarf
-description: The _dwarf_get_size_of_val function in 
-  libdwarf/dwarf_util.c in Libdwarf before 20161124 
-  allows remote attackers to cause a denial of service 
-  (out-of-bounds read) by calling the dwarfdump command 
-  on a crafted file. 
+description: The _dwarf_get_size_of_val function in
+  libdwarf/dwarf_util.c in Libdwarf before 20161124
+  allows remote attackers to cause a denial of service
+  (out-of-bounds read) by calling the dwarfdump command
+  on a crafted file.
   <pre>
   www.securityfocus.com/bid/93601
   blogs.gentoo.org/ago/2016/10/06/libdwarf-heap-based-
@@ -2819,21 +2795,18 @@ reportedby: agostino
 vulnerability: Out of bounds read
 product: libdwarf
 description: The _dwarf_get_abbrev_for_code function in
-  dwarf_util.c in libdwarf 20161001 and earlier allows remote 
-  attackers to cause a denial of service (out-of-bounds read) 
-  by calling the dwarfdump command on a crafted file. 
+  dwarf_util.c in libdwarf 20161001 and earlier allows remote
+  attackers to cause a denial of service (out-of-bounds read)
+  by calling the dwarfdump command on a crafted file.
   <pre>
   bugzilla.redhat.com/show_bug.cgi?id=1385690
   www.securityfocus.com/bid/93592
   Duplicate of CVE-2016-8681
   </pre>
 datefixed: 2016-10-04
-references: 
+references:
 gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
 endrec: DW201610-002
-
-
-
 
 id: DW201610-001
 cve: CVE-2016-8681
@@ -2842,22 +2815,21 @@ reportedby: agostino
 vulnerability: Out of bounds read
 product: libdwarf
 description: The _dwarf_get_abbrev_for_code function in
-  dwarf_util.c in libdwarf 20161001 and earlier allows remote 
-  attackers to cause a denial of service (out-of-bounds read) 
-  by calling the dwarfdump command on a crafted file. 
+  dwarf_util.c in libdwarf 20161001 and earlier allows remote
+  attackers to cause a denial of service (out-of-bounds read)
+  by calling the dwarfdump command on a crafted file.
   <pre>
   bugzilla.redhat.com/show_bug.cgi?id=1385690
   www.securityfocus.com/bid/93592
   Duplicate of CVE-2016-8680
   </pre>
 datefixed: 2016-10-04
-references: 
+references:
 gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
 endrec: DW201610-001
 
-
 id: DW201609-004
-cve: CVE-2016-7510 
+cve: CVE-2016-7510
 datereported: 2016-09-17
 reportedby: Puzzor
 vulnerability: libdwarf 20160613 Out-of-Bounds read
@@ -2886,16 +2858,13 @@ gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
-
-
 id: DW201609-003
 cve: CVE-2016-7410
 datereported: 2016-09-13
 reportedby: https://marc.info/?l=oss-security&m=147391785920048&w=2
 vulnerability: libdwarf 20160613 heap-buffer-overflow
 product: libdwarf
-description: With AddressSanitizer, 
+description: With AddressSanitizer,
   we found a Heap-Buffer-overflow in the latest
   release version of dwarfdump. The crash output is as follows:
   <pre>
@@ -2938,7 +2907,6 @@ gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
 id: DW201609-002
 cve: CVE-2016-7511
 datereported: 2016-09-18
@@ -2946,7 +2914,7 @@ reportedby: Shi Ji (@Puzzor)
 vulnerability: libdwarf 20160613 Integer Overflow
 product: libdwarf
 description: In dwarf_get_size_of_val() with
-  fuzzed DWARF data we get a SEGV. 
+  fuzzed DWARF data we get a SEGV.
   <pre>
   See
   https://sourceforge.net/p/libdwarf/bugs/3/
@@ -2961,7 +2929,7 @@ description: In dwarf_get_size_of_val() with
   #5 0x804b23f in get_die_and_siblings /home/fuzzing/fuzzing/dwarf-20160613/dwarfexample/./simplereader.c:573
   </pre>
   _dwarf_make_CU_Context() is insufficiently cautious about
-  the length of a CU being absurd. 
+  the length of a CU being absurd.
   Unclear as yet if this is the problem
   but it is a problem and is fixed for next release.
 datefixed: 2016-09-23
@@ -2970,10 +2938,8 @@ gitfixid:   3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
-
 id: DW201609-001
-cve: 
+cve:
 datereported: 2016-09-16
 reportedby: STARLAB
    https://sourceforge.net/p/libdwarf/bugs/2/
@@ -2987,18 +2953,18 @@ description: At line 1533 of dwarf_die_deliv.c a
  https://sourceforge.net/p/libdwarf/bugs/2/
  </pre>
  <pre>
- ==8054==ERROR: AddressSanitizer: heap-buffer-overflow on 
+ ==8054==ERROR: AddressSanitizer: heap-buffer-overflow on
     address 0xf4c027ab at pc 0x819e4a4 bp 0xff88eb38 sp 0xff88eb30
  READ of size 1 at 0xf4c027ab thread T0
  #0 0x819e4a3 in dwarf_siblingof_b /home/starlab/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1533
  #1 0x8116201 in print_die_and_children_internal /home/starlab/fuzzing/dwarf-20160613/dwarfdump/print_die.c:1157
  Bug report on sourceforge.net bug list for libdwarf.
- The bad pointer dereference is due to libdwarf 
+ The bad pointer dereference is due to libdwarf
  not noticing that the DWARF in that file is corrupt.
  In addtion
  The code was not noticing that it could dereference
  a pointer that pointed out of bounds in the end-sibling-list
- loop. 
+ loop.
  </pre>
  <pre>
  The example from the bug report (DW201609-001-poc) has
@@ -3007,12 +2973,11 @@ description: At line 1533 of dwarf_die_deliv.c a
  on both test2.o and DW201609-001-poc.
  </pre>
 datefixed: 2016-09-17
-references: regressiontests/DW201609-001/test2.o 
+references: regressiontests/DW201609-001/test2.o
   regressiontests/DW201609-001/DW201609-001-poc
 gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
-
 
 id: DW201605-019
 cve: CVE-2016-5028
@@ -3031,7 +2996,6 @@ gitfixid: a55b958926cc67f89a512ed30bb5a22b0adb10f4
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
 id: DW201605-018
 cve: CVE-2016-5029
 datereported: 2016-05-22
@@ -3046,12 +3010,12 @@ description: The null dereference in create_fullest_file_path()
  <pre>
   202             }
  203             if (dirno > 0 && fe->fi_dir_index > 0) {
- 204                 inc_dir_name = (char *) 
+ 204                 inc_dir_name = (char *)
                          line_context->lc_include_directories[
  205                     fe->fi_dir_index - 1];
  206                 incdirnamelen = strlen(inc_dir_name);  <- $pc
  207             }
- 208             full_name = (char *) _dwarf_get_alloc(dbg, 
+ 208             full_name = (char *) _dwarf_get_alloc(dbg,
 
  #0  create_fullest_file_path (dbg=<optimized out>,
  fe=0x68d510, line_context=0x68c4f0, name_ptr_out=<optimized
@@ -3071,31 +3035,28 @@ gitfixid: acae971371daa23a19358bc62204007d258fbc5e
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
-
-
 id: DW201605-017
 cve: CVE-2016-5030
 datereported: 2016-05-19
 reportedby: Yue Liu
 vulnerability: Null dereference bug in  _dwarf_calculate_info_section_end_ptr().
 product: libdwarf
-description: 
+description:
  NULL dereference bug in _dwarf_calculate_info_section_end_ptr().
  <pre>
  1742         Dwarf_Off off2 = 0;
  1743         Dwarf_Small *dataptr = 0;
- 1744     
+ 1744
  1745         dbg = context->cc_dbg;
  1746         dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:                 <- $pc
  1747             dbg->de_debug_types.dss_data;
  1748         off2 = context->cc_debug_offset;
  1749         info_start = dataptr + off2;
  1750         info_end = info_start + context->cc_length +
- 
+
  #0  _dwarf_calculate_info_section_end_ptr
  (context=context@entry=0x0) at dwarf_query.c:1746
- 
+
  #1  0x00002aaaaace307d in
  _dwarf_extract_string_offset_via_str_offsets
  (dbg=dbg@entry=0x655a70, info_data_ptr=0x6629f0
@@ -3103,7 +3064,7 @@ description:
  attrform=attrform@entry=26, cu_context=0x0,
  str_sect_offset_out=str_sect_offset_out@entry=0x7fffffffd718,
  error=error@entry=0x7fffffffd878) at dwarf_form.c:1099
- 
+
  #2  0x00002aaaaacf4ed7 in dwarf_get_macro_defundef
  (macro_context=macro_context@entry=0x65b790,
  op_number=op_number@entry=1,
@@ -3113,10 +3074,10 @@ description:
  forms_count=forms_count@entry=0x7fffffffd7ce,
  macro_string=macro_string@entry=0x7fffffffd870,
  error=error@entry=0x7fffffffd878) at dwarf_macro5.c:557
- 
+
  ------
- 
- _dwarf_calculate_info_section_end_ptr (context=context@entry=0x0) at 
+
+ _dwarf_calculate_info_section_end_ptr (context=context@entry=0x0) at
    dwarf_query.c:1746
  1746        dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:
  gef> p/x $rdi
@@ -3128,13 +3089,11 @@ gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
-
 id: DW201605-016
 cve:
 datereported: 2016-05-19
 reportedby: Yue Liu
-vulnerability: Invalid dwarf leads to 
+vulnerability: Invalid dwarf leads to
  dwarfdump crash in print_frame_inst_bytes.
 product: dwarfdump
 description: Corrupted dwarf crashes dwarfdump
@@ -3178,7 +3137,6 @@ gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
 id: DW201605-015
 cve: CVE-2016-5031
 datereported: 2016-05-17
@@ -3192,18 +3150,18 @@ description: Test object shows
  1295             unsigned char ibyte = *instp;           <- $pc
  1296             int top = ibyte & 0xc0;
 
- #0  print_frame_inst_bytes (dbg=dbg@entry=0x654c80, 
-    cie_init_inst=<optimized out>, len=503715, data_alignment_factor=-4, 
-    code_alignment_factor=1, addr_size=addr_size@entry=4, offset_size=4, 
-    version=3, config_data=config_data@entry=0x63bda0 
+ #0  print_frame_inst_bytes (dbg=dbg@entry=0x654c80,
+    cie_init_inst=<optimized out>, len=503715, data_alignment_factor=-4,
+    code_alignment_factor=1, addr_size=addr_size@entry=4, offset_size=4,
+    version=3, config_data=config_data@entry=0x63bda0
     <g_config_file_data>) at print_frames.c:1295
- #1  0x000000000041b64c in print_one_cie (dbg=dbg@entry=0x654c80, 
-    cie=<optimized out>, cie_index=cie_index@entry=1, 
+ #1  0x000000000041b64c in print_one_cie (dbg=dbg@entry=0x654c80,
+    cie=<optimized out>, cie_index=cie_index@entry=1,
     address_size=<optimized out>, config_data=
     config_data@entry=0x63bda0 <g_config_file_data>) at print_frames.c:1161
- #2  0x000000000041ce92 in print_frames (dbg=0x654c80, 
-    print_debug_frame=print_debug_frame@entry=1, print_eh_frame=0, 
-    config_data=config_data@entry=0x63bda0 <g_config_file_data>) 
+ #2  0x000000000041ce92 in print_frames (dbg=0x654c80,
+    print_debug_frame=print_debug_frame@entry=1, print_eh_frame=0,
+    config_data=config_data@entry=0x63bda0 <g_config_file_data>)
     at print_frames.c:2209
 
  gef> x/10x $r13
@@ -3217,9 +3175,6 @@ gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
-
-
-
 id: DW201605-014
 cve: CVE-2016-5032
 datereported: 2016-05-17
@@ -3229,17 +3184,17 @@ product: libdwarf
 description: Test object shows
  an invalid read in dwarf_get _xu_hash_entry, lin 211.
  <pre>
- #0  dwarf_get_xu_hash_entry (xuhdr=xuhdr@entry=0x657360, 
+ #0  dwarf_get_xu_hash_entry (xuhdr=xuhdr@entry=0x657360,
     index=index@entry=2897626028, hash_value=
-    hash_value@entry=0x7fffffffd5b0, 
-    index_to_sections=index_to_sections@entry=0x7fffffffd5a8, 
+    hash_value@entry=0x7fffffffd5b0,
+    index_to_sections=index_to_sections@entry=0x7fffffffd5a8,
     err=err@entry=0x7fffffffdb08) at dwarf_xu_index.c:211
  #1  0x00002aaaaacfd05e in _dwarf_search_fission_for_key (
     dbg=0x654a50, error=0x7fffffffdb08, percu_index_out=<synthetic pointer>,
     key_in=0x7fffffffd670, xuhdr=0x657360) at dwarf_xu_index.c:363
- #2  dwarf_get_debugfission_for_key (dbg=dbg@entry=0x654a50, 
-    key=key@entry=0x7fffffffd670, key_type=key_type@entry=0x2aaaaad15e2a 
-    "tu", percu_out=percu_out@entry=0x65a830, 
+ #2  dwarf_get_debugfission_for_key (dbg=dbg@entry=0x654a50,
+    key=key@entry=0x7fffffffd670, key_type=key_type@entry=0x2aaaaad15e2a
+    "tu", percu_out=percu_out@entry=0x65a830,
     error=error@entry=0x7fffffffdb08) at dwarf_xu_index.c:577
  </pre>
 datefixed: 2015-05-18
@@ -3247,9 +3202,6 @@ references: regressiontests/liu/OOB0517_02.elf
 gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
-
-
-
 
 id: DW201605-013
 cve: CVE-2016-5033
@@ -3260,14 +3212,14 @@ product: libdwarf
 description: Test object shows
  an invalid write in print_exprloc_content.
  <pre>
- #0  print_exprloc_content (dbg=dbg@entry=0x654ea0, 
-    die=die@entry=0x65b110, attrib=attrib@entry=0x65b590, 
+ #0  print_exprloc_content (dbg=dbg@entry=0x654ea0,
+    die=die@entry=0x65b110, attrib=attrib@entry=0x65b590,
     esbp=esbp@entry=0x7fffffffcef0, showhextoo=1) at print_die.c:4182
- #1  0x0000000000412fb1 in get_attr_value (dbg=dbg@entry=0x654ea0, 
-    tag=<optimized out>, die=die@entry=0x65b110, 
-    dieprint_cu_goffset=dieprint_cu_goffset@entry=11, 
-    attrib=attrib@entry=0x65b590, srcfiles=srcfiles@entry=0x0, 
-    cnt=cnt@entry=0, esbp=esbp@entry=0x7fffffffcef0, show_form=0, 
+ #1  0x0000000000412fb1 in get_attr_value (dbg=dbg@entry=0x654ea0,
+    tag=<optimized out>, die=die@entry=0x65b110,
+    dieprint_cu_goffset=dieprint_cu_goffset@entry=11,
+    attrib=attrib@entry=0x65b590, srcfiles=srcfiles@entry=0x0,
+    cnt=cnt@entry=0, esbp=esbp@entry=0x7fffffffcef0, show_form=0,
     local_verbose=0) at print_die.c:4972
  </pre>
 datefixed: 2015-05-18
@@ -3275,7 +3227,6 @@ references: regressiontests/liu/OOB0517_01.elf
 gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
-
 
 id: DW201605-012
 cve: CVE-2016-5034
@@ -3291,13 +3242,11 @@ description: Test object shows
  With a 32bit kernel build the test could show
  a double-free and coredump due to the unchecked invalid
  writes from relocations.
-datefixed: 2016-05-17 
+datefixed: 2016-05-17
 references: regressiontests/liu/HeapOverflow0513.elf
 gitfixid: 10ca310f64368dc083efacac87732c02ef560a92
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
-
-
 
 id: DW201605-011
 cve: CVE-2016-5035
@@ -3314,7 +3263,6 @@ references: regressiontests/liu/OOB_read4.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: libdwarf-20160923.tar.gz
 endrec:
-
 
 id: DW201605-010
 cve: CVE-2016-5036
@@ -3368,7 +3316,7 @@ datefixed: 2016-05-12
 references: regressiontests/liu/OOB0505_02.elf
  regressiontests/liu/OOB0505_02_02.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
-tarrelease: libdwarf-20160923.tar.gz 
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 id: DW201605-007
@@ -3416,7 +3364,7 @@ datereported: 2016-05-02
 reportedby: Yue Liu
 vulnerability: A specially crafted DWARF section
  results in a duplicate free() in libdwarf and
- the calling application will crash. 
+ the calling application will crash.
 product:  libdwarf
 description:
  In file dwarf_elf_access.c:1071
@@ -3441,8 +3389,6 @@ gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 gittag: 2016-05-07
 tarrelease: libdwarf-20160507.tar.gz
 endrec:
-
-
 
 id: DW201605-002
 cve: CVE-2016-5043
@@ -3513,7 +3459,7 @@ description:
  information entry  using DWARF5 macros
  a null dereference in dwarf_macro5.c will
  crash the application.
- 
+
 datefixed: 2016-05-04
 references: regressiontests/liu/null01.elf
  <pre>
@@ -3551,23 +3497,23 @@ reportedby: Yue Liu,lieanu
 vulnerability: NULL dereference in  _dwarf_decode_s_leb128
 product: libdwarf
 description: dwarf_form.c in libdwarf 20160115 allows
-  remote attackers to cause a denial of service (crash) 
+  remote attackers to cause a denial of service (crash)
   via a crafted elf file
   Apparently no crafted object file presented.
   However the code fix is presented in the report
   at openwall.com.
   Discovered the CVE November 2021
   To attack the code just pass the argument
-  Dwarf_Word * leb128_length as a NULL pointer (that is allowed). 
+  Dwarf_Word * leb128_length as a NULL pointer (that is allowed).
   The code was fixed in dwarf_leb.c on 2016-04-27 20:00:06.
   <pre>
   bugzilla.redhat.com/show_bug.cgi?id=1330237
   www.openwall.com/lists/oss-security/2016/05/24/1
   www.openwall.com/lists/oss-security/2016/05/25/1
   </pre>
-datefixed: 2016-05-27 
+datefixed: 2016-05-27
 references:
-gitfixid: 
+gitfixid:
 tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201605-020
 
@@ -3578,7 +3524,7 @@ reportedby: Qixue Xiao
 vulnerability: Out of bound read in  dwarf_read_cie_fde_prefix()
 product: libdwarf
 description: Crashes the calling program. Requires
-  a crafted object file.  
+  a crafted object file.
   <pre>
   *** DWARF CHECK: DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE
   len=0x00000010, len size=0x00000004, extn size=0x00000000, totl
@@ -3622,7 +3568,7 @@ description: Crashes the calling program. Requires
   /home/xqx/test/libdwarf-test/llvm-codes/dwarf-20151114/dwarfdump/dwarfdump)
   ==5358==    by 0x40FD92: print_one_die_section (in
   /home/xqx/test/libdwarf-test/llvm-codes/dwarf-20151114/dwarfdump/dwarfdump)
-  www.openwall.com/lists/oss-security/2016/01/19/9 
+  www.openwall.com/lists/oss-security/2016/01/19/9
   www.openwall.com/lists/oss-security/2016/01/25/3
   </pre>
 datefixed: 2016-01-21
@@ -3638,16 +3584,16 @@ reportedby: Qixue Xiao (xqx)
 vulnerability:  Null pointer dereference in libdwarf
 product: libdwarf
 description: libdwarf 20151114 and earlier allows remote
-  attackers to cause a denial of service (NULL pointer 
-  dereference and crash) via a debug_abbrev 
+  attackers to cause a denial of service (NULL pointer
+  dereference and crash) via a debug_abbrev
   section marked NOBITS in an ELF file.
   <pre>
   bugzilla.redhat.com/show_bug.cgi?id=1294264
   www.openwall.com/lists/oss-security/2016/01/07/11
   </pre>
-datefixed: 2015-12-31 
+datefixed: 2015-12-31
 references: regressiontests/xqx-c/awbug6.elf
-gitfixid: 
+gitfixid:
 tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201512-001
 
@@ -3658,23 +3604,22 @@ reportedby: Adam Maris
 vulnerability:  Out-of-bounds read in dwarf_leb.c
 product: libdwarf
 description: libdwarf 20151114 and earlier allows remote
-  attackers to cause a denial of service (NULL pointer 
-  dereference and crash) via a debug_abbrev 
+  attackers to cause a denial of service (NULL pointer
+  dereference and crash) via a debug_abbrev
   section marked NOBITS in an ELF file.
   The CVE report mentions a reproducer object file
   but such is not present.
   Due to recent tool advances (like
   coverity scan) we are confident this was fixed long ago.
   <pre>
-  bugzilla.redhat.com/show_bug.cgi?id=1291299 
-  www.openwall.com/lists/oss-security/2015/12/10/3 
+  bugzilla.redhat.com/show_bug.cgi?id=1291299
+  www.openwall.com/lists/oss-security/2015/12/10/3
   </pre>
 datefixed: 2018-01-01
 references:
-gitfixid: 
+gitfixid:
 tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201512-002
-
 
 id: DW201412-001
 cve: CVE-2014-9482
@@ -3687,14 +3632,12 @@ description: The use-after-free has no attached testcase
   coverity scan) we are confident this was fixed long ago.
   <pre>
   bugzilla.redhat.com/show_bug.cgi?id=1177758
-  www.openwall.com/lists/oss-security/2014/12/31/3 
+  www.openwall.com/lists/oss-security/2014/12/31/3
   www.openwall.com/lists/oss-security/2015/01/03/14
   </pre>
 datefixed: 2018-01-01
-references: 
+references:
 gitfixid:
 tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201412-001
-
-
 

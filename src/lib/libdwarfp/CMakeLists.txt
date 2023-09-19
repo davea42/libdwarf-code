@@ -69,6 +69,8 @@ endforeach()
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
+configure_file(libdwarfp.pc.cmake libdwarfp.pc @ONLY )
+
 add_custom_target(dg DEPENDS ${DWARFP_TARGETS} dwarfgen)
 install(TARGETS ${DWARFP_TARGETS} EXPORT libdwarfpTargets
     ARCHIVE DESTINATION lib
@@ -83,8 +85,9 @@ install(
     FILES cmake/libdwarfp-config.cmake
     DESTINATION lib/cmake/libdwarfp
 )
-install(DIRECTORY libdwarfp DESTINATION include/
-    FILES_MATCHING PATTERN "*.h")
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarfp.h
     DESTINATION include/libdwarfp)
+install( FILES ${PROJECT_BINARY_DIR}/src/lib/libdwarfp/libdwarfp.pc
+    DESTINATION lib/pkgconfig
+)

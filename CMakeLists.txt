@@ -5,6 +5,8 @@ project(libdwarf C CXX)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include_directories( ${PROJECT_BINARY_DIR} )
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
     if(MSVC AND ("${MSVC_VERSION}" LESS 1900))
@@ -99,7 +101,7 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 0.7.1)
+set(VERSION 0.8.0)
 set(PACKAGE_VERSION "\"${VERSION}\"") 
 set(PACKAGE_NAME "libdwarf" )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
@@ -302,9 +304,6 @@ option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
 
-# This references cmake/FindLibElf.cmake. See cmake documentation.
-find_package(LibElf REQUIRED)
-
 configure_file(cmake/config.h.cmake config.h)
 
 if(BUILD_NON_SHARED)
@@ -331,14 +330,15 @@ add_subdirectory(src/bin/dwarfdump)
 if ( BUILD_DWARFEXAMPLE )
 	add_subdirectory(src/bin/dwarfexample)
 endif()
-if (DO_TESTING)
-add_subdirectory(test)
-endif()
 
 if ( BUILD_DWARFGEN )
      set(LIBDWARF_INCLUDE_DIR ../libdwarf)
      add_subdirectory(src/lib/libdwarfp)
      add_subdirectory(src/bin/dwarfgen)
+endif()
+
+if (DO_TESTING)
+add_subdirectory(test)
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )

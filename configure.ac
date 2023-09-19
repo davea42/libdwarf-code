@@ -3,8 +3,8 @@
 
 dnl defines the version name of  the libdwarf.so
 m4_define([v_maj], [0])
-m4_define([v_min], [7])
-m4_define([v_mic], [1])
+m4_define([v_min], [8])
+m4_define([v_mic], [0])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([v_rel], [])
@@ -227,9 +227,16 @@ c_common_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
     [
-       cxx_compiler_flags="$c_common_flags -Wno-unused-private-field"
+       cxx_compiler_flags="$c_common_flags "
 
-       c_compiler_flags="$c_common_flags -Wnostringop-overread -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs  -Wnull-dereference -Wredundant-decls"
+       c_compiler_flags="$c_common_flags -Wmissing-prototypes -Wdeclaration-after-statement -Wmissing-parameter-type -Wnested-externs -Wredundant-decls -Wsign-compare"
+
+#-Wnull-dereference causes bogus warnings.
+#-Wbad-function-cast removes useful warnings
+#-Wnostringop-overread  removes useful warnings
+#-Wbad-function-cast  removes useful warnings
+#-Wmissing-parameter-type removes useful warnings
+
     ]
     )
 AS_IF(
@@ -243,6 +250,40 @@ AS_IF(
 
 DWARF_CHECK_CXX_COMPILER_FLAGS([${cxx_compiler_flags}])
 DWARF_CHECK_C_COMPILER_FLAGS([${c_compiler_flags}])
+
+# If we can compile then the runtime can do the
+# setlocal itself.
+# We do not run this since the C compiler needs
+# the C locale to compile correctly.
+AC_COMPILE_IFELSE(
+  [ AC_LANG_PROGRAM(
+    [[
+    #include <langinfo.h>
+    #include <locale.h>
+    #include <string.h>
+    #include <stdio.h>
+    ]],
+    [[
+    char * langinfo = 0;
+    setlocale(LC_CTYPE, "");
+    setlocale(LC_NUMERIC, "");
+    langinfo = nl_langinfo(CODESET);
+    printf("Lang: %s\n",langinfo);
+    if (strcmp(langinfo,"UTF-8") && strcmp(langinfo,"UTF8")) {
+        return 1;
+    }
+    ]]
+    )
+  ],
+  [ have_utf8="yes"
+    AC_DEFINE(
+      [HAVE_UTF8], [1],
+      [Set to 1 as utf8 is fully printable])
+  ],
+  [ have_utf8="no"
+    AC_MSG_WARN([utf8 printed uri-style])
+  ]
+)
 
 # unused attribute
 AC_COMPILE_IFELSE(
@@ -402,6 +443,7 @@ echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
 echo "  dwarfdump............: always"
+echo "  dwarfdump print utf-8: ${have_utf8}"
 echo "  dwarfgen.............: ${enable_dwarfgen}"
 echo "  dwarfexample.........: ${enable_dwarfexample}"
 echo

@@ -286,7 +286,7 @@ static Dwarf_Unsigned range_array_count = 0;
     The space is reused by all CUs.
 */
 void
-allocate_range_array_info()
+allocate_range_array_info(void)
 {
     if (range_array == NULL) {
         /* Allocate initial range array info */
@@ -298,7 +298,7 @@ allocate_range_array_info()
 }
 
 void
-release_range_array_info()
+release_range_array_info(void)
 {
     if (range_array) {
         free(range_array);

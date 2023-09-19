@@ -3,8 +3,7 @@
 # This test script is in the public domain for use
 # by anyone for any purpose.
 # buildandrelease test [--savebart]
-# [--disable-libelf]
-# [--enable-libelf] [--disable-dwarfgen] 
+# [--disable-dwarfgen] 
 # [--enable-nonstandardprintf] 
 #  scripts/buildandreleasetest.sh
 #  A script verifying the distribution gets all needed files
@@ -19,13 +18,16 @@
 # First, get the current configure.ac version into v:
 # if stdint.h does not define uintptr_t and intptr_t
 # Then dwarfgen (being c++) will not build
-# Use --disable-libelf to disable reliance on libelf
-# and dwarfgen.
-# To just eliminate dwarfgen build/test/install use --disable-dwarfgen.
+# To just eliminate dwarfgen build/test/install use 
+# --disable-dwarfgen.
 
+# accomodate differences in cmake install file count:
+# 16 is for 32bit build
+# 18 is for 64bit build
+expectlen32=16
+expectlen64=18
 genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
-libelfopt=''
 wd=`pwd`
 # If passes, remove the /tmp/bart working directory.
 # Useful to consider if all intended files actually present,
@@ -35,9 +37,6 @@ while [ $# -ne 0 ]
 do
   case $1 in
    --savebart ) savebart=y ; shift  ;;
-   --disable-libelf ) genopta='' ; genoptb='' 
-        libelfopt=$1 ; shift ;;
-   --enable-libelf )  shift  ;;
    --disable-dwarfgen ) genopta='' ; genoptb='' ; shift  ;;
    --enable-nonstandardprintf ) nonstdprintf=$1 ; shift  ;;
    * ) echo "Unknown buildandreleasetest.sh option $1. Error." ; exit 1 ;;
@@ -115,6 +114,7 @@ cinstrelp=$bart/c-installrelp
 dbigend=$bart/d-bigendian
 ecmakebld=$bart/e-cmakebld
 fcmakebld=$bart/f-cmakebld
+fcmakeinst=$bart/f-cmakeinstalltarg
 gcmakebld=$bart/g-cmakebld
 hcmakebld=$bart/h-cmakebld
 imesonbld=$bart/i-mesonbld
@@ -124,6 +124,7 @@ mdirs $hcmakebld $imesonbld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
+ftfout=$bart/f-tarftout
 rm -rf $bart/a-dwrelease
 rm -rf $blibsrc
 
@@ -135,8 +136,8 @@ echo "dirs created empty"
 
 echo cd $abld
 safecd $abld "FAIL A cd failed"
-echo "now: $configloc --prefix=$ainstall $libelfopt $nonstdprintf"
-$configloc --prefix=$ainstall $libelfopt $nonstdprintf
+echo "now: $configloc --prefix=$ainstall  $nonstdprintf"
+$configloc --prefix=$ainstall $nonstdprintf
 chkres $? "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make
@@ -165,7 +166,7 @@ echo "TEST Section B: now cd $binstrelbld for second build install"
 safecd $binstrelbld "FAIL B cd"
 echo "TEST: now second install install, prefix $binstrelp"
 echo "TEST: Expecting src in $blibsrc"
-$blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $libelfopt $nonstdprintf
+$blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $nonstdprintf
 chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
 make
@@ -206,8 +207,8 @@ echo "TEST Section C: now cd $dbigend for big-endian build (not runnable) "
 safecd $dbigend "FAIL C be1 "
 echo "TEST: now second install install, prefix $crelbld"
 echo "TEST: Expecting src in $blibsrc"
-echo "TEST: $blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$crelbld $libelfopt $nonstdprintf"
-$blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$cinstrelp $libelfopt $nonstdprintf
+echo "TEST: $blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$crelbld $nonstdprintf"
+$blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$cinstrelp  $nonstdprintf
 chkres $? "FAIL be2  configure fail"
 echo "#define WORDS_BIGENDIAN 1" >> config.h
 echo "TEST: Compile In $dbigend make from $blibsrc/configure"
@@ -245,7 +246,7 @@ then
 fi
 if [ $havecmake = "y" ]
 then
-  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
+  echo "TEST E: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
   cmake $genoptb -DWALL=ON \
        -DBUILD_NON_SHARED=ON \
        -DBUILD_SHARED=OFF \
@@ -271,25 +272,53 @@ which cmake >/dev/null
 if [ $? -eq 0 ]
 then
   havecmake=y
-  echo "We have cmake and can test it."
+  echo "We have cmake and can test it: test F."
 fi
-if [ $havecmake = "y" ]
+if [ x$havecmake = "xy" ]
 then
-  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $fcmakebld"
+  echo "TEST F: Now cmake from source dir $blibsrc/ in build dir  $fcmakebld"
+  # We are doing -DBUILD_DWARFGEN=ON as a sanity check.
+  # Building lidwarfp and dwarfgen.
+  # You should not be building or installing dwarfgen
+  # or libdwarfp, it is unlikely you have a use
+  # for lidwarfp and dwarfgen. 
   cmake $genoptb \
+    -DCMAKE_INSTALL_PREFIX=$fcmakeinst \
     -DBUILD_SHARED=OFF \
     -DBUILD_NON_SHARED=ON \
+    -DBUILD_DWARFGEN=ON  \
     -DWALL=ON \
-    -DDWARF_WITH_LIBELF=OFF -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON $blibsrc
+    -DBUILD_DWARFEXAMPLE=ON \
+    -DDO_TESTING=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL Sec F C11c  cmake make in $fcmakebld"
   make test
   chkres $? "FAIL Sec F C11d  cmake make test in $fcmakebld"
+  make install
+  chkres $? "FAIL Sec F C11d  cmake install in $fcmakebld"
+  find $fcmakeinst -type f -print >$ftfout
+  len=`wc -l <$ftfout`
+  exp=18
+  echo "Examine contents of cmake install dir $fcmakeinst"
+  echo "Number of files in installtarg: $len"
+  echo "Number of files expected      : $expectcmakelen" 
+  if [ $len -ne $expectlen64 ]
+  then
+    if [ $len -ne $expectlen32 ]
+    then 
+      echo "Contents of failing $ftfout"
+      cat $ftfout
+      echo "FAIL Sec F C11inst install loc contents want $expectlen32"
+      echo "FAIL Sec F C11inst or $expectlen64 "
+      echo "FAIL Sec F C11inst got $len"
+      exit 1
+    fi
+  fi
   ctest -R self
   chkres $? "FAIL Sec F C11e  ctest -R self in $fcmakebld"
 else
-  echo "cmake not installed so -DDWARF_WITH_LIBELF=OFF (sec. F) not tested."
+  echo "cmake not installed (sec. F) not tested."
 fi
 echo " End Section F  $bart (ls output follows)"
 ls  $bart
@@ -338,7 +367,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON \
+  cmake -DWALL=ON -DBUILD_NON_SHARED=ON \
     -DBUILD_SHARED=OFF \
     -DDO_TESTING=ON  \
     -DBUILD_DWARFEXAMPLE=ON $blibsrc

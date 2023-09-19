@@ -76,22 +76,6 @@ extern "C" {
     *errcode when the function returns DW_DLV_ERROR)
     will hopefully suffice for most purposes. */
 
-int dwarf_object_detector_path(const char  *path,
-    char *outpath,
-    unsigned long outpath_len,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
-    int * errcode);
-
-int dwarf_object_detector_fd(int fd,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
-    int * errcode);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

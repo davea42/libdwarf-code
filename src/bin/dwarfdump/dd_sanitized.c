@@ -34,6 +34,9 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 #ifndef TESTING
 #include "dd_glflags.h"
 #endif
+#ifdef HAVE_UTF8
+#include "dd_utf8.h"
+#endif /* HAVE_UTF8 */
 #include "dd_sanitized.h"
 
 /*  This does a uri-style conversion of control characters.
@@ -93,40 +96,55 @@ In addition,  characters decimal 141, 157, 127,128, 129
 appear to be questionable too.
 Not in iso-8859-1 nor in html character entities list.
 
-We translate all strings with a % to do sanitizing and
-we change a literal ASCII '%' char to %27 so readers
+We translate all strings with a % to do sanitizing.
+we change a literal ASCII '%' char to %25 so readers
 know any % is a sanitized char. We could double up
-a % into %% on output, but switching to %27 is simpler
+a % into %% on output, but switching to %25 is simpler
 and for readers and prevents ambiguity.
+If a % is found then utf8 is suppressed for the entire string
+and uri-style %25 is used and.
 
-Since we do not handle utf-8 properly nor detect it
-we turn all non-ASCII to %xx below.
+If the dwarfdump runtime environment is UTF-8
+and the necessary locale() and nl_langinfo()
+functions are available and the string
+has no unwanted bytes then utf8 names
+are printed using utf8 so they look as
+expected.
+
 */
 #define SANBUF_SIZE 400
 /*  Allocates as esb_constructor_fixed() would,
-    so below SANBUF_SIZE bytes no malloc needed. */
-static char sanbuf[SANBUF_SIZE];
-static struct esb_s localesb = {sanbuf,
+    so for strings shorter than
+    SANBUF_SIZE bytes no malloc needed. */
+static char sanbufa[SANBUF_SIZE];
+static char sanbufb[SANBUF_SIZE];
+static int usebufa = TRUE;
+static struct esb_s localesba = {sanbufa,
+    SANBUF_SIZE,0,1,0};
+static struct esb_s localesbb = {sanbufb,
     SANBUF_SIZE,0,1,0};
 
-/* dwarfdump-sanitize table */
+/*  dwarfdump-sanitize table
+    1 means printable ASCII character (byte)
+    3 means non-printable
+    5 means non-printable control character (byte) */
 char dwarfdump_sanitize_table[256] = {
-0 /*0*/,3 /*0x1*/,3 /*0x2*/,3 /*0x3*/,
-3 /*0x4*/,3 /*0x5*/,3 /*0x6*/,3 /*0x7*/,
-3 /*0x8*/,1 /*0x9*/,1 /*0xa*/,3 /*0xb*/,
-3 /*0xc*/,
+0 /*0*/  ,5 /*0x1*/,5 /*0x2*/,5 /*0x3*/,
+5 /*0x4*/,5 /*0x5*/,5 /*0x6*/,5 /*0x7*/,
+5 /*0x8*/,1 /*0x9*/,1 /*0xa*/,5 /*0xb*/,
+5 /*0xc*/,
 #ifdef _WIN32
 1 /*0x0d*/,
 #else
-3 /*0x0d*/,
+5 /*0x0d*/,
 #endif
-3 /*0xe*/,3 /*0xf*/,
-3 /*0x10*/,3 /*0x11*/,3 /*0x12*/,3 /*0x13*/,
-3 /*0x14*/,3 /*0x15*/,3 /*0x16*/,3 /*0x17*/,
-3 /*0x18*/,3 /*0x19*/,3 /*0x1a*/,3 /*0x1b*/,
-3 /*0x1c*/,3 /*0x1d*/,3 /*0x1e*/,3 /*0x1f*/,
+5 /*0x0e*/,5 /*0xf*/,
+5 /*0x10*/,5 /*0x11*/,5 /*0x12*/,5 /*0x13*/,
+5 /*0x14*/,5 /*0x15*/,5 /*0x16*/,5 /*0x17*/,
+5 /*0x18*/,5 /*0x19*/,5 /*0x1a*/,5 /*0x1b*/,
+5 /*0x1c*/,5 /*0x1d*/,5 /*0x1e*/,5 /*0x1f*/,
 1 /*   */,1 /* ! */,1 /* " */,1 /* # */,
-1 /* $ */,3 /* % */,1 /* & */,1 /* ' */,
+1 /* $ */,5 /* % */,1 /* & */,1 /* ' */,
 1 /* ( */,1 /* ) */,1 /* * */,1 /* + */,
 1 /* , */,1 /* - */,1 /* . */,1 /* / */,
 1 /* 0 */,1 /* 1 */,1 /* 2 */,1 /* 3 */,
@@ -148,7 +166,7 @@ char dwarfdump_sanitize_table[256] = {
 1 /* p */,1 /* q */,1 /* r */,1 /* s */,
 1 /* t */,1 /* u */,1 /* v */,1 /* w */,
 1 /* x */,1 /* y */,1 /* z */,1 /* { */,
-1 /* | */,1 /* } */,1 /* ~ */,3 /*0x7f*/,
+1 /* | */,1 /* } */,1 /* ~ */,5 /*0x7f*/,
 3 /*0x80*/,3 /*0x81*/,3 /*0x82*/,3 /*0x83*/,
 3 /*0x84*/,3 /*0x85*/,3 /*0x86*/,3 /*0x87*/,
 3 /*0x88*/,3 /*0x89*/,3 /*0x8a*/,3 /*0x8b*/,
@@ -236,13 +254,22 @@ no_questionable_chars(const char *s) {
 void
 sanitized_string_destructor(void)
 {
-    esb_destructor(&localesb);
+    esb_destructor(&localesba);
+    esb_destructor(&localesbb);
 }
 
+/*  Because we reuse static esb's this MUST NOT
+    be called a third time before printing
+    out the initial returns.  It is rarely
+    a problem.  But it is up to the caller to
+    behave correctly to avoid getting
+    incorect strings.
+*/
 const char *
 sanitized(const char *s)
 {
     const char *sout = 0;
+    struct esb_s *lsp = 0;
 
 #ifndef TESTING
     if (glflags.gf_no_sanitize_strings) {
@@ -250,7 +277,7 @@ sanitized(const char *s)
     }
 #endif
     if (no_questionable_chars(s)) {
-        /*  The original string is safe as is. */
+        /*  The original string is safe ASCII as is. */
         return s;
     }
     /*  Using esb_destructor is quite expensive in cpu time
@@ -259,8 +286,21 @@ sanitized(const char *s)
         One reason it's expensive is that we do the appends
         in such small batches in do_sanity-insert().
         */
-    esb_empty_string(&localesb);
-    do_sanity_insert(s,&localesb);
-    sout = esb_get_string(&localesb);
+
+#ifndef TESTING
+#ifdef  HAVE_UTF8
+    if (glflags.gf_print_utf8_flag) {
+        if (DW_DLV_OK == dd_utf8_checkCodePoints(
+            (unsigned char *)s)) {
+            return s;
+        }
+    }
+#endif /* HAVE_UTF8 */
+#endif /* TESTING */
+    lsp = usebufa? &localesba: &localesbb;
+    usebufa = !usebufa;
+    esb_empty_string(lsp);
+    do_sanity_insert(s,lsp);
+    sout = esb_get_string(lsp);
     return sout;
 }

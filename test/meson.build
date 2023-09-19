@@ -42,7 +42,8 @@ tests = [
   [
    'test_sanitized.c',
    '../src/bin/dwarfdump/dd_esb.c',
-   '../src/bin/dwarfdump/dd_sanitized.c'
+   '../src/bin/dwarfdump/dd_sanitized.c',
+   '../src/bin/dwarfdump/dd_utf8.c'
   ],
 
   [

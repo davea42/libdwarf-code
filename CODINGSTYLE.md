@@ -1,9 +1,15 @@
 # Libdwarf/dwarfdump etc  coding style.
 
-Latest update: 17 December 2021
+Latest update (minor clarifications): 7 July 2023
+
 Adapted from the Cairo coding style document
 
 Libdwarf/dwarfdump etc  coding style.
+
+In "Tools that help" we provide a tool (dicheck)
+that enforces some parts of the coding style.
+Please don't submit changes (longer
+than a few lines) that cause messages from dicheck.
 
 This document is intended to be a short description of the
 preferred coding style for the libdwarf and
@@ -17,12 +23,15 @@ some of the specific details seem trivial. If nothing else,
 this document gives a place to put consistent answers for
 issues that would otherwise be arbitrary.
 
+We avoid using features of C standardised
+after ANSI C89,ISO C90.
+
 Most of the guidelines here are demonstrated by examples,
 (which means this document is quicker to read than it might
 appear given its length). Most of the examples are positive
 examples that you should imitate. The few negative examples
 are clearly marked with a comment of /* Yuck! */. Please
-don't submit code for libdwarf that looks like any of these.
+don't submit code for libdwarf that looks like any Yuck!
 
 Section list:
 
@@ -45,7 +54,7 @@ Section list:
     Argument Lists
     Tools that help
 
-###Indentation
+### Indentation
 Each new level is indented 4 more spaces than the previous level,
 and an if is followed by a space and a left-parenthesis:
 
@@ -113,7 +122,7 @@ with blank lines:
 
     struct _Dwarf_Data_s {
         struct Something_s  op;
-        double tolerance;
+        double         tolerance;
         Dwarf_Unsigned line_width;
         Dwarf_Unsigned line_height;
         Dwarf_Unsigned line_thickness;
@@ -123,7 +132,7 @@ with blank lines:
             and the blank line above this comment to
             make it clear the comment applies to fill_rule. */
         struct Reg_Struct_s  fill_rule;
-        Dwarf_Signed distance_from_end;
+        Dwarf_Signed   distance_from_end;
         ...
     };
 
@@ -131,15 +140,15 @@ Having both CamelCase in names and _ in the names
 used by the library
 is perhaps unusual, but it's been that way
 in the libdwarf source since the library was
-first written.
-so we sitck with it in most cases.
+first written.  
+So we stick with it in most cases.
 
 Never use a space before a function-call left parenthesis
 or a macro-call left parenthesis. 
 
-Don't eliminate newlines just because things would still fit
-on one line if it breaks the expected visual structure of
-the code making it harder to read and understand:
+Don't remove newlines just because things would still fit
+on one line if removal breaks the expected visual structure of
+the code.  
 
 Eliminate trailing whitespace on any line. Also, avoid putting
 initial or final blank lines into any file, and never use

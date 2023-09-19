@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-06-13 v0.7.1
+    @date 2023-09-20 v0.8.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -389,6 +389,7 @@
     @link string Strings can be read independently @endlink
 
     @link str_offsets String Offsets can be read independently @endlink
+    @link debug_addr The addr table can be read independently @endlink
 
     Those functions allow starting at byte 0 of the
     section and provide a length so you can calculate
@@ -897,6 +898,26 @@
     dw_true_path_out_buffer contains the
     object path.
 
+    @section dwsec_static Linking against libdwarf.a
+
+    - If you are building an application 
+    - And are linking your application against a static library libdwarf.a
+    - Then you rmust ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
+
+    When compiling to link against a shared library libdwarf.so
+    or libdwarf.dll you must not define LIBDWARF_STATIC.
+
+    To pass <b>LIBDWARF_STATIC</b> to the preprocessor with Visual
+    Studio:
+
+    - Right click on a project name
+    - In the contextual menu, click on <b>Properties</b> at the very bottom.
+    - In the new window, double click on <b>C/C++</b>
+    - On the right, click on <b>Preprocessor definitions</b>
+    - There is a small down arrow on the right, click on it then click on <b>Modify</b>
+    - Add L<b>IBDWARF_STATIC</b> to the values
+    - Click on <b>OK</b> to close the windows
+
     @section dwsec_dbglink Suppressing CRC calculation for debuglink
 
     GNU Debuglink-specific issue:
@@ -946,12 +967,45 @@
 
     We list these with newest first.
 
-    <b>Changes 0.7.0 to 0.7.1</b>
+    <b>Changes 0.7.0 to 0.8.0</b>
 
-    Several vulnerabilities involving reading
+    v0.8.0 released 2023-09-20 
+
+    New functions dwarf_get_fde_info_for_reg3_c(),
+    dwarf_get_fde_info_for_cfa_reg3_c() are defined.
+    The advantage of the new versions is they correctly
+    type the dw_offset argument return value
+    as Dwarf_Signed instead of the earlier and incorrect type
+    Dwarf_Unsigned.
+
+    The original functions dwarf_get_fde_info_for_reg3_b() and
+    dwarf_get_fde_info_for_cfa_reg3_b()
+    continue to exist and work for compatibility with
+    the previous release.
+
+    For all open() calls for which the O_CLOEXEC flag exists
+    we now add that flag to the open() call.
+
+    Vulnerabilities involving reading
     corrupt object files (created by fuzzing)
-    have been fixed.
-    
+    have been fixed: 
+    DW202308-001 (ossfuzz 59576),
+    DW202307-001 (ossfuzz 60506),
+    DW202306-011 (ossfuzz 59950),
+    DW202306-009 (ossfuzz 59755), 
+    DW202306-006 (ossfuzz 59727),
+    DW202306-005 (ossfuzz 59717), 
+    DW202306-004 (ossfuzz 59695), 
+    DW202306-002 (ossfuzz 59519), 
+    DW202306-001 (ossfuzz 59597). 
+    DW202305-010 (ossfuzz 59478). 
+    DW202305-009 (ossfuzz 56451). 
+    DW202305-008 (ossfuzz 56451), 
+    DW202305-007 (ossfuzz 56474), 
+    DW202305-006 (ossfuzz 56472), 
+    DW202305-005 (ossfuzz 56462), 
+    DW202305-004 (ossfuzz 56446).
+
     <b>Changes 0.6.0 to 0.7.0</b>
 
     v0.7.0 released 2023-05-20 

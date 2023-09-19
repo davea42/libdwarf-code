@@ -188,7 +188,6 @@ main(int argc, char **argv)
 {
     unsigned int num = 0;
     int input_eof = 0;
-    unsigned current_row = 0;
     FILE * fileInp = 0;
     FILE * fileOut = 0;
 
@@ -302,7 +301,6 @@ main(int argc, char **argv)
                 bad_line_input("Not terminated correctly.");
             }
         }
-        ++current_row;
     }
     if (extended_flag) {
         fprintf(fileOut,"{ 0,0,0 }\n");

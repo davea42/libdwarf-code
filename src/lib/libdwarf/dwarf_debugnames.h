@@ -119,4 +119,3 @@ struct Dwarf_Dnames_Head_s {
 };
 
 void _dwarf_dnames_destructor(void *m);
-void dwarf_dealloc_dnames(Dwarf_Dnames_Head dn);

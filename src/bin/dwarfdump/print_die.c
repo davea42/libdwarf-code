@@ -3473,15 +3473,25 @@ print_sig8_target(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  DW_FORM_data16 should not apply here. */
 static Dwarf_Bool
-is_simple_location_expr(int form)
+is_form_block(int form)
 {
     if (form == DW_FORM_block1 ||
         form == DW_FORM_block2 ||
         form == DW_FORM_block4 ||
-        form == DW_FORM_block  ||
-        form == DW_FORM_exprloc) {
+        form == DW_FORM_block)  {
+        return TRUE;
+    }
+    return FALSE;
+}
+/*  DW_FORM_data16 should not apply here. */
+static Dwarf_Bool
+is_simple_location_expr(int form)
+{
+    if (is_form_block(form)) {
+        return TRUE;
+    }
+    if (form == DW_FORM_exprloc) {
         return TRUE;
     }
     return FALSE;
@@ -4773,8 +4783,36 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         }
         break;
+    case DW_AT_allocated:
+    case DW_AT_associated:
+    case DW_AT_call_value:
+    case DW_AT_call_data_value:
+    case DW_AT_call_data_location:
+    case DW_AT_call_origin:
+    case DW_AT_call_target:
+    case DW_AT_call_target_clobbered:
     case DW_AT_const_value:
+    case DW_AT_count:
+    case DW_AT_data_location:
     case DW_AT_data_member_location:
+    case DW_AT_default_value:
+    case DW_AT_frame_base:
+    case DW_AT_GNU_call_site_value:
+    case DW_AT_GNU_call_site_target:
+    case DW_AT_byte_stride:
+    case DW_AT_byte_size:
+    case DW_AT_bit_size:
+    case DW_AT_bit_stride:
+    case DW_AT_location:
+    case DW_AT_lower_bound:
+    case DW_AT_rank:
+    case DW_AT_return_addr:
+    case DW_AT_segment:
+    case DW_AT_static_link:
+    case DW_AT_string_length:
+    case DW_AT_upper_bound:
+    case DW_AT_use_location:
+    case DW_AT_vtable_elem_location:
         {
             /*  Value is a constant or a location
                 description or location list.
@@ -4814,22 +4852,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 a location description, or a reference
                 to one, or a mistake. */
         }
-        /* Fall Through */
-    case DW_AT_call_value:
-    case DW_AT_call_data_value:
-    case DW_AT_call_data_location:
-    case DW_AT_frame_base:
-    case DW_AT_GNU_call_site_value:
-    case DW_AT_GNU_call_site_target:
-    case DW_AT_byte_size:
-    case DW_AT_bit_size:
-    case DW_AT_location:
-    case DW_AT_return_addr:
-    case DW_AT_segment:
-    case DW_AT_static_link:
-    case DW_AT_string_length:
-    case DW_AT_use_location:
-    case DW_AT_vtable_elem_location:
         {
         Dwarf_Bool showform = glflags.show_form_used;
 
@@ -4920,55 +4942,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&cfkindstr);
         }
         break;
-    case DW_AT_upper_bound:
-        {
-            int rv;
-            struct esb_s upperboundstr;
-
-            esb_constructor(&upperboundstr);
-            switch (theform) {
-            case DW_FORM_block1: {
-                append_extra_string = TRUE;
-                rv = print_location_list(dbg, die, attrib,
-                    checking,
-                    die_indent_level,
-                    TRUE,
-                    &esb_extra,err);
-                if (rv == DW_DLV_ERROR) {
-                    esb_destructor(&valname);
-                    esb_destructor(&esb_extra);
-                    return rv;
-                }
-                show_form_itself(glflags.show_form_used,
-                    glflags.verbose,
-                    theform,
-                    directform,&valname);
-                }
-                break;
-            default:
-                rv = get_attr_value(dbg, tag, die,
-                    dieprint_cu_goffset,
-                    attrib, srcfiles, srcfiles_cnt,
-                    &upperboundstr,
-                    glflags.show_form_used,glflags.verbose,
-                    err);
-                if (rv == DW_DLV_ERROR) {
-                    print_error_and_continue(
-                        "ERROR: Cannot get DW_AT_upper_bound"
-                        " form value",
-                        rv, *err);
-                    esb_destructor(&valname);
-                    esb_destructor(&esb_extra);
-                    return rv;
-                }
-                esb_empty_string(&valname);
-                esb_append(&valname,
-                    esb_get_string(&upperboundstr));
-                break;
-            }
-            esb_destructor(&upperboundstr);
-            break;
-        }
     case DW_AT_low_pc:
     case DW_AT_high_pc:
         {

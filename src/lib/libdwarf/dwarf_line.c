@@ -79,6 +79,8 @@ _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
 {
     (void)lineversion;
     *regs = _dwarf_line_table_regs_default_values;
+    /*  Remember that 0xf006 is the version of
+        the experimental line table */
     if (lineversion == DW_LINE_VERSION5) {
         /*  DWARF5 Section 2.14 says default 0 for line table
             file numbering..
@@ -150,6 +152,88 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 }
 #include "dwarf_line_table_reader_common.h"
 
+/*  Used for a short time in the next two functions.
+    Not saved.  If multithreading ever allowed this
+    will have to change to be function local
+    non-static buffers. */
+static char targbuf[300];
+static char nbuf[300];
+
+static int
+ret_simple_full_path(Dwarf_Debug dbg,
+    char *file_name,
+    char ** name_ptr_out,
+    Dwarf_Error *error)
+{
+    char *tmp = 0;
+    char * mstr = 0;
+    unsigned long mlen = 0;
+    dwarfstring targ;
+    dwarfstring nxt;
+
+    dwarfstring_constructor_static(&targ,
+        targbuf,sizeof(targbuf));
+    dwarfstring_constructor_static(&nxt,
+        nbuf,sizeof(nbuf));
+
+    dwarfstring_append(&nxt,file_name);
+    _dwarf_pathjoinl(&targ,&nxt);
+    mstr= dwarfstring_string(&targ);
+    mlen = dwarfstring_strlen(&targ) +1;
+    tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
+        mlen);
+    if (tmp) {
+        _dwarf_safe_strcpy(tmp,mlen, mstr,mlen-1);
+        *name_ptr_out = tmp;
+        dwarfstring_destructor(&targ);
+        dwarfstring_destructor(&nxt);
+        return DW_DLV_OK;
+    }
+    dwarfstring_destructor(&targ);
+    dwarfstring_destructor(&nxt);
+    _dwarf_error_string(dbg,error,DW_DLE_ALLOC_FAIL,
+        "DW_DLE_ALLOC_FAIL: "
+        "Allocation of space for a simple full path "
+        "from line table header data fails." );
+    return DW_DLV_ERROR;
+}
+
+static void
+_dwarf_dirno_string(Dwarf_Line_Context line_context,
+    Dwarf_Unsigned dirno,
+    unsigned include_dir_offset,
+    dwarfstring *dwstr_out)
+{
+    if ((dirno - include_dir_offset) >=
+        line_context->lc_include_directories_count) {
+
+        /*  Corrupted data. We try to continue.
+            Make the text look like a full-path */
+        dwarfstring_append_printf_u(dwstr_out,
+            "/ERROR<corrupt include directory index %u"
+            " unusable,",
+            dirno);
+        dwarfstring_append_printf_u(dwstr_out,
+            " only %u directories present>",
+            line_context->lc_include_directories_count);
+        return;
+    }
+    {
+        char *inc_dir_name =
+            (char *)line_context->lc_include_directories[
+            dirno - include_dir_offset];
+        if (!inc_dir_name) {
+            /*  This should never ever happen except in case
+                of a corrupted object file.
+                Make the text look like a full-path */
+            inc_dir_name =
+                "/ERROR<erroneous NULL include dir pointer>";
+        }
+        dwarfstring_append(dwstr_out,inc_dir_name);
+    }
+    return;
+}
+
 /*  With this routine we ensure the file full path
     is calculated identically for
     dwarf_srcfiles() and _dwarf_filename()
@@ -162,6 +246,10 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
     dwarf_finish() will do the dealloc if nothing else does.
     Unless the calling application did the call
     dwarf_set_de_alloc_flag(0).
+
+    The treatment of DWARF5 differs from DWARF < 5
+    as the line table header in DW5 lists the
+    compilation directory directly. 10 August 2023.
 
     _dwarf_pathjoinl() takes care of / and Windows \
 */
@@ -177,10 +265,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
     char *file_name = 0;
     /*  Large enough that almost never will any malloc
         be needed by dwarfstring.  Arbitrary size. */
-    static char targbuf[300];
-    static char nbuf[300];
     dwarfstring targ;
-    dwarfstring nxt;
     unsigned linetab_version = line_context->lc_version_number;
 
     file_name = (char *) fe->fi_file_name;
@@ -189,32 +274,13 @@ create_fullest_file_path(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     if (_dwarf_file_name_is_full_path((Dwarf_Small *)file_name)) {
-        char *tmp = 0;
-        char * mstr = 0;
-        unsigned long mlen = 0;
+        int res = 0;
 
-        dwarfstring_constructor_static(&targ,
-            targbuf,sizeof(targbuf));
-        dwarfstring_constructor_static(&nxt,
-            nbuf,sizeof(nbuf));
-
-        dwarfstring_append(&nxt,file_name);
-        _dwarf_pathjoinl(&targ,&nxt);
-        mstr= dwarfstring_string(&targ);
-        mlen = dwarfstring_strlen(&targ) +1;
-        tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
-            mlen);
-        if (tmp) {
-            _dwarf_safe_strcpy(tmp,mlen, mstr,mlen-1);
-            *name_ptr_out = tmp;
-            dwarfstring_destructor(&targ);
-            dwarfstring_destructor(&nxt);
-            return DW_DLV_OK;
-        }
-        dwarfstring_destructor(&targ);
-        dwarfstring_destructor(&nxt);
-        _dwarf_error(dbg,error,DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR;
+        res = ret_simple_full_path(dbg,
+            file_name,
+            name_ptr_out,
+            error);
+        return res;
     }
     {
         int need_dir = FALSE;
@@ -240,6 +306,8 @@ create_fullest_file_path(Dwarf_Debug dbg,
         need_dir = FALSE;
         dirno = fe->fi_dir_index;
         include_dir_offset = 0;
+        /*  Remember that 0xf006 is the version of
+            the experimental line table */
         if (linetab_version == DW_LINE_VERSION5) {
             /* DWARF5 */
             need_dir = TRUE;
@@ -250,7 +318,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
                 need_dir = TRUE;
                 include_dir_offset = 1;
             }/* else, no dirno, need_dir = FALSE
-                Take directory from DW_AT_name */
+                Take directory from DW_AT_comp_dir */
         }
 
         if (dirno > line_context->lc_include_directories_count) {
@@ -272,42 +340,37 @@ create_fullest_file_path(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if (need_dir ) {
-            if ((dirno - include_dir_offset) >=
-                line_context->lc_include_directories_count) {
-
-                /* Corrupted data. We try to continue. */
-                dwarfstring_append_printf_u(&incdir,
-                    "/ERROR<corrupt include directory index %u"
-                    " unusable,",
-                    dirno);
-                dwarfstring_append_printf_u(&incdir,
-                    " only %u directories present>",
-                    line_context->lc_include_directories_count);
-            } else {
-                char *inc_dir_name =
-                    (char *)line_context->lc_include_directories[
-                    dirno - include_dir_offset];
-                if (!inc_dir_name) {
-                    /*  This should never ever happen except in case
-                        of a corrupted object file. */
-                    inc_dir_name =
-                        "/ERROR<erroneous NULL include dir pointer>";
-                }
-                dwarfstring_append(&incdir,inc_dir_name);
-            }
+            _dwarf_dirno_string(line_context,dirno,
+                include_dir_offset,&incdir);
         }
         dwarfstring_append(&filename,file_name);
         if (dwarfstring_strlen(&incdir) > 0 &&
             _dwarf_file_name_is_full_path(
             (Dwarf_Small*)dwarfstring_string(&incdir))) {
 
-            /* incdir is full path,Ignore DW_AT_comp_dir */
+            /* incdir is full path,Ignore DW_AT_comp_dir
+                and (for DWARF5 include_dir[0]) */
             _dwarf_pathjoinl(&targ,&incdir);
             _dwarf_pathjoinl(&targ,&filename);
         } else {
-            /* Join all three strings, ignoring empty ones. */
-            if (dwarfstring_strlen(&compdir) > 0) {
-                _dwarf_pathjoinl(&targ,&compdir);
+            /* Join two or all three strings,
+                ignoring empty/irrelevant ones. */
+            /*  Remember that 0xf006 is the version of
+                the experimental line table */
+            if (linetab_version != DW_LINE_VERSION5) {
+                if (dwarfstring_strlen(&compdir) > 0) {
+                    _dwarf_pathjoinl(&targ,&compdir);
+                }
+            } else if (!include_dir_offset && dirno)  {
+                /*  Don't do this if DW5 and dirno
+                    was zero, doing 0 here will
+                    duplicate the comp dir */
+                dwarfstring_reset(&compdir);
+                _dwarf_dirno_string(line_context,0,
+                    include_dir_offset,&compdir);
+                if (dwarfstring_strlen(&compdir) > 0) {
+                    _dwarf_pathjoinl(&targ,&compdir);
+                }
             }
             if (dwarfstring_strlen(&incdir) > 0) {
                 _dwarf_pathjoinl(&targ,&incdir);
@@ -1567,6 +1630,8 @@ dwarf_srclines_include_dir_data(Dwarf_Line_Context line_context,
         return DW_DLV_ERROR;
     }
     version = line_context->lc_version_number;
+    /*  Remember that 0xf006 is the version of
+        the experimental line table */
     if (version == DW_LINE_VERSION5) {
         if (index >= line_context->lc_include_directories_count) {
             _dwarf_error(line_context->lc_dbg, error,
@@ -1882,6 +1947,8 @@ _dwarf_filename(Dwarf_Line_Context context,
                 /* else ok */
             }
         }  else {
+            /*  Remember that 0xf006 is the version of
+                the experimental line table */
             /* DW_LINE_VERSION5 so file index 0 is fine */
         }
     }
@@ -2506,6 +2573,8 @@ _dwarf_add_to_files_list(Dwarf_Line_Context context,
     /*  Here we attempt to write code to make it easy to interate
         though source file names without having to code specially
         for DWARF2,3,4 vs DWARF5 */
+    /*  Remember that 0xf006 is the version of
+        the experimental line table */
     if (version == DW_LINE_VERSION5) {
         context->lc_file_entry_baseindex = 0;
         context->lc_file_entry_endindex =

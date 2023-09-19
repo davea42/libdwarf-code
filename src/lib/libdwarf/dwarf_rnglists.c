@@ -1274,6 +1274,9 @@ int
 dwarf_rnglists_get_rle_head(
     Dwarf_Attribute attr,
     Dwarf_Half     theform,
+    /*  attr_val is either an offset 
+            (theform == DW_FORM_sec_offset)
+        or an index DW_FORM_rnglistx. */
     Dwarf_Unsigned attr_val,
     Dwarf_Rnglists_Head *head_out,
     Dwarf_Unsigned      *entries_count_out,
@@ -1412,10 +1415,7 @@ dwarf_rnglists_get_rle_head(
         rle_global_offset = attr_val;
     }
 
-    shead.rh_rlepointer = rctx->rc_offsets_array +
-        rctx->rc_offset_entry_count*offsetsize;
     shead.rh_end_data_area = enddata;
-
     shead.rh_rlearea_offset = rle_global_offset;
     shead.rh_rlepointer = rle_global_offset +
         dbg->de_debug_rnglists.dss_data;

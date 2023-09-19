@@ -234,7 +234,8 @@ test_testesb_CPPFLAGS = -DTESTING \
 
 test_sanitized_SOURCES = test_sanitized.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
-    $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_utf8.c
 test_sanitized_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_sanitized_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
