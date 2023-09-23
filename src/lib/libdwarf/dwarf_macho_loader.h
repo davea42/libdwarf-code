@@ -76,6 +76,33 @@ extern "C" {
 #define TYP(n,l) char (n)[(l)]
 #endif /* TYP */
 
+#define FAT_MAGIC   0xcafebabe
+#define FAT_CIGAM   0xbebafeca  /* NXSwapLong(FAT_MAGIC) */
+#define FAT_MAGIC_64    0xcafebabf
+#define FAT_CIGAM_64    0xbfbafeca  /* NXSwapLong(FAT_MAGIC_64) */
+
+struct fat_header {
+    TYP(magic,4);    /* FAT_MAGIC or FAT_MAGIC_64 */
+    TYP(nfat_arch,4); /* number of structs that follow */
+};
+
+struct fat_arch {
+    TYP(cputype,4);    /* cpu specifier (int) */
+    TYP(cpusubtype,4); /* machine specifier (int) */
+    TYP(offset,4);     /* file offset to this object file */
+    TYP(size,4);       /* size of this object file */
+    TYP(align,4);      /* alignment as a power of 2 */
+};
+
+struct fat_arch_64 {
+    TYP(cputype,4);    /* cpu specifier (int) */
+    TYP(cpusubtype,4); /* machine specifier (int) */
+    TYP(offset,8);     /* file offset to this object file */
+    TYP(size,8);       /* size of this object file */
+    TYP(align,4);      /* alignment as a power of 2 */
+    TYP(reserved,4);   /* reserved */
+};
+
 /*
 * The 32-bit mach header appears at the very
 * beginning of the object file for
