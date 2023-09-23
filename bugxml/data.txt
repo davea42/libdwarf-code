@@ -1,4 +1,17 @@
 
+id: DW202309-001
+fuzzer: ossfuzz id: 62547
+datereported: 2023-09-22
+reportedby: David Korczynski
+vulnerability: Heap use after free
+product: libdwarf
+description: TBD
+datefixed: 
+references: 
+gitfixid: 
+tarrelease: 
+endrec: DW202309-001
+
 id: DW202308-001
 fuzzer: ossfuzz id: 59576
 datereported: 2023-06-04

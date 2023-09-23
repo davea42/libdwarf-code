@@ -3,6 +3,32 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 62547</fuzzer>
+
+<datereported>2023-09-22</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap use after free
+</vulnerability>
+
+<description> TBD
+</description>
+
+<datefixed></datefixed>
+
+<references></references>
+
+<gitfixid></gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 59576</fuzzer>
 
 <datereported>2023-06-04</datereported>
