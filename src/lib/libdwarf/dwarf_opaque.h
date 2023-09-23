@@ -594,6 +594,7 @@ struct Dwarf_Debug_s {
         under de_obj_file. */
     int  de_fd;
     char de_owns_fd;
+    char de_in_tdestroy; /* for de_alloc_tree  DW202309-001 */
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
     unsigned char de_path_source;
     /*  de_path is only set automatically if dwarf_init_path()
