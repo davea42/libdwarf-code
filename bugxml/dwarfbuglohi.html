@@ -5670,12 +5670,22 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:  TBD
+<p>description:  Calling dwarf_get_fde_for_die() causes the
+  problem as its special handling in a user calling
+  for fde destruction is wrong when dwarf_finish()
+  is calling for fde destruction.
+  dwarf_finish() can refer to freed memory
+  in trying to delete a CIE twice.
+  The use after free has a dependence on the order nodes are seen
+  in the de_alloc_tree tdestroy() walk of the table
+  (the order is not predictable).
+  Broken in release 0.8.0 and all previous releases.
 </p>
-<p>datefixed: 
+<p>datefixed: 2023-09-23
 </p>
-<p>references:</p>
-<p>gitfixid: 
+<p>references:  regressiontests/ossfuzz62547/fuzz_stack_frame_access-5263709637050368
+</p>
+<p>gitfixid: cd741379bd0203a0875b413542d5f982606ae637
 </p>
 <p>tarrelease: 
 </p>
