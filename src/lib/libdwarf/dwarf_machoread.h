@@ -102,7 +102,6 @@ typedef struct dwarf_macho_filedata_s {
     const char *     mo_path; /* libdwarf must free.*/
     int              mo_fd;
     int              mo_destruct_close_fd; /*aka: lib owns fd */
-    int              mo_is_64bit;
     Dwarf_Unsigned   mo_filesize;
     Dwarf_Small      mo_offsetsize; /* 32 or 64 section data */
     Dwarf_Small      mo_pointersize;

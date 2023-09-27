@@ -8884,6 +8884,16 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     unsigned int   *dw_offsetsize,
     Dwarf_Unsigned *dw_filesize,
     int            *dw_errcode);
+#if 0
+/*  Added September 2023 for Mach-O universal binaries */
+DW_API int dwarf_object_detector_fd_a(int dw_fd,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned *dw_startingoffset,
+    Dwarf_Unsigned *dw_filesize,
+    int            *dw_errcode);
+#endif
 
 /*! @}
 */

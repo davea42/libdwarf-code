@@ -907,7 +907,6 @@ _dwarf_macho_object_access_internals_init(
     intfc->mo_ident[0]    = 'M';
     intfc->mo_ident[1]    = '1';
     intfc->mo_fd          = fd;
-    intfc->mo_is_64bit    = ((offsetsize==64)?TRUE:FALSE);
     intfc->mo_offsetsize  = offsetsize;
     intfc->mo_pointersize = offsetsize;
     intfc->mo_filesize    = filesize;

@@ -509,23 +509,23 @@ dwarf_object_detector_fd(int fd,
             return res;
         }
         *ftype = DW_FTYPE_ELF;
-        *filesize = (size_t)fsize;
+        *filesize = (Dwarf_Unsigned)fsize;
         return DW_DLV_OK;
     }
     if (is_mach_o_magic(&h,endian,offsetsize)) {
         *ftype = DW_FTYPE_MACH_O;
-        *filesize = (size_t)fsize;
+        *filesize = (Dwarf_Unsigned)fsize;
         return DW_DLV_OK;
     }
     if (is_archive_magic(&h)) {
         *ftype = DW_FTYPE_ARCHIVE;
-        *filesize = (size_t)fsize;
+        *filesize = (Dwarf_Unsigned)fsize;
         return DW_DLV_OK;
     }
     res = is_pe_object(fd,fsize,endian,offsetsize,errcode);
     if (res == DW_DLV_OK ) {
         *ftype = DW_FTYPE_PE;
-        *filesize = (size_t)fsize;
+        *filesize = (Dwarf_Unsigned)fsize;
         return DW_DLV_OK;
     }
     /* Unknown object format. */
