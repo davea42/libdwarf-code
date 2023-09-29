@@ -115,6 +115,7 @@ extern "C" {
 #define DW_FTYPE_MACH_O     2  /* MacOS. */
 #define DW_FTYPE_PE         3  /* Windows */
 #define DW_FTYPE_ARCHIVE    4  /* unix archive */
+#define DW_FTYPE_APPLEUNIVERSAL    5
 #endif /* DW_FTYPE_UNKNOWN */
 /* standard return values for functions */
 #define DW_DLV_NO_ENTRY -1
@@ -1385,9 +1386,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_LINE_INDEX_WRONG                499
 #define DW_DLE_LINE_COUNT_WRONG                500
 #define DW_DLE_ARITHMETIC_OVERFLOW             501
+#define DW_DLE_UNIVERSAL_BINARY_ERROR          502
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        501
+#define DW_DLE_LAST        502
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
@@ -1457,6 +1459,16 @@ DW_API int dwarf_init_path(const char * dw_path,
     Dwarf_Debug*      dw_dbg,
     Dwarf_Error*      dw_error);
 
+DW_API int dwarf_init_path_a(const char * dw_path,
+    char *            dw_true_path_out_buffer,
+    unsigned int      dw_true_path_bufferlen,
+    unsigned int      dw_groupnumber,
+    unsigned int      dw_universalnumber,
+    Dwarf_Handler     dw_errhand,
+    Dwarf_Ptr         dw_errarg,
+    Dwarf_Debug*      dw_dbg,
+    Dwarf_Error*      dw_error);
+
 /*! @brief Initialization following GNU debuglink section data.
 
     Sets the true-path with DWARF if there is
@@ -1517,6 +1529,19 @@ DW_API int dwarf_init_path_dl(const char * dw_path,
     char *            dw_true_path_out_buffer,
     unsigned int      dw_true_path_bufferlen,
     unsigned int      dw_groupnumber,
+    Dwarf_Handler     dw_errhand,
+    Dwarf_Ptr         dw_errarg,
+    Dwarf_Debug*      dw_dbg,
+    char **           dw_dl_path_array,
+    unsigned int      dw_dl_path_array_size,
+    unsigned char   * dw_dl_path_source,
+    Dwarf_Error*      dw_error);
+
+DW_API int dwarf_init_path_dl_a(const char * dw_path,
+    char *            dw_true_path_out_buffer,
+    unsigned int      dw_true_path_bufferlen,
+    unsigned int      dw_groupnumber,
+    unsigned int      dw_universalnumber,
     Dwarf_Handler     dw_errhand,
     Dwarf_Ptr         dw_errarg,
     Dwarf_Debug*      dw_dbg,
@@ -5402,7 +5427,7 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
     dwarf_get_fde_info_for_reg3_c but
     it refers to the CFA (which is not part of the register
     table) so function has no table column argument.
- 
+
     New in September 2023, release 0.8.0.
     dwarf_get_fde_info_for_cfa_reg3_c() returns dw_offset
     as a signed type.
@@ -8852,6 +8877,14 @@ DW_API Dwarf_Small dwarf_set_default_address_size(
 
 /*! @defgroup objectdetector Determine Object Type of a File
     @{
+
+    This group of functions are unlikely to be called
+    by your code unless your code needs to know
+    the basic data about an object file without
+    actually opening a Dwarf_Debug.
+
+    These are crucial for libdwarf itself.
+
 */
 DW_API int dwarf_object_detector_path_b(const char * dw_path,
     char           *dw_outpath_buffer,
@@ -8884,16 +8917,6 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     unsigned int   *dw_offsetsize,
     Dwarf_Unsigned *dw_filesize,
     int            *dw_errcode);
-#if 0
-/*  Added September 2023 for Mach-O universal binaries */
-DW_API int dwarf_object_detector_fd_a(int dw_fd,
-    unsigned int   *dw_ftype,
-    unsigned int   *dw_endian,
-    unsigned int   *dw_offsetsize,
-    Dwarf_Unsigned *dw_startingoffset,
-    Dwarf_Unsigned *dw_filesize,
-    int            *dw_errcode);
-#endif
 
 /*! @}
 */
