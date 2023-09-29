@@ -316,6 +316,7 @@ init_global_flags(void)
     /*  Output filename */
     glflags.output_file = 0;
     glflags.group_number = 0;
+    glflags.gf_universalnumber = 0;/* for Mach-O universal binaries */
 
     /*  Global esb-buffers. */
     glflags.newprogname = &_newprogname;

@@ -378,7 +378,8 @@ struct glflags_s {
 
     /* Output filename */
     const char *output_file;
-    int group_number;
+    int         group_number;
+    unsigned gf_universalnumber; /* for Mach-O universal binaries*/
 
     /*  Global esb-buffers. */
     struct esb_s *newprogname;

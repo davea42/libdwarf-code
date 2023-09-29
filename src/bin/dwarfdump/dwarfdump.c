@@ -561,6 +561,7 @@ main(int argc, char *argv[])
         glflags.gf_count_major_errors++;
     } else if (ftype == DW_FTYPE_ELF ||
         ftype ==  DW_FTYPE_MACH_O  ||
+        ftype ==  DW_FTYPE_APPLEUNIVERSAL  ||
         ftype == DW_FTYPE_PE  ) {
         flag_data_pre_allocation();
         close_a_file(global_basefd);
@@ -913,9 +914,10 @@ process_one_file(
             tb = 0;
             tblen = 0;
         }
-        dres = dwarf_init_path_dl(file_name,
+        dres = dwarf_init_path_dl_a(file_name,
             tb,tblen,
             glflags.group_number,
+            glflags.gf_universalnumber,
             NULL, NULL, &dbg,
             glflags.gf_global_debuglink_paths,
             glflags.gf_global_debuglink_count,
@@ -951,10 +953,11 @@ process_one_file(
         {
             /*  The tied file we define as group 1, BASE.
                 Cannot follow debuglink or dSYM,
-                is a tied file */
-            dres = dwarf_init_path(tied_file_name,
+                is a tied file  */
+            dres = dwarf_init_path_a(tied_file_name,
                 0,0,  /* ignore dSYM & debuglink */
                 DW_GROUPNUMBER_BASE,
+                glflags.gf_universalnumber,
                 0,0,
                 &dbgtied,
                 &onef_err);
