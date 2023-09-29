@@ -755,7 +755,7 @@
     dwarfdump output.
 
     Sections that are part of an Elf COMDAT GROUP are
-    asigned a group number > 2.  There can be many
+    assigned a group number > 2.  There can be many
     such COMDAT groups in an object file (but none
     in an executable or shared object).  Each such
     COMDAT group will have a small set of sections
@@ -967,6 +967,33 @@
 
     We list these with newest first.
 
+    <b>Changes 0.8.0 to 0.8.1</b>
+
+    Changes were required to support Mach-O universal binaries,
+    which were not readable by earlier versions of the library.
+
+    We have new library functions 
+    dwarf_init_path_a(),
+    dwarf_init_path_dl_a(), and 
+    dwarf_get_universalbinary_count().
+
+    The first two allow a caller to specify which
+    (numbering from zero) object file to
+    report on by adding a new argument dw_universalnumber.
+    Passing zero as the dw_universalnumber argument
+    is always safe.
+
+    The third lets callers retrieve the number
+    being used.
+    
+    These new calls do not replace anything so existing
+    code should work fine.  Applying the previously
+    existing calls dwarf_init_path() dwarf_init_path_dl()
+    to a Mach-O universal binary works, but the library
+    will return data on the first (index zero)
+    as a default since there is no dw_universalnumber
+    argument possible.
+
     <b>Changes 0.7.0 to 0.8.0</b>
 
     v0.8.0 released 2023-09-20 
@@ -1107,7 +1134,7 @@
     DWARF would, in 0.5.0 and earlier, result in
     libdwarf reporting erroneous data.  A copy-paste
     error in libdwarf/dwarf_util.c was noticed
-    and fixed 24 Januarly 2023 for 0.6.0.
+    and fixed 24 January 2023 for 0.6.0.
     Bug <b>DW202301-001</b>.
 
     <b>Changes 0.4.2 to 0.5.0</b>

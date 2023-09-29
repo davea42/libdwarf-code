@@ -1405,6 +1405,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 /*! @brief Initialization based on path, the most common
     initialization.
 
+    On a Mach-O universal binary this function can
+    only return information about the first (zero index)
+    object in the universal binary. 
+
     @param dw_path
     Pass in the path to the object file to open.
     @param dw_true_path_out_buffer
@@ -1450,6 +1454,8 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     @see dwarf_init_path_dl dwarf_init_b
     @see exampleinit
 */
+
+
 DW_API int dwarf_init_path(const char * dw_path,
     char *            dw_true_path_out_buffer,
     unsigned int      dw_true_path_bufferlen,
@@ -1459,6 +1465,18 @@ DW_API int dwarf_init_path(const char * dw_path,
     Dwarf_Debug*      dw_dbg,
     Dwarf_Error*      dw_error);
 
+/*! @brief Initialization based on path
+
+    This identical to dwarf_init_path() except that it
+    adds a new argument, dw_universalnumber,
+    with which you can specify which object in
+    a Mach-O universal binary you wish to open. 
+
+    It is always safe and appropriate to pass
+    zero as the dw_universalnumber.
+    Elf and PE and (non-universal) Mach-O object
+    files ignore the value of dw_universalnumber.
+*/
 DW_API int dwarf_init_path_a(const char * dw_path,
     char *            dw_true_path_out_buffer,
     unsigned int      dw_true_path_bufferlen,
@@ -1536,6 +1554,22 @@ DW_API int dwarf_init_path_dl(const char * dw_path,
     unsigned int      dw_dl_path_array_size,
     unsigned char   * dw_dl_path_source,
     Dwarf_Error*      dw_error);
+
+/*! @brief Initialization based on path with debuglink
+
+    This identical to dwarf_init_path_dl() except that it
+    adds a new argument, dw_universalnumber,
+    with which you can specify which object in
+    a Mach-O universal binary you wish to open.
+
+    It is always safe and appropriate to pass
+    zero as the dw_universalnumber.
+    Elf and PE and (non-universal) Mach-O object
+    files ignore the value of dw_universalnumber.
+
+    Mach-O objects do not contain or use debuglink
+    data.
+*/
 
 DW_API int dwarf_init_path_dl_a(const char * dw_path,
     char *            dw_true_path_out_buffer,
