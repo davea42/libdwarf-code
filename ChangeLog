@@ -1,3 +1,141 @@
+2023-09-29:  David Anderson
+    commit 0bf443a5b24c503e5ca37d0e17323f695780ec1b
+
+    Now the tied-file (if Mach-O universal binary)
+    gets reported as such.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-09-29:  David Anderson
+    commit e612fb75b2b75ff78f550aea7c659799432f5bb4
+
+    Now dwarfdump prints the number of binaries
+    in the Mach-O universal binary referenced and also
+    prints the number (index) of the individual
+    binary being reported on.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            new file:   src/lib/libdwarf/dwarf_universal.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-29:  David Anderson
+    commit 3422281f8006574059c2ab95ec1a798d89764ffc
+
+    Support for Mach-O univeral-binary reading
+    DO NOT USE THIS COMMIT. Shortly the many
+    debugging printf lines will be removed.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/dwarf_abbrev.h
+            modified:   src/lib/libdwarf/dwarf_alloc.h
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2023-09-29:  David Anderson
+    commit ce7412392dfae1487572e97428acab63b5cc35ce
+
+    Adding option
+       --format-universalnumber=<n>
+    so if reading a Mach-O universal binary
+    one can select which executable from that
+    universal binary libdwarf should read.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-09-29:  David Anderson
+    commit f60c9e791aa5c6adc42a3027a01b696f7e38a3a5
+
+    Correct indent mistake.
+            modified:   dwarf_rnglists.c
+    Remove trailing whitespace
+            modified:   libdwarf.h
+
+2023-09-27:  David Anderson
+    commit a01681e600acd695658657165c047b9ba8ea9da2
+
+    Removing the unused field mo_is_64bit from an
+    internal struct.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+
+    Corrected four filesize casts from (size_t) to (Dwarf_Unsigned)
+    which represents a correction (in practice
+    invisible to library users).
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+    Added a new function, which is invisible to users
+    for now.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-27:  David Anderson
+    commit 3b0408a74c6d2f2b9a81fe3fc0a1564b509ad84e
+
+    Regenerated with latest vulnerability listed.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-09-23:  David Anderson
+    commit 04140b4dcf9d5db880fbf15a76c12290f768daa3
+
+    Documenting fix to DW202309-001
+            modified:   bugxml/data.txt
+
+2023-09-23:  David Anderson
+    commit cd741379bd0203a0875b413542d5f982606ae637
+
+    Fixing DW202309-001 ossfuzz 62547, a bug
+    which has been in the code for many years.
+
+    The symptom was use-after-free in calling
+    dwarf_finish(), but provoked by code
+    in dwarf_get_fde_for_die().
+        modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2023-09-23:  David Anderson
+    commit 2867fa3cc7a79ba89c3b7f5672b6096ac4fc28ff
+
+    New ossfuzz bug DW202309-001 recorded here now.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+    Version now 0.8.1
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-23:  David Anderson
+    commit e367283d6299057c52fdf3e50c13d1759086d55a
+
+    Preparation for dealing with MacOS universl binaries.
+    New structs not yet used.
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+
+2023-09-18:  David Anderson
+    commit d482de0857770c02ac098ce94f487909b06b567a
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-09-18:  David Anderson
     commit 25ddab93a059ea8ecce088c73d3b4c66a14dbc23
 
