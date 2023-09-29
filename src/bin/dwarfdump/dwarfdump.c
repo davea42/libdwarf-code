@@ -960,7 +960,7 @@ process_one_file(
             }
             printf("This is a Mach-O Universal Binary with %"
                 DW_PR_DUu " %s.  This is object %"
-			    DW_PR_DUu "\n",
+                DW_PR_DUu "\n",
                 count,name,index);
         }
     }
@@ -989,6 +989,22 @@ process_one_file(
             print_error(dbg,
                 "dwarf_init_path on tied_file",
                 dres, onef_err);
+        }
+        {
+            Dwarf_Unsigned index = 0;
+            Dwarf_Unsigned count = 0;
+            dres = dwarf_get_universalbinary_count(dbg,&index,&count);
+            if (dres == DW_DLV_OK) {
+                const char * name = "object";
+                if (count != 1) {
+                    name = "objects";
+                }
+                printf("The tied-file is a Mach-O Universal Binary "
+                    "with %"
+                    DW_PR_DUu " %s.  This is object %"
+                    DW_PR_DUu "\n",
+                    count,name,index);
+            }
         }
     }
 
