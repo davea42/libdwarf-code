@@ -1011,10 +1011,11 @@ void _dwarf_destruct_elf_nlaccess(
 
 extern int _dwarf_macho_setup(int fd,
     char *true_path,
+    unsigned universalnumber,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
-    size_t filesize,
+    Dwarf_Unsigned filesize,
     unsigned groupnumber,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,

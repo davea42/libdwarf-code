@@ -61,6 +61,7 @@ dwarf_tied_decls.h
 dwarf_tsearch.h 
 dwarf_setup_sections.h
 dwarf_str_offsets.h
+dwarf_universal.h 
 dwarf_util.h 
 dwarf_xu_index.h libdwarf_private.h
 dwarf_macho_loader.h
