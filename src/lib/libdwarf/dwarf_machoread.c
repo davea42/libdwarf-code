@@ -92,7 +92,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_macho_loader.h"
 
-#if 1
+#if 0
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -142,6 +142,7 @@ static int _dwarf_macho_object_access_init(
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
+    unsigned * universalbinary_count,
     Dwarf_Unsigned filesize,
     Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum);
@@ -327,12 +328,10 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     ASNAR(mfp->mo_copy_word,mfp->mo_header.flags,mh32.flags);
     mfp->mo_header.reserved = 0;
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
-printf("dadebug command count 0x%lx line %d\n",(unsigned long)mfp->mo_header.ncmds,__LINE__);
     if (mfp->mo_command_count >= mfp->mo_filesize ||
         mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
         mfp->mo_command_count >= mfp->mo_header.sizeofcmds) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
-printf("dadebug DW_DLE_MACHO_CORRUPT_HEADER line %d\n",__LINE__);
         return DW_DLV_ERROR;
     }
 
@@ -358,35 +357,21 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     if (res != DW_DLV_OK) {
         return res;
     }
-printf("dadebug header64 RRMOA  0x%lx\n",(unsigned long)inner);
     /* Do not adjust endianness of magic, leave as-is. */
-dump_bytes("dadebug mh64 ",(unsigned char *)&mh64,sizeof(mh64));
     ASNAR(memcpy,mfp->mo_header.magic,mh64.magic);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.cputype,mh64.cputype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.cpusubtype,
         mh64.cpusubtype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.filetype,mh64.filetype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.ncmds,mh64.ncmds);
-printf("dadeug wordcpy addr 0x%lx\n",(unsigned long)mfp->mo_copy_word);
-printf("dadeug std wordcpy addr 0x%lx\n",(unsigned long)_dwarf_memcpy_swap_bytes);
-printf("dadebug command count 0x%lx line %d\n",(unsigned long)mfp->mo_header.ncmds,__LINE__);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.sizeofcmds,
         mh64.sizeofcmds);
-printf("dadebug command count 0x%lx line %d\n",(unsigned long)mfp->mo_header.sizeofcmds,__LINE__);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.flags,mh64.flags);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.reserved,mh64.reserved);
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
     if (mfp->mo_command_count >= mfp->mo_filesize ||
         mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
         mfp->mo_command_count >= mfp->mo_header.sizeofcmds) {
-printf("dadebug "
-" comm count 0x%lx "
-" filesize 0x%lx "
-" sizeofcmds 0x%lx \n",
-(unsigned long)mfp->mo_command_count,
-(unsigned long)mfp->mo_filesize,
-(unsigned long)mfp->mo_header.sizeofcmds);
-printf("dadebug DW_DLE_MACHO_CORRUPT_HEADER line %d\n",__LINE__);
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -890,11 +875,14 @@ _dwarf_macho_setup(int fd,
     dwarf_macho_object_access_internals_t *intfc = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
+    unsigned universalbinary_count = 0;
 
     res = _dwarf_macho_object_access_init(
         fd,
         universalnumber,
-        ftype,endian,offsetsize,filesize,
+        ftype,endian,offsetsize,
+        &universalbinary_count,
+        filesize,
         &binary_interface,
         &localerrnum);
     if (res != DW_DLV_OK) {
@@ -914,6 +902,8 @@ _dwarf_macho_setup(int fd,
     }
     intfc = binary_interface->ai_object;
     intfc->mo_path = strdup(true_path);
+    (*dbg)->de_universalbinary_index = universalnumber;
+    (*dbg)->de_universalbinary_count = universalbinary_count;
     return res;
 }
 
@@ -955,7 +945,6 @@ _dwarf_macho_inner_object_fd(int fd,
     Dwarf_Unsigned innerbase = 0;
     Dwarf_Unsigned innersize = 0;
 
-printf("dadebug fd %d line %d\n",fd,__LINE__);
     res =  _dwarf_object_detector_universal_head_fd(
         fd, outer_filesize, unibinarycount,
         &head, errcode);
@@ -1009,6 +998,7 @@ _dwarf_macho_object_access_internals_init(
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
+    unsigned *unibinarycount,
     Dwarf_Unsigned filesize,
     int *errcode)
 {
@@ -1045,6 +1035,7 @@ _dwarf_macho_object_access_internals_init(
             }
             return res;
         }
+        *unibinarycount = unibinarycounti;
         endian = endiani;
     }
 
@@ -1055,7 +1046,6 @@ _dwarf_macho_object_access_internals_init(
     intfc->mo_fd          = fd;
     intfc->mo_offsetsize  = offsetsizei;
     intfc->mo_pointersize = offsetsizei;
-printf("dadebug inner offset now 0x%lx\n",(unsigned long)fileoffseti);
     intfc->mo_inner_offset  =  fileoffseti;
     intfc->mo_filesize    = filesizei;
     intfc->mo_ftype       = ftypei;
@@ -1074,11 +1064,9 @@ printf("dadebug inner offset now 0x%lx\n",(unsigned long)fileoffseti);
     if (endian == DW_END_little ) {
         intfc->mo_copy_word = _dwarf_memcpy_noswap_bytes;
         intfc->mo_endian = DW_END_little;
-printf("dadebug endian %lu line %d\n",(unsigned long)endian,__LINE__);
     } else {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
         intfc->mo_endian = DW_END_big;
-printf("dadebug endian %lu line %d\n",(unsigned long)endian,__LINE__);
     }
 #endif /* LITTLE- BIG-ENDIAN */
     res = _dwarf_load_macho_header(intfc,errcode);
@@ -1103,7 +1091,6 @@ printf("dadebug endian %lu line %d\n",(unsigned long)endian,__LINE__);
             count better be zero. */
         if (intfc->mo_dwarf_sectioncount) {
             _dwarf_destruct_macho_access(localdoas);
-printf("dadebug DW_DLE_MACHO_CORRUPT_HEADER line %d\n",__LINE__);
             *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
             return DW_DLV_ERROR;
         }
@@ -1130,6 +1117,7 @@ _dwarf_macho_object_access_init(
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
+    unsigned * universalbinary_count,
     Dwarf_Unsigned filesize,
     Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum)
@@ -1150,7 +1138,9 @@ _dwarf_macho_object_access_init(
     res = _dwarf_macho_object_access_internals_init(internals,
         fd,
         uninumber,
-        ftype, endian, offsetsize, filesize,
+        ftype, endian, offsetsize, 
+        universalbinary_count,
+        filesize,
         localerrnum);
     if (res != DW_DLV_OK){
         /* *err is already set and the call freed internals. */
@@ -1290,16 +1280,12 @@ printf("Reading magic number universal compare failed " "Inconsistent\n");
     ASNAR(word_swap,duhd.au_count,fh.nfat_arch);
     /*  The limit is a first-cut safe heuristic. */
     if (duhd.au_count >= (dw_filesize/2) ) {
-printf("dadebug Universal Binary header count impossible: 0x%lx \n",
-(unsigned long) duhd.au_count);
         *errcode = DW_DLE_UNIVERSAL_BINARY_ERROR ;
         return DW_DLV_ERROR;
     }
     duhd.au_arches = (struct  Dwarf_Universal_Arch_s*)
         calloc(duhd.au_count, sizeof(struct Dwarf_Universal_Arch_s));
     if (!duhd.au_arches) {
-printf("dadebug Universal Binary au_arches alloc fail line %d\n",
-            __LINE__);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
@@ -1308,8 +1294,6 @@ printf("dadebug Universal Binary au_arches alloc fail line %d\n",
         fa = (struct fat_arch *)calloc(duhd.au_count,
             sizeof(struct fat_arch));
         if (!fa) {
-printf("dadebug Universal Binary au_arches alloc fail line %d\n",
-            __LINE__);
             *errcode = DW_DLE_ALLOC_FAIL;
             free(duhd.au_arches);
             duhd.au_arches = 0;
@@ -1320,8 +1304,6 @@ printf("dadebug Universal Binary au_arches alloc fail line %d\n",
             duhd.au_count*sizeof(*fa),
             dw_filesize,errcode);
         if (res != DW_DLV_OK) {
-printf("dadebug Universal Binary value read fail line %d\n",
-__LINE__);
             free(duhd.au_arches);
             duhd.au_arches = 0;
             free(fa);
@@ -1330,8 +1312,6 @@ __LINE__);
         res = fill_in_uni_arch_32(fa,&duhd,word_swap);
         if (res != DW_DLV_OK) {
             free(duhd.au_arches);
-printf("dadebug Universal Binary value read fail line %d\n",
-__LINE__);
             duhd.au_arches = 0;
             free(fa);
             return res;
@@ -1343,8 +1323,6 @@ __LINE__);
         fa = (struct fat_arch_64 *)calloc(duhd.au_count,
             sizeof(struct fat_arch));
         if (!fa) {
-printf("dadebug Universal Binary au_arches alloc fail line %d\n",
-__LINE__);
             *errcode = DW_DLE_ALLOC_FAIL;
             free(duhd.au_arches);
             duhd.au_arches = 0;
@@ -1354,7 +1332,6 @@ __LINE__);
             duhd.au_count*sizeof(fa),
             dw_filesize,errcode);
         if (res == DW_DLV_ERROR) {
-printf("dadebug Universal Binary value read fail line %d\n", __LINE__);
             free(duhd.au_arches);
             duhd.au_arches = 0;
             free(fa);

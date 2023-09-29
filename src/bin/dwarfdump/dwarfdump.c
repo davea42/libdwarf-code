@@ -949,6 +949,21 @@ process_one_file(
             sanitized(temp_path_buf));
         glflags.gf_gnu_debuglink_flag = TRUE;
     } else { /* Nothing to print yet. */ }
+    {
+        Dwarf_Unsigned index = 0;
+        Dwarf_Unsigned count = 0;
+        dres = dwarf_get_universalbinary_count(dbg,&index,&count);
+        if (dres == DW_DLV_OK) {
+            const char * name = "object";
+            if (count != 1) {
+                name = "objects";
+            }
+            printf("This is a Mach-O Universal Binary with %"
+                DW_PR_DUu " %s.  This is object %"
+			    DW_PR_DUu "\n",
+                count,name,index);
+        }
+    }
     if (tied_file_name && strlen(tied_file_name)) {
         {
             /*  The tied file we define as group 1, BASE.

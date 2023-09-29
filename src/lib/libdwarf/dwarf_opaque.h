@@ -754,6 +754,14 @@ struct Dwarf_Debug_s {
     Dwarf_Unsigned de_frame_same_value_number;
     Dwarf_Unsigned de_frame_undefined_value_number;
 
+    /*  If count > 0 means the DW_FTYPE_APPLEUNIVERSAL
+        we initially read has this number of
+        binaries in it, and de_universalbinary_index
+        is the index of the current object inside
+        the universal binary. */
+    unsigned int   de_universalbinary_count;
+    unsigned int   de_universalbinary_index;
+
     unsigned char de_big_endian_object; /* Non-zero if
         object being read is big-endian. */
 

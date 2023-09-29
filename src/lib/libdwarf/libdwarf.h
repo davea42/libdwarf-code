@@ -8872,6 +8872,37 @@ DW_API Dwarf_Small dwarf_set_default_address_size(
     Dwarf_Debug dw_dbg,
     Dwarf_Small dw_value);
 
+/*! @brief Retrieve universal binary index
+
+    For Mach-O universal binaries this returns
+    relvant information. 
+
+    For non-universal binaries (Mach-O, Elf,
+    or PE) the values are not meaningful, so
+    the function returns DW_DLV_NO_ENTRY..
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_current_index
+    If dw_current_index is passed in non-null the function
+    returns the universal-binary index of the current
+    object (which came from a universal binary).
+    @param dw_available_count
+    If dw_current_index is passed in non-null the function
+    returns the count of binaries in
+    the universal binary.
+    @return
+    Returns DW_DLV_NO_ENTRY if the object file is
+    not from a Mach-O universal binary.
+    Returns DW_DLV_NO_ENTRY if dw_dbg is passed in NULL.
+    Never returns DW_DLV_ERROR.
+*/
+DW_API int dwarf_get_universalbinary_count(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned *dw_current_index,
+    Dwarf_Unsigned *dw_available_count);
+
+
 /*! @}
 */
 
