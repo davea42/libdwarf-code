@@ -8909,7 +8909,7 @@ DW_API Dwarf_Small dwarf_set_default_address_size(
 /*! @brief Retrieve universal binary index
 
     For Mach-O universal binaries this returns
-    relvant information. 
+    relevant information. 
 
     For non-universal binaries (Mach-O, Elf,
     or PE) the values are not meaningful, so
