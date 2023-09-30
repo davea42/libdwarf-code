@@ -1,3 +1,116 @@
+2023-09-30:  David Anderson
+    commit f7c7e84e5a77915bb6570215887118d8e7759122
+
+    We have reset memcpy()-like functions to
+    use the prototype that libdwarf has long
+    exported to callers (on request).
+     void  copy_word(void *, const void *,unsigned long)
+
+    The length in practice is small where our swap/no-swap
+    functions are involved.
+
+    There were some inconsistencies but freebsd 32bit
+    with clang caught them all, so it should be ok
+    everywhere.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.c
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2023-09-30:  David Anderson
+    commit 566f4ee9305d708853e53ee7589cf93830ca6a3b
+
+    Fix indents and remove trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-09-30:  David Anderson
+    commit e8df98c5c6629b75402b8ea5e5a44797fb3ae4b3
+
+    Remove left-over printf debug output.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2023-09-30:  David Anderson
+    commit a19f51f629dc2d2f84d99926494422cc57e5c10f
+
+    Now all the word_swap swap_bytes functions
+    have the  length argument as size_t (there was
+    some with unsigned long).
+    No calls to these should have a length > 8
+    (since swap makes no sense on non-integers).
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2023-09-30:  David Anderson
+    commit 1289ba5b2fe87116e2bd3a79e0373f9460f025a4
+
+    Small refactoring of  freeing internals
+    so we can use the right call at the right point
+    in case of error. Simpler and clearer.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2023-09-30:  David Anderson
+    commit d88502010481d7bfa550bdf2dd875a83f7462029
+
+    New leak reports, all new and directly
+    related to changes yesterday.
+    Have more fixes to commit today.
+            modified:   bugxml/data.txt
+
+2023-09-30:  David Anderson
+    commit 5ac9aa1a0adeb18bad6aa531dddc59b35d9b0030
+
+    Removed several lines of dead code:
+    Coverity Scan correctly reported it was dead code.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-09-29:  David Anderson
+    commit 834dbc50dec104fbea389b8dcddb8e6c4cc9dfa8
+
+    Version in generated source is now 0.8.1
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-09-29:  David Anderson
+    commit c529bb42fa9088c4f7b61a1253dda42348f15523
+
+    version in genererated source is 0.8.1 now
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2023-09-29:  David Anderson
+    commit 7b3fdd228496794c9fc58e049f2e31333a64e80d
+
+    With universal binary features documented.
+            modified:   doc/libdwarf.pdf
+
+2023-09-29:  David Anderson
+    commit 4c995195d2009ab24454c914d59a1ce23d4484c7
+
+    Fixed a single misspelling in a doxygen comment.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-09-29:  David Anderson
+    commit 80249f4423b83389c1bd1c4d1ae49f7f5fbc81ea
+
+    Small spelling corrections and wording
+    changes.
+            modified:   libdwarf.dox
+            modified:   ../src/lib/libdwarf/libdwarf.h
+
+2023-09-29:  David Anderson
+    commit 5ad97c9da90aa5830cc8410f142cb288304806c9
+
+    up to date.
+            modified:   ChangeLog
+
 2023-09-29:  David Anderson
     commit 0bf443a5b24c503e5ca37d0e17323f695780ec1b
 
