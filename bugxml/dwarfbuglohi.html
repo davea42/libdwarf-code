@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of September 2023</p>
-<p> Record count: 163 </p>
+<p> Record count: 164 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5653,6 +5653,41 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>gitfixid: e53adc90ffd6d5d0fad61546b0041990aefd970b
 </p>
 <p>tarrelease: libdwarf-0.8.0.tar.xz
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202309-001">164) DW202309-001</h3>
+<p>id: DW202309-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 62547
+</p>
+<p>datereported: 2023-09-22
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap use after free
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Calling dwarf_get_fde_for_die() causes the
+  problem as its special handling in a user calling
+  for fde destruction is wrong when dwarf_finish()
+  is calling for fde destruction.
+  dwarf_finish() can refer to freed memory
+  in trying to delete a CIE twice.
+  The use after free has a dependence on the order nodes are seen
+  in the de_alloc_tree tdestroy() walk of the table
+  (the order is not predictable).
+  Broken in release 0.8.0 and all previous releases.
+</p>
+<p>datefixed: 2023-09-23
+</p>
+<p>references:  regressiontests/ossfuzz62547/fuzz_stack_frame_access-5263709637050368
+</p>
+<p>gitfixid: cd741379bd0203a0875b413542d5f982606ae637
+</p>
+<p>tarrelease: 
 </p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>

@@ -109,6 +109,7 @@ dwarf_tied.c \
 dwarf_tied_decls.h \
 dwarf_tsearchhash.c \
 dwarf_tsearch.h \
+dwarf_universal.h \
 dwarf_util.c \
 dwarf_util.h \
 dwarf_xu_index.c \

@@ -358,6 +358,7 @@ static void arg_format_suppress_utf8(void);
 static void arg_format_file(void);
 static void arg_format_gcc(void);
 static void arg_format_groupnumber(void);
+static void arg_format_universalnumber(void);
 static void arg_format_limit(void);
 static void arg_format_producer(void);
 static void arg_format_snc(void);
@@ -596,6 +597,10 @@ static const char *usage_long_text[] = {
 "-u<file> --format-file=<file>  Print only specified file (CU name)",
 "-x groupnumber=<n>    ",
 "         --format-group-number=<n> Groupnumber to print",
+"-x universalnumber=<n>    ",
+"         --format-universalnumber=<n> Binary to print.",
+"                               Only applies to",
+"                               Mach-O universal binaries.",
 "-H<num>  --format-limit=<num>  Limit output to the first <num>",
 "                               major units.",
 "                               Stop after <num> compilation units",
@@ -739,11 +744,16 @@ OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri    */
 OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg  */
 
 OPT_FORMAT_SUPPRESS_UTF8,     /*  --format-suppress-utf8 */
+OPT_FORMAT_UNIVERSALNUMBER,   /*  --format-universalnumber */
 
 /* Print Output Limiters    */
 OPT_FORMAT_FILE,              /* -u<file> --format-file=<file> */
 OPT_FORMAT_GCC,               /* -cg      --format-gcc         */
 OPT_FORMAT_GROUP_NUMBER,      /* -x<n>  --format-group-number=<n>*/
+
+/* -x<n>  --format-universalnumber=<n>*/
+OPT_FORMAT_GROUP_UNIVERSALNUMBER,
+
 OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>   */
 OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str> */
 OPT_FORMAT_SNC,               /* -cs      --format-snc           */
@@ -893,6 +903,8 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"format-gcc",          dwno_argument,       0, OPT_FORMAT_GCC },
 {"format-group-number", dwrequired_argument, 0,
     OPT_FORMAT_GROUP_NUMBER},
+{"format-universalnumber", dwrequired_argument, 0,
+    OPT_FORMAT_UNIVERSALNUMBER},
 {"format-limit",        dwrequired_argument, 0, OPT_FORMAT_LIMIT },
 {"format-producer",     dwrequired_argument, 0, OPT_FORMAT_PRODUCER},
 {"format-snc",          dwno_argument,       0, OPT_FORMAT_SNC },
@@ -2148,6 +2160,9 @@ void arg_x_multiple_selection(void)
     } else if (strncmp(dwoptarg,"groupnumber=",12) == 0) {
         dwoptarg = &dwoptarg[12];
         arg_format_groupnumber();
+    } else if (strncmp(dwoptarg,"universalnumber=",16) == 0) {
+        dwoptarg = &dwoptarg[12];
+        arg_format_universalnumber();
     } else if (strncmp(dwoptarg,"tied=",5) == 0) {
         dwoptarg = &dwoptarg[5];
         arg_file_tied();
@@ -2182,6 +2197,32 @@ arg_file_abi(void)
     abi = do_uri_translation(dwoptarg,ctx);
     if (strlen(abi) > 0) {
         config_file_abi = abi;
+    } else {
+        arg_x_invalid();
+    }
+}
+
+/*  Option '-x universalnumber='
+    greater than zero only applies to Mach-O universal
+    object files*/
+static void
+arg_format_universalnumber(void)
+{
+    /*  By default prints the lowest universal number in the object.
+        Default is  -x universalnumber=0 */
+
+    long int gnum = 0;
+    int res = 0;
+
+    if (!dwoptarg || !dwoptarg[0]) {
+        printf("ERROR *groupnumber= does not allow an empty text\n");
+        glflags.gf_count_major_errors++;
+        arg_usage_error = TRUE;
+        return;
+    }
+    res = get_number_value(dwoptarg,&gnum);
+    if (res == DW_DLV_OK && gnum >= 0) {
+        glflags.gf_universalnumber = gnum;
     } else {
         arg_x_invalid();
     }
@@ -2510,6 +2551,8 @@ set_command_options(int argc, char *argv[])
         case OPT_FORMAT_FILE:         arg_format_file();       break;
         case OPT_FORMAT_GCC:          arg_format_gcc();        break;
         case OPT_FORMAT_GROUP_NUMBER: arg_format_groupnumber(); break;
+        case OPT_FORMAT_UNIVERSALNUMBER: arg_format_universalnumber();
+            break;
         case OPT_FORMAT_LIMIT:        arg_format_limit();      break;
         case OPT_FORMAT_PRODUCER:     arg_format_producer();   break;
         case OPT_FORMAT_SNC:          arg_format_snc();        break;
