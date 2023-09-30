@@ -1,4 +1,47 @@
 
+id: DW202309-004
+fuzzer: ossfuzz id: 62842
+datereported: 2023-09-30
+reportedby: David Korczynski
+vulnerability: 
+product: libdwarf
+description: 
+datefixed: 
+references: regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
+gitfixid: 
+tarrelease: 
+endrec: DW202309-004
+
+id: DW202309-003
+fuzzer: ossfuzz id: 62834
+datereported: 2023-09-30
+reportedby: David Korczynski
+vulnerability: Memory leak in _dwarf_macho_setup()
+product: libdwarf
+description: 
+datefixed: 
+references: regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
+gitfixid: 
+tarrelease: 
+endrec: DW202309-003
+
+id: DW202309-002
+fuzzer: ossfuzz id: 62833
+datereported: 2023-09-30
+reportedby: David Korczynski
+vulnerability: Memory leak in _dwarf_macho_setup()
+product: libdwarf
+description: 
+datefixed: 
+references: regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
+gitfixid: 
+tarrelease: 
+endrec: DW202309-002
+
+id: DW202308-001
+fuzzer: ossfuzz id: 59576
+
+
 id: DW202309-001
 fuzzer: ossfuzz id: 62547
 datereported: 2023-09-22
