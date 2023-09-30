@@ -1,5 +1,5 @@
 /* Generated table, do not edit. */
-/* Generated for source version 0.8.0 */
+/* Generated for source version 0.8.1 */
 
 #ifndef DWARFDUMP_AF_TABLE_H
 #define DWARFDUMP_AF_TABLE_H
