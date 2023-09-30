@@ -106,7 +106,6 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 }
 #endif /*0*/
 
-
 /* MACH-O and dwarf section names */
 static struct macho_sect_names_s {
     char const *ms_moname;
@@ -256,7 +255,7 @@ macho_load_section (void *obj, Dwarf_Unsigned section_index,
     return DW_DLV_NO_ENTRY;
 }
 
-static void 
+static void
 _dwarf_destruct_macho_internals(
     dwarf_macho_object_access_internals_t *mp)
 {
@@ -613,7 +612,7 @@ _dwarf_macho_load_dwarf_section_details32(
             *errcode  = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
-        res = RRMOA(mfp->mo_fd, &mosec, 
+        res = RRMOA(mfp->mo_fd, &mosec,
             (off_t)(inner+curoff), sizeof(mosec),
             (off_t)(inner+mfp->mo_filesize), errcode);
         if (res != DW_DLV_OK) {
@@ -999,7 +998,7 @@ _dwarf_macho_object_access_internals_init(
     unsigned int   unibinarycounti = 0;
 
     if (ftype == DW_FTYPE_APPLEUNIVERSAL) {
-         res = _dwarf_macho_inner_object_fd(fd,
+        res = _dwarf_macho_inner_object_fd(fd,
             uninumber,
             filesize,
             &ftypei,&unibinarycounti,&endiani,
@@ -1102,7 +1101,7 @@ _dwarf_macho_object_access_init(
     res = _dwarf_macho_object_access_internals_init(internals,
         fd,
         uninumber,
-        ftype, endian, offsetsize, 
+        ftype, endian, offsetsize,
         universalbinary_count,
         filesize,
         localerrnum);

@@ -1152,8 +1152,8 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
                 return res;
             }
             frame_ptr = fp_updated;
-        } /*  We know cieptr was set as was augt, no else needed 
-              converity scan CID 323429 */
+        } /*  We know cieptr was set as was augt, no else needed
+            converity scan CID 323429 */
         {
             Dwarf_Unsigned adlen = 0;
 
