@@ -1141,7 +1141,7 @@ static int
 fill_in_uni_arch_32(
     struct fat_arch * fa,
     struct Dwarf_Universal_Head_s *duhd,
-    void (*word_swap) (void *, const void *, size_t))
+    void (*word_swap) (void *, const void *, unsigned long))
 {
     Dwarf_Unsigned i = 0;
     struct Dwarf_Universal_Arch_s * dua = 0;
@@ -1162,7 +1162,7 @@ static int
 fill_in_uni_arch_64(
     struct fat_arch_64 * fa,
     struct Dwarf_Universal_Head_s *duhd,
-    void (*word_swap) (void *, const void *, size_t))
+    void (*word_swap) (void *, const void *, unsigned long))
 {
     Dwarf_Unsigned i = 0;
     struct Dwarf_Universal_Arch_s * dua = 0;
@@ -1194,7 +1194,7 @@ _dwarf_object_detector_universal_head_fd(
     struct Dwarf_Universal_Head_s *duhdp = 0;
     struct  fat_header fh;
     int     res = 0;
-    void (*word_swap) (void *, const void *, size_t);
+    void (*word_swap) (void *, const void *, unsigned long);
     int     locendian = 0;
     int     locoffsetsize = 0;
 

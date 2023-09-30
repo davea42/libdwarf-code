@@ -637,7 +637,7 @@ _dwarf_load_pe_sections(
 {
     struct dos_header_dw dhinmem;
     IMAGE_FILE_HEADER_dw ifh;
-    void (*word_swap) (void *, const void *, size_t);
+    void (*word_swap) (void *, const void *, unsigned long);
     unsigned locendian = 0;
     int res = 0;
     Dwarf_Unsigned dos_sig = 0;
