@@ -33,12 +33,12 @@ extern "C" {
 #endif /* __cplusplus */
 
 void _dwarf_memcpy_swap_bytes(void *s1, const void *s2,
-    unsigned long len);
+    size_t len);
 /*  It was once inconvenient to use memcpy directly as it
     uses size_t and that requires <stddef.h>,
     although stddef.h is a part of C90, so..ok. */
 void _dwarf_memcpy_noswap_bytes(void *s1,
-    const void *s2, unsigned long len);
+    const void *s2, size_t len);
 
 #ifdef __cplusplus
 }

@@ -331,7 +331,7 @@ is_pe_object(int fd,
 {
     unsigned dos_sig = 0;
     unsigned locendian = 0;
-    void (*word_swap) (void *, const void *, unsigned long);
+    void (*word_swap) (void *, const void *, size_t);
     unsigned long nt_address = 0;
     struct dos_header dhinmem;
     char nt_sig_array[4];
