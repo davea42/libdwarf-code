@@ -3,13 +3,13 @@ id: DW202309-004
 fuzzer: ossfuzz id: 62842
 datereported: 2023-09-30
 reportedby: David Korczynski
-vulnerability: 
+vulnerability: Heap buffer overflow  
 product: libdwarf
-description: 
-description: The September 29 addition of Mach-O
-  universal binary support
-  resulted in memory leaks due to revising memory alloc/free
-  incompletely when fuzzed object files were encountered..
+description: The heap buffer overflow in
+  _dwarf_memcpy_swap_bytes was due a failure to check
+  for a valid size field (a fuzzed value) in a count
+  of array elements..
+  Now we check for a sensible count.
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
