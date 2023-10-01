@@ -3,6 +3,95 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 62842</fuzzer>
+
+<datereported>2023-09-30</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability></vulnerability>
+
+<description> The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+</description>
+
+<datefixed>2023-10-01</datefixed>
+
+<references> regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
+</references>
+
+<gitfixid>f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 62834</fuzzer>
+
+<datereported>2023-09-30</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Memory leak in _dwarf_macho_setup()
+</vulnerability>
+
+<description> The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+</description>
+
+<datefixed>2023-10-01</datefixed>
+
+<references> regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
+</references>
+
+<gitfixid>f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 62833</fuzzer>
+
+<datereported>2023-09-30</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Memory leak in _dwarf_macho_setup()
+</vulnerability>
+
+<description> The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+</description>
+
+<datefixed>2023-10-01</datefixed>
+
+<references> regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
+</references>
+
+<gitfixid>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 62547</fuzzer>
 
 <datereported>2023-09-22</datereported>

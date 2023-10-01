@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of September 2023</p>
-<p> Record count: 164 </p>
+</p>as of October 2023</p>
+<p> Record count: 167 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5686,6 +5686,92 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz62547/fuzz_stack_frame_access-5263709637050368
 </p>
 <p>gitfixid: cd741379bd0203a0875b413542d5f982606ae637
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202309-002">165) DW202309-002</h3>
+<p>id: DW202309-002
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 62833
+</p>
+<p>datereported: 2023-09-30
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Memory leak in _dwarf_macho_setup()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+</p>
+<p>datefixed: 2023-10-01
+</p>
+<p>references:  regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
+</p>
+<p>gitfixid: gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202309-003">166) DW202309-003</h3>
+<p>id: DW202309-003
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 62834
+</p>
+<p>datereported: 2023-09-30
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Memory leak in _dwarf_macho_setup()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+</p>
+<p>datefixed: 2023-10-01
+</p>
+<p>references:  regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
+</p>
+<p>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202309-004">167) DW202309-004</h3>
+<p>id: DW202309-004
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 62842
+</p>
+<p>datereported: 2023-09-30
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:</p>
+<p>product: libdwarf
+</p>
+<p>description:  The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+</p>
+<p>datefixed: 2023-10-01
+</p>
+<p>references:  regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
+</p>
+<p>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
 </p>
 <p>tarrelease: 
 </p>
