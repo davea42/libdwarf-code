@@ -1,3 +1,19 @@
+2023-10-01:  David Anderson
+    commit 4dcfdaf50c496ef743bc581f139ca9f4d42ddf47
+
+    Completed report on DW202309-004,
+    DW202309-003, and DW202309-002.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-09-30:  David Anderson
+    commit 1608be2e62e028aad0f1d7ad17c5863eca0b57e2
+
+    up to date.
+            modified:   ChangeLog
+
 2023-09-30:  David Anderson
     commit f7c7e84e5a77915bb6570215887118d8e7759122
 
