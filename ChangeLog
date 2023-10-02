@@ -1,3 +1,67 @@
+2023-10-02:  David Anderson
+    commit 8554a94e7a3661a34eaa99951bdcee2b0239fd93
+
+    Two places in _dwarf_object_detector_universal_head_fd()
+    we failed to free(fa). Now we do so.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2023-10-02:  David Anderson
+    commit e533fccd7d891dd66f96a298227a15dd0c05ec78
+
+    Now we can easily check for gross corruption of the
+    universal binary headers, and we now check for such.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+    Added a new field with the actual whole file size
+    so when reading universal binaries
+    we can easily check for gross corruption of the
+    universal binary headers. au_filesize.
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+
+2023-10-02:  David Anderson
+    commit 0f996051eaf56238cac4a1cf7031166212ab4646
+
+    Fixed accidental blank in error 502.
+    Added 503 (as it is required, defined in libdwarf.h)
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+2023-10-02:  David Anderson
+    commit e57d0f251d85549b7aad5288ef161d160eff8d90
+
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-10-02:  David Anderson
+    commit ea31407a95ce862e00c2748d7ba8367ee1621f2b
+
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-10-01:  David Anderson
+    commit af3eedfd123a55b876022eba5974defb90b166c6
+
+    Updated the text on the latest of the bugs.
+            modified:   ../../../bugxml/data.txt
+
+    Corrected a comment on the new function
+    dwarf_init_path_a().
+            modified:   dwarf_generic_init.c
+
+2023-10-01:  David Anderson
+    commit 782cc96d558402739288e58fbedd0240844a9b99
+
+    Removed  150 lines of #if 0 code (not useful code)
+    and a now-empty function.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2023-10-01:  David Anderson
+    commit 2af75f9fc0042c06c12c820667621fecd78fb4b5
+
+    Up to date now.
+            modified:   ChangeLog
+
 2023-10-01:  David Anderson
     commit 4dcfdaf50c496ef743bc581f139ca9f4d42ddf47
 
