@@ -1311,14 +1311,13 @@ _dwarf_object_detector_universal_head_fd(
         }
         res = fill_in_uni_arch_32(fa,&duhd,word_swap,
             errcode);
+        free(fa);
+        fa = 0;
         if (res != DW_DLV_OK) {
             free(duhd.au_arches);
             duhd.au_arches = 0;
-            free(fa);
             return res;
         }
-        free(fa);
-        fa = 0;
     } else { /* 64 */
         struct fat_arch_64 * fa = 0;
         fa = (struct fat_arch_64 *)calloc(duhd.au_count,
@@ -1347,13 +1346,13 @@ _dwarf_object_detector_universal_head_fd(
         }
         res = fill_in_uni_arch_64(fa,&duhd,word_swap,
             errcode);
+        free(fa);
+        fa = 0;
         if (res != DW_DLV_OK) {
             free(duhd.au_arches);
             duhd.au_arches = 0;
             return res;
         }
-        free(fa);
-        fa = 0;
     }
 
     duhdp = malloc(sizeof(*duhdp));
