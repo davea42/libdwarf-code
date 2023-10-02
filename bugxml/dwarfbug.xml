@@ -11,12 +11,14 @@
 
 <product>libdwarf</product>
 
-<vulnerability></vulnerability>
+<vulnerability> Heap buffer overflow
+</vulnerability>
 
-<description> The September 29 addition of Mach-O
-  universal binary support
-  resulted in memory leaks due to revising memory alloc/free
-  incompletely when fuzzed object files were encountered..
+<description> The heap buffer overflow in
+  _dwarf_memcpy_swap_bytes was due a failure to check
+  for a valid size field (a fuzzed value) in a count
+  of array elements..
+  Now we check for a sensible count.
 </description>
 
 <datefixed>2023-10-01</datefixed>

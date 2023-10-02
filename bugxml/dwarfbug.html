@@ -61,13 +61,15 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:</p>
+<p>vulnerability:  Heap buffer overflow
+</p>
 <p>product: libdwarf
 </p>
-<p>description:  The September 29 addition of Mach-O
-  universal binary support
-  resulted in memory leaks due to revising memory alloc/free
-  incompletely when fuzzed object files were encountered..
+<p>description:  The heap buffer overflow in
+  _dwarf_memcpy_swap_bytes was due a failure to check
+  for a valid size field (a fuzzed value) in a count
+  of array elements..
+  Now we check for a sensible count.
 </p>
 <p>datefixed: 2023-10-01
 </p>
