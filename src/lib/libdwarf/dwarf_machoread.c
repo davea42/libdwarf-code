@@ -1234,6 +1234,11 @@ _dwarf_object_detector_universal_head_fd(
     duhd = duhzero;
     fh = fhzero;
     /*  A universal head is always at offset zero. */
+    duhd.au_filesize = dw_filesize;
+    if (sizeof(fh) >= dw_filesize) {
+        *errcode = DW_DLE_UNIVERSAL_BINARY_ERROR;
+        return DW_DLV_ERROR;
+    }
     res = RRMOA(fd,&fh,0,sizeof(fh), dw_filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
@@ -1268,8 +1273,6 @@ _dwarf_object_detector_universal_head_fd(
         word_swap = _dwarf_memcpy_swap_bytes;
     }
 #endif /* LITTLE- BIG-ENDIAN */
-
-    duhd.au_filesize = dw_filesize;
     ASNAR(word_swap,duhd.au_count,fh.nfat_arch);
     /*  The limit is a first-cut safe heuristic. */
     if (duhd.au_count >= (dw_filesize/2) ) {
@@ -1293,7 +1296,7 @@ _dwarf_object_detector_universal_head_fd(
             free(fa);
             return DW_DLV_ERROR;
         }
-        if (duhd.au_count*sizeof(*fa) >= dw_filesize) {
+        if (sizeof(fh)+duhd.au_count*sizeof(*fa) >= dw_filesize) {
             free(duhd.au_arches);
             duhd.au_arches = 0;
             free(fa);
@@ -1328,7 +1331,7 @@ _dwarf_object_detector_universal_head_fd(
             duhd.au_arches = 0;
             return DW_DLV_ERROR;
         }
-        if (duhd.au_count*sizeof(*fa) >= dw_filesize) {
+        if (sizeof(fh)+duhd.au_count*sizeof(*fa) >= dw_filesize) {
             free(duhd.au_arches);
             duhd.au_arches = 0;
             free(fa);
