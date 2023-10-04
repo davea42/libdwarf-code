@@ -101,7 +101,7 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 0.8.1)
+set(VERSION 0.9.0)
 set(PACKAGE_VERSION "\"${VERSION}\"") 
 set(PACKAGE_NAME "libdwarf" )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
