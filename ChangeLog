@@ -1,3 +1,38 @@
+2023-10-04:  David Anderson
+    commit 174b9777367869ce6d7200a6084bf42b815c690f
+
+    All are now denoted as version 0.9.0
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-10-04:  David Anderson
+    commit 453b45451766676d2a0a539c7177c617316089af
+
+    With pacman commands for use with msys2
+    on Windows so one can build there.
+            modified:   README.cmake
+
+2023-10-04:  David Anderson
+    commit 4b2285d43d14a307ad956fdf46104c2a68a9b718
+
+    Added DW202310-001 ossfuzz 62943
+    on reading Apple Universal Binary
+            modified:   bugxml/data.txt
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-10-04:  David Anderson
+    commit a9c64d849e05b89509c9f51aa4d0febcca518e18
+
+    Now with full universal binary timeline to date.
+            modified:   ChangeLog
+
 2023-10-03:  David Anderson
     commit aea77dad8745d9aad5275c3226e4e3156effa71f
 
