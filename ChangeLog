@@ -1,3 +1,76 @@
+2023-10-03:  David Anderson
+    commit aea77dad8745d9aad5275c3226e4e3156effa71f
+
+    This is the fix for vulnerability ossfuzz id ossfuzz62943,
+    DW202310-001
+    which  has been in the public repository for one day.
+    Was failing to check, very early on, for
+    an incomplete Mach-O universal object.
+
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+    Here is the timeline of Apple Universal Binary handling
+    in libdwarf:
+
+    2023-09-20
+    In github libdwarf-code discussion #185
+    asks if libdwarf supports Mach-O universal objects,
+    which We will abbreviate here as Apple Universal Objects (AUB).
+    Each AUB may have a number of Mach-O executables inside.
+
+    2023-09-21
+    Initial commit in the readelfobj-code project of code
+    reading AUB.
+
+    2023-09-26
+    Completed code handling AUB in readelfobj-code project..
+
+    2023-09-27
+    In the  libdwarf-code project we do a little
+    code cleanup related to Mach-O object files.
+    Added a new API function for
+    AUB in libdwarf.h
+
+    2023-09-29
+    Initial commit in dwarfdump so dwarfdump can
+    select what Mach-O object in an AUB to report on
+    (defaults to object 0(zero)).
+
+    2023-09-29
+    Full AUB support is now public on github,
+    
+    2023-09-30
+    DW202309-002 ossfuzz id 62833
+    DW202309-003 ossfuzz id 62834
+    DW202309-004 ossfuzz id 62842
+    reported. Bugs in AUB handling
+    present publically for one day.
+    
+    2023-10-01
+    Pushed fix for the three bugs in AUB handling:
+    DW202309-002 ossfuzz id 62833
+    DW202309-003 ossfuzz id 62834
+    DW202309-004 ossfuzz id 62842
+    
+    2023-10-02
+    DW202310-001 ossfuzz id 62943 reported
+    on AUB handling.
+    
+    2023-10-03
+    Pushed fix to ossfuzz 62943 DW202310-001
+
+2023-10-03:  David Anderson
+    commit 1eb099f0a31b836d0a9919643debadbe4d482150
+
+    One of the new messages about Mach-O universal
+    binary files had words run togetherr, now fixed.
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+2023-10-02:  David Anderson
+    commit 1f4b850411a93648e804be0d33416190b84b1c54
+
+    Up to date now.
+            modified:   ChangeLog
+
 2023-10-02:  David Anderson
     commit 8554a94e7a3661a34eaa99951bdcee2b0239fd93
 
