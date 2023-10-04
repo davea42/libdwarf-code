@@ -1,4 +1,24 @@
 
+id: DW202310-001
+fuzzer: ossfuzz id: 62943
+datereported: 2023-10-02
+reportedby: David Korczynski
+vulnerability: Heap buffer overflow
+product: libdwarf
+description: The heap buffer overflow was due
+  to a failure to do initial sanity checks on a
+  universal object. The object involved was 
+  not large enough to have a complete universal
+  header.  
+  This bug was in the public repository
+  for three days (in all-new code, for Apple
+  Universal Binary objects).
+datefixed: 2023-10-03
+references: regressiontests/ossfuzz62943/fuzz_init_path-5486726493372416
+gitfixid: aea77dad8745d9aad5275c3226e4e3156effa71f
+tarrelease:
+endrec: DW202310-001
+
 id: DW202309-004
 fuzzer: ossfuzz id: 62842
 datereported: 2023-09-30
@@ -10,6 +30,9 @@ description: The heap buffer overflow in
   for a valid size field (a fuzzed value) in a count
   of array elements..
   Now we check for a sensible count.
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
@@ -26,6 +49,9 @@ description: The September 29 addition of Mach-O
   universal binary support
   resulted in memory leaks due to revising memory alloc/free
   incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
@@ -42,6 +68,9 @@ description: The September 29 addition of Mach-O
   universal binary support
   resulted in memory leaks due to revising memory alloc/free
   incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
 gitfixid: gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122

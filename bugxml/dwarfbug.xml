@@ -3,6 +3,40 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 62943</fuzzer>
+
+<datereported>2023-10-02</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap buffer overflow
+</vulnerability>
+
+<description> The heap buffer overflow was due
+  to a failure to do initial sanity checks on a
+  universal object. The object involved was
+  not large enough to have a complete universal
+  header.
+  This bug was in the public repository
+  for three days (in all-new code, for Apple
+  Universal Binary objects).
+</description>
+
+<datefixed>2023-10-03</datefixed>
+
+<references> regressiontests/ossfuzz62943/fuzz_init_path-5486726493372416
+</references>
+
+<gitfixid>aea77dad8745d9aad5275c3226e4e3156effa71f</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 62842</fuzzer>
 
 <datereported>2023-09-30</datereported>
@@ -19,6 +53,9 @@
   for a valid size field (a fuzzed value) in a count
   of array elements..
   Now we check for a sensible count.
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 </description>
 
 <datefixed>2023-10-01</datefixed>
@@ -49,6 +86,9 @@
   universal binary support
   resulted in memory leaks due to revising memory alloc/free
   incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 </description>
 
 <datefixed>2023-10-01</datefixed>
@@ -79,6 +119,9 @@
   universal binary support
   resulted in memory leaks due to revising memory alloc/free
   incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 </description>
 
 <datefixed>2023-10-01</datefixed>

@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of October 2023</p>
-<p> Record count: 167 </p>
+<p> Record count: 168 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5709,6 +5709,9 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   universal binary support
   resulted in memory leaks due to revising memory alloc/free
   incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 </p>
 <p>datefixed: 2023-10-01
 </p>
@@ -5738,6 +5741,9 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   universal binary support
   resulted in memory leaks due to revising memory alloc/free
   incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 </p>
 <p>datefixed: 2023-10-01
 </p>
@@ -5768,12 +5774,48 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   for a valid size field (a fuzzed value) in a count
   of array elements..
   Now we check for a sensible count.
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
 </p>
 <p>datefixed: 2023-10-01
 </p>
 <p>references:  regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
 </p>
 <p>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202310-001">168) DW202310-001</h3>
+<p>id: DW202310-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 62943
+</p>
+<p>datereported: 2023-10-02
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Heap buffer overflow
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The heap buffer overflow was due
+  to a failure to do initial sanity checks on a
+  universal object. The object involved was
+  not large enough to have a complete universal
+  header.
+  This bug was in the public repository
+  for three days (in all-new code, for Apple
+  Universal Binary objects).
+</p>
+<p>datefixed: 2023-10-03
+</p>
+<p>references:  regressiontests/ossfuzz62943/fuzz_init_path-5486726493372416
+</p>
+<p>gitfixid: aea77dad8745d9aad5275c3226e4e3156effa71f
 </p>
 <p>tarrelease: 
 </p>
