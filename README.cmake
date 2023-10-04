@@ -81,27 +81,32 @@ END of cmake on Linux/Unix/Macos/Freebsd/Openbsd
 ===========================
 USING MSYS2 (WINDOWS) CMAKE.
 
-to use msys2 under mingw64 one must install the right packages
-(speaking here of mingw64 msys2 for Windows, not plain Windows)
-
 
 Do not use the -DWALL option to cmake, that trips
 a minor warning in gcc (treated as an error).
 
 We suggest you use meson for  msys2 builds.
 
-Except where cmake is mentioned specifically
-the following applies to autotools(configure)
-and meson use as well
+Go to msys2.org
 
-After following the instructions for the msys2
-and minw64 install, ensure the following useful
-items are
-installed with packman -S> Use  pacman -Q
-with no options to see what is installed.
+Download a recent .exe from the downloads page.
+I downloaded msys2-x86_64-20230718.exe
+Execute it and follow the instructions on msys2.org
 
-There are also i686 versions of some of
-these if you wish to build 32bit windows applications.
+the following should get you sufficent files for
+building and testing all the build mechanisms:
+
+    pacman -Suy
+    pacman -S git meson cmake automake libtool
+    pacman -S pkgconf make zlib zstd
+    pacman -S vim
+
+
+    to list packages
+    pacman -Q 
+    to remove packages
+    pacman -R  <packagename>
+
 
 cmake will generate ninja makefiles by default, add
 '-G "Unix Makefiles"' to the cmake command line to
@@ -114,76 +119,6 @@ Use
 -DBUILD_NON_SHARED:BOOL=FALSE
 on the cmake command
 to be consistent with normal Windows use.
-
-
-mingw-w64-x86_64-binutils
-mingw-w64-x86_64-brotli
-mingw-w64-x86_64-bzip2
-mingw-w64-x86_64-c-ares
-mingw-w64-x86_64-ca-certificates
-mingw-w64-x86_64-cmake
-mingw-w64-x86_64-crt-git
-mingw-w64-x86_64-curl
-mingw-w64-x86_64-expat
-mingw-w64-x86_64-gcc
-mingw-w64-x86_64-gcc-ada
-mingw-w64-x86_64-gcc-fortran
-mingw-w64-x86_64-gcc-libgfortran
-mingw-w64-x86_64-gcc-libs
-mingw-w64-x86_64-gcc-objc
-mingw-w64-x86_64-gdb
-mingw-w64-x86_64-gdb-multiarch
-mingw-w64-x86_64-gettext
-mingw-w64-x86_64-gmp
-mingw-w64-x86_64-headers-git
-mingw-w64-x86_64-isl
-mingw-w64-x86_64-jansson
-mingw-w64-x86_64-jemalloc
-mingw-w64-x86_64-jsoncpp
-mingw-w64-x86_64-libarchive
-mingw-w64-x86_64-libb2
-mingw-w64-x86_64-libffi
-mingw-w64-x86_64-libgccjit
-mingw-w64-x86_64-libiconv
-mingw-w64-x86_64-libidn2
-mingw-w64-x86_64-libmangle-git
-mingw-w64-x86_64-libpsl
-mingw-w64-x86_64-libssh2
-mingw-w64-x86_64-libsystre
-mingw-w64-x86_64-libtasn1
-mingw-w64-x86_64-libtre-git
-mingw-w64-x86_64-libunistring
-mingw-w64-x86_64-libuv
-mingw-w64-x86_64-libwinpthread-git
-mingw-w64-x86_64-libxml2
-mingw-w64-x86_64-lz4
-mingw-w64-x86_64-make
-mingw-w64-x86_64-meson
-mingw-w64-x86_64-mpc
-mingw-w64-x86_64-mpdecimal
-mingw-w64-x86_64-mpfr
-mingw-w64-x86_64-ncurses
-mingw-w64-x86_64-nghttp2
-mingw-w64-x86_64-ninja
-mingw-w64-x86_64-openssl
-mingw-w64-x86_64-p11-kit
-mingw-w64-x86_64-pkgconf
-mingw-w64-x86_64-python
-mingw-w64-x86_64-readline
-mingw-w64-x86_64-rhash
-mingw-w64-x86_64-sqlite3
-mingw-w64-x86_64-tcl
-mingw-w64-x86_64-termcap
-mingw-w64-x86_64-tk
-mingw-w64-x86_64-tools-git
-mingw-w64-x86_64-tzdata
-mingw-w64-x86_64-windows-default-manifest
-mingw-w64-x86_64-winpthreads-git
-mingw-w64-x86_64-winstorecompat-git
-mingw-w64-x86_64-xxhash
-mingw-w64-x86_64-xz
-mingw-w64-x86_64-zlib
-mingw-w64-x86_64-zstd
 
 To get a usable set of executables
 set a prefix (for cmake,
