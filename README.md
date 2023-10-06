@@ -16,11 +16,11 @@ using configure,cmake, and meson.
 
 ## NOTE on linking against libdwarf.a
 
-If you are not using one of the three build systems
-provided and are linking code against a static 
+If you are linking code against a static 
 library libdwarf.a You must arrange to  define the
 macro LIBDWARF_STATIC in compiling your code that 
 does a #include "libdwarf.h".
+See also READMEwin-msys2.md
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
@@ -31,7 +31,6 @@ here to just building libdwarf and dwarfdump.
 Nothing in the project requires or references
 elf.h, libelf.h, or libelf as of 29 June 2023,
 version 0.8.0.
-
 
 If the objects you work with do not have
 section content compressed
@@ -102,7 +101,7 @@ tool.
     meson 0.55.2  on Ubuntu 20.04 works.
     meson 0.60.3  on Freebsd 12.2 and Freebsd 13.0 works.
 
-See README.cmake for the mingw64 msys2 packages to install
+See READMEwin-msys2.md for the mingw64 msys2 packages to install
 and the command(s) to do that in msys2.
 The tools listed there are also for msys2 meson and
 autotools/configure.
