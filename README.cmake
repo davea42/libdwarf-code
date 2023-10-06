@@ -79,8 +79,7 @@ We suggest you use meson or configure for install
 
 END of cmake on Linux/Unix/Macos/Freebsd/Openbsd
 ===========================
-USING MSYS2 (WINDOWS) CMAKE.
-
+USING MSYS2 (WINDOWS) CMAKE, MESON, CONFIGURE
 
 Do not use the -DWALL option to cmake, that trips
 a minor warning in gcc (treated as an error).
@@ -96,23 +95,37 @@ Execute it and follow the instructions on msys2.org
 the following should get you sufficent files for
 building and testing all the build mechanisms:
 
-    pacman -Suy
-    pacman -S git meson cmake automake libtool
-    pacman -S pkgconf make zlib zstd
-    pacman -S vim
+Avoid using --enable-wall. Avoid other
+compiler options (as presented in
+CFLAGS=<someting) unless you verify they
+cause no build issue.
 
+    basics
+    pacman -Suy
+    pacman -S base-devel git autoconf automake libtool
+    pacnam -S mingw-w64-x86_64-python3 
+    pacman -S mingw-w64-x86_64-toolchain
+    pacman -S mingw-w64-x86_64-zlib 
+    pacman -S mingw-w64-x86_64-zstd 
+    pacman -S mingw-w64-x86_64-doxygen
+
+    extras for meson/cmake
+    pacman -S mingw-w64-x86_64-meson
+    pacman -S mingw-w64-x86_64-cmake
+    pacnam -S mingw-w64-x86_64-python3-pip
+
+    To create a distribution
+    pacman -S mingw-w64-x86_64-xz
 
     to list packages
     pacman -Q 
     to remove packages
     pacman -R  <packagename>
 
-
 cmake will generate ninja makefiles by default, add
 '-G "Unix Makefiles"' to the cmake command line to
 generate makefiles for gnu make, but we suggest you
 use "-G Ninja" for speed and clarity..
-
 
 Use
 -DBUILD_SHARED:BOOL=TRUE  \
@@ -140,8 +153,3 @@ do
   # dwarfdump is usable.
 END USING MSYS2 (WINDOWS) CMAKE.
 ===========================
-  
-
-
-
-
