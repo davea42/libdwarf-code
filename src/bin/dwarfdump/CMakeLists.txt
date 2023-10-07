@@ -60,7 +60,7 @@ set_folder(dwarfdump src/bin/dwarfdump)
 
 
 target_compile_definitions(dwarfdump PRIVATE 
-    "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib")
+    "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib" ${DW_LIBDWARF_STATIC})
 target_compile_options(dwarfdump PRIVATE ${DW_FWALL})
 
 target_link_libraries(dwarfdump PRIVATE ${dwarf-target} ${DW_FZLIB} ${DW_FZSTD} ) 
