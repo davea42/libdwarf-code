@@ -196,9 +196,10 @@ For the full options list , do:
     /path/to/code/configure --help
 
 By default configure compiles and uses libdwarf.a.
-With `--enable-shared` appended to the configure step,
-both libdwarf.a and libdwarf.so
-are built and the runtimes built will reference libdwarf.so.
+With `--enable-shared --disable-sttic"
+appended to the configure step,
+libdwarf.so is built and the runtimes
+built will reference libdwarf.so.
 
 If you get a build failure that mentions
 something about test/ and missing .Po object files
@@ -210,12 +211,6 @@ necessary.
 See:
 https://www.gnu.org/savannah-checkouts/gnu/automake/history/automake-history.html#Dependency-Tracking-Evolution
 
-With 
-
-    --enable-shared --disable-static
-
-appended to the configure command
-libdwarf.so is built and used.  libdwarf.a is not built.
 
 Other options of possible interest:
 
@@ -227,27 +222,17 @@ Other options of possible interest:
 Sanity checking:
 
 gcc has some checks that can be done at runtime.
--fsanitize=undefined is turned on by --enable-sanitize
+-fsanitize=undefined is turned on  for
+configure by --enable-sanitize
 
 ### Options to meson on Windows (Msys2)
 
-All libdwarf builds are automatically shared object (dll)
-builds as of 0.8.0. 
-
-With
-
-    --default-library static
-
-on the meson command line
-one can build libdwarf as an archive and dwarfdump and the
-programs built will use the static library.
-
-The default is shared and can be explicitly
-chosen by:
+As of 0.8.0 meson builds default to be
+shared-library builds.
+the default can be explicity chosen with: 
 
     --default-library shared
 
-Has the same meson setup reporting as on Linux (above).
 
 ### Options to configure on Windows (Msys2)
 
@@ -257,6 +242,8 @@ If you need static libdwarf.a use meson or cmake.
 
 Has the same meson setup reporting as on Linux (above).
 
+See READMEwin-msys2.md
+
 ### Distributing via configure/autotools
 
 When ready to create a new source distribution do
@@ -265,6 +252,13 @@ a build and then
     make distcheck
 
 # INCOMPATIBILITIES. Changes to interfaces
+
+### Comparing libdwarf-0.9.0 to libdwarf-0.8.0
+
+New interfaces allow full support for
+Mach-O (Apple) universal binaries:
+dwarf_init_path_a(), dwarf_init_path_dl_a(), and
+dwarf_get_universalbinary_count().
 
 ### Comparing libdwarf-0.8.0 to libdwarf-0.7.0
 

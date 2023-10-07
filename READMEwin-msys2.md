@@ -1,6 +1,6 @@
 #USING MSYS2 (WINDOWS) CMAKE, MESON, CONFIGURE
 
-Created 6 October 2023
+Created 7 October 2023
 
 msys2 provides an environment much like posix/unix/linux
 with programs precompiled for use on windows
@@ -17,34 +17,42 @@ library libdwarf.a is not supported. A static
 libdwarf.a can be built with meson or cmake.
 
 ### Shared library builds
-All libdwarf builds are automatically shared object (dll)
-builds as of 0.8.0.
+Libdwarf builds from configure
+and cmake  are static (archive) library builds
+by default.
+Meson builds to a shared library by default.
 
-With
+On msys2 with cmake one can generate a shared library
+build with: 
 
-    --default-library static
+    -DBUILD_SHARED=YEs -DBUILD_NON_SHARED=NO
 
-on the meson command line
+
+With the following on the meson command line
 one can build libdwarf as an archive and dwarfdump and the
 programs built will use the static library.
 
-The default is shared and can be explicitly
+    --default-library static
+
+
+The meson default is shared and can be explicitly
 chosen by:
 
     --default-library shared
 
-Has the same meson setup reporting as on Linux (above).
-
 configure will only allow generation of shared library
 builds, while for cmake and meson one can choose
-wither to build a shared library or an archive library
+whether to build a shared library or a static (archive) library
 (libdwarf.a).
 
+On msys2 with configure one gets a shared library build with:
+
+    --enable-shared --disable-static
 
 ### NOTE on linking against libdwarf.a
 
 If you are are linking code against a static 
-library libdwarf.a you must arrange to  define the
+library libdwarf.a you must arrange to define the
 macro LIBDWARF_STATIC in compiling your code that
 does a #include "libdwarf.h".
 
@@ -86,7 +94,7 @@ building and testing all the build mechanisms:
     pacman -S mingw-w64-x86_64-cmake
     pacnam -S mingw-w64-x86_64-python3-pip
 
-    To create a distribution
+    To create a distribution one needs xz:
     pacman -S mingw-w64-x86_64-xz
 
     to list packages
@@ -94,22 +102,19 @@ building and testing all the build mechanisms:
     to remove packages
     pacman -R  <packagename>
 
-## cmake specific
+## Ninja speed
+
 cmake will generate ninja makefiles by default, add
 '-G "Unix Makefiles"' to the cmake command line to
 generate makefiles for gnu make, but we suggest you
 use "-G Ninja" for speed and clarity..
 
-Use
--DBUILD_SHARED:BOOL=TRUE  \
--DBUILD_NON_SHARED:BOOL=FALSE
-on the cmake command
-to be consistent with normal Windows use.
+## Set a Prefix for test installs
 
 To get a usable set of executables
 set a prefix (for cmake,
--DCMAKE_INSTALL_PREFIX=/c/msys64/usr),
-presuming  the bin directory
+-DCMAKE_INSTALL_PREFIX=$HOME/bin
+presuming the bin directory
 is something in your $PATH in msys2.
 Set an appropriate prefix whichever
 build tool you use.

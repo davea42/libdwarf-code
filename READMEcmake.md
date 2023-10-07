@@ -1,6 +1,6 @@
 # Cmake on Unix/linux/MacOS/FreeBSD/OpenBSD
 Created 26 April 2019
-Updated 6 October 2023
+Updated 7 October 2023
 
 Consider switching entirely to meson for your build.
 
@@ -13,7 +13,12 @@ cmake builds a static library: libdwarf.a
 For cmake, ignore the autogen.sh
 script in the base source directory.
 
-By default cmake builds just libdwarf and dwarfdump.
+By default cmake builds just libdwarf and dwarfdump
+and libdwarf is a static (archive) library.
+To switch to a shared library output with cmake add
+the following to the cmake command:
+
+    -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
 
 Lets assume the base directory of the the libdwarf source in a
 directory named 'code' inside the directory '/path/to/' Always
