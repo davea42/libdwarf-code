@@ -1324,7 +1324,7 @@ _dwarf_object_detector_universal_head_fd(
     } else { /* 64 */
         struct fat_arch_64 * fa = 0;
         fa = (struct fat_arch_64 *)calloc(duhd.au_count,
-            sizeof(struct fat_arch));
+            sizeof(struct fat_arch_64));
         if (!fa) {
             *errcode = DW_DLE_ALLOC_FAIL;
             free(duhd.au_arches);
