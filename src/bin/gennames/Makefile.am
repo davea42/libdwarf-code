@@ -18,6 +18,7 @@ gennames_SOURCES = gennames.c \
 gennames_CPPFLAGS = \
   -I$(top_srcdir)/src/bin/dwarfdump \
   -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir) \
   -I$(top_builddir)/src/lib/libdwarf
 gennames_CFLAGS = $(DWARF_CFLAGS_WARN)
 
