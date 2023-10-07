@@ -87,9 +87,10 @@ CMakeLists.txt \
 CODINGSTYLE.md \
 CONTRIBUTING.md \
 cmake/config.h.cmake \
-README \
 README.md \
-README.cmake \
+READMEmacos.md \
+READMEcmake.md \
+READMEwin-msys2.md \
 libdwarf.pc.in \
 libdwarfp.pc.in \
 meson.build \
@@ -102,5 +103,3 @@ scripts/ChangeLog2019 \
 scripts/ChangeLog2020 \
 scripts/CLEANUP \
 .travis.yml
-
-# AUTHORS, ChangeLog and COPYING must be present
