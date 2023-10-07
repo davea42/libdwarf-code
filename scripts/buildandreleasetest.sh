@@ -138,7 +138,8 @@ echo cd $abld
 safecd $abld "FAIL A cd failed"
 echo "now: $configloc --prefix=$ainstall  $nonstdprintf"
 $configloc --prefix=$ainstall $nonstdprintf
-chkres $? "FAIL A4a configure fail"
+r=$?
+chkres $r "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make
 # Adding run of the new make choice on 15 July 2021
