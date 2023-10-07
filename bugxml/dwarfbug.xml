@@ -3,6 +3,36 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 63024</fuzzer>
+
+<datereported>2023-10-06</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap buffer overflow
+</vulnerability>
+
+<description> A copy-paste error lead to
+  a heap buffer overflow. Named the wrong struct
+  in calling calloc().
+  The function with the bug was added seven days ago.
+</description>
+
+<datefixed>2023-10-07</datefixed>
+
+<references> regressiontests/ossfuzz63024/fuzz_init_path-5486726493372416
+</references>
+
+<gitfixid>3a658bd1dd7437948cecbf82bb9b24f5f6122a7d</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 62943</fuzzer>
 
 <datereported>2023-10-02</datereported>
