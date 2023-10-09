@@ -55,7 +55,16 @@ fi
 # prints differently for different time zones.
 textlim=700
 cp "$top_srcdir/src/bin/dwarfdump/dwarfdump.conf" .
-dd=$top_blddir/src/bin/dwarfdump/dwarfdump
+if [ -f $top_blddir/src/bin/dwarfdump/.libs/dwarfdump.exe ]
+then
+  bldx=$top_blddir/src 
+  dd=$bldx/bin/dwarfdump/.libs/dwarfdump.exe
+  cp $bldx/lib/libdwarf/.libs/msys-dwarf-*.dll \
+     $bldx/bin/dwarfdump/.libs/
+  bldx=
+else
+  dd=$top_blddir/src/bin/dwarfdump/dwarfdump
+fi
 
 # Delete what follows 'last time 0x0'
 fixlasttime() {

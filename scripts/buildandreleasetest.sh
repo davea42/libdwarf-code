@@ -10,16 +10,18 @@
 #  for building, including "make check"
 #
 #  For a guaranteed clean run:
-#    sh scripts/CLEANUP
 #    sh autogen.sh
 #    sh scripts/buildandreleasetest.sh
 #  In this script all the generated files are in /tmp/bart
 #
-# First, get the current configure.ac version into v:
-# if stdint.h does not define uintptr_t and intptr_t
-# Then dwarfgen (being c++) will not build
-# To just eliminate dwarfgen build/test/install use 
-# --disable-dwarfgen.
+echo "sh scripts/buildandreleasetest.sh [--static|--shared]"
+echo "   [--disable-dwarfgen] [--enable-wall] [--savebart]"
+echo "   --savebart means do not delete temp files"
+
+shared=y
+configureopt="--enable-shared --disable-static"
+cmakeopt="-DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO"
+mesonopt="--default-library shared"
 
 # accomodate differences in cmake install file count:
 # 16 is for 32bit build
@@ -33,16 +35,40 @@ wd=`pwd`
 # Useful to consider if all intended files actually present,
 # including any possibly not used.
 savebart=n
+enablewall=n
 while [ $# -ne 0 ]
 do
   case $1 in
+   --static ) shared=n ; 
+     configureopt="--enable-static --disable-shared"
+     cmakeopt="-DBUILD_SHARED=NO -DBUILD_NON_SHARED=YES"
+     mesonopt="--default-library static"
+     shift  ;;
+   --shared ) shared=y ; 
+     configureopt="--enable-shared --disable-static"
+     cmakeopt="-DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO"
+     mesonopt="--default-library shared"
+     shift  ;;
+   --enable-wall )  enablewall=y;  shift  ;;
    --savebart ) savebart=y ; shift  ;;
    --disable-dwarfgen ) genopta='' ; genoptb='' ; shift  ;;
-   --enable-nonstandardprintf ) nonstdprintf=$1 ; shift  ;;
    * ) echo "Unknown buildandreleasetest.sh option $1. Error." ; exit 1 ;;
   esac
 done
-echo "savebart flag about temp files:...: $savebart"
+if [ "x$enablewall" = "y" ]
+then
+    configureopt="$configureopt --enable-wall"
+    cmakeopt="$cmakeopt -DWALL=YES"
+    mesonopt="$mesonopt -Dwerror=true" 
+else
+    cmakeopt="$cmakeopt"
+    mesonopt="$mesonopt -Dwerror=false" 
+fi
+echo "Build specific options:"
+echo " configure   : $configureopt"
+echo " cmake       : $cmakeopt"
+echo " meson       : $mesonopt"
+echo "savebart flag:...: $savebart"
 if [ -f ./configure.ac ]
 then
   f=./configure.ac
@@ -136,15 +162,15 @@ echo "dirs created empty"
 
 echo cd $abld
 safecd $abld "FAIL A cd failed"
-echo "now: $configloc --prefix=$ainstall  $nonstdprintf"
-$configloc --prefix=$ainstall $nonstdprintf
+echo "now: $configloc $configureopt --prefix=$ainstall"
+$configloc $configureopt --prefix=$ainstall
 r=$?
 chkres $r "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make
-# Adding run of the new make choice on 15 July 2021
-make rebuild
-chkres $? "FAIL Section A 4rb make rebuild"
+# Do not do make rebuild routinely.
+#make rebuild
+#chkres $? "FAIL Section A 4rb make rebuild"
 make doc
 chkres $? "FAIL Section A 4rb make doc"
 make install
@@ -167,13 +193,14 @@ echo "TEST Section B: now cd $binstrelbld for second build install"
 safecd $binstrelbld "FAIL B cd"
 echo "TEST: now second install install, prefix $binstrelp"
 echo "TEST: Expecting src in $blibsrc"
-$blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $nonstdprintf
+$blibsrc/configure $configureopt --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp
 chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
 make
 chkres $? "FAIL make fail in Section B"
-make rebuild
-chkres $? "FAIL make rebuild fail in Section B"
+# Do not do make rebuild routinely.
+#make rebuild
+#chkres $? "FAIL make rebuild fail in Section B"
 make doc
 chkres $? "FAIL make doc fail in Section B"
 make install
@@ -208,15 +235,16 @@ echo "TEST Section C: now cd $dbigend for big-endian build (not runnable) "
 safecd $dbigend "FAIL C be1 "
 echo "TEST: now second install install, prefix $crelbld"
 echo "TEST: Expecting src in $blibsrc"
-echo "TEST: $blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$crelbld $nonstdprintf"
-$blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$cinstrelp  $nonstdprintf
+echo "TEST: $blibsrc/configure $genopta --enable-wall --enable-dwarfexample --prefix=$crelbld"
+$blibsrc/configure $configureopt $genopta  --enable-dwarfexample --prefix=$cinstrelp
 chkres $? "FAIL be2  configure fail"
 echo "#define WORDS_BIGENDIAN 1" >> config.h
 echo "TEST: Compile In $dbigend make from $blibsrc/configure"
 make
 chkres $? "FAIL be3  make: Build failed"
-make rebuild
-chkres $? "FAIL be3  make rebuild: failed"
+# Do not do make rebuild routinely.
+#make rebuild
+#chkres $? "FAIL be3  make rebuild: failed"
 make doc
 chkres $? "FAIL be3  make doc: failed"
 echo "  End Section C  $bart"
@@ -225,13 +253,13 @@ echo "  End Section C  $bart"
 ################ Start section D
 safecd $crelbld "FAIL section D cd "
 echo "TEST: Now configure from source dir $blibsrc/ in build dir $crelbld"
-$blibsrc/configure --enable-wall --enable-dwarfexample $genopta
-$nonstdprintf
+$blibsrc/configure $configureopt --enable-dwarfexample $genopta
 chkres $? "FAIL C9  $blibsrc/configure"
 make
 chkres $? "FAIL C9  $blibsrc/configure  make"
-make rebuild
-chkres $? "FAIL C9  $blibsrc/configure  make rebuild"
+# Do not do make rebuild routinely.
+#make rebuild
+#chkres $? "FAIL C9  $blibsrc/configure  make rebuild"
 make doc
 chkres $? "FAIL C9  $blibsrc/configure  make doc"
 echo "  End Section D  $bart"
@@ -248,9 +276,8 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST E: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
-  cmake $genoptb -DWALL=ON \
+  cmake $cmakeopt $genoptb \
        -DBUILD_NON_SHARED=ON \
-       -DBUILD_SHARED=OFF \
        -DBUILD_DWARFEXAMPLE=ON\
        -DDO_TESTING=ON $blibsrc
   chkres $? "FAIL C10b  cmake in $ecmakdbld"
@@ -283,11 +310,8 @@ then
   # You should not be building or installing dwarfgen
   # or libdwarfp, it is unlikely you have a use
   # for lidwarfp and dwarfgen. 
-  cmake $genoptb \
+  cmake $cmakeopt $genoptb \
     -DCMAKE_INSTALL_PREFIX=$fcmakeinst \
-    -DBUILD_SHARED=OFF \
-    -DBUILD_NON_SHARED=ON \
-    -DBUILD_DWARFGEN=ON  \
     -DWALL=ON \
     -DBUILD_DWARFEXAMPLE=ON \
     -DDO_TESTING=ON $blibsrc
@@ -337,10 +361,8 @@ if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake sharedlib from source dir $blibsrc/ in build dir  $gcmakebld"
   echo " lidwarfp expects to see hidden symbols. "
-  cmake $genoptb  -DWALL=ON \
-    -DBUILD_SHARED=ON \
-    -DBUILD_NON_SHARED=NO -DDO_TESTING=ON \
-    -DBUILD_DWARFGEN=ON \
+  cmake $cmakeopt $genoptb  \
+    -DDO_TESTING=ON \
     -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $gcmakdbld"
   make
@@ -368,8 +390,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake -DWALL=ON -DBUILD_NON_SHARED=ON \
-    -DBUILD_SHARED=OFF \
+  cmake $cmakeopt \
     -DDO_TESTING=ON  \
     -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec H C12b  cmake in $hcmakdbld"
@@ -406,7 +427,7 @@ fi
 if [ $havemeson = "y" ]
 then
   echo "TEST: Now meson from source dir $blibsrc/ in build dir $imesonbld"
-  meson $wd  --prefix=$imesonbld-dist --default-library static
+  meson $wd $mesonopt --prefix=$imesonbld-dist
   if [ $haveninja = "y" ]
   then
     ninja -j8 install

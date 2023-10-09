@@ -64,8 +64,16 @@ b=$top_srcdir/test/jitreader.base
 localsrc=$top_srcdir/test
 testbin=$top_blddir/test
 tx=$testbin/junk.jitreader.new
-jr=$top_blddir/src/bin/dwarfexample/jitreader
-
+if [ -f $top_blddir/src/bin/dwarfexample/.libs/jitreader.exe ]
+then
+  bldx=$top_blddir/src
+  dd=$bldx/bin/dwarfexample/.libs/jitreader.exe
+  cp $bldx/lib/libdwarf/.libs/msys-dwarf-*.dll \
+     $bldx/bin/dwarfexample/.libs/
+  bldx=
+else
+  jr=$top_blddir/src/bin/dwarfexample/jitreader
+fi
 rm -f $tx
 echo "Running: $jr with env var DWTOPSRCDIR: $DWTOPSRCDIR"
 $jr
