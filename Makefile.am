@@ -41,6 +41,9 @@ rebuild:
 doc:
 	make -C doc doc
 
+### Avoids README complaints from earlier versions of automake.
+README: README.md
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdwarf.pc
 if HAVE_DWARFGEN 
