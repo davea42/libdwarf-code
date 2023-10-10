@@ -5345,6 +5345,14 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
     On success returns the address of the row of
     frame data which may be a few counts off of
     the pc requested.
+    @param dw_has_more_rows
+    On success returns FALSE if there are no more rows,
+    otherwise returns TRUE.
+    @param dw_subsequent_pc
+    On success this returns the address of the next pc
+    for which there is a register row, making access
+    to all the rows in sequence much more efficient
+    than just adding 1 to a pc value.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -5352,6 +5360,23 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
     FDE passed in and there is some applicable row
     in the table.
 
+*/
+DW_API int dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde dw_fde,
+    Dwarf_Addr       dw_pc_requested,
+    Dwarf_Regtable3* dw_reg_table,
+    Dwarf_Addr*      dw_row_pc,
+    Dwarf_Bool*      dw_has_more_rows,
+    Dwarf_Addr*      dw_subsequent_pc,
+    Dwarf_Error*     dw_error);
+
+/*! @brief @brief Return information on frame registers at a given pc value
+
+    Identical to dwarf_get_fde_info_for_all_regs3_b() except that
+    this doesn't output dw_has_more_rows and dw_subsequent_pc.
+
+    If you need to iterate through all rows of the FDE, consider
+    switching to dwarf_get_fde_info_for_all_regs3_b() as it is more
+    efficient.
 */
 DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Dwarf_Addr       dw_pc_requested,
