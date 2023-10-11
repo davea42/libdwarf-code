@@ -70,7 +70,7 @@ echo " configure   : $configureopt"
 echo " cmake       : $cmakeopt"
 echo " meson       : $mesonopt"
 echo "savebart flag:...: $savebart"
-if [ $staticbld = "y" ]
+if [ "$staticbuild" = "y" ]
 then
   if [ "x$USERDOMAIN" = "xMSYS" ]
   then
