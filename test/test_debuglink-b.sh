@@ -47,6 +47,17 @@ then
 fi
 # bldloc is the executable directories.
 bldloc=$top_blddir/src/bin/dwarfexample
+if [ -f $bldloc/.libs/dwdebuglink.exe ]
+then
+  bldx=$bldloc/dwarfexample
+  dwdl=$bldloc/.libs/debuglink.exe
+  cp $top_blddir/src/lib/libdwarf/.libs/msys-dwarf-*.dll \
+     $bldloc/.libs/
+  bldx=
+else
+  dwdl=$bldloc/dwdebuglink
+fi
+
 #localsrc is the source dir with baseline data
 localsrc=$top_srcdir/test
 srcdir=$top_srcdir/test
@@ -71,8 +82,8 @@ echo "test_debuglink-b.sh test2"
 o=junk.dlinkb
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
-echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
-$bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
+echo "Run: $dwdl $p $p2 $testsrc/dummyexecutable "
+$dwdl $p $p2 $testsrc/dummyexecutable > $testbin/$o
 r=$?
 chkres $r "running dwdebuglink test2"
 ${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c

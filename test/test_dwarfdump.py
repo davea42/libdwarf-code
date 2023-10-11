@@ -9,6 +9,7 @@
 
 import os
 import sys
+import shutil
 from subprocess import Popen, PIPE, STDOUT
 
 # For reporting differences.
@@ -165,6 +166,17 @@ def rundwarfdump(td, dd, dwarfdumppath, objpath, lmaxlines):
     return out
 
 
+# we are in windows copy dll from lib build to
+# the dwarfdump build directory.
+def copydll(td):
+    dllpath = os.path.join(td.bldbase,
+        "src/lib/libdwarf/libdwarf-0.dll")
+    targetdllpath= os.path.join(td.bldbase,
+        "src/bin/dwarfdump/libdwarf-0.dll")
+    if os.path.exists(dllpath):
+        if not os.path.exists(targetdllpath):
+            shutil.copy(dllpath,targetdllpath)
+
 if __name__ == "__main__":
     if len(sys.argv) != 5:
         print("FAIL test_dwarfdump.py arg count wrong")
@@ -198,8 +210,13 @@ if __name__ == "__main__":
             )
             copytobuild(confsrcpath, mesonloc)
     dwarfdumppath = os.path.join(
-        td.bldbase, "src/bin/dwarfdump/dwarfdump"
-    )
+        td.bldbase, "src/bin/dwarfdump/dwarfdump")
+    dwarfdumppathexe = os.path.join(
+        td.bldbase, "src/bin/dwarfdump/dwarfdump.exe")
+    if os.path.exists(dwarfdumppathexe):
+        dwarfdumppath = dwarfdumppathexe
+        copydll(td)
+
     objpath = os.path.join(td.srcbase, "test", dd.testobj)
     baseline_path = os.path.join(td.srcbase, "test", dd.testbase)
     testout_path = os.path.join(td.bldbase, "test", dd.newtest)

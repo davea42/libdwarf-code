@@ -55,12 +55,19 @@ fi
 # prints differently for different time zones.
 textlim=700
 cp "$top_srcdir/src/bin/dwarfdump/dwarfdump.conf" .
+# detects Windows msys3 mingw executable
 if [ -f $top_blddir/src/bin/dwarfdump/.libs/dwarfdump.exe ]
 then
   bldx=$top_blddir/src 
   dd=$bldx/bin/dwarfdump/.libs/dwarfdump.exe
-  cp $bldx/lib/libdwarf/.libs/msys-dwarf-*.dll \
-     $bldx/bin/dwarfdump/.libs/
+  if [ ! -f  $bldx/bin/dwarfdump/.libs/libdwarf-*.dll ]
+  then
+    x="cp $bldx/lib/libdwarf/.libs/libdwarf-*.dll \
+     $bldx/bin/dwarfdump/.libs/"
+    echo "Do: $x"
+    $x
+    ls  $bldx/bin/dwarfdump/.libs/libdwarf*
+  fi
   bldx=
 else
   dd=$top_blddir/src/bin/dwarfdump/dwarfdump
