@@ -25,7 +25,7 @@ Meson builds to a shared library by default.
 On msys2 with cmake one can generate a shared library
 build with: 
 
-    -DBUILD_SHARED=YEs -DBUILD_NON_SHARED=NO
+    -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
 
 
 With the following on the meson command line
@@ -77,7 +77,19 @@ Download a recent .exe from the downloads page.
 For example msys2-x86_64-20230718.exe
 Execute it and follow the instructions on msys2.org
 
-the following should get you sufficent files for
+A straightforward way to use the tests etc in
+the source is to find the appropriate MSYS2
+shell program and put a link to it on the desktop.
+The Windows list of applications will show MSYS2
+and under that category there will be a list of
+candidates to use.
+
+The useful candidates on x86_64 are are
+
+    MSYS2 MINGW64  The compiler is gcc
+    MSYS2 CLANG64  The compiler is clang
+
+the following should get you sufficient files for
 building and testing all the build mechanisms:
 
     basics
@@ -104,7 +116,7 @@ building and testing all the build mechanisms:
 
 ## Ninja speed
 
-cmake will generate ninja makefiles by default, add
+cmake will generate ninja makefiles on mingw by default, add
 '-G "Unix Makefiles"' to the cmake command line to
 generate makefiles for gnu make, but we suggest you
 use "-G Ninja" for speed and clarity..

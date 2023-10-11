@@ -2,21 +2,19 @@
 # Copyright (C) 2021 David Anderson
 # This test script is in the public domain for use
 # by anyone for any purpose.
-# buildandrelease test [--savebart]
-# [--disable-dwarfgen] 
-# [--enable-nonstandardprintf] 
-#  scripts/buildandreleasetest.sh
+echo "sh scripts/buildandreleasetest.sh [--static|--shared]"
+echo "   [--disable-dwarfgen] [--enable-wall] [--savebart]"
+echo "   --savebart means do not delete temp files"
+echo "   Defaults to shared library build and use"
+
 #  A script verifying the distribution gets all needed files
 #  for building, including "make check"
 #
 #  For a guaranteed clean run:
 #    sh autogen.sh
 #    sh scripts/buildandreleasetest.sh
-#  In this script all the generated files are in /tmp/bart
+#  All the generated files are in /tmp/bart
 #
-echo "sh scripts/buildandreleasetest.sh [--static|--shared]"
-echo "   [--disable-dwarfgen] [--enable-wall] [--savebart]"
-echo "   --savebart means do not delete temp files"
 
 shared=y
 configureopt="--enable-shared --disable-static"
@@ -26,8 +24,8 @@ mesonopt="--default-library shared"
 # accomodate differences in cmake install file count:
 # 16 is for 32bit build
 # 18 is for 64bit build
-expectlen32=16
-expectlen64=18
+#expectlen32=16
+#expectlen64=18
 genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
 wd=`pwd`
@@ -36,15 +34,18 @@ wd=`pwd`
 # including any possibly not used.
 savebart=n
 enablewall=n
+staticbuild=n
 while [ $# -ne 0 ]
 do
   case $1 in
    --static ) shared=n ; 
+     staticbuild=y
      configureopt="--enable-static --disable-shared"
      cmakeopt="-DBUILD_SHARED=NO -DBUILD_NON_SHARED=YES"
      mesonopt="--default-library static"
      shift  ;;
    --shared ) shared=y ; 
+     staticbuild=n
      configureopt="--enable-shared --disable-static"
      cmakeopt="-DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO"
      mesonopt="--default-library shared"
@@ -69,6 +70,16 @@ echo " configure   : $configureopt"
 echo " cmake       : $cmakeopt"
 echo " meson       : $mesonopt"
 echo "savebart flag:...: $savebart"
+if [ $staticbld = "y" ]
+then
+  if [ "x$USERDOMAIN" = "xMSYS" ]
+  then
+    echo "Libdwarf configure objects to a static build"
+    echo "on Windows Msys2 so this script will not work"
+    echo "here. Giving up."
+    exit 1
+  fi
+fi
 if [ -f ./configure.ac ]
 then
   f=./configure.ac
@@ -128,6 +139,26 @@ safemv() {
   chkres $?  "mv $f $t failed  $3"
 }
 
+showinstalled()  {
+  dir=$1
+  msg=$2
+  tmpdir=$3
+  
+  echo "REPORT OF INSTALLED FILES  in $dir $msg"
+  if [ ! -d $dir ]
+  then
+     echo "Target install directory $1 does not exist"
+     echo "Fatal error"
+     exit 1
+  fi
+  find $dir -type f -print >$tmpdir
+  len=`wc -l <$tmpdir`
+  echo "Number of files $len"
+  cat $tmpdir
+  echo "======end of install list"
+  echo ""
+}
+
 configloc=$wd/configure
 bart=/tmp/bart
 abld=$bart/a-dwbld
@@ -150,7 +181,9 @@ mdirs $hcmakebld $imesonbld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
+btfoutb=$bart/b-tarftoutb
 ftfout=$bart/f-tarftout
+itfout=$bart/i-tarftout
 rm -rf $bart/a-dwrelease
 rm -rf $blibsrc
 
@@ -168,13 +201,11 @@ r=$?
 chkres $r "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make
-# Do not do make rebuild routinely.
-#make rebuild
-#chkres $? "FAIL Section A 4rb make rebuild"
 make doc
 chkres $? "FAIL Section A 4rb make doc"
 make install
 chkres $? "FAIL Section A 4b make install"
+showinstalled $ainstall "using configure" $atfout
 ls -lR $ainstall
 make dist
 chkres $? "FAIL make dist Section A" 
@@ -198,14 +229,11 @@ chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
 make
 chkres $? "FAIL make fail in Section B"
-# Do not do make rebuild routinely.
-#make rebuild
-#chkres $? "FAIL make rebuild fail in Section B"
 make doc
 chkres $? "FAIL make doc fail in Section B"
 make install
 chkres $? "FAIL Section B install fail"
-ls -lR $binstrelp
+showinstalled $binstrelp "config, secondary install" $btfoutb
 echo "TEST: Now lets see if make check works"
 make check
 chkres $? "FAIL make check in Section B"
@@ -242,9 +270,6 @@ echo "#define WORDS_BIGENDIAN 1" >> config.h
 echo "TEST: Compile In $dbigend make from $blibsrc/configure"
 make
 chkres $? "FAIL be3  make: Build failed"
-# Do not do make rebuild routinely.
-#make rebuild
-#chkres $? "FAIL be3  make rebuild: failed"
 make doc
 chkres $? "FAIL be3  make doc: failed"
 echo "  End Section C  $bart"
@@ -257,9 +282,6 @@ $blibsrc/configure $configureopt --enable-dwarfexample $genopta
 chkres $? "FAIL C9  $blibsrc/configure"
 make
 chkres $? "FAIL C9  $blibsrc/configure  make"
-# Do not do make rebuild routinely.
-#make rebuild
-#chkres $? "FAIL C9  $blibsrc/configure  make rebuild"
 make doc
 chkres $? "FAIL C9  $blibsrc/configure  make doc"
 echo "  End Section D  $bart"
@@ -322,24 +344,7 @@ then
   chkres $? "FAIL Sec F C11d  cmake make test in $fcmakebld"
   make install
   chkres $? "FAIL Sec F C11d  cmake install in $fcmakebld"
-  find $fcmakeinst -type f -print >$ftfout
-  len=`wc -l <$ftfout`
-  exp=18
-  echo "Examine contents of cmake install dir $fcmakeinst"
-  echo "Number of files in installtarg: $len"
-  echo "Number of files expected      : $expectcmakelen" 
-  if [ $len -ne $expectlen64 ]
-  then
-    if [ $len -ne $expectlen32 ]
-    then 
-      echo "Contents of failing $ftfout"
-      cat $ftfout
-      echo "FAIL Sec F C11inst install loc contents want $expectlen32"
-      echo "FAIL Sec F C11inst or $expectlen64 "
-      echo "FAIL Sec F C11inst got $len"
-      exit 1
-    fi
-  fi
+  showinstalled $fcmakeinst "using cmake" $ftfout
   ctest -R self
   chkres $? "FAIL Sec F C11e  ctest -R self in $fcmakebld"
 else
@@ -431,7 +436,8 @@ then
   if [ $haveninja = "y" ]
   then
     ninja -j8 install
-    chkres $? " FAIL C13 ninja -j8"
+    chkres $? " FAIL C13 ninja -j8 install"
+    showinstalled $imesonbld-dist "using meson" $itfout
     ninja test
     chkres $? " FAIL C13 ninja test"
   else
