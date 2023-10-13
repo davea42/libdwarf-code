@@ -16,6 +16,10 @@ echo "   Defaults to shared library build and use"
 #  All the generated files are in /tmp/bart
 #
 
+echo 'Starting buildandreleasetest.sh:' \
+   `date "+%Y-%m-%d %H:%M:%S"`
+stsecs=`date '+%s'
+
 shared=y
 configureopt="--enable-shared --disable-static"
 cmakeopt="-DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO"
@@ -450,7 +454,12 @@ echo " End Section I  $bart (ls output follows)"
 ls  $bart
 ############ End Section I
 
-
+ndsecs=`date '+%s'`
+showminutes() {
+   t=`expr  \( $2 \- $1 \+ 29  \) \/ 60`
+   echo "Run time in minutes: $t"
+}
+showminutes $stsecs $ndsecs
 
 echo "PASS scripts/buildandreleasetest.sh"
 if [ "$savebart" = "n" ]

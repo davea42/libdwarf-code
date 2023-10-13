@@ -8,6 +8,11 @@ echo "start run-all-tests.sh at $start"
 echo "This removes and recreates /tmp/dw-regression"
 echo "Use --enable-nonstandardprintf to use Windows long long"
 echo "  printf formats."
+
+echo 'Starting run-all-tests.sh' \
+   `date "+%Y-%m-%d %H:%M:%S"`
+stsecs=`date '+%s'
+
 # Removes and recreates /tmp/dwtestalldd directory
 # for the regression tests.
 
@@ -230,12 +235,14 @@ fi
 echo "run-all-tests.sh started at $start"
 don=`date`
 echo "run-all-tests.sh done    at $don"
+
 ndsecs=`date '+%s'`
 showminutes() {
    t=`expr  \( $2 \- $1 \+ 29  \) \/ 60`
    echo "Run time in minutes: $t"
 }
 showminutes $stsecs $ndsecs
+
 if [ $failcount -ne 0 ]
 then
    echo "run-all-tests.sh FAIL count $failcount"
