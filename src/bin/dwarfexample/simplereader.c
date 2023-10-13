@@ -648,10 +648,9 @@ read_cu_list(Dwarf_Debug dbg)
     Dwarf_Half     header_cu_type = unittype;
     Dwarf_Bool     is_info = g_is_info;
     Dwarf_Error error;
-    int cu_number = 0;
     Dwarf_Error *errp  = 0;
 
-    for (;;++cu_number) {
+    for (;;) {
         Dwarf_Die no_die = 0;
         Dwarf_Die cu_die = 0;
         int res = DW_DLV_ERROR;

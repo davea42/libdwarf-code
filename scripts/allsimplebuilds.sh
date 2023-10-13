@@ -137,7 +137,7 @@ chkres $? "cd to $tpath fails"
 rm -rf *
 
 echo "Building with configure, shared library"
-if [ "$havemake" = "no" -o "$haveautomake" = "no" ] 
+if [ "$havemake" = "no" ] 
 then
    echo "SKIP configure shared library "
 else
@@ -163,12 +163,12 @@ fi
 
 echo ""
 echo "Building with configure, static library"
-if [ "$havemake" = "no" -o  "$haveautomake" = "no" ] 
+if [ "$havemake" = "no" ] 
 then
-   echo "SKIP configure shared library"
+   echo "SKIP configure static library"
 elif [ "$havemsys2" = "yes"  ]
 then
-   echo "SKIP configure shared library on Windows msys2"
+   echo "SKIP configure static library on Windows msys2"
 else
   prefx=$tbase/allconfigurestaticinstalled
   bb=$bbase/configurestatic
