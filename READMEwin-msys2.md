@@ -121,6 +121,14 @@ cmake will generate ninja makefiles on mingw by default, add
 generate makefiles for gnu make, but we suggest you
 use "-G Ninja" for speed and clarity..
 
+## Basic Testing of libdwarf
+
+This checks for the existence critical executables
+such as cmake,meson,and ninja and only runs builds
+that could work.
+
+    sh scripts/allsimplebuilds.sh
+
 ## Set a Prefix for test installs
 
 To get a usable set of executables
