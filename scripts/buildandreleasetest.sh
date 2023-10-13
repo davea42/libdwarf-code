@@ -18,7 +18,7 @@ echo "   Defaults to shared library build and use"
 
 echo 'Starting buildandreleasetest.sh:' \
    `date "+%Y-%m-%d %H:%M:%S"`
-stsecs=`date '+%s'
+stsecs=`date '+%s'`
 
 shared=y
 configureopt="--enable-shared --disable-static"
