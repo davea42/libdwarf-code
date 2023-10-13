@@ -302,7 +302,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST E: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
-  cmake $cmakeopt $genoptb \
+  cmake -G "Unix Makefiles" $cmakeopt $genoptb \
        -DBUILD_NON_SHARED=ON \
        -DBUILD_DWARFEXAMPLE=ON\
        -DDO_TESTING=ON $blibsrc
@@ -336,7 +336,7 @@ then
   # You should not be building or installing dwarfgen
   # or libdwarfp, it is unlikely you have a use
   # for lidwarfp and dwarfgen. 
-  cmake $cmakeopt $genoptb \
+  cmake -G "Unix Makefiles" $cmakeopt $genoptb \
     -DCMAKE_INSTALL_PREFIX=$fcmakeinst \
     -DWALL=ON \
     -DBUILD_DWARFEXAMPLE=ON \
@@ -370,7 +370,7 @@ if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake sharedlib from source dir $blibsrc/ in build dir  $gcmakebld"
   echo " lidwarfp expects to see hidden symbols. "
-  cmake $cmakeopt $genoptb  \
+  cmake -G "Unix Makefiles" $cmakeopt $genoptb  \
     -DDO_TESTING=ON \
     -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $gcmakdbld"
@@ -399,7 +399,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake $cmakeopt \
+  cmake -G "Unix Makefiles" $cmakeopt \
     -DDO_TESTING=ON  \
     -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec H C12b  cmake in $hcmakdbld"
