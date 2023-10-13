@@ -127,6 +127,15 @@ For a faster build, adding additional checks:
     ninja install
     ninja test
 
+## BUILDING example showing simple builds:
+
+This checks for the existence critical executables 
+such as cmake,meson,and ninja and only runs builds
+that could work. Useful in any supported
+environment.
+
+    sh scripts/allsimplebuilds.sh
+
 ## BUILDING on linux from a git clone with configure/autotools
 
 Ignore this section if using meson (or cmake).

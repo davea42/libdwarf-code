@@ -208,13 +208,12 @@ else
     -Ddwarfexample=true \
     . $spath
   chkres $? "Meson setup shared fail c"
-  meson configure
   ninja
-  chkres $? "Meson setup shared fail d"
+  chkres $? "Meson ninja shared fail d"
   ninja install
-  chkres $? "Meson setup shared fail e"
+  chkres $? "Meson ninja install shared fail e"
   ninja test
-  chkres $? "Meson setup shared fail f"
+  chkres $? "Meson ninja test shared fail f"
 fi
 
 echo ""
@@ -235,13 +234,12 @@ else
     -Ddwarfexample=true \
     . $spath
   chkres $? "Meson setup static library fail c"
-  meson configure
   ninja
-  chkres $? "Meson setup static library fail d"
+  chkres $? "Meson ninja static library fail d"
   ninja install
-  chkres $? "Meson setup static library fail e"
+  chkres $? "Meson ninja install static library fail e"
   ninja test
-  chkres $? "Meson setup static library fail f"
+  chkres $? "Meson ninja test static library fail f"
 fi
 
 echo ""
@@ -257,7 +255,6 @@ else
   cd $bb
   chkres $? "cd cmake shared directory fail b"
   cmake -G Ninja  \
-    -DWALL:BOOL=TRUE \
     -DBUILD_SHARED=YES \
     -DBUILD_NON_SHARED=NO \
     -DBUILD_DWARFEXAMPLE:BOOL=YES \
@@ -286,7 +283,6 @@ else
   cd $bb
   chkres $? "cd cmake static directory fail b"
   cmake -G Ninja  \
-    -DWALL:BOOL=TRUE \
     -DBUILD_DWARFEXAMPLE:BOOL=YES \
     -DBUILD_SHARED=NO \
     -DBUILD_NON_SHARED=YES \

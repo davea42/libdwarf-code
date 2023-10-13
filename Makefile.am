@@ -98,6 +98,7 @@ libdwarf.pc.in \
 libdwarfp.pc.in \
 meson.build \
 meson_options.txt \
+scripts/allsimplebuilds.sh \
 scripts/buildandreleasetest.sh \
 scripts/run-all-tests.sh \
 scripts/ChangeLog \
