@@ -2472,10 +2472,12 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 }
 
 int
-dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
+dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
     Dwarf_Regtable3 * reg_table,
     Dwarf_Addr * row_pc,
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
     Dwarf_Error * error)
 {
 
@@ -2522,7 +2524,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
         &fde_table,
         dbg->de_frame_cfa_col_number,
-        NULL,NULL,
+        has_more_rows,subsequent_pc,
         error);
     if (res != DW_DLV_OK) {
         free(reg_table_i.rt3_rules);
@@ -2585,6 +2587,19 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     reg_table_i.rt3_reg_table_size = 0;
     _dwarf_free_fde_table(&fde_table);
     return DW_DLV_OK;
+}
+
+int
+dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
+    Dwarf_Addr pc_requested,
+    Dwarf_Regtable3 * reg_table,
+    Dwarf_Addr * row_pc,
+    Dwarf_Error * error)
+{
+    int res = dwarf_get_fde_info_for_all_regs3_b(fde,pc_requested,
+            reg_table,row_pc,NULL,NULL,error);
+
+    return res;
 }
 
 /*  Table_column DW_FRAME_CFA_COL is not meaningful.
