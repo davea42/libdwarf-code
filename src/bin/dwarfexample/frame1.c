@@ -395,7 +395,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
     Dwarf_Addr jsave = 0;
     Dwarf_Addr high_addr = 0;
     Dwarf_Addr next_jsave = 0;
-    Dwarf_Bool has_more_rows = 0;
+    Dwarf_Bool has_more_rows = FALSE;
     Dwarf_Addr subsequent_pc = 0;
     Dwarf_Error error = 0;
     int res = 0;
@@ -655,6 +655,8 @@ print_fde_instrs(Dwarf_Debug dbg,
     Dwarf_Signed cie_index = 0;
     Dwarf_Off fde_offset = 0;
     Dwarf_Addr arbitrary_addr = 0;
+    Dwarf_Addr subsequent_pc = 0;
+    Dwarf_Bool has_more_rows =  TRUE;
     Dwarf_Addr actual_pc = 0;
     Dwarf_Regtable3 tab3;
     int oldrulecount = 0;
@@ -691,22 +693,46 @@ print_fde_instrs(Dwarf_Debug dbg,
 
     res = dwarf_get_fde_info_for_all_regs3(fde,arbitrary_addr ,
         &tab3,&actual_pc,error);
-    printf("function actual addr of row 0x%" DW_PR_DUx "\n",
-        actual_pc);
-
+    printf("function  Requested_pc 0x%" 
+        DW_PR_DUx " Actual addr of row 0x%" DW_PR_DUx "\n",
+        arbitrary_addr,actual_pc);
     if (res != DW_DLV_OK) {
+        free(tab3.rt3_rules);
+        tab3.rt3_rules = 0;
         printf("dwarf_get_fde_info_for_all_regs3 failed!\n");
         exit(EXIT_FAILURE);
+    }
+    /*  Now for an example of iterating through a range of addrs
+        efficiently, lets redo the above and iterate pc values. 
+        the function called is new as of 0.9.0 October 2023. */
+    for (arbitrary_addr=lowpc; has_more_rows  ; 
+        arbitrary_addr = subsequent_pc) { 
+        res = dwarf_get_fde_info_for_all_regs3_b(fde,arbitrary_addr ,
+            &tab3,&actual_pc,&has_more_rows, &subsequent_pc,error);
+        if (res != DW_DLV_OK) {
+            free(tab3.rt3_rules);
+            tab3.rt3_rules = 0;
+            printf("dwarf_get_fde_info_for_all_regs3_b failed!\n");
+            exit(EXIT_FAILURE);
+        }
+        printf("iterating Requested addr of row 0x%" DW_PR_DUx 
+           " Actual addr 0x%" DW_PR_DUx 
+           " More rows? %s Subsequent_pc 0x%" DW_PR_DUx "\n",
+           arbitrary_addr,actual_pc,has_more_rows?"yes":"no",subsequent_pc);
     }
     print_regtable(&tab3);
 
     res = dwarf_get_fde_instr_bytes(fde,&outinstrs,&instrslen,error);
     if (res != DW_DLV_OK) {
+        free(tab3.rt3_rules);
+        tab3.rt3_rules = 0;
         printf("dwarf_get_fde_instr_bytes failed!\n");
         exit(EXIT_FAILURE);
     }
     res = dwarf_get_cie_of_fde(fde,&cie,error);
     if (res != DW_DLV_OK) {
+        free(tab3.rt3_rules);
+        tab3.rt3_rules = 0;
         printf("Error getting cie from fde\n");
         exit(EXIT_FAILURE);
     }
@@ -720,6 +746,8 @@ print_fde_instrs(Dwarf_Debug dbg,
             &frame_instr_count,
             error);
         if (res != DW_DLV_OK) {
+            free(tab3.rt3_rules);
+            tab3.rt3_rules = 0;
             printf("dwarf_expand_frame_instructions failed!\n");
             exit(EXIT_FAILURE);
         }
@@ -730,6 +758,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         dwarf_dealloc_frame_instr_head(frame_instr_head);
     }
     free(tab3.rt3_rules);
+    tab3.rt3_rules = 0;
 }
 
 static void
