@@ -11,7 +11,8 @@ attr_form_src = [
   '../dwarfdump/dd_naming.c',
   '../dwarfdump/dd_safe_strcpy.c',
   '../dwarfdump/dd_sanitized.c',
-  '../dwarfdump/dd_tsearchbal.c'
+  '../dwarfdump/dd_tsearchbal.c',
+  '../dwarfdump/dd_utf8.c'
 ]
 
 attr_form_args = [

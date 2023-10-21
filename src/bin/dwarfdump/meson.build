@@ -50,7 +50,7 @@ dwarfdump_src = [
   'dd_strstrnocase.c',
   'dd_true_section_name.c',
   'dd_uri.c',
-  'dd_utf8.c',
+  'dd_utf8.c'
 ]
 
 pkgdwarfdump = join_paths(dir_data, 'dwarfdump')
