@@ -16,3 +16,15 @@ option('doc',
   value : false,
   description : 'build and install Doxygen documentation'
 )
+
+option('sanitize',
+  type : 'boolean',
+  value : false,
+  description : 'compile and link with -fsanitize options'
+)
+
+option('wall',
+  type : 'boolean',
+  value : false,
+  description : 'compile and link with compiler warning options'
+)

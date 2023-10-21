@@ -47,6 +47,7 @@ cpp = meson.get_compiler('cpp')
 
 dev_cflags = []
 dev_cppflags = []
+dev_ldflags = []
 
 dev_cflags_try = [
   '-Wpointer-arith',
@@ -61,6 +62,11 @@ dev_cflags_try = [
   '-Wsign-compare',
   '-Wno-missing-field-initializers',
   '-fno-omit-frame-pointer'
+]
+sanitize_flags_try = [
+  '-fsanitize=address', 
+  '-fsanitize=leak',
+  '-fsanitize=undefined'
 ]
 
 if sys_windows
@@ -81,6 +87,15 @@ foreach cf: dev_cflags_try
     endif
   endif
 endforeach
+
+dev_sanitize = get_option('sanitize')
+if dev_sanitize 
+  foreach cf: sanitize_flags_try
+    if cc.has_argument(cf)
+      dev_cflags += cf
+    endif
+  endforeach
+endif
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 if cc.get_id() == 'msvc'
@@ -118,6 +133,12 @@ endif
 
 if cc.has_function_attribute('unused') == true
   config_h.set10('HAVE_UNUSED_ATTRIBUTE', true)
+endif
+
+if cc.has_function('setlocale') == true
+  if cc.has_function('nl_langinfo') == true
+    config_h.set10('HAVE_UTF8', true)
+  endif
 endif
 
 foreach header : header_checks
