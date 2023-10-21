@@ -32,7 +32,7 @@ libdwarfp_src = [
 
 libdwarf_dir = include_directories('../libdwarf')
 
-libdwarfp_lib = library('libdwarfp', libdwarfp_src,
+libdwarfp_lib = library('dwarfp', libdwarfp_src,
   c_args : [ dev_cflags, libdwarf_args, '-DLIBDWARFP_BUILD' ],
   dependencies : [libdwarf ],
   gnu_symbol_visibility: 'hidden',
