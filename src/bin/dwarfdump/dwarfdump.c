@@ -38,7 +38,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include <stddef.h> /* NULL size_t */
 #include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
-#include <stdlib.h> /* exit() free() malloc() qsort() realloc() */
+#include <stdlib.h> /* exit() free() malloc() qsort() realloc()
+    getenv() */
 #include <string.h> /* memset() strcmp() stricmp()
     strlen() strrchr() strstr() */
 
@@ -878,6 +879,38 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     *size  = basesize;
     return DW_DLV_OK;
 }
+
+/* So that regression testing can work better
+   we substitute '$HOME" where the string s
+   began with the value of that environment
+   variable.  Otherwise, we just fill in
+   the esb with the name as it came in.  */
+
+static void
+homeify(char *s, struct esb_s* out)
+{
+   char *home = getenv("HOME");
+   size_t homelen = 0;
+
+   if (!home) {
+       esb_append(out,s);
+       return;
+   }
+   homelen = strlen(home);
+   if (s[homelen] != '/') {
+       esb_append(out,s);
+       return;
+   }
+   if(strncmp(s,(const char *)home,homelen)) {
+       esb_append(out,s);
+       return;
+   }
+   esb_append(out,"$HOME");
+   esb_append(out,s+homelen);
+   return;
+}
+
+
 /*  Given a file which is an object type
     we think we can read, process the dwarf data.  */
 static int
@@ -942,11 +975,21 @@ process_one_file(
         return DW_DLV_NO_ENTRY;
     }
     if (path_source == DW_PATHSOURCE_dsym) {
+        struct esb_s homifiedname;
+
+        esb_constructor(&homifiedname);
+        homeify(temp_path_buf,&homifiedname);
         printf("Filename by dSYM is %s\n",
-            sanitized(temp_path_buf));
+            sanitized(esb_get_string(&homifiedname)));
+        esb_destructor(&homifiedname);
     } else if (path_source == DW_PATHSOURCE_debuglink) {
+        struct esb_s homifiedname;
+
+        esb_constructor(&homifiedname);
+        homeify(temp_path_buf,&homifiedname);
         printf("Filename by debuglink is %s\n",
-            sanitized(temp_path_buf));
+            sanitized(esb_get_string(&homifiedname)));
+        esb_destructor(&homifiedname);
         glflags.gf_gnu_debuglink_flag = TRUE;
     } else { /* Nothing to print yet. */ }
     {
