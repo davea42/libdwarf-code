@@ -22,9 +22,7 @@ dir_pkgdata = join_paths(dir_data, meson.project_name())
 dir_locale = join_paths(dir_prefix, get_option('localedir'))
 
 # host
-
 windows = import('windows')
-
 host_os = host_machine.system()
 
 windows = ['windows', 'cygwin']
@@ -88,11 +86,13 @@ foreach cf: dev_cflags_try
   endif
 endforeach
 
+dwarf_link_args = []
 dev_sanitize = get_option('sanitize')
 if dev_sanitize 
   foreach cf: sanitize_flags_try
     if cc.has_argument(cf)
       dev_cflags += cf
+      dwarf_link_args += cf
     endif
   endforeach
 endif

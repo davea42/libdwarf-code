@@ -100,6 +100,7 @@ foreach test_src : tests
   test(test_name,
     executable(test_name, test_src,
       c_args : [ dev_cflags, libdwarf_args, '-DTESTING', '-DLIBDWARF_BUILD' ],
+      link_args :  dwarf_link_args,
       include_directories : [ config_dir, incdir ],
       install : false
     )
@@ -118,6 +119,7 @@ foreach atest_src : argstests
   atest_name = atest_src[0].split('.')[0]
   atexec = executable(atest_name, atest_src,
     c_args : [ dev_cflags, libdwarf_args, '-DTESTING' ],
+    link_args :  dwarf_link_args,
     include_directories : [ config_dir, incdir ],
     install : false)
   test(atest_name,atexec, args: ['-f',projectbase])

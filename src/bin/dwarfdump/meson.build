@@ -62,6 +62,7 @@ endif
 
 executable('dwarfdump', dwarfdump_src,
   c_args : [ dev_cflags, libdwarf_args, dwarfdump_args ],
+  link_args :  dwarf_link_args ,
   dependencies : libdwarf,
   include_directories : config_dir,
   install : true

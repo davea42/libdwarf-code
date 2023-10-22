@@ -9,6 +9,7 @@ endif
 
 executable('buildopstab', 'buildopscounttab.c',
   c_args : [ dev_cflags, libdwarf_args, buildopstab_args ],
+  link_args :  dwarf_link_args,
   dependencies : libdwarf,
   include_directories : [config_dir,localinclude],
   install : false

@@ -12,6 +12,7 @@ endif
 localinclude = include_directories('../dwarfdump')
 executable('gennames', gennames_src,
   c_args : [ dev_cflags, libdwarf_args, gennames_args ],
+  link_args :  dwarf_link_args,
   dependencies : libdwarf,
   include_directories : [ config_dir, localinclude],
   install : false
