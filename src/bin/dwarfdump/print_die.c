@@ -8377,6 +8377,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_ordering:
             case DW_AT_byte_size:
             case DW_AT_bit_offset:
+            case DW_AT_data_bit_offset:
             case DW_AT_bit_size:
             case DW_AT_inline:
             case DW_AT_language:
