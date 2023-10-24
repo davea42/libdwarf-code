@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 20 September 2023
+Updated 23 October 2023
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -10,9 +10,9 @@ using configure,cmake, and meson.
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
     Version 0.8.0 Released 20 September 2023.
-    Version 0.7.0 Released 20 May      2023.
-    Version 0.6.0 Released 20 February 2023.
-    Version 0.5.0 Released 22 November 2022.
+    Version 0.7.0 Released 20 May       2023.
+    Version 0.6.0 Released 20 February  2023.
+    Version 0.5.0 Released 22 November  2022.
 
 ## NOTE on linking against libdwarf.a
 
@@ -234,13 +234,30 @@ gcc has some checks that can be done at runtime.
 -fsanitize=undefined is turned on  for
 configure by --enable-sanitize
 
-### Options to meson on Windows (Msys2)
+### Options to meson on linux MacOS Windows (Msys2)
 
-As of 0.8.0 meson builds default to be
+As of 0.9.0 meson builds default to be
 shared-library builds.
+These options go on the meson setup command line.
 the default can be explicity chosen with: 
 
     --default-library shared
+
+A static libdwarf (archive) libdwarf.a can be built with
+   
+    --default-library static
+
+By default compiler warnings are errors.  Add the following
+to let compilations continue:
+
+    -Dwerror=false
+
+By default compiles are normal.  Add the following
+to add gcc -fsanitize checking in the build to catch
+various memory errors (the generated code is larger and
+slower than normal).
+
+    -Dsanitize=true
 
 
 ### Options to configure on Windows (Msys2)

@@ -31,9 +31,15 @@ libdwarfp_src = [
 ]
 
 libdwarf_dir = include_directories('../libdwarf')
+if (lib_type == 'shared')
+  compiler_flags = ['-DLIBDWARF_BUILD']
+else
+  compiler_flags = ['-DLIBDWARF_STATIC']
+endif
+
 
 libdwarfp_lib = library('dwarfp', libdwarfp_src,
-  c_args : [ dev_cflags, libdwarf_args, '-DLIBDWARFP_BUILD' ],
+  c_args : [ dev_cflags, libdwarf_args, compiler_flags ],
   dependencies : [libdwarf ],
   gnu_symbol_visibility: 'hidden',
   include_directories : [ config_dir, libdwarf_dir ],

@@ -447,7 +447,6 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
         exit(1);
     }
     //std::list<IRDie> & childlist =  irdie.getChildren();
-    int childcount = 0;
     for (;;) {
         IRDie child;
         get_basic_die_data(dbg,curchilddie,child);
@@ -457,9 +456,7 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
 
         ircudata.insertLocalDieOffset(lastchild.getCURelativeOffset(),
             &lastchild);
-
         get_children_of_die(curchilddie,lastchild,ircudata,irep,dbg);
-        ++childcount;
 
         Dwarf_Die tchild = 0;
         res = dwarf_siblingof_b(dbg,curchilddie,
@@ -668,10 +665,9 @@ static void
 readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
     Dwarf_Error error;
-    int cu_number = 0;
     std::list<IRCUdata> &culist = irep.infodata().getCUData();
 
-    for (;;++cu_number) {
+    for (;;) {
         Dwarf_Unsigned cu_header_length = 0;
         Dwarf_Half version_stamp = 0;
         Dwarf_Unsigned abbrev_offset = 0;

@@ -858,7 +858,6 @@ determine_file_content_size(Dwarf_P_Debug dbg,
     unsigned count_len   = 0;
     Dwarf_P_F_Entry  cur = 0;
     Dwarf_P_F_Entry  nxt = 0;
-    unsigned n           = 0;
     int res              = 0;
     Dwarf_Unsigned offset_size = 0;
 
@@ -871,7 +870,7 @@ determine_file_content_size(Dwarf_P_Debug dbg,
     calculated_size += count_len;
 
     cur =  entry_list;
-    for (n = 0; cur; n++,cur = nxt) {
+    for ( ; cur; cur = nxt) {
         unsigned f = 0;
         nxt = cur->dfe_next;
 
@@ -2952,14 +2951,11 @@ sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
     Dwarf_P_Attribute sorted_tail = 0;
     int attrcount = die->di_n_attr;
     int res = 0;
-    unsigned ct = 0;
-
     int k = 0;
 
     if (attrcount < 2) {
         return DW_DLV_OK;
     }
-
     sortab = (struct Dwarf_Sort_Abbrev_s *)
         malloc(sizeof(struct Dwarf_Sort_Abbrev_s)*attrcount);
     if (!sortab) {
@@ -2972,7 +2968,6 @@ sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
         ap->dsa_attr = at->ar_attribute;
         ap->dsa_form = at->ar_attribute_form;
         ap->dsa_attrp = at;
-        ++ct;
     }
     qsort(sortab,attrcount,sizeof(struct Dwarf_Sort_Abbrev_s),
         abcompare);

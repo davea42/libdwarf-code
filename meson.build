@@ -74,6 +74,11 @@ if sys_windows
 else
   dev_cflags_try += '-fvisibility=hidden'
 endif
+ 
+if sys_osx
+  add_project_link_arguments('-L/opt/local/lib', language: ['c', 'cpp'])
+  add_project_arguments('-I/opt/local/include',language: ['c', 'cpp'])
+endif
 
 foreach cf: dev_cflags_try
   if cc.has_argument(cf)
@@ -205,6 +210,10 @@ configure_file(
 
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
+message('dadebug zlib deps ')
+message(zlib_deps.found())
+message('dadebug libzstd deps')
+message(libzstd_deps.found())
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
 

@@ -205,6 +205,7 @@ else
   meson setup \
     --default-library shared \
     --prefix=$prefx \
+    -Dwerror=false  \
     -Ddwarfexample=true \
     . $spath
   chkres $? "Meson setup shared fail c"
@@ -231,6 +232,7 @@ else
   meson setup \
     --default-library static \
     --prefix=$prefx \
+    -Dwerror=false  \
     -Ddwarfexample=true \
     . $spath
   chkres $? "Meson setup static library fail c"
