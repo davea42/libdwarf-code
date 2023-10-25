@@ -48,6 +48,10 @@ fi
 
 haveapp() {
   x=`which $1`
+  if [ "x$x" = "x" ]
+  then
+    return 1
+  fi
   xb=`basename $x`
   if [ "x$xb" = "x$1" ]
   then
