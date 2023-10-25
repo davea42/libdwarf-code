@@ -1,8 +1,11 @@
 project('libdwarf', ['c','cpp'],
   version: '0.9.0',
-  default_options : ['buildtype=debugoptimized', 'warning_level=3', 'werror=true'],
-  meson_version : '>=0.53'
+  default_options : ['buildtype=debugoptimized', 
+  'warning_level=3', 'werror=true'],
+  meson_version : '>=0.56'
 )
+# version 0.56 is the first version with project_source_root and
+# project_build_root.
 
 v_arr = meson.project_version().split('.')
 v_maj = v_arr[0]
@@ -197,10 +200,45 @@ pkgconf.set('requirements_libdwarf_pc', 'zlib')
 pkgconf.set('requirements_libdwarf_pc', 'libzstd')
 pkgconf.set('requirements_libdwarf_libs', '')
 
+if zlib_deps.found()
+  message('dadebug found base zlib')
+  message(zlib_deps.found())
+else
+  zlib_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lz' ],
+    include_directories: ['/opt/local/include'])
+  message('dadebug zlib try opt/local')
+  message(zlib_deps.found())
+endif
+
+if libzstd_deps.found()
+  message('dadebug found base libzstd')
+  message(libzstd_deps.found())
+else
+  libzstd_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lzstd' ],
+    include_directories: ['/opt/local/include'])
+  message('dadebug zstd tried opt/local')
+  message(libzstd_deps.deps_found())
+endif
+
+if not zlib_deps.found()
+  zlib_deps = declare_dependency(link_args: [ '-L/usr/local/lib','-lz' ],
+    include_directories: ['/usr/local/include'])
+  message('dadebug zlib tried /usr/local')
+  message(zlib_deps.found())
+endif
+
+if not libzstd_deps.found()
+  libzstd_deps = declare_dependency(link_args: [ '-L/usr/local/lib',
+    '-lzstd' ],
+    include_directories: ['/usr/local/include'])
+  message('dadebug zstd tried usr/local')
+  message(libzstd_deps.deps_found())
+endif
+
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
 
 configure_file(
-  input : join_paths(meson.source_root(), 'libdwarf.pc.in'),
+  input : join_paths(meson.project_source_root(), 'libdwarf.pc.in'),
   output : 'libdwarf.pc',
   configuration : pkgconf,
   install_dir : pkg_install_dir
