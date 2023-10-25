@@ -201,38 +201,32 @@ pkgconf.set('requirements_libdwarf_pc', 'libzstd')
 pkgconf.set('requirements_libdwarf_libs', '')
 
 if zlib_deps.found()
-  message('dadebug found base zlib')
-  message(zlib_deps.found())
+  message(['mesondebug found base zlib',zlib_deps.found()])
 else
   zlib_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lz' ],
     include_directories: ['/opt/local/include'])
-  message('dadebug zlib try opt/local')
-  message(zlib_deps.found())
+  message(['mesondebug zlib found in opt/local',zlib_deps.found()])
 endif
 
 if libzstd_deps.found()
-  message('dadebug found base libzstd')
-  message(libzstd_deps.found())
+  message(['mesondebug found base libzstd',libzstd_deps.found()])
 else
   libzstd_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lzstd' ],
     include_directories: ['/opt/local/include'])
-  message('dadebug zstd tried opt/local')
-  message(libzstd_deps.deps_found())
+  message(['mesondebug zstd found in opt/local', libzstd_deps.deps_found()])
 endif
 
 if not zlib_deps.found()
   zlib_deps = declare_dependency(link_args: [ '-L/usr/local/lib','-lz' ],
     include_directories: ['/usr/local/include'])
-  message('dadebug zlib tried /usr/local')
-  message(zlib_deps.found())
+  message(['mesondebug zlib found in /usr/local',zlib_deps.found()])
 endif
 
 if not libzstd_deps.found()
   libzstd_deps = declare_dependency(link_args: [ '-L/usr/local/lib',
     '-lzstd' ],
     include_directories: ['/usr/local/include'])
-  message('dadebug zstd tried usr/local')
-  message(libzstd_deps.deps_found())
+  message(['mesondebug zstd found in usr/local',libzstd_deps.deps_found()])
 endif
 
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
@@ -248,10 +242,8 @@ configure_file(
 
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
-message('dadebug zlib deps ')
-message(zlib_deps.found())
-message('dadebug libzstd deps')
-message(libzstd_deps.found())
+message(['mesondebug zlib deps ',zlib_deps.found()])
+message(['mesondebug libzstd deps',libzstd_deps.found()])
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
 
@@ -261,9 +253,15 @@ summary({'OS': host_os,
          'dwarfdump': 'always',
          'libdwarfp': libdwarfp_output,
          'dwarfgen': have_libdwarfp ? 'yes' : 'no',
+         'zlib-found': (zlib_deps.found() ? 'yes' : 'no'),
+         'libzstd-found': (libzstd_deps.found() ? 'yes' : 'no'),
          'dwarfexample': get_option('dwarfexample') ? 'yes' : 'no',
          'documentation': have_doc,
         }, section: 'Configuration Options Summary:')
+
+summary({'zlib': (zlib_deps.found() ? 'yes' : 'no'),
+         'libzstd': (libzstd_deps.found() ? 'yes' : 'no'),
+        }, section: 'Referenced Libraries:')
 
 summary({'prefix': dir_prefix,
          'bindir': dir_bin,
