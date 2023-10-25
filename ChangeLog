@@ -1,3 +1,378 @@
+2023-10-25:  David Anderson
+    commit b5c2aa54344f4a725ecb7e81cd7f92d68e3d48ba
+
+    Now using project_build_root() and
+    project_source_root() instead of the
+    deprecated functions build_root() and
+    source_root().
+
+    Updated the required version to 0.56 as this
+    is the version required to support the project*()
+    commands we now use.
+
+    Also added code to look in specific directories
+    beyond the standard locations
+    for zlib and libzstd (/opt/local/lib and /usr/local/lib)
+    so the build can work in more environments.
+            modified:   meson.build
+            modified:   test/meson.build
+
+2023-10-25:  zerons
+    commit 809f32b7664f04a9cec28dd1a518725190a26cbd
+
+    handle DW_AT_data_bit_offset in get_attr_value() (#189)
+
+    An oversight that this pull fixes.
+
+2023-10-24:  David Anderson
+    commit 0e6464b2a55c6a3355695ef9500b79c5d8863ed7
+
+    Minor correctsions for meson
+            modified:   README.md
+
+    Toward making it all work more places.
+            modified:   meson.build
+
+    Making it more tolerant of warnings from compilers.
+            modified:   scripts/allsimplebuilds.sh
+
+    Removing unused locals.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+
+    Correcting build args for libdwarfp
+            modified:   src/lib/libdwarfp/meson.build
+
+    Removing obsolete ifdef as we do not test that C90 header files exist
+            modified:   test/test_macrocheck.c
+
+2023-10-22:  David Anderson
+    commit ea1d31e8f88104fcf9a86f529615981b964b7b66
+
+    Now present with just a 2 line comment.
+            new file:   README
+
+2023-10-22:  David Anderson
+    commit 0402c07c9d87dc9aa76681ce11de8f0fc3c35b43
+
+    A change to Makefile.am means we can
+    delete this now, leaving README.md .
+            deleted:    README
+
+2023-10-22:  David Anderson
+    commit d5f0e75ee93986404d69c96d483e3ade6a520a2a
+
+    All have basically the same line added to each executable(),
+    adding a "link_args :" so that the -fsanitize options
+    are passed to the link step as well as compile steps
+    when running
+    the gcc -fsanitize options.
+            modified:   meson.build
+            modified:   src/bin/attr_form/meson.build
+            modified:   src/bin/buildopstab/meson.build
+            modified:   src/bin/builduritable/meson.build
+            modified:   src/bin/dwarfdump/meson.build
+            modified:   src/bin/dwarfexample/meson.build
+            modified:   src/bin/dwarfgen/meson.build
+            modified:   src/bin/gennames/meson.build
+            modified:   src/bin/tag_attr/meson.build
+            modified:   src/bin/tag_tree/meson.build
+            modified:   test/meson.build
+
+2023-10-21:  David Anderson
+    commit f1408bf9e7c98654173fbf5672ee3671e7db0e21
+
+    Documented new fde 0.9.0 fde frame function
+    in the Changes section
+            modified:   doc/libdwarf.dox
+
+2023-10-21:  David Anderson
+    commit 37c0c26e48754ee69288d73f238d4f54ce957fdb
+
+    Now checks if required functiosn exist and sets
+    HAVE_UTF8 inconfig so dwarfdump built with meson
+    and print UTF8 properly.
+            modified:   meson.build
+
+    Added options sanitize as in -Dsanitize=true
+      so we can use -fsanitiz3
+    and wall as in -Dwall=false
+      so we can turn off warnings as errors.
+            modified:   meson_options.txt
+
+2023-10-21:  David Anderson
+    commit 6504fba6ee02c47517489040afa574a040166478
+
+    All these additionally compile dwarfdump_dd_utf8.c so they
+    build with meson (required for swithching regressiontests
+    to building with meson)
+            modified:   src/bin/attr_form/meson.build
+            modified:   src/bin/dwarfdump/meson.build
+            modified:   src/bin/tag_attr/meson.build
+            modified:   src/bin/tag_tree/meson.build
+
+2023-10-21:  David Anderson
+    commit 15d2a8aed6f46f24ba907c181efd3789fec499f5
+
+    libdwarfp was misnamed resulting in generating
+    src/lib/libdwarfp/liblibdwarfp.a
+    Fixed now.
+            modified:   src/lib/libdwarfp/meson.build
+
+2023-10-21:  David Anderson
+    commit a377f4f21942e20b8a391a3092d402eb3ff09c3f
+
+    Left-over references to libelf functions removed.
+            modified:   src/lib/libdwarfp/meson.build
+
+2023-10-21:  David Anderson
+    commit d493bd62b64f157b27529da897ddaf7b1678e33a
+
+    Added another example of getting frame registers
+    using the latest new frame function in libdwarf.h,
+            modified:   src/bin/dwarfexample/frame1.c
+
+2023-10-21:  David Anderson
+    commit ec9e7b682f198fdc4b735ca5487b724263b95584
+
+    When printing lines about dSYM or debuglink paths
+    returned change the prefix of the output to $HOME
+    if that is equivalent to what is the returned string.
+    This enables regressiontests to work
+    in more system types with no errors.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-10-18:  David Anderson
+    commit 67215ca4b6f42ce2b591335dd6cf6b384b782b11
+
+    One line had an incorrect indent (per project
+    codingstandards). Fixed.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-10-18:  Ritesh Oedayrajsingh Varma
+    commit 17de6b8f363f0dc978b6f844c6f1657ebc46f627
+
+    Added `dwarf_get_fde_info_for_all_regs3_b` which returns the subsequent PC and whether there are more rows, for easy iteration through all rows in an FDE. This is similar to what `dwarf_get_fde_info_for_reg3_c` already does. (#188)
+
+2023-10-13:  David Anderson
+    commit 82798b35a5dbb6d0a7a6ddddac0f2e7dc484f4ff
+
+    No need to check for automake in a release, it's not needed
+    unless one is building from a git clone.
+
+            modified:   scripts/allsimplebuilds.sh
+
+    A compiler noticed a used-but-not-set local variable.
+    Now removed.
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2023-10-13:  David Anderson
+    commit 17039c9d808e49ab64b04715ca1a752a0bfc7337
+
+    Specify what build files to emit from cmake
+    because the default is different on some systems.
+    Here we choose
+        -G "Unix Makefiles"
+    whereas in scripts/allsimplebuilds.sh we use
+        -G Ninja
+
+            modified:   scripts/buildandreleasetest.sh
+
+2023-10-13:  David Anderson
+    commit 7754301b7063809580c77d1d880c7e193d30f257
+
+    Left off a back-quote(`) in new scipt lines ... which broke this script for
+    a few minutes.
+            modified:   scripts/buildandreleasetest.sh
+
+2023-10-13:  David Anderson
+    commit e6eea37b489b22024b8aa5b2ec97e8655c62089a
+
+    Added words about scripts/allsimplebuilds.sh
+            modified:   READMEwin-msys2.md
+
+2023-10-13:  David Anderson
+    commit 0ff5c18bc10bb110c92fd92ac7b605b6045bfe45
+
+    Added scripts/allsimplebuilds.sh to the files in the distribution.
+            modified:   Makefile.am
+
+    Added a few words about scripts/allsimplebuilds.sh
+            modified:   README.md
+
+    Modified to remove accidental cmake -DWALL in two places and remove
+    two instances of 'meson configure' which were not
+    required and which, on msys2, forced one to page through
+    by hand output like 'more' that showed all the meson options.
+            modified:   scripts/allsimplebuilds.sh
+
+2023-10-13:  David Anderson
+    commit e5cf21b004c1b85834c9396062aee5a311c2c82c
+
+    Adding  output of the number of minutes
+    at the end of the run of each script
+            modified:   scripts/buildandreleasetest.sh
+            modified:   scripts/run-all-tests.sh
+
+2023-10-13:  David Anderson
+    commit aa1b4c6f3b16b241b2be8848e3f75b5a86806867
+
+    New script demonstrating useful simple builds
+            new file:   scripts/allsimplebuilds.sh
+
+2023-10-11:  David Anderson
+    commit ef4b5ebd89ef35c2b92f8ba7d61c2f92f671bf44
+
+    Minor tweak to correct a typo (only affected windows msys2 builds)
+            modified:   scripts/buildandreleasetest.sh
+
+2023-10-11:  David Anderson
+    commit 88f9a6619cff179da4fcc19f8a25e465292d87ec
+
+    All have changes so they work on windows msys2 as well
+    as unix-like systems.
+            modified:   test/test_debuglink-a.sh
+            modified:   test/test_debuglink-b.sh
+            modified:   test/test_dwarfdump.py
+            modified:   test/test_dwarfdumpsetup.sh
+            modified:   test/test_jitreaderdiff.sh
+
+2023-10-11:  David Anderson
+    commit e76b0da1a7fc9a7fcc97fe254358f5ef0accc769
+
+    Added important details
+            modified:   READMEwin-msys2.md
+    Major revision , now works on Windows msys2 as well.
+            modified:   scripts/buildandreleasetest.sh
+
+2023-10-09:  David Anderson
+    commit e40372ce4c656e3a76f20117d80f610df582c2f6
+
+    Working toward scripts that work
+    on msys2 with shared libdwarf.
+            modified:   scripts/buildandreleasetest.sh
+            modified:   test/test_dwarfdumpsetup.sh
+            modified:   test/test_jitreaderdiff.sh
+
+2023-10-09:  David Anderson
+    commit bd752633c39519b2d2564c5bd5750ab2d86b7b44
+
+    A simple added rule will avoid
+    automake complaining README is gone.
+            modified:   Makefile.am
+
+2023-10-09:  David Anderson
+    commit f717ac1039bea2c1454edefcd8d7cad37565f4eb
+
+    Some versions of autoreconf insist on README
+    and ignore README.md.
+    So reintroducing README (a copy of README.md)
+            new file:   README
+
+2023-10-07:  David Anderson
+    commit df4cc3f4ef40b442a30203a3691f7ca3273ae226
+
+    Correcting md typo
+            modified:   READMEwin-msys2.md
+
+2023-10-07:  David Anderson
+    commit be42d89044a97e84c7d701c29a6fb4155a871f5c
+
+    Correcting some errors and
+    also hoping these changes will
+    make things easier to read.
+            modified:   README.md
+            modified:   READMEcmake.md
+            modified:   READMEwin-msys2.md
+
+2023-10-07:  David Anderson
+    commit ae3271adac45e45d27afb289c601d90f0844ecff
+
+    It was failing to mention the base build
+    directory as a source for include of config.h.
+    Fixed.
+            modified:   src/bin/gennames/Makefile.am
+
+2023-10-07:  David Anderson
+    commit 639e2bb4daf71899e6f7a2163ea831a1b1b4aafc
+
+    Minor tweak to the script
+            modified:   scripts/buildandreleasetest.sh
+
+2023-10-07:  David Anderson
+    commit 020bbd37f4529999e37a0a0ca674f6d3cca7dec0
+
+    Now, with cmake, both shared-lib and
+    non-shared work properly for Win32 msys2
+            modified:   CMakeLists.txt
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+            modified:   test/CMakeLists.txt
+
+2023-10-07:  David Anderson
+    commit 51e42f74e2ad659c33bd451b01f32675871be6b4
+
+    Now listing the revised set of README* files.
+            modified:   Makefile.am
+
+2023-10-07:  David Anderson
+    commit 84c189d2323382d65f0a40a2e9f7c02f4d6f7079
+
+    Updated DW202310-002. Fixed.
+            modified:   bugxml/data.txt
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-10-07:  David Anderson
+    commit 3a658bd1dd7437948cecbf82bb9b24f5f6122a7d
+
+    DW202310-002
+    ossfuzz:  63024
+    The bug was a copy-paste mistake.
+    This bug was in the function when
+    the function was first made public,
+    seven days ago.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2023-10-06:  David Anderson
+    commit 19a850b5aae47303dcf9298c05a4e90c8b80a0b4
+
+    Now all README are .md and
+    with a new one for msys2 details.
+            deleted:    README
+            deleted:    README.cmake
+            modified:   README.md
+            new file:   READMEcmake.md
+            new file:   READMEwin-msys2.md
+
+2023-10-05:  David Anderson
+    commit f6265d5779245f8737c5fc6553569986c96f2134
+
+    More accurate description to setup
+    msys2 mingq64 in windows 10
+            modified:   README.cmake
+
+2023-10-04:  David Anderson
+    commit 28509ddf7cb43015ed7a3760bf4c99b3e9553bed
+
+    Regenerated with version 0.9.0
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-10-04:  David Anderson
+    commit 5c33a19272d08df6077fcf54420f7ed801f809a5
+
+    Updated with latest
+            modified:   ChangeLog
+
 2023-10-04:  David Anderson
     commit 174b9777367869ce6d7200a6084bf42b815c690f
 
