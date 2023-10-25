@@ -2,10 +2,18 @@ project('libdwarf', ['c','cpp'],
   version: '0.9.0',
   default_options : ['buildtype=debugoptimized', 
   'warning_level=3', 'werror=true'],
-  meson_version : '>=0.56'
+  meson_version : '>=0.53'
 )
+
 # version 0.56 is the first version with project_source_root and
-# project_build_root.
+# project_build_root.   We use meson.current_source_dir() and
+# meson.current_build_dir()  (and read these before
+# meson knows of other directories) to avoid meson.build_root()
+# meson.source_root() and avoid requring 0.56. Ubuntu 20.04,
+# for example, uses meson 0.53.
+
+# meson file system module
+fs = import('fs')
 
 v_arr = meson.project_version().split('.')
 v_maj = v_arr[0]
@@ -78,11 +86,6 @@ else
   dev_cflags_try += '-fvisibility=hidden'
 endif
  
-if sys_osx
-  add_project_link_arguments('-L/opt/local/lib', language: ['c', 'cpp'])
-  add_project_arguments('-I/opt/local/include',language: ['c', 'cpp'])
-endif
-
 foreach cf: dev_cflags_try
   if cc.has_argument(cf)
     dev_cflags += cf
@@ -161,6 +164,13 @@ foreach t : [ 'uint64_t', 'uintptr_t', 'intptr_t' ]
   endif
 endforeach
 
+# Do this early so we have the base source and build directory names
+# for this and test/meson.build
+project_source_base_root = meson.current_source_dir()
+project_build_base_root = meson.current_build_dir()
+message(['mesondebug set psbr',project_source_base_root])
+message(['mesondebug set pbbr',project_build_base_root])
+
 subdir('src/lib/libdwarf')
 subdir('src/bin/dwarfdump')
 have_libdwarfp = false
@@ -200,39 +210,44 @@ pkgconf.set('requirements_libdwarf_pc', 'zlib')
 pkgconf.set('requirements_libdwarf_pc', 'libzstd')
 pkgconf.set('requirements_libdwarf_libs', '')
 
-if zlib_deps.found()
-  message(['mesondebug found base zlib',zlib_deps.found()])
-else
-  zlib_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lz' ],
-    include_directories: ['/opt/local/include'])
-  message(['mesondebug zlib found in opt/local',zlib_deps.found()])
+if fs.is_dir('/opt/local/lib') and fs.is_dir('/opt/local/include')
+  if zlib_deps.found()
+    message(['mesondebug found base zlib',zlib_deps.found()])
+  else
+    zlib_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lz' ],
+      include_directories: ['/opt/local/include'])
+    message(['mesondebug zlib found in opt/local',zlib_deps.found()])
+  endif
+  
+  if libzstd_deps.found()
+    message(['mesondebug found base libzstd',libzstd_deps.found()])
+  else
+    libzstd_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lzstd' ],
+      include_directories: ['/opt/local/include'])
+    message(['mesondebug zstd found in opt/local', libzstd_deps.found()])
+  endif
 endif
-
-if libzstd_deps.found()
-  message(['mesondebug found base libzstd',libzstd_deps.found()])
-else
-  libzstd_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lzstd' ],
-    include_directories: ['/opt/local/include'])
-  message(['mesondebug zstd found in opt/local', libzstd_deps.deps_found()])
-endif
-
-if not zlib_deps.found()
-  zlib_deps = declare_dependency(link_args: [ '-L/usr/local/lib','-lz' ],
-    include_directories: ['/usr/local/include'])
-  message(['mesondebug zlib found in /usr/local',zlib_deps.found()])
-endif
-
-if not libzstd_deps.found()
-  libzstd_deps = declare_dependency(link_args: [ '-L/usr/local/lib',
-    '-lzstd' ],
-    include_directories: ['/usr/local/include'])
-  message(['mesondebug zstd found in usr/local',libzstd_deps.deps_found()])
+  
+if fs.is_dir('/usr/local/lib') and fs.is_dir('/usr/local/include')
+  if not zlib_deps.found()
+    zlib_deps = declare_dependency(link_args: [ '-L/usr/local/lib','-lz' ],
+      include_directories: ['/usr/local/include'])
+    message(['mesondebug zlib found in /usr/local',zlib_deps.found()])
+  endif
+  
+  if not libzstd_deps.found()
+    libzstd_deps = declare_dependency(link_args: [ '-L/usr/local/lib',
+      '-lzstd' ],
+      include_directories: ['/usr/local/include'])
+    message(['mesondebug zstd found in usr/local',libzstd_deps.found()])
+  endif
 endif
 
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
 
+
 configure_file(
-  input : join_paths(meson.project_source_root(), 'libdwarf.pc.in'),
+  input : join_paths(project_source_base_root, 'libdwarf.pc.in'),
   output : 'libdwarf.pc',
   configuration : pkgconf,
   install_dir : pkg_install_dir
@@ -253,8 +268,6 @@ summary({'OS': host_os,
          'dwarfdump': 'always',
          'libdwarfp': libdwarfp_output,
          'dwarfgen': have_libdwarfp ? 'yes' : 'no',
-         'zlib-found': (zlib_deps.found() ? 'yes' : 'no'),
-         'libzstd-found': (libzstd_deps.found() ? 'yes' : 'no'),
          'dwarfexample': get_option('dwarfexample') ? 'yes' : 'no',
          'documentation': have_doc,
         }, section: 'Configuration Options Summary:')

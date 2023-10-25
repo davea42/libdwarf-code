@@ -114,7 +114,8 @@ argstests = [
   ]
 ]
 
-projectbase = meson.project_source_root()
+projectbase = project_source_base_root
+message(['mesondebug test projectbase',projectbase])
 foreach atest_src : argstests
   atest_name = atest_src[0].split('.')[0]
   atexec = executable(atest_name, atest_src,
@@ -135,12 +136,15 @@ pyscripttests = [
 #pkgconfig_mod = import('pkgconfig')
 
 
+builddir = project_build_base_root
+message(['mesondebug test builds ',builddir])
+
 py3_exe = import('python').find_installation(required:false)
 if py3_exe.found()
   foreach testscr : pyscripttests
     pytest_name = testscr[0]
     message(pytest_name)
-    buildbase = meson.project_build_root()
+    buildbase = builddir
     pyexec_name = join_paths(projectbase,'test','test_dwarfdump.py')
     test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase])
   endforeach
