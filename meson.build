@@ -97,6 +97,13 @@ foreach cf: dev_cflags_try
   endif
 endforeach
 
+#if fs.isdir('/usr/local/include')
+#  dev_cflags += '-I/usr/local/include'
+#endif
+#if fs.isdir('/opt/local/include')
+#  dev_cflags += '-I/opt/local/include'
+#endif
+
 dwarf_link_args = []
 dev_sanitize = get_option('sanitize')
 if dev_sanitize 
@@ -193,7 +200,7 @@ subdir('test')
 
 # Use config_h after all subdirs have set values
 
-configure_file(output : 'config.h', configuration : config_h)
+#configure_file(output : 'config.h', configuration : config_h)
 
 # pkg-config files
 
@@ -210,41 +217,7 @@ pkgconf.set('requirements_libdwarf_pc', 'zlib')
 pkgconf.set('requirements_libdwarf_pc', 'libzstd')
 pkgconf.set('requirements_libdwarf_libs', '')
 
-if fs.is_dir('/opt/local/lib') and fs.is_dir('/opt/local/include')
-  if zlib_deps.found()
-    message(['mesondebug found base zlib',zlib_deps.found()])
-  else
-    zlib_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lz' ],
-      include_directories: ['/opt/local/include'])
-    message(['mesondebug zlib found in opt/local',zlib_deps.found()])
-  endif
-  
-  if libzstd_deps.found()
-    message(['mesondebug found base libzstd',libzstd_deps.found()])
-  else
-    libzstd_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lzstd' ],
-      include_directories: ['/opt/local/include'])
-    message(['mesondebug zstd found in opt/local', libzstd_deps.found()])
-  endif
-endif
-  
-if fs.is_dir('/usr/local/lib') and fs.is_dir('/usr/local/include')
-  if not zlib_deps.found()
-    zlib_deps = declare_dependency(link_args: [ '-L/usr/local/lib','-lz' ],
-      include_directories: ['/usr/local/include'])
-    message(['mesondebug zlib found in /usr/local',zlib_deps.found()])
-  endif
-  
-  if not libzstd_deps.found()
-    libzstd_deps = declare_dependency(link_args: [ '-L/usr/local/lib',
-      '-lzstd' ],
-      include_directories: ['/usr/local/include'])
-    message(['mesondebug zstd found in usr/local',libzstd_deps.found()])
-  endif
-endif
-
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
-
 
 configure_file(
   input : join_paths(project_source_base_root, 'libdwarf.pc.in'),
@@ -254,6 +227,9 @@ configure_file(
 )
 
 # output
+# Use config_h after all subdirs have set values
+
+configure_file(output : 'config.h', configuration : config_h)
 
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
