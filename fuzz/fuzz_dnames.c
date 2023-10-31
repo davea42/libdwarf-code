@@ -17,7 +17,10 @@ limitations under the License.
 #include <sys/types.h>
 #include <unistd.h>
 
+#ifndef O_BINARY
 #define O_BINARY 0 /* So it does nothing in Linux/Unix */
+#endif
+
 
 /*
  * Libdwarf library callers can only use these headers.

@@ -20,7 +20,9 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
-#define O_BINARY 0
+#ifndef O_BINARY
+#define O_BINARY 0 /* So it does nothing in Linux/Unix */
+#endif
 #define DW_PR_DUx "llx"
 #define DW_PR_DSx "llx"
 #define DW_PR_DUu "llu"
