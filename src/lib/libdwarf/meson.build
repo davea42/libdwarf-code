@@ -126,7 +126,11 @@ if zlib_deps.found()
   else
     config_h.set10('HAVE_ZLIB_H',false)
     config_h.set10('HAVE_ZLIB',false)
-    message('mesondebug no libzstd, ignore zlib')
+    zlib_deps = dependency('',required: false)
+    if zlib_deps.found()
+       error('mesondebug libdwarf error zlib')
+    endif
+    message('mesondebug no libzstd, set zlib_deps', zlib_deps.found())
     message('mesondebug Since builds and tests both ')
     message('mesondebug leaving zlib set will be ignored in build and test')
   endif
@@ -134,7 +138,11 @@ else
   if libzstd_deps.found()
     config_h.set10('HAVE_ZSTD_H',false)
     config_h.set10('HAVE_ZSTD',false)
-    message('mesondebug no zlib, ignore libzstd')
+    libszstd_deps = dependency('',required: false)
+    if libzstd_deps.found()
+       error('mesondebug libdwarf error libzstd')
+    endif
+    message('mesondebug no zlib, set libzstd_deps',libzstd_deps.found())
     message('mesondebug Since builds and tests want both')
     message('mesondebug leaving libzstd set will be ignored in build and test')
   else

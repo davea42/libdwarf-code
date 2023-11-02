@@ -11,7 +11,7 @@ limitations under the License.
 */
 #include "dwarf.h"
 #include "libdwarf.h"
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

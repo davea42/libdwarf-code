@@ -889,25 +889,35 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
 static void
 homeify(char *s, struct esb_s* out)
 {
-   char *home = getenv("HOME");
-   size_t homelen = 0;
+    char *home = getenv("HOME");
+    size_t homelen = 0;
 
-   if (!home) {
-       esb_append(out,s);
-       return;
-   }
-   homelen = strlen(home);
-   if (s[homelen] != '/') {
-       esb_append(out,s);
-       return;
-   }
-   if(strncmp(s,(const char *)home,homelen)) {
-       esb_append(out,s);
-       return;
-   }
-   esb_append(out,"$HOME");
-   esb_append(out,s+homelen);
-   return;
+    /*  In msys2 this Windows terminology
+        is not needed and causes trouble for
+        regression testing. */
+    char *winprefix = "C:/msys64/";
+    size_t winlen = 10; 
+
+    if (0 == strncmp(s,winprefix,winlen)) {
+        /* leave the second / in winprefix in the string */
+        s = s+ winlen-1;
+    }
+    if (!home) {
+        esb_append(out,s);
+        return;
+    }
+    homelen = strlen(home);
+    if (s[homelen] != '/') {
+        esb_append(out,s);
+        return;
+    }
+    if(strncmp(s,(const char *)home,homelen)) {
+        esb_append(out,s);
+        return;
+    }
+    esb_append(out,"$HOME");
+    esb_append(out,s+homelen);
+    return;
 }
 
 

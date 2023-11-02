@@ -9,7 +9,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +23,9 @@ limitations under the License.
  */
 #include "dwarf.h"
 #include "libdwarf.h"
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 /*
  * Fuzzer function
@@ -48,7 +51,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   int i = 0;
   Dwarf_Die die = 0;
 
-  fuzz_fd = open(filename, O_RDONLY);
+  fuzz_fd = open(filename, O_RDONLY|O_BINARY);
   if (fuzz_fd != -1) {
     res =
         dwarf_init_b(fuzz_fd, DW_GROUPNUMBER_ANY, errhand, errarg, &dbg, errp);

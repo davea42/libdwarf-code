@@ -9,7 +9,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +51,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   unsigned int tcrc = 0;
   unsigned int init = 0;
 
-  fuzz_fd = open(filename, O_RDONLY);
+  fuzz_fd = open(filename, O_RDONLY|O_BINARY);
   fsize = size_left = lseek(fuzz_fd, 0L, SEEK_END);
   readbuf = (unsigned char *)malloc(readlen);
   if (fuzz_fd != -1) {
