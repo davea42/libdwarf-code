@@ -86,7 +86,10 @@ echo "Run: $dwdl $p $p2 $testsrc/dummyexecutable "
 $dwdl $p $p2 $testsrc/dummyexecutable > $testbin/$o
 r=$?
 chkres $r "running dwdebuglink test2"
-${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
+${localsrc}/canonicalpath.py $localsrc $testbin/$o content > $testbin/${o}ac
+${localsrc}/canonicalpath.py $blddir $testbin/${o}ac content > $testbin/${o}c
+#${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
+
 ${localsrc}/test_dwdiff.py $testsrc/debuglink2.base $testbin/${o}c
 r=$?
 echo "To update test_debuglink-b.sh  baseline:"

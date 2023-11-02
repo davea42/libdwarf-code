@@ -84,7 +84,10 @@ else
   # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  ${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}a
+  ${localsrc}/canonicalpath.py $localsrc $testbin/$o content > $testbin/${o}ac
+  ${localsrc}/canonicalpath.py $blddir $testbin/${o}ac content > $testbin/${o}a
+
+  #${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}a
   ${localsrc}/test_dwdiff.py $testsrc/debuglink.base $testbin/${o}a
   r=$?
   echo "To update test_debuglink-a.sh baseline:"
