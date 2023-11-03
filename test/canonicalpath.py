@@ -2,10 +2,6 @@
 # Copyright 2020 David Anderson.
 # This code is hereby placed into the public domain.
 
-See also
-
-# try:
-#  canonicalpath.py /a/b/../c/d/./e/ $HOME
 # For msys2 mingw this trims off Windows C: stuff
 # msys2 cannot always accept the true Windows path
 # in open().
@@ -44,16 +40,11 @@ if __name__ == '__main__':
         printfixedcontent(s,codepath)
         sys.exit(0)
     # We are fixing the content 
-    #print("dadebug path",s)
     w = os.path.abspath(s)
-    #print("dadebug abspath",w)
     w= dowinb(w)
-    #print("dadebug after dowinb",w)
     # patchwhere is "start"
     if not codepath == 'xxxx':
-        #print("dadebug not xxxx ",w)
         if w.startswith(codepath):
             s = w.replace(codepath,"...std...")
             w = s
-        #print("dadebug not xxxx ",w)
     print(w)
