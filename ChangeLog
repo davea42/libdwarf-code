@@ -1,3 +1,154 @@
+2023-11-03:  David Anderson
+    commit d00ec74b9eadbdc6e0e83089944cd59841ec63fc
+
+    Removing debug print statements.
+            modified:   test/canonicalpath.py
+
+2023-11-02:  David Anderson
+    commit 9530b4a8100ea8e931d5b3d552e5d688bcdb94bb
+
+    This is the same as regressiontests/script/canonicalpath.py
+            new file:   canonicalpath.py
+    Now use canonicalpath.py and ignore test_transformpath.py
+            modified:   test_debuglink-a.sh
+            modified:   test_debuglink-b.sh
+
+2023-11-02:  David Anderson
+    commit 3df08b8af737c11f774c1586460ad5d8c443d3c0
+
+    These were not treating O_BINARY correctly and/or
+    failing to use it at all. It is necessary on Windows
+    to read object files properly.
+    No change in logic at all.
+            modified:   fuzz/fuzz_aranges.c
+            modified:   fuzz/fuzz_crc.c
+            modified:   fuzz/fuzz_crc_32.c
+            modified:   fuzz/fuzz_debug_addr_access.c
+            modified:   fuzz/fuzz_debug_str.c
+            modified:   fuzz/fuzz_debuglink.c
+            modified:   fuzz/fuzz_die_cu.c
+            modified:   fuzz/fuzz_die_cu_attrs.c
+            modified:   fuzz/fuzz_die_cu_attrs_loclist.c
+            modified:   fuzz/fuzz_die_cu_info1.c
+            modified:   fuzz/fuzz_die_cu_offset.c
+            modified:   fuzz/fuzz_die_cu_print.c
+            modified:   fuzz/fuzz_dnames.c
+            modified:   fuzz/fuzz_gdbindex.c
+            modified:   fuzz/fuzz_globals.c
+            modified:   fuzz/fuzz_gnu_index.c
+            modified:   fuzz/fuzz_init_b.c
+            modified:   fuzz/fuzz_init_binary.c
+            modified:   fuzz/fuzz_macro_dwarf4.c
+            modified:   fuzz/fuzz_macro_dwarf5.c
+            modified:   fuzz/fuzz_rng.c
+            modified:   fuzz/fuzz_set_frame_all.c
+            modified:   fuzz/fuzz_showsectgrp.c
+            modified:   fuzz/fuzz_simplereader_tu.c
+            modified:   fuzz/fuzz_srcfiles.c
+            modified:   fuzz/fuzz_stack_frame_access.c
+            modified:   fuzz/fuzz_str_offsets.c
+            modified:   fuzz/fuzz_tie.c
+            modified:   fuzz/fuzz_xuindex.c
+
+    Fixing the reporting of filenames so that even on msys2
+    the report is sensible (for msys2)
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Tweak to make it work.
+            modified:   src/lib/libdwarf/meson.build
+
+    Introducing the correct header ifdefs involving DWP_API
+    to match the concept in libdwarf.h
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2023-11-02:  David Anderson
+    commit ca7c784d5e45baf132adf0238bff4ca835fa0f29
+
+    A new month, so a change in the titles.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-11-02:  David Anderson
+    commit bca7f325467a5dd11d5f8b6afc8594b269822100
+
+    Changed a suggestion from buildandreleasetest.sh to allsimplebuilds.sh
+    as that makes more sense here.
+            modified:   READMEmacos.md
+
+2023-10-31:  David Anderson
+    commit e00930a69244025dda57b53238bc6231117c9bd9
+
+    Now we test O_BINARY and only if not already set set it to zero.
+    Because in the msys2 windows environment O_BINARY has a value already
+    (from system headers). So we avoid a poinless warning.
+            modified:   fuzz/fuzz_aranges.c
+            modified:   fuzz/fuzz_debug_str.c
+            modified:   fuzz/fuzz_dnames.c
+            modified:   fuzz/fuzz_gdbindex.c
+            modified:   fuzz/fuzz_globals.c
+            modified:   fuzz/fuzz_gnu_index.c
+            modified:   fuzz/fuzz_init_b.c
+            modified:   fuzz/fuzz_macro_dwarf4.c
+            modified:   fuzz/fuzz_set_frame_all.c
+            modified:   fuzz/fuzz_str_offsets.c
+
+2023-10-30:  David Anderson
+    commit 0a4ba6b0b5dcee6a1876d660c0286960e857a5d6
+
+    Correcting the code looking for libz/libzstd
+    in /opt/local or /usr/local.
+
+    DO NOT USE THIS COMMIT
+    it is just to save this correction and
+    further changes will be madel
+            modified:   meson.build
+            modified:   src/lib/libdwarf/meson.build
+
+2023-10-30:  David Anderson
+    commit 667a6fa8aa7f194a93feae917807033f876fae91
+
+    Simplifying. We now require both zlib and libzstd
+    to be present for decompressing object sections.
+    If one is missing it is the same as both missing
+    and then we build libdwarf with no decompression
+    capability.
+    It's much simpler code this way.
+
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2023-10-25:  David Anderson
+    commit b778c2a9a895bfe7e71aa6c1159a59741579a209
+
+    Checking for an app (such as cmake) was
+    not properly dealing with the app is not present
+    situation. Resulted in warning. Fixed.
+            modified:   scripts/allsimplebuilds.sh
+
+2023-10-25:  David Anderson
+    commit 45c4b785359b32ff20a9325e2776855ee9abfaa1
+
+    Now meson can find and use zlib, libzstd even
+    if they are in /usr/local/lib instead of system directories.
+    Or in /opt/local/lib etc. No user action required.
+
+    We no longer use any deprecated meson functions.
+    The meson version required is still 0.53.
+            modified:   meson.build
+            modified:   test/meson.build
+
+2023-10-25:  David Anderson
+    commit f04d7df32ff612de1f24dcc47d5c2faea618e017
+
+    Better reporting on zlib libzstd, hopefully better
+    searching too.
+            modified:   meson.build
+
+2023-10-25:  David Anderson
+    commit d51dd661329891a7919feabc47f35760314fee00
+
+    Brought up to date.
+            modified:   ChangeLog
+
 2023-10-25:  David Anderson
     commit b5c2aa54344f4a725ecb7e81cd7f92d68e3d48ba
 
