@@ -3239,6 +3239,49 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
 /*! @brief The list of source files from the line table header
 
+    The array returned by this function applies to 
+    a single compilation unit (CU).
+
+    The returned array is indexed from 0 (zero) to 
+    dw_filecount-1 when the function returns
+    DW_DLV_OK.
+
+    In referencing the array via a file-number from
+    a DW_AT_decl_file attribute one needs to
+    know if the CU is DWARF5 or not.
+
+    Line Table Version numbers match compilation unit
+    version numbers except that an experimental line table
+    version 0xfe06 has sometimes been used with DWARF4.
+
+    See Appendix G, DWARF Section Version Numbers in DWARF5
+    or a similarly named Appendix in earlier standards.
+
+    For DWARF5:
+    The file-number from DW_AT_decl_file
+    is the proper index into the array of string pointers.
+
+    For DWARF2,3,4, including experimental line table
+    version 0xfe06:
+    If the file-number is zero there is no file name to find.
+    Otherwise subtract one from the file-number and
+    use the new value as the index into the array
+    of string pointers.
+
+    The name strings returned are each assembled in the
+    following way by dwarf_srcfiles():
+
+    0. The file number denotes a name in the line table header. 
+    
+    1. If the name is not a full path (ie, not starting 
+       with / in posix) then prepend the appropriate
+       directory string from the line table header.
+
+    2. If the name is still not a full path, prepend
+       the content of the DW_AT_comp_dir attribute
+       of the CU die.
+
+
     @param dw_cu_die
     The CU DIE in this CU.
     @param dw_srcfiles
@@ -4825,7 +4868,8 @@ DW_API int dwarf_get_macro_context_by_offset(Dwarf_Die dw_die,
     Dwarf_Unsigned      * dw_macro_ops_data_length,
     Dwarf_Error         * dw_error);
 
-/*  New December 2020. Sometimes its necessary to know
+/*  New December 2020. libdwarf 0.1.0 
+    Sometimes its necessary to know
     a context total length including macro 5 header */
 /*! @brief Return a macro context total length
 
@@ -5333,6 +5377,7 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
 /*! @brief Return information on frame registers at a given pc value
 
     An FDE at a given pc (code address)
+    This function is new in October 2023 version 0.9.0.
 
     @param dw_fde
     Pass in the FDE of interest.
@@ -5387,9 +5432,9 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
 /*  See discussion of dw_value_type, libdwarf.h. */
 /*! @brief Return details about a particular pc and register.
 
-    It is inefficient to iterate across all table_columns (registers)
+    It is efficient to iterate across all table_columns (registers)
     using this function (dwarf_get_fde_info_for_reg3_c()).
-    Instead call dwarf_get_fde_info_for_all_regs3()
+    Or one could instead call dwarf_get_fde_info_for_all_regs3()
     and index into the table it fills in.
 
     If dw_value_type == DW_EXPR_EXPRESSION or
@@ -5399,8 +5444,8 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     on runtime frame data which cannot be calculated
     without a stack frame including registers (etc).
 
-    dwarf_get_fde_info_for_reg3_c() is new in Septmber 2023
-    to correct the incorrect type of the dw_offset
+    dwarf_get_fde_info_for_reg3_c() is new in libdwarf 0.8.0.
+    It corrects the incorrect type of the dw_offset
     argument in  dwarf_get_fde_info_for_reg3_b().
     Both versions operate correctly.
 
@@ -5481,11 +5526,11 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
 
 /*! @brief Get the value of the CFA for a particular pc value
 
-    @see dwarf_get_fde_info_for_reg3_c
+    @see dwarf_get_fde_info_for_reg3_c()
     has essentially the same return values  as
     dwarf_get_fde_info_for_reg3_c but
     it refers to the CFA (which is not part of the register
-    table) so function has no table column argument.
+    table) so this function has no table column argument.
 
     New in September 2023, release 0.8.0.
     dwarf_get_fde_info_for_cfa_reg3_c() returns dw_offset
@@ -6395,8 +6440,8 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug dw_dbg,
 /*! @defgroup debugnames Fast Access to .debug_names DWARF5
     @{
 
-    The section is new in DWARF5  supersedes .debug_pubnames and
-    .debug_pubtypes in DWARF2, DWARF3, and DWARF4.
+    The section is new in DWARF5 and supersedes .debug_pubnames
+    and .debug_pubtypes in DWARF2, DWARF3, and DWARF4.
 
     The functions provide a detailed reporting
     of the content and structure of the table (so one
