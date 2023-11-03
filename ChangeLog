@@ -1,4 +1,34 @@
 2023-11-03:  David Anderson
+    commit 7c714926d5680fe1dc4806d20cce2ac8f66fb1eb
+
+    What canonicalpath.py returns
+    for some directories is now ...std...
+    instead of the previous ..std..
+            modified:   test/debuglink.base
+            modified:   test/debuglink2.base
+
+    The switch to canonicalpath.py was not correctly
+    handled. Now fixed.
+            modified:   test/test_debuglink-a.sh
+            modified:   test/test_debuglink-b.sh
+
+2023-11-03:  David Anderson
+    commit 40e09c31500c492c33b09f52c82e4e40941d5721
+
+    Minor tweaks
+            modified:   doc/libdwarf.dox
+    Much more complete description of what dwarf_srcfiles()
+    returns and how to use it.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-03:  David Anderson
+    commit 5b2b463f756660bbd20fd0746a54503536770c71
+
+    Small changes so that we can pass
+    regression testing on MacOS and hopefully msys2.
+            modified:   ChangeLog
+
+2023-11-03:  David Anderson
     commit d00ec74b9eadbdc6e0e83089944cd59841ec63fc
 
     Removing debug print statements.
