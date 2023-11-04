@@ -1,3 +1,19 @@
+2023-11-04:  David Anderson
+    commit 4e2c435a38cd7eb0c05b3ae1616e599cc176a20f
+
+    Improving format and content of
+     dwarf_srcfiles() documentation. Now with 4 November
+    date.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-03:  David Anderson
+    commit 21e4498903193e0b675dff341e61e344870ac8b0
+
+    Updated.
+            modified:   ChangeLog
+
 2023-11-03:  David Anderson
     commit 7c714926d5680fe1dc4806d20cce2ac8f66fb1eb
 
