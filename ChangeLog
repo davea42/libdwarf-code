@@ -1,4 +1,30 @@
 2023-11-04:  David Anderson
+    commit 2727bb089899417a73657d1918aac5758d2f9a46
+
+    Now with much improved doc of dwarf_srcfiles()
+            modified:   doc/libdwarf.pdf
+
+2023-11-04:  David Anderson
+    commit a18672597c58452ed932b9937fe873f7110421eb
+
+    Better documentation of dwarf_srcfiles() and
+    accessing the version number of a line table.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-04:  David Anderson
+    commit 4bcf94ee30ffc6d424b776917c984d33bb64316f
+
+    Corrected the comment about compiling this.
+    Added a missing local variable declaration.
+            modified:   doc/checkexamples.c
+
+2023-11-04:  David Anderson
+    commit a189179b3c0a447f23c80ddc3849883be2a12650
+
+    With latest doc updates shown.
+            modified:   ChangeLog
+
+2023-11-04:  David Anderson
     commit 4e2c435a38cd7eb0c05b3ae1616e599cc176a20f
 
     Improving format and content of
