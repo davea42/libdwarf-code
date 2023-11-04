@@ -15,13 +15,12 @@ jobs:
         with:
           operating_system: freebsd
           version:  '13.2'
-          prepare: |
+          run: |
             uname -a
             freebsd-version
             echo $SHELL
             sudo pkg install -y python3 bash cmake ninja pkgconf
             sudo pkg install -y gmake binutils lzlib
-          run: |
             mkdir builddir && cd builddir
             cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
             ninja
