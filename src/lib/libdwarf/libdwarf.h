@@ -2102,7 +2102,7 @@ DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int dw_form);
 /*! @brief Return the CU DIE offset given any DIE
 
     Returns
-    the global debug_info section offset of the CU die
+    the global debug_info section offset of the CU DIE
     in the CU containing the given_die
     (the passed in DIE can be any DIE).
 
@@ -3275,7 +3275,12 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
        directory string from the line table header.
     -# If the name is still not a full path then prepend
        the content of the DW_AT_comp_dir attribute
-       of the CU die.
+       of the CU DIE.
+
+    To retrieve the line table version call
+    dwarf_srclines_b() and dwarf_srclines_version().
+    
+    @see examplec
 
     @param dw_cu_die
     The CU DIE in this CU.
@@ -3305,8 +3310,11 @@ DW_API int dwarf_srcfiles(Dwarf_Die dw_cu_die,
 /*! @brief Initialize Dwarf_Line_Context for line table access
 
     Returns Dwarf_Line_Context pointer, needed for
-    access to line table data.
+    access to line table data. Returns the line table
+    version number (needed to use dwarf_srcfiles()
+    properly).
 
+    @see examplec
     @see exampled
 
     @param dw_cudie
@@ -3555,7 +3563,6 @@ DW_API int dwarf_srclines_files_indexes(
     @return
     DW_DLV_OK if it succeeds.
 
-    @see examplec
 */
 DW_API int dwarf_srclines_files_data_b(
     Dwarf_Line_Context   dw_context,
@@ -3615,9 +3622,15 @@ DW_API int dwarf_srclines_include_dir_data(
     Dwarf_Error   * dw_error);
 
 /*! @brief The DWARF version number of this compile-unit
-    The .debug_lines[.dwo] t
-    actual tables:0 (header with no lines),
-    1 (standard table), or 2 (experimental).
+
+    The .debug_lines[.dwo] table count informs about
+    the line table version and the
+    type of line table involved.
+
+    Meaning of the value returned via dw_table_count: 
+    -  0 The table is a header with no lines.
+    -  1 The table is a standard line table.
+    -  2 The table is an experimental line table.
 
     @param dw_line_context
     The Line Context of interest.
