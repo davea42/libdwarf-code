@@ -8,18 +8,17 @@ permissions: read-all
 jobs:
   freebsd_cmake:
     runs-on: macos-12
-    name: FreeBSD
+    name: FreeBSD using cmake
     steps:
-    - uses: actions/checkout@v3
-    - name: FreeBSD VM using cmake
       uses: cross-platform-actions/action@v0.20.0
       with:
         operating_system: freebsd
         version:  '13.2'
         shell: bash
-        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
         run: |
           freebsd-version
+          sudo pkg install -y python3 bash cmake ninja pkgconf
+          sudo pkg install -y gmake binutils lzlib
           mkdir builddir && cd builddir
           cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
           ninja
