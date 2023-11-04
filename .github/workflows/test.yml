@@ -74,23 +74,24 @@ jobs:
           make
           make check
 
-  freebsd_cmake:
-    runs-on: macos-12
-    name: FreeBSD
-    steps:
-    - uses: actions/checkout@v2
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
-      with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
-        run: |
-          mkdir builddir && cd builddir
-          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-          ninja 
-          ninja test
+# As of Nov 4 2023 this hangs booting its kernel
+#  freebsd_cmake:
+#    runs-on: macos-12
+#    name: FreeBSD
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: FreeBSD VM
+#      uses: vmactions/freebsd-vm@v0
+#      with:
+#        usesh: true
+#        sync:  rsync
+#        copyback: false
+#        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
+#        run: |
+#          mkdir builddir && cd builddir
+#          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+#          ninja 
+#          ninja test
 
   freebsd_meson:
     runs-on: macos-12
