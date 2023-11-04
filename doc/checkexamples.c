@@ -17,7 +17,7 @@ cc -c -Wall -O0 -Wpointer-arith  \
 -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
 -Wno-long-long -Wshadow -Wbad-function-cast \
 -Wmissing-parameter-type -Wnested-externs \
--Isrc/lib/libdwarf checkexamples.c
+-I../src/lib/libdwarf checkexamples.c
 @endcode
 */
 
@@ -1765,6 +1765,7 @@ void           add_offset_to_list(Dwarf_Unsigned offset);
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
+    Dwarf_Unsigned  k = 0;
     Dwarf_Unsigned version = 0;
     Dwarf_Macro_Context macro_context = 0;
     Dwarf_Unsigned macro_unit_offset = 0;
