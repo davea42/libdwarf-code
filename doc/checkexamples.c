@@ -1304,20 +1304,48 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 */
 int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
-    char **srcfiles = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    /*  It is an annoying historical mistake in libdwarf that the count
+        is a signed value. */
+    Dwarf_Signed       count = 0;
+    char             **srcfiles = 0;
+    Dwarf_Signed       i = 0;
+    int                res = 0;
+    Dwarf_Line_Context line_context = 0;
+    Dwarf_Small        table_count = 0;
+    Dwarf_Unsigned     lineversion = 0;
 
     res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
     if (res != DW_DLV_OK) {
         return res;
     }
-    for (i = 0; i < count; ++i) {
-        /* use srcfiles[i] */
-        dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+    res = dwarf_srclines_b(somedie,&lineversion,
+        &table_count,&line_context,error);
+    if (res != DW_DLV_OK) {
+            /*  dwarf_finish() will dealloc srcfiles, not doing 
+                that here.  */
+        return res;
     }
+    for (i = 0; i < count; ++i) {
+        Dwarf_Signed propernumber = 0;
+        
+        /*  Use srcfiles[i] If you  wish to print 'i'
+            mostusefully
+            you should reflect the numbering that 
+            a DW_AT_decl_file attribute would report in
+            this CU. */
+        if (lineversion ==  5) {
+            propernumber = i;
+        } else {
+            propernumber = i+1;
+        }
+        printf("File %4ld %s\n",(unsigned long)propernumber,srcfiles[i]);
+        dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+        srcfiles[i] = 0;
+    }
+    /*  We could leave all dealloc to dwarf_finish() to
+        handle, but this tidies up sooner. */
     dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+    dwarf_srclines_dealloc_b(line_context);
     return DW_DLV_OK;
 }
 /*! @endcode */
