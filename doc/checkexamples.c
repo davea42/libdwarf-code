@@ -1314,10 +1314,6 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
     Dwarf_Small        table_count = 0;
     Dwarf_Unsigned     lineversion = 0;
 
-    res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
     res = dwarf_srclines_b(somedie,&lineversion,
         &table_count,&line_context,error);
     if (res != DW_DLV_OK) {
@@ -1325,6 +1321,12 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
                 that here.  */
         return res;
     }
+    res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
+    if (res != DW_DLV_OK) {
+        dwarf_srclines_dealloc_b(line_context);
+        return res;
+    }
+
     for (i = 0; i < count; ++i) {
         Dwarf_Signed propernumber = 0;
         
