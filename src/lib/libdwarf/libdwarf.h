@@ -3239,10 +3239,10 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
 /*! @brief The list of source files from the line table header
 
-    The array returned by this function applies to 
+    The array returned by this function applies to
     a single compilation unit (CU).
 
-    The returned array is indexed from 0 (zero) to 
+    The returned array is indexed from 0 (zero) to
     dw_filecount-1 when the function returns
     DW_DLV_OK.
 
@@ -3252,35 +3252,30 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
     Line Table Version numbers match compilation unit
     version numbers except that an experimental line table
-    version 0xfe06 has sometimes been used with DWARF4.
-
-    See Appendix G, DWARF Section Version Numbers in DWARF5
-    or a similarly named Appendix in earlier standards.
+    with line table version 0xfe06 has
+    sometimes been used with DWARF4.
 
     For DWARF5:
-    The file-number from DW_AT_decl_file
+    The file-number from a \b DW_AT_decl_file
     is the proper index into the array of string pointers.
 
     For DWARF2,3,4, including experimental line table
-    version 0xfe06:
-    If the file-number is zero there is no file name to find.
-    Otherwise subtract one from the file-number and
-    use the new value as the index into the array
-    of string pointers.
+    version 0xfe06 and a file-number from a \b DW_AT_decl_file:
+    -# If the file-number is zero there is no file name to find.
+    -# Otherwise subtract one(1) from the file-number and
+       use the new value as the index into the array
+       of string pointers.
 
     The name strings returned are each assembled in the
     following way by dwarf_srcfiles():
 
-    0. The file number denotes a name in the line table header. 
-    
-    1. If the name is not a full path (ie, not starting 
-       with / in posix) then prepend the appropriate
+    -# The file number denotes a name in the line table header.
+    -# If the name is not a full path (i.e. not starting
+       with / in posix/linux/MacOS) then prepend the appropriate
        directory string from the line table header.
-
-    2. If the name is still not a full path, prepend
+    -# If the name is still not a full path then prepend
        the content of the DW_AT_comp_dir attribute
        of the CU die.
-
 
     @param dw_cu_die
     The CU DIE in this CU.
@@ -3338,7 +3333,7 @@ DW_API int dwarf_srclines_b(Dwarf_Die dw_cudie,
 
 /*! @brief Access source lines from line context
 
-    The access to Dwarf_Line data from
+    Provides access to Dwarf_Line data from
     a Dwarf_Line_Context on a standard line table.
 
     @param dw_linecontext
@@ -4868,7 +4863,7 @@ DW_API int dwarf_get_macro_context_by_offset(Dwarf_Die dw_die,
     Dwarf_Unsigned      * dw_macro_ops_data_length,
     Dwarf_Error         * dw_error);
 
-/*  New December 2020. libdwarf 0.1.0 
+/*  New December 2020. libdwarf 0.1.0
     Sometimes its necessary to know
     a context total length including macro 5 header */
 /*! @brief Return a macro context total length
