@@ -88,6 +88,8 @@ if (PIC_ALWAYS)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
   set(COMPILER_FLAGS "${COMPILER_FLAGS} -DPIC")
 endif()
+
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
