@@ -84,6 +84,10 @@ else()
     set(COMPILER_FLAGS -DLIBDWARF_STATIC)
 endif()
 
+if (PIC_ALWAYS)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  set(COMPILER_FLAGS "${COMPILER_FLAGS} -DPIC")
+endif()
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")

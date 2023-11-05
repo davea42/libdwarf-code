@@ -276,6 +276,10 @@ int main()
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
+# Set policy to allow options to respect existing defines
+# This is useful for fetchcontent
+# cmake_policy(SET CMP0077 NEW)
+
 # libdwarf  
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 option(BUILD_SHARED 
@@ -300,6 +304,8 @@ endif()
 #  unset(DW_LIBDWARF_STATIC)
 #endif()
 
+option(BUILD_DWARFDUMP "Build dwarfdump (default is YES)" TRUE)
+
 option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
 message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
 
@@ -309,6 +315,8 @@ message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
 option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
+
+option(PIC_ALWAYS "Build libdwarf with position-independent code for both static and shared (default is NO)" FALSE)
 
 configure_file(cmake/config.h.cmake config.h)
 
@@ -333,7 +341,10 @@ else()
 endif()
 
 add_subdirectory(src/lib/libdwarf)
-add_subdirectory(src/bin/dwarfdump)
+
+if ( BUILD_DWARFDUMP )
+  add_subdirectory(src/bin/dwarfdump)
+endif()
 
 if ( BUILD_DWARFEXAMPLE )
 	add_subdirectory(src/bin/dwarfexample)
