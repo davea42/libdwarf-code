@@ -56,57 +56,63 @@ jobs:
         ninja
         ninja test                       
 
-# As of Nov 4 2023 this hangs booting its kernel
-#  freebsd_autotools:
-#    runs-on: macos-12
-#    name: FreeBSD
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: FreeBSD VM
-#      uses: vmactions/freebsd-vm@v0
-#      with:
-#        usesh: true
-#        sync:  rsync
-#        copyback: false
-#        prepare: pkg install -y python3 bash autoconf automake libtool pkgconf gmake binutils lzlib
-#        run: |
-#          sh ./autogen.sh
-#          ./configure
-#          make
-#          make check
+  freebsd_autotools:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+      - name: FreeBSD-with-autotools
+        uses: cross-platform-actions/action@v0.20.0
+        with:
+          operating_system: freebsd
+          version:  '13.2'
+          run: |
+            uname -a
+            freebsd-version
+            echo $SHELL
+            sudo pkg install -y python3 bash autoconf automake
+            sudo pkg install -y libtool pkgconf gmake binutils lzlib
+            sh ./autogen.sh
+            ./configure
+            make
+            make check
 
-# As of Nov 4 2023 this hangs booting its kernel
-#  freebsd_cmake:
-#    runs-on: macos-12
-#    name: FreeBSD
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: FreeBSD VM
-#      uses: vmactions/freebsd-vm@v0
-#      with:
-#        usesh: true
-#        sync:  rsync
-#        copyback: false
-#        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
-#        run: |
-#          mkdir builddir && cd builddir
-#          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-#          ninja 
-#          ninja test
+  freebsd_cmake:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+      - name: FreeBSD-with-cmake
+        uses: cross-platform-actions/action@v0.20.0
+        with:
+          operating_system: freebsd
+          version:  '13.2'
+          run: |
+            uname -a
+            freebsd-version
+            echo $SHELL
+            sudo pkg install -y python3 bash cmake ninja pkgconf
+            sudo pkg install -y gmake binutils lzlib
+            mkdir builddir && cd builddir
+            cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+            ninja
+            ninja test
 
   freebsd_meson:
     runs-on: macos-12
-    name: FreeBSD
+    name: FreeBSD-with-meson
     steps:
-    - uses: actions/checkout@v2
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
+    - uses: actions/checkout@v3
+    - name: FreeBSD-meson 
+      uses: cross-platform-actions/action@v0.20.0
       with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash meson ninja pkgconf gmake binutils lzlib
+        operating_system: freebsd
+        version:  '13.2'
         run: |
+          uname -a
+          freebsd-version
+          echo $SHELL
+
+          sudo pkg install -y python3 bash meson ninja 
+          sudo pkg install -y pkgconf gmake binutils lzlib
           mkdir build && cd build
           meson . ..  -Ddwarfexample=true
           ninja
