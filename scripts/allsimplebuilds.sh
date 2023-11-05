@@ -121,7 +121,7 @@ spath=`pwd`
 tpath=/tmp/allsimple
 bbase=/tmp/allsimple
 tbase=/tmp/allsimpleinstalled
-echo "Source diectory.............: $spath"
+echo "Source directory............: $spath"
 echo "Run builds in temp directory: $bbase"
 echo "Store install directories in: $tbase"
 echo ""
