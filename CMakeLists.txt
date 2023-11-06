@@ -276,10 +276,6 @@ int main()
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
-# Set policy to allow options to respect existing defines
-# This is useful for fetchcontent
-# cmake_policy(SET CMP0077 NEW)
-
 # libdwarf  
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 option(BUILD_SHARED 

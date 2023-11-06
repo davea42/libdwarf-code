@@ -86,10 +86,10 @@ endif()
 
 if (PIC_ALWAYS)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-  set(COMPILER_FLAGS "${COMPILER_FLAGS} -DPIC")
+  list(APPEND COMPILER_FLAGS -DPIC)
 endif()
 
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+# set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
@@ -106,6 +106,8 @@ foreach(i RANGE ${targetCount})
 	add_library(${target} ${type} ${SOURCES} ${HEADERS}
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
+    add_library(libdwarf::${target} ALIAS ${target})
+    
 	set_folder(${target} src/lib/libdwarf)
     target_compile_options(${target} PRIVATE ${COMPILER_FLAGS}
             ${DW_FWALL})
