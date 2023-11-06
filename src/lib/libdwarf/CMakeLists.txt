@@ -79,11 +79,15 @@ if (BUILD_SHARED)
     if(NOT BUILD_DWARFGEN)
       set(CMAKE_C_VISIBILITY_PRESET hidden)
     endif()
-    set(COMPILER_FLAGS -DLIBDWARF_BUILD -DPIC)
+    set(DEFS LIBDWARF_BUILD PIC)
 else()
-    set(COMPILER_FLAGS -DLIBDWARF_STATIC)
+    set(DEFS LIBDWARF_STATIC)
 endif()
 
+if (PIC_ALWAYS)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  list(APPEND DEFS PIC)
+endif()
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
@@ -100,10 +104,14 @@ foreach(i RANGE ${targetCount})
 	add_library(${target} ${type} ${SOURCES} ${HEADERS}
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
+    add_library(libdwarf::${target} ALIAS ${target})
+    
 	set_folder(${target} src/lib/libdwarf)
     target_compile_options(${target} PRIVATE ${COMPILER_FLAGS}
             ${DW_FWALL})
 	msvc_posix(${target})
+    
+    target_compile_definitions(${target} PUBLIC ${DEFS})
 
 	target_link_libraries(${target} PUBLIC  ${DW_FZLIB} ${DW_FZSTD} ) 
 	
