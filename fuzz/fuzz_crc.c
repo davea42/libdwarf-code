@@ -24,6 +24,10 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 /*
  * Fuzzer function
  */
