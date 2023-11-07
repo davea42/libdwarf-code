@@ -88,6 +88,8 @@ if (PIC_ALWAYS)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
   list(APPEND DEFS PIC)
 endif()
+
+include(GNUInstallDirs)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
@@ -112,6 +114,13 @@ foreach(i RANGE ${targetCount})
 	msvc_posix(${target})
     
     target_compile_definitions(${target} PUBLIC ${DEFS})
+    
+  target_include_directories(
+    ${target}
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  )
 
 	target_link_libraries(${target} PUBLIC  ${DW_FZLIB} ${DW_FZSTD} ) 
 	
@@ -136,7 +145,8 @@ configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY )
 add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
 install(TARGETS ${DWARF_TARGETS} EXPORT libdwarfTargets
     ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib)
+    LIBRARY DESTINATION lib
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(EXPORT libdwarfTargets
     FILE libdwarf-targets.cmake
     NAMESPACE libdwarf::
