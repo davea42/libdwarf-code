@@ -201,39 +201,12 @@ if (ZLIB_FOUND)
   set(HAVE_ZLIB TRUE)
 endif()
 
-set(CMAKE_REQUIRED_LIBRARIES zstd )
-check_c_source_compiles( [=[
-  #include "zstd.h"
-  int main()
-  {
-      char * dest[100];
-      size_t destlen = 100;
-      char *src = 0;
-      size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
-      if (res == destlen) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZSTD )
-check_c_source_compiles( [=[
-  #include "zstd.h"
-  int main()
-  {
-      char * dest[100];
-      size_t destlen = 100;
-      char *src = 0;
-      size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
-      if (res == destlen) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZSTD_H )
-set(CMAKE_REQUIRED_LIBRARIES)
-if (HAVE_ZSTD)
+find_package(ZSTD)
+if (ZSTD_FOUND)
   # For linking in libzstd
-  set(DW_FZSTD "zstd")
+  set(HAVE_ZSTD TRUE)
+  set(HAVE_ZSTD_H TRUE)
+  set(DW_FZSTD ZSTD::ZSTD)
 endif()
 
 
