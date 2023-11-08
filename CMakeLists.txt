@@ -231,6 +231,8 @@ endif()
 find_package(ZSTD)
 if (ZSTD_FOUND)
   # For linking in libzstd
+  set(HAVE_ZSTD TRUE)
+  set(HAVE_ZSTD_H TRUE)
   set(DW_FZSTD ZSTD::ZSTD)
 endif()
 

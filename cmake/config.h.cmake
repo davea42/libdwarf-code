@@ -64,6 +64,12 @@
 /* Define to 1 if you have the <zlib.h> header file. */
 #cmakedefine HAVE_ZLIB_H 1
 
+/* Set to 1 if zlib decompression is available. */
+#cmakedefine HAVE_ZSTD 1
+
+/* Define to 1 if you have the <zstd.h> header file. */
+#cmakedefine HAVE_ZSTD_H 1
+
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #cmakedefine LT_OBJDIR 1
 
