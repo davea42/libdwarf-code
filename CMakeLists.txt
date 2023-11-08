@@ -197,6 +197,8 @@ find_package(ZLIB)
 if (ZLIB_FOUND) 
   # For linking in libz
   set(DW_FZLIB ZLIB::ZLIB)
+  set(HAVE_ZLIB_H TRUE)
+  set(HAVE_ZLIB TRUE)
 endif()
 
 set(CMAKE_REQUIRED_LIBRARIES zstd )
