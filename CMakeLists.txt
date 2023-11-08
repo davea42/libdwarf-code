@@ -193,39 +193,12 @@ check_c_source_compiles([=[
   }]=] HAVE_STDAFX_H)
 #message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
 
-set(CMAKE_REQUIRED_LIBRARIES z)
-check_c_source_compiles( [=[
-  #include "zlib.h"
-  int main()
-  {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZLIB )
-check_c_source_compiles( [=[
-  #include "zlib.h"
-  int main()
-  {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZLIB_H )
-set(CMAKE_REQUIRED_LIBRARIES)
-if (HAVE_ZLIB) 
+find_package(ZLIB)
+if (ZLIB_FOUND) 
   # For linking in libz
-  set(DW_FZLIB "z")
+  set(DW_FZLIB ZLIB::ZLIB)
+  set(HAVE_ZLIB_H TRUE)
+  set(HAVE_ZLIB TRUE)
 endif()
 
 set(CMAKE_REQUIRED_LIBRARIES zstd )
