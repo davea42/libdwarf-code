@@ -191,21 +191,15 @@ check_c_source_compiles([=[
   }]=] HAVE_STDAFX_H)
 #message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
 
+# Zlib and ZSTD need to be found otherwise disable it
 find_package(ZLIB)
-if (ZLIB_FOUND) 
-  # For linking in libz
-  set(HAVE_ZLIB_H TRUE)
-  set(HAVE_ZLIB TRUE)
-endif()
-
 find_package(ZSTD)
-if (ZSTD_FOUND)
-  # For linking in libzstd
+if (ZLIB_FOUND AND ZSTD_FOUND ) 
+  set(HAVE_ZLIB TRUE)
+  set(HAVE_ZLIB_H TRUE)
   set(HAVE_ZSTD TRUE)
   set(HAVE_ZSTD_H TRUE)
 endif()
-
-
 
 check_c_source_compiles([=[
 #include <stdint.h>
