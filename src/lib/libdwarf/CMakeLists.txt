@@ -93,13 +93,7 @@ include(GNUInstallDirs)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
-list(APPEND DWARF_LIBS ${LIBELF_LIBRARIES})
-if (DW_FZLIB)
-    list(APPEND DWARF_LIBS z)
-endif()
-if (DW_FZSTD)
-    list(APPEND DWARF_LIBS zstd)
-endif()
+
 foreach(i RANGE ${targetCount})
 	list(GET DWARF_TARGETS ${i} target)
 	list(GET DWARF_TYPES ${i} type)
@@ -122,8 +116,9 @@ foreach(i RANGE ${targetCount})
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
 
-	target_link_libraries(${target} PUBLIC  ${DW_FZLIB} ${DW_FZSTD} ) 
-	
+  if(ZLIB_FOUND AND ZSTD_FOUND)
+	target_link_libraries(${target} PRIVATE  ZLIB::ZLIB ZSTD::ZSTD ) 
+  endif()
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
 
 	set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)

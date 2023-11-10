@@ -5,8 +5,6 @@ project(libdwarf C CXX)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include_directories( ${PROJECT_BINARY_DIR} )
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
     if(MSVC AND ("${MSVC_VERSION}" LESS 1900))
@@ -193,23 +191,15 @@ check_c_source_compiles([=[
   }]=] HAVE_STDAFX_H)
 #message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
 
+# Zlib and ZSTD need to be found otherwise disable it
 find_package(ZLIB)
-if (ZLIB_FOUND) 
-  # For linking in libz
-  set(DW_FZLIB ZLIB::ZLIB)
-  set(HAVE_ZLIB_H TRUE)
-  set(HAVE_ZLIB TRUE)
-endif()
-
 find_package(ZSTD)
-if (ZSTD_FOUND)
-  # For linking in libzstd
+if (ZLIB_FOUND AND ZSTD_FOUND ) 
+  set(HAVE_ZLIB TRUE)
+  set(HAVE_ZLIB_H TRUE)
   set(HAVE_ZSTD TRUE)
   set(HAVE_ZSTD_H TRUE)
-  set(DW_FZSTD ZSTD::ZSTD)
 endif()
-
-
 
 check_c_source_compiles([=[
 #include <stdint.h>

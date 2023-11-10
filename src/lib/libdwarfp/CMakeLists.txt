@@ -36,7 +36,6 @@ endif()
 
 list(LENGTH DWARFP_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
-list(APPEND DWARFP_LIBS ${LIBELF_LIBRARIES})
 foreach(i RANGE ${targetCount})
 	list(GET DWARFP_TARGETS ${i} target)
 	list(GET DWARFP_TYPES ${i} type)
@@ -44,15 +43,12 @@ foreach(i RANGE ${targetCount})
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
 	set_folder(${target} src/lib/libdwarfp)
-	target_include_directories(${target} PUBLIC 
-            ${LIBELF_INCLUDE_DIRS} )
 	target_include_directories(${target} PRIVATE 
             ${LIBDWARF_INCLUDE_DIR} )
     target_compile_options(${target} PRIVATE ${DW_COMPILER_FLAGS}
             ${DW_FWALL})
 	msvc_posix(${target})
 
-	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})
 	
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarfp)
 
