@@ -194,7 +194,6 @@ check_c_source_compiles([=[
 find_package(ZLIB)
 if (ZLIB_FOUND) 
   # For linking in libz
-  set(DW_FZLIB ZLIB::ZLIB)
   set(HAVE_ZLIB_H TRUE)
   set(HAVE_ZLIB TRUE)
 endif()
@@ -204,7 +203,6 @@ if (ZSTD_FOUND)
   # For linking in libzstd
   set(HAVE_ZSTD TRUE)
   set(HAVE_ZSTD_H TRUE)
-  set(DW_FZSTD ZSTD::ZSTD)
 endif()
 
 

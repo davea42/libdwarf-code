@@ -116,8 +116,9 @@ foreach(i RANGE ${targetCount})
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
 
-	target_link_libraries(${target} PUBLIC  ${DW_FZLIB} ${DW_FZSTD} ) 
-	
+  if(ZLIB_FOUND AND ZSTD_FOUND)
+	target_link_libraries(${target} PRIVATE  ZLIB::ZLIB ZSTD::ZSTD ) 
+  endif()
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
 
 	set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
