@@ -126,7 +126,6 @@ configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY )
 # another CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
-add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
 install(TARGETS dwarf EXPORT libdwarfTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib

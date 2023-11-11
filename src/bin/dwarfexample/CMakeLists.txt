@@ -46,7 +46,7 @@ set_folder(jitreader src/bin/dwarfexample)
 target_compile_definitions(jitreader PRIVATE
     CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib ${DW_LIBDWARF_STATIC})
 target_compile_options(jitreader PRIVATE ${DW_FWALL})
-target_link_libraries(jitreader PRIVATE
+target_link_libraries(jitreader PRIVATE 
 dwarf)
 
 set_source_group(SHOWSECTIONGROUPS_SOURCES "Source Files"
