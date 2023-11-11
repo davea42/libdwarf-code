@@ -34,41 +34,34 @@ else()
     set(COMPILER_FLAGS -DLIBDWARF_STATIC)
 endif()
 
-list(LENGTH DWARFP_TARGETS targetCount)
-math(EXPR targetCount "${targetCount} - 1")
-foreach(i RANGE ${targetCount})
-	list(GET DWARFP_TARGETS ${i} target)
-	list(GET DWARFP_TYPES ${i} type)
-	add_library(${target} ${type} ${SOURCES} ${HEADERS}
-            ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
+if (BUILD_SHARED)
+    add_library(dwarfp SHARED ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
+    add_library(libdwarf::dwarfp-shared ALIAS dwarfp)
+else()
+    add_library(dwarfp STATIC ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
+    add_library(libdwarf::dwarfp-static ALIAS dwarfp)
+endif()
+set_folder(dwarfp src/lib/libdwarfp)
+target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/lib/libdwarf> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_compile_options(dwarfp PRIVATE ${DW_COMPILER_FLAGS}
+    ${DW_FWALL})
+msvc_posix(dwarfp)
+set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
+set(LIBDIR lib${SUFFIX})
+set(BINDIR bin${SUFFIX})
 
-	set_folder(${target} src/lib/libdwarfp)
-	target_include_directories(${target} PRIVATE 
-            ${LIBDWARF_INCLUDE_DIR} )
-    target_compile_options(${target} PRIVATE ${DW_COMPILER_FLAGS}
-            ${DW_FWALL})
-	msvc_posix(${target})
+install(TARGETS dwarfp
+    RUNTIME DESTINATION ${BINDIR}		
+    LIBRARY DESTINATION ${LIBDIR}
+    ARCHIVE DESTINATION ${LIBDIR})
 
-	
-	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarfp)
-
-	set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
-	set(LIBDIR lib${SUFFIX})
-	set(BINDIR bin${SUFFIX})
-
-	install(TARGETS ${target}
-		RUNTIME DESTINATION ${BINDIR}		
-		LIBRARY DESTINATION ${LIBDIR}
-		ARCHIVE DESTINATION ${LIBDIR})
-endforeach()
 # The install has to be here, not in
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
 configure_file(libdwarfp.pc.cmake libdwarfp.pc @ONLY )
 
-add_custom_target(dg DEPENDS ${DWARFP_TARGETS} dwarfgen)
-install(TARGETS ${DWARFP_TARGETS} EXPORT libdwarfpTargets
+install(TARGETS dwarfp EXPORT libdwarfpTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 install(EXPORT libdwarfpTargets
