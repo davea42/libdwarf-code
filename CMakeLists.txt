@@ -2,6 +2,29 @@ cmake_minimum_required(VERSION 3.5)
 
 project(libdwarf C CXX)
 
+# libdwarf  
+option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+option(BUILD_SHARED 
+    "build shared library libdwarf[p].so and use it" FALSE)
+
+#  This adds compiler option -Wall (gcc compiler warnings)
+option(WALL "Add -Wall" FALSE)
+option(LIBDWARF_STATIC "add -DLIBDWARF_STATIC" FALSE)
+
+option(BUILD_DWARFDUMP "Build dwarfdump (default is YES)" TRUE)
+
+option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
+message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
+
+option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
+message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
+
+option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
+message(STATUS "Building api tests   ... ${DOTESTS}")
+### end what was configure.cmake
+
+option(PIC_ALWAYS "Build libdwarf with position-independent code for both static and shared (default is NO)" FALSE)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include_directories( ${PROJECT_BINARY_DIR} )
 
@@ -206,15 +229,6 @@ int main()
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
-# libdwarf  
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
-option(BUILD_SHARED 
-    "build shared library libdwarf[p].so and use it" FALSE)
-
-#  This adds compiler option -Wall (gcc compiler warnings)
-option(WALL "Add -Wall" FALSE)
-option(LIBDWARF_STATIC "add -DLIBDWARF_STATIC" FALSE)
-
 #  DW_FWALLXX are gnu C++ options.
 if (WALL)
   set(DW_FWALLXX -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror)
@@ -229,20 +243,6 @@ endif()
 #else()
 #  unset(DW_LIBDWARF_STATIC)
 #endif()
-
-option(BUILD_DWARFDUMP "Build dwarfdump (default is YES)" TRUE)
-
-option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
-message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
-
-option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
-message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
-
-option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
-message(STATUS "Building api tests   ... ${DOTESTS}")
-### end what was configure.cmake
-
-option(PIC_ALWAYS "Build libdwarf with position-independent code for both static and shared (default is NO)" FALSE)
 
 configure_file(cmake/config.h.cmake config.h)
 
