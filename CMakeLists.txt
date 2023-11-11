@@ -85,8 +85,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # would probably do this anyway).
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
-enable_testing()
-
 # always include project's folder to includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
@@ -276,7 +274,8 @@ if ( BUILD_DWARFGEN )
 endif()
 
 if (DO_TESTING)
-add_subdirectory(test)
+  enable_testing()
+  add_subdirectory(test)
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
