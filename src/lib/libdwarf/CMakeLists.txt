@@ -93,10 +93,10 @@ include(GNUInstallDirs)
 	
 
 if(BUILD_SHARED)
-    add_library(dwarf SHARED ${SOURCES} ${HEADERS} ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
+    add_library(dwarf SHARED ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
     add_library(libdwarf::dwarf-shared ALIAS dwarf)
 else()
-    add_library(dwarf STATIC ${SOURCES} ${HEADERS} ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
+    add_library(dwarf STATIC ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
     add_library(libdwarf::dwarf-static ALIAS dwarf)
 endif()
 set_folder(dwarf src/lib/libdwarf)
