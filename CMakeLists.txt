@@ -85,10 +85,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # would probably do this anyway).
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
-# always include project's folder to includes
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
-
 ### begin what was configure.cmake
 # cmake macros
 include(TestBigEndian)
