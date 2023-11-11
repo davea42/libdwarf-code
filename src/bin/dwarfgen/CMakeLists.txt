@@ -29,7 +29,7 @@ target_include_directories(dwarfgen PRIVATE
    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libdwarfp)
 
 target_link_libraries(dwarfgen PRIVATE ${dwarfp-target}
-   ${dwarf-target})
+   dwarf)
 
 set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
 set(LIBDIR lib${SUFFIX})

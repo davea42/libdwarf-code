@@ -63,7 +63,7 @@ target_compile_definitions(dwarfdump PRIVATE
     "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib" ${DW_LIBDWARF_STATIC})
 target_compile_options(dwarfdump PRIVATE ${DW_FWALL})
 
-target_link_libraries(dwarfdump PRIVATE ${dwarf-target}) 
+target_link_libraries(dwarfdump PRIVATE dwarf) 
 
 if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	set(SUFFIX 64)
