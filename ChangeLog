@@ -1,3 +1,267 @@
+2023-11-10:  David Anderson
+    commit f697a9077c6263bcb12a7ef2ae3bc50c74be61ba
+    Merge: c8451af2 cede2bd7
+
+    Merge branch 'flagarde-cmake'
+    Simplifying cmake CMakeLists.txt
+    and remove a leftover reference to libelf.
+
+2023-11-11:  flagarde
+    commit cede2bd7d3666c430cea1f0ea8131ab0a246ff31
+
+    Libelf is gone
+
+2023-11-11:  flagarde
+    commit a85b6e8a74693634f7edd525941e58cbafe4443b
+
+    Simplify the logic
+
+2023-11-11:  flagarde
+    commit 9e4395a7d609fec0cc72a1df6be8e62b51e1c4fe
+
+    Zlib and ZSTD are only used in libdwarf so make it PRIVATE
+
+2023-11-11:  flagarde
+    commit f6523085f94b23acea1648e04e3e6fdf05ee8131
+
+    Remove redundant line
+
+2023-11-11:  flagarde
+    commit 66edaed74e9deb45a583d938b438c05077539fa0
+
+    DWARF_LIBS is never used
+
+2023-11-08:  David Anderson
+    commit c8451af25f5007f6cbb45ac6e0ca5ced43307614
+    Merge: 2eabd6e2 183e5ea6
+
+    Merge branch 'flagarde-zstd'
+    Cleaning up cmake zstd references to be more standard cmake
+    usage. Adding cmakedefine for zstd.
+
+2023-11-08:  David Anderson
+    commit 183e5ea6c96756c792e5f62a2c16df3953b63907
+    Merge: 2eabd6e2 e112a648
+
+    Merge branch 'zstd' of https://github.com/flagarde/libdwarf-code into flagarde-zstd
+    Cmake correction for libzstd
+
+2023-11-08:  David Anderson
+    commit 2eabd6e2a6d4de9b39e4175072f57206dcab0722
+    Merge: e1a4cc53 245cc0d6
+
+    Merge branch 'flagarde-zlib'
+    Removing some awkward cmake code and switch to find_package().
+    Much simpler.
+
+2023-11-08:  flagarde
+    commit e112a64806dd4fc5226117ae7ec77e900f7d4968
+
+    Update config.h.cmake
+
+2023-11-08:  flagarde
+    commit bf09d993ce42985d7d5233b6a9d7e94b00cf9a5f
+
+    propagate to config.h
+
+2023-11-08:  flagarde
+    commit 245cc0d6712543fe7bfbecca69a15813a63b605a
+
+    propagate HAVE_ZLIB_H to config.h
+
+2023-11-08:  flagarde
+    commit 218bd5c1246b2cad79ef2811777db63512ad5c4c
+
+    Use FindZSTD
+
+2023-11-08:  flagarde
+    commit d76d3c04dad115b02ea157aa9eb6115a62876cb8
+
+    Use FindZLIB.cmake provided by CMake
+
+2023-11-07:  David Anderson
+    commit e1a4cc53c3e82727964e1d1e0d8ef1340e4c7152
+    Merge: e9355ca7 583ece00
+
+    Merge branch 'jeremy-rifkin-cmake-improvements'
+
+    Adds cmake GNUInstallDirs for cross platform installs.
+    Introduces a set of CMAKE_INSTALL_* variables
+    which do not conflict with anything in the libdwarf project.
+    A description in some detail is in the book
+    Provessional CMake (I have no financial interest
+    in the book).
+
+2023-11-06:  David Anderson
+    commit 583ece00ed0031e928dc925221922661e51cb053
+    Merge: e9355ca7 6216e185
+
+    Merge branch 'cmake-improvements' of https://github.com/jeremy-rifkin/libdwarf-code into jeremy-rifkin-cmake-improvements
+    Looking at cmake changes
+
+2023-11-06:  Jeremy
+    commit 6216e185863f41d6f19ab850caabfff7326020d7
+
+    Try to fix include issues
+
+2023-11-06:  David Anderson
+    commit e9355ca7a32dcaef96dfb2be9641b0f8b0654a85
+
+    Accidentally omitted an ifndef on O_BINARY. Fixed.
+            modified:   fuzz_crc.c
+
+2023-11-06:  David Anderson
+    commit 1e19293b64bf293a2e274f8881681807f01e8674
+    Merge: 8698def7 7f806b48
+
+    Merge branch 'jeremy-rifkin-cmake-improvements'
+    Fixes a cmake warning and allows more choice
+    in cmake about what to build and whether PIC required.
+
+2023-11-06:  David Anderson
+    commit 7f806b481281ab81d189036845fa2bb30ad773f4
+    Merge: 8698def7 8b163d80
+
+    Merge branch 'cmake-improvements' of https://github.com/jeremy-rifkin/libdwarf-code into jeremy-refken-cmake-improvements
+
+    Want a clearer view of rifkin changes for cmake
+
+2023-11-06:  Jeremy
+    commit 8b163d80aa30afd37027e826f6e8becd8e62ee2f
+
+    Make LIBDWARF_STATIC, LIBDWARF_BUILD, and PIC public definitions
+
+2023-11-06:  Jeremy
+    commit 8687cd60eadf6bf37a4a59df96ceb48e5c35faa9
+
+    Fixes
+
+2023-11-05:  David Anderson
+    commit 8698def74a06747acbbb0cf2037a750a38d066a3
+
+    A new file, test/canonicalpath.py,
+    was left out which would make basic
+    debuglink tests fail from a distribution without this file.
+            modified:   test/Makefile.am
+
+2023-11-05:  David Anderson
+    commit 2a0015b0d63d26d8f1190b1eab0a8ac881607008
+
+    A message spelling error correction:
+    diectory->directory
+            modified:   scripts/allsimplebuilds.sh
+
+2023-11-05:  Jeremy
+    commit 4ca6a7bc86b27d56741923f03c15b5aa274efc28
+
+    Set CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS
+
+2023-11-05:  Jeremy
+    commit 5799cc056302a7f909d9a31863bd0a40ac7ebe5b
+
+    Bump to 3.5
+
+2023-11-05:  Jeremy
+    commit 10d661e45a6b2199f75e885c132b1180511fb50b
+
+    Some small cmake improvements
+
+2023-11-04:  David Anderson
+    commit ee5b78e4bd66063965c7ca607205fd11ddabf9a2
+
+    Now freebsd uses cross-platform-actions,
+    as vmactions no longer works for freebsd.
+            modified:   test.yml
+
+2023-11-04:  David Anderson
+    commit ca727c34a251051515b0df6a1119c763fda2f6e5
+
+    trial h
+
+2023-11-04:  David Anderson
+    commit 0d450b7d5e947c1f2ddd111ee567037d599d9c3e
+
+    Passes actionlint
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit b23b987345456773caafe70d865b1f7426f35e84
+
+    trial g
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit df6b15bbff0e82ea7d7b5cbdfc19981bdec57f11
+
+    Trial-f
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit 3a97aab67b3a5905ba847c5e13b8ca1930deeb53
+
+    trial
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit d893e75e262a50a2569ac3ed24f8b7a0a22df9ad
+
+    Trial
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit 0de5c2dfc3d976ad49222bfa802483f038f1ead0
+
+    Fixing
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit 4cb15b806a6fdad75cd0704c9059bf66636183e5
+
+    Trying again
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit 48335681e96eebd4e52936cb2dcec397b4b1e5a3
+
+    Switch to cross-platform-actions
+            modified:   freebsd_cmake.yml
+
+2023-11-04:  David Anderson
+    commit d89230e0ec759693f271554c75b1f7c597e9b85b
+
+    commenting out a run that hangs starting vm
+            modified:   test.yml
+
+2023-11-04:  David Anderson
+    commit cc47409a15926dc09a0bfbd9548deda51de68d7e
+
+    Removing a run that hangs booting freebsd
+            modified:   test.yml
+
+2023-11-04:  David Anderson
+    commit 0cfe7788ba99cd0cf29be820c751b73520f9b866
+
+    Improved the order of libdwarf calls in examplee, making
+    it easier to release unneeded memory.
+            modified:   doc/checkexamples.c
+
+2023-11-04:  David Anderson
+    commit 2a6fb5361d9d2da2e97a5d2c9679435cc722667a
+
+    Making examplee more complete.
+            modified:   checkexamples.c
+
+2023-11-04:  David Anderson
+    commit a0c5696fa95eed566f2ea46a35bb85fab00deb88
+
+    Create CODE_OF_CONDUCT.md
+
+2023-11-04:  David Anderson
+    commit 93098873433f0ef7fa0d4a3631aa72fbbddf8cf6
+
+    now with dwarf_srcfiles() doc changes here.
+            modified:   ChangeLog
+
 2023-11-04:  David Anderson
     commit 2727bb089899417a73657d1918aac5758d2f9a46
 
