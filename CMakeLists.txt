@@ -271,9 +271,8 @@ if ( BUILD_DWARFEXAMPLE )
 endif()
 
 if ( BUILD_DWARFGEN )
-     set(LIBDWARF_INCLUDE_DIR ../libdwarf)
-     add_subdirectory(src/lib/libdwarfp)
-     add_subdirectory(src/bin/dwarfgen)
+  add_subdirectory(src/lib/libdwarfp)
+  add_subdirectory(src/bin/dwarfgen)
 endif()
 
 if (DO_TESTING)

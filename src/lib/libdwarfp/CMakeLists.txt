@@ -42,8 +42,7 @@ else()
     add_library(libdwarf::dwarfp-static ALIAS dwarfp)
 endif()
 set_folder(dwarfp src/lib/libdwarfp)
-target_include_directories(dwarfp PRIVATE 
-    ${LIBDWARF_INCLUDE_DIR} )
+target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/lib/libdwarf>)
 target_compile_options(dwarfp PRIVATE ${DW_COMPILER_FLAGS}
     ${DW_FWALL})
 msvc_posix(dwarfp)
