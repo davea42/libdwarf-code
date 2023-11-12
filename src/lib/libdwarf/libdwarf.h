@@ -1735,8 +1735,20 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
 */
 /*! @brief Return information on the next CU header.
 
+
     The library keeps track of where it is in the object file
     and it knows where to find 'next'.
+
+    In order to read the DIE tree of the CU this
+    records information in the dw_dbg data.
+    One should call 
+
+    dwarf_siblingof_b(dw_dbg,NULL,,dw_is_info, &cu_die,...)
+    immediately to get the Compilation Unit DIE for
+    the compilation unit dwarf_next_cu_header_d()
+    initializes.
+        
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_is_info

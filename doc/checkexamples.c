@@ -620,7 +620,16 @@ int examplecuhdr(Dwarf_Debug dbg,
                 .debug_info or .debug_types. */
             return res;
         }
-        /* The CU will have a single sibling, a cu_die. */
+        /*  The CU will have a single sibling, a cu_die. 
+            It is essential to call this right after
+            a call to dwarf_next_cu_header_d() because
+            there is no explicit connection provided to
+            dwarf_siblingof_b(), which returns a DIE
+            from whatever CU was last accessed by
+            dwarf_next_cu_header_d()! 
+            The lack of explicit connection was a
+            design mistake in the API (made in 1992). */
+
         res = dwarf_siblingof_b(dbg,no_die,is_info,
             &cu_die,error);
         if (res == DW_DLV_ERROR) {
