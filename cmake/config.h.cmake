@@ -10,40 +10,23 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H 1
 
-/* Define to 1 if you have the <libelf.h> header file. */
-#cmakedefine HAVE_INTTYPES_H 1
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #cmakedefine HAVE_FCNTL_H 1
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #cmakedefine HAVE_MALLOC_H 1
 
-/* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine HAVE_MEMORY_H 1
-
 /* Set to 1 if big endian . */
 #cmakedefine WORDS_BIGENDIAN 1
 
-/* Define to 1 if you have the <sgidefs.h> header file. */
-#cmakedefine HAVE_SGIDEFS_H 1
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H 1
-
-/* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine HAVE_SYS_TYPES_H 1
-
-/* Define to HAVE_UINTPTR_T 1 if the system has the type `uintptr_t'. */
-#cmakedefine HAVE_UINTPTR_T 1
-/* Define to 1 if the system has the type `intptr_t'. */
-#cmakedefine HAVE_INTPTR_T
 
 
 /*  Define to the uintptr_t to the type of an unsigned integer 
@@ -54,9 +37,6 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
-
-/* Set to 1 if __attribute__ ((unused)) is available. */
-#cmakedefine HAVE_UNUSED_ATTRIBUTE 1
 
 /* Set to 1 if zlib decompression is available. */
 #cmakedefine HAVE_ZLIB 1
