@@ -636,6 +636,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                 /*  If we got this die from the parent, we do not want
                     to dealloc here! */
                 dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
+                prev_child = 0;
             }
             /* Not there at this level */
             esb_destructor(&nestname);
@@ -647,8 +648,10 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             /*  If we got this die from the parent, we do not want
                 to dealloc here! */
             dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
+            /*  Clearing prev_child here gets coverity 330895
+                unused value warning.
+                prev_child = 0; */
         }
-        prev_child = 0;
         die_locally_gotten = 1;
     }
     if (die_locally_gotten) {

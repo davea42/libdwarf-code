@@ -714,6 +714,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,
                     context_DLA_code);
+                pubnames_context = 0;
             }
             return DW_DLV_ERROR;
         }
@@ -726,6 +727,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return mres;
         }
@@ -745,6 +747,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
+                    pubnames_context = 0;
                 }
                 return DW_DLV_ERROR;
             }
@@ -778,6 +781,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return DW_DLV_ERROR;
         }
@@ -789,6 +793,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return mres;
         }
@@ -801,6 +806,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             _dwarf_error(dbg, error, version_err_num);
             return DW_DLV_ERROR;
@@ -817,6 +823,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return DW_DLV_ERROR;
         }
@@ -830,6 +837,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return mres;
         }
@@ -850,6 +858,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return mres;
         }
@@ -861,6 +870,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             _dwarf_error(dbg, error, length_err_num);
             return DW_DLV_ERROR;
@@ -878,6 +888,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             return mres;
         }
@@ -890,6 +901,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             _dwarf_error(dbg, error, length_err_num);
             return DW_DLV_ERROR;
@@ -927,6 +939,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                     if (!pubnames_context_on_list) {
                         dwarf_dealloc(dbg,pubnames_context,
                             context_DLA_code);
+                        pubnames_context = 0;
                     }
                     return res;
                 }
@@ -935,7 +948,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 /*  The section is empty.
                     Nowhere to record pubnames_context); */
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
-                pubnames_context = 0;
+                /* pubnames_context = 0; reset at top of loop */
                 continue;
             }
         }
@@ -958,6 +971,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
+                    pubnames_context = 0;
                 }
                 return res;
             }
@@ -983,6 +997,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
+                    pubnames_context = 0;
                 }
                 return res;
             }
@@ -1000,6 +1015,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
+                    pubnames_context = 0;
                 }
                 return DW_DLV_ERROR;
             }
@@ -1014,6 +1030,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
+                    pubnames_context = 0;
                 }
                 dealloc_globals_chain(dbg,*out_phead_chain);
                 *out_phead_chain = 0;
@@ -1045,6 +1062,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, length_err_num);
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                pubnames_context = 0;
             }
             dealloc_globals_chain(dbg,*out_phead_chain);
             *out_phead_chain = 0;

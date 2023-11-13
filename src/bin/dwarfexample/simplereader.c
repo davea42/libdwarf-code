@@ -764,7 +764,6 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         /* res == DW_DLV_OK */
         if (cur_die != in_die) {
             dwarf_dealloc_die(cur_die);
-            cur_die = 0;
         }
         cur_die = sib_die;
         print_die_data(dbg,cur_die,in_level,sf);

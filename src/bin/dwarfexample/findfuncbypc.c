@@ -759,7 +759,6 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
                 child != td->td_subprog_die) {
                 dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
             }
-            cur_die = 0;
         }
         cur_die = sib_die;
         res = examine_die_data(dbg,is_info,cur_die,in_level,td,errp);
