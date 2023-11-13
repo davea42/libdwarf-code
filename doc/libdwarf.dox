@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-11-04 v0.9.0
+    @date 2023-11-13 v0.9.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -902,7 +902,9 @@
 
     - If you are building an application 
     - And are linking your application against a static library libdwarf.a
-    - Then you rmust ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
+    - Then you must ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
+    - Then you must add -lz -lzstd to the link line of the build of your application.
+      
 
     When compiling to link against a shared library libdwarf.so
     or libdwarf.dll you must not define LIBDWARF_STATIC.
