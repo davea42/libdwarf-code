@@ -131,12 +131,8 @@ endif()
 
 check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H) 
 check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H ) 
-check_include_file( "inttypes.h"      HAVE_INTTYPES_H   ) 
-check_include_file( "memory.h"        HAVE_MEMORY_H   ) 
-check_include_file( "strings.h"       HAVE_STRINGS_H  ) 
 check_include_file( "stdint.h"        HAVE_STDINT_H   )
 check_include_file( "unistd.h"        HAVE_UNISTD_H   )
-check_include_file( "sgidefs.h"       HAVE_SGIDEFS_H  )
 check_include_file( "stdafx.h"        HAVE_STDAFX_H   )
 check_include_file( "fcntl.h"         HAVE_FCNTL_H   ) 
 
@@ -174,7 +170,7 @@ if (HAVE_INTPTR_T)
   message(STATUS "HAVE_INTPTR_T 1: intptr_t defined in stdint.h... YES")
 else()
   message(STATUS "intptr_t defined in stdint.h... NO")
-  set(uintptr_t "long long int" )
+  set(intptr_t "long long int" )
   message(STATUS "Setting #define intptr_t " ${intptr_t})
 endif()
 if (intptr_t) 
@@ -182,31 +178,6 @@ if (intptr_t)
 else()
   message(STATUS "intptr_t value considered NO ")
 endif()
-
-
-check_c_source_compiles("
-  static unsigned foo( unsigned x, 
-      __attribute__ ((unused)) int y)
-  {  
-      unsigned x2 = x + 1;
-      return x2;
-  } 
-  
-  int main(void) {
-      unsigned y = 0;
-      y = foo(12,y);
-      return 0;
-  }"    HAVE_UNUSED_ATTRIBUTE)
-message(STATUS "Checking compiler supports __attribute__ unused... ${HAVE_UNUSED_ATTRIBUTE}")
-
-check_c_source_compiles([=[
-  #include "stdafx.h"
-  int main() 
-  { 
-      int p; p = 27;
-      return 0;
-  }]=] HAVE_STDAFX_H)
-#message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
 
 # Zlib and ZSTD need to be found otherwise disable it
 find_package(ZLIB)
@@ -217,15 +188,6 @@ if (ZLIB_FOUND AND ZSTD_FOUND )
   set(HAVE_ZSTD TRUE)
   set(HAVE_ZSTD_H TRUE)
 endif()
-
-check_c_source_compiles([=[
-#include <stdint.h>
-int main()
-{
-    intptr_t p; 
-    p = 27;
-    return 0;
-}]=] HAVE_INTPTR_T)
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
