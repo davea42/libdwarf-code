@@ -949,6 +949,7 @@ int _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
+    Dwarf_Die * cu_die_out,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
     Dwarf_Unsigned * abbrev_offset,

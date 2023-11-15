@@ -1111,6 +1111,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             to corrupt dwarf. */
         glflags.DIE_section_offset = dieprint_cu_goffset;
         memset(&fission_data,0,sizeof(fission_data));
+#ifdef  ORIGINAL_HEADER_API
         nres = dwarf_next_cu_header_d(dbg,
             is_info,
             &cu_header_length, &version_stamp,
@@ -1119,6 +1120,18 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             &signature, &typeoffset,
             &next_cu_offset,
             &cu_type, pod_err);
+#else
+        nres = dwarf_next_cu_header_e(dbg,
+            is_info,
+            &cu_die,
+            &cu_header_length, &version_stamp,
+            &abbrev_offset, &address_size,
+            &length_size,&extension_size,
+            &signature, &typeoffset,
+            &next_cu_offset,
+            &cu_type, pod_err);
+#endif /* ORIGINAL_HEADER_API */
+
         if (!loop_count) {
             /*  So compress flags show, we waited till
                 section loaded to do this. */
@@ -1141,8 +1154,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 m="CU";
             }
             printf("Break at %d %s\n",cu_count,m);
+            dwarf_dealloc_die(cu_die);
+            cu_die = 0;
             break;
         }
+#ifdef  ORIGINAL_HEADER_API
         /*  Regardless of any options used, get basic
             information about the current CU: producer, name */
         sres = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die, pod_err);
@@ -1159,6 +1175,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 sres, *pod_err);
             return sres;
         }
+#endif /* ORIGINAL_HEADER_API */
         /*  Get the CU offset  (when we can)
             for easy error reporting. Ignore errors. */
         offres = dwarf_die_offsets(cu_die,
@@ -1211,6 +1228,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 &cu_short_name,&cu_long_name,
                 pod_err);
             if (chres == DW_DLV_ERROR ) {
+                dwarf_dealloc_die(cu_die);
+                cu_die = 0;
                 return chres;
             }
             if (chres == DW_DLV_OK) {
@@ -1265,10 +1284,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         glflags.CU_low_address = 0;
 
         /*  Release the 'cu_die' created by the call
-            to 'dwarf_next_cu_header_d' at the
+            to 'dwarf_next_cu_header_e' at the
             top of the main loop. */
-        dwarf_dealloc_die(cu_die);
-        cu_die = 0; /* For debugging, stale die should be NULL. */
 
         if ((glflags.gf_info_flag || glflags.gf_types_flag) &&
             glflags.gf_do_print_dwarf) {
@@ -1316,9 +1333,14 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
 
         /*  Process a single compilation unit in .debug_info or
             .debug_types. */
-        cu_die2 = 0;
+        cu_die2 = cu_die;
+        cu_die = 0;
+#ifdef ORIGINAL_HEADER_API
         sres = dwarf_siblingof_b(dbg, NULL,is_info,
             &cu_die2, pod_err);
+#else
+        sres = DW_DLV_OK;
+#endif /* ORIGINAL_HEADER_API */
         if (sres == DW_DLV_OK) {
             int pres = 0;
             Dwarf_Signed srcfiles_cnt = 0;
@@ -1503,11 +1525,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                             srcfiles = 0;
                             srcfiles_cnt = 0;
                         }
+                        dwarf_dealloc_die(cu_die2);
                         return mres;
                     }
                 }
-                dwarf_dealloc_die(cu_die2);
-                cu_die2 = 0;
                 if (srcfiles) {
                     dealloc_all_srcfiles(dbg,srcfiles,srcfiles_cnt);
                     srcfiles = 0;
@@ -1522,7 +1543,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     sres,*pod_err);
                 DROP_ERROR_INSTANCE(dbg,sres,*pod_err);
             }
-            cu_die2 = 0;
+            if (cu_die2) {
+                dwarf_dealloc_die(cu_die2);
+                cu_die2 = 0;
+            }
             ++cu_count;
         } /*  End loop on loop_count */
         return nres;
@@ -2099,8 +2123,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         dwarf_dealloc_die(child);
         child = 0;
         /*  Find the next sibling or get DW_DLV_NO_ENTRY */
-        siblingres = dwarf_siblingof_b(dbg, in_die,is_info,
-            &sibling, err);
+        siblingres = dwarf_siblingof_c(in_die, &sibling, err);
         if (siblingres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "ERROR: dwarf_siblingof fails"

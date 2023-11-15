@@ -1733,21 +1733,14 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
 
     @{
 */
-/*! @brief Return information on the next CU header.
+/*! @brief Return information on the next CU header(e).
 
+    New in v0.9.0 November 2023.
 
     The library keeps track of where it is in the object file
     and it knows where to find 'next'.
 
-    In order to read the DIE tree of the CU this
-    records information in the dw_dbg data.
-    One should call 
-
-    dwarf_siblingof_b(dw_dbg,NULL,,dw_is_info, &cu_die,...)
-    immediately to get the Compilation Unit DIE for
-    the compilation unit dwarf_next_cu_header_d()
-    initializes.
-        
+    It returns the CU_DIE pointer through dw_cu_die;
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -1755,6 +1748,11 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Pass in TRUE if reading through .debug_info
     Pass in FALSE if reading through DWARF4
     .debug_types.
+    @param dw_cu_die
+    Pass in a pointer to a Dwarf_Die. the call
+    sets the passed-in pointer to be a Compilation
+    Unit Die for use with dwarf_child() or any
+    other call requiring a Dwarf_Die argument.
     @param dw_cu_header_length
     Returns the length of the just-read CU header.
     @param dw_version_stamp
@@ -1795,9 +1793,51 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Returns DW_DLV_OK on success.
     Returns DW_DLV_NO_ENTRY if all CUs have been read.
 
-    @see examplecuhdr
+    @see examplecuhdre
 
 */
+DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
+    Dwarf_Bool      dw_is_info,
+    Dwarf_Die      *dw_cu_die,
+    Dwarf_Unsigned *dw_cu_header_length,
+    Dwarf_Half     *dw_version_stamp,
+    Dwarf_Off      *dw_abbrev_offset,
+    Dwarf_Half     *dw_address_size,
+    Dwarf_Half     *dw_length_size,
+    Dwarf_Half     *dw_extension_size,
+    Dwarf_Sig8     *dw_type_signature,
+    Dwarf_Unsigned *dw_typeoffset,
+    Dwarf_Unsigned *dw_next_cu_header_offset,
+    Dwarf_Half     *dw_header_cu_type,
+    Dwarf_Error    *dw_error);
+
+/*! @brief Return information on the next CU header(d)
+
+    This is the version to use for linking against
+    libdwarf v0.8.0 and earlier.
+
+    This version will evenually be deprecated, but
+    that won't be for years.
+
+    The library keeps track of where it is in the object file
+    and it knows where to find 'next'.
+
+    In order to read the DIE tree of the CU this
+    records information in the dw_dbg data.
+    One should call 
+
+    dwarf_siblingof_b(dw_dbg,NULL,,dw_is_info, &cu_die,...)
+    immediately to get the Compilation Unit DIE for
+    the compilation unit dwarf_next_cu_header_d()
+    initializes.
+
+    @see examplecuhdrd
+   
+    All arguments are the same as dwarf_next_cu_header_e()
+    except that ther is no dw_cu_die argument here.
+
+*/
+
 DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     Dwarf_Bool      dw_is_info,
     Dwarf_Unsigned *dw_cu_header_length,
@@ -1811,6 +1851,26 @@ DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_next_cu_header_offset,
     Dwarf_Half     *dw_header_cu_type,
     Dwarf_Error    *dw_error);
+
+/*! @brief Return the next sibling DIE.
+
+    @param dw_die
+    Pass in a known DIE and this will retrieve
+    the next sibling in the chain.
+    @param dw_return_siblingdie
+    The DIE returned through the pointer.
+    @param dw_error
+    The usual error information, if any.
+    @return
+    Returns DW_DLV_OK etc.
+
+    @see example4
+    @see dwarf_get_die_infotypes
+*/
+DW_API int dwarf_siblingof_c(Dwarf_Die    dw_die,
+    Dwarf_Die   *dw_return_siblingdie,
+    Dwarf_Error *dw_error);
+
 
 /*! @brief Return the first DIE or the next sibling DIE.
 
