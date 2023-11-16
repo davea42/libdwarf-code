@@ -15,6 +15,7 @@ fuzz_debug_str.c \
 fuzz_die_cu_attrs.c \
 fuzz_die_cu_attrs_loclist.c \
 fuzz_die_cu.c \
+fuzz_die_cu_e.c  fuzz_die_cu_e_print.c \
 fuzz_die_cu_info1.c \
 fuzz_die_cu_offset.c \
 fuzz_die_cu_print.c \
