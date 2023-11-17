@@ -1,3 +1,193 @@
+2023-11-17:  David Anderson
+    commit 31b1ce7a1808c1d05f16c36ad9c52a28e5f6ef80
+
+    With the new dwarf_next_cu_header_e() details.
+            modified:   doc/libdwarf.pdf
+
+2023-11-17:  David Anderson
+    commit a312db08715a48318402c4333f0a3385e004cc7b
+    Merge: 865bc397 0732a127
+
+    Merge branch 'flagarde-patch-1'
+    The cmake build problem is now fixed.
+
+2023-11-17:  David Anderson
+    commit 0732a12741368b9eb69a6e4c555700156a2af238
+    Merge: 865bc397 9693f06f
+
+    Merge branch 'patch-1' of https://github.com/flagarde/libdwarf-code into flagarde-patch-1
+    Fixing cmake typo relevant to zstd.
+
+2023-11-17:  David Anderson
+    commit 865bc397c63e12af080d0717f98d642f07df372b
+
+    Refactored the main CU loop printing DIEs so
+    the actual loop is significantly shorter and
+    easier to understand.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-11-17:  flagarde
+    commit 9693f06ffee3e1f0d0f89fa4b236e63925e064a6
+
+    Update FindZSTD.cmake
+
+2023-11-16:  David Anderson
+    commit be0a501c954388f0ce236f1de9a888e1b07ddafb
+
+    Added two new fuzz files as examples of using
+    dwarf_next_cu_header_e() and dwarf_siblingof_c()
+            modified:   fuzz/Makefile.am
+
+2023-11-15:  David Anderson
+    commit 027888d3efb83820d132cb8f6ae2b5844466860a
+
+    Now using dwarf_next_cu_header_e()
+    and removing the old call of dwarf_siblingof_b() as
+    the CU-DIE is returned by dwarf_next_cu_header_e().
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+
+    An internal function changed its prototype so
+    we have both dwarf_siblingof_b() and
+    dwarf_siblingof_c() with essentially no
+    duplicated code.
+    The implementation of dwarf_next_cu_header_e() added.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    An internal function changed prototype.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    one line changed to match toe new prototype for
+    the internal function.
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+    Added and documented dwarf_next_cu_header_e()
+    and dwarf_siblingof_c().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    To match up with the new  API function we
+    modify the dummy local version which does nothing.
+            modified:   test/test_dwarf_tied.c
+
+2023-11-15:  David Anderson
+    commit 6e8a397887d6bc8e694c20617cb252a7c8423a4f
+
+    Documenting dwarf_next_cu_header_e()
+    and dwarf_siblingof_c()
+    and adding important documentation of
+    dwarf_next_cu_header_d() and dwarf_siblingof_b()
+            modified:   doc/libdwarf.dox
+
+    New examples with the new, improved dwarf_next_cu_header_e()
+            modified:   doc/checkexamples.c
+
+2023-11-13:  David Anderson
+    commit 5ea9cce104ae3e21b3f7337892b982a026154376
+
+    These are using the new dwarf_next_cu_header_e()
+            new file:   fuzz_die_cu_e.c
+            new file:   fuzz_die_cu_e_print.c
+
+2023-11-13:  David Anderson
+    commit 449e194bc4ebce603f03d721c031011eda366c84
+
+    Added a line to the Linking against libdwarf.a
+    of an essential step of adding -lz -lzstd
+            modified:   doc/libdwarf.dox
+
+2023-11-13:  David Anderson
+    commit ca40575dc3915093e17b860f65afa666e53afc2a
+    Merge: ec0abd14 853ca654
+
+    Merge branch 'jeremy-rifkin-jr/cmake-checks'
+    Approve/commit the CMakeLists.txt improvements.
+
+2023-11-13:  David Anderson
+    commit 853ca6546dc61c596a72f06d4dfc0c4e410c9a9e
+    Merge: ec0abd14 b0a6d4b5
+
+    Merge branch 'jr/cmake-checks' of https://github.com/jeremy-rifkin/libdwarf-code into jeremy-rifkin-jr/cmake-checks
+    fix definition in CMakeLists.txt and remove unused/redundant checks too.
+
+2023-11-13:  David Anderson
+    commit ec0abd14c6e9a1548e0feaf20196a3db04d02473
+
+    With a new coverity scan version it found
+    some  questionable things. Where an assignment
+    is redundant.
+    Basically adding or removing an assignment of 0.
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/bin/dwarfgen/irepline.h
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.c
+
+2023-11-13:  Jeremy
+    commit b0a6d4b5b9c9412ed345686761447c0e99add2c6
+
+    Remove unused and redundant checks, also fix a definition
+
+2023-11-12:  David Anderson
+    commit b38adecb85a1c0f1ada5ace2c5b259056c0727a5
+
+    Clarifying dwarf_next_cu_header_d()
+            modified:   doc/checkexamples.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-11:  David Anderson
+    commit fb3209ad69cea4a156b97f4d4b3e5486bae31ab5
+    Merge: d05a5125 4391e2ba
+
+    Merge branch 'flagarde-unloop'
+    Improvements in cmake usage.
+
+2023-11-11:  flagarde
+    commit 4391e2ba824908451737dbae1b7fcfc018c7104d
+
+    put all options on the beginning to be more user friendly
+
+2023-11-11:  flagarde
+    commit 6bff62427e5a7c7190b2ace3682ac0131674b368
+
+    include it this target commands
+
+2023-11-11:  flagarde
+    commit 2c5f41b64bf1ee6d9f4f9c491b680b0a7f31e7ef
+
+    GENNAMES_OUTPUT is never used
+
+2023-11-11:  flagarde
+    commit 953038c32f59491d9c641bcbf7b5296caf77b0b1
+
+    enable test just when needed
+
+2023-11-11:  flagarde
+    commit ea2efa043b31e5c15d675f076625d58788b8f335
+
+    set the header folder in the right place
+
+2023-11-11:  flagarde
+    commit 526dcda065a73bffd0f52155b1b3992e00014973
+
+    Supress useless variables
+
+2023-11-11:  flagarde
+    commit 7338b5019a02694f814bfc01ecdcd7cbfbfed665
+
+    Simplify dwarfp
+
+2023-11-11:  flagarde
+    commit e55d4f25d71809500c21ad0ea5df8cab0fe5dfb9
+
+    simplify dwarf target
+
+2023-11-10:  David Anderson
+    commit d05a51256d01a04c8eaf47bad3446924006be78b
+
+    Up to date with latest cmake changes
+            modified:   ChangeLog
+
 2023-11-10:  David Anderson
     commit f697a9077c6263bcb12a7ef2ae3bc50c74be61ba
     Merge: c8451af2 cede2bd7
