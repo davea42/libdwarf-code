@@ -705,7 +705,7 @@ print_cu_hdr_std(Dwarf_Unsigned cu_header_length,
     Dwarf_Half offset_size,
     int debug_fission_res,
     Dwarf_Half cu_type,
-    struct Dwarf_Debug_Fission_Per_CU_s * fsd)
+    struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 {
     int res = 0;
     const char *utname = 0;
@@ -1059,6 +1059,123 @@ print_cu_hdr_abbrev_data(Dwarf_Debug dbg,
 
 }
 
+static void
+fill_in_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Unsigned dieprint_cu_goffset)
+
+{
+    /*  Get producer name for this CU and
+        update compiler list */
+    int cures = 0;
+    struct esb_s producername;
+    Dwarf_Error pod_err = 0;
+
+    esb_constructor(&producername);
+    /*  Fills in some producername no matter
+        what status returned. */
+    cures  = get_producer_name(dbg,cu_die,
+        dieprint_cu_goffset,&producername,&pod_err);
+    if (cures == DW_DLV_OK) {
+        update_compiler_target(esb_get_string(&producername));
+    } else if (cures == DW_DLV_ERROR) {
+        DROP_ERROR_INSTANCE(dbg,cures,pod_err);
+    }
+    esb_destructor(&producername);
+}
+
+static int
+fill_in_compiler_target(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Unsigned dieprint_cu_goffset,
+    Dwarf_Error*pod_err)
+{
+    char * cu_short_name = NULL;
+    char * cu_long_name = NULL;
+    int chres = 0;
+
+    chres = get_cu_name(dbg,cu_die,
+        dieprint_cu_goffset,
+        &cu_short_name,&cu_long_name,
+        pod_err);
+    if (chres == DW_DLV_ERROR ) {
+        return chres;
+    }
+    if (chres == DW_DLV_OK) {
+        /* Add CU name to current compiler entry */
+        add_cu_name_compiler_target(cu_long_name);
+    }
+    return chres;
+}
+
+static void
+suppress_irrelevant_checking(void)
+{
+    /*  In a .dwp file some checks get all sorts
+        of spurious errors.  */
+    glflags.gf_suppress_checking_on_dwp = TRUE;
+    glflags.gf_check_ranges = FALSE;
+    glflags.gf_check_aranges = FALSE;
+    glflags.gf_check_decl_file = FALSE;
+    glflags.gf_check_lines = FALSE;
+    glflags.gf_check_pubname_attr = FALSE;
+    glflags.gf_check_fdes = FALSE;
+}
+
+static void
+reset_error_reporting_globals(void)
+{
+    /*  We have not seen the compile unit  yet, reset these
+        error-reporting  globals. */
+    glflags.seen_CU = FALSE;
+    glflags.need_CU_name = TRUE;
+    glflags.need_CU_base_address = TRUE;
+    glflags.need_CU_high_address = TRUE;
+    /*  Some prerelease gcc versions used ranges but seemingly
+        assumed the lack of a base address in the CU was
+        defined to be a zero base.
+        Assuming a base address (and low and high) is sensible. */
+    glflags.CU_base_address = 0;
+    glflags.CU_high_address = 0;
+    glflags.CU_low_address = 0;
+}
+
+static void
+print_cu_header_data_or_signature(
+    Dwarf_Unsigned cu_header_length,
+    Dwarf_Unsigned abbrev_offset,
+    Dwarf_Half version_stamp,
+    Dwarf_Half address_size,
+    Dwarf_Half length_size,
+    int fission_data_result,
+    Dwarf_Half cu_type,
+    struct Dwarf_Debug_Fission_Per_CU_s  *fission_data,
+    Dwarf_Sig8 *signature,
+    Dwarf_Unsigned typeoffset)
+{
+    if (glflags.verbose) {
+        print_cu_hdr_std(cu_header_length,abbrev_offset,
+            version_stamp,address_size,length_size,
+            fission_data_result,cu_type,fission_data);
+        if (!empty_signature(signature)) {
+            print_cu_hdr_signature(signature,typeoffset);
+        }
+        if (glflags.dense) {
+            printf("\n");
+        }
+    } else {
+        if (!empty_signature(signature)) {
+            if (glflags.dense) {
+                printf("<%s>", "cu_header");
+            } else {
+                printf("\nCU_HEADER:\n");
+            }
+            print_cu_hdr_signature(signature,typeoffset);
+            if (glflags.dense) {
+                printf("\n");
+            }
+        }
+    }
+}
+
 /*   */
 static int
 print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
@@ -1075,8 +1192,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
     unsigned loop_count = 0;
     int nres = DW_DLV_OK;
     int   cu_count = 0;
-    char * cu_short_name = NULL;
-    char * cu_long_name = NULL;
     int res = 0;
     Dwarf_Off dieprint_cu_goffset = 0;
 
@@ -1094,16 +1209,15 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             }
         }
     }
-    /* Loop until it fails.  */
+    /*  Start loop on loop_count (CUs) */
     for (;;++loop_count) {
-        int sres = DW_DLV_OK;
-        Dwarf_Die cu_die = 0;
-        Dwarf_Die cu_die2 = 0;
+        Dwarf_Die  cu_die = 0;
+        Dwarf_Die  cu_die2 = 0;
         struct Dwarf_Debug_Fission_Per_CU_s fission_data;
-        int fission_data_result = 0;
+        int        fission_data_result = 0;
         Dwarf_Half cu_type = 0;
         Dwarf_Sig8 signature;
-        int offres = 0;
+        int        offres = 0;
 
         signature = zerosig;
         /*  glflags.DIE_section_offset: in case
@@ -1112,6 +1226,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         glflags.DIE_section_offset = dieprint_cu_goffset;
         memset(&fission_data,0,sizeof(fission_data));
 #ifdef  ORIGINAL_HEADER_API
+        /* a sample. Other places changed with no ifdef */
         nres = dwarf_next_cu_header_d(dbg,
             is_info,
             &cu_header_length, &version_stamp,
@@ -1158,24 +1273,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             cu_die = 0;
             break;
         }
-#ifdef  ORIGINAL_HEADER_API
-        /*  Regardless of any options used, get basic
-            information about the current CU: producer, name */
-        sres = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die, pod_err);
-        if (sres != DW_DLV_OK) {
-            /* There is no CU die, which should be impossible. */
-            if (sres == DW_DLV_ERROR) {
-                print_error_and_continue(
-                    "ERROR: dwarf_siblingof_b failed, no CU die",
-                    sres, *pod_err);
-                return sres;
-            }
-            print_error_and_continue(
-                "ERROR: dwarf_siblingof_b got NO_ENTRY, no CU die",
-                sres, *pod_err);
-            return sres;
-        }
-#endif /* ORIGINAL_HEADER_API */
         /*  Get the CU offset  (when we can)
             for easy error reporting. Ignore errors. */
         offres = dwarf_die_offsets(cu_die,
@@ -1198,43 +1295,18 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 continue;
             }
         }
-        {
-        /*  Get producer name for this CU and
-            update compiler list */
-            int cures = 0;
-            struct esb_s producername;
-
-            esb_constructor(&producername);
-            /*  Fills in some producername no matter
-                what status returned. */
-            cures  = get_producer_name(dbg,cu_die,
-                dieprint_cu_goffset,&producername,pod_err);
-            if (cures == DW_DLV_OK) {
-                update_compiler_target(esb_get_string(&producername));
-            } else {
-                DROP_ERROR_INSTANCE(dbg,cures,*pod_err);
-            }
-            esb_destructor(&producername);
-        }
-
+        fill_in_producer_name(dbg,cu_die, dieprint_cu_goffset);
         /*  Once the compiler table has been updated, see
             if we need to generate the list of CU compiled
             by all the producers contained in the elf file */
         if (glflags.gf_producer_children_flag) {
             int chres = 0;
-
-            chres = get_cu_name(dbg,cu_die,
-                dieprint_cu_goffset,
-                &cu_short_name,&cu_long_name,
-                pod_err);
+            chres = fill_in_compiler_target(dbg,cu_die,
+                dieprint_cu_goffset,pod_err);
             if (chres == DW_DLV_ERROR ) {
                 dwarf_dealloc_die(cu_die);
                 cu_die = 0;
                 return chres;
-            }
-            if (chres == DW_DLV_OK) {
-                /* Add CU name to current compiler entry */
-                add_cu_name_compiler_target(cu_long_name);
             }
         }
 
@@ -1258,60 +1330,16 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             return fission_data_result;
         }
         if (fission_data_result == DW_DLV_OK) {
-            /*  In a .dwp file some checks get all sorts
-                of spurious errors.  */
-            glflags.gf_suppress_checking_on_dwp = TRUE;
-            glflags.gf_check_ranges = FALSE;
-            glflags.gf_check_aranges = FALSE;
-            glflags.gf_check_decl_file = FALSE;
-            glflags.gf_check_lines = FALSE;
-            glflags.gf_check_pubname_attr = FALSE;
-            glflags.gf_check_fdes = FALSE;
+            suppress_irrelevant_checking();
         }
-
-        /*  We have not seen the compile unit  yet, reset these
-            error-reporting  globals. */
-        glflags.seen_CU = FALSE;
-        glflags.need_CU_name = TRUE;
-        glflags.need_CU_base_address = TRUE;
-        glflags.need_CU_high_address = TRUE;
-        /*  Some prerelease gcc versions used ranges but seemingly
-            assumed the lack of a base address in the CU was
-            defined to be a zero base.
-            Assuming a base address (and low and high) is sensible. */
-        glflags.CU_base_address = 0;
-        glflags.CU_high_address = 0;
-        glflags.CU_low_address = 0;
-
-        /*  Release the 'cu_die' created by the call
-            to 'dwarf_next_cu_header_e' at the
-            top of the main loop. */
+        reset_error_reporting_globals();
 
         if ((glflags.gf_info_flag || glflags.gf_types_flag) &&
             glflags.gf_do_print_dwarf) {
-            if (glflags.verbose) {
-                print_cu_hdr_std(cu_header_length,abbrev_offset,
-                    version_stamp,address_size,length_size,
-                    fission_data_result,cu_type,&fission_data);
-                if (!empty_signature(&signature)) {
-                    print_cu_hdr_signature(&signature,typeoffset);
-                }
-                if (glflags.dense) {
-                    printf("\n");
-                }
-            } else {
-                if (!empty_signature(&signature)) {
-                    if (glflags.dense) {
-                        printf("<%s>", "cu_header");
-                    } else {
-                        printf("\nCU_HEADER:\n");
-                    }
-                    print_cu_hdr_signature(&signature,typeoffset);
-                    if (glflags.dense) {
-                        printf("\n");
-                    }
-                }
-            }
+            print_cu_header_data_or_signature(cu_header_length,
+                abbrev_offset, version_stamp,address_size,
+                length_size, fission_data_result,cu_type,
+                &fission_data, &signature,typeoffset);
         }
         if (glflags.gf_check_abbreviations ||
             (glflags.verbose > 3 &&
@@ -1328,20 +1356,15 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             }
         }
 
-        /* Get abbreviation info for this CU */
+        /*  Get abbreviation info for this CU, given
+            the abbrev offset */
         get_abbrev_array_info(dbg,abbrev_offset);
 
         /*  Process a single compilation unit in .debug_info or
             .debug_types. */
         cu_die2 = cu_die;
         cu_die = 0;
-#ifdef ORIGINAL_HEADER_API
-        sres = dwarf_siblingof_b(dbg, NULL,is_info,
-            &cu_die2, pod_err);
-#else
-        sres = DW_DLV_OK;
-#endif /* ORIGINAL_HEADER_API */
-        if (sres == DW_DLV_OK) {
+        {
             int pres = 0;
             Dwarf_Signed srcfiles_cnt = 0;
             char **srcfiles = 0;
@@ -1437,6 +1460,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     }
                     glflags.current_section_id = oldsection;
                 }
+                /*  We are not currently checking the macro
+                    import trees for (infinite) loops.
+                    We do not follow the import tree directly
+                    so we will not loop forever here. */
                 if (glflags.gf_macro_flag ||
                     glflags.gf_check_macros) {
                     int mres = 0;
@@ -1534,21 +1561,13 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     srcfiles = 0;
                     srcfiles_cnt = 0;
                 }
-            } else if (sres == DW_DLV_NO_ENTRY) {
-                /* Do nothing I guess. */
-            } else {
-                print_error_and_continue(
-                    "ERROR: getting a compilation-unit "
-                    "CU die failed ",
-                    sres,*pod_err);
-                DROP_ERROR_INSTANCE(dbg,sres,*pod_err);
             }
             if (cu_die2) {
                 dwarf_dealloc_die(cu_die2);
                 cu_die2 = 0;
             }
             ++cu_count;
-        } /*  End loop on loop_count */
+        } /*  End loop on loop_count (CUs) */
         return nres;
     }
 
