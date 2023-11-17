@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-11-13 v0.9.0
+    @date 2023-11-17 v0.9.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -917,7 +917,7 @@
     - In the new window, double click on <b>C/C++</b>
     - On the right, click on <b>Preprocessor definitions</b>
     - There is a small down arrow on the right, click on it then click on <b>Modify</b>
-    - Add L<b>IBDWARF_STATIC</b> to the values
+    - Add <b>LIBDWARF_STATIC</b> to the values
     - Click on <b>OK</b> to close the windows
 
     @section dwsec_dbglink Suppressing CRC calculation for debuglink
@@ -990,7 +990,8 @@
     except to traverse sibling DIEs.
     (the compilation-unit DIE by definition has no siblings).
 
-    Changes were required to support Mach-O (Apple) universal binaries,
+    Changes were required to support Mach-O (Apple)
+    universal binaries,
     which were not readable by earlier versions of the library.
 
     We have new library functions 
@@ -1008,7 +1009,7 @@
     being used.
     
     These new calls do not replace anything so existing
-    code should work fine.  
+    code will work fine.  
 
     Applying the previously
     existing calls dwarf_init_path() dwarf_init_path_dl()
@@ -1208,7 +1209,7 @@
     No API changes. No API additions.  Corrected
     a bug in dwarf_tsearchhash.c where a delete
     request was accidentally assumed in all hash tree
-    searches.  It was inivsible to libdwarf uses.
+    searches.  It was invisible to libdwarf uses.
     Vulnerabilities DW202207-001 and DW202208-001
     were fixed so error conditions when reading
     fuzzed object files can no longer crash libdwarf

@@ -134,7 +134,7 @@ extern "C" {
     associated with a dwarf frame. */
 #define DW_DLX_NO_EH_OFFSET         (-1LL)
 /*  The following value indicates that the producer
-    was unable to analyse the
+    was unable to analyze the
     source file to generate Exception tables for this function. */
 #define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
 
@@ -777,7 +777,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     associated with a dwarf frame. */
 #define DW_DLX_NO_EH_OFFSET         (-1LL)
 /*  The following value indicates that the producer
-    was unable to analyse the
+    was unable to analyze the
     source file to generate Exception tables for this function. */
 #define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
 
@@ -1814,7 +1814,8 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
 /*! @brief Return information on the next CU header(d)
 
     This is the version to use for linking against
-    libdwarf v0.8.0 and earlier.
+    libdwarf v0.8.0 and earlier (and it also works
+    for later versions).
 
     This version will evenually be deprecated, but
     that won't be for years.
@@ -1823,19 +1824,22 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     and it knows where to find 'next'.
 
     In order to read the DIE tree of the CU this
-    records information in the dw_dbg data.
-    One should call 
+    records information in the dw_dbg data and
+    after a successful call to dwarf_next_cu_header_d()
+    only an immediate call to 
+    dwarf_siblingof_b(dw_dbg,NULL,dw_is_info, &cu_die,...)
+    is guaranteed to return the correct DIE (a Compilation
+    Unit DIE).
 
-    dwarf_siblingof_b(dw_dbg,NULL,,dw_is_info, &cu_die,...)
-    immediately to get the Compilation Unit DIE for
-    the compilation unit dwarf_next_cu_header_d()
-    initializes.
+    Avoid any call to libdwarf
+    between a successful call to dwarf_next_cu_header_d() and
+    dwarf_siblingof_b(dw_dbg,NULL,dw_is_info, &cu_die,...)
+    to ensure the intended and correct Dwarf_Die is returned.
 
     @see examplecuhdrd
    
     All arguments are the same as dwarf_next_cu_header_e()
-    except that ther is no dw_cu_die argument here.
-
+    except that there is no dw_cu_die argument here.
 */
 
 DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
@@ -5546,7 +5550,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     On success returns a register number.
     @param dw_offset
     On success returns a signed register offset value when
-    dw_value_tyoe is DW_EXPR_OFFSET or DW_EXPER_VAL_OFFSET.
+    dw_value_type is DW_EXPR_OFFSET or DW_EXPER_VAL_OFFSET.
     @param dw_block_content
     On success returns a pointer to a block.
     For example, for DW_EXPR_EXPRESSION the block
