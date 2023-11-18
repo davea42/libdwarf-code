@@ -17,7 +17,6 @@ limitations under the License.
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 /*
  * Libdwarf library callers can only use these headers.
  */
@@ -55,7 +54,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   unsigned int tcrc = 0;
   unsigned int init = 0;
 
-  fuzz_fd = open(filename, O_RDONLY|O_BINARY);
+  fuzz_fd = open(filename, O_RDONLY | O_BINARY);
   fsize = size_left = lseek(fuzz_fd, 0L, SEEK_END);
   readbuf = (unsigned char *)malloc(readlen);
   if (fuzz_fd != -1) {
