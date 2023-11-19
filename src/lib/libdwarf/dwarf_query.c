@@ -298,7 +298,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
         }
         /* Move to next sibling next sibling */
         sib_die = 0;
-        res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,error);
+        res = dwarf_siblingof_c(cur_die,&sib_die,error);
         if (cur_die != die) {
             dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
         }

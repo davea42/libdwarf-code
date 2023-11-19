@@ -902,6 +902,7 @@ int _dwarf_create_a_new_cu_context_record_on_list(
     Dwarf_Unsigned section_size,
     Dwarf_Unsigned new_cu_offset,
     Dwarf_CU_Context *context_out,
+    Dwarf_Die        *cu_die_out,
     Dwarf_Error *error);
 Dwarf_Unsigned _dwarf_calculate_next_cu_context_offset(
     Dwarf_CU_Context cu_context);
