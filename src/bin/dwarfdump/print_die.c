@@ -6037,6 +6037,94 @@ emit_op_indentation(struct esb_s *string_out,
     }
 }
 
+/*  When an expression op has another expression inside
+    this does the printing.
+    Not limited to a single level of nesting.
+*/
+static int
+print_expression_inner_block(Dwarf_Debug dbg,
+    Dwarf_Die       die,
+    int             die_indent_level,
+    Dwarf_Block    *block,
+    struct esb_s   *string_out,
+    Dwarf_Error    *error)
+{
+    int res = 0;
+    Dwarf_Loc_Head_c header = 0;
+    Dwarf_Unsigned   listlen = 0;
+    Dwarf_Half       dw_version = 0;
+    Dwarf_Bool       dw_is_info = 0;
+    Dwarf_Bool       dw_is_dwo = 0;
+    Dwarf_Half       dw_offset_size = 0;
+    Dwarf_Half       dw_address_size = 0;
+    Dwarf_Half       dw_extension_size = 0;
+    Dwarf_Sig8      *dw_signature = 0; 
+    Dwarf_Off        dw_offset_of_length = 0;
+    Dwarf_Unsigned   dw_total_byte_length = 0;
+    Dwarf_Small     lle_value = 0;
+    Dwarf_Unsigned  rawlowpc = 0;
+    Dwarf_Unsigned  rawhipc = 0;
+    Dwarf_Bool      debug_addr_unavailable = TRUE;
+    Dwarf_Unsigned  lowpc_cooked = 0;
+    Dwarf_Unsigned  hipc_cooked = 0;
+    Dwarf_Unsigned  locexpr_op_count=0;
+    Dwarf_Locdesc_c locentry = 0;
+    Dwarf_Small     loclist_source = 0;
+    Dwarf_Unsigned  expression_offset = 0;
+    Dwarf_Unsigned  locdesc_offset =0;
+    
+
+    res = dwarf_cu_header_basics(die, &dw_version,&dw_is_info,
+        &dw_is_dwo,&dw_offset_size,&dw_address_size,
+        &dw_extension_size,&dw_signature,
+        &dw_offset_of_length,&dw_total_byte_length,
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    res = dwarf_loclist_from_expr_c(dbg,
+        block->bl_data,block->bl_len,
+        dw_address_size,dw_offset_size,
+        dw_version,
+        &header,&listlen,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    res = dwarf_get_locdesc_entry_d(header,
+        0, /* Data from 0th LocDesc, the only entry */
+        &lle_value,
+        &rawlowpc, &rawhipc,
+        &debug_addr_unavailable,
+        &lowpc_cooked, &hipc_cooked,
+        &locexpr_op_count,
+        &locentry,
+        &loclist_source,
+        &expression_offset,
+        &locdesc_offset,
+        error);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_loc_head_c(header);
+        glflags.gf_count_major_errors++;
+        printf("\nERROR: calling dwarf_get_locdesc_entry_d()"
+            " on LocDesc 0");
+        return res;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        dwarf_dealloc_loc_head_c(header);
+        return res;
+    }
+    /*  ASSERT: loclist_source == DW_LKIND_expression  */
+    /*  ASSERT: lle_value == DW_LLE_start_end  */
+    res = dwarfdump_print_expression_operations(dbg,
+        die,
+        die_indent_level,
+        locentry,
+        locexpr_op_count,
+        string_out,error);
+    dwarf_dealloc_loc_head_c(header);
+    return res;
+}
+
+
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
@@ -6227,11 +6315,12 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             break;
         case DW_OP_implicit_value:
             {
-                unsigned long print_len = 0;
+                unsigned long print_len = (unsigned long)opd1;
+                Dwarf_Block inr;
+                int inres = 0;
+
                 bracket_hex(" ",opd1,"",string_out);
                 /*  The other operand is a block of opd1 bytes. */
-                /*  FIXME */
-                print_len = opd1;
                 {
                     const unsigned char *bp = 0;
                     /*  This is a really ugly cast, a way
@@ -6244,6 +6333,18 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                             die_indent_level,index);
                         esb_append_printf_s(string_out,
                             "contents='%s'",(const char *)bp);
+                    } else  {
+                        inr.bl_len = opd1;
+                        inr.bl_data = (Dwarf_Ptr)(uintptr_t)opd2;
+                        inr.bl_from_loclist = DW_LKIND_expression;
+                        inr.bl_section_offset = 0;
+                        inres = print_expression_inner_block(dbg,die,
+                            die_indent_level+1,&inr,
+                            string_out,
+                            err);
+                        if (inres == DW_DLV_ERROR) {
+                            DROP_ERROR_INSTANCE(dbg,inres,*err);
+                        }
                     }
                 }
             }
@@ -6298,9 +6399,10 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_entry_value:       /* DWARF5 */
         case DW_OP_GNU_entry_value: {
             const unsigned char *bp = 0;
-            unsigned int length = 0;
+            unsigned long length = (unsigned long)opd1;
+            Dwarf_Block inr;
+            int inres = 0;
 
-            length = opd1;
             bracket_hex(" ",opd1,"",string_out);
             bp = (Dwarf_Small *)(uintptr_t) opd2;
             if (!bp) {
@@ -6314,6 +6416,18 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                         die_indent_level,index);
                     esb_append_printf_s(string_out,
                         "contents='%s'",(const char *)bp);
+                } else {
+                    inr.bl_len = opd1;
+                    inr.bl_data = (Dwarf_Ptr)(uintptr_t)opd2;
+                    inr.bl_from_loclist = DW_LKIND_expression;
+                    inr.bl_section_offset = 0;
+                    inres = print_expression_inner_block(dbg,die,
+                        die_indent_level+1,&inr,
+                        string_out,
+                        err);
+                    if (inres == DW_DLV_ERROR) {
+                        DROP_ERROR_INSTANCE(dbg,inres,*err);
+                    }
                 }
             }
             }
@@ -6326,7 +6440,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             /*  opd1 is cu-relative offset of type DIE.
                 we have a die in the relevant CU in the arg
                 list */
-            bracket_hex(" ",opd1,"",string_out);
             length = opd2;
             esb_append(string_out," const length: ");
             esb_append_printf_u(string_out,
