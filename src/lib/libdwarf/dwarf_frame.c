@@ -2674,7 +2674,7 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
     int res = DW_DLV_ERROR;
 
     Dwarf_Debug dbg = 0;
-    int table_real_data_size = 0;
+    Dwarf_Unsigned table_real_data_size = 0;
 
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
 
