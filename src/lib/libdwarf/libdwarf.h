@@ -1826,7 +1826,7 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     In order to read the DIE tree of the CU this
     records information in the dw_dbg data and
     after a successful call to dwarf_next_cu_header_d()
-    only an immediate call to 
+    only an immediate call to
     dwarf_siblingof_b(dw_dbg,NULL,dw_is_info, &cu_die,...)
     is guaranteed to return the correct DIE (a Compilation
     Unit DIE).
@@ -1837,7 +1837,7 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     to ensure the intended and correct Dwarf_Die is returned.
 
     @see examplecuhdrd
-   
+
     All arguments are the same as dwarf_next_cu_header_e()
     except that there is no dw_cu_die argument here.
 */
@@ -1875,7 +1875,6 @@ DW_API int dwarf_siblingof_c(Dwarf_Die    dw_die,
     Dwarf_Die   *dw_return_siblingdie,
     Dwarf_Error *dw_error);
 
-
 /*! @brief Return the first DIE or the next sibling DIE.
 
     @param dw_dbg
@@ -1909,6 +1908,7 @@ DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
     Any Dwarf_Die will work.
     The values returned through the pointers
     are about the CU for a DIE
+
     @param dw_die
     Some open Dwarf_Die.
     @param dw_version
@@ -3355,7 +3355,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
     To retrieve the line table version call
     dwarf_srclines_b() and dwarf_srclines_version().
-    
+
     @see examplec
 
     @param dw_cu_die
@@ -3703,7 +3703,7 @@ DW_API int dwarf_srclines_include_dir_data(
     the line table version and the
     type of line table involved.
 
-    Meaning of the value returned via dw_table_count: 
+    Meaning of the value returned via dw_table_count:
     -  0 The table is a header with no lines.
     -  1 The table is a standard line table.
     -  2 The table is an experimental line table.
