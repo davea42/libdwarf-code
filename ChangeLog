@@ -1,3 +1,82 @@
+2023-11-23:  David Anderson
+    commit 5c91360e97f3cc6a56edbcc1b5e3fd03ad620d4d
+
+    Now does a better job of printing DW_OP_const_type
+    and a more complete job of printing a dwarf-expression
+    inside another dwarf-expression (odd as that seems).
+    And now, for DW_OP_const_type checks the cu-relative
+    offset for correctness and reports the target die
+    TAG and name.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-11-22:  David Anderson
+    commit 4a62ab06eb85f7b369b5b426039b347caa5ec1c7
+
+    Adding printing of a dwarf-expression inside
+    another dwarf expression for certain DW_OP codes.
+    DW_OP_implicit_value
+    DW_OP_entry_value
+    DW_OP_GNU_entry_value
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-11-22:  David Anderson
+    commit 898058a794322fc51df7b94a491eaa8a57a7e6c7
+
+    Changed an unsigned to Dwarf_Unsigned to avoid
+    a warning from Windows C.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2023-11-22:  David Anderson
+    commit 32f5ff2ba4ad978c2b27ed31a9380fd9e5253407
+
+    Fixed trailing whitespace.
+    Added a blank line in comments for clarity of doxygen output.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-18:  David Anderson
+    commit 6c14db69a3819f43573144bba3d12e4dcdc006fb
+
+    It's long been the case that for each CU
+    the cu_die would be created twice and one
+    discarded.
+
+    Now (at least if one uses
+    dwarf_next_cu_header_e() ) that that creation
+    happens only once .
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2023-11-18:  David Anderson
+    commit 4e585d13d5326579fb4cb462a95c292db9e37c3a
+
+    Adding space characers in | to force rebuild.
+            modified:   fuzz/fuzz_crc.c
+
+2023-11-17:  David Anderson
+    commit efa593bc2ddbcd9734ca0dd4ddfff11e492a155a
+
+    Latest, with typos fixed.
+            modified:   doc/libdwarf.pdf
+
+2023-11-17:  David Anderson
+    commit 1eadb33958d3d51f3c661a11591e81d43d183796
+
+    Corrected spellings and updated the date in the document.
+            modified:   doc/libdwarf.dox
+    Corrected a spelling and modified the
+    documentation of dwarf_next_cu_header_d()
+    and dwarf_next_cu_header_e() a little.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-17:  David Anderson
+    commit 55517fccd6117174ba0cea9c618cade3622922f8
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-11-17:  David Anderson
     commit 31b1ce7a1808c1d05f16c36ad9c52a28e5f6ef80
 
