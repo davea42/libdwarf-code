@@ -6124,7 +6124,6 @@ print_expression_inner_block(Dwarf_Debug dbg,
     return res;
 }
 
-
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
@@ -6440,6 +6439,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             /*  opd1 is cu-relative offset of type DIE.
                 we have a die in the relevant CU in the arg
                 list */
+            
+            esb_append_printf_u(string_out," 0x%"
+                DW_PR_DUx,opd1);
             length = opd2;
             esb_append(string_out," const length: ");
             esb_append_printf_u(string_out,
@@ -6458,6 +6460,15 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                         "contents='%s'",(const char *)bp);
                 }
             }
+            esb_append(string_out,"\n");
+#if 0
+            append_indent_prefix(string_out,indentprespaces,
+                die_indent_level,indentpostspaces+2);
+            esb_append(string_out," Target Die: ");
+            show_target_die_offset_name(dbg,die,opd1,
+                string_out, err);
+#endif
+
             check_die_expr_op_basic_data(dbg,die,op_name,
                 indentprespaces,die_indent_level,indentpostspaces,
                 DW_TAG_base_type, NON_ZERO_OFFSET_REQUIRED,
