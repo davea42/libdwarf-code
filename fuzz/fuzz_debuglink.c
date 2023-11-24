@@ -23,6 +23,9 @@ limitations under the License.
  */
 #include "dwarf.h"
 #include "libdwarf.h"
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 /*
  * Fuzzer function targeting a case of dwarf_gnu_debuglink
