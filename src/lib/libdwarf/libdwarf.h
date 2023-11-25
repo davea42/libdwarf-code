@@ -8651,15 +8651,16 @@ DW_API int dwarf_get_ranges_section_name(Dwarf_Debug dw_dbg,
     This is not from DWARF information, it is
     from object file headers.
 */
-DW_API int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_offset_size(Dwarf_Debug dw_dbg,
     Dwarf_Half  *    dw_offset_size,
     Dwarf_Error *    dw_error);
+
 /*! @brief Get the address  size as defined by the object
 
     This is not from DWARF information, it is
     from object file headers.
 */
-DW_API int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_address_size(Dwarf_Debug dw_dbg,
     Dwarf_Half  *    dw_addr_size,
     Dwarf_Error *    dw_error);
 
@@ -8761,10 +8762,12 @@ DW_API int dwarf_get_section_count(Dwarf_Debug dw_dbg);
     with MIPSpro 7.3.1.3 toolchain.).
 
     @param dw_dbg
-    Pass in the Dwarf_Debug of interest.
+    Pass in a valid Dwarf_Debug of interest.
 
     @return
-    Always returns DW_DLV_OK.
+    If the dw_dbg is non-null it returns DW_DLV_OK.
+    If dw_dbg is NULL it returns DW_DLV_NO_ENTRY.
+
 */
 DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_debug_info_size,
