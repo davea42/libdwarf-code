@@ -178,6 +178,22 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         }                                                     \
     } while (0)
 
+/*  Any error  found here represents a bug that cannot
+    be fixed. Pass cd_funcname as a quoted string,
+    for example "dwarf_crc32" */
+#define CHECK_DBG(cd_dbg,cd_er,cd_funcname)                        \
+    do {                                                      \
+        if (!(cd_dbg) || (cd_dbg)->de_magic != DBG_IS_VALID) {    \
+            _dwarf_error_string(NULL, (cd_er), DW_DLE_DBG_NULL, \
+                "DW_DLE_DBG_NULL: "                           \
+                "dbg argument to " cd_funcname                \
+                "either null or it contains"                  \
+                "a stale Dwarf_Debug pointer");               \
+            return DW_DLV_ERROR;                              \
+        }                                                     \
+    } while (0)
+
+
 /*
    Reads 'source' for 'length' bytes from unaligned addr.
 
