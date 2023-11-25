@@ -1,4 +1,25 @@
 
+#64496
+id: DW202311-002
+fuzzer: ossfuzz id: 64496
+datereported: 2023-02-28
+reportedby: David Korczynski
+vulnerability: Null dereference from dwarf_gnu_debuglink()
+product: libdwarf
+description: If the Dwarf_Debug was opened  with 
+  dwarf_init_object_b() there is no pathname known to libdwarf
+  and the library was dereferencing a null pointer as a result.
+  With the library bug fixed
+  the fuzz/fuzz_debuglink.c test case was violating the
+  rules of use of the function resulting in memory
+  leakage. The documentation has been improved on this
+  function.
+datefixed: 2023-11-25
+references: regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
+gitfixid: 
+tarrelease:
+endrec: DW202311-002
+
 
 id: DW202311-001
 fuzzer: ossfuzz id: 56452

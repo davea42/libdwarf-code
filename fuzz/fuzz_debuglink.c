@@ -74,6 +74,18 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
                               &debuglink_fullpath_strlen, &buildid_type,
                               &buildidowner_name, &buildid_itself,
                               &buildid_length, &paths, &paths_count, errp);
+    /*  Calling dwarf_gnu_debuglink and passing in
+        &paths here means the caller
+        is obligated to free the array/block of strings
+        returned. dwarf_finish() will NOT
+        free these strings. See the libdwarf documentation.  */
+    free(paths);
+    /*  Calling dwarf_gnu_debuglink and passing in
+        &debuglink_fullpath  means the caller
+        is obligated to free the array/block of strings
+        returned. dwarf_finish() will NOT
+        free these strings. See the libdwarf documentation.  */
+    free(debuglink_fullpath);
 
     dwarf_finish(dbg);
     close(fuzz_fd);

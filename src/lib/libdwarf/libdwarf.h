@@ -8032,7 +8032,17 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     such arguments. Useful if you only care about some
     of the data potentially returned.
 
-    Caller frees space returned by debuglink_fullpath_returned.
+    If  dw_debuglink_fullpath returned is set by
+    the call the space allocated must be freed
+    by the caller with free(dw_debuglink_fullpath_returned).
+
+    if dw_debuglink_paths_returned is set by the call
+    the space allocated must be free by
+    the caller with free(dw_debuglink_paths_returned).
+
+    dwarf_finish() will not free strings 
+    dw_debuglink_fullpath_returned or 
+    dw_debuglink_paths_returned.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -8050,7 +8060,6 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     @param dw_debuglink_path_length_returned
     On success returns the strlen() of
     dw_debuglink_fullpath_returned .
-
     @param dw_buildid_type_returned
     On success returns a pointer to integer with
     a type code. See the buildid definition.
@@ -8064,11 +8073,12 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     On success this is set to the length of the
     set of bytes pointed to by dw_buildid_returned .
     @param dw_paths_returned
-    On success returns a pointer to an array of
+    On success sets a pointer to an array of
     pointers to strings, each  with a global path.
-    It actually points to an array of pointers
-    followed by a blob of strings, and freeing
-    all of that just means calling free(dw_paths_returned).
+    These strings must be freed by the caller,
+    dwarf_finish() will not free these strings.
+    Call free(dw_paths_returned).
+    
     @param dw_paths_length_returned
     On success returns the length of the array of string
     pointers dw_paths_returned points at.

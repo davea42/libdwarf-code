@@ -939,7 +939,17 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
     and are only valid while that dbg is open.
     debuglink_path_returned.
     crc_returned, buildid_owner_name_returned,
-    buildid_returned, */
+    buildid_returned, 
+
+    Caller must initialize the passed-in pointers
+    debuglink_fullpath_returned
+    and paths_returned to zero, and other arguments
+    to zero or sensible values before calling. 
+
+    If the dbg was set up via dwarf_init_b(fd... )
+    then dbg->de_path will be 0, a null pointer
+    which makes some of this less than useful.
+*/
 int
 dwarf_gnu_debuglink(Dwarf_Debug dbg,
     char     **  debuglink_path_returned, /* do not free*/
@@ -951,7 +961,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     char     **  buildid_owner_name_returned,
     unsigned char ** buildid_returned,
     unsigned *   buildid_length_returned,
-    char     *** paths_returned,
+    char     *** paths_returned, /* caller frees */
     unsigned   * paths_count_returned,
     Dwarf_Error* error)
 {
@@ -979,9 +989,14 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     }
 
     if (!pdebuglink && !pbuildid) {
-        *debuglink_fullpath_returned = strdup(dbg->de_path);
-        *debuglink_fullpath_length_returned =
+        if(dbg->de_path) {
+            *debuglink_fullpath_returned = strdup(dbg->de_path);
+            *debuglink_fullpath_length_returned =
             (unsigned)strlen(dbg->de_path);
+        } else {
+            *debuglink_fullpath_returned = 0;
+            *debuglink_fullpath_length_returned = 0;
+        }
         return DW_DLV_OK;
     }
 
@@ -1012,7 +1027,8 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         }
     }
     dwarfstring_constructor(&debuglink_fullpath);
-    pathname = (char *)dbg->de_path;
+    pathname = dbg->de_path?(char *)dbg->de_path:
+        "";
     if (pathname && paths_returned) {
         /*  Caller wants paths created and returned. */
         res =  _dwarf_construct_linkedto_path(
