@@ -1,3 +1,119 @@
+2023-11-25:  David Anderson
+    commit d87a170a1c0f79aa001c104367248984307ab221
+
+    This is a new-to-me bug report
+    and its fix. DW202311-001
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-11-25:  David Anderson
+    commit ef77596af000719c04bd3e40b97139247ff3efb4
+
+    This is the definition of the new macro
+    CHECK_DBG for use inside libdwarf.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2023-11-25:  David Anderson
+    commit f9ce938de8ffa5e837d9215d17bd1b677fdcab03
+
+    Ensuring that all API functions that have a
+    Dwarf_Debug input argument check the passed
+    in pointer thoroughly using a new CHECK_DBG
+    macro in dwarf_util.h
+    Many of the place have been incorrectly
+    checking for many years.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_dsc.c
+            modified:   src/lib/libdwarf/dwarf_error.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_groups.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/dwarf_stringsection.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-11-25:  David Anderson
+    commit 6fe6f29f1c191202a2334f2eeeca4e2e292adb15
+    Merge: 7cddf97e 1f698830
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    merge from github
+
+2023-11-25:  David Anderson
+    commit 7cddf97ee462ca27f753328de241cfb350aa6ac9
+
+    We now test a Dwarf_Debug better in libdwarf, so we have
+    to set dbg->de_magic properly to test what we
+    want to test here. Done.
+            modified:   test/test_linkedtopath.c
+
+2023-11-25:  David Anderson
+    commit bd6d53d323061738f70de05f56cc6df0b357646d
+
+    Minor clarifications and /* dbg */ is now dw_dbg
+    in two places.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-24:  David Anderson
+    commit 06d843c916ab88543cec7b0e64554b8adf1607f2
+
+    Was failing to check that the Dwarf_Debug argument
+    was non-null. Exposed as a result of oss fuzz
+    63900 (which started out as a bug in fuzz/fuzz_debuglink.c)
+            modified:   ../src/lib/libdwarf/dwarf_debuglink.c
+    Then we were notified this was originally
+    oss fuzz 56452 ! Odd, we had not heard of 56542 before.
+
+    The bug has been present since libdwarf/dwarf_debuglink.c
+    was written in 2021.
+
+2023-11-24:  David Anderson
+    commit 1f6988307748f427566e3266695bb72d5384bf3d
+
+    Was failing to check that the Dwarf_Debug argument
+    was non-null. Exposed as a result of oss fuzz
+    63900 (which started out as a bug in fuzz/fuzz_debuglink.c)
+            modified:   ../src/lib/libdwarf/dwarf_debuglink.c
+
+    The bug has been present since libdwarf/dwarf_debuglink.c
+    was written in 2021.
+
+2023-11-24:  David Anderson
+    commit b2d1f44e6a75042a6dc9a3c2f9fe6c9515ca4f5b
+
+    Missing the #define of O_BINARY. Fixed now.
+            modified:   fuzz/fuzz_debuglink.c
+
+2023-11-23:  David Anderson
+    commit 528f7495b63d73ec46c153be8770753f4b6869f2
+
+    Up to date with git log now
+            modified:   ChangeLog
+
 2023-11-23:  David Anderson
     commit 5c91360e97f3cc6a56edbcc1b5e3fd03ad620d4d
 
