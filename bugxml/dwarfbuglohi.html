@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of November 2023</p>
-<p> Record count: 169 </p>
+<p> Record count: 170 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5845,6 +5845,42 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz63024/fuzz_init_path-5486726493372416
 </p>
 <p>gitfixid: 3a658bd1dd7437948cecbf82bb9b24f5f6122a7d
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202311-001">170) DW202311-001</h3>
+<p>id: DW202311-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 56452
+</p>
+<p>datereported: 2023-11-24
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Null dereference
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  Passing a null Dwarf_Debug to
+  dwarf_add_debuglink_global_path() lead to  library crash.
+  The code was not checking for a valid Dwarf_Debug Argument.
+  The bug was present when the function was created in 2021
+  Moreover, oss fuzz originally noted the bug
+  on 02 March 2023 but
+  I can find no trace of a notification of the bug arriving
+  before 24 November 2023.
+  Fixing this sort of thing for all functions, here is
+  the last commit id...
+  ef77596af000719c04bd3e40b97139247ff3efb4
+</p>
+<p>datefixed: 2023-11-25
+</p>
+<p>references:  regressiontests/ossfuzz56452/fuzz_debuglink-cs4231a-5927365017731072
+</p>
+<p>gitfixid: 1f6988307748f427566e3266695bb72d5384bf3d
 </p>
 <p>tarrelease: 
 </p>

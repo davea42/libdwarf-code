@@ -1,3 +1,29 @@
+
+
+id: DW202311-001
+fuzzer: ossfuzz id: 56452
+datereported: 2023-11-24
+reportedby: David Korczynski
+vulnerability: Null dereference
+product: libdwarf
+description: Passing a null Dwarf_Debug to
+  dwarf_add_debuglink_global_path() lead to  library crash.
+  The code was not checking for a valid Dwarf_Debug Argument.
+  The bug was present when the function was created in 2021
+  Moreover, oss fuzz originally noted the bug 
+  on 02 March 2023 but
+  I can find no trace of a notification of the bug arriving
+  before 24 November 2023.
+  Fixing this sort of thing for all functions, here is
+  the last commit id...
+  ef77596af000719c04bd3e40b97139247ff3efb4
+datefixed: 2023-11-25
+references: regressiontests/ossfuzz56452/fuzz_debuglink-cs4231a-5927365017731072
+gitfixid: 1f6988307748f427566e3266695bb72d5384bf3d
+tarrelease:
+endrec: DW202311-001
+
+
 id: DW202310-002
 fuzzer: ossfuzz id: 63024
 datereported: 2023-10-06
