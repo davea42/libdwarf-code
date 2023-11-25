@@ -16,7 +16,7 @@ description: If the Dwarf_Debug was opened  with
   function.
 datefixed: 2023-11-25
 references: regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
-gitfixid: 
+gitfixid:  d76cce559b898f7059ce5ffd82f3cfd58cb392fe
 tarrelease:
 endrec: DW202311-002
 

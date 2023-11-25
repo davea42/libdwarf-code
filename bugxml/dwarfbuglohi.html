@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of November 2023</p>
-<p> Record count: 170 </p>
+<p> Record count: 171 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5881,6 +5881,39 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz56452/fuzz_debuglink-cs4231a-5927365017731072
 </p>
 <p>gitfixid: 1f6988307748f427566e3266695bb72d5384bf3d
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202311-002">171) DW202311-002</h3>
+<p>id: DW202311-002
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 64496
+</p>
+<p>datereported: 2023-02-28
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Null dereference from dwarf_gnu_debuglink()
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  If the Dwarf_Debug was opened  with
+  dwarf_init_object_b() there is no pathname known to libdwarf
+  and the library was dereferencing a null pointer as a result.
+  With the library bug fixed
+  the fuzz/fuzz_debuglink.c test case was violating the
+  rules of use of the function resulting in memory
+  leakage. The documentation has been improved on this
+  function.
+</p>
+<p>datefixed: 2023-11-25
+</p>
+<p>references:  regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
+</p>
+<p>gitfixid: d76cce559b898f7059ce5ffd82f3cfd58cb392fe
 </p>
 <p>tarrelease: 
 </p>
