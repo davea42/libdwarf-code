@@ -45,6 +45,7 @@
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
+#include "dwarf_util.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
 
@@ -75,11 +76,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     unsigned int   init = 0;
     int            fd = -1;
 
-    if (!dbg) {
-        _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: Bad call to dwarf_crc32");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_crc32()");
     if (!crcbuf) {
         return DW_DLV_NO_ENTRY;
     }

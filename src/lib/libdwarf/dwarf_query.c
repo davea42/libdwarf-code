@@ -58,6 +58,7 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
     Dwarf_Half  *    offset_size,
     Dwarf_Error *    error)
 {
+    CHECK_DBG(dbg,error,"dwarf_get_offset_size()");
     if (dbg == 0) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
@@ -96,10 +97,7 @@ dwarf_get_address_size(Dwarf_Debug dbg,
 {
     Dwarf_Half address_size = 0;
 
-    if (dbg == 0) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_address_size()");
     address_size = dbg->de_pointer_size;
     *ret_addr_size = address_size;
     return DW_DLV_OK;
@@ -250,9 +248,9 @@ dwarf_offset_list(Dwarf_Debug dbg,
     Dwarf_Chain_2 head_chain = 0;
     Dwarf_Chain_2 *plast = &head_chain;
 
+    CHECK_DBG(dbg,error,"dwarf_offset_list()");
     *offbuf = NULL;
     *offcnt = 0;
-
     res = dwarf_offdie_b(dbg,offset,is_info,&die,error);
     if (DW_DLV_OK != res) {
         return res;

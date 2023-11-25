@@ -168,15 +168,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_implicit_const_count_out = 0;
     int res = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: "
-            "calling dwarf_get_abbrev "
-            "either null or it contains"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
-
+    CHECK_DBG(dbg,error,"dwarf_get_abbrev()");
     if (dbg->de_debug_abbrev.dss_data == 0) {
         /*  Loads abbrev section (and .debug_info as we do those
             together). */

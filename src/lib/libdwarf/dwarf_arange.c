@@ -416,11 +416,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
 
     /* ***** BEGIN CODE ***** */
 
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
-
+    CHECK_DBG(dbg,error,"dwarf_get_aranges()");
     res = _dwarf_load_section(dbg, &dbg->de_debug_aranges, error);
     if (res != DW_DLV_OK) {
         return res;

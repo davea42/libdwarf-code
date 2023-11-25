@@ -779,13 +779,7 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     Dwarf_Small      *curptr       = 0;
     int              res           = 0;
 
-    if (!dbg) {
-        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: Dwarf_Debug argument in "
-            "dwarf_dnames_header() "
-            "call is NULL");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_dnames_header()");
     res = _dwarf_load_section(dbg, &dbg->de_debug_names, error);
     if (res != DW_DLV_OK) {
         return res;

@@ -1127,7 +1127,7 @@ int
 dwarf_object_finish(Dwarf_Debug dbg)
 {
     int res = 0;
-
+    /* do not use CHECK_DBG */
     _dwarf_harmless_cleanout(&dbg->de_harmless_errors);
     res = _dwarf_free_all_of_one_debug(dbg);
     /*  see dwarf_error.h dwarf_error.c  Relevant
@@ -1526,6 +1526,9 @@ dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
     Dwarf_Unsigned * debug_loclists_size,
     Dwarf_Unsigned * debug_rnglists_size)
 {
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        return DW_DLV_NO_ENTRY;
+    }
     if (debug_info_size) {
         *debug_info_size = dbg->de_debug_info.dss_size;
     }
@@ -1603,16 +1606,10 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     Dwarf_Unsigned section_index = 0;
     struct Dwarf_Obj_Access_Section_a_s doas;
 
+    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_name()");
     *section_addr = 0;
     *section_size = 0;
-
-    if (!dbg) {
-        _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: null dbg passed to "
-            "dwarf_get_section_info_by_name");
-        return DW_DLV_ERROR;
-    }
-    if (!section_name) {
+    if (!section_name || 0 == section_name[0]) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: null section_name pointer "
             "passed to "
@@ -1648,8 +1645,12 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
             continue;
         }
         if (!strcmp(section_name,doas.as_name)) {
-            *section_addr = doas.as_addr;
-            *section_size = doas.as_size;
+            if (section_addr) {
+                *section_addr = doas.as_addr;
+            }
+            if (section_size) {
+                *section_size = doas.as_size;
+            }
             return DW_DLV_OK;
         }
     }
@@ -1665,10 +1666,17 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
-    *section_addr = 0;
-    *section_size = 0;
-    *section_name = NULL;
 
+    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_index()");
+    if (section_addr) {
+        *section_addr = 0;
+    }
+    if (section_size) {
+        *section_size = 0;
+    }
+    if (section_name) {
+        *section_name = NULL;
+    }
     /* Check if we have a valid section index */
     if (section_index >= 0 && section_index <
         dwarf_get_section_count(dbg)) {
@@ -1686,9 +1694,15 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
-        *section_addr = doas.as_addr;
-        *section_size = doas.as_size;
-        *section_name = doas.as_name;
+        if (section_addr) {
+            *section_addr = doas.as_addr;
+        }
+        if (section_size) {
+            *section_size = doas.as_size;
+        }
+        if (section_name) {
+            *section_name = doas.as_name;
+        }
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -1698,8 +1712,13 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
 int
 dwarf_get_section_count(Dwarf_Debug dbg)
 {
-    struct Dwarf_Obj_Access_Interface_a_s * obj = dbg->de_obj_file;
-    if (NULL == obj) {
+    struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
+
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        return DW_DLV_NO_ENTRY;
+    }
+    obj = dbg->de_obj_file;
+    if (!obj) {
         /*  -1  */
         return DW_DLV_NO_ENTRY;
     }

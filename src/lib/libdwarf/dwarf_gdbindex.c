@@ -183,14 +183,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     Dwarf_Small *startdata = 0;
     Dwarf_Unsigned version_in = 0;
 
-    if (!dbg) {
-        _dwarf_error_string(NULL, error,
-            DW_DLE_GDB_INDEX_INDEX_ERROR,
-            "DW_DLE_GDB_INDEX_INDEX_ERROR:"
-            " passed in NULL Dwarf_Debut to"
-            " dwarf_gdbindex_header");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_gdbindex_header()");
     if (!dbg->de_debug_gdbindex.dss_size) {
         return DW_DLV_NO_ENTRY;
     }

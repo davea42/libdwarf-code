@@ -511,14 +511,7 @@ dwarf_load_loclists(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *cxt = 0;
     Dwarf_Unsigned count = 0;
 
-    if (!dbg) {
-        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL"
-            "NULL Dwarf_Debug "
-            "argument passed to "
-            "dwarf_load_loclists()");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_load_loclists()");
     if (dbg->de_loclists_context) {
         if (loclists_count) {
             *loclists_count = dbg->de_loclists_context_count;
@@ -587,15 +580,7 @@ dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
     Dwarf_Small *offsetptr = 0;
     Dwarf_Unsigned targetoffset = 0;
 
-    if (!dbg) {
-        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL"
-            "NULL Dwarf_Debug "
-            "argument passed to "
-            "dwarf_get_loclist_offset_index_value()");
-        return DW_DLV_ERROR;
-    }
-
+    CHECK_DBG(dbg,error,"dwarf_get_loclist_offset_index_value()");
     if (!dbg->de_loclists_context_count) {
         return DW_DLV_NO_ENTRY;
     }
@@ -728,6 +713,7 @@ dwarf_get_loclist_context_basics(Dwarf_Debug dbg,
 {
     Dwarf_Loclists_Context con = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_get_loclist_context_basics()");
     if (!dbg) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL"
@@ -815,14 +801,7 @@ int dwarf_get_loclist_lle(Dwarf_Debug dbg,
     int res = 0;
     unsigned address_size = 0;
 
-    if (!dbg) {
-        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL"
-            "NULL Dwarf_Debug "
-            "argument passed to "
-            "dwarf_get_loclist_lle()");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_loclist_lle()");
     if (!dbg->de_loclists_context_count) {
         return DW_DLV_NO_ENTRY;
     }

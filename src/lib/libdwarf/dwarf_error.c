@@ -84,7 +84,8 @@ dwarf_error_creation(Dwarf_Debug dbg,
     char *errmsg)
 {
     dwarfstring m;
-    if (!dbg) {
+
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         return;
     }
     dwarfstring_constructor(&m);

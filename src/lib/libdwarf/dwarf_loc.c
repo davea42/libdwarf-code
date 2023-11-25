@@ -1611,14 +1611,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         return DW_DLV_ERROR;
     }
     dbg = attr->ar_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL"
-            "NULL Dwarf_Debug, improper Dwarf_Attribute "
-            "argument passed to "
-            "dwarf_get_loclist_c()");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_loclist_c()");
 
     /* ***** BEGIN CODE ***** */
     setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
@@ -1764,14 +1757,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Small version_stamp = dwarf_version;
     int res = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL"
-            "NULL or bad Dwarf_Debug "
-            "argument passed to "
-            "dwarf_loclist_from_expr_c()");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_loclist_from_expr_c()");
     llhead = (Dwarf_Loc_Head_c)_dwarf_get_alloc(dbg,
         DW_DLA_LOC_HEAD_C, 1);
     if (!llhead) {

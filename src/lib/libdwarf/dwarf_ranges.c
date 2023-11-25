@@ -135,10 +135,7 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     Dwarf_Bool rangeslocal = TRUE;
 
     (void)offset_size;
-    if (!dbg) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_ranges_b()");
     address_size = localdbg->de_pointer_size; /* default  */
     if (die) {
         /*  If we wind up using the tied file the die_version

@@ -90,10 +90,7 @@ dwarf_open_str_offsets_table_access(Dwarf_Debug dbg,
     Dwarf_Small *offsets_start_ptr = 0;
     Dwarf_Unsigned sec_size = 0;
 
-    if (!dbg) {
-        _dwarf_error(NULL,error,DW_DLE_STR_OFFSETS_NULL_DBG);
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_open_str_offsets_table_access()");
     if (!table_data) {
         _dwarf_error(dbg,error,DW_DLE_STR_OFFSETS_NULLARGUMENT);
         return DW_DLV_ERROR;

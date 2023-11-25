@@ -85,6 +85,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
+#include "dwarf_util.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -479,7 +480,7 @@ dwarf_init_b(int fd,
 int
 dwarf_finish(Dwarf_Debug dbg)
 {
-    if (!dbg) {
+    if (!dbg || dbg->de_magic != DBG_IS_VALID ) {
         _dwarf_free_static_errlist();
         return DW_DLV_OK;
     }
@@ -536,9 +537,8 @@ dwarf_set_tied_dbg(Dwarf_Debug dbg,
     Dwarf_Debug tieddbg,
     Dwarf_Error*error)
 {
-    if (!dbg) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
-    }
+    CHECK_DBG(dbg,error,"dwarf_set_tied_dbg()");
+
     dbg->de_tied_data.td_tied_object = tieddbg;
     if (tieddbg) {
         tieddbg->de_tied_data.td_is_tied_object = TRUE;
@@ -551,7 +551,7 @@ int
 dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
     Dwarf_Error*error)
 {
-    (void)error;
+    CHECK_DBG(dbg,error,"dwarf_get_tied_dbg()");
     *tieddbg_out = dbg->de_tied_data.td_tied_object;
     return DW_DLV_OK;
 }

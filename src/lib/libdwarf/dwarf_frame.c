@@ -182,6 +182,8 @@ dwarf_get_frame_section_name(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
+
+    CHECK_DBG(dbg,error,"dwarf_get_frame_section_name()");
     if (error != NULL) {
         *error = NULL;
     }
@@ -200,6 +202,8 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
+
+    CHECK_DBG(dbg,error,"dwarf_get_frame_section_name_eh_gnu()");
     if (error != NULL) {
         *error = NULL;
     }
@@ -1978,12 +1982,8 @@ dwarf_get_fde_list_eh(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     int res = 0;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: Either null or it contains"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
+
+    CHECK_DBG(dbg,error,"dwarf_get_fde_list_eh()");
     res = _dwarf_load_section(dbg,
         &dbg->de_debug_frame_eh_gnu,error);
     if (res != DW_DLV_OK) {
@@ -2018,13 +2018,7 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
 {
     int res = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: dwarf_get_fde_list: "
-            "Either null Dwarf_Debug or it is"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_fde_list()");
     res = _dwarf_load_section(dbg, &dbg->de_debug_frame,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -2074,13 +2068,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     struct cie_fde_prefix_s prefix;
     struct cie_fde_prefix_s prefix_c;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: in dwarf_get_fde_for_die(): "
-            "Either null or it contains"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_fde_for_die()");
     if (!die ) {
         _dwarf_error_string(NULL, error, DW_DLE_DIE_NULL,
             "DW_DLE_DIE_NUL: in dwarf_get_fde_for_die(): "
@@ -3115,7 +3103,6 @@ dwarf_get_frame_instruction_a(Dwarf_Frame_Instr_Head head,
     The dwarf_ version is preferred over the obsolete _dwarf version.
     _dwarf version kept for compatibility.
 */
-/* ARGSUSED 4 */
 int
 _dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     Dwarf_Off * fde_off, Dwarf_Off * cie_off,
@@ -3124,7 +3111,6 @@ _dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     return dwarf_fde_section_offset(dbg,in_fde,fde_off,
         cie_off,error);
 }
-/* ARGSUSED 4 */
 int
 dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     Dwarf_Off * fde_off, Dwarf_Off * cie_off,
@@ -3133,6 +3119,7 @@ dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     char *start = 0;
     char *loc = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_fde_section_offset()");
     if (!in_fde) {
         _dwarf_error(dbg, error, DW_DLE_FDE_NULL);
         return DW_DLV_ERROR;
@@ -3150,14 +3137,13 @@ dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
    The dwarf_ version is preferred over the obsolete _dwarf version.
    _dwarf version kept for compatibility.
 */
-/* ARGSUSED 4 */
 int
 _dwarf_cie_section_offset(Dwarf_Debug dbg, Dwarf_Cie in_cie,
     Dwarf_Off * cie_off, Dwarf_Error * error)
 {
     return dwarf_cie_section_offset(dbg,in_cie,cie_off,error);
 }
-/* ARGSUSED 4 */
+
 int
 dwarf_cie_section_offset(Dwarf_Debug dbg, Dwarf_Cie in_cie,
     Dwarf_Off * cie_off, Dwarf_Error * error)
@@ -3165,6 +3151,7 @@ dwarf_cie_section_offset(Dwarf_Debug dbg, Dwarf_Cie in_cie,
     char *start = 0;
     char *loc = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_cie_section_offset()");
     if (!in_cie) {
         _dwarf_error(dbg, error, DW_DLE_CIE_NULL);
         return DW_DLV_ERROR;

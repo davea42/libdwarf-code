@@ -97,6 +97,7 @@ dwarf_get_debug_sup(Dwarf_Debug dbg,
     Dwarf_Small   *enddata = 0;
     Dwarf_Unsigned size = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_get_debug_sup()");
     res = load_sup(dbg,error);
     if (res != DW_DLV_OK) {
         return res;

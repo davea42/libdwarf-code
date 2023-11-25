@@ -210,6 +210,7 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+
         input_length_in_bytes;
 
+    CHECK_DBG(dbg,error,"dwarf_uncompress_integer_block_a()");
     output_length_in_units = 0;
     remain = (Dwarf_Signed)input_length_in_bytes;
     ptr = input_block;

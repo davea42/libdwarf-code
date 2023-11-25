@@ -592,11 +592,8 @@ finish_cu_context_via_cudie_inner(
 
     /*  Must call the internal siblingof so
         we do not depend on the dbg...de_cu_context
-        used by and for dwarf_cu_header_* calls. 
+        used by and for dwarf_cu_header_* calls.
         Safe because we know the correct cu_context.  */
-#if 0
-printf("dadebug calling _dwarf_siblingof_internal w/NULL line %d\n",__LINE__);
-#endif
     resdwo = _dwarf_siblingof_internal(dbg,NULL,
         cu_context,
         cu_context->cc_is_info,
@@ -1061,7 +1058,6 @@ dwarf_next_cu_header_e(Dwarf_Debug dbg,
         error);
     return res;
 }
-
 
 static void
 local_attrlist_dealloc(Dwarf_Debug dbg,
@@ -1787,16 +1783,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
 
     /* ***** BEGIN CODE ***** */
 
-#if 0
-printf("dadebug entry dwarf_next_cu_header_internal line %d\n",__LINE__);
-#endif
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: calling dwarf_next_cuheader_d() "
-            "Either null or it contains"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_next_cuheader_[d,e]()");
     if (is_info) {
         dis =&dbg->de_info_reading;
         dataptr = dbg->de_debug_info.dss_data;
@@ -1849,7 +1836,7 @@ printf("dadebug entry dwarf_next_cu_header_internal line %d\n",__LINE__);
             &cu_context,&local_cudie,error);
         if (res != DW_DLV_OK) {
             if (local_cudie) {
-               dwarf_dealloc_die(local_cudie);
+                dwarf_dealloc_die(local_cudie);
             }
             return res;
         }
@@ -1858,7 +1845,7 @@ printf("dadebug entry dwarf_next_cu_header_internal line %d\n",__LINE__);
         _dwarf_next_cu_header_d()
         with no offset presented work to march
         through all the CUs in order. Other places
-        creating a cu_context do not set de_cu_context. 
+        creating a cu_context do not set de_cu_context.
         if callers use dwarf_next_cu_header_e() this
         is unimportant but not harmful.  */
     dis->de_cu_context = cu_context;
@@ -1923,9 +1910,6 @@ printf("dadebug entry dwarf_next_cu_header_internal line %d\n",__LINE__);
         if (!local_cudie) {
             /*  This is safe since we know the
                 correct cu_context */
-#if 0
-printf("dadebug calling _dwarf_siblingof_internal w/NULL line %d\n",__LINE__);
-#endif
             res = _dwarf_siblingof_internal(dbg,NULL,
                 cu_context, is_info,&local_cudie,error);
             if (res != DW_DLV_OK) {
@@ -1933,20 +1917,13 @@ printf("dadebug calling _dwarf_siblingof_internal w/NULL line %d\n",__LINE__);
             }
             *cu_die_out = local_cudie;
         } else {
-#if 0
-printf("dadebug using local_cudie from context creation line %d\n",__LINE__);
-#endif
             *cu_die_out = local_cudie;
         }
     } else {
         if (local_cudie) {
             dwarf_dealloc_die(local_cudie);
         }
-        
     }
-#if 0
-printf("dadebug exit OK dwarf_next_cu_header_internal line %d\n",__LINE__);
-#endif
     return DW_DLV_OK;
 }
 
@@ -1996,14 +1973,7 @@ dwarf_die_from_hash_signature(Dwarf_Debug dbg,
     Dwarf_Bool is_type_unit = FALSE;
     int sres = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: calling dwarf_die_from_hash_signature()"
-            "Either null or it contains"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
-
+    CHECK_DBG(dbg,error,"dwarf_die_from_hash_signature()");
     sres = _dwarf_load_debug_info(dbg,error);
     if (sres == DW_DLV_ERROR) {
         return sres;
@@ -2514,12 +2484,13 @@ int
 dwarf_siblingof_b(Dwarf_Debug dbg,
     Dwarf_Die    die,
     Dwarf_Bool   is_info,
-    Dwarf_Die   *caller_ret_die, 
+    Dwarf_Die   *caller_ret_die,
     Dwarf_Error *error)
 {
     int res = 0;
     Dwarf_CU_Context context = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_siblingof_b()");
     if (die) {
         CHECK_DIE(die,DW_DLV_ERROR);
         context = die->di_cu_context;
@@ -2529,7 +2500,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     } else {
         /*  This is the pre-0.9.0 way, and is assuming
             that the 'dis' has the correct cu context.
-            Which might not be true if a caller 
+            Which might not be true if a caller
             used dwarf_next_cu_header_d() twice in a
             row before calling dwarf_siblingof_b().
             Use dwarf_next_cu_header_e() instead of
@@ -2537,11 +2508,8 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         context = is_info? dbg->de_info_reading.de_cu_context:
             dbg->de_types_reading.de_cu_context;
     }
-#if 0
-printf("dadebug siblingof_b calling _dwarf_siblingof_internal w/ die 0x%lx line %d\n",(unsigned long)die,__LINE__);
-#endif
     res = _dwarf_siblingof_internal(dbg,die,
-            context, is_info,caller_ret_die,error);
+        context, is_info,caller_ret_die,error);
     return res;
 }
 
@@ -2556,9 +2524,6 @@ dwarf_siblingof_c(Dwarf_Die die,
     CHECK_DIE(die,DW_DLV_ERROR);
     dbg =  die->di_cu_context->cc_dbg;
     is_info =  die->di_cu_context->cc_is_info;
-#if 0
-printf("dadebug calling _dwarf_siblingof_internal  from siblingof_c die 0x%lx line %d\n",(unsigned long)die,__LINE__);
-#endif
     res = _dwarf_siblingof_internal(dbg,die,
         die->di_cu_context, is_info,
         caller_ret_die,error);
@@ -2588,8 +2553,8 @@ dw_start_load_root_die(Dwarf_Debug dbg,
         local_dealloc_cu_context(dbg,context);
         _dwarf_error_string(dbg,error,
             DW_DLE_DBG_NO_CU_CONTEXT,
-            "DW_DLE_DBG_NO_CU_CONTEXT:" 
-            " Setting up a new CU failed loading root die"); 
+            "DW_DLE_DBG_NO_CU_CONTEXT:"
+            " Setting up a new CU failed loading root die");
         return DW_DLV_ERROR;
     }
     off2 = context->cc_debug_offset;
@@ -2610,7 +2575,6 @@ dw_start_load_root_die(Dwarf_Debug dbg,
 
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_siblingof_internal(Dwarf_Debug dbg,
@@ -2633,9 +2597,6 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     /* Since die may be NULL, we rely on the input argument. */
     Dwarf_Small *dataptr =  0;
 
-#if 0
-printf("dadebug entry _dwarf_siblingof_internal die 0x%lx   %d\n",(unsigned long)die,__LINE__);
-#endif
     if (!dbg) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
@@ -2814,8 +2775,8 @@ printf("dadebug entry _dwarf_siblingof_internal die 0x%lx   %d\n",(unsigned long
         return DW_DLV_NO_ENTRY;
     }
     if ((*die_info_ptr) == 0) {
-        /*  We are not at the end of the section, but a 
-            valid DIE will not start with a zero byte. 
+        /*  We are not at the end of the section, but a
+            valid DIE will not start with a zero byte.
             We will just assume it is a padding byte and is
             not an error.   An error report will appear
             later if actually reading DIEs*/
@@ -3087,12 +3048,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Unsigned   highest_code = 0;
     struct Dwarf_Section_s * secdp = 0;
 
-    if (dbg == NULL) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: "
-            "in call to dwarf_offdie_b()");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_offdie_b()");
     if (is_info) {
         dis =&dbg->de_info_reading;
         secdp = &dbg->de_debug_info;
@@ -3124,9 +3080,6 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             /*  We do not want this to return cu_die as
                 we only want the last one to create DIE,
                 and that will be done just below. */
-#if 0
-printf("dadebug offdie calling create new cu context line %d\n",__LINE__);
-#endif
             lres = _dwarf_create_a_new_cu_context_record_on_list(
                 dbg, dis,is_info,section_size,new_cu_offset,
                 &cu_context,NULL,error);
@@ -3264,10 +3217,17 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     unsigned i = 0;
-    char tbuf[100];
-    size_t std_sec_name_len = strlen(std_section_name);
+    char tbuf[100] = {0};
+    size_t std_sec_name_len = 0;
 
-    tbuf[0] = 0;
+    CHECK_DBG(dbg,error,"dwarf_get_real_section_name()");
+    if (!std_section_name || 0 == std_section_name[0]) {
+        _dwarf_error_string(dbg,error,DW_DLE_SECTION_NAME_BIG,
+            "DW_DLE_SECTION_NAME_BIG: Actually the "
+            "section name is empty, not big.");
+        return DW_DLV_ERROR;
+    }
+    std_sec_name_len = strlen(std_section_name);
     /*  std_section_name never has the .dwo on the end,
         so allow for that and allow one (arbitrarily) more. */
     if ((std_sec_name_len + 5) < sizeof(tbuf)) {
@@ -3276,10 +3236,6 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
         _dwarf_safe_strcpy(tbuf+std_sec_name_len,
             sizeof(tbuf)-std_sec_name_len,
             ".dwo",4);
-    }
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
     }
     for (i=0; i < dbg->de_debug_sections_total_entries; i++) {
         struct Dwarf_dbg_sect_s *sdata = &dbg->de_debug_sections[i];
@@ -3334,10 +3290,7 @@ dwarf_get_die_section_name(Dwarf_Debug dbg,
 {
     struct Dwarf_Section_s *sec = 0;
 
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_die_section_name()");
     if (is_info) {
         sec = &dbg->de_debug_info;
     } else {

@@ -195,13 +195,8 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     Dwarf_Unsigned section_sizes_tab_offset = 0;
     unsigned datalen32 = SIZEOFT32;
     Dwarf_Small *section_end = 0;
-/* FIXME */
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
-            "DW_DLE_XU_TYPE_ARG_ERROR: Dwarf_Debug pointer "
-            "is not valid");
-        return DW_DLV_ERROR;
-    }
+
+    CHECK_DBG(dbg,error,"dwarf_get_xu_index_header()");
     if (!section_type || !xuptr) {
         _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
             "DW_DLE_XU_TYPE_ARG_ERROR: section type or header "
@@ -931,6 +926,7 @@ _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned sect_index_base = 0;
     Dwarf_Sig8 key;
 
+    CHECK_DBG(dbg,error,"_dwarf_get_debugfission_for_offset()");
     sect_index_base = DW_SECT_INFO;
     key = zerohashkey;
     sres = _dwarf_get_xuhdr(dbg,key_type, &xuhdr,error);
@@ -960,6 +956,7 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
     Dwarf_Unsigned percu_index = 0;
     Dwarf_Xu_Index_Header xuhdr = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_get_debugfission_for_key()");
     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
             "DW_DLE_XU_TYPE_ARG_ERROR: Dwarf_Debug pointer "

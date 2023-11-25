@@ -569,6 +569,7 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     struct Dwarf_Gnu_IBlock_s *iblock_array = 0;
     int                  res = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_get_gnu_index_head()");
     if (!dbg) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: in "

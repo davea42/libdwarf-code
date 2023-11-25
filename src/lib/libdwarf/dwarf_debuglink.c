@@ -962,12 +962,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pdebuglink = 0;
     struct Dwarf_Section_s * pbuildid = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL,error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: Improper Dwarf_Debug "
-            "passed to dwarf_gnu_debuglink");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_gnu_debuglink()");
     if (dbg->de_gnu_debuglink.dss_size) {
         pdebuglink = &dbg->de_gnu_debuglink;
         res = _dwarf_load_section(dbg, pdebuglink,error);
@@ -1065,12 +1060,7 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     char      **glpaths = 0;
     char       *path1 = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL,error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: Improper Dwarf_Debug "
-            "passed to dwarf_add_debuglink_global_path");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_add_debuglink_global_path()");
     glpath_count_in = dbg->de_gnu_global_path_count;
     glpath_count_out = glpath_count_in+1;
     glpaths = (char **)malloc(sizeof(char *)*

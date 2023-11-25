@@ -105,6 +105,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     /* we will instantiate this below */
     Dwarf_Debug_Addr_Table newad = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_debug_addr_table()");
     res = _dwarf_load_section(dbg, &dbg->de_debug_addr,error);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
