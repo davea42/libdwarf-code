@@ -1,4 +1,28 @@
 2023-11-25:  David Anderson
+    commit d76cce559b898f7059ce5ffd82f3cfd58cb392fe
+
+    With latest info on debuglink issues
+            modified:   bugxml/data.txt
+    The source here uses a libdwarf public
+    function incorrectly which
+    guarantees a memory leak. Now the test case
+    follows the rules...
+            modified:   fuzz/fuzz_debuglink.c
+
+    Fix so that dwarf_gnu_debuglink() will not
+    dereference a NULL pointer.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Clarify the doxgen comments on dwarf_gnu_debuglink().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-25:  David Anderson
+    commit 0ee98238cc37e79d27cdb2f85eb7af81b9e8215a
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2023-11-25:  David Anderson
     commit d87a170a1c0f79aa001c104367248984307ab221
 
     This is a new-to-me bug report
