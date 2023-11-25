@@ -482,6 +482,8 @@ int main(void)
 
     dbg = &db;
     memset(dbg,0,sizeof(db));
+    /*  Faking up so it looks valid. See  dwarf_opaque.h */
+    dbg->de_magic =  DBG_IS_VALID;
 
     test1(dbg);
     test2();
