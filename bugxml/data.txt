@@ -1,5 +1,4 @@
 
-#64496
 id: DW202311-002
 fuzzer: ossfuzz id: 64496
 datereported: 2023-02-28
@@ -19,7 +18,6 @@ references: regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
 gitfixid:  d76cce559b898f7059ce5ffd82f3cfd58cb392fe
 tarrelease:
 endrec: DW202311-002
-
 
 id: DW202311-001
 fuzzer: ossfuzz id: 56452
