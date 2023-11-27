@@ -400,6 +400,9 @@ pe_load_section (void *obj, Dwarf_Unsigned section_index,
             *return_data = sp->loaded_data;
             return DW_DLV_OK;
         }
+        if (sp->section_irrelevant_to_dwarf) {
+            return DW_DLV_NO_ENTRY;
+        }
         if (!sp->VirtualSize) {
             return DW_DLV_NO_ENTRY;
         }
@@ -577,10 +580,11 @@ _dwarf_pe_load_dwarf_section_headers(
             filesect.SizeOfRawData);
         irrelevant = is_irrelevant_section(sec_outp->dwarfsectname,
             sec_outp->VirtualSize);
+        sec_outp->section_irrelevant_to_dwarf = irrelevant;
         if (irrelevant) {
-            sec_outp->VirtualSize = 0;
-            sec_outp->SizeOfRawData = 0;
-        }else{
+            continue;
+        } 
+        {
             /*  A Heuristic, allowing large virtual size
                 but not unlimited as we will malloc it
                 later, as Virtualsize. */

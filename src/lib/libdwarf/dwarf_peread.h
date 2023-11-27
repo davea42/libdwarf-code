@@ -107,6 +107,7 @@ struct dwarf_pe_generic_image_section_header
     Dwarf_Unsigned NumberOfLinenumbers;
     Dwarf_Unsigned Characteristics;
     Dwarf_Small *  loaded_data; /* must be freed. */
+    Dwarf_Bool     section_irrelevant_to_dwarf;
 };
 
 #define DWARF_PE_IMAGE_NT_OPTIONAL_HDR32_MAGIC 0x10b
