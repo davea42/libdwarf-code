@@ -344,13 +344,7 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
     *cucontext_ret = attr->ar_cu_context;
 
     dbg = attr->ar_cu_context->cc_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
-            "DW_DLE_ATTR_DBG_NULL The Attribute passed to "
-            "dwarf_get_loclist_c() "
-            "points to an invalid Dwarf_Debug");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"_dwarf_get_loclist_lle_count()");
     *dbg_ret = dbg;
     blkres = dwarf_whatform(attr, &form, error);
     if (blkres != DW_DLV_OK) {

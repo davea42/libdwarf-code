@@ -480,7 +480,7 @@ dwarf_init_b(int fd,
 int
 dwarf_finish(Dwarf_Debug dbg)
 {
-    if (!dbg || dbg->de_magic != DBG_IS_VALID ) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_free_static_errlist();
         return DW_DLV_OK;
     }

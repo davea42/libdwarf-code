@@ -578,7 +578,7 @@ _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
     Dwarf_Unsigned i = 0;
     Dwarf_Rnglists_Context * rngcon = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     if (!dbg->de_rnglists_context) {
@@ -1284,14 +1284,8 @@ dwarf_rnglists_get_rle_head(
     memset(&shead,0,sizeof(shead));
     ctx = attr->ar_cu_context;
     dbg = ctx->cc_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL "
-            "NULL or invalid dbg "
-            "argument passed to "
-            "dwarf_rnglists_get_rle_head()");
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,
+        "dwarf_rnglists_get_rle_head() via attribute");
     array = dbg->de_rnglists_context;
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;

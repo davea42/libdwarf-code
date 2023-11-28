@@ -647,7 +647,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
         a few lines above. */
     Dwarf_Unsigned context_count = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: "
             "calling for pubnames-like data Dwarf_Debug "
@@ -1626,7 +1626,7 @@ dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug dbg,
     Dwarf_Off headerlen = 0;
     int cres = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: "
             "calling dwarf_get_cu_die_offset_given"

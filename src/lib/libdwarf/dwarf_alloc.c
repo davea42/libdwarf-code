@@ -748,7 +748,7 @@ dwarf_dealloc_die( Dwarf_Die die)
         return;
     }
     dbg = context->cc_dbg;
-    if (!dbg ||dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     dwarf_dealloc(dbg,die,DW_DLA_DIE);
@@ -1069,11 +1069,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
 {
     unsigned g = 0;
 
-    if (dbg == NULL) {
-        _dwarf_free_static_errlist();
-        return DW_DLV_NO_ENTRY;
-    }
-    if (dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_free_static_errlist();
         return DW_DLV_NO_ENTRY;
     }

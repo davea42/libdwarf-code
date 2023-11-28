@@ -39,6 +39,8 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
+#include "libdwarf_private.h"
+#include "dwarf_util.h"
 #include "dwarf_abbrev.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -364,7 +366,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     }
 
     dbg = abbrev->dab_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: "
             "calling dwarf_get_abbrev_entry_b() "

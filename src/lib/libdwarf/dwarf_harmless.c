@@ -86,7 +86,7 @@ dwarf_get_harmless_error_list(Dwarf_Debug dbg,
 
     struct Dwarf_Harmless_s *dhp = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_NO_ENTRY;
     }
     dhp = &dbg->de_harmless_errors;
@@ -137,7 +137,7 @@ dwarf_insert_harmless_error(Dwarf_Debug dbg,
     unsigned cur = 0;
     char *msgspace = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     dhp = &dbg->de_harmless_errors;
@@ -177,7 +177,7 @@ dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
     struct Dwarf_Harmless_s *dhp = 0;
     unsigned prevcount = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return 0;
     }
     dhp = &dbg->de_harmless_errors;

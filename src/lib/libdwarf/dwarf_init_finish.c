@@ -1526,7 +1526,7 @@ dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
     Dwarf_Unsigned * debug_loclists_size,
     Dwarf_Unsigned * debug_rnglists_size)
 {
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_NO_ENTRY;
     }
     if (debug_info_size) {
@@ -1714,7 +1714,7 @@ dwarf_get_section_count(Dwarf_Debug dbg)
 {
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_NO_ENTRY;
     }
     obj = dbg->de_obj_file;
