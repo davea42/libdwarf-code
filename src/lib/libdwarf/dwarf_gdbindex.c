@@ -798,7 +798,7 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
         return DW_DLV_ERROR;
     }
     dbg = gdbindexptr->gi_dbg;
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         emit_no_value_msg(NULL,DW_DLE_GDB_INDEX_INDEX_ERROR,
             "DW_DLE_GDB_INDEX_INDEX_ERROR: "
             "The gdbindex Dwarf_Debug in"

@@ -1491,7 +1491,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         return DW_DLV_ERROR;
     }
     dbg = dn->dn_dbg;
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: "
             "a call to dwarf_dnames_name() "

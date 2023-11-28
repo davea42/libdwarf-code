@@ -138,7 +138,7 @@ get_pubxx_fields(Dwarf_Debug dbg,
     int                     *errnum_out,
     const char             **errstr_out)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     if (for_gnu_pubnames) {
@@ -570,12 +570,6 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
     int                  res = 0;
 
     CHECK_DBG(dbg,error,"dwarf_get_gnu_index_head()");
-    if (!dbg) {
-        _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: in "
-            "dwarf_get_gnu_index_head");
-        return DW_DLV_ERROR;
-    }
     res = load_pub_section(dbg,for_gnu_pubnames,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -662,12 +656,12 @@ _dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head head)
 void
 dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head head)
 {
-    Dwarf_Debug dbg;
+    Dwarf_Debug dbg = 0;
     if (!head) {
         return;
     }
     dbg = head->gi_dbg;
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     _dwarf_free_gnu_index_head_content(head);

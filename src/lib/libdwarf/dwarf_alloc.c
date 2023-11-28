@@ -584,7 +584,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     unsigned int type = alloc_type;
     short action = 0;
 
-    if (dbg == NULL) {
+    if (IS_INVALID_DBG(dbg)) {
 #if DEBUG_ALLOC
         printf("libdwarfdetector ALLOC dbg null  "
             "ret NULL type 0x%x size %lu line %d %s\n",
@@ -813,7 +813,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
 #endif /* DEBUG_ALLOC*/
         return;
     }
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         /*  App error, or an app that failed in a
             dwarf_init*() or dwarf_elf_init*() call.
 
@@ -994,7 +994,7 @@ _dwarf_get_debug(Dwarf_Unsigned filesize)
     Dwarf_Debug dbg;
 
     dbg = (Dwarf_Debug) malloc(sizeof(struct Dwarf_Debug_s));
-    if (dbg == NULL) {
+    if (!dbg) {
         return NULL;
     }
     memset(dbg, 0, sizeof(struct Dwarf_Debug_s));

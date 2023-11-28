@@ -148,7 +148,7 @@ dwarf_get_endian_copy_function(Dwarf_Debug dbg)
 Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return FALSE;
     }
     if (dbg->de_cu_hashindex_data) {
@@ -159,7 +159,7 @@ _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 Dwarf_Bool
 _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return FALSE;
     }
     if (dbg->de_tu_hashindex_data ) {
@@ -171,7 +171,7 @@ _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
 Dwarf_Bool
 _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return FALSE;
     }
     if (dbg->de_cu_hashindex_data ||

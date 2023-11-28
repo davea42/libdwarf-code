@@ -119,7 +119,7 @@ get_attr_dbg(Dwarf_Debug *dbg_out,
         return DW_DLV_ERROR;
     }
     dbg = cup->cc_dbg;
-    if (!dbg  || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
             "DW_DLE_ATTR_DBG_NULL: Stale or null Dwarf_Debug"
             "in a Dwarf_CU_Context" );
@@ -1322,7 +1322,7 @@ dwarf_formflag(Dwarf_Attribute attr,
         return DW_DLV_ERROR;
     }
     dbg = cu_context->cc_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
             "DW_DLE_ATTR_DBG_NULL: dwarf_formflag() attribute"
             " passed in has NULL or stale Dwarf_Debug pointer");

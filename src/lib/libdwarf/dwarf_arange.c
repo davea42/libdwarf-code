@@ -496,7 +496,7 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     if (error != NULL)
         *error = NULL;
 
-    if (dbg == NULL) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }

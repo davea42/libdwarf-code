@@ -1027,7 +1027,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         Filesize is to set up a sensible default hash tree
         size. */
     dbg = _dwarf_get_debug(filesize);
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }
     dbg->de_errhand = errhand;

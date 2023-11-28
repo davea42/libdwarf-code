@@ -56,7 +56,7 @@ static void
 get_sup_fields(Dwarf_Debug dbg,
     struct Dwarf_Section_s **sec_out)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     *sec_out = &dbg->de_debug_sup;

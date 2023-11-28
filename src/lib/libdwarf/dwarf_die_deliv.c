@@ -2597,7 +2597,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     /* Since die may be NULL, we rely on the input argument. */
     Dwarf_Small *dataptr =  0;
 
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }

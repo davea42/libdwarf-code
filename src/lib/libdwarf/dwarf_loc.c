@@ -65,7 +65,7 @@ _dwarf_locdesc_c_constructor(Dwarf_Debug dbg, void *locd)
 {
     Dwarf_Locdesc_c  ldp = (Dwarf_Locdesc_c)locd;
 
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_ERROR;
     }
     ldp->ld_lle_value = DW_LLE_VALUE_BOGUS;

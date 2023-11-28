@@ -2371,7 +2371,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
     }
 
     dbg = fde->fd_dbg;
-    if (dbg == NULL) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
         return DW_DLV_ERROR;
     }
@@ -3402,7 +3402,7 @@ _dwarf_frame_constructor(Dwarf_Debug dbg, void *frame)
 {
     struct Dwarf_Frame_s *fp = frame;
 
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_ERROR;
     }
     return init_reg_rules_alloc(dbg,fp,

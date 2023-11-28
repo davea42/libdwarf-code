@@ -59,10 +59,6 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
     Dwarf_Error *    error)
 {
     CHECK_DBG(dbg,error,"dwarf_get_offset_size()");
-    if (dbg == 0) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
     *offset_size = dbg->de_length_size;
     return DW_DLV_OK;
 }
@@ -2111,7 +2107,7 @@ dwarf_get_universalbinary_count(
     Dwarf_Unsigned *current_index,
     Dwarf_Unsigned *available_count)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_NO_ENTRY;
     }
     if (!dbg->de_universalbinary_count ) {

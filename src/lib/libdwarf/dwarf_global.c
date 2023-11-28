@@ -1302,7 +1302,7 @@ _dwarf_internal_globals_dealloc(Dwarf_Debug dbg,
     struct Dwarf_Global_Context_s *glcp = 0;
     struct Dwarf_Global_Context_s *lastglcp = 0;
 
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     if (!dwgl) {
@@ -1673,7 +1673,7 @@ dwarf_CU_dieoffset_given_die(Dwarf_Die die,
 int
 dwarf_return_empty_pubnames(Dwarf_Debug dbg, int flag)
 {
-    if (dbg == NULL) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_OK;
     }
     if (flag && flag != 1) {
