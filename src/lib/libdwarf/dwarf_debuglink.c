@@ -939,12 +939,12 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
     and are only valid while that dbg is open.
     debuglink_path_returned.
     crc_returned, buildid_owner_name_returned,
-    buildid_returned, 
+    buildid_returned,
 
     Caller must initialize the passed-in pointers
     debuglink_fullpath_returned
     and paths_returned to zero, and other arguments
-    to zero or sensible values before calling. 
+    to zero or sensible values before calling.
 
     If the dbg was set up via dwarf_init_b(fd... )
     then dbg->de_path will be 0, a null pointer
@@ -989,7 +989,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     }
 
     if (!pdebuglink && !pbuildid) {
-        if(dbg->de_path) {
+        if (dbg->de_path) {
             *debuglink_fullpath_returned = strdup(dbg->de_path);
             *debuglink_fullpath_length_returned =
             (unsigned)strlen(dbg->de_path);

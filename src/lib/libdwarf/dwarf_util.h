@@ -154,11 +154,11 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     } while (0)
 
 /*  This is for use where the action taken must be local.
-    One cannot do a return.  Reasons vary. 
+    One cannot do a return.  Reasons vary.
     Use this in an if or assign the result to a
     local small integer (normally an int). */
 #define IS_INVALID_DBG(d) \
-    ((!(d) || ((d)->de_magic != DBG_IS_VALID))?TRUE:FALSE) 
+    ((!(d) || ((d)->de_magic != DBG_IS_VALID))?TRUE:FALSE)
 
 /*  Any error  found here represents a bug that cannot
     be dealloc-d as the caller will not know there was no dbg */
@@ -199,7 +199,6 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             return DW_DLV_ERROR;                              \
         }                                                     \
     } while (0)
-
 
 /*
    Reads 'source' for 'length' bytes from unaligned addr.

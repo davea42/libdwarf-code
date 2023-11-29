@@ -59,7 +59,6 @@
 /*  Dwarf_Unsigned is always 64 bits */
 #define INVALIDUNSIGNED(x)  ((x) & (((Dwarf_Unsigned)1) << 63))
 
-
 /*  Simply assumes error is a Dwarf_Error * in its context */
 #define FDE_NULL_CHECKS_AND_SET_DBG(fde,dbg )          \
     do {                                               \
