@@ -1607,8 +1607,12 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     struct Dwarf_Obj_Access_Section_a_s doas;
 
     CHECK_DBG(dbg,error,"dwarf_get_section_info_by_name()");
-    *section_addr = 0;
-    *section_size = 0;
+    if (section_addr) {
+        *section_addr = 0;
+    }
+    if (section_size) {
+        *section_size = 0;
+    }
     if (!section_name || 0 == section_name[0]) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: null section_name pointer "

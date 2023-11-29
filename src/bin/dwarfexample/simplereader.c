@@ -672,9 +672,12 @@ read_cu_list(Dwarf_Debug dbg)
             &typeoffset, &next_cu_header,
             &header_cu_type,errp);
         if (res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):
+            char *em = errp?dwarf_errmsg(*errp):
                 "An error next cu her";
             printf("Error in dwarf_next_cu_header: %s\n",em);
+            if (errp) {
+                dwarf_dealloc_error(dbg,*errp);
+            }
             dwarf_finish(dbg);
             cleanupstr();
             exit(EXIT_FAILURE);
@@ -689,9 +692,11 @@ read_cu_list(Dwarf_Debug dbg)
         res = dwarf_siblingof_b(dbg,no_die,is_info,
             &cu_die,errp);
         if (res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"An error";
+            char *em = (errp?dwarf_errmsg(*errp):"An error");
             printf("Error in dwarf_siblingof_b on CU die: %s\n",em);
-            dwarf_dealloc_error(dbg,*errp);
+            if (errp) {
+                dwarf_dealloc_error(dbg,*errp);
+            }
             dwarf_finish(dbg);
             cleanupstr();
             exit(EXIT_FAILURE);
