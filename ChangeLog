@@ -1,3 +1,98 @@
+2023-11-28:  David Anderson
+    commit d3596f02aca5bf1a9b151a7c80f5c9cf261508fb
+
+    Coverityscan found 3 issues.
+
+    Here, they were real could lead to a segv.
+    the issue was the code has options oriented
+    to testing (probably a mistake to put such in an example)
+    and there was a dereference of a null pointer
+    that could occur in a particular scenario. Fixed.
+            modified:   src/bin/dwarfexample/simplereader.c
+
+    Here the (new, undocumented) option of leaving
+    either of two pointer inputs (for return values) NUll to
+    dwarf_get_section_info_by_name was
+    not coded correctly.  Fixed.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2023-11-28:  David Anderson
+    commit 03afade11bd58bb239ec92c2ea517348ba918187
+
+    Found more places to use IS_INVALID_DBG()
+    replacing various inconsistent tests
+    of a dbg (Dwarf_Debug pointer).
+
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_error.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2023-11-27:  David Anderson
+    commit fbfbf16e94878e1242f46f1ed9e54a0c9010bbd9
+
+    Individual tests of dbg and de_magic are now
+    all in util.h new  macro IS_INVALID_DBG
+    to ensure consistency.
+            modified:   ../../lib/libdwarf/dwarf_abbrev.c
+            modified:   ../../lib/libdwarf/dwarf_alloc.c
+            modified:   ../../lib/libdwarf/dwarf_frame.c
+            modified:   ../../lib/libdwarf/dwarf_generic_init.c
+            modified:   ../../lib/libdwarf/dwarf_global.c
+            modified:   ../../lib/libdwarf/dwarf_harmless.c
+            modified:   ../../lib/libdwarf/dwarf_init_finish.c
+            modified:   ../../lib/libdwarf/dwarf_loc.c
+            modified:   ../../lib/libdwarf/dwarf_macro.c
+            modified:   ../../lib/libdwarf/dwarf_rnglists.c
+            modified:   ../../lib/libdwarf/dwarf_util.h
+            modified:   ../../lib/libdwarf/dwarf_xu_index.c
+
+2023-11-27:  David Anderson
+    commit 92a841cbc79fbe7c038b68be3b140b5ce27c687e
+
+    Updated to the date of last minor change.
+            modified:   doc/libdwarf.dox
+
+    Now when reading PE object files callers can get
+    the size of even sections not involved in DWARF.
+    Because useful to some, some of the time.
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_peread.h
+
+2023-11-27:  David Anderson
+    commit 76c4b8295cb3ac1a4efade9e79f90ba2470c5f62
+
+    Removing pointless blank line
+            modified:   bugxml/data.txt
+
+2023-11-25:  David Anderson
+    commit c29a5b34d77562766250a79adc8bfbde48eeb4a5
+
+    Corrected the gitfixid.
+            modified:   bugxml/data.txt
+    regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-11-25:  David Anderson
+    commit c3a2dfc6837485f97cecdb818461cf48f4654ca7
+
+    Now with latest
+            modified:   ChangeLog
+
 2023-11-25:  David Anderson
     commit d76cce559b898f7059ce5ffd82f3cfd58cb392fe
 
