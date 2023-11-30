@@ -1,3 +1,55 @@
+2023-11-29:  David Anderson
+    commit c71e435ac49df3f99eac4e0181b75efe4e19e397
+
+    Added new fields to Dwarf_Debug for use...soon:
+    de_ftype (one of the DW_FTYPE values)
+    and de_processor (soon to be the object data
+    saying which processor is named in the object file).
+
+    Documenting new functions dwarf_get_section_info_by_index_a()
+    and dwarf_get_section_info_by_name_a()
+    which return additional section information to callers
+    for all supported object types..
+            modified:   doc/libdwarf.dox
+
+    Use the new functionss.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Set the dbg field de_ftype with the DW_FTYPE_
+    value applicable to the object.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+    Add the new functions. The old ones now call the new ones.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+    Record flags, addr  and offset (which were not previously
+    recorded.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+    Declare and document the new functions.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Set the fields   as_offset and as_flags now.
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+    Declare and document the new functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-29:  David Anderson
+    commit 36152b90d3bf88209c1a26bc51ea4ae743cc5b03
+
+    Removed trailing whitespace and fixed a couple
+    violations of the CODINGSTYLE.md for libdwarf.
+            modified:   dwarf_debuglink.c
+            modified:   dwarf_frame.c
+            modified:   dwarf_util.h
+
+2023-11-28:  David Anderson
+    commit d2b1ec9269ef23aa2527845d483106ff0727fe8b
+
+    Now up to date with ChangeLog. CoverityScan at 0 defects again.
+            modified:   ChangeLog
+
 2023-11-28:  David Anderson
     commit d3596f02aca5bf1a9b151a7c80f5c9cf261508fb
 
