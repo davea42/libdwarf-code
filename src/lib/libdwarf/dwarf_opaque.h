@@ -594,6 +594,7 @@ struct Dwarf_Debug_s {
         under de_obj_file. */
     int  de_fd;
     char de_owns_fd;
+    char de_ftype; /* DW_FTYPE_PE, ... */
     char de_in_tdestroy; /* for de_alloc_tree  DW202309-001 */
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
     unsigned char de_path_source;
@@ -626,6 +627,12 @@ struct Dwarf_Debug_s {
     /*  Size of the object file in bytes. If Unknown
         leave this zero. */
     Dwarf_Unsigned de_filesize;
+
+    /*  The value is what the object file encodes.
+        PE MACOS Elf all have different values, so
+        inspect de_ftype before attempting to understand
+        de_processor. */
+    Dwarf_Unsigned de_processor;
 
     /*  number of bytes in a pointer of the target in various .debug_
         sections. 4 in 32bit, 8 in MIPS 64, ia64. */

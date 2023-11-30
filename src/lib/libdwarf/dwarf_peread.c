@@ -241,10 +241,10 @@ pe_get_section_info (void *obj,
         sp = pep->pe_sectionptr + section_index;
         return_section->as_name = sp->dwarfsectname;
         return_section->as_type = 0;
-        return_section->as_flags = 0;
+        return_section->as_flags = sp->Characteristics;
         return_section->as_addr = pep->pe_OptionalHeader.ImageBase +
             sp->VirtualAddress;
-        return_section->as_offset = 0;
+        return_section->as_offset = sp->PointerToRawData;
         /*  SizeOfRawData can be rounded or truncated,
             use VirtualSize for the real analog of Elf
             section size. */
@@ -583,7 +583,7 @@ _dwarf_pe_load_dwarf_section_headers(
         sec_outp->section_irrelevant_to_dwarf = irrelevant;
         if (irrelevant) {
             continue;
-        } 
+        }
         {
             /*  A Heuristic, allowing large virtual size
                 but not unlimited as we will malloc it

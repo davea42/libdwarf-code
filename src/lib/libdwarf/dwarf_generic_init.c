@@ -344,6 +344,7 @@ dwarf_init_path_dl_a(const char *path,
         }
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
+        dbg->de_ftype =  ftype;
         *ret_dbg = dbg;
         return res;
     }
@@ -360,6 +361,7 @@ dwarf_init_path_dl_a(const char *path,
         }
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
+        dbg->de_ftype =  ftype;
         *ret_dbg = dbg;
         return res;
     }
@@ -374,6 +376,7 @@ dwarf_init_path_dl_a(const char *path,
         }
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
+        dbg->de_ftype =  ftype;
         *ret_dbg = dbg;
         return res;
     }

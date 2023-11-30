@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-11-25 v0.9.0
+    @date 2023-11-29 v0.9.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -970,6 +970,17 @@
     We list these with newest first.
 
     <b>Changes 0.8.0 to 0.9.0</b>
+
+    Adding functions (rarely needed) for callers
+    with special requirements.
+    Added dwarf_get_section_info_by_name_a() and
+    dwarf_get_section_info_by_index_a() which add
+    dw_section_flags pointer argument to return
+    the object section file flags (whose meaning
+    depends entirely on the object file format),
+    and dw_section_offset pointer argument to return
+    the object-relevant offset of the section
+    (here too the meaning depends on the object format). 
 
     This adds new libnrary functions
     dwarf_next_cu_header_e()

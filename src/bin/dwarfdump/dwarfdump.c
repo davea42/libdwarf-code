@@ -833,8 +833,8 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         const char *name = likely_ns[ct];
 
         ln = likely_names + lnindex;
-        res = dwarf_get_section_info_by_name(dbg,name,
-            &clow,&csize,&err);
+        res = dwarf_get_section_info_by_name_a(dbg,name,
+            &clow,&csize,0,0,&err);
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,err);
             return res;
@@ -2197,10 +2197,10 @@ build_linkonce_info(Dwarf_Debug dbg)
     for (section_index = 1;
         section_index < nCount;
         ++section_index) {
-        res = dwarf_get_section_info_by_index(dbg,section_index,
+        res = dwarf_get_section_info_by_index_a(dbg,section_index,
             &section_name,
             &section_addr,
-            &section_size,
+            &section_size,0,0,
             &error);
         if (res == DW_DLV_OK) {
             for (nIndex = 0; linkonce_names[nIndex]; ++nIndex) {

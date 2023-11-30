@@ -8040,8 +8040,8 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     the space allocated must be free by
     the caller with free(dw_debuglink_paths_returned).
 
-    dwarf_finish() will not free strings 
-    dw_debuglink_fullpath_returned or 
+    dwarf_finish() will not free strings
+    dw_debuglink_fullpath_returned or
     dw_debuglink_paths_returned.
 
     @param dw_dbg
@@ -8078,7 +8078,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     These strings must be freed by the caller,
     dwarf_finish() will not free these strings.
     Call free(dw_paths_returned).
-    
+
     @param dw_paths_length_returned
     On success returns the length of the array of string
     pointers dw_paths_returned points at.
@@ -8705,7 +8705,17 @@ DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die dw_die,
     const char ** dw_section_name_out,
     Dwarf_Error * dw_error);
 
-/*! @brief Given a section name, get its size and address
+/*! @brief Given a section name, get its size, address, etc
+
+    New in v0.9.0 November 2023.
+
+    See dwarf_get_section_info_by_name() for the
+    older and still current version.
+
+    Any of the pointers
+    dw_section_addr, dw_section_size, dw_section_flags,
+    and dw_section_offset may be passed in as zero
+    and those will be ignored by the function.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -8718,18 +8728,61 @@ DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die dw_die,
     @param dw_section_size
     On success returns the section size as defined
     by an object header.
+    @param dw_section_flags
+    On success returns the section flags as defined
+    by an object header.
+    The flag meaning depends on which object format
+    is being read and the meaning is defined by
+    the object format.
+    We hope it is of some use.
+    In PE object files this
+    field is called Characteristics.
+    @param dw_section_offset
+    On success returns the section offset as defined
+    by an object header.
+    The offset meaning is supposedly an object file offset
+    but the meaning depends on the object file type(!).
+    We hope it is of some use.
     @param dw_error
     On error returns the usual error pointer.
     @return
     Returns DW_DLV_OK etc.
 */
+DW_API int dwarf_get_section_info_by_name_a(Dwarf_Debug dw_dbg,
+    const char    * dw_section_name,
+    Dwarf_Addr    * dw_section_addr,
+    Dwarf_Unsigned* dw_section_size,
+    Dwarf_Unsigned* dw_section_flags,
+    Dwarf_Unsigned* dw_section_offset,
+    Dwarf_Error   * dw_error);
+
+/*! @brief Given a section name, get its size and address
+
+    See dwarf_get_section_info_by_name_a() for the
+    newest version which returns additional values.
+
+    Fields and meanings in dwarf_get_section_info_by_name()
+    are the same as in
+    dwarf_get_section_info_by_name_a()
+    except that the arguments dw_section_flags
+    and dw_section_offset are missing here.
+*/
+
 DW_API int dwarf_get_section_info_by_name(Dwarf_Debug dw_dbg,
     const char    * dw_section_name,
     Dwarf_Addr    * dw_section_addr,
     Dwarf_Unsigned* dw_section_size,
     Dwarf_Error   * dw_error);
 
-/*! @brief Given a section index, get its size and address
+/*! @brief Given a section index, get its size and address, etc
+
+    See dwarf_get_section_info_by_index() for the
+    older and still current version.
+
+    Any of the pointers
+    dw_section_addr, dw_section_size, dw_section_flags,
+    and dw_section_offset may be passed in as zero
+    and those will be ignored by the function.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -8745,11 +8798,46 @@ DW_API int dwarf_get_section_info_by_name(Dwarf_Debug dw_dbg,
     @param dw_section_size
     On success returns the section size as defined
     by an object header.
+    @param dw_section_flags
+    On success returns the section flags as defined
+    by an object header.
+    The flag meaning depends on which object format
+    is being read and the meaning is defined by
+    the object format. In PE object files this
+    field is called Characteristics.
+    We hope it is of some use.
+    @param dw_section_offset
+    On success returns the section offset as defined
+    by an object header.
+    The offset meaning is supposedly an object file offset
+    but the meaning depends on the object file type(!).
+    We hope it is of some use.
     @param dw_error
     On error returns the usual error pointer.
     @return
     Returns DW_DLV_OK etc.
 */
+DW_API int dwarf_get_section_info_by_index_a(Dwarf_Debug dw_dbg,
+    int              dw_section_index,
+    const char **    dw_section_name,
+    Dwarf_Addr*      dw_section_addr,
+    Dwarf_Unsigned*  dw_section_size,
+    Dwarf_Unsigned*  dw_section_flags,
+    Dwarf_Unsigned*  dw_section_offset,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Given a section index, get its size and address
+
+    See dwarf_get_section_info_by_index_a() for the
+    newest version which returns additional values.
+
+    Fields and meanings in dwarf_get_section_info_by_index()
+    are the same as in
+    dwarf_get_section_info_by_index_a()
+    except that the arguments dw_section_flags
+    and dw_section_offset are missing here.
+*/
+
 DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     int              dw_section_index,
     const char **    dw_section_name,
@@ -9115,6 +9203,11 @@ DW_API int dwarf_get_universalbinary_count(
     actually opening a Dwarf_Debug.
 
     These are crucial for libdwarf itself.
+    The dw_ftype returned is one of
+    DW_FTYPE_APPLEUNIVERSAL
+    DW_FTYPE_MACH_O
+    DW_FTYPE_ELF
+    DW_FTYPE_PE
 
 */
 DW_API int dwarf_object_detector_path_b(const char * dw_path,

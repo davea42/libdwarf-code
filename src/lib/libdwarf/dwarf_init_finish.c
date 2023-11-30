@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright (C) 2009-2022 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2023 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -1601,23 +1601,45 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
+    return dwarf_get_section_info_by_name_a(dbg,
+        section_name,
+        section_addr,
+        section_size,
+        0,0,
+        error);
+}
+int
+dwarf_get_section_info_by_name_a(Dwarf_Debug dbg,
+    const char *section_name,
+    Dwarf_Addr *section_addr,
+    Dwarf_Unsigned *section_size,
+    Dwarf_Unsigned *section_flags,
+    Dwarf_Unsigned *section_offset,
+    Dwarf_Error * error)
+{
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     Dwarf_Unsigned section_count = 0;
     Dwarf_Unsigned section_index = 0;
     struct Dwarf_Obj_Access_Section_a_s doas;
 
-    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_name()");
+    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_name_a()");
     if (section_addr) {
         *section_addr = 0;
     }
     if (section_size) {
         *section_size = 0;
     }
-    if (!section_name || 0 == section_name[0]) {
+    if (section_flags) {
+        *section_flags = 0;
+    }
+    if (section_offset) {
+        *section_offset = 0;
+    }
+    if (!section_name) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: null section_name pointer "
             "passed to "
-            "dwarf_get_section_info_by_name");
+            "dwarf_get_section_info_by_name_a");
         return DW_DLV_ERROR;
     }
     if (!section_name[0]) {
@@ -1655,6 +1677,12 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
             if (section_size) {
                 *section_size = doas.as_size;
             }
+            if (section_flags) {
+                *section_offset = doas.as_flags;
+            }
+            if (section_offset) {
+                *section_size = doas.as_offset;
+            }
             return DW_DLV_OK;
         }
     }
@@ -1670,8 +1698,26 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
+    return dwarf_get_section_info_by_index_a(dbg,
+        section_index,
+        section_name,
+        section_addr,
+        section_size,
+        0,0,
+        error);
+}
+int
+dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
+    int section_index,
+    const char **section_name,
+    Dwarf_Addr *section_addr,
+    Dwarf_Unsigned *section_size,
+    Dwarf_Unsigned *section_flags,
+    Dwarf_Unsigned *section_offset,
+    Dwarf_Error * error)
+{
 
-    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_index()");
+    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_index_a()");
     if (section_addr) {
         *section_addr = 0;
     }
@@ -1679,7 +1725,13 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
         *section_size = 0;
     }
     if (section_name) {
-        *section_name = NULL;
+        *section_name = 0;
+    }
+    if (section_flags) {
+        *section_flags = 0;
+    }
+    if (section_offset) {
+        *section_offset = 0;
     }
     /* Check if we have a valid section index */
     if (section_index >= 0 && section_index <
@@ -1706,6 +1758,12 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
         }
         if (section_name) {
             *section_name = doas.as_name;
+        }
+        if (section_flags) {
+            *section_flags = doas.as_flags;
+        }
+        if (section_offset) {
+            *section_offset = doas.as_offset;
         }
         return DW_DLV_OK;
     }
