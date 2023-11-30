@@ -373,8 +373,6 @@ int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
 }
 /*! @endcode */
 
-/*! @endcode */
-
 /*! @defgroup example5 Using dwarf_child()
     @brief Accessing a DIE child
 

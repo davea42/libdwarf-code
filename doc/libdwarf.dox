@@ -389,7 +389,7 @@
     @link string Strings can be read independently @endlink
 
     @link str_offsets String Offsets can be read independently @endlink
-    @link debug_addr The addr table can be read independently @endlink
+    @link debugaddr The addr table can be read independently @endlink
 
     Those functions allow starting at byte 0 of the
     section and provide a length so you can calculate
