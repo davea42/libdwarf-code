@@ -618,6 +618,8 @@ _dwarf_elf_nlsetup(int fd,
     }
     intfc = binary_interface->ai_object;
     intfc->f_path = strdup(true_path);
+    (*dbg)->de_obj_machine = intfc->f_machine;
+    (*dbg)->de_obj_flags = intfc->f_flags;
     return res;
 }
 

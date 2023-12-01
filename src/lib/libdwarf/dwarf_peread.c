@@ -744,7 +744,8 @@ _dwarf_load_pe_sections(
         ifh.SizeOfOptionalHeader);
     ASNAR(word_swap,pep->pe_FileHeader.Characteristics,
         ifh.Characteristics);
-
+    pep->pe_machine = pep->pe_FileHeader.Machine;
+    pep->pe_flags = pep->pe_FileHeader.Characteristics;
     pep->pe_optional_header_offset = pep->pe_nt_header_offset+
         sizeof(ifh);
     if (pep->pe_offsetsize == 32) {
@@ -883,6 +884,8 @@ _dwarf_pe_setup(int fd,
         return res;
     }
     pep = binary_interface->ai_object;
+    (*dbg)->de_obj_flags = pep->pe_flags;
+    (*dbg)->de_obj_machine = pep->pe_machine;
     pep->pe_path = strdup(true_path);
     return res;
 }

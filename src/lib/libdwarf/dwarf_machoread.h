@@ -120,6 +120,8 @@ typedef struct dwarf_macho_filedata_s {
     int              mo_fd;
     int              mo_destruct_close_fd; /*aka: lib owns fd */
     Dwarf_Unsigned   mo_filesize;
+    Dwarf_Unsigned   mo_machine;
+    Dwarf_Unsigned   mo_flags;
     Dwarf_Unsigned   mo_inner_offset; /* for universal inner */
     Dwarf_Small      mo_offsetsize; /* 32 or 64 section data */
     Dwarf_Small      mo_pointersize;

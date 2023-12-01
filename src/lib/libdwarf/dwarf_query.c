@@ -2121,3 +2121,54 @@ dwarf_get_universalbinary_count(
     }
     return DW_DLV_OK;
 }
+
+/*  Never returns DW_DLV_ERROR */
+int
+dwarf_machine_architecture(Dwarf_Debug dbg,
+    Dwarf_Small    *dw_ftype,
+    Dwarf_Small    *dw_obj_pointersize,
+    Dwarf_Bool     *dw_obj_is_big_endian,
+    Dwarf_Unsigned *dw_obj_machine,
+    Dwarf_Unsigned *dw_obj_flags,
+    Dwarf_Small    *dw_path_source,
+    Dwarf_Unsigned *dw_ub_offset,
+    Dwarf_Unsigned *dw_ub_count,
+    Dwarf_Unsigned *dw_ub_index,
+    Dwarf_Unsigned *dw_comdat_groupnumber)
+{
+    if (IS_INVALID_DBG(dbg)) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (dw_ftype) {
+         *dw_ftype = dbg->de_ftype;
+    }
+    if (dw_obj_pointersize) {
+         *dw_obj_pointersize = dbg->de_pointer_size;
+    }
+    if (dw_obj_is_big_endian) {
+         *dw_obj_is_big_endian = dbg->de_big_endian_object;
+    }
+    if (dw_obj_machine) {
+         *dw_obj_machine = dbg->de_obj_machine;
+    }
+    if (dw_obj_flags) {
+         *dw_obj_flags = dbg->de_obj_flags;
+    }
+    if (dw_path_source) {
+         *dw_path_source = dbg->de_path_source;
+    }
+    if (dw_ub_offset) {
+         *dw_ub_offset = dbg->de_obj_ub_offset;
+    }
+    if (dw_ub_count) {
+         *dw_ub_count = dbg->de_universalbinary_count;
+    }
+    if (dw_ub_index) {
+         *dw_ub_index = dbg->de_universalbinary_index;
+    }
+    if (dw_comdat_groupnumber) {
+         *dw_comdat_groupnumber = dbg->de_groupnumber;
+    }
+    return DW_DLV_OK;
+}
+

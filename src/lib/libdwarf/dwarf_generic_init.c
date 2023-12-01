@@ -224,6 +224,28 @@ dwarf_init_path_dl(const char *path,
         dl_path_count,path_source,error);
     return res;
 }
+
+#if 0
+/*  for debugging */
+static void
+dump_header_fields(const char *w,Dwarf_Debug dbg)
+{
+    printf("dadebug dumping certain fields of %s\n",w);
+    printf("ftype         : %d\n",dbg->de_ftype);
+    printf("machine       : %llu\n",dbg->de_obj_machine);
+    printf("flags         : 0x%llx\n",dbg->de_obj_flags);
+    printf("pointer size  : %u\n",dbg->de_pointer_size);
+    printf("big_endian?   : %u\n",dbg->de_big_endian_object);
+    printf("ubcount       : %u\n",dbg->de_universalbinary_count);
+    printf("ubindex       : %u\n",dbg->de_universalbinary_index);
+    printf("ub offset     : %llu\n",dbg->de_obj_ub_offset);
+    printf("path source   : %u\n",dbg->de_path_source);
+    printf("comdat group# : %u\n",dbg->de_groupnumber);
+    exit(0);
+}
+#endif
+
+
 int
 dwarf_init_path_dl_a(const char *path,
     char            * true_path_out_buffer,

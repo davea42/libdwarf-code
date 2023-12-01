@@ -711,7 +711,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_assume_string_in_bounds =
         _dwarf_assume_string_in_bounds;
     /* First make an arbitrary assumption. */
-    dbg->de_same_endian = 1;
     dbg->de_copy_word = _dwarf_memcpy_noswap_bytes;
     obj = dbg->de_obj_file;
     endianness = obj->ai_methods->om_get_byte_order(obj->ai_object);
@@ -719,14 +718,12 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 #ifdef WORDS_BIGENDIAN
     dbg->de_big_endian_object = 1;
     if (endianness == DW_END_little) {
-        dbg->de_same_endian = 0;
         dbg->de_big_endian_object = 0;
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
     }
 #else /* little endian */
     dbg->de_big_endian_object = 0;
     if (endianness == DW_END_big ) {
-        dbg->de_same_endian = 0;
         dbg->de_big_endian_object = 1;
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
     }

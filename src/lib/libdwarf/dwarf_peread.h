@@ -124,11 +124,12 @@ typedef struct pe_filedata_s {
     int              pe_destruct_close_fd; /*aka: lib owns fd */
     int              pe_is_64bit;
     Dwarf_Unsigned   pe_filesize;
+    Dwarf_Unsigned   pe_flags;
+    Dwarf_Unsigned   pe_machine;
     Dwarf_Small      pe_offsetsize; /* 32 or 64 section data */
     Dwarf_Small      pe_pointersize;
     int              pe_ftype;
     unsigned         pe_endian;
-    /*Dwarf_Small      pe_machine; */
     void (*pe_copy_word) (void *, const void *, unsigned long);
     Dwarf_Unsigned   pe_nt_header_offset;
     Dwarf_Unsigned   pe_optional_header_offset;

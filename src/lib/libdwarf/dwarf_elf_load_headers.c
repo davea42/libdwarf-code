@@ -1786,7 +1786,10 @@ elf_load_elf_header32(
     res  = generic_ehdr_from_32(ep,ehdr,&ehdr32,errcode);
     if (res != DW_DLV_OK) {
         free(ehdr);
+        return res;
     }
+    ep->f_machine = ehdr->ge_machine;
+    ep->f_flags = ehdr->ge_flags;
     return res;
 }
 static int
@@ -1812,7 +1815,10 @@ elf_load_elf_header64(
     res  = generic_ehdr_from_64(ep,ehdr,&ehdr64,errcode);
     if (res != DW_DLV_OK) {
         free(ehdr);
+        return res;
     }
+    ep->f_machine = ehdr->ge_machine;
+    ep->f_flags = ehdr->ge_flags;
     return res;
 }
 
