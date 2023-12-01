@@ -1,3 +1,82 @@
+2023-12-01:  David Anderson
+    commit 903e8cc407e56cde7467c67d7a9ba97d5b06a4fa
+
+    Adding dd_mac_cputype.h and dd_elf_cputype.h
+    to the build where necessary.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+
+    Adding support for option --print-machine-arch
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+
+    Added a missing entry.
+            modified:   src/bin/dwarfdump/dd_mac_cputype.h
+
+    Implementing --print-machine-arch
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Fixing whitespace issues.
+            modified:   src/bin/dwarfdump/print_die.c
+    Deleting obsolete commentary.
+            modified:   src/bin/dwarfdump/print_sections.c
+
+2023-12-01:  David Anderson
+    commit abb4acf6e8c9b40610372770839dd7e5131f8214
+
+    This has the implementation of the three new functions
+    that give access to object file header and section data.
+    Small changes, but widely spread!
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_elfread.h
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_peread.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-12-01:  David Anderson
+    commit e10170f606842aa164d676ca0135ba15f063f511
+
+    Now December, so the html shows the new month.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2023-12-01:  David Anderson
+    commit c2d9d3c3303b7d3fb9f836f0348ff0a8640515b3
+
+    Changes list up to date
+            modified:   doc/libdwarf.dox
+
+    New for better reporting of dwarf_machine_architecture()
+    by dwarfdump
+            new file:   src/bin/dwarfdump/dd_elf_cputype.h
+            new file:   src/bin/dwarfdump/dd_mac_cputype.h
+
+    The three new API functions declared and documented/doxygen.
+     dwarf_machine_architecture()
+    dwarf_get_section_info_by_index_a()
+    dwarf_get_section_info_by_name_a()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-11-30:  David Anderson
+    commit b90ea31db1dfa9f9d9b95d25554e05738fd63b0a
+
+    Fixing problems in doxgen comments.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+
+2023-11-29:  David Anderson
+    commit 416d1e0f398e25806f5c56f63221e25cb18236fa
+
+    Latest info. Up to date.
+            modified:   ChangeLog
+
 2023-11-29:  David Anderson
     commit c71e435ac49df3f99eac4e0181b75efe4e19e397
 
