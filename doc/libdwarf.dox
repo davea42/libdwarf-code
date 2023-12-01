@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-11-29 v0.9.0
+    @date 2023-12-01 v0.9.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -981,6 +981,10 @@
     and dw_section_offset pointer argument to return
     the object-relevant offset of the section
     (here too the meaning depends on the object format). 
+    Also added  dwarf_machine_architecture() which returns
+    a few top level data items about the object
+    libdwarf has opened, including the 'machine' and 'flags'
+    from object headers (all supported object types).
 
     This adds new libnrary functions
     dwarf_next_cu_header_e()

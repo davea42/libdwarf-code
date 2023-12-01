@@ -4830,16 +4830,17 @@ DW_API int dwarf_debug_addr_table(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned   *dw_length,
     Dwarf_Half       *dw_version,
     Dwarf_Small      *dw_address_size,
-    Dwarf_Unsigned   *dw_dw_at_addr_base,
+    Dwarf_Unsigned   *dw_at_addr_base,
     Dwarf_Unsigned   *dw_entry_count,
     Dwarf_Unsigned   *dw_next_table_offset,
     Dwarf_Error      *dw_error);
 
 /*! @brief Return .debug_addr address given table index
 
-    @param dw_table_header
+
+    @param dw_dat
     Pass in a Dwarf_Debug_Addr_Table pointer.
-    @param dw_table_header
+    @param dw_entry_index
     Pass in a Dwarf_Debug_Addr_Table index to an address.
     If out of the valid range 0 through
     dw_entry_count-1  the function returns
@@ -4854,8 +4855,7 @@ DW_API int dwarf_debug_addr_table(Dwarf_Debug dw_dbg,
     If the dw_section_offset passed in is out of range
     it returns DW_DLV_NO_ENTRY.
     If it returns DW_DLV_ERROR  only dw_error is
-    set, dw_address and dw_segment are not
-    set through the pointers.
+    set, dw_address is not set.
 */
 
 DW_API int dwarf_debug_addr_by_index(Dwarf_Debug_Addr_Table dw_dat,
@@ -4865,7 +4865,7 @@ DW_API int dwarf_debug_addr_by_index(Dwarf_Debug_Addr_Table dw_dat,
 
 /*! @brief dealloc (free) a Dwarf_Attr_Table record.
 
-    @param dw_table_header
+    @param dw_dat
     Pass in a valid Dwarf_Debug_Addr_Table pointer.
     Does nothing if the dw_dat field is NULL.
 
@@ -7389,7 +7389,7 @@ DW_API int dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head dw_head,
 
     @param dw_head
     Pass in the Dwarf_Gnu_Index_head interest.
-    @param dw_number
+    @param dw_blocknumber
     Pass in the block number of the block of interest.
     0 through dw_index_block_count_out-1.
     @param dw_entrynumber
@@ -8515,6 +8515,11 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
 /*! @defgroup objectsections Object Sections Data
     @{
 
+    These functions are not often used. They
+    give access to section- and objectfile-related
+    information, and that sort of information
+    is not generally needed to understand DWARF content..
+
     Section name access.  Because names sections
     such as .debug_info might
     end with .dwo or be .zdebug  or might not.
@@ -8527,6 +8532,14 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
     it were Elf sections. For example, not the names
     MacOS puts in its object sections (which
     the MacOS reader translates).
+
+    These calls returning selected object header
+    {machine architecture,flags)
+    and section (offset, flags) data 
+    are not of interest to most library callers:
+    dwarf_machine_architecture(),
+    dwarf_get_section_info_by_index_a(), and
+    dwarf_get_section_info_by_name_a().
 
     The simple calls will not be documented in full detail here.
 
@@ -8709,6 +8722,9 @@ DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die dw_die,
 
     New in v0.9.0 November 2023.
 
+    This is not often used and is completely
+    unnecessary for most to call.
+
     See dwarf_get_section_info_by_name() for the
     older and still current version.
 
@@ -8736,7 +8752,7 @@ DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die dw_die,
     the object format.
     We hope it is of some use.
     In PE object files this
-    field is called Characteristics.
+    field is called @b Characteristics.
     @param dw_section_offset
     On success returns the section offset as defined
     by an object header.
@@ -8804,7 +8820,7 @@ DW_API int dwarf_get_section_info_by_name(Dwarf_Debug dw_dbg,
     The flag meaning depends on which object format
     is being read and the meaning is defined by
     the object format. In PE object files this
-    field is called Characteristics.
+    field is called @b Characteristics.
     We hope it is of some use.
     @param dw_section_offset
     On success returns the section offset as defined
@@ -8844,6 +8860,95 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     Dwarf_Addr*      dw_section_addr,
     Dwarf_Unsigned*  dw_section_size,
     Dwarf_Error*     dw_error);
+
+/*! @brief Get basic object information from Dwarf_Debug
+
+    Not all the fields here are relevant for all object
+    types, and the dw_obj_machine and dw_obj_flags
+    have ABI-defined values which have nothing to do
+    with DWARF.
+
+    dwarf_ub_offset, dw_ub_count, dw_ub_index only
+    apply to DW_FTYPE_APPLEUNIVERSAL.
+
+    dw_comdat_groupnumber only applies to DW_FTYPE_ELF.
+   
+    Other than dw_dbg one can pass in NULL for any
+    pointer parameter whose value is not of interest. 
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_ftype
+    Pass in a pointer. On success the value
+    pointed to will be set to the the applicable
+    DW_FTYPE value (see libdwarf.h).
+    @param dw_obj_pointersize
+    Pass in a pointer. On success the value
+    pointed to will be set to the the applicable
+    pointer size, which is almost always either 4 or 8.
+    @param dw_obj_is_big_endian
+    Pass in a pointer. On success the value
+    pointed to will be set to either 1 (the object being
+    read is big-endia) or 0 (the object being read is
+    little-endian.
+    @param dw_obj_machine
+    Pass in a pointer. On success the value
+    pointed to will be set to a value that
+    the specific ABI uses for the machine-architecture
+    the object file says it is for.
+    @param dw_obj_flags
+    Pass in a pointer. On success the value
+    pointed to will be set to a value that
+    the specific ABI uses for a header record
+    flags word (in a PE object the flags word is
+    called @b Characteristics ).
+    @param dw_path_source
+    Pass in a pointer. On success the value
+    pointed to will be set to a value that
+    libdwarf sets to a DW_PATHSOURCE value
+    indicating what caused the file path.
+    @param dw_ub_offset
+    Pass in a pointer. On success
+    if  the value of dw_ftype is DW_FTYPE_APPLEUNIVERSAL
+    the returned value will be set to the count
+    (in all other cases, the value is set to 0)
+    @param dw_ub_count
+    Pass in a pointer. On success
+    if  the value of dw_ftype is DW_FTYPE_APPLEUNIVERSAL
+    the returned value will be set to the number
+    of object files in the binary
+    (in all other cases, the value is set to 0)
+    @param dw_ub_index
+    Pass in a pointer. On success
+    if  the value of dw_ftype is DW_FTYPE_APPLEUNIVERSAL
+    the returned value will be set to the number
+    of the specific object from the universal-binary,
+    usable values are 0 through dw_ub_count-1.
+    (in all other cases, the value is set to 0)
+    @param dw_comdat_groupnumber
+    Pass in a pointer. On success
+    if  the value of dw_ftype is DW_FTYPE_ELF
+    the returned value will be the comdat group
+    being referenced.
+    (in all other cases, the value is set to 0)
+    @return
+    Returns DW_DLV_NO_ENTRY if the Dwarf_Debug passed in
+    is null or stale. Otherwise returns DW_DLV_OK
+    and non-null return-value pointers will have
+    meaningful data.
+
+*/
+DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
+    Dwarf_Small    *dw_ftype,
+    Dwarf_Small    *dw_obj_pointersize,
+    Dwarf_Bool     *dw_obj_is_big_endian,
+    Dwarf_Unsigned *dw_obj_machine, /*architecture*/
+    Dwarf_Unsigned *dw_obj_flags,
+    Dwarf_Small    *dw_path_source,
+    Dwarf_Unsigned *dw_ub_offset,
+    Dwarf_Unsigned *dw_ub_count,
+    Dwarf_Unsigned *dw_ub_index,
+    Dwarf_Unsigned *dw_comdat_groupnumber);
 
 /*! @brief Get section count (of object file sections).
 */
@@ -8896,6 +9001,11 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
 /*! @defgroup secgroups Section Groups Objectfile Data
 
     @{
+
+    Section Groups are defined in the extended
+    Elf ABI and are usually seen in relocatable
+    Elf object files.
+
     @link dwsec_sectiongroup Section Groups Overview @endlink
 
 */
