@@ -38,12 +38,14 @@ set_source_group(HEADERS "Header Files"
   dd_opscounttab.h 
   print_debug_gnu.h
   dd_dwconf_using_functions.h dd_esb_using_functions.h
+  dd_elf_cputype.h
   dd_helpertree.h
   dd_canonical_append.h
   dwarfdump-af-table.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
   dd_getopt.h dd_esb.h dd_glflags.h dd_globals.h
+  dd_mac_cputype.h 
   dd_macrocheck.h dd_defined_types.h
   dd_sanitized.h
   dd_naming.h dd_makename.h dd_tsearchbal.h print_frames.h 

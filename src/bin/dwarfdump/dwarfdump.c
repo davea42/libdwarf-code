@@ -85,6 +85,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_compiler_info.h"
 #include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
+#include "dd_mac_cputype.h"
+#include "dd_elf_cputype.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -124,6 +126,8 @@ static int global_basefd = -1;
 static int global_tiedfd = -1;
 static struct esb_s global_file_name;
 static struct esb_s global_tied_file_name;
+
+static void print_machine_arch(Dwarf_Debug dbg);
 
 static int process_one_file(
     const char * file_name,
@@ -880,12 +884,11 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* So that regression testing can work better
-   we substitute '$HOME" where the string s
-   began with the value of that environment
-   variable.  Otherwise, we just fill in
-   the esb with the name as it came in.  */
-
+/*  So that regression testing can work better
+    we substitute '$HOME" where the string s
+    began with the value of that environment
+    variable.  Otherwise, we just fill in
+    the esb with the name as it came in.  */
 static void
 homeify(char *s, struct esb_s* out)
 {
@@ -896,7 +899,7 @@ homeify(char *s, struct esb_s* out)
         is not needed and causes trouble for
         regression testing. */
     char *winprefix = "C:/msys64/";
-    size_t winlen = 10; 
+    size_t winlen = 10;
 
     if (0 == strncmp(s,winprefix,winlen)) {
         /* leave the second / in winprefix in the string */
@@ -911,7 +914,7 @@ homeify(char *s, struct esb_s* out)
         esb_append(out,s);
         return;
     }
-    if(strncmp(s,(const char *)home,homelen)) {
+    if (strncmp(s,(const char *)home,homelen)) {
         esb_append(out,s);
         return;
     }
@@ -919,7 +922,6 @@ homeify(char *s, struct esb_s* out)
     esb_append(out,s+homelen);
     return;
 }
-
 
 /*  Given a file which is an object type
     we think we can read, process the dwarf data.  */
@@ -1015,6 +1017,9 @@ process_one_file(
                 DW_PR_DUu " %s.  This is object %"
                 DW_PR_DUu "\n",
                 count,name,index);
+        }
+        if (glflags.gf_machine_arch_flag) {
+            print_machine_arch(dbg);
         }
     }
     if (tied_file_name && strlen(tied_file_name)) {
@@ -2572,4 +2577,157 @@ void
 dd_minimal_count_global_error(void)
 {
     glflags.gf_count_major_errors++;
+}
+
+static const char *ft[] = {
+"DW_FTYPE_UNKNOWN",
+"DW_FTYPE_ELF",
+"DW_FTYPE_MACH_O",
+"DW_FTYPE_PE",
+"DW_FTYPE_ARCHIVE",
+"DW_FTYPE_APPLEUNIVERSAL"
+};
+
+static
+const char * get_ftype_name(Dwarf_Small ftype)
+{
+    if (ftype >DW_FTYPE_APPLEUNIVERSAL) {
+        dd_minimal_count_global_error();
+        return "ERROR: Impossible ftype value";
+    }
+    return ft[ftype];
+}
+
+static const char *psn[] = {
+"DW_PATHSOURCE_unspecified",
+"DW_PATHSOURCE_basic, standard",
+"DW_PATHSOURCE_dsym, MacOS",
+"DW_PATHSOURCE_debuglink, GNU debuglink"
+};
+
+static
+const char * get_pathsource_name(Dwarf_Small ps)
+{
+    if (ps >DW_PATHSOURCE_debuglink) {
+        dd_minimal_count_global_error();
+        return "ERROR: Impossible pathsource value";
+    }
+    return psn[ps];
+}
+
+static const char *
+get_machine_name(Dwarf_Unsigned machine,
+    Dwarf_Small ftype)
+{
+    switch(ftype) {
+    case DW_FTYPE_ELF:
+        return dd_elf_arch_name(machine);
+    case DW_FTYPE_PE:
+        return "";
+    case DW_FTYPE_APPLEUNIVERSAL:
+    case DW_FTYPE_MACH_O:
+        return dd_mach_arch_name(machine);
+    default:
+        return "Unexpected DW_FTYPE!";
+    }
+}
+
+/*  'machine' number meaning the cpu architecture */
+static void
+print_machine_arch(Dwarf_Debug dbg)
+{
+    int res = 0;
+    Dwarf_Small    dw_ftype = 0;
+    Dwarf_Small    dw_obj_pointersize = 0;
+    Dwarf_Bool     dw_obj_is_big_endian = 0;
+    Dwarf_Unsigned dw_obj_machine = 0;
+    Dwarf_Unsigned dw_obj_flags = 0;
+    Dwarf_Small    dw_path_source = 0;
+    Dwarf_Unsigned dw_ub_offset = 0;
+    Dwarf_Unsigned dw_ub_count = 0;
+    Dwarf_Unsigned dw_ub_index = 0;
+    Dwarf_Unsigned dw_comdat_groupnumber = 0;
+    res = dwarf_machine_architecture(dbg,
+        &dw_ftype,
+        &dw_obj_pointersize,
+        &dw_obj_is_big_endian,
+        &dw_obj_machine,
+        &dw_obj_flags,
+        &dw_path_source,
+        &dw_ub_offset,
+        &dw_ub_count,
+        &dw_ub_index,
+        &dw_comdat_groupnumber);
+    if (res != DW_DLV_OK) {
+        printf("ERROR: Impossible error calling "
+            "dwarf_machine_architecture!\n");
+        dd_minimal_count_global_error();
+        return;
+    }
+    printf("Machine Architecture, Object Information fields\n");
+    printf("  Filetype              : %d  (%s)\n",dw_ftype,
+        get_ftype_name(dw_ftype));
+    printf("  Pointersize           : %u\n",dw_obj_pointersize);
+    printf("  endian                : %s\n", dw_obj_is_big_endian?
+        "big endian":"little endian");
+    printf("  machine/architecture  : %" DW_PR_DUu " (0x%" DW_PR_DUx
+        ") <%s>\n",dw_obj_machine,dw_obj_machine,
+            get_machine_name(dw_obj_machine, dw_ftype));
+    printf("  machine flags         : 0x%" DW_PR_DUx "\n",
+        dw_obj_flags);
+    printf("  path source           : %u  (%s)\n",dw_path_source,
+        get_pathsource_name(dw_path_source));
+    if (glflags.verbose || dw_ftype == DW_FTYPE_APPLEUNIVERSAL) {
+    printf("  MacOS Universal Binary \n");
+    printf("    Object Offset in UB : Ox%" DW_PR_DUx "\n",
+        dw_ub_offset);
+    printf("    UB object count     : %" DW_PR_DUu "\n",
+        dw_ub_count);
+    printf("    UB index            : %" DW_PR_DUu "\n",
+        dw_ub_index);
+    }
+    if (glflags.verbose ||dw_ftype == DW_FTYPE_ELF) {
+        printf("  Comdat group number   : %" DW_PR_DUu
+            "  (%s)\n",
+            dw_comdat_groupnumber,
+            dw_comdat_groupnumber==1?"DW_GROUPNUMBER_BASE, standard":
+            dw_comdat_groupnumber==2?
+            "DW_GROUPNUMBER_DWO, .debug.dwo etc":
+            "(a requested non-default group number)");
+    }
+    if (glflags.verbose) {
+        Dwarf_Error error = 0;
+        int j = 0;
+        int fres = DW_DLV_OK;
+
+        printf("  []    offset     size       flags      addr\n");
+        for ( ; fres == DW_DLV_OK; ++j) {
+            const char    *name = 0;
+            Dwarf_Addr     addr = 0;
+            Dwarf_Unsigned size = 0;
+            Dwarf_Unsigned flags = 0;
+            Dwarf_Unsigned offset = 0;
+
+
+            fres = dwarf_get_section_info_by_index_a(dbg,j,
+                &name,&addr,&size,&flags,&offset,&error);
+            if (fres != DW_DLV_OK) {
+                break;
+            }
+            printf("  [%3d]"
+                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                " 0x%" DW_PR_XZEROS DW_PR_DUx 
+                " %s\n",j,offset,size,flags,addr,name);
+        }
+        if (fres == DW_DLV_ERROR) {
+            char *errm = dwarf_errmsg(error); 
+            printf("ERROR: dwarf_get_secion_info_by_index_a failed %s\n",
+                errm);
+            dwarf_dealloc_error(dbg,error);
+            glflags.gf_count_major_errors++;
+            error = 0;
+        }
+    }
 }

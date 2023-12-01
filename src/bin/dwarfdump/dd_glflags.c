@@ -154,6 +154,8 @@ init_global_flags(void)
     glflags.gf_uri_options_translation = TRUE;
     glflags.gf_do_print_uri_in_input = TRUE;
 
+    glflags.gf_machine_arch_flag = FALSE;
+
     glflags.gf_print_unique_errors = FALSE;
     glflags.gf_found_error_message = FALSE;
 

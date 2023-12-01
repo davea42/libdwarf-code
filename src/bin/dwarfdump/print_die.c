@@ -6058,7 +6058,7 @@ print_expression_inner_block(Dwarf_Debug dbg,
     Dwarf_Half       dw_offset_size = 0;
     Dwarf_Half       dw_address_size = 0;
     Dwarf_Half       dw_extension_size = 0;
-    Dwarf_Sig8      *dw_signature = 0; 
+    Dwarf_Sig8      *dw_signature = 0;
     Dwarf_Off        dw_offset_of_length = 0;
     Dwarf_Unsigned   dw_total_byte_length = 0;
     Dwarf_Small     lle_value = 0;
@@ -6072,7 +6072,6 @@ print_expression_inner_block(Dwarf_Debug dbg,
     Dwarf_Small     loclist_source = 0;
     Dwarf_Unsigned  expression_offset = 0;
     Dwarf_Unsigned  locdesc_offset =0;
-    
 
     res = dwarf_cu_header_basics(die, &dw_version,&dw_is_info,
         &dw_is_dwo,&dw_offset_size,&dw_address_size,
@@ -6439,7 +6438,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             /*  opd1 is cu-relative offset of type DIE.
                 we have a die in the relevant CU in the arg
                 list */
-            
+
             esb_append_printf_u(string_out," 0x%"
                 DW_PR_DUx,opd1);
             length = opd2;

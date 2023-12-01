@@ -38,13 +38,6 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 #include "print_sections.h"
 #include "print_frames.h"
 
-/*
-    Print line number information:
-        filename
-        new basic-block
-        [line] [address] <new statement>
-*/
-
 int dwarf_names_print_on_error = 1;
 
 /* The April 2005 dwarf_get_section_max_offsets()

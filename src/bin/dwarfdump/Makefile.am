@@ -21,6 +21,7 @@ dd_common.h \
 dd_compiler_info.c \
 dd_compiler_info.h \
 dd_defined_types.h \
+dd_elf_cputype.h \
 dd_minimal.h \
 dd_regex.c \
 dd_regex.h \
@@ -47,6 +48,7 @@ dd_glflags.h \
 dd_globals.h \
 dd_helpertree.c \
 dd_helpertree.h \
+dd_mac_cputype.h \
 dd_macrocheck.c \
 dd_macrocheck.h \
 dd_makename.c \
