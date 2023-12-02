@@ -87,6 +87,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_minimal.h"
 #include "dd_mac_cputype.h"
 #include "dd_elf_cputype.h"
+#include "dd_pe_cputype.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -2623,7 +2624,7 @@ get_machine_name(Dwarf_Unsigned machine,
     case DW_FTYPE_ELF:
         return dd_elf_arch_name(machine);
     case DW_FTYPE_PE:
-        return "";
+        return dd_pe_arch_name(machine);
     case DW_FTYPE_APPLEUNIVERSAL:
     case DW_FTYPE_MACH_O:
         return dd_mach_arch_name(machine);

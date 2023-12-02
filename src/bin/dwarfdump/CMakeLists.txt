@@ -39,6 +39,7 @@ set_source_group(HEADERS "Header Files"
   print_debug_gnu.h
   dd_dwconf_using_functions.h dd_esb_using_functions.h
   dd_elf_cputype.h
+  dd_pe_cputype.h
   dd_helpertree.h
   dd_canonical_append.h
   dwarfdump-af-table.h
