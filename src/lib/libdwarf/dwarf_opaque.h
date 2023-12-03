@@ -757,7 +757,8 @@ struct Dwarf_Debug_s {
     Dwarf_Xu_Index_Header  de_cu_hashindex_data;
     Dwarf_Xu_Index_Header  de_tu_hashindex_data;
 
-    void (*de_copy_word) (void *, const void *, unsigned long);
+    void (*de_copy_word) (void *dw_targ, const void *dw_src,
+        unsigned long dw_len);
     unsigned char de_elf_must_close; /* If non-zero, then
         it was dwarf_init (not dwarf_elf_init)
         so must elf_end() */
