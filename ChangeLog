@@ -1,3 +1,28 @@
+2023-12-02:  David Anderson
+    commit c4ca69922baf8854a4677dde0681b9a7fc3207bd
+
+    When system endian and object endian do not
+    always match, the debuglink 4 byte hash value needs
+    de_copy_word() applied.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+    Better doc of de_copy_word in Dwarf_Debug_s
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2023-12-02:  David Anderson
+    commit 5fddac64954aefe7a3e33234c5f2ca48491ab0c4
+
+    Now with a translation from PE machine number to a name.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            new file:   src/bin/dwarfdump/dd_pe_cputype.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2023-12-01:  David Anderson
+    commit 460b234d6474ae4fd3048c154594fa4df925805b
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2023-12-01:  David Anderson
     commit 903e8cc407e56cde7467c67d7a9ba97d5b06a4fa
 
