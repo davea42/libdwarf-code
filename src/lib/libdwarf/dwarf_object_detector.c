@@ -872,7 +872,8 @@ _dwarf_debuglink_finder_internal(
         DW_GROUPNUMBER_ANY,
         0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
-        *errcode = dwarf_errno(error);
+        /* error codes all >=0 && < 2000 */
+        *errcode = (int)dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
         error = 0;
         return res;
@@ -888,7 +889,7 @@ _dwarf_debuglink_finder_internal(
             lpath, &error);
         if (res != DW_DLV_OK){
             if (res == DW_DLV_ERROR) {
-                *errcode = dwarf_errno(error);
+                *errcode = (int)dwarf_errno(error);
                 dwarf_dealloc_error(dbg,error);
                 error = 0;
             }
@@ -903,7 +904,7 @@ _dwarf_debuglink_finder_internal(
         &buildid, &buildid_length,
         &paths, &paths_count, &error);
     if (res == DW_DLV_ERROR) {
-        *errcode = dwarf_errno(error);
+        *errcode = (int)dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
         dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;

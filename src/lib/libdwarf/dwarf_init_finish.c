@@ -1675,10 +1675,10 @@ dwarf_get_section_info_by_name_a(Dwarf_Debug dbg,
                 *section_size = doas.as_size;
             }
             if (section_flags) {
-                *section_offset = doas.as_flags;
+                *section_flags = doas.as_flags;
             }
             if (section_offset) {
-                *section_size = doas.as_offset;
+                *section_offset = doas.as_offset;
             }
             return DW_DLV_OK;
         }
