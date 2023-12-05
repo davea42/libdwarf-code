@@ -131,7 +131,6 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 }
 #endif
 
-
 int
 dwarf_suppress_debuglink_crc(int dw_suppress)
 {
@@ -727,7 +726,7 @@ match_buildid(
 }
 
 /*  we need the crc byte order to match that
-    of the object file so a comparison works. 
+    of the object file so a comparison works.
     Here we fix up when there is a mismatch */
 static int
 _dwarf_debuglink_finder_newpath(

@@ -245,7 +245,6 @@ dump_header_fields(const char *w,Dwarf_Debug dbg)
 }
 #endif
 
-
 int
 dwarf_init_path_dl_a(const char *path,
     char            * true_path_out_buffer,
