@@ -479,7 +479,7 @@ void _dwarf_report_bad_lnct( Dwarf_Debug dbg,
 void _dwarf_update_chain_list( Dwarf_Chain chain_line,
     Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain);
 void _dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,
-    int count);
+    Dwarf_Unsigned count);
 
 int _dwarf_line_context_constructor(Dwarf_Debug dbg, void *m);
 void _dwarf_line_context_destructor(void *m);

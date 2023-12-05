@@ -2545,9 +2545,10 @@ _dwarf_update_chain_list( Dwarf_Chain chain_line,
 }
 
 void
-_dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count)
+_dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,
+    Dwarf_Unsigned count)
 {
-    int i = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_Chain curr_chain = head;
     for (i = 0; i < count; i++) {
         Dwarf_Chain t = curr_chain;

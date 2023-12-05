@@ -629,8 +629,8 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
         Dwarf_Abbrev_List listent = entry_in[k];
         Dwarf_Abbrev_List nextlistent = 0;
         for (; listent ; listent = nextlistent) {
-            unsigned long newtmp = listent->abl_code;
-            unsigned long newhash = newtmp HT_MOD_OP
+            Dwarf_Unsigned newtmp = listent->abl_code;
+            Dwarf_Unsigned newhash = newtmp HT_MOD_OP
                 (entry_out_count -1);
 
             nextlistent = listent->abl_next;
@@ -743,7 +743,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context context,
     Dwarf_Byte_Ptr     end_abbrev_ptr = 0;
     Dwarf_Small       *abbrev_section_start =
         dbg->de_debug_abbrev.dss_data;
-    unsigned long      hashable_val             = 0;
+    Dwarf_Unsigned     hashable_val             = 0;
 
     if (!hash_table_base->tb_entries) {
         hash_table_base->tb_table_entry_count =
@@ -883,7 +883,7 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
         return DW_DLV_NO_ENTRY;
     }
     do {
-        unsigned long new_hashable_val = 0;
+        Dwarf_Unsigned new_hashable_val = 0;
         Dwarf_Off  abb_goff = 0;
         Dwarf_Unsigned atcount = 0;
         Dwarf_Unsigned impl_const_count = 0;
