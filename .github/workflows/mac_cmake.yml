@@ -1,4 +1,4 @@
-name: ci_mac_meson
+name: ci_mac_cmake
 
 on:
   workflow_dispatch:
@@ -10,18 +10,12 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: tools
-      run:  |
-        brew install meson ninja
-        brew install --overwrite pkgconf
-#        brew install --overwrite python@3.11
-#        brew install --overwrite pkgconf
-#        brew install  python@3.11
-#        brew install meson ninja
-    - name: 
+    - name: brew
+      run: brew install cmake ninja
+    - name:  cmake
       run:  |
         mkdir builddir && cd builddir
-        meson . .. -Ddwarfexample=true
+        cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         ninja
         ninja test
 
