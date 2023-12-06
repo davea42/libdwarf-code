@@ -21,7 +21,7 @@ jobs:
             freebsd-version
             echo $SHELL
             sudo pkg install -y python3 bash automake libtool
-            sudo pkg install -y gmake binutils lzlib
+            sudo pkg install -y pkgconf gmake binutils lzlib 
             autoreconf --warnings=all  -vif
             ./configure
             make
