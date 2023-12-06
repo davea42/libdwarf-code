@@ -65,6 +65,7 @@ jobs:
         uses: cross-platform-actions/action@v0.20.0
         with:
           operating_system: freebsd
+          sync_files: false
           version:  '13.2'
           run: |
             uname -a
@@ -107,12 +108,12 @@ jobs:
       uses: cross-platform-actions/action@v0.20.0
       with:
         operating_system: freebsd
+        sync_files: false
         version:  '13.2'
         run: |
           uname -a
           freebsd-version
           echo $SHELL
-
           sudo pkg install -y python3 bash meson ninja 
           sudo pkg install -y pkgconf gmake binutils lzlib
           mkdir build && cd build
