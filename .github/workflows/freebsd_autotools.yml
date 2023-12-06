@@ -22,7 +22,7 @@ jobs:
             echo $SHELL
             sudo pkg install -y python3 bash automake libtool
             sudo pkg install -y gmake binutils lzlib
-            sh ./autogen.sh
+            autoreconf --warnings=all  -vif
             ./configure
             make
             make check
