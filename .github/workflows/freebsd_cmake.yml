@@ -20,7 +20,7 @@ jobs:
             freebsd-version
             echo $SHELL
             sudo pkg install -y python3 bash cmake ninja pkgconf
-            sudo pkg install -y gmake binutils lzlib
+            sudo pkg install -y gmake binutils lzlib zstd
             mkdir builddir && cd builddir
             cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
             ninja

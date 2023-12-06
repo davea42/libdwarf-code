@@ -1,0 +1,27 @@
+name: ci_mac_meson
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  macos_meson:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: tools
+      run:  |
+        brew install meson ninja
+        brew install --overwrite pkgconf
+#        brew install --overwrite python@3.11
+#        brew install --overwrite pkgconf
+#        brew install  python@3.11
+#        brew install meson ninja
+    - name: 
+      run:  |
+        mkdir builddir && cd builddir
+        meson . .. -Ddwarfexample=true
+        ninja
+        ninja test
+
