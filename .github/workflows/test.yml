@@ -92,7 +92,7 @@ jobs:
             sudo pkg install -y python3 bash cmake ninja pkgconf
             sudo pkg install -y gmake binutils lzlib
             mkdir builddir && cd builddir
-            cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+            cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
             ninja
             ninja test
 
