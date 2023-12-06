@@ -21,7 +21,7 @@ jobs:
     - name: 
       run:  |
         mkdir builddir && cd builddir
-        meson . .. -Ddwarfexample=true
+        meson setup -Ddwarfexample=true . ..
         ninja
         ninja test
 
