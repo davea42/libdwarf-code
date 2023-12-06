@@ -20,7 +20,7 @@ jobs:
             uname -a
             freebsd-version
             echo $SHELL
-            sudo pkg install -y python3 bash cmake ninja pkgconf
+            sudo pkg install -y python3 bash meson ninja pkgconf
             sudo pkg install -y gmake binutils lzlib zstd
             mkdir builddir && cd builddir
             meson setup -Ddwarfexample=true . ..
