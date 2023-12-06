@@ -21,7 +21,7 @@ jobs:
             freebsd-version
             echo $SHELL
             sudo pkg install -y python3 bash meson ninja pkgconf
-            sudo pkg install -y gmake binutils lzlib zstd
+            sudo pkg install -y gmake binutils zlib zstd
             mkdir builddir && cd builddir
             meson setup -Ddwarfexample=true . ..
             ninja
