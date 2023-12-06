@@ -14,6 +14,7 @@ jobs:
         uses: cross-platform-actions/action@v0.20.0
         with:
           operating_system: freebsd
+          sync_files: false
           version:  '13.2'
           run: |
             uname -a
