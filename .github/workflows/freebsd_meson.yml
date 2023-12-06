@@ -1,0 +1,29 @@
+name: freebsd_meson
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  freebsd_meson:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+      - name: FreeBSD-with-cmake
+        uses: cross-platform-actions/action@v0.20.0
+        with:
+          operating_system: freebsd
+          sync_files: false
+          version:  '13.2'
+          run: |
+            uname -a
+            freebsd-version
+            echo $SHELL
+            sudo pkg install -y python3 bash cmake ninja pkgconf
+            sudo pkg install -y gmake binutils lzlib zstd
+            mkdir builddir && cd builddir
+            meson setup -Ddwarfexample=true . ..
+            ninja
+            ninja test
+
