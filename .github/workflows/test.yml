@@ -33,7 +33,7 @@ jobs:
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         make
         ctest -R self
   linux_meson:
@@ -155,7 +155,7 @@ jobs:
     - name: brew
       run:  |
         brew install meson ninja
-        brew install --overwrite pkgconf
+        #brew install --overwrite pkgconf
     - name: meson
       run:  |
         mkdir builddir && cd builddir
@@ -221,11 +221,11 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen
+        install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen mingw-w64-x86_64-ninja
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        meson . ..  --default-library shared -Ddwarfexample=true -Ddwarfgen=false
+        meson . .. -G Ninja  --default-library shared -Ddwarfexample=true -Ddwarfgen=false
         ninja 
         ninja install
         ninja test
