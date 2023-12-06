@@ -24,7 +24,7 @@ jobs:
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        meson . .. -G Ninja  --default-library shared -Ddwarfexample=true -Ddwarfgen=false
+        meson setup -G Ninja  --default-library shared -Ddwarfexample=true -Ddwarfgen=false . ..
         ninja
         ninja install
         ninja test
