@@ -20,7 +20,7 @@ jobs:
             uname -a
             freebsd-version
             echo $SHELL
-            sudo pkg install -y python3 bash automake 
+            sudo pkg install -y python3 bash automake libtool
             sudo pkg install -y gmake binutils lzlib
             sh ./autogen.sh
             ./configure
