@@ -22,10 +22,7 @@ jobs:
             echo $SHELL
             sudo pkg install -y python3 bash meson ninja pkgconf
             sudo pkg install -y gmake binutils zstd
-            pwd
-            ls .
             mkdir builddir && cd builddir
             meson setup -Ddwarfexample=true . ..
             ninja
             ninja test
-

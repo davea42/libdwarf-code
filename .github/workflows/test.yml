@@ -65,15 +65,15 @@ jobs:
         uses: cross-platform-actions/action@v0.20.0
         with:
           operating_system: freebsd
-          sync_files: false
+          sync_files: true
           version:  '13.2'
           run: |
             uname -a
             freebsd-version
             echo $SHELL
-            sudo pkg install -y python3 bash automake
-            sudo pkg install -y gmake binutils lzlib
-            sh ./autogen.sh
+            sudo pkg install -y python3 bash automake pkgconf
+            sudo pkg install -y libtool gmake binutils lzlib
+            autoreconf --warnings=all  -vif
             ./configure
             make
             make check
@@ -86,7 +86,7 @@ jobs:
         uses: cross-platform-actions/action@v0.20.0
         with:
           operating_system: freebsd
-          sync_files: false
+          sync_files: runner-to-vm
           version:  '13.2'
           run: |
             uname -a
@@ -108,14 +108,14 @@ jobs:
       uses: cross-platform-actions/action@v0.20.0
       with:
         operating_system: freebsd
-        sync_files: false
+        sync_files: runner-to-vm
         version:  '13.2'
         run: |
           uname -a
           freebsd-version
           echo $SHELL
           sudo pkg install -y python3 bash meson ninja 
-          sudo pkg install -y pkgconf gmake binutils lzlib
+          sudo pkg install -y pkgconf gmake binutils zstd
           mkdir build && cd build
           meson setup -Ddwarfexample=true . ..
           ninja
@@ -157,7 +157,6 @@ jobs:
     - name: brew
       run:  |
         brew install meson ninja
-        #brew install --overwrite pkgconf
     - name: meson
       run:  |
         mkdir builddir && cd builddir

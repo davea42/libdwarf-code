@@ -13,7 +13,6 @@ jobs:
     - name: tools
       run:  |
         brew install meson ninja
-        brew install --overwrite pkgconf
     - name: 
       run:  |
         mkdir builddir && cd builddir
