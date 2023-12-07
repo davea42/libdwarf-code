@@ -213,7 +213,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: msys2 {0}cmake
+        shell: msys2 {0}
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
