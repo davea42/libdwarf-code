@@ -988,7 +988,7 @@
     libdwarf has opened, including the 'machine' and 'flags'
     from object headers (all supported object types).
 
-    This adds new libnrary functions
+    This adds new library functions
     dwarf_next_cu_header_e()
     and dwarf_siblingof_c().
     Used exactly as documented dwarf_next_cu_header_d()
