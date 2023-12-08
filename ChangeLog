@@ -1,3 +1,264 @@
+2023-12-08:  David Anderson
+    commit b33f2b6a2643e7b552cdfeb835ab48a9c82768da
+
+    Now up to latest for release.
+            modified:   doc/libdwarf.pdf
+
+2023-12-08:  David Anderson
+    commit 32934f5e442383361b4239298aa4b407d6e35160
+
+    Updating to release date
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+
+2023-12-07:  David Anderson
+    commit 288b59b0aaf662fdab66cd61e39c599daa9edc82
+
+    A typo. Fixed.
+            modified:   test.yml
+
+2023-12-07:  David Anderson
+    commit 8416a134976192b1acbdb3bb22c04c72cbad41aa
+
+    Rm dup mingw inst (ninja)
+            modified:   msys2_meson.yml
+            modified:   test.yml
+
+2023-12-07:  David Anderson
+    commit 089b4ff4229fd09ba2659c131859359bb5178f53
+
+    runner-to-vm
+            modified:   freebsd_autotools.yml
+            modified:   test.yml
+
+2023-12-06:  David Anderson
+    commit 3d296d4f5efd1bbce23cc28084f95a3ace39c252
+
+    Cleaning up, all seems working.
+            modified:   freebsd_meson.yml
+            modified:   mac_meson.yml
+            modified:   test.yml
+
+2023-12-06:  David Anderson
+    commit fcbe5ce9261815aa566cd8f45d291e5ffdfb1146
+
+    runner-to-vm
+            modified:   freebsd_cmake.yml
+
+2023-12-06:  David Anderson
+    commit 68517f3e28fc05536efab9f8f9a402c6f947d85a
+
+    trial
+            modified:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit 0aa394c7c7820121e92971959830702538282322
+
+    trial
+            modified:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit cb3dba2b4a93b9d28d9265df6a346ef12d2585e2
+
+    zlib wrong name. Leaving off.
+            modified:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit f3f80cbdb4093a61297ab103af9b778837181529
+
+    Fix
+            modified:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit 1889a6a211a33a9ac501153df01e829cb0b5c4f7
+
+    again
+            modified:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit e1d9e65143d98a7045bd80713be030306cffdffa
+
+    Correcting bug
+            modified:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit f5cb963c7668eedfe7cd22a2685bf0906e99cb15
+
+    add pkgconf
+            modified:   freebsd_autotools.yml
+
+2023-12-06:  David Anderson
+    commit 9a3eecf4ac7092c1f0c3acb31a0ffd62efc7b869
+
+    Altering fsync setting
+            modified:   freebsd_autotools.yml
+
+2023-12-06:  David Anderson
+    commit 55f6bd906de69d92bf8b3102a90a56a91376992e
+
+    Now autoreconf not autogen.sh
+            modified:   freebsd_autotools.yml
+
+2023-12-06:  David Anderson
+    commit df0703d57a93ac6e06e6200625a4c51c5a7b2d63
+
+    Added libtool
+            modified:   freebsd_autotools.yml
+
+2023-12-06:  David Anderson
+    commit 465e050a3851e3aee1264bca0632af14fd87a5ab
+
+    For freebsd do fsync_files: false
+            modified:   test.yml
+
+2023-12-06:  David Anderson
+    commit c4c7290e061d89443e021df8c8d4a159c7d56799
+
+    Added fsync  as false
+            modified:   freebsd_autotools.yml
+
+2023-12-06:  David Anderson
+    commit 832704300ba662976cabe4f4f26627c873f5c55c
+
+    Remove old comments.
+            modified:   mac_meson.yml
+
+2023-12-06:  David Anderson
+    commit 2b6f8e535c2c25fa2920f85eeb918332f3be9f5b
+
+    new for single test.
+            new file:   freebsd_meson.yml
+
+2023-12-06:  David Anderson
+    commit bc7a7c04d1ac56e0c8a48b5a5ef41a0749d7eab5
+
+    Meson setup was written wrong...
+            modified:   mac_meson.yml
+            modified:   test.yml
+
+2023-12-06:  David Anderson
+    commit 673c308605640046fd44994fbc8124f006d1127c
+
+    oops.silly mistake.
+            modified:   msys2_meson.yml
+
+2023-12-06:  David Anderson
+    commit 7239cad53e355eab75b55816b38565e0f949a372
+
+    Fixing, was failing
+            modified:   msys2_meson.yml
+
+2023-12-06:  David Anderson
+    commit 751e4a1464ba54fd3a68e9ebca54c98bb936c0f8
+
+    Fix errors
+            modified:   msys2_cmake.yml
+
+2023-12-06:  David Anderson
+    commit 4f94c59b774e8c1cf5f29e2ed6dac1ab0d8a322f
+
+    Removing unwanted  install items.
+            modified:   mac_autotools.yml
+
+2023-12-06:  David Anderson
+    commit 7fc16952c66a9ebb7880481929fd2dd0e2beb9cf
+
+    Added sync_files: false
+            modified:   freebsd_cmake.yml
+
+2023-12-06:  David Anderson
+    commit 822d1316d6ec466c6c3b98a261e956f0a40cb8ab
+
+    Toward individual tests to deal with
+    particular build issues.
+            new file:   freebsd_autotools.yml
+            new file:   msys2_cmake.yml
+            new file:   msys2_meson.yml
+
+2023-12-06:  David Anderson
+    commit 205743f182ac924b043df94d573b4cbe8f1e426b
+
+    fixing freebsd cmake
+            modified:   test.yml
+
+2023-12-06:  David Anderson
+    commit caca010a2a8967a7f7b0a126d63f6146af449550
+
+    trial change to get workable options
+            modified:   freebsd_cmake.yml
+    Now with corrected mac cmake.
+            modified:   test.yml
+
+2023-12-06:  David Anderson
+    commit 297b199b0bf620e0d2beb89cc480de3050f8ff3a
+
+    needed more -D for cmake.
+            modified:   mac_cmake.yml
+
+2023-12-06:  David Anderson
+    commit 725369b0e9d721b4c221db515e7643e681485a57
+
+    small tweak
+            modified:   mac_cmake.yml
+
+2023-12-06:  David Anderson
+    commit c059560573dcbd0e0d0e5b3b4e49b91ec9190e43
+
+    Testing.
+            modified:   freebsd_cmake.yml
+            new file:   mac_cmake.yml
+            modified:   test.yml
+
+2023-12-05:  David Anderson
+    commit 333982334bb4dbd7035c17e668fc0833674f149d
+
+    Things changed, making them work, I hope
+            modified:   .github/workflows/test.yml
+
+2023-12-05:  David Anderson
+    commit 92874271148d444d5b9d4eeb1a22599ba82fe35e
+
+    Removing unwanted whitespace,
+    fixing indents.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2023-12-05:  David Anderson
+    commit 7ac6ea034e5e4abc65ba2e2ca8ea4c9d5f86c639
+
+    Changing a few local variables to Dwarf_Unsigned
+    to avoid some warnings
+    about size differences from a particular compiler.
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line.h
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2023-12-05:  David Anderson
+    commit 5d89e76d41fd9b111c803b0a748f5703cd765b7f
+
+    Fixes a mistake  returning object values through
+    pointers. Found by Coverity Scan.
+    A mistake created a few days ago.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+    Add cast to int on error number returned
+    by dwarf_errno(), these are guaranteed
+    to be integers under 1000 and >= 0. Removes a compiler warning.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2023-12-03:  David Anderson
+    commit 3f5352adff5f9dec013faf8365518a68486b3809
+
+    Dated Dec 3.
+            modified:   libdwarf.dox
+            modified:   libdwarf.pdf
+
+2023-12-02:  David Anderson
+    commit 67257f5da2b30d476477c55f8cfd85236bfcb7c7
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-12-02:  David Anderson
     commit c4ca69922baf8854a4677dde0681b9a7fc3207bd
 
