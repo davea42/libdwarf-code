@@ -1,4 +1,17 @@
 2023-12-08:  David Anderson
+    commit 9666fdf00753ffd9608f136972f9484d59c613cb
+
+    Corrected spelling mistake. libnrary -> library
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2023-12-08:  David Anderson
+    commit 7894f73f4fe22046a855bafd87902f7eedaaf00a
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2023-12-08:  David Anderson
     commit b33f2b6a2643e7b552cdfeb835ab48a9c82768da
 
     Now up to latest for release.
