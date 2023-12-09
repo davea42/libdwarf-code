@@ -11,7 +11,7 @@ limitations under the License.
 */
 #include "dwarf.h"
 #include "libdwarf.h"
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +19,9 @@ limitations under the License.
 #include <sys/types.h>
 #include <unistd.h>
 
-#define O_BINARY 0
+#ifndef O_BINARY
+#define O_BINARY 0 /* So it does nothing in Linux/Unix */
+#endif
 
 int string_offsets_example(Dwarf_Debug dbg, Dwarf_Error *error);
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {

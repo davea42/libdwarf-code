@@ -30,25 +30,17 @@ libdwarfp_src = [
   'dwarf_pro_weaks.c'
 ]
 
-elf_deps = cc.find_library('elf', required : false)
-
-have_getehdr = false
-if cc.has_function('elf64_getehdr', dependencies: elf_deps) == true
-  config_h.set10('HAVE_ELF64_GETEHDR', true)
-  have_getehdr = true
-endif
-
-have_getshdr = false
-if cc.has_function('elf64_getshdr', dependencies: elf_deps) == true
-  config_h.set10('HAVE_ELF64_GETSHDR', true)
-  have_getshdr = true
-endif
-
 libdwarf_dir = include_directories('../libdwarf')
+if (lib_type == 'shared')
+  compiler_flags = ['-DLIBDWARF_BUILD']
+else
+  compiler_flags = ['-DLIBDWARF_STATIC']
+endif
 
-libdwarfp_lib = library('libdwarfp', libdwarfp_src,
-  c_args : [ dev_cflags, libdwarf_args, '-DLIBDWARFP_BUILD' ],
-  dependencies : [ elf_deps, libdwarf ],
+
+libdwarfp_lib = library('dwarfp', libdwarfp_src,
+  c_args : [ dev_cflags, libdwarf_args, compiler_flags ],
+  dependencies : [libdwarf ],
   gnu_symbol_visibility: 'hidden',
   include_directories : [ config_dir, libdwarf_dir ],
   install : true,
@@ -59,7 +51,6 @@ libdwarfp_lib = library('libdwarfp', libdwarfp_src,
 libdwarfp = declare_dependency(
   include_directories : [ include_directories('.')],
   link_with : libdwarfp_lib,
-  dependencies : elf_deps
 )
 
 install_headers(libdwarfp_header_src,

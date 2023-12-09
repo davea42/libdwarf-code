@@ -186,10 +186,12 @@ typedef struct elf_filedata_s {
     int            f_is_64bit;
     unsigned       f_endian;
     Dwarf_Unsigned f_filesize;
+    Dwarf_Unsigned f_flags;
     /* Elf size, not DWARF. 32 or 64 */
     Dwarf_Small    f_offsetsize;
     Dwarf_Small    f_pointersize;
     int            f_ftype;
+    int            f_path_source;
 
     Dwarf_Unsigned f_max_secdata_offset;
     Dwarf_Unsigned f_max_progdata_offset;

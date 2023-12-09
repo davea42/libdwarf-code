@@ -648,10 +648,9 @@ read_cu_list(Dwarf_Debug dbg)
     Dwarf_Half     header_cu_type = unittype;
     Dwarf_Bool     is_info = g_is_info;
     Dwarf_Error error;
-    int cu_number = 0;
     Dwarf_Error *errp  = 0;
 
-    for (;;++cu_number) {
+    for (;;) {
         Dwarf_Die no_die = 0;
         Dwarf_Die cu_die = 0;
         int res = DW_DLV_ERROR;
@@ -673,9 +672,12 @@ read_cu_list(Dwarf_Debug dbg)
             &typeoffset, &next_cu_header,
             &header_cu_type,errp);
         if (res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):
+            char *em = errp?dwarf_errmsg(*errp):
                 "An error next cu her";
             printf("Error in dwarf_next_cu_header: %s\n",em);
+            if (errp) {
+                dwarf_dealloc_error(dbg,*errp);
+            }
             dwarf_finish(dbg);
             cleanupstr();
             exit(EXIT_FAILURE);
@@ -690,9 +692,11 @@ read_cu_list(Dwarf_Debug dbg)
         res = dwarf_siblingof_b(dbg,no_die,is_info,
             &cu_die,errp);
         if (res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"An error";
+            char *em = (errp?dwarf_errmsg(*errp):"An error");
             printf("Error in dwarf_siblingof_b on CU die: %s\n",em);
-            dwarf_dealloc_error(dbg,*errp);
+            if (errp) {
+                dwarf_dealloc_error(dbg,*errp);
+            }
             dwarf_finish(dbg);
             cleanupstr();
             exit(EXIT_FAILURE);
@@ -765,7 +769,6 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         /* res == DW_DLV_OK */
         if (cur_die != in_die) {
             dwarf_dealloc_die(cur_die);
-            cur_die = 0;
         }
         cur_die = sib_die;
         print_die_data(dbg,cur_die,in_level,sf);

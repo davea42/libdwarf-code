@@ -115,6 +115,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* A flag not public to users. */
 static int _dwarf_global_debuglink_crc_suppress;
 
+#if 0
+/* debugging only */
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    printf("%s ",msg);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+#endif
+
 int
 dwarf_suppress_debuglink_crc(int dw_suppress)
 {
@@ -464,7 +480,6 @@ is_mach_o_universal(struct elf_header *h,
     return TRUE;
 }
 
-
 static int
 is_mach_o_magic(struct elf_header *h,
     unsigned *endian,
@@ -710,6 +725,9 @@ match_buildid(
     return TRUE;
 }
 
+/*  we need the crc byte order to match that
+    of the object file so a comparison works.
+    Here we fix up when there is a mismatch */
 static int
 _dwarf_debuglink_finder_newpath(
     char         * path_in,
@@ -719,7 +737,8 @@ _dwarf_debuglink_finder_newpath(
     dwarfstring    *m,
     int * fd_out)
 {
-    unsigned char  lcrc[4];
+    unsigned char  lcrc[4] = {0,0,0,0};
+    unsigned char  newcrc[4] = {0,0,0,0};
     char          *debuglinkpath = 0; /* must be freed */
     unsigned char *crc = 0;
     char          *debuglinkfullpath = 0;
@@ -772,7 +791,6 @@ _dwarf_debuglink_finder_newpath(
     free(paths);
     paths = 0;
 
-    memset(&lcrc[0],0,sizeof(lcrc));
     if (!_dwarf_get_suppress_debuglink_crc() &&crc_in && !crc) {
         int res1 = 0;
 
@@ -788,7 +806,8 @@ _dwarf_debuglink_finder_newpath(
             return DW_DLV_NO_ENTRY;
         }
         if (res1 == DW_DLV_OK) {
-            crc = &lcrc[0];
+            dbg->de_copy_word((void *)newcrc,(void *)lcrc,4);
+            crc=&newcrc[0];
         }
     }
     free(debuglinkfullpath);
@@ -852,7 +871,8 @@ _dwarf_debuglink_finder_internal(
         DW_GROUPNUMBER_ANY,
         0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
-        *errcode = dwarf_errno(error);
+        /* error codes all >=0 && < 2000 */
+        *errcode = (int)dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
         error = 0;
         return res;
@@ -868,7 +888,7 @@ _dwarf_debuglink_finder_internal(
             lpath, &error);
         if (res != DW_DLV_OK){
             if (res == DW_DLV_ERROR) {
-                *errcode = dwarf_errno(error);
+                *errcode = (int)dwarf_errno(error);
                 dwarf_dealloc_error(dbg,error);
                 error = 0;
             }
@@ -883,7 +903,7 @@ _dwarf_debuglink_finder_internal(
         &buildid, &buildid_length,
         &paths, &paths_count, &error);
     if (res == DW_DLV_ERROR) {
-        *errcode = dwarf_errno(error);
+        *errcode = (int)dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
         dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;

@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright (C) 2009-2022 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2023 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -53,10 +53,8 @@
 #include "dwarf_secname_ck.h"
 #include "dwarf_setup_sections.h"
 
-#ifdef HAVE_ZLIB_H
+#if defined(HAVE_ZLIB_H) && defined(HAVE_ZSTD_H)
 #include "zlib.h"
-#endif
-#ifdef HAVE_ZSTD_H
 #include "zstd.h"
 #endif
 
@@ -713,7 +711,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_assume_string_in_bounds =
         _dwarf_assume_string_in_bounds;
     /* First make an arbitrary assumption. */
-    dbg->de_same_endian = 1;
     dbg->de_copy_word = _dwarf_memcpy_noswap_bytes;
     obj = dbg->de_obj_file;
     endianness = obj->ai_methods->om_get_byte_order(obj->ai_object);
@@ -721,14 +718,12 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 #ifdef WORDS_BIGENDIAN
     dbg->de_big_endian_object = 1;
     if (endianness == DW_END_little) {
-        dbg->de_same_endian = 0;
         dbg->de_big_endian_object = 0;
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
     }
 #else /* little endian */
     dbg->de_big_endian_object = 0;
     if (endianness == DW_END_big ) {
-        dbg->de_same_endian = 0;
         dbg->de_big_endian_object = 1;
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
     }
@@ -1029,7 +1024,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         Filesize is to set up a sensible default hash tree
         size. */
     dbg = _dwarf_get_debug(filesize);
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }
     dbg->de_errhand = errhand;
@@ -1129,7 +1124,7 @@ int
 dwarf_object_finish(Dwarf_Debug dbg)
 {
     int res = 0;
-
+    /* do not use CHECK_DBG */
     _dwarf_harmless_cleanout(&dbg->de_harmless_errors);
     res = _dwarf_free_all_of_one_debug(dbg);
     /*  see dwarf_error.h dwarf_error.c  Relevant
@@ -1138,7 +1133,7 @@ dwarf_object_finish(Dwarf_Debug dbg)
     return res;
 }
 
-#if defined(HAVE_ZLIB) || defined(HAVE_ZSTD)
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
 /*  case 1:
     The input stream is assumed to contain
     the four letters
@@ -1253,7 +1248,6 @@ do_decompress(Dwarf_Debug dbg,
             " The compressed section is not properly formatted");
         return DW_DLV_ERROR;
     }
-#ifdef HAVE_ZLIB
     if (!zstdcompress) {
         /*  According to zlib.net zlib essentially never expands
             the data when compressing.  There is no statement
@@ -1297,16 +1291,6 @@ do_decompress(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     }
-#else /* !HAVE_ZLIB */
-    if (!zstdcompress) {
-        _dwarf_error_string(dbg, error,
-            DW_DLE_ZDEBUG_REQUIRES_ZLIB,
-            "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
-            " zlib is missing, cannot decomreess a zlib section");
-        return DW_DLV_ERROR;
-    }
-#endif /* HAVE_ZLIB */
-#ifdef HAVE_ZSTD
     if (zstdcompress) {
         /*  According to zlib.net zlib essentially never expands
             the data when compressing.  There is no statement
@@ -1350,15 +1334,6 @@ do_decompress(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     }
-#else /* !HAVE_ZSTD */
-    if (zstdcompress) {
-        _dwarf_error_string(dbg, error,
-            DW_DLE_ZDEBUG_REQUIRES_ZLIB,
-            "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
-            " zstd is missing, cannot decomreess a libzstd section");
-        return DW_DLV_ERROR;
-    }
-#endif /* HAVE_ZSTD */
     if ((src +srclen) > endsection) {
         _dwarf_error_string(dbg, error,
             DW_DLE_ZLIB_SECTION_SHORT,
@@ -1379,7 +1354,6 @@ do_decompress(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     /*  uncompress is a zlib function. */
-#ifdef HAVE_ZLIB
     if (!zstdcompress) {
         int res = 0;
         uLongf dlen = destlen;
@@ -1398,8 +1372,6 @@ do_decompress(Dwarf_Debug dbg,
                 DW_DLV_ERROR);
         }
     }
-#endif /* HAVE_ZLIB */
-#ifdef HAVE_ZSTD
     if (zstdcompress) {
         size_t zsize =
             ZSTD_decompress(dest,destlen,src,srclen);
@@ -1412,7 +1384,6 @@ do_decompress(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     }
-#endif /* HAVE_ZSTD */
     /* Z_OK */
     section->dss_data = dest;
     section->dss_size = destlen;
@@ -1420,7 +1391,7 @@ do_decompress(Dwarf_Debug dbg,
     section->dss_did_decompress = TRUE;
     return DW_DLV_OK;
 }
-#endif /* HAVE_ZLIB || HAVE_ZSTD */
+#endif /* HAVE_ZLIB && HAVE_ZSTD */
 
 /*  Load the ELF section with the specified index and set its
     dss_data pointer to the memory where it was loaded.  */
@@ -1488,19 +1459,19 @@ _dwarf_load_section(Dwarf_Debug dbg,
             DWARF_DBG_ERROR(dbg, DW_DLE_COMPRESSED_EMPTY_SECTION,
                 DW_DLV_ERROR);
         }
-#if defined(HAVE_ZLIB) || defined(HAVE_ZSTD)
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
         res = do_decompress(dbg,section,error);
         if (res != DW_DLV_OK) {
             return res;
         }
-#else
+#else /* !defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
         _dwarf_error_string(dbg, error,
             DW_DLE_ZDEBUG_REQUIRES_ZLIB,
             "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
             " zlib and zstd are missing, cannot"
             " decompress section.");
         return DW_DLV_ERROR;
-#endif
+#endif /* defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
         section->dss_did_decompress = TRUE;
     }
     if (_dwarf_apply_relocs == 0) {
@@ -1552,6 +1523,9 @@ dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
     Dwarf_Unsigned * debug_loclists_size,
     Dwarf_Unsigned * debug_rnglists_size)
 {
+    if (IS_INVALID_DBG(dbg)) {
+        return DW_DLV_NO_ENTRY;
+    }
     if (debug_info_size) {
         *debug_info_size = dbg->de_debug_info.dss_size;
     }
@@ -1624,25 +1598,45 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
+    return dwarf_get_section_info_by_name_a(dbg,
+        section_name,
+        section_addr,
+        section_size,
+        0,0,
+        error);
+}
+int
+dwarf_get_section_info_by_name_a(Dwarf_Debug dbg,
+    const char *section_name,
+    Dwarf_Addr *section_addr,
+    Dwarf_Unsigned *section_size,
+    Dwarf_Unsigned *section_flags,
+    Dwarf_Unsigned *section_offset,
+    Dwarf_Error * error)
+{
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     Dwarf_Unsigned section_count = 0;
     Dwarf_Unsigned section_index = 0;
     struct Dwarf_Obj_Access_Section_a_s doas;
 
-    *section_addr = 0;
-    *section_size = 0;
-
-    if (!dbg) {
-        _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: null dbg passed to "
-            "dwarf_get_section_info_by_name");
-        return DW_DLV_ERROR;
+    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_name_a()");
+    if (section_addr) {
+        *section_addr = 0;
+    }
+    if (section_size) {
+        *section_size = 0;
+    }
+    if (section_flags) {
+        *section_flags = 0;
+    }
+    if (section_offset) {
+        *section_offset = 0;
     }
     if (!section_name) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: null section_name pointer "
             "passed to "
-            "dwarf_get_section_info_by_name");
+            "dwarf_get_section_info_by_name_a");
         return DW_DLV_ERROR;
     }
     if (!section_name[0]) {
@@ -1674,8 +1668,18 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
             continue;
         }
         if (!strcmp(section_name,doas.as_name)) {
-            *section_addr = doas.as_addr;
-            *section_size = doas.as_size;
+            if (section_addr) {
+                *section_addr = doas.as_addr;
+            }
+            if (section_size) {
+                *section_size = doas.as_size;
+            }
+            if (section_flags) {
+                *section_flags = doas.as_flags;
+            }
+            if (section_offset) {
+                *section_offset = doas.as_offset;
+            }
             return DW_DLV_OK;
         }
     }
@@ -1691,10 +1695,41 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
-    *section_addr = 0;
-    *section_size = 0;
-    *section_name = NULL;
+    return dwarf_get_section_info_by_index_a(dbg,
+        section_index,
+        section_name,
+        section_addr,
+        section_size,
+        0,0,
+        error);
+}
+int
+dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
+    int section_index,
+    const char **section_name,
+    Dwarf_Addr *section_addr,
+    Dwarf_Unsigned *section_size,
+    Dwarf_Unsigned *section_flags,
+    Dwarf_Unsigned *section_offset,
+    Dwarf_Error * error)
+{
 
+    CHECK_DBG(dbg,error,"dwarf_get_section_info_by_index_a()");
+    if (section_addr) {
+        *section_addr = 0;
+    }
+    if (section_size) {
+        *section_size = 0;
+    }
+    if (section_name) {
+        *section_name = 0;
+    }
+    if (section_flags) {
+        *section_flags = 0;
+    }
+    if (section_offset) {
+        *section_offset = 0;
+    }
     /* Check if we have a valid section index */
     if (section_index >= 0 && section_index <
         dwarf_get_section_count(dbg)) {
@@ -1712,9 +1747,21 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
-        *section_addr = doas.as_addr;
-        *section_size = doas.as_size;
-        *section_name = doas.as_name;
+        if (section_addr) {
+            *section_addr = doas.as_addr;
+        }
+        if (section_size) {
+            *section_size = doas.as_size;
+        }
+        if (section_name) {
+            *section_name = doas.as_name;
+        }
+        if (section_flags) {
+            *section_flags = doas.as_flags;
+        }
+        if (section_offset) {
+            *section_offset = doas.as_offset;
+        }
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -1724,8 +1771,13 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
 int
 dwarf_get_section_count(Dwarf_Debug dbg)
 {
-    struct Dwarf_Obj_Access_Interface_a_s * obj = dbg->de_obj_file;
-    if (NULL == obj) {
+    struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
+
+    if (IS_INVALID_DBG(dbg)) {
+        return DW_DLV_NO_ENTRY;
+    }
+    obj = dbg->de_obj_file;
+    if (!obj) {
         /*  -1  */
         return DW_DLV_NO_ENTRY;
     }

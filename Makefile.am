@@ -41,6 +41,9 @@ rebuild:
 doc:
 	make -C doc doc
 
+### Avoids README complaints from earlier versions of automake.
+README: README.md
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdwarf.pc
 if HAVE_DWARFGEN 
@@ -87,13 +90,15 @@ CMakeLists.txt \
 CODINGSTYLE.md \
 CONTRIBUTING.md \
 cmake/config.h.cmake \
-README \
 README.md \
-README.cmake \
+READMEmacos.md \
+READMEcmake.md \
+READMEwin-msys2.md \
 libdwarf.pc.in \
 libdwarfp.pc.in \
 meson.build \
 meson_options.txt \
+scripts/allsimplebuilds.sh \
 scripts/buildandreleasetest.sh \
 scripts/run-all-tests.sh \
 scripts/ChangeLog \
@@ -102,5 +107,3 @@ scripts/ChangeLog2019 \
 scripts/ChangeLog2020 \
 scripts/CLEANUP \
 .travis.yml
-
-# AUTHORS, ChangeLog and COPYING must be present

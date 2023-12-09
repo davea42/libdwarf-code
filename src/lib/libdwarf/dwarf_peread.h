@@ -107,6 +107,7 @@ struct dwarf_pe_generic_image_section_header
     Dwarf_Unsigned NumberOfLinenumbers;
     Dwarf_Unsigned Characteristics;
     Dwarf_Small *  loaded_data; /* must be freed. */
+    Dwarf_Bool     section_irrelevant_to_dwarf;
 };
 
 #define DWARF_PE_IMAGE_NT_OPTIONAL_HDR32_MAGIC 0x10b
@@ -123,11 +124,12 @@ typedef struct pe_filedata_s {
     int              pe_destruct_close_fd; /*aka: lib owns fd */
     int              pe_is_64bit;
     Dwarf_Unsigned   pe_filesize;
+    Dwarf_Unsigned   pe_flags;
+    Dwarf_Unsigned   pe_machine;
     Dwarf_Small      pe_offsetsize; /* 32 or 64 section data */
     Dwarf_Small      pe_pointersize;
     int              pe_ftype;
     unsigned         pe_endian;
-    /*Dwarf_Small      pe_machine; */
     void (*pe_copy_word) (void *, const void *, unsigned long);
     Dwarf_Unsigned   pe_nt_header_offset;
     Dwarf_Unsigned   pe_optional_header_offset;

@@ -1,8 +1,19 @@
 project('libdwarf', ['c','cpp'],
-  version: '0.8.1',
-  default_options : ['buildtype=debugoptimized', 'warning_level=3', 'werror=true'],
+  version: '0.9.0',
+  default_options : ['buildtype=debugoptimized', 
+  'warning_level=3', 'werror=true'],
   meson_version : '>=0.53'
 )
+
+# version 0.56 is the first version with project_source_root and
+# project_build_root.   We use meson.current_source_dir() and
+# meson.current_build_dir()  (and read these before
+# meson knows of other directories) to avoid meson.build_root()
+# meson.source_root() and avoid requring 0.56. Ubuntu 20.04,
+# for example, uses meson 0.53.
+
+# meson file system module
+fs = import('fs')
 
 v_arr = meson.project_version().split('.')
 v_maj = v_arr[0]
@@ -22,9 +33,7 @@ dir_pkgdata = join_paths(dir_data, meson.project_name())
 dir_locale = join_paths(dir_prefix, get_option('localedir'))
 
 # host
-
 windows = import('windows')
-
 host_os = host_machine.system()
 
 windows = ['windows', 'cygwin']
@@ -47,6 +56,7 @@ cpp = meson.get_compiler('cpp')
 
 dev_cflags = []
 dev_cppflags = []
+dev_ldflags = []
 
 dev_cflags_try = [
   '-Wpointer-arith',
@@ -62,6 +72,11 @@ dev_cflags_try = [
   '-Wno-missing-field-initializers',
   '-fno-omit-frame-pointer'
 ]
+sanitize_flags_try = [
+  '-fsanitize=address', 
+  '-fsanitize=leak',
+  '-fsanitize=undefined'
+]
 
 if sys_windows
   if cc.get_id() != 'msvc'
@@ -70,7 +85,7 @@ if sys_windows
 else
   dev_cflags_try += '-fvisibility=hidden'
 endif
-
+ 
 foreach cf: dev_cflags_try
   if cc.has_argument(cf)
     dev_cflags += cf
@@ -81,6 +96,24 @@ foreach cf: dev_cflags_try
     endif
   endif
 endforeach
+
+#if fs.isdir('/usr/local/include')
+#  dev_cflags += '-I/usr/local/include'
+#endif
+#if fs.isdir('/opt/local/include')
+#  dev_cflags += '-I/opt/local/include'
+#endif
+
+dwarf_link_args = []
+dev_sanitize = get_option('sanitize')
+if dev_sanitize 
+  foreach cf: sanitize_flags_try
+    if cc.has_argument(cf)
+      dev_cflags += cf
+      dwarf_link_args += cf
+    endif
+  endforeach
+endif
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 if cc.get_id() == 'msvc'
@@ -120,6 +153,12 @@ if cc.has_function_attribute('unused') == true
   config_h.set10('HAVE_UNUSED_ATTRIBUTE', true)
 endif
 
+if cc.has_function('setlocale') == true
+  if cc.has_function('nl_langinfo') == true
+    config_h.set10('HAVE_UTF8', true)
+  endif
+endif
+
 foreach header : header_checks
   if cc.has_header(header)
     config_h.set10('HAVE_'+header.underscorify().to_upper(), true)
@@ -131,6 +170,13 @@ foreach t : [ 'uint64_t', 'uintptr_t', 'intptr_t' ]
     error('Sanity check failed: type @0@ not provided via stdint.h'.format(t))
   endif
 endforeach
+
+# Do this early so we have the base source and build directory names
+# for this and test/meson.build
+project_source_base_root = meson.current_source_dir()
+project_build_base_root = meson.current_build_dir()
+message(['mesondebug set psbr',project_source_base_root])
+message(['mesondebug set pbbr',project_build_base_root])
 
 subdir('src/lib/libdwarf')
 subdir('src/bin/dwarfdump')
@@ -154,7 +200,7 @@ subdir('test')
 
 # Use config_h after all subdirs have set values
 
-configure_file(output : 'config.h', configuration : config_h)
+#configure_file(output : 'config.h', configuration : config_h)
 
 # pkg-config files
 
@@ -174,16 +220,21 @@ pkgconf.set('requirements_libdwarf_libs', '')
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
 
 configure_file(
-  input : join_paths(meson.source_root(), 'libdwarf.pc.in'),
+  input : join_paths(project_source_base_root, 'libdwarf.pc.in'),
   output : 'libdwarf.pc',
   configuration : pkgconf,
   install_dir : pkg_install_dir
 )
 
 # output
+# Use config_h after all subdirs have set values
+
+configure_file(output : 'config.h', configuration : config_h)
 
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
+message(['mesondebug zlib deps ',zlib_deps.found()])
+message(['mesondebug libzstd deps',libzstd_deps.found()])
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
 
@@ -196,6 +247,10 @@ summary({'OS': host_os,
          'dwarfexample': get_option('dwarfexample') ? 'yes' : 'no',
          'documentation': have_doc,
         }, section: 'Configuration Options Summary:')
+
+summary({'zlib': (zlib_deps.found() ? 'yes' : 'no'),
+         'libzstd': (libzstd_deps.found() ? 'yes' : 'no'),
+        }, section: 'Referenced Libraries:')
 
 summary({'prefix': dir_prefix,
          'bindir': dir_bin,

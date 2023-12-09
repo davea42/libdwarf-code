@@ -11,7 +11,7 @@ limitations under the License.
 */
 #include "dwarf.h"
 #include "libdwarf.h"
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +19,10 @@ limitations under the License.
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
@@ -43,7 +47,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Die die = 0;
   Dwarf_Attribute attr = 0;
 
-  fuzz_fd = open(filename, O_RDONLY);
+  fuzz_fd = open(filename, O_RDONLY|O_BINARY);
   if (fuzz_fd != -1) {
     Dwarf_Debug_Fission_Per_CU fisdata;
     memset(&fisdata, 0, sizeof(fisdata));

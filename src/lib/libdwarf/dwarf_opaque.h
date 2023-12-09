@@ -594,9 +594,10 @@ struct Dwarf_Debug_s {
         under de_obj_file. */
     int  de_fd;
     char de_owns_fd;
+    Dwarf_Small de_ftype; /* DW_FTYPE_PE, ... */
     char de_in_tdestroy; /* for de_alloc_tree  DW202309-001 */
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
-    unsigned char de_path_source;
+    Dwarf_Small de_path_source;
     /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
@@ -627,8 +628,26 @@ struct Dwarf_Debug_s {
         leave this zero. */
     Dwarf_Unsigned de_filesize;
 
+    /*  The value is what the object file encodes for
+        the machine, In an  Elf Header, for example, its value
+        comes from the e_machine field.
+        MACOS provides a cputype field.
+        PE provides IMAGE_FILE_HEADER.Machine.
+        Inspect de_ftype using the value of
+        de_obj_machine or the following de_obj_* fields. */
+    Dwarf_Unsigned de_obj_machine;
+    /*  For DW_FTYPE_APPLEUNIVERSAL this is the
+        offset of an executable object in the multi-executable
+        file.  For all other de_ftype values this has
+        value zero. */
+    Dwarf_Unsigned de_obj_ub_offset;
+    /*  The flags field from an Elf or Macos header
+        or the Charactersics field from a PE header. */
+    Dwarf_Unsigned de_obj_flags;
+
     /*  number of bytes in a pointer of the target in various .debug_
-        sections. 4 in 32bit, 8 in MIPS 64, ia64. */
+        sections. 4 in 32bit, 8 in MIPS 64, ia64. 
+        This is taken from object file headers. */
     Dwarf_Small de_pointer_size;
 
     /*  set at creation of a Dwarf_Debug to say if form_string
@@ -738,8 +757,8 @@ struct Dwarf_Debug_s {
     Dwarf_Xu_Index_Header  de_cu_hashindex_data;
     Dwarf_Xu_Index_Header  de_tu_hashindex_data;
 
-    void (*de_copy_word) (void *, const void *, unsigned long);
-    unsigned char de_same_endian;
+    void (*de_copy_word) (void *dw_targ, const void *dw_src,
+        unsigned long dw_len);
     unsigned char de_elf_must_close; /* If non-zero, then
         it was dwarf_init (not dwarf_elf_init)
         so must elf_end() */
@@ -902,6 +921,7 @@ int _dwarf_create_a_new_cu_context_record_on_list(
     Dwarf_Unsigned section_size,
     Dwarf_Unsigned new_cu_offset,
     Dwarf_CU_Context *context_out,
+    Dwarf_Die        *cu_die_out,
     Dwarf_Error *error);
 Dwarf_Unsigned _dwarf_calculate_next_cu_context_offset(
     Dwarf_CU_Context cu_context);
@@ -949,6 +969,7 @@ int _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
+    Dwarf_Die * cu_die_out,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
     Dwarf_Unsigned * abbrev_offset,

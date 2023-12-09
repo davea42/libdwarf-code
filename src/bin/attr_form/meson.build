@@ -11,7 +11,8 @@ attr_form_src = [
   '../dwarfdump/dd_naming.c',
   '../dwarfdump/dd_safe_strcpy.c',
   '../dwarfdump/dd_sanitized.c',
-  '../dwarfdump/dd_tsearchbal.c'
+  '../dwarfdump/dd_tsearchbal.c',
+  '../dwarfdump/dd_utf8.c'
 ]
 
 attr_form_args = [
@@ -28,6 +29,7 @@ localinclude = include_directories('../dwarfdump')
 
 executable('attr_form', attr_form_src,
   c_args : [ dev_cflags, libdwarf_args, attr_form_args ],
+  link_args :  dwarf_link_args,
   dependencies : libdwarf,
   include_directories : [config_dir, localinclude],
   install : false

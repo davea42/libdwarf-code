@@ -67,6 +67,7 @@
 #include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
+#include "dwarf_util.h"
 #include "dwarf_frame.h"
 #include "dwarf_harmless.h"
 
@@ -76,12 +77,19 @@
 /*  The pointers returned here through errmsg_ptrs_array
     become invalidated by any call to libdwarf. Any call.
 */
-int dwarf_get_harmless_error_list(Dwarf_Debug dbg,
+int
+dwarf_get_harmless_error_list(Dwarf_Debug dbg,
     unsigned  count,
     const char ** errmsg_ptrs_array,
     unsigned * errs_count)
 {
-    struct Dwarf_Harmless_s *dhp = &dbg->de_harmless_errors;
+
+    struct Dwarf_Harmless_s *dhp = 0;
+
+    if (IS_INVALID_DBG(dbg)) {
+        return DW_DLV_NO_ENTRY;
+    }
+    dhp = &dbg->de_harmless_errors;
     if (!dhp->dh_errors) {
         dhp->dh_errs_count = 0;
         return DW_DLV_NO_ENTRY;
@@ -120,13 +128,20 @@ int dwarf_get_harmless_error_list(Dwarf_Debug dbg,
 /*  Insertion made public is only for testing the harmless error code,
     it is not necessarily useful for libdwarf client code aside
     from code testing libdwarf. */
-void dwarf_insert_harmless_error(Dwarf_Debug dbg,
+void
+dwarf_insert_harmless_error(Dwarf_Debug dbg,
     char *newerror)
 {
-    struct Dwarf_Harmless_s *dhp = &dbg->de_harmless_errors;
+    struct Dwarf_Harmless_s *dhp = 0;
     unsigned next = 0;
-    unsigned cur = dhp->dh_next_to_use;
-    char *msgspace;
+    unsigned cur = 0;
+    char *msgspace = 0;
+
+    if (IS_INVALID_DBG(dbg)) {
+        return;
+    }
+    dhp = &dbg->de_harmless_errors;
+    cur = dhp->dh_next_to_use;
     if (!dhp->dh_errors) {
         dhp->dh_errs_count++;
         return;
@@ -155,11 +170,18 @@ void dwarf_insert_harmless_error(Dwarf_Debug dbg,
     Remember the maxcount we record is 1 > the user count,
     so we adjust it so it looks like the user count.
 */
-unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
+unsigned
+dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
     unsigned maxcount )
 {
-    struct Dwarf_Harmless_s *dhp = &dbg->de_harmless_errors;
-    unsigned prevcount = dhp->dh_maxcount;
+    struct Dwarf_Harmless_s *dhp = 0;
+    unsigned prevcount = 0;
+
+    if (IS_INVALID_DBG(dbg)) {
+        return 0;
+    }
+    dhp = &dbg->de_harmless_errors;
+    prevcount = dhp->dh_maxcount;
     if (maxcount != 0) {
         ++maxcount;
         if (maxcount != dhp->dh_maxcount) {

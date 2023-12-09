@@ -39,6 +39,8 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
+#include "libdwarf_private.h"
+#include "dwarf_util.h"
 #include "dwarf_abbrev.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -168,15 +170,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_implicit_const_count_out = 0;
     int res = 0;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: "
-            "calling dwarf_get_abbrev "
-            "either null or it contains"
-            "a stale Dwarf_Debug pointer");
-        return DW_DLV_ERROR;
-    }
-
+    CHECK_DBG(dbg,error,"dwarf_get_abbrev()");
     if (dbg->de_debug_abbrev.dss_data == 0) {
         /*  Loads abbrev section (and .debug_info as we do those
             together). */
@@ -372,7 +366,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     }
 
     dbg = abbrev->dab_dbg;
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: "
             "calling dwarf_get_abbrev_entry_b() "

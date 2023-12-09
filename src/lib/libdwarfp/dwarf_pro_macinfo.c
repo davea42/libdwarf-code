@@ -438,7 +438,6 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
         macinfo_ptr += m_sect->mb_used_len;
         if (m_prev) {
             _dwarf_p_dealloc((Dwarf_Small *) m_prev);
-            m_prev = 0;
         }
         m_prev = m_sect;
     }

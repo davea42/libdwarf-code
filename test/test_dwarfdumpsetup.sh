@@ -55,7 +55,23 @@ fi
 # prints differently for different time zones.
 textlim=700
 cp "$top_srcdir/src/bin/dwarfdump/dwarfdump.conf" .
-dd=$top_blddir/src/bin/dwarfdump/dwarfdump
+# detects Windows msys3 mingw executable
+if [ -f $top_blddir/src/bin/dwarfdump/.libs/dwarfdump.exe ]
+then
+  bldx=$top_blddir/src 
+  dd=$bldx/bin/dwarfdump/.libs/dwarfdump.exe
+  if [ ! -f  $bldx/bin/dwarfdump/.libs/libdwarf-*.dll ]
+  then
+    x="cp $bldx/lib/libdwarf/.libs/libdwarf-*.dll \
+     $bldx/bin/dwarfdump/.libs/"
+    echo "Do: $x"
+    $x
+    ls  $bldx/bin/dwarfdump/.libs/libdwarf*
+  fi
+  bldx=
+else
+  dd=$top_blddir/src/bin/dwarfdump/dwarfdump
+fi
 
 # Delete what follows 'last time 0x0'
 fixlasttime() {

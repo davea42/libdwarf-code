@@ -166,6 +166,7 @@ _dwarf_loop_reading_debug_info_for_cu(
         memset(&signature,0,sizeof(signature));
         sres = _dwarf_next_cu_header_internal(tieddbg,
             is_info,
+            /* no CU die wanted*/ NULL,
             &cu_header_length, &version_stamp,
             &abbrev_offset, &address_size,
             &length_size,&extension_size,

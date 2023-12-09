@@ -379,6 +379,7 @@ static void arg_print_lines(void);
 static void arg_print_lines_short(void);
 static void arg_print_loc(void);
 static void arg_print_macinfo(void);
+static void arg_print_machine_arch(void);
 static void arg_print_pubnames(void);
 static void arg_print_producers(void);
 static void arg_print_ranges(void);
@@ -479,6 +480,8 @@ static const char *usage_long_text[] = {
 "-c   --print-loc         Does nothing, was never very useful",
 "-m   --print-macinfo     Print DWARF5 style .debug_macro section",
 "                         and DWARF2,3,4 .debug_macinfo section.",
+"     --print-machine-arch Print selected items about objects",
+"                         and sections",
 "-P   --print-producers   Print list of compile units per producer",
 "-p   --print-pubnames    Print pubnames section",
 "-N   --print-ranges      Print ranges section",
@@ -775,6 +778,7 @@ OPT_PRINT_LINES,              /* -l   --print-lines       */
 OPT_PRINT_LINES_SHORT,        /* -ls  --print-lines-short */
 OPT_PRINT_LOC,                /* -c   --print-loc         */
 OPT_PRINT_MACINFO,            /* -m   --print-macinfo     */
+OPT_PRINT_MACHINE_ARCH,       /*      --print-machine-arch */
 OPT_PRINT_PRODUCERS,          /* -P   --print-producers   */
 OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames    */
 OPT_PRINT_RANGES,             /* -N   --print-ranges      */
@@ -926,6 +930,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-lines-short", dwno_argument, 0, OPT_PRINT_LINES_SHORT},
 {"print-loc",         dwno_argument, 0, OPT_PRINT_LOC        },
 {"print-macinfo",     dwno_argument, 0, OPT_PRINT_MACINFO    },
+{"print-machine-arch", dwno_argument, 0, OPT_PRINT_MACHINE_ARCH    },
 {"print-producers",   dwno_argument, 0, OPT_PRINT_PRODUCERS  },
 {"print-pubnames",    dwno_argument, 0, OPT_PRINT_PUBNAMES   },
 {"print-ranges",      dwno_argument, 0, OPT_PRINT_RANGES     },
@@ -1640,6 +1645,12 @@ void arg_print_macinfo(void)
 {
     glflags.gf_macinfo_flag = TRUE; /* DWARF2,3,4 */
     glflags.gf_macro_flag   = TRUE; /* DWARF5 */
+    suppress_check_dwarf();
+}
+/*  Option '--print-machine-arch' */
+void arg_print_machine_arch(void)
+{
+    glflags.gf_machine_arch_flag = TRUE;
     suppress_check_dwarf();
 }
 
@@ -2575,6 +2586,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_LINES_SHORT: arg_print_lines_short(); break;
         case OPT_PRINT_LOC:         arg_print_loc();         break;
         case OPT_PRINT_MACINFO:     arg_print_macinfo();     break;
+        case OPT_PRINT_MACHINE_ARCH: arg_print_machine_arch(); break;
         case OPT_PRINT_PRODUCERS:   arg_print_producers();   break;
         case OPT_PRINT_PUBNAMES:    arg_print_pubnames();    break;
         case OPT_PRINT_RANGES:      arg_print_ranges();      break;

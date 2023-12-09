@@ -532,7 +532,8 @@ static SectionForDwarf & FindMySection(
 }
 #endif
 
-static int FindMySectionNum(const ElfSectIndex & elf_section_index)
+static int 
+FindMySectionNum(const ElfSectIndex & elf_section_index)
 {
     for (unsigned i =0; i < dwsectab.size(); ++i) {
         if (elf_section_index.getSectIndex() !=
@@ -1546,7 +1547,6 @@ copy_section_hdr_data (SectionForDwarf&sec)
 static void
 write_section_contents(void)
 {
-    unsigned long i = 0;
     for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
         it != dwsectab.end();
         it++) {
@@ -1564,15 +1564,13 @@ write_section_contents(void)
             dwwriter.wwrite(curoff,bb.len_,bb.bytes_); 
             curoff += bb.len_;
         }
-        i++;
     }
-
 }
+
 static void
 write_section_headers()
 {
     Dwarf_Unsigned headeroff = dwelfheader.e_shoff_;
-    unsigned long i = 0;
     for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
         it != dwsectab.end();
         it++) {
@@ -1584,7 +1582,6 @@ write_section_headers()
         unsigned char *data = copy_section_hdr_data(sec);
         dwwriter.wwrite(headeroff,hdrlen,data);
         headeroff += dwelfheader.e_shentsize_; 
-        i++;
     }
 }
 

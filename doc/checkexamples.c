@@ -17,7 +17,7 @@ cc -c -Wall -O0 -Wpointer-arith  \
 -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
 -Wno-long-long -Wshadow -Wbad-function-cast \
 -Wmissing-parameter-type -Wnested-externs \
--Isrc/lib/libdwarf checkexamples.c
+-I../src/lib/libdwarf checkexamples.c
 @endcode
 */
 
@@ -332,14 +332,34 @@ void examplesecgroup(Dwarf_Debug dbg)
 
     @code
 */
-int example4(Dwarf_Debug dbg,Dwarf_Die in_die,
+int example4c(Dwarf_Die in_die,
+    Dwarf_Error *error)
+{
+    Dwarf_Die return_sib = 0;
+    int res = 0;
+
+    /* in_die must be a valid Dwarf_Die */
+    res = dwarf_siblingof_c(in_die,&return_sib, error);
+    if (res == DW_DLV_OK) {
+        /* Use return_sib here. */
+        dwarf_dealloc_die(return_sib);
+        /*  return_sib is no longer usable for anything, we
+            ensure we do not use it accidentally with: */
+        return_sib = 0;
+        return res;
+    }
+    return res;
+}
+int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
     Dwarf_Bool is_info,
     Dwarf_Error *error)
 {
     Dwarf_Die return_sib = 0;
     int res = 0;
 
-    /* in_die might be NULL or a valid Dwarf_Die */
+    /*  in_die might be NULL following a call
+        to dwarf_next_cu_header_d() 
+        or a valid Dwarf_Die */
     res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, error);
     if (res == DW_DLV_OK) {
         /* Use return_sib here. */
@@ -487,9 +507,8 @@ int example_sibvalid(Dwarf_Debug dbg,
 }
 /*! @endcode */
 
-/*! @defgroup examplecuhdr Example walking CUs
-
-    @brief Accessing all CUs looking for specific items.
+/*! @defgroup examplecuhdre Example walking CUs(e)
+    @brief Accessing all CUs looking for specific items(e).
 
     Loops through as many CUs as needed, stops
     and returns once a CU provides the desired data.
@@ -498,9 +517,6 @@ int example_sibvalid(Dwarf_Debug dbg,
     the aspect of CUs that matter to you so once found
     in a cu my_needed_data_exists() or some other
     function of yours can identify the correct record.
-    (Possibly a DIE global offset. Remember to note
-    if each DIE has is_info TRUE or FALSE so libdwarf
-    can find the DIE properly.)
 
     Depending on your goals in examining the DIE tree
     it may be helpful to maintain a DIE stack
@@ -510,15 +526,16 @@ int example_sibvalid(Dwarf_Debug dbg,
     We assume that on a serious error we will give up
     (for simplicity here).
 
-    We assume the caller  to examplecuhdr() will
+    We assume the caller  to examplecuhdre() will
     know what to retrieve (when we return DW_DLV_OK
-    from examplecuhdr() and that myrecords points
+    from examplecuhdree() and that myrecords points
     to a record with all the data needed by
     my_needed_data_exists() and
     recorded by myrecord_data_for_die().
 
     @code
 */
+
 struct myrecords_struct *myrecords;
 void myrecord_data_for_die(struct myrecords_struct *myrecords,
     Dwarf_Die d);
@@ -526,7 +543,7 @@ int  my_needed_data_exists(struct myrecords_struct *myrecords);
 
 /*  Loop on DIE tree. */
 static void
-record_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
+record_die_and_siblingse(Dwarf_Debug dbg, Dwarf_Die in_die,
     int is_info, int in_level,
     struct myrecords_struct *myrec,
     Dwarf_Error *error)
@@ -550,7 +567,156 @@ record_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_OK) {
-            record_die_and_siblings(dbg,child,is_info,
+            record_die_and_siblingse(dbg,child,is_info,
+                in_level+1,myrec,error);
+            /* No longer need 'child' die. */
+            dwarf_dealloc(dbg,child,DW_DLA_DIE);
+            child = 0;
+        }
+        /* res == DW_DLV_NO_ENTRY or DW_DLV_OK */
+        res = dwarf_siblingof_c(cur_die,&sib_die,error);
+        if (res == DW_DLV_ERROR) {
+            exit(EXIT_FAILURE);
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            /* Done at this level. */
+            break;
+        }
+        /* res == DW_DLV_OK */
+        if (cur_die != in_die) {
+            dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
+            cur_die = 0;
+        }
+        cur_die = sib_die;
+        myrecord_data_for_die(myrec,sib_die);
+    }
+    return;
+}
+
+/*  Assuming records properly initialized for your use. */
+int examplecuhdre(Dwarf_Debug dbg,
+    struct myrecords_struct *myrec,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned abbrev_offset = 0;
+    Dwarf_Half     address_size = 0;
+    Dwarf_Half     version_stamp = 0;
+    Dwarf_Half     offset_size = 0;
+    Dwarf_Half     extension_size = 0;
+    Dwarf_Sig8     signature;
+    Dwarf_Unsigned typeoffset = 0;
+    Dwarf_Unsigned next_cu_header = 0;
+    Dwarf_Half     header_cu_type = 0;
+    Dwarf_Bool     is_info = TRUE;
+    int            res = 0;
+
+    while(!my_needed_data_exists(myrec)) {
+        Dwarf_Die cu_die = 0;
+        Dwarf_Unsigned cu_header_length = 0;
+
+        memset(&signature,0, sizeof(signature));
+        res = dwarf_next_cu_header_e(dbg,is_info,
+            &cu_die,
+            &cu_header_length,
+            &version_stamp, &abbrev_offset,
+            &address_size, &offset_size,
+            &extension_size,&signature,
+            &typeoffset, &next_cu_header,
+            &header_cu_type,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            if (is_info == TRUE) {
+                /*  Done with .debug_info, now check for
+                    .debug_types. */
+                is_info = FALSE;
+                continue;
+            }
+            /*  No more CUs to read! Never found
+                what we were looking for in either
+                .debug_info or .debug_types. */
+            return res;
+        }
+        /*  We have the cu_die .
+            New in v0.9.0 because the connection of
+            the CU_DIE to the CU header is clear
+            in the argument list. 
+            No call to siblingof() is appropriate here.
+            */
+        record_die_and_siblingse(dbg,cu_die,is_info,
+            0, myrec,error);
+        dwarf_dealloc_die(cu_die);
+    }
+    /*  Found what we looked for */
+    return DW_DLV_OK;
+}
+/*! @endcode */
+
+/*! @defgroup examplecuhdrd Example walking CUs(d)
+
+    @brief Accessing all CUs looking for specific items(d).
+
+    Loops through as many CUs as needed, stops
+    and returns once a CU provides the desired data.
+
+    Assumes certain functions you write to remember
+    the aspect of CUs that matter to you so once found
+    in a cu my_needed_data_exists() or some other
+    function of yours can identify the correct record.
+    (Possibly a DIE global offset. Remember to note
+    if each DIE has is_info TRUE or FALSE so libdwarf
+    can find the DIE properly.)
+
+    Depending on your goals in examining the DIE tree
+    it may be helpful to maintain a DIE stack
+    of active DIEs, pushing and popping as you
+    make your way throught the DIE levels.
+
+    We assume that on a serious error we will give up
+    (for simplicity here).
+
+    We assume the caller  to examplecuhdrd() will
+    know what to retrieve (when we return DW_DLV_OK
+    from examplecuhdrd() and that myrecords points
+    to a record with all the data needed by
+    my_needed_data_exists() and
+    recorded by myrecord_data_for_die().
+
+    @code
+*/
+struct myrecords_struct *myrecords;
+void myrecord_data_for_die(struct myrecords_struct *myrecords,
+    Dwarf_Die d);
+int  my_needed_data_exists(struct myrecords_struct *myrecords);
+
+/*  Loop on DIE tree. */
+static void
+record_die_and_siblingsd(Dwarf_Debug dbg, Dwarf_Die in_die,
+    int is_info, int in_level,
+    struct myrecords_struct *myrec,
+    Dwarf_Error *error)
+{
+    int       res = DW_DLV_OK;
+    Dwarf_Die cur_die=in_die;
+    Dwarf_Die child = 0;
+
+    myrecord_data_for_die(myrec,in_die);
+
+    /*   Loop on a list of siblings */
+    for (;;) {
+        Dwarf_Die sib_die = 0;
+
+        /*  Depending on your goals, the in_level,
+            and the DW_TAG of cur_die, you may want
+            to skip the dwarf_child call. */
+        res = dwarf_child(cur_die,&child,error);
+        if (res == DW_DLV_ERROR) {
+            printf("Error in dwarf_child , level %d \n",in_level);
+            exit(EXIT_FAILURE);
+        }
+        if (res == DW_DLV_OK) {
+            record_die_and_siblingsd(dbg,child,is_info,
                 in_level+1,myrec,error);
             /* No longer need 'child' die. */
             dwarf_dealloc(dbg,child,DW_DLA_DIE);
@@ -577,7 +743,7 @@ record_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
 }
 
 /*  Assuming records properly initialized for your use. */
-int examplecuhdr(Dwarf_Debug dbg,
+int examplecuhdrd(Dwarf_Debug dbg,
     struct myrecords_struct *myrec,
     Dwarf_Error *error)
 {
@@ -620,7 +786,16 @@ int examplecuhdr(Dwarf_Debug dbg,
                 .debug_info or .debug_types. */
             return res;
         }
-        /* The CU will have a single sibling, a cu_die. */
+        /*  The CU will have a single sibling, a cu_die. 
+            It is essential to call this right after
+            a call to dwarf_next_cu_header_d() because
+            there is no explicit connection provided to
+            dwarf_siblingof_b(), which returns a DIE
+            from whatever CU was last accessed by
+            dwarf_next_cu_header_d()! 
+            The lack of explicit connection was a
+            design mistake in the API (made in 1992). */
+
         res = dwarf_siblingof_b(dbg,no_die,is_info,
             &cu_die,error);
         if (res == DW_DLV_ERROR) {
@@ -630,8 +805,9 @@ int examplecuhdr(Dwarf_Debug dbg,
             /*  Impossible */
             exit(EXIT_FAILURE);
         }
-        record_die_and_siblings(dbg,cu_die,is_info,
+        record_die_and_siblingsd(dbg,cu_die,is_info,
             0, myrec,error);
+        dwarf_dealloc_die(cu_die);
     }
     /*  Found what we looked for */
     return DW_DLV_OK;
@@ -1304,20 +1480,50 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 */
 int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
-    char **srcfiles = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    /*  It is an annoying historical mistake in libdwarf that the count
+        is a signed value. */
+    Dwarf_Signed       count = 0;
+    char             **srcfiles = 0;
+    Dwarf_Signed       i = 0;
+    int                res = 0;
+    Dwarf_Line_Context line_context = 0;
+    Dwarf_Small        table_count = 0;
+    Dwarf_Unsigned     lineversion = 0;
 
-    res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
+    res = dwarf_srclines_b(somedie,&lineversion,
+        &table_count,&line_context,error);
     if (res != DW_DLV_OK) {
+            /*  dwarf_finish() will dealloc srcfiles, not doing 
+                that here.  */
         return res;
     }
-    for (i = 0; i < count; ++i) {
-        /* use srcfiles[i] */
-        dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+    res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
+    if (res != DW_DLV_OK) {
+        dwarf_srclines_dealloc_b(line_context);
+        return res;
     }
+
+    for (i = 0; i < count; ++i) {
+        Dwarf_Signed propernumber = 0;
+        
+        /*  Use srcfiles[i] If you  wish to print 'i'
+            mostusefully
+            you should reflect the numbering that 
+            a DW_AT_decl_file attribute would report in
+            this CU. */
+        if (lineversion ==  5) {
+            propernumber = i;
+        } else {
+            propernumber = i+1;
+        }
+        printf("File %4ld %s\n",(unsigned long)propernumber,srcfiles[i]);
+        dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+        srcfiles[i] = 0;
+    }
+    /*  We could leave all dealloc to dwarf_finish() to
+        handle, but this tidies up sooner. */
     dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+    dwarf_srclines_dealloc_b(line_context);
     return DW_DLV_OK;
 }
 /*! @endcode */
@@ -1765,6 +1971,7 @@ void           add_offset_to_list(Dwarf_Unsigned offset);
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
+    Dwarf_Unsigned  k = 0;
     Dwarf_Unsigned version = 0;
     Dwarf_Macro_Context macro_context = 0;
     Dwarf_Unsigned macro_unit_offset = 0;

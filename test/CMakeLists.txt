@@ -5,6 +5,7 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h)
     add_executable(selfteststring ${TESTSTRING})
+    target_compile_definitions(selfteststring PRIVATE ${DW_LIBDWARF_STATIC})
     target_compile_options(selfteststring PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")
     target_compile_options(selfteststring PRIVATE ${DW_FWALL})
@@ -17,6 +18,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h)
     add_executable(selftestextrastring ${TESTEXTRASTRING})
+    target_compile_definitions(selftestextrastring PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selftestextrastring PRIVATE 
          "-DTESTING -DLIBDWARF_BUILD" )
     target_compile_options(selftestextrastring PRIVATE
@@ -37,6 +40,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.c
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_error.h)
     add_executable(selftest_linkedtopath ${TESTEXTRASTRING})
+    target_compile_definitions(selftest_linkedtopath PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selftest_linkedtopath PRIVATE 
         "-DTESTING -DLIBDWARF_BUILD" )
     target_compile_options(selftest_linkedtopath PRIVATE
@@ -52,6 +57,8 @@ if (DO_TESTING)
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.h
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.c)
     add_executable(selfgetopttest ${GETOPTEST_SOURCES})
+    target_compile_definitions(selfgetopttest PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfgetopttest PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
@@ -67,6 +74,8 @@ if (DO_TESTING)
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_makename.c
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmakename ${MAKENAME_SOURCES})
+    target_compile_definitions(selfmakename PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfmakename PRIVATE ${DW_FWALL})
     target_compile_options(selfmakename PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump"
@@ -82,6 +91,8 @@ if (DO_TESTING)
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_helpertree.c
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfhelpertree ${HELPERTREE_SOURCES})
+    target_compile_definitions(selfhelpertree PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfhelpertree PRIVATE ${DW_FWALL})
     target_compile_options(selfhelpertree PRIVATE
         "-I${PROJECT_SOURCE_DIR}/dwarfdump")
@@ -96,6 +107,8 @@ if (DO_TESTING)
       ${PROJECT_SOURCE_DIR}/test/test_ignoresec.c
       ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_secname_ck.c)
     add_executable(selfignoresec ${IGNORESEC_SOURCES})
+    target_compile_definitions(selfignoresec PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfignoresec PRIVATE ${DW_FWALL})
     target_compile_options(selfignoresec PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")
@@ -108,6 +121,8 @@ if (DO_TESTING)
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
       ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmacrocheck ${SELFMC_SOURCES} )
+    target_compile_definitions(selfmacrocheck PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfmacrocheck PRIVATE "-DTESTING" )
     target_compile_options(selfmacrocheck PRIVATE ${DW_FWALL})
     target_compile_options(selfmacrocheck PRIVATE
@@ -125,6 +140,8 @@ if (DO_TESTING)
        ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
        ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selftestesb ${TESTESB_SOURCES})
+    target_compile_definitions(selftestesb PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selftestesb PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")
     target_compile_options(selftestesb PRIVATE
@@ -142,6 +159,8 @@ if (DO_TESTING)
        ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_utf8.c
     )
     add_executable(selftestsanitized ${TESTESB_SOURCES})
+    target_compile_definitions(selftestsanitized PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selftestsanitized PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf")
     target_compile_options(selftestsanitized PRIVATE
@@ -158,6 +177,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/test/test_dwarf_leb.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_leb.c )
     add_executable(selfleb ${TESTLEB})
+    target_compile_definitions(selfleb PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfleb PRIVATE 
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf" "-DLIBDWARF_BUILD")
     target_compile_options(selfleb PRIVATE ${DW_FWALL})
@@ -170,6 +191,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_tied.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_tsearchhash.c )
     add_executable(selftied ${TESTTIED})
+    target_compile_definitions(selftied PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selftied PRIVATE 
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
         "-DTESTING" "-DLIBDWARF_BUILD")
@@ -181,6 +204,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/test/test_getname.c
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_names.c)
     add_executable(selftestnames ${TESTNAMES})
+    target_compile_definitions(selftestnames PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selftestnames PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf" "-DLIBDWARF_BUILD")
     target_compile_options(selftestnames PRIVATE ${DW_FWALL})
@@ -196,6 +221,8 @@ if (DO_TESTING)
     set_source_group(OBJINT64TEST "Source Files"
         ${PROJECT_SOURCE_DIR}/test/test_int64_test.c )
     add_executable(selfintobj64test ${OBJINT64TEST})
+    target_compile_definitions(selfintobj64test PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfintobj64test PRIVATE
         "-I${PROJECT_SOURCEDIR}/src/lib/libdwarf" )
     target_compile_options(selfintobj64test PRIVATE ${DW_FWALL})
@@ -208,6 +235,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/test/test_errmsglist.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)
     add_executable(selferrmsglist ${OBJERRMSGLIST})
+    target_compile_definitions(selferrmsglist PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selferrmsglist PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf" )
     target_compile_options(selferrmsglist PRIVATE ${DW_FWALL})
@@ -222,6 +251,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_canonical_append.c
         ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c)
     add_executable(selfcanonical ${CANONICALLIST})
+    target_compile_definitions(selfcanonical PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfcanonical PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
@@ -236,6 +267,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_setup_sections.c
         )
     add_executable(selfsetupsections ${SETUPSECLIST})
+    target_compile_definitions(selfsetupsections PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfsetupsections PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
         "-DLIBDWARF_BUILD")
@@ -248,6 +281,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/test/test_safe_strcpy.c 
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)
     add_executable(selfteststrcpy ${SAFESTRCPYLIST})
+    target_compile_definitions(selfteststrcpy PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfteststrcpy PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf" )
@@ -260,6 +295,8 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/test/test_regex.c 
         ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dd_regex.c)
     add_executable(selfregex ${REGEXLIST})
+    target_compile_definitions(selfregex PRIVATE 
+        ${DW_LIBDWARF_STATIC})
     target_compile_options(selfregex PRIVATE
         "-I$(PROJECT_BINARY_DIR)"
         "-I${PROJECT_SOURCE_DIR}/src/bin/dwarfdump"

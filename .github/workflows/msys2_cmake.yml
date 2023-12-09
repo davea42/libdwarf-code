@@ -1,0 +1,32 @@
+
+name: msys2cmake
+
+on: 
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+ msys2_cmake:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      PYTHONIOENCODING: "utf-8"
+    steps:
+    - uses: actions/checkout@master
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen  mingw-w64-x86_64-ninja
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE ../CMakeLists.txt
+        ninja
+        ninja install
+        ninja test
+
+

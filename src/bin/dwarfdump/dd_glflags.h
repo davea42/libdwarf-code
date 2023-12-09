@@ -260,6 +260,7 @@ struct glflags_s {
     Dwarf_Bool gf_show_global_offsets;
     Dwarf_Bool gf_display_offsets;
     Dwarf_Bool gf_print_str_offsets;
+    Dwarf_Bool gf_machine_arch_flag;
     Dwarf_Bool gf_expr_ops_joined;
     Dwarf_Bool gf_print_raw_rnglists;
     Dwarf_Bool gf_print_raw_loclists;

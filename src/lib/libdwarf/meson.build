@@ -64,15 +64,90 @@ libdwarf_src = [
 zlib_deps = dependency('zlib', method: 'pkg-config', required: false)
 libzstd_deps = dependency('libzstd', method: 'pkg-config', required: false)
 
-if zlib_deps.found() == true
-  # set10 means set to 1 or 0. Ref man, see cfg_data.set10
-  # A variation on set().
-  config_h.set10('HAVE_ZLIB', true)
-  config_h.set10('HAVE_ZLIB_H', true)
+if zlib_deps.found()
+    message(['mesondebug found base zlib',zlib_deps.found()])
 endif
-if libzstd_deps.found() == true
-  config_h.set10('HAVE_ZSTD', true)
-  config_h.set10('HAVE_ZSTD_H', true)
+if libzstd_deps.found()
+    message(['mesondebug found base libzstd',libzstd_deps.found()])
+endif
+
+if zlib_deps.found()
+    message(['mesondebug found base zlib',zlib_deps.found()])
+else
+  if fs.is_dir('/opt/local/lib') and fs.is_file('/opt/local/include/zlib.h')
+    message(['mesondebug /opt/local/include/zlib.h exists'])
+    zlib_deps = declare_dependency(link_args: [ '-L/opt/local/lib','-lz' ],
+      include_directories: ['/opt/local/include'])
+    message(['mesondebug zlib in /opt/local',zlib_deps.found()])
+  endif
+endif
+  
+if libzstd_deps.found()
+  message(['mesondebug found base libzstd',libzstd_deps.found()])
+else
+  if fs.is_dir('/opt/local/lib') and fs.is_file('/opt/local/include/zstd.h')
+    message(['mesondebug /opt/local/include/zstd.h exists'])
+    libzstd_deps = declare_dependency(link_args: ['-L/opt/local/lib','-lzstd' ],
+     include_directories: ['/opt/local/include'])
+    message(['mesondebug zstd in /opt/local', libzstd_deps.found()])
+  endif
+endif
+  
+if zlib_deps.found()
+  message(['Have zlib'])
+else
+  if fs.is_dir('/usr/local/lib') and fs.is_file('/usr/local/include/zlib.h')
+    message(['mesondebug /usr/local/include/zlib.h exists'])
+    zlib_deps = declare_dependency(link_args: [ '-L/usr/local/lib','-lz' ],
+      include_directories: ['/usr/local/include'])
+    message(['mesondebug zlib in /usr/local',zlib_deps.found()])
+  endif
+endif
+  
+if libzstd_deps.found()
+  message(['Have libzstd'])
+else
+  if fs.is_dir('/usr/local/lib') and fs.is_file('/usr/local/include/zstd.h')
+    message(['mesondebug /usr/local/include/zstd.h exists'])
+    libzstd_deps = declare_dependency(link_args: [ '-L/usr/local/lib',
+      '-lzstd' ],
+      include_directories: ['/usr/local/include'])
+    message(['mesondebug zstd in /usr/local',libzstd_deps.found()])
+  endif
+endif
+
+if zlib_deps.found() 
+  if libzstd_deps.found()
+    message('mesondebug Have zlib and libzstd')
+    config_h.set10('HAVE_ZSTD_H',true)
+    config_h.set10('HAVE_ZSTD',true)
+    config_h.set10('HAVE_ZLIB_H',true)
+    config_h.set10('HAVE_ZLIB',true)
+  else
+    config_h.set10('HAVE_ZLIB_H',false)
+    config_h.set10('HAVE_ZLIB',false)
+    zlib_deps = dependency('',required: false)
+    if zlib_deps.found()
+       error('mesondebug libdwarf error zlib')
+    endif
+    message('mesondebug no libzstd, set zlib_deps', zlib_deps.found())
+    message('mesondebug Since builds and tests both ')
+    message('mesondebug leaving zlib set will be ignored in build and test')
+  endif
+else
+  if libzstd_deps.found()
+    config_h.set10('HAVE_ZSTD_H',false)
+    config_h.set10('HAVE_ZSTD',false)
+    libszstd_deps = dependency('',required: false)
+    if libzstd_deps.found()
+       error('mesondebug libdwarf error libzstd')
+    endif
+    message('mesondebug no zlib, set libzstd_deps',libzstd_deps.found())
+    message('mesondebug Since builds and tests want both')
+    message('mesondebug leaving libzstd set will be ignored in build and test')
+  else
+    message('mesondebug found neither zlib nor libzstd')
+  endif
 endif
 
 if (lib_type == 'shared')

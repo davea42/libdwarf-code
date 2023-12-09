@@ -9,7 +9,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#include <fcntl.h> /* open() O_RDONLY */
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +17,10 @@ limitations under the License.
 #include <sys/types.h>
 #include <unistd.h>
 
+#ifndef O_BINARY
 #define O_BINARY 0 /* So it does nothing in Linux/Unix */
+#endif
+
 
 /*
  * Libdwarf library callers can only use these headers.

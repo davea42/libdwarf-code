@@ -241,10 +241,10 @@ pe_get_section_info (void *obj,
         sp = pep->pe_sectionptr + section_index;
         return_section->as_name = sp->dwarfsectname;
         return_section->as_type = 0;
-        return_section->as_flags = 0;
+        return_section->as_flags = sp->Characteristics;
         return_section->as_addr = pep->pe_OptionalHeader.ImageBase +
             sp->VirtualAddress;
-        return_section->as_offset = 0;
+        return_section->as_offset = sp->PointerToRawData;
         /*  SizeOfRawData can be rounded or truncated,
             use VirtualSize for the real analog of Elf
             section size. */
@@ -399,6 +399,9 @@ pe_load_section (void *obj, Dwarf_Unsigned section_index,
         if (sp->loaded_data) {
             *return_data = sp->loaded_data;
             return DW_DLV_OK;
+        }
+        if (sp->section_irrelevant_to_dwarf) {
+            return DW_DLV_NO_ENTRY;
         }
         if (!sp->VirtualSize) {
             return DW_DLV_NO_ENTRY;
@@ -577,10 +580,11 @@ _dwarf_pe_load_dwarf_section_headers(
             filesect.SizeOfRawData);
         irrelevant = is_irrelevant_section(sec_outp->dwarfsectname,
             sec_outp->VirtualSize);
+        sec_outp->section_irrelevant_to_dwarf = irrelevant;
         if (irrelevant) {
-            sec_outp->VirtualSize = 0;
-            sec_outp->SizeOfRawData = 0;
-        }else{
+            continue;
+        }
+        {
             /*  A Heuristic, allowing large virtual size
                 but not unlimited as we will malloc it
                 later, as Virtualsize. */
@@ -740,7 +744,8 @@ _dwarf_load_pe_sections(
         ifh.SizeOfOptionalHeader);
     ASNAR(word_swap,pep->pe_FileHeader.Characteristics,
         ifh.Characteristics);
-
+    pep->pe_machine = pep->pe_FileHeader.Machine;
+    pep->pe_flags = pep->pe_FileHeader.Characteristics;
     pep->pe_optional_header_offset = pep->pe_nt_header_offset+
         sizeof(ifh);
     if (pep->pe_offsetsize == 32) {
@@ -879,6 +884,8 @@ _dwarf_pe_setup(int fd,
         return res;
     }
     pep = binary_interface->ai_object;
+    (*dbg)->de_obj_flags = pep->pe_flags;
+    (*dbg)->de_obj_machine = pep->pe_machine;
     pep->pe_path = strdup(true_path);
     return res;
 }

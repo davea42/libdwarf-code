@@ -92,7 +92,7 @@ private:
 };
 class IRCUSrcfile {
 public:
-    IRCUSrcfile(std::string file): cusrcfile_(file) {};
+    IRCUSrcfile(std::string file): cusrcfile_(std::move(file)) {};
     ~IRCUSrcfile() {};
     std::string &getfilepath() {return cusrcfile_;};
 private:

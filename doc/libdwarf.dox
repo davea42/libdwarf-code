@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-09-20 v0.8.1
+    @date 2023-12-08 v0.9.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -389,7 +389,7 @@
     @link string Strings can be read independently @endlink
 
     @link str_offsets String Offsets can be read independently @endlink
-    @link debug_addr The addr table can be read independently @endlink
+    @link debugaddr The addr table can be read independently @endlink
 
     Those functions allow starting at byte 0 of the
     section and provide a length so you can calculate
@@ -902,7 +902,9 @@
 
     - If you are building an application 
     - And are linking your application against a static library libdwarf.a
-    - Then you rmust ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
+    - Then you must ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
+    - Then you must add -lz -lzstd to the link line of the build of your application.
+      
 
     When compiling to link against a shared library libdwarf.so
     or libdwarf.dll you must not define LIBDWARF_STATIC.
@@ -915,7 +917,7 @@
     - In the new window, double click on <b>C/C++</b>
     - On the right, click on <b>Preprocessor definitions</b>
     - There is a small down arrow on the right, click on it then click on <b>Modify</b>
-    - Add L<b>IBDWARF_STATIC</b> to the values
+    - Add <b>LIBDWARF_STATIC</b> to the values
     - Click on <b>OK</b> to close the windows
 
     @section dwsec_dbglink Suppressing CRC calculation for debuglink
@@ -967,9 +969,46 @@
 
     We list these with newest first.
 
-    <b>Changes 0.8.0 to 0.8.1</b>
+    <b>Changes 0.8.0 to 0.9.0</b>
 
-    Changes were required to support Mach-O universal binaries,
+    Version 0.9.0 released 8 December 2023
+
+    Adding functions (rarely needed) for callers
+    with special requirements.
+    Added dwarf_get_section_info_by_name_a() and
+    dwarf_get_section_info_by_index_a() which add
+    dw_section_flags pointer argument to return
+    the object section file flags (whose meaning
+    depends entirely on the object file format),
+    and dw_section_offset pointer argument to return
+    the object-relevant offset of the section
+    (here too the meaning depends on the object format). 
+    Also added  dwarf_machine_architecture() which returns
+    a few top level data items about the object
+    libdwarf has opened, including the 'machine' and 'flags'
+    from object headers (all supported object types).
+
+    This adds new library functions
+    dwarf_next_cu_header_e()
+    and dwarf_siblingof_c().
+    Used exactly as documented dwarf_next_cu_header_d()
+    and  dwarf_siblingof_b() work fine and continue to
+    be supported for the forseeable future. However
+    it would be easy to misuse as the requirement that
+    dwarf_siblingof_b() be called immediately after
+    a successfull call to dwarf_next_cu_header_d()
+    was never stated and that dependency was impossible
+    to enforce. The dependency was an API mistake
+    made in 1992.
+
+    So dwarf_next_cu_header_e() now returns the
+    compilation-unit DIE as well as header
+    data and dwarf_siblingof_c() is not needed
+    except to traverse sibling DIEs.
+    (the compilation-unit DIE by definition has no siblings).
+
+    Changes were required to support Mach-O (Apple)
+    universal binaries,
     which were not readable by earlier versions of the library.
 
     We have new library functions 
@@ -987,12 +1026,21 @@
     being used.
     
     These new calls do not replace anything so existing
-    code should work fine.  Applying the previously
+    code will work fine.  
+
+    Applying the previously
     existing calls dwarf_init_path() dwarf_init_path_dl()
     to a Mach-O universal binary works, but the library
     will return data on the first (index zero)
     as a default since there is no dw_universalnumber
     argument possible.
+
+    For improved performance in reading Fde data
+    when iterating though all usable pc values
+    we add dwarf_get_fde_info_for_all_regs3_b(), which
+    returns the next pc value with actual frame data.
+    We retain dwarf_get_fde_info_for_all_regs3() so
+    existing code need not change.
 
     <b>Changes 0.7.0 to 0.8.0</b>
 
@@ -1178,7 +1226,7 @@
     No API changes. No API additions.  Corrected
     a bug in dwarf_tsearchhash.c where a delete
     request was accidentally assumed in all hash tree
-    searches.  It was inivsible to libdwarf uses.
+    searches.  It was invisible to libdwarf uses.
     Vulnerabilities DW202207-001 and DW202208-001
     were fixed so error conditions when reading
     fuzzed object files can no longer crash libdwarf

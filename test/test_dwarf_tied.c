@@ -82,6 +82,7 @@ int
 _dwarf_next_cu_header_internal(
     Dwarf_Debug dbg,
     Dwarf_Bool is_info,
+    Dwarf_Die  *cu_die_output,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
     Dwarf_Unsigned * abbrev_offset,
@@ -97,6 +98,7 @@ _dwarf_next_cu_header_internal(
 {
     (void)dbg;
     (void)is_info;
+    (void)cu_die_output;
     (void)cu_header_length;
     (void)version_stamp;
     (void)abbrev_offset;

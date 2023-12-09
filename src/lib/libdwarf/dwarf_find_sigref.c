@@ -146,7 +146,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
 #endif /*0*/
             lres = _dwarf_create_a_new_cu_context_record_on_list(
                 dbg, dis,is_info,section_size,new_cu_offset,
-                &cu_context,error);
+                &cu_context,NULL,error);
             if (lres == DW_DLV_ERROR) {
                 return lres;
             }
@@ -183,6 +183,7 @@ dwarf_find_die_given_sig8(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     int res = 0;
+    CHECK_DBG(dbg,error,"dwarf_find_die_given_sig8()");
     res = _dwarf_internal_find_die_given_sig8(
         dbg,0,ref,die_out,is_info,error);
     return res;

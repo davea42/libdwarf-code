@@ -291,6 +291,7 @@ buildingdummy.sh \
 CMakeLists.txt \
 debuglink2.base \
 debuglink.base \
+canonicalpath.py \
 test_debuglink-a.sh \
 test_debuglink-b.sh \
 dummyexecutable \

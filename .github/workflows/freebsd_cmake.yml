@@ -8,19 +8,22 @@ permissions: read-all
 jobs:
   freebsd_cmake:
     runs-on: macos-12
-    name: FreeBSD
     steps:
-    - uses: actions/checkout@v2
-    - name: FreeBSD VM
-      uses: vmactions/freebsd-vm@v0
-      with:
-        usesh: true
-        sync:  rsync
-        copyback: false
-        prepare: pkg install -y python3 bash cmake ninja pkgconf gmake binutils lzlib
-        run: |
-          mkdir builddir && cd builddir
-          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-          ninja
-          ninja test
+      - uses: actions/checkout@v3
+      - name: FreeBSD-with-cmake
+        uses: cross-platform-actions/action@v0.20.0
+        with:
+          operating_system: freebsd
+          sync_files: runner-to-vm
+          version:  '13.2'
+          run: |
+            uname -a
+            freebsd-version
+            echo $SHELL
+            sudo pkg install -y python3 bash cmake ninja pkgconf
+            sudo pkg install -y gmake binutils lzlib zstd
+            mkdir builddir && cd builddir
+            cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+            ninja
+            ninja test
 

@@ -64,8 +64,43 @@ b=$top_srcdir/test/jitreader.base
 localsrc=$top_srcdir/test
 testbin=$top_blddir/test
 tx=$testbin/junk.jitreader.new
-jr=$top_blddir/src/bin/dwarfexample/jitreader
-
+if [ -f $top_blddir/src/bin/dwarfexample/.libs/jitreader.exe ]
+then
+  bldx=$top_blddir/src
+  jr=$bldx/bin/dwarfexample/.libs/jitreader.exe
+  #echo "dadebug jitreader name ok?"
+  #ldd $dd
+  #echo "dadebug dll already in dir?"
+  ls $bldx/bin/dwarfexample/.libs/libdwarf-*.dll
+  # we expect the above ls to usually fail.
+  if [ ! -f $bldx/bin/dwarfexample/.libs/libdwarf-*.dll ]
+  then
+    cp $bldx/lib/libdwarf/.libs/libdwarf-*.dll \
+     $bldx/bin/dwarfexample/.libs/
+    #echo "dadebug dll now in dir?"
+    #ls $bldx/bin/dwarfexample/.libs/libdwarf*
+  fi
+  bldx=
+elif [ -f $top_blddir/src/bin/dwarfexample/jitreader.exe ]
+then
+  bldx=$top_blddir/src
+  jr=$bldx/bin/dwarfexample/jitreader.exe
+  #echo "dadebug jitreader name ok?"
+  #ldd $dd
+  #echo "dadebug dll already in dir?"
+  ls $bldx/bin/dwarfexample/libdwarf-*.dll
+  # we expect the above ls to usually fail.
+  if [ ! -f $bldx/bin/dwarfexample/libdwarf-*.dll ]
+  then
+    cp $bldx/lib/libdwarf/libdwarf-*.dll \
+     $bldx/bin/dwarfexample/
+    #echo "dadebug dll now in dir?"
+    #ls $bldx/bin/dwarfexample/libdwarf*
+  fi
+  bldx=
+else
+  jr=$top_blddir/src/bin/dwarfexample/jitreader
+fi
 rm -f $tx
 echo "Running: $jr with env var DWTOPSRCDIR: $DWTOPSRCDIR"
 $jr

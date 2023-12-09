@@ -153,6 +153,13 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         (ptr) += lu_leblen;                           \
     } while (0)
 
+/*  This is for use where the action taken must be local.
+    One cannot do a return.  Reasons vary.
+    Use this in an if or assign the result to a
+    local small integer (normally an int). */
+#define IS_INVALID_DBG(d) \
+    ((!(d) || ((d)->de_magic != DBG_IS_VALID))?TRUE:FALSE)
+
 /*  Any error  found here represents a bug that cannot
     be dealloc-d as the caller will not know there was no dbg */
 #define CHECK_DIE(die, error_ret_value)       \
@@ -172,6 +179,21 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL, \
                 "DW_DLE_DBG_NULL: "                           \
                 "accesing a cu context, Dwarf_Debug "         \
+                "either null or it contains"                  \
+                "a stale Dwarf_Debug pointer");               \
+            return DW_DLV_ERROR;                              \
+        }                                                     \
+    } while (0)
+
+/*  Any error  found here represents a bug that cannot
+    be fixed. Pass cd_funcname as a quoted string,
+    for example "dwarf_crc32" */
+#define CHECK_DBG(cd_dbg,cd_er,cd_funcname)                        \
+    do {                                                      \
+        if (!(cd_dbg) || (cd_dbg)->de_magic != DBG_IS_VALID) {    \
+            _dwarf_error_string(NULL, (cd_er), DW_DLE_DBG_NULL, \
+                "DW_DLE_DBG_NULL: "                           \
+                "dbg argument to " cd_funcname                \
                 "either null or it contains"                  \
                 "a stale Dwarf_Debug pointer");               \
             return DW_DLV_ERROR;                              \

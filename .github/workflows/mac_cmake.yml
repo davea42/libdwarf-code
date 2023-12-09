@@ -1,0 +1,21 @@
+name: ci_mac_cmake
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  macos_cmake:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: brew
+      run: brew install cmake ninja
+    - name:  cmake
+      run:  |
+        mkdir builddir && cd builddir
+        cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        ninja
+        ninja test
+

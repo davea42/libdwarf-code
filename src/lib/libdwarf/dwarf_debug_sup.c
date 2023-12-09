@@ -56,7 +56,7 @@ static void
 get_sup_fields(Dwarf_Debug dbg,
     struct Dwarf_Section_s **sec_out)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return;
     }
     *sec_out = &dbg->de_debug_sup;
@@ -97,6 +97,7 @@ dwarf_get_debug_sup(Dwarf_Debug dbg,
     Dwarf_Small   *enddata = 0;
     Dwarf_Unsigned size = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_get_debug_sup()");
     res = load_sup(dbg,error);
     if (res != DW_DLV_OK) {
         return res;

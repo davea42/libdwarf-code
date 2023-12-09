@@ -27,7 +27,7 @@
 
 #include "dd_macrocheck.c"
 #include "dd_minimal.h"
-
+#include <stdlib.h> /* for exit() */
 void dd_minimal_count_global_error(void) {}
 
 int

@@ -36,27 +36,28 @@
 #undef DWP_API
 #endif /* DWP_API */
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-#ifdef LIBDWARFP_BUILD
-#define DWP_API __declspec(dllexport)
-#else
-#define DWP_API __declspec(dllimport)
-#endif /* LIBDWARF_BUILD */
-#elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
-#if defined(PIC) || defined(__PIC__)
-#define DWP_API __global
-#else
+#ifndef LIBDWARF_STATIC
+# if defined(_WIN32) || defined(__CYGWIN__)
+#  ifdef LIBDWARF_BUILD
+#   define DWP_API __declspec(dllexport)
+#  else /* !LIBDWARF_BUILD */
+#   define DWP_API __declspec(dllimport)
+#  endif /* LIBDWARF_BUILD */
+# elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
+#  if defined(PIC) || defined(__PIC__)
+#   define DWP_API __global
+#  endif /* __PIC__ */
+# elif (defined(__GNUC__) && __GNUC__ >= 4) || \
+    defined(__INTEL_COMPILER)
+#  if defined(PIC) || defined(__PIC__)
+#   define DWP_API __attribute__ ((visibility("default")))
+#  endif /* PIC */
+# endif /* WIN32 SUNPRO GNUC  */
+#endif /* !LIBDWARF_STATIC */
+
+#ifndef DWP_API
 #define DWP_API
-#endif /* PIC */
-#elif (defined(__GNUC__) && __GNUC__ >= 4) || defined(__INTEL_COMPILER)
-#if defined(PIC) || defined(__PIC__)
-#define DWP_API __attribute__ ((visibility("default")))
-#else
-#define DWP_API
-#endif /* PIC */
-#else
-#define DWP_API
-#endif /* _WIN32 || __CYGWIN__ */
+#endif
 
 #ifdef __cplusplus
 extern "C" {

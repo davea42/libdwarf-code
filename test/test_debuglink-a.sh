@@ -47,6 +47,16 @@ then
 fi
 # bld loc to find dwdebuglink executable.
 bldloc=$top_blddir/src/bin/dwarfexample
+if [ -f $bldloc/.libs/dwdebuglink.exe ]
+then
+  bldx=$bldloc/
+  dwdl=$bldloc/.libs/debuglink.exe
+  cp $top_blddir/src/lib/libdwarf/.libs/msys-dwarf-*.dll \
+     $bldloc/.libs/
+  bldx=
+else
+  dwdl=$bldloc/dwdebuglink
+fi
 #localsrc is the source dir with baseline data
 localsrc=$top_srcdir/test
 
@@ -67,14 +77,15 @@ else
   o=junk.dlinka
   p="--add-debuglink-path=/exam/ple"
   p2="--add-debuglink-path=/tmp/phony"
-  echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
-  $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
+  echo "Run: $dwdl $p $p2 $testsrc/dummyexecutable "
+  $dwdl $p $p2 $testsrc/dummyexecutable > $testbin/$o
   r=$?
   chkres $r "test_debuglink-a.sh running dwdebuglink test1"
   # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  ${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}a
+  ${localsrc}/canonicalpath.py $testbin/$o $localsrc content > $testbin/${o}ac
+  ${localsrc}/canonicalpath.py $testbin/${o}ac $blddir content > $testbin/${o}a
   ${localsrc}/test_dwdiff.py $testsrc/debuglink.base $testbin/${o}a
   r=$?
   echo "To update test_debuglink-a.sh baseline:"

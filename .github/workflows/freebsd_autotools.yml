@@ -1,0 +1,30 @@
+name: freebsd_autotools
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  freebsd_autotools:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+      - name: FreeBSD-with-autotools
+        uses: cross-platform-actions/action@v0.20.0
+        with:
+          operating_system: freebsd
+          sync_files: runner-to-vm
+          version:  '13.2'
+          run: |
+            uname -a
+            freebsd-version
+            echo $SHELL
+            sudo pkg install -y python3 bash automake libtool
+            sudo pkg install -y pkgconf gmake binutils lzlib 
+            autoreconf --warnings=all  -vif
+            ./configure
+            make
+            make check
+
+

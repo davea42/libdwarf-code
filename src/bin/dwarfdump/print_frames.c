@@ -607,9 +607,13 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
         /* try next sibling */
         prev_child = curdie;
         esb_empty_string(&nestname);
+#ifdef ORIGINAL_HEADER_API
         chres = dwarf_siblingof_b(dbg, curdie,
             dwarf_get_die_infotypes_flag(curdie),
             &newsibling, err);
+#else
+        chres = dwarf_siblingof_c(curdie,&newsibling,err);
+#endif /* ORIGINAL_HEADER_API */
         if (chres == DW_DLV_ERROR) {
             struct esb_s m;
 
@@ -636,6 +640,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                 /*  If we got this die from the parent, we do not want
                     to dealloc here! */
                 dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
+                prev_child = 0;
             }
             /* Not there at this level */
             esb_destructor(&nestname);
@@ -647,8 +652,10 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             /*  If we got this die from the parent, we do not want
                 to dealloc here! */
             dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
+            /*  Clearing prev_child here gets coverity 330895
+                unused value warning.
+                prev_child = 0; */
         }
-        prev_child = 0;
         die_locally_gotten = 1;
     }
     if (die_locally_gotten) {
@@ -707,8 +714,9 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     }
     if (*cu_die_for_print_frames == NULL) {
         /* Call depends on dbg->cu_context to know what to do. */
-        cures = dwarf_next_cu_header_d(dbg,
+        cures = dwarf_next_cu_header_e(dbg,
             is_info,
+            cu_die_for_print_frames,
             &cu_header_length,
             &version_stamp, &abbrev_offset,
             &address_size,
@@ -736,6 +744,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             /* loop thru the list again */
             *cu_die_for_print_frames = 0;
         } else {                /* DW_DLV_OK */
+#ifdef ORIGINAL_HEADER_API
             dres = dwarf_siblingof_b(dbg, NULL,
                 is_info,
                 cu_die_for_print_frames,
@@ -759,6 +768,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 /*  No initial die? Something is wrong! */
                 return dres;
             }
+#endif /* ORIGINAL_HEADER_API */
         }
     }
     if (dres == DW_DLV_OK) {
@@ -803,6 +813,8 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         Dwarf_Die ldie = 0;
 
         type_signature = zero_type_signature;
+#ifdef ORIGINAL_HEADER_API
+
         cures = dwarf_next_cu_header_d(dbg,
             is_info, &cu_header_length,
             &version_stamp, &abbrev_offset,
@@ -812,6 +824,17 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &next_cu_offset,
             &header_cu_type,
             err);
+#else
+        cures = dwarf_next_cu_header_e(dbg,
+            is_info, &ldie, &cu_header_length,
+            &version_stamp, &abbrev_offset,
+            &address_size,
+            &length_size,&extension_size,
+            &type_signature,&typeoffset,
+            &next_cu_offset,
+            &header_cu_type,
+            err);
+#endif
         if (cures != DW_DLV_OK) {
             if (cures == DW_DLV_ERROR) {
                 printf("\nERROR: Error getting "
@@ -828,11 +851,16 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             break;
         }
 
+#ifdef ORIGINAL_HEADER_API
         dres = dwarf_siblingof_b(dbg,NULL,is_info, &ldie, err);
+#else
+        dres = DW_DLV_OK;
+#endif
         if (*cu_die_for_print_frames) {
             dwarf_dealloc(dbg, *cu_die_for_print_frames,DW_DLA_DIE);
             *cu_die_for_print_frames = 0;
         }
+#ifdef ORIGINAL_HEADER_API
         if (dres == DW_DLV_ERROR) {
             DROP_ERROR_INSTANCE(dbg,dres,*err);
             glflags.gf_all_cus_seen_search_by_address = 1;
@@ -840,6 +868,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         } else if (dres == DW_DLV_NO_ENTRY) {
             return dres;
         }
+#endif /* ORIGINAL_HEADER_API */
         /*  DW_DLV_OK
             In normal processing (ie, when doing print_info()
             we would call print_attribute for each die

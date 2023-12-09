@@ -9,7 +9,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +23,9 @@ limitations under the License.
  */
 #include "dwarf.h"
 #include "libdwarf.h"
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 /*
  * Fuzzer function targeting a case of dwarf_gnu_debuglink
@@ -44,7 +47,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Error *errp = NULL;
   Dwarf_Debug dbg = 0;
 
-  fuzz_fd = open(filename, O_RDONLY);
+  fuzz_fd = open(filename, O_RDONLY |O_BINARY);
   if (fuzz_fd != -1) {
     dwarf_init_b(fuzz_fd, DW_GROUPNUMBER_ANY, errhand, errarg, &dbg, errp);
 
@@ -71,6 +74,18 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
                               &debuglink_fullpath_strlen, &buildid_type,
                               &buildidowner_name, &buildid_itself,
                               &buildid_length, &paths, &paths_count, errp);
+    /*  Calling dwarf_gnu_debuglink and passing in
+        &paths here means the caller
+        is obligated to free the array/block of strings
+        returned. dwarf_finish() will NOT
+        free these strings. See the libdwarf documentation.  */
+    free(paths);
+    /*  Calling dwarf_gnu_debuglink and passing in
+        &debuglink_fullpath  means the caller
+        is obligated to free the array/block of strings
+        returned. dwarf_finish() will NOT
+        free these strings. See the libdwarf documentation.  */
+    free(debuglink_fullpath);
 
     dwarf_finish(dbg);
     close(fuzz_fd);

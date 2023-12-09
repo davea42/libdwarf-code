@@ -3,6 +3,241 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 64496</fuzzer>
+
+<datereported>2023-02-28</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Null dereference from dwarf_gnu_debuglink()
+</vulnerability>
+
+<description> If the Dwarf_Debug was opened  with
+  dwarf_init_object_b() there is no pathname known to libdwarf
+  and the library was dereferencing a null pointer as a result.
+  With the library bug fixed
+  the fuzz/fuzz_debuglink.c test case was violating the
+  rules of use of the function resulting in memory
+  leakage. The documentation has been improved on this
+  function.
+</description>
+
+<datefixed>2023-11-25</datefixed>
+
+<references> regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
+</references>
+
+<gitfixid>d76cce559b898f7059ce5ffd82f3cfd58cb392fe</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 56452</fuzzer>
+
+<datereported>2023-11-24</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Null dereference
+</vulnerability>
+
+<description> Passing a null Dwarf_Debug to
+  dwarf_add_debuglink_global_path() lead to  library crash.
+  The code was not checking for a valid Dwarf_Debug Argument.
+  The bug was present when the function was created in 2021
+  Moreover, oss fuzz originally noted the bug
+  on 02 March 2023 but
+  I can find no trace of a notification of the bug arriving
+  before 24 November 2023.
+  Fixing this sort of thing for all functions, here is
+  the last commit id...
+  ef77596af000719c04bd3e40b97139247ff3efb4
+</description>
+
+<datefixed>2023-11-25</datefixed>
+
+<references> regressiontests/ossfuzz56452/fuzz_debuglink-cs4231a-5927365017731072
+</references>
+
+<gitfixid>1f6988307748f427566e3266695bb72d5384bf3d</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 63024</fuzzer>
+
+<datereported>2023-10-06</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap buffer overflow
+</vulnerability>
+
+<description> A copy-paste error lead to
+  a heap buffer overflow. Named the wrong struct
+  in calling calloc().
+  The function with the bug was added seven days ago.
+</description>
+
+<datefixed>2023-10-07</datefixed>
+
+<references> regressiontests/ossfuzz63024/fuzz_init_path-5486726493372416
+</references>
+
+<gitfixid>3a658bd1dd7437948cecbf82bb9b24f5f6122a7d</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 62943</fuzzer>
+
+<datereported>2023-10-02</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap buffer overflow
+</vulnerability>
+
+<description> The heap buffer overflow was due
+  to a failure to do initial sanity checks on a
+  universal object. The object involved was
+  not large enough to have a complete universal
+  header.
+  This bug was in the public repository
+  for three days (in all-new code, for Apple
+  Universal Binary objects).
+</description>
+
+<datefixed>2023-10-03</datefixed>
+
+<references> regressiontests/ossfuzz62943/fuzz_init_path-5486726493372416
+</references>
+
+<gitfixid>aea77dad8745d9aad5275c3226e4e3156effa71f</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 62842</fuzzer>
+
+<datereported>2023-09-30</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Heap buffer overflow
+</vulnerability>
+
+<description> The heap buffer overflow in
+  _dwarf_memcpy_swap_bytes was due a failure to check
+  for a valid size field (a fuzzed value) in a count
+  of array elements..
+  Now we check for a sensible count.
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
+</description>
+
+<datefixed>2023-10-01</datefixed>
+
+<references> regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
+</references>
+
+<gitfixid>f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 62834</fuzzer>
+
+<datereported>2023-09-30</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Memory leak in _dwarf_macho_setup()
+</vulnerability>
+
+<description> The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
+</description>
+
+<datefixed>2023-10-01</datefixed>
+
+<references> regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
+</references>
+
+<gitfixid>f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>ossfuzz id: 62833</fuzzer>
+
+<datereported>2023-09-30</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Memory leak in _dwarf_macho_setup()
+</vulnerability>
+
+<description> The September 29 addition of Mach-O
+  universal binary support
+  resulted in memory leaks due to revising memory alloc/free
+  incompletely when fuzzed object files were encountered..
+  This bug was in the public repository
+  for two days (in all-new code, for Apple
+  Universal Binary objects).
+</description>
+
+<datefixed>2023-10-01</datefixed>
+
+<references> regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
+</references>
+
+<gitfixid>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 62547</fuzzer>
 
 <datereported>2023-09-22</datereported>

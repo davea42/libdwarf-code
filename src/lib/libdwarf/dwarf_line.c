@@ -1084,6 +1084,7 @@ dwarf_get_ranges_section_name(Dwarf_Debug dbg,
     if (error != NULL) {
         *error = NULL;
     }
+    CHECK_DBG(dbg,error,"dwarf_get_ranges_section_name()");
     sec = &dbg->de_debug_ranges;
     if (sec->dss_size == 0) {
         /* We don't have such a  section at all. */
@@ -1099,6 +1100,8 @@ dwarf_get_aranges_section_name(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     struct Dwarf_Section_s *sec = 0;
+
+    CHECK_DBG(dbg,error,"dwarf_get_aranges_section_name()");
     if (error != NULL) {
         *error = NULL;
     }
@@ -1116,6 +1119,8 @@ dwarf_get_line_section_name(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     struct Dwarf_Section_s *sec = 0;
+
+    CHECK_DBG(dbg,error,"dwarf_get_line_section_name)");
     if (error != NULL) {
         *error = NULL;
     }
@@ -1160,11 +1165,11 @@ dwarf_get_string_section_name(Dwarf_Debug dbg,
 {
     struct Dwarf_Section_s *sec = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_get_string_section_name()");
     /*  ***** BEGIN CODE ***** */
     if (error != NULL) {
         *error = NULL;
     }
-
     sec = &dbg->de_debug_str;
     if (sec->dss_size == 0) {
         /* We don't have such a  section at all. */
@@ -2540,9 +2545,10 @@ _dwarf_update_chain_list( Dwarf_Chain chain_line,
 }
 
 void
-_dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count)
+_dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,
+    Dwarf_Unsigned count)
 {
-    int i = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_Chain curr_chain = head;
     for (i = 0; i < count; i++) {
         Dwarf_Chain t = curr_chain;

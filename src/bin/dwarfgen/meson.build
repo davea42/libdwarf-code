@@ -17,6 +17,7 @@ libdwarfp_dir = include_directories('../../lib/libdwarfp')
 
 executable('dwarfgen', dwarfgen_src,
   cpp_args : [ dev_cppflags, libdwarf_args,dg_args ],
+  link_args :  dwarf_link_args,
   dependencies : [ libdwarf, libdwarfp ],
   include_directories : [ config_dir, libdwarfp_dir ],
   install : true

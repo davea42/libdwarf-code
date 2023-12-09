@@ -85,6 +85,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
+#include "dwarf_util.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -124,7 +125,7 @@ set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
     return res;
 }
 
-/* New in December 2018. */
+/* New in September 2023. */
 int dwarf_init_path_a(const char *path,
     char            * true_path_out_buffer,
     unsigned          true_path_bufferlen,
@@ -223,6 +224,27 @@ dwarf_init_path_dl(const char *path,
         dl_path_count,path_source,error);
     return res;
 }
+
+#if 0
+/*  for debugging */
+static void
+dump_header_fields(const char *w,Dwarf_Debug dbg)
+{
+    printf("dadebug dumping certain fields of %s\n",w);
+    printf("ftype         : %d\n",dbg->de_ftype);
+    printf("machine       : %llu\n",dbg->de_obj_machine);
+    printf("flags         : 0x%llx\n",dbg->de_obj_flags);
+    printf("pointer size  : %u\n",dbg->de_pointer_size);
+    printf("big_endian?   : %u\n",dbg->de_big_endian_object);
+    printf("ubcount       : %u\n",dbg->de_universalbinary_count);
+    printf("ubindex       : %u\n",dbg->de_universalbinary_index);
+    printf("ub offset     : %llu\n",dbg->de_obj_ub_offset);
+    printf("path source   : %u\n",dbg->de_path_source);
+    printf("comdat group# : %u\n",dbg->de_groupnumber);
+    exit(0);
+}
+#endif
+
 int
 dwarf_init_path_dl_a(const char *path,
     char            * true_path_out_buffer,
@@ -343,6 +365,7 @@ dwarf_init_path_dl_a(const char *path,
         }
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
+        dbg->de_ftype =  ftype;
         *ret_dbg = dbg;
         return res;
     }
@@ -359,6 +382,7 @@ dwarf_init_path_dl_a(const char *path,
         }
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
+        dbg->de_ftype =  ftype;
         *ret_dbg = dbg;
         return res;
     }
@@ -373,6 +397,7 @@ dwarf_init_path_dl_a(const char *path,
         }
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
+        dbg->de_ftype =  ftype;
         *ret_dbg = dbg;
         return res;
     }
@@ -479,7 +504,7 @@ dwarf_init_b(int fd,
 int
 dwarf_finish(Dwarf_Debug dbg)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         _dwarf_free_static_errlist();
         return DW_DLV_OK;
     }
@@ -536,9 +561,8 @@ dwarf_set_tied_dbg(Dwarf_Debug dbg,
     Dwarf_Debug tieddbg,
     Dwarf_Error*error)
 {
-    if (!dbg) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
-    }
+    CHECK_DBG(dbg,error,"dwarf_set_tied_dbg()");
+
     dbg->de_tied_data.td_tied_object = tieddbg;
     if (tieddbg) {
         tieddbg->de_tied_data.td_is_tied_object = TRUE;
@@ -551,7 +575,7 @@ int
 dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
     Dwarf_Error*error)
 {
-    (void)error;
+    CHECK_DBG(dbg,error,"dwarf_get_tied_dbg()");
     *tieddbg_out = dbg->de_tied_data.td_tied_object;
     return DW_DLV_OK;
 }

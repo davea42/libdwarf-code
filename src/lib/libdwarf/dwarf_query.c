@@ -58,10 +58,7 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
     Dwarf_Half  *    offset_size,
     Dwarf_Error *    error)
 {
-    if (dbg == 0) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_offset_size()");
     *offset_size = dbg->de_length_size;
     return DW_DLV_OK;
 }
@@ -96,10 +93,7 @@ dwarf_get_address_size(Dwarf_Debug dbg,
 {
     Dwarf_Half address_size = 0;
 
-    if (dbg == 0) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_get_address_size()");
     address_size = dbg->de_pointer_size;
     *ret_addr_size = address_size;
     return DW_DLV_OK;
@@ -250,9 +244,9 @@ dwarf_offset_list(Dwarf_Debug dbg,
     Dwarf_Chain_2 head_chain = 0;
     Dwarf_Chain_2 *plast = &head_chain;
 
+    CHECK_DBG(dbg,error,"dwarf_offset_list()");
     *offbuf = NULL;
     *offcnt = 0;
-
     res = dwarf_offdie_b(dbg,offset,is_info,&die,error);
     if (DW_DLV_OK != res) {
         return res;
@@ -298,7 +292,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
         }
         /* Move to next sibling next sibling */
         sib_die = 0;
-        res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,error);
+        res = dwarf_siblingof_c(cur_die,&sib_die,error);
         if (cur_die != die) {
             dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
         }
@@ -2107,16 +2101,16 @@ int dwarf_cu_header_basics(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_get_universalbinary_count(
     Dwarf_Debug dbg,
     Dwarf_Unsigned *current_index,
     Dwarf_Unsigned *available_count)
 {
-    if (!dbg) {
+    if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_NO_ENTRY;
     }
-    if (!dbg->de_universalbinary_count ) { 
+    if (!dbg->de_universalbinary_count ) {
         return DW_DLV_NO_ENTRY;
     }
     if (current_index) {
@@ -2128,3 +2122,52 @@ dwarf_get_universalbinary_count(
     return DW_DLV_OK;
 }
 
+/*  Never returns DW_DLV_ERROR */
+int
+dwarf_machine_architecture(Dwarf_Debug dbg,
+    Dwarf_Small    *dw_ftype,
+    Dwarf_Small    *dw_obj_pointersize,
+    Dwarf_Bool     *dw_obj_is_big_endian,
+    Dwarf_Unsigned *dw_obj_machine,
+    Dwarf_Unsigned *dw_obj_flags,
+    Dwarf_Small    *dw_path_source,
+    Dwarf_Unsigned *dw_ub_offset,
+    Dwarf_Unsigned *dw_ub_count,
+    Dwarf_Unsigned *dw_ub_index,
+    Dwarf_Unsigned *dw_comdat_groupnumber)
+{
+    if (IS_INVALID_DBG(dbg)) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (dw_ftype) {
+        *dw_ftype = dbg->de_ftype;
+    }
+    if (dw_obj_pointersize) {
+        *dw_obj_pointersize = dbg->de_pointer_size;
+    }
+    if (dw_obj_is_big_endian) {
+        *dw_obj_is_big_endian = dbg->de_big_endian_object;
+    }
+    if (dw_obj_machine) {
+        *dw_obj_machine = dbg->de_obj_machine;
+    }
+    if (dw_obj_flags) {
+        *dw_obj_flags = dbg->de_obj_flags;
+    }
+    if (dw_path_source) {
+        *dw_path_source = dbg->de_path_source;
+    }
+    if (dw_ub_offset) {
+        *dw_ub_offset = dbg->de_obj_ub_offset;
+    }
+    if (dw_ub_count) {
+        *dw_ub_count = dbg->de_universalbinary_count;
+    }
+    if (dw_ub_index) {
+        *dw_ub_index = dbg->de_universalbinary_index;
+    }
+    if (dw_comdat_groupnumber) {
+        *dw_comdat_groupnumber = dbg->de_groupnumber;
+    }
+    return DW_DLV_OK;
+}

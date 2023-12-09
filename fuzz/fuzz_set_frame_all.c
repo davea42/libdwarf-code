@@ -9,7 +9,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#include <fcntl.h>
+#include <fcntl.h> /* open() O_RDONLY O_BINARY */
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,7 +20,9 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
-#define O_BINARY 0
+#ifndef O_BINARY
+#define O_BINARY 0 /* So it does nothing in Linux/Unix */
+#endif
 #define DW_PR_DUx "llx"
 #define DW_PR_DSx "llx"
 #define DW_PR_DUu "llu"

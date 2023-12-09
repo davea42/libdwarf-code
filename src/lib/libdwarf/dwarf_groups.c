@@ -44,6 +44,7 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
+#include "dwarf_util.h"
 #include "dwarf_error.h"
 #include "dwarf_tsearch.h"
 
@@ -186,16 +187,18 @@ _dwarf_section_get_target_group_from_map(Dwarf_Debug dbg,
 /*  New May 2017.  So users can find out what groups (dwo or COMDAT)
     are in the object and how much to allocate so one can get the
     group-section map data. */
-int dwarf_sec_group_sizes(Dwarf_Debug dbg,
+int
+dwarf_sec_group_sizes(Dwarf_Debug dbg,
     Dwarf_Unsigned * section_count_out,
     Dwarf_Unsigned * group_count_out,
     Dwarf_Unsigned * selected_group_out,
     Dwarf_Unsigned * map_entry_count_out,
     Dwarf_Error    * error)
 {
-    struct Dwarf_Group_Data_s *grp = &dbg->de_groupnumbers;
+    struct Dwarf_Group_Data_s *grp = 0;
 
-    (void)error;
+    CHECK_DBG(dbg,error,"dwarf_sec_group_sizes()");
+    grp = &dbg->de_groupnumbers;
     *section_count_out   = grp->gd_number_of_sections;
     *group_count_out     = grp->gd_number_of_groups;
     *selected_group_out  = dbg->de_groupnumber;
@@ -258,7 +261,8 @@ map_sort_compar(const void*l, const void*r)
     values and this function fills in the array entries.
     Output ordered by group number and section number.
     */
-int dwarf_sec_group_map(Dwarf_Debug dbg,
+int
+dwarf_sec_group_map(Dwarf_Debug dbg,
     Dwarf_Unsigned   map_entry_count,
     Dwarf_Unsigned * group_numbers_array,
     Dwarf_Unsigned * sec_numbers_array,
@@ -268,6 +272,7 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
     struct Dwarf_Group_Data_s *grp = 0;
 
+    CHECK_DBG(dbg,error,"dwarf_sec_group_map()");
     if (temp_map_data) {
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;

@@ -1596,7 +1596,7 @@ int dwarf_get_macro_section_name(Dwarf_Debug dbg,
 {
     struct Dwarf_Section_s *sec = 0;
 
-    (void)error;
+    CHECK_DBG(dbg,error,"dwarf_get_macro_section_name()");
     sec = &dbg->de_debug_macro;
     if (sec->dss_size == 0) {
         /* We don't have such a  section at all. */

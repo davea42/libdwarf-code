@@ -1,11 +1,32 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.5)
 
 project(libdwarf C CXX)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include_directories( ${PROJECT_BINARY_DIR} )
+# libdwarf  
+option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+option(BUILD_SHARED 
+    "build shared library libdwarf[p].so and use it" FALSE)
+
+#  This adds compiler option -Wall (gcc compiler warnings)
+option(WALL "Add -Wall" FALSE)
+option(LIBDWARF_STATIC "add -DLIBDWARF_STATIC" FALSE)
+
+option(BUILD_DWARFDUMP "Build dwarfdump (default is YES)" TRUE)
+
+option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
+message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
+
+option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
+message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
+
+option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
+message(STATUS "Building api tests   ... ${DOTESTS}")
+### end what was configure.cmake
+
+option(PIC_ALWAYS "Build libdwarf with position-independent code for both static and shared (default is NO)" FALSE)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include_directories( ${PROJECT_BINARY_DIR} )
 
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
@@ -87,12 +108,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # would probably do this anyway).
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
-enable_testing()
-
-# always include project's folder to includes
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
-
 ### begin what was configure.cmake
 # cmake macros
 include(TestBigEndian)
@@ -101,7 +116,7 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 0.8.1)
+set(VERSION 0.9.0)
 set(PACKAGE_VERSION "\"${VERSION}\"") 
 set(PACKAGE_NAME "libdwarf" )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
@@ -116,12 +131,8 @@ endif()
 
 check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H) 
 check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H ) 
-check_include_file( "inttypes.h"      HAVE_INTTYPES_H   ) 
-check_include_file( "memory.h"        HAVE_MEMORY_H   ) 
-check_include_file( "strings.h"       HAVE_STRINGS_H  ) 
 check_include_file( "stdint.h"        HAVE_STDINT_H   )
 check_include_file( "unistd.h"        HAVE_UNISTD_H   )
-check_include_file( "sgidefs.h"       HAVE_SGIDEFS_H  )
 check_include_file( "stdafx.h"        HAVE_STDAFX_H   )
 check_include_file( "fcntl.h"         HAVE_FCNTL_H   ) 
 
@@ -159,7 +170,7 @@ if (HAVE_INTPTR_T)
   message(STATUS "HAVE_INTPTR_T 1: intptr_t defined in stdint.h... YES")
 else()
   message(STATUS "intptr_t defined in stdint.h... NO")
-  set(uintptr_t "long long int" )
+  set(intptr_t "long long int" )
   message(STATUS "Setting #define intptr_t " ${intptr_t})
 endif()
 if (intptr_t) 
@@ -168,121 +179,17 @@ else()
   message(STATUS "intptr_t value considered NO ")
 endif()
 
-
-check_c_source_compiles("
-  static unsigned foo( unsigned x, 
-      __attribute__ ((unused)) int y)
-  {  
-      unsigned x2 = x + 1;
-      return x2;
-  } 
-  
-  int main(void) {
-      unsigned y = 0;
-      y = foo(12,y);
-      return 0;
-  }"    HAVE_UNUSED_ATTRIBUTE)
-message(STATUS "Checking compiler supports __attribute__ unused... ${HAVE_UNUSED_ATTRIBUTE}")
-
-check_c_source_compiles([=[
-  #include "stdafx.h"
-  int main() 
-  { 
-      int p; p = 27;
-      return 0;
-  }]=] HAVE_STDAFX_H)
-#message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
-
-set(CMAKE_REQUIRED_LIBRARIES z)
-check_c_source_compiles( [=[
-  #include "zlib.h"
-  int main()
-  {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZLIB )
-check_c_source_compiles( [=[
-  #include "zlib.h"
-  int main()
-  {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZLIB_H )
-set(CMAKE_REQUIRED_LIBRARIES)
-if (HAVE_ZLIB) 
-  # For linking in libz
-  set(DW_FZLIB "z")
+# Zlib and ZSTD need to be found otherwise disable it
+find_package(ZLIB)
+find_package(ZSTD)
+if (ZLIB_FOUND AND ZSTD_FOUND ) 
+  set(HAVE_ZLIB TRUE)
+  set(HAVE_ZLIB_H TRUE)
+  set(HAVE_ZSTD TRUE)
+  set(HAVE_ZSTD_H TRUE)
 endif()
-
-set(CMAKE_REQUIRED_LIBRARIES zstd )
-check_c_source_compiles( [=[
-  #include "zstd.h"
-  int main()
-  {
-      char * dest[100];
-      size_t destlen = 100;
-      char *src = 0;
-      size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
-      if (res == destlen) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZSTD )
-check_c_source_compiles( [=[
-  #include "zstd.h"
-  int main()
-  {
-      char * dest[100];
-      size_t destlen = 100;
-      char *src = 0;
-      size_t srclen = 3;
-      size_t res = ZSTD_decompress(dest,destlen,src,srclen);
-      if (res == destlen) {
-           /* ALL IS WELL */
-      }
-      return 0;
-  } ]=]  HAVE_ZSTD_H )
-set(CMAKE_REQUIRED_LIBRARIES)
-if (HAVE_ZSTD)
-  # For linking in libzstd
-  set(DW_FZSTD "zstd")
-endif()
-
-
-
-check_c_source_compiles([=[
-#include <stdint.h>
-int main()
-{
-    intptr_t p; 
-    p = 27;
-    return 0;
-}]=] HAVE_INTPTR_T)
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
-
-# libdwarf  
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
-option(BUILD_SHARED 
-    "build shared library libdwarf[p].so and use it" FALSE)
-
-#  This adds compiler option -Wall (gcc compiler warnings)
-option(WALL "Add -Wall" FALSE)
 
 #  DW_FWALLXX are gnu C++ options.
 if (WALL)
@@ -293,52 +200,40 @@ else()
   unset(DW_FWALL )
   message(STATUS "Compiler warning options... NO")
 endif()
-
-option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
-message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
-
-option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
-message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
-
-option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
-message(STATUS "Building api tests   ... ${DOTESTS}")
-### end what was configure.cmake
+#if (LIBDWARF_STATIC)
+#  set(DW_LIBDWARF_STATIC -DLIBDWARF_STATIC)
+#else()
+#  unset(DW_LIBDWARF_STATIC)
+#endif()
 
 configure_file(cmake/config.h.cmake config.h)
 
 if(BUILD_NON_SHARED)
-    set(BUILD_SHARED_LIBS NO)
-	set(DWARF_TARGETS dwarf-static)
-	set(DWARF_TYPES STATIC)
-	set(dwarf-target dwarf-static)
-	set(DWARFP_TARGETS dwarfp-static)
-	set(DWARFP_TYPES STATIC)
-	set(dwarfp-target dwarfp-static)
+  set(DW_LIBDWARF_STATIC -DLIBDWARF_STATIC)
+  set(BUILD_SHARED_LIBS NO)
 else()
-    set(BUILD_SHARED_LIBS YES)
-	set(DWARF_TARGETS dwarf-shared)
-	set(DWARF_TYPES SHARED)
-	set(dwarf-target dwarf-shared)
-	set(DWARFP_TARGETS dwarfp-shared)
-	set(DWARFP_TYPES SHARED)
-	set(dwarfp-target dwarfp-shared)
+  unset(DW_LIBDWARF_STATIC)
+  set(BUILD_SHARED_LIBS YES)
 endif()
 
 add_subdirectory(src/lib/libdwarf)
-add_subdirectory(src/bin/dwarfdump)
+
+if ( BUILD_DWARFDUMP )
+  add_subdirectory(src/bin/dwarfdump)
+endif()
 
 if ( BUILD_DWARFEXAMPLE )
 	add_subdirectory(src/bin/dwarfexample)
 endif()
 
 if ( BUILD_DWARFGEN )
-     set(LIBDWARF_INCLUDE_DIR ../libdwarf)
-     add_subdirectory(src/lib/libdwarfp)
-     add_subdirectory(src/bin/dwarfgen)
+  add_subdirectory(src/lib/libdwarfp)
+  add_subdirectory(src/bin/dwarfgen)
 endif()
 
 if (DO_TESTING)
-add_subdirectory(test)
+  enable_testing()
+  add_subdirectory(test)
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )

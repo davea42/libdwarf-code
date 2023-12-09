@@ -175,10 +175,7 @@ int dwarf_discr_list(Dwarf_Debug dbg,
     Dwarf_Small * dscblockp = 0;
     Dwarf_Unsigned dscblocklen = 0;
 
-    if (!dbg){
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);          \
-        return DW_DLV_ERROR;
-    }
+    CHECK_DBG(dbg,error,"dwarf_discr_list()");
     if (blocklen == 0) {
         return DW_DLV_NO_ENTRY;
     }

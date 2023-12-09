@@ -22,6 +22,8 @@ the port program will be in your $PATH ).
     sudo port install meson
     sudo port select --set python3 python311
 
+port commands install in subdirectories of /opt/local.
+
 ## Basic validation 
 
 At this point normal configure/cmake/meson
@@ -29,10 +31,7 @@ builds should work and 'make check' works too.
 
 From the source directory one can run:
 
-    sh scripts/buildandreleasetest.sh
-
-if one wants a test using all the build
-mechanisms.
+    sh scripts/allsimplebuilds.sh
 
 The full libdwarf-regressiontests suite
 runs successfully. There is no
