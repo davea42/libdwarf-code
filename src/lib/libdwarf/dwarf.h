@@ -1003,6 +1003,9 @@ most-likely-useful name. */
 #define DW_IDX_GNU_internal         0x2000
 #define DW_IDX_lo_user              0x2000   /* DWARF5 */
 #define DW_IDX_GNU_external         0x2001
+#define DW_IDX_GNU_main             0x2002
+#define DW_IDX_GNU_language         0x2003
+#define DW_IDX_GNU_linkage_name     0x2004
 #define DW_IDX_hi_user              0x3fff   /* DWARF5 */
 
 /*  These with not-quite-the-same-names were used in DWARF4

@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 0.9.0 */
+/* Generated for source version 0.9.1 */
 
 /* BEGIN FILE */
 
@@ -2299,6 +2299,15 @@ dwarf_get_IDX_name (unsigned int val,
         0x2000. DW_IDX_lo_user */
     case DW_IDX_GNU_external:
         *s_out = "DW_IDX_GNU_external";
+        return DW_DLV_OK;
+    case DW_IDX_GNU_main:
+        *s_out = "DW_IDX_GNU_main";
+        return DW_DLV_OK;
+    case DW_IDX_GNU_language:
+        *s_out = "DW_IDX_GNU_language";
+        return DW_DLV_OK;
+    case DW_IDX_GNU_linkage_name:
+        *s_out = "DW_IDX_GNU_linkage_name";
         return DW_DLV_OK;
     case DW_IDX_hi_user:
         *s_out = "DW_IDX_hi_user";
