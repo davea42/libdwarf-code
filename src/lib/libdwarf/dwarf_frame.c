@@ -2161,9 +2161,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     cie_ptr = new_fde->fd_section_ptr + cie_id;
-    if ((Dwarf_Unsigned)cie_ptr  <
-        (Dwarf_Unsigned) new_fde->fd_section_ptr ||
-        (Dwarf_Unsigned)cie_ptr <  cie_id) {
+    if ((Dwarf_Unsigned)(uintptr_t)cie_ptr  <
+        (Dwarf_Unsigned)(uintptr_t)new_fde->fd_section_ptr ||
+        (Dwarf_Unsigned)(uintptr_t)cie_ptr <  cie_id) {
         dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
         new_fde = 0;
         _dwarf_error_string(dbg, error, DW_DLE_NO_CIE_FOR_FDE,

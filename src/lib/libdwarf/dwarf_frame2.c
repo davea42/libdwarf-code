@@ -323,7 +323,7 @@ get_cieptr_given_offset(Dwarf_Debug dbg,
             cie_id itself, to
             use vm ptr of the value,
             less the value, to get to the cie header.  */
-        if ((Dwarf_Unsigned)cie_id_addr <= cie_id_value) {
+        if ((Dwarf_Unsigned)(uintptr_t)cie_id_addr <= cie_id_value) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
                 "DW_DLE_DEBUG_FRAME_LENGTH_BAD: in eh_frame "
