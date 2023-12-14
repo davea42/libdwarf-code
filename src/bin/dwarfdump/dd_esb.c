@@ -39,12 +39,8 @@
     pointer arguments of all kinds are not NULL.
 */
 
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif /* _WIN32 */
 
 #include <config.h>
-
 #include <stdarg.h> /* va_end() va_start() */
 #include <stdlib.h> /* exit() free() malloc() realloc() */
 #include <string.h> /* memcpy() memset() strlen() */

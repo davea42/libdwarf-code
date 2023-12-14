@@ -30,12 +30,7 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif /* _WIN32 */
-
 #include <config.h>
-
 #include <stddef.h> /* size_t */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 

@@ -55,12 +55,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     of tsearchbal.c, we never define  BUILD_TDUMP
 */
 
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif /* _WIN32 */
-
 #include <config.h>
-
 #include <stdio.h>  /* fprintf() printf() sprintf() */
 #include <stddef.h> /* NULL size_t */
 #include <stdlib.h> /* calloc() free() malloc() */

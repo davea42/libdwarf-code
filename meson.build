@@ -117,7 +117,7 @@ endif
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 if cc.get_id() == 'msvc'
-  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS', '-D_CRT_SECURE_NO_WARNINGS' ]
+  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS']
 endif
 
 config_dir = [include_directories('.')]
