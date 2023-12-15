@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2023-12-08 v0.9.1
+    @date 2023-12-15 v0.9.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -898,6 +898,34 @@
     dw_true_path_out_buffer contains the
     object path.
 
+    @section dwsec_shared Linking against libdwarf.so (or dll or dylib)
+
+    If you wish to do the basic libdwarf tests and are linking
+    against a shared library libdwarf you must do an install
+    for the tests to succeed (in some environments it is
+    not strictly necessary).
+
+    For example, if building with configure, do
+    @code
+    make
+    make install
+    make check
+    @endcode
+
+    You can install anywhere, there is no need to install
+    in a system directory! Creating a temporary directory
+    and installing there suffices. If installed
+    in appropriate system directories that works too.
+
+    When compiling to link against a shared library libdwarf
+    you <b>must not define LIBDWARF_STATIC</b>.
+
+    For examples of this for all three build systems
+    read the project shell script 
+    @code
+    scripts/allsimplebuilds.sh
+    @endcode
+
     @section dwsec_static Linking against libdwarf.a
 
     - If you are building an application 
@@ -905,10 +933,6 @@
     - Then you must ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
     - Then you must add -lz -lzstd to the link line of the build of your application.
       
-
-    When compiling to link against a shared library libdwarf.so
-    or libdwarf.dll you must not define LIBDWARF_STATIC.
-
     To pass <b>LIBDWARF_STATIC</b> to the preprocessor with Visual
     Studio:
 
@@ -968,6 +992,10 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 0.9.0 to 0.9.1</b>
+
+    None at this time.
 
     <b>Changes 0.8.0 to 0.9.0</b>
 
