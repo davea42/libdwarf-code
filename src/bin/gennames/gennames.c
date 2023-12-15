@@ -29,11 +29,6 @@
 /*   Used by scripts/libbuild.sh. Not in libdwarf itself. */
 
 #include <config.h>
-
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif /* _WIN32 */
-
 #include <stddef.h> /* NULL size_t */
 #include <ctype.h>  /* isspace() */
 #include <errno.h>  /* errno */

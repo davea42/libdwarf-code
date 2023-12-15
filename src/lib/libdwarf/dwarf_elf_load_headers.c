@@ -87,6 +87,9 @@ calls
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif /* O_BINARY */
+#ifndef O_RDONLY
+#define O_RDONLY 0
+#endif /* O_RDONLY */
 #ifndef O_CLOEXEC
 #define O_CLOEXEC 0
 #endif /* O_CLOEXEC */

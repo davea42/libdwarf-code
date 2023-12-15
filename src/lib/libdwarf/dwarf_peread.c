@@ -33,12 +33,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     file appropriate to reading DWARF debugging data.
 */
 
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-#endif /* _WIN32 */
-
 #include <config.h>
-
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* atoi() calloc() free() malloc() */
 #include <string.h> /* memset() strdup() strlen() */

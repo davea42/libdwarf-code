@@ -1,3 +1,94 @@
+2023-12-14:  David Anderson
+    commit 6e24c3cc2d9b0a7a1455b10327bbf9ae173e0a1f
+
+    Removing -D_CRT_NONSTDC_NO_WARNINGS everywhere to
+    avoid compiler warnings from Visual Studio
+
+    meson.build:  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS', '-D_CRT_SECURE_NO_WARNINGS' ]
+    src/bin/dwarfdump/dd_esb.c:#define _CRT_SECURE_NO_WARNINGS
+    src/bin/dwarfdump/dd_tsearchbal.c:#define _CRT_SECURE_NO_WARNINGS
+    src/bin/gennames/gennames.c:#define _CRT_SECURE_NO_WARNINGS
+    src/lib/libdwarf/dwarf_machoread.c:#define _CRT_SECURE_NO_WARNINGS
+    src/lib/libdwarf/dwarf_object_read_common.c:#define _CRT_SECURE_NO_WARNINGS
+    src/lib/libdwarf/dwarf_peread.c:#define _CRT_SECURE_NO_WARNINGS
+
+            modified:   meson.build
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2023-12-12:  David Anderson
+    commit 82d23bc1218880bb153c5d541b873901a634dfe4
+
+     error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+
+    On 32bit systems casts like (Dwarf_Unsigned)
+    applied to a pointer need to be
+    (Dwarf_Unsigned)(uintptr_t)
+    to avoid failing in compilations.
+    Four places.
+
+    Would not fail if one avoids --enable-wall and the like.
+    But now fixed.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-12-10:  David Anderson
+    commit deebe40e89214efe61c7b56debf2565974027dc8
+
+    Latest from git log (plus extra on DW_IDX)
+            modified:   ChangeLog
+
+2023-12-10:  David Anderson
+    commit 12e478e78a93d957c2eb8518dd958c00b8f1cee9
+
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+The full set of changes in gdb dwarf2.def is:
++/* Internal linkage.  A flag.  */
+ DW_IDX (DW_IDX_GNU_internal, 0x2000)
++/* External linkage.  A flag.  Note that gdb no longer generates this;
++   the default is to assume external linkage.  */
+ DW_IDX (DW_IDX_GNU_external, 0x2001)
++/* This entry is the program's entry point.  A flag.  */
++DW_IDX (DW_IDX_GNU_main, 0x2002)
++/* Language for this entry.  A DW_LANG_* value.  */
++DW_IDX (DW_IDX_GNU_language, 0x2003)
++/* This entry is a linkage name.  A flag.  */
++DW_IDX (DW_IDX_GNU_linkage_name, 0x2004)
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2023-12-08:  David Anderson
+    commit 26bedb0159e0ff6b1795009115213ebd14b6d959
+
+    Now all 0.9.1
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-12-08:  David Anderson
+    commit 8b0bd09d8c77d45a68cb1bb00a54186a92b683d9
+
+    Corrected spelling of one word.
+            modified:   doc/libdwarf.pdf
+
+2023-12-08:  David Anderson
+    commit d9f6fe863d775a1e480d79f630e4a97ed78969ab
+
+    Up to date with spelling fix
+            modified:   ChangeLog
+
 2023-12-08:  David Anderson
     commit 9666fdf00753ffd9608f136972f9484d59c613cb
 
