@@ -1736,7 +1736,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Unsigned expression_length,
     Dwarf_Half address_size,
     Dwarf_Half offset_size,
-    Dwarf_Small dwarf_version,
+    Dwarf_Half dwarf_version,
     Dwarf_Loc_Head_c *loc_head,
     Dwarf_Unsigned * listlen,
     Dwarf_Error * error)

@@ -4572,7 +4572,7 @@ DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned dw_expression_length,
     Dwarf_Half     dw_address_size,
     Dwarf_Half     dw_offset_size,
-    Dwarf_Small    dw_dwarf_version,
+    Dwarf_Half     dw_dwarf_version,
     Dwarf_Loc_Head_c* dw_loc_head,
     Dwarf_Unsigned  * dw_listlen,
     Dwarf_Error     * dw_error);
