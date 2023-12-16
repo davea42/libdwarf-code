@@ -81,9 +81,11 @@ void *  macro_check_tree;   /* DWARF5 macros */
 void *  macinfo_check_tree; /* DWARF 2,3,4 macros */
 void *  macdefundeftree;    /* DWARF5 macros */
 
-static struct Macrocheck_Map_Entry_s * macrocheck_map_insert(
+static struct Macrocheck_Map_Entry_s * macrocheck_map_insert
+(
     Dwarf_Unsigned off,
-    unsigned prim,unsigned sec,
+    Dwarf_Unsigned prim,
+    Dwarf_Unsigned sec,
     Dwarf_Unsigned linenum,
     unsigned src_file_num,
     void **map);
@@ -135,7 +137,7 @@ macrocheck_map_compare_func(const void *l, const void *r)
 
 static struct Macrocheck_Map_Entry_s *
 macrocheck_map_insert(Dwarf_Unsigned offset,
-    unsigned add_prim,unsigned add_sec,
+    Dwarf_Unsigned add_prim,Dwarf_Unsigned add_sec,
     Dwarf_Unsigned line_num,
     unsigned src_file_num,
     void **tree1)

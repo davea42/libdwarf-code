@@ -116,8 +116,8 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
     Dwarf_Locdesc_c exprc,
-    int index,
-    Dwarf_Bool has_skip_or_branch,
+    Dwarf_Unsigned  index,
+    Dwarf_Bool      has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     int *stackchange,
     Dwarf_Signed *branchdistance,
@@ -2475,7 +2475,8 @@ dd_check_die_functions( Dwarf_Debug dbg,
     if (res == DW_DLV_OK) {
         dd_check_if_legal_offset(dbg,off,is_info);
     } else if (res == DW_DLV_ERROR) {
-        int err = dwarf_errno(error);
+        /* errno > 0 , < 1000 */
+        int err = (int)dwarf_errno(error);
         if (err == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
             /* OK */
         } else {
@@ -3683,7 +3684,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         res = dwarf_global_formref(attrib, &ref_goff, err);
         if (res == DW_DLV_ERROR) {
-            int dwerrno = dwarf_errno(*err);
+            /* errno > 0 , < 1000 */
+            int dwerrno = (int)dwarf_errno(*err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 /*  No need to stop, ref_sig8 refers out of
                     the current section. */
@@ -3704,7 +3706,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         /* Gives die offset in section. */
         res = dwarf_dieoffset(die, &die_goff, err);
         if (res == DW_DLV_ERROR) {
-            int dwerrno = dwarf_errno(*err);
+            /* errno > 0 , < 1000 */
+            int dwerrno = (int)dwarf_errno(*err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 /*  No need to stop, ref_sig8 refers out of
                     the current section. */
@@ -4953,7 +4956,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     case DW_AT_SUN_cf_kind:
     {
-        Dwarf_Half kind = 0;
+        Dwarf_Half     kind = 0;
         Dwarf_Unsigned tempud = 0;
         int wres = 0;
         struct esb_s cfkindstr;
@@ -4961,9 +4964,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor(&cfkindstr);
         wres = dwarf_formudata (attrib,&tempud, err);
         if (wres == DW_DLV_OK) {
-            kind = tempud;
+            kind = (Dwarf_Half)tempud;
             esb_append(&cfkindstr,
-                get_ATCF_name(kind,
+                get_ATCF_name((unsigned int)kind,
                 pd_dwarf_names_print_on_error));
             } else if (wres == DW_DLV_NO_ENTRY) {
                 esb_append(&cfkindstr,  "?");
@@ -5363,7 +5366,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             frres = dwarf_global_formref_b(attrib, &ref_goff,
                 &is_info2,err);
             if (frres == DW_DLV_ERROR) {
-                int myerr = dwarf_errno(*err);
+                /* myerr will be way less than 1000 */
+                int myerr = (int)dwarf_errno(*err);
                 if (myerr == DW_DLE_REF_SIG8_NOT_HANDLED) {
                     /*  DW_DLE_REF_SIG8_NOT_HANDLED */
                     /*  No offset available, it makes
@@ -5883,8 +5887,8 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     struct esb_s   *string_out,
     Dwarf_Error    *err)
 {
-    Dwarf_Half no_of_ops = 0;
-    unsigned i = 0;
+    Dwarf_Unsigned no_of_ops = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_Bool has_skip_or_branch = FALSE;
     struct OpBranchHead_s op_branch_checking;
     int stackdepth = 0;
@@ -6128,8 +6132,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
     int         die_indent_level,
     Dwarf_Locdesc_c exprc,
-    int         index,
-    Dwarf_Bool  has_skip_or_branch,
+    Dwarf_Unsigned  index,
+    Dwarf_Bool      has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     int   *stackchange,
     Dwarf_Signed *branchdistance,
@@ -6434,7 +6438,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_GNU_const_type:
             {
             const unsigned char *bp = 0;
-            unsigned int length = 0;
+            Dwarf_Unsigned length = 0;
             /*  opd1 is cu-relative offset of type DIE.
                 we have a die in the relevant CU in the arg
                 list */
@@ -6815,7 +6819,7 @@ print_location_list(Dwarf_Debug dbg,
                 DROP_ERROR_INSTANCE(dbg,lresx,*llerr);
             }
         }
-        version = lle_version;
+        version = (Dwarf_Half)lle_version;
         /*  append_local_prefix(esbp); No,
             here the newline grates, causes blank
             line in the output. So. Just add 6 spaces.
@@ -7498,7 +7502,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 total_entries += entries;
                 total_bytes_formx += bytes_formx;
                 total_bytes_leb128 += bytes_leb128;
-                saved_rate = bytes_leb128 * 100 / bytes_formx;
+                saved_rate = (float)(bytes_leb128 * 100 / bytes_formx);
                 printf("%3d %-25s "
                     "%10" /*DW_PR_XZEROS*/ DW_PR_DUu /* Entries */
                     " "
@@ -7523,7 +7527,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
             Dwarf_Unsigned size = 0;
             int infoerr = 0;
 
-            saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
+            saved_rate = (float)((total_bytes_leb128 * 100) /
+                total_bytes_formx);
             printf("** Summary **                 "
                 "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
                 "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */
@@ -7545,8 +7550,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 attributes_encoding_do_init = TRUE;
                 return infoerr;
             }
-            saved_rate = (total_bytes_formx - total_bytes_leb128)
-                * 100 / size;
+            saved_rate = (float)((total_bytes_formx - total_bytes_leb128)
+                * 100 / size);
             if (saved_rate > 0) {
                 printf("\n** .debug_info size can be reduced "
                     "by %.0f%% **\n",
@@ -8139,7 +8144,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 esb_destructor(&lstr);
                 if (!glflags.gf_error_code_search_by_address) {
                     glflags.gf_error_code_search_by_address =
-                        dwarf_errno(*err);
+                        (int)dwarf_errno(*err);
                 }
                 return bres;
             }

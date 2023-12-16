@@ -100,7 +100,7 @@ dwoptnamematches(
 {
 
     const char *eq = 0;
-    unsigned namelen = 0;
+    unsigned long namelen = 0;
     size_t arglenszt = 0;
     int d = 0;
 
@@ -109,8 +109,8 @@ dwoptnamematches(
             continue;
         }
         /* Found  =, arg should follow */
-        namelen = (eq - iplace);
-        if (namelen != (unsigned)strlen(dwlopt->name)) {
+        namelen = (unsigned long)(eq - iplace);
+        if (namelen != (unsigned long)strlen(dwlopt->name)) {
             return FALSE;
         }
         eq++;

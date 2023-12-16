@@ -236,7 +236,7 @@ const char *kind_list[] = {
 };
 
 static void
-get_kind_string(struct esb_s *out,unsigned k)
+get_kind_string(struct esb_s *out,Dwarf_Unsigned k)
 {
     if (k <= 7) {
         esb_append(out,sanitized(kind_list[k]));
