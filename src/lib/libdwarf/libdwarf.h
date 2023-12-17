@@ -8954,8 +8954,18 @@ DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_comdat_groupnumber);
 
 /*! @brief Get section count (of object file sections).
+
+    Return the section count. Returns 0 if the
+    dw_debug argument is improper in any way. 
+
+    @param dw_dbt
+    @param dw_dbg
+    Pass in a valid Dwarf_Debug of interest.
+    @return
+    Returns the count of sections in the object file
+    or zero.
 */
-DW_API int dwarf_get_section_count(Dwarf_Debug dw_dbg);
+DW_API Dwarf_Unsigned dwarf_get_section_count(Dwarf_Debug dw_dbg);
 
 /*! @brief Get section sizes for many sections.
 

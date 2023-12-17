@@ -996,9 +996,15 @@
     <b>Changes 0.9.0 to 0.9.1</b>
 
     The abbreviation code type returned by
-    dwarf_die_abbrev_code() changed from int
-    to Dwarf_Unsigned as abbrev codes are
+    dwarf_die_abbrev_code() changed from <b>int</b>
+    to <b>Dwarf_Unsigned</b> as abbrev codes are
     not constrained by the DWARF Standard.
+
+    The section count returned by dwarf_get_section_count()
+    is now of type <b>Dwarf_Unsigned</b>. The previous type
+    if <b>int</b> never made sense, though since the count
+    of sections is essentially never over 32000 callers
+    will see the same value as before.
 
     <b>Changes 0.8.0 to 0.9.0</b>
 

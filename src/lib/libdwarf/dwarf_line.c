@@ -167,7 +167,7 @@ ret_simple_full_path(Dwarf_Debug dbg,
 {
     char *tmp = 0;
     char * mstr = 0;
-    unsigned long mlen = 0;
+    size_t mlen = 0;
     dwarfstring targ;
     dwarfstring nxt;
 
@@ -181,7 +181,7 @@ ret_simple_full_path(Dwarf_Debug dbg,
     mstr= dwarfstring_string(&targ);
     mlen = dwarfstring_strlen(&targ) +1;
     tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
-        mlen);
+        (Dwarf_Unsigned)mlen);
     if (tmp) {
         _dwarf_safe_strcpy(tmp,mlen, mstr,mlen-1);
         *name_ptr_out = tmp;
@@ -379,9 +379,9 @@ create_fullest_file_path(Dwarf_Debug dbg,
         }
         {
             char *mname = dwarfstring_string(&targ);
-            unsigned long mlen = dwarfstring_strlen(&targ)+1;
+            size_t mlen = dwarfstring_strlen(&targ)+1;
             full_name = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
-                mlen);
+                (Dwarf_Unsigned)mlen);
             if (!full_name) {
                 dwarfstring_destructor(&targ);
                 dwarfstring_destructor(&incdir);
@@ -645,13 +645,15 @@ dwarf_srcfiles(Dwarf_Die die,
         Dwarf_Signed baseindex = 0;
         Dwarf_Signed file_count = 0;
         Dwarf_Signed endindex = 0;
+        Dwarf_Signed ifp = 0;
 
         res =  dwarf_srclines_files_indexes(line_context, &baseindex,
             &file_count, &endindex, error);
         if (res != DW_DLV_OK) {
             return res;
         }
-        for (i = baseindex; i < endindex; ++i,fe2 = fe->fi_next ) {
+        for (ifp = baseindex; ifp < endindex; 
+            ++ifp,fe2 = fe->fi_next ) {
             int sres = 0;
             char *name_out = 0;
 
@@ -2302,8 +2304,8 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
 
 static void
 report_ltype_form_issue(Dwarf_Debug dbg,
-    int ltype,
-    int form,
+    Dwarf_Half ltype,
+    Dwarf_Half form,
     const char *splmsg,
     Dwarf_Error *error)
 {
@@ -2413,8 +2415,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         return DW_DLV_OK;
         }
     default:
-        report_ltype_form_issue(dbg, ltype,
-            form,0,error);
+        report_ltype_form_issue(dbg, (Dwarf_Half)ltype,
+            (Dwarf_Half)form,0,error);
         return DW_DLV_ERROR;
     }
 }
@@ -2527,8 +2529,8 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
         return DW_DLV_OK;
     default: break;
     }
-    report_ltype_form_issue(dbg, ltype,
-        form,splmsg,error);
+    report_ltype_form_issue(dbg, (Dwarf_Half)ltype,
+        (Dwarf_Half)form,splmsg,error);
     return DW_DLV_ERROR;
 }
 

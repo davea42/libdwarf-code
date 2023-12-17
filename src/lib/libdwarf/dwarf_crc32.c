@@ -57,7 +57,11 @@
     The crc is calculated based on reading
     the entire current open
     Dwarf_Debug dbg object file and all bytes in
-    the file are read to create  the crc.  */
+    the file are read to create  the crc.  
+
+    In Windows, where unsigned int is 16 bits, this
+    produces different output than on 32bit ints.
+*/
 int
 dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     Dwarf_Error *error)
@@ -138,7 +142,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
             return DW_DLV_ERROR;
         }
         /*  Call the public API function so it gets tested too. */
-        tcrc = dwarf_basic_crc32(readbuf,readlenu,
+        tcrc = (unsigned int)dwarf_basic_crc32(readbuf,readlenu,
             (unsigned long)init);
         init = tcrc;
         size_left -= (off_t)readlenu;

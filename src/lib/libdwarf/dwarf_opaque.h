@@ -561,6 +561,9 @@ struct Dwarf_Tied_Data_s {
     dg_groupnum 1 is base
     dg_groupnum 2 is dwo
     dg_groupnum 3 and higher are COMDAT groups (if any).
+
+    We assume the number of groups will not exceed
+    event the Windows 16 bit int maximum.
 */
 struct Dwarf_Group_Data_s {
     /* For traditional DWARF the value is one, just one group. */

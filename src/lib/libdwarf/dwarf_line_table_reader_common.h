@@ -1894,9 +1894,7 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_fixed_advance_pc:{
                 Dwarf_Unsigned fpc = 0;
                 int apres = 0;
-                /*READ_UNALIGNED_CK(dbg, fixed_advance_pc,
-                    Dwarf_Half, line_ptr,
-                    DWARF_HALF_SIZE,error,line_ptr_end); */
+
                 apres = _dwarf_read_unaligned_ck_wrapper(dbg,
                     &fpc,line_ptr,DWARF_HALF_SIZE,line_ptr_end,
                     error);
