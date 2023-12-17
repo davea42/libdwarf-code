@@ -489,7 +489,7 @@ int _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Small *section_ptr_end,
     int use_gnu_cie_calc,
     Dwarf_Cie  cie_ptr_in,
-    Dwarf_Small address_size_in,
+    Dwarf_Half address_size_in,
     Dwarf_Fde *fde_ptr_out,
     Dwarf_Error *error);
 
