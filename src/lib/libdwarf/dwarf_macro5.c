@@ -643,7 +643,8 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
             &localstring, &lerr);
         if (resup != DW_DLV_OK) {
             if (resup == DW_DLV_ERROR) {
-                int myerrno = dwarf_errno(lerr);
+                Dwarf_Unsigned myerrno = 
+                    (unsigned int)dwarf_errno(lerr);
                 if (myerrno == DW_DLE_NO_TIED_FILE_AVAILABLE) {
                     *macro_string =
                         (char *)"<DW_FORM_str_sup-no-tied_file>";
@@ -1045,7 +1046,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
             dbg, error, endptr);
 
         curformentry->mf_code = opcode_number;
-        curformentry->mf_formcount = formcount;
+        curformentry->mf_formcount = (Dwarf_Small)formcount;
 
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
@@ -1394,8 +1395,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_context->mc_macro_header = macro_header;
     macro_context->mc_section_offset = macro_offset;
     macro_context->mc_section_size = section_size;
-    macro_context->mc_version_number = version;
-    macro_context->mc_flags = flags;
+    macro_context->mc_version_number = (Dwarf_Half)version;
+    macro_context->mc_flags = (Dwarf_Small)flags;
     macro_context->mc_dbg = dbg;
     macro_context->mc_offset_size_flag =
         flags& MACRO_OFFSET_SIZE_FLAG?TRUE:FALSE;
@@ -1439,8 +1440,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
 
     macro_data += optablesize;
     macro_context->mc_macro_ops = macro_data;
-    macro_context->mc_macro_header_length =macro_data - macro_header;
-
+    macro_context->mc_macro_header_length =
+        (Dwarf_Half)(macro_data - macro_header);
     build_ops_array = FALSE;
     res = _dwarf_get_macro_ops_count_internal(macro_context,
         build_ops_array,

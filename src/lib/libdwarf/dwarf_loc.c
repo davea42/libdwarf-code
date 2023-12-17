@@ -590,7 +590,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Block_c * loc_block,
     Dwarf_Half address_size,
     Dwarf_Half offset_size,
-    Dwarf_Small version_stamp,
+    Dwarf_Half version_stamp,
     Dwarf_Addr lowpc,
     Dwarf_Addr highpc,
     Dwarf_Half lle_op,
@@ -1589,7 +1589,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     Dwarf_Loc_Head_c llhead  = 0;
     Dwarf_CU_Context cucontext = 0;
     unsigned address_size    = 0;
-    int cuversionstamp       = 0;
+    Dwarf_Half cuversionstamp       = 0;
     Dwarf_Bool is_cu         = FALSE;
     Dwarf_Unsigned attrnum   = 0;
     Dwarf_Bool is_dwo        = 0;
@@ -1624,8 +1624,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         const char * attrname = "<unknown attribute>";
 
         dwarfstring_constructor(&m);
-        dwarf_get_FORM_name(form,&formname);
-        dwarf_get_AT_name(attrnum,&attrname);
+        dwarf_get_FORM_name((unsigned int)form,&formname);
+        dwarf_get_AT_name((unsigned int)attrnum,&attrname);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_LOC_EXPR_BAD: For Compilation Unit "
             "version %u",cuversionstamp);
@@ -1656,8 +1656,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     }
     llhead->ll_cuversion = cuversionstamp;
     llhead->ll_kind = lkind;
-    llhead->ll_attrnum = attrnum;
-    llhead->ll_attrform = form;
+    llhead->ll_attrnum = (Dwarf_Half)attrnum;
+    llhead->ll_attrform = (Dwarf_Half)form;
     llhead->ll_dbg = dbg;
     llhead->ll_address_size = address_size;
     llhead->ll_offset_size = cucontext->cc_length_size;
@@ -1748,7 +1748,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     int local_listlen = 1;
     Dwarf_Addr rawlowpc = 0;
     Dwarf_Addr rawhighpc = MAX_ADDR;
-    Dwarf_Small version_stamp = dwarf_version;
+    Dwarf_Half version_stamp = dwarf_version;
     int res = 0;
 
     CHECK_DBG(dbg,error,"dwarf_loclist_from_expr_c()");

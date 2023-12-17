@@ -82,7 +82,7 @@ _dwarf_object_read_random(int fd, char *buf, off_t loc,
         return DW_DLV_ERROR;
     }
     rcode = read(fd,buf,size);
-    if (rcode == -1 ||
+    if (rcode == (ssize_t)-1 ||
         (size_t)rcode != size) {
         *errc = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;

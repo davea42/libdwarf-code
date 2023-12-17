@@ -296,7 +296,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             if (res != DW_DLV_OK) {
                 return res;
             }
-            slen = strlen((char *) pnext) + 1;
+            slen = (unsigned long)strlen((char *) pnext) + 1;
             pnext += slen;
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
@@ -435,8 +435,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg,return_data,DW_DLA_STRING);
                 return res;
             }
-            slen = strlen((char *) pnext) + 1;
-
+            slen = (unsigned long)strlen((char *) pnext) + 1;
             _dwarf_safe_strcpy((char *)latest_str_loc,
                 space_needed - space_used,
                 (const char *)pnext,slen-1);

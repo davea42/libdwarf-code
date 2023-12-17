@@ -127,7 +127,7 @@ static int
 _dwarf_object_detector_universal_head_fd(
     int fd,
     Dwarf_Unsigned      dw_filesize,
-    unsigned int      *dw_contentcount,
+    unsigned int       *dw_contentcount,
     Dwarf_Universal_Head * dw_head,
     int            *errcode);
 
@@ -996,7 +996,7 @@ _dwarf_macho_object_access_internals_init(
     unsigned int   offsetsizei = offsetsize;
     Dwarf_Unsigned filesizei = filesize;
     Dwarf_Unsigned fileoffseti = 0;
-    unsigned int   unibinarycounti = 0;
+    unsigned int unibinarycounti = 0;
 
     if (ftype == DW_FTYPE_APPLEUNIVERSAL) {
         res = _dwarf_macho_inner_object_fd(fd,
@@ -1223,8 +1223,8 @@ static const struct fat_header fhzero;
 static int
 _dwarf_object_detector_universal_head_fd(
     int fd,
-    Dwarf_Unsigned      dw_filesize,
-    unsigned int      *dw_contentcount,
+    Dwarf_Unsigned        dw_filesize,
+    unsigned int         *dw_contentcount,
     Dwarf_Universal_Head * dw_head,
     int                *errcode)
 {
@@ -1371,7 +1371,7 @@ _dwarf_object_detector_universal_head_fd(
         return res;
     }
     memcpy(duhdp,&duhd,sizeof(duhd));
-    *dw_contentcount = duhd.au_count;
+    *dw_contentcount = (unsigned int)duhd.au_count;
     duhdp->au_arches = duhd.au_arches;
     *dw_head = duhdp;
     return DW_DLV_OK;

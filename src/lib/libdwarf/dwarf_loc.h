@@ -72,10 +72,9 @@ struct Dwarf_Loclists_Context_s {
         64bit DWARF2 MIPS/IRIX: rc_extension_size is zero.
         32bit DWARF:            rc_extension_size is zero.  */
     Dwarf_Small     lc_extension_size;
-
-    unsigned        lc_version; /* 5 */
     Dwarf_Small     lc_address_size;
     Dwarf_Small     lc_segment_selector_size;
+    Dwarf_Half      lc_version; /* 5 */
     Dwarf_Unsigned  lc_offset_entry_count;
 
     /* offset in the section of the offset entries */
@@ -110,7 +109,7 @@ struct Dwarf_Block_c_s {
     Dwarf_Byte_Ptr       bl_data;
 
     /*  DW_LKIND, see libdwarf.h.in  */
-    Dwarf_Small     bl_kind;
+    Dwarf_Half     bl_kind;
 
     /* Section (not CU) offset which 'data' comes from. */
     Dwarf_Unsigned  bl_section_offset;
@@ -171,7 +170,7 @@ struct Dwarf_Loc_Expr_Op_s {
     Adds the DW_LLE value (new in DWARF5).
     This struct is opaque. Not visible to callers. */
 struct Dwarf_Locdesc_c_s {
-    Dwarf_Small      ld_kind; /* DW_LKIND */
+    Dwarf_Half       ld_kind; /* DW_LKIND */
 
     /*  A DW_LLEX or DW_LLE value, real or synthesized */
     Dwarf_Small      ld_lle_value;
@@ -232,15 +231,15 @@ struct Dwarf_Loc_Head_c_s {
     /*  Entry count of the ll_locdesc array.  */
     Dwarf_Unsigned   ll_locdesc_count;
 
-    unsigned         ll_attrnum;
-    unsigned         ll_attrform;
-    unsigned         ll_cuversion;
+    Dwarf_Half       ll_attrnum;
+    Dwarf_Half       ll_attrform;
+    Dwarf_Half       ll_cuversion;
     unsigned         ll_address_size;
     unsigned         ll_offset_size;
     /*  The CU Context of this loclist or locexpr. */
     Dwarf_CU_Context ll_context;
     /* DW_LKIND*    */
-    Dwarf_Small      ll_kind;
+    Dwarf_Half       ll_kind;
     Dwarf_Debug      ll_dbg;
     unsigned long    ll_magic;
 
@@ -281,7 +280,7 @@ int _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Block_c * loc_block,
     Dwarf_Half address_size,
     Dwarf_Half offset_size,
-    Dwarf_Small version_stamp,
+    Dwarf_Half version_stamp,
     Dwarf_Addr lowpc,
     Dwarf_Addr highpc,
     Dwarf_Half lle_op,
