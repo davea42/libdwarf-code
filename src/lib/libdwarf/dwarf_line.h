@@ -280,7 +280,7 @@ struct Dwarf_Line_Registers_s {
     Dwarf_Bool lr_end_sequence;   /* DWARF2 */
     Dwarf_Bool lr_prologue_end;   /* DWARF3 */
     Dwarf_Bool lr_epilogue_begin; /* DWARF3 */
-    Dwarf_Small lr_isa;           /* DWARF3 */
+    Dwarf_Half lr_isa;            /* DWARF3 */
     Dwarf_Unsigned lr_op_index;   /* DWARF4, operation
         within VLIW instruction. */
     Dwarf_Unsigned lr_discriminator; /* DWARF4 */
@@ -321,7 +321,7 @@ struct Dwarf_Line_s {
         Dwarf_Unsigned li_line;
 
         Dwarf_Half li_column; /*source file column number 1-N */
-        Dwarf_Small li_isa;   /*New as of DWARF4. */
+        Dwarf_Half li_isa;   /*New as of DWARF4. */
 
         /*  Two-level line tables.
             Is index from logicals table

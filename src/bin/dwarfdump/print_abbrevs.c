@@ -128,7 +128,7 @@ is_valid_form_we_know(Dwarf_Unsigned form)
     int res = 0;
     const char *n = 0;
 
-    res = dwarf_get_FORM_name(form,&n);
+    res = dwarf_get_FORM_name((unsigned int)form,&n);
     if (res == DW_DLV_NO_ENTRY) {
         return FALSE;
     }
@@ -170,7 +170,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
 {
     const char *tagname = "";
     struct abbrev_entry_s *entryarray =0;
-    unsigned               entryarray_size = 0;
+    Dwarf_Unsigned entryarray_size = 0;
     Dwarf_Unsigned abbrev_entry_count = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Half     tag = 0;
@@ -290,7 +290,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     entryarray = calloc(entryarray_size,
         sizeof(struct abbrev_entry_s));
     if (!entryarray) {
-        printf( "%s ERROR:  Malloc of %u abbrev_entry_s"
+        printf( "%s ERROR:  Malloc of %" DW_PR_DUu " abbrev_entry_s"
             " structs failed. Near section global offset 0x%"
             DW_PR_DUx "  .\n",
         glflags.program_name,entryarray_size,offset);

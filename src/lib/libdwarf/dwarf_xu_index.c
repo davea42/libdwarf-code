@@ -141,7 +141,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
             dwarfstring_destructor(&s);
             return DW_DLV_ERROR;
         }
-        xuhdr->gx_section_id[i] = v;
+        xuhdr->gx_section_id[i] = (unsigned long)v;
     }
     return DW_DLV_OK;
 }
@@ -780,7 +780,8 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Unsigned m = 0;
-    int secnum_index = -1;  /* N index */
+    Dwarf_Unsigned secnum_index = 0; 
+    Dwarf_Bool     found_secnum = FALSE;
     int res = 0;
 
     for ( i = 0; i< xuhdr->gx_column_count_sections; i++) {
@@ -794,10 +795,11 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
         }
         if (num == dfp_sect_num) {
             secnum_index = i;
+            found_secnum = TRUE;
             break;
         }
     }
-    if (secnum_index == -1) {
+    if (FALSE == found_secnum) {
         _dwarf_error(dbg,error,DW_DLE_FISSION_SECNUM_ERR);
         return DW_DLV_ERROR;
     }
@@ -864,12 +866,14 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Debug_Fission_Per_CU *  percu_out,
     Dwarf_Error *error)
 {
-    unsigned i = 0;
-    unsigned l = 0;
-    unsigned n = 1;
-    unsigned max_cols = xuhdr->gx_column_count_sections;  /* L */
-    unsigned secnums[DW_FISSION_SECT_COUNT];
-    int res;
+    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned l = 0;
+    Dwarf_Unsigned n = 1;
+    Dwarf_Unsigned max_cols = 
+        xuhdr->gx_column_count_sections;/* L */
+    Dwarf_Unsigned secnums[DW_FISSION_SECT_COUNT];
+    int res = 0;
+
     for ( i = 0; i< max_cols; i++) {
         /*  We could put the secnums array into xuhdr
             if recreating it is too slow. */

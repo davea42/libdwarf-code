@@ -822,7 +822,7 @@ struct Dwarf_Debug_s {
 
 /* New style. takes advantage of dwarfstrings capability.
     This not a public function. */
-int _dwarf_printf(Dwarf_Debug dbg, const char * data);
+void  _dwarf_printf(Dwarf_Debug dbg, const char * data);
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;
 struct Dwarf_Chain_s {

@@ -1349,21 +1349,19 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 }
 
 /* No varargs required */
-int
+void
 _dwarf_printf(Dwarf_Debug dbg,
     const char * data)
 {
-    int nlen = 0;
     struct Dwarf_Printf_Callback_Info_s *bufdata =
         &dbg->de_printf_callback;
 
     dwarf_printf_callback_function_type func = bufdata->dp_fptr;
     if (!func) {
-        return 0;
+        return;
     }
-    nlen =  strlen(data);
     func(bufdata->dp_user_pointer,data);
-    return nlen;
+    return;
 }
 
 /*  Often errs and errt point to the same Dwarf_Error,
@@ -1404,9 +1402,10 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     /*  copy errs errno to errt by building
         a new errt.
         variable if there is one!
-        Move the error from dbgs to dbgt. */
-    mydw_errno = dwarf_errno(*errs);
-
+        Move the error from dbgs to dbgt. 
+        Error numbers are all < 1000.
+        */
+    mydw_errno = (int)dwarf_errno(*errs);
     dwarf_dealloc(dbgs,*errs, DW_DLA_ERROR);
     *errs = 0;
     _dwarf_error(dbgt,errt, mydw_errno);
