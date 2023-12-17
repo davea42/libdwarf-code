@@ -6025,7 +6025,7 @@ show_contents(struct esb_s *string_out,
 static void
 emit_op_indentation(struct esb_s *string_out,
     int die_indent_level,
-    int index)
+    Dwarf_Unsigned index)
 {
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         int indentprespaces = 0;

@@ -134,7 +134,7 @@ static int process_one_file(
     const char * file_name,
     const char * tied_file_name,
     char *       tempbuf,
-    unsigned int tempbuflen,
+    size_t       tempbuflen,
     struct dwconf_s *conf);
 
 static int print_gnu_debuglink(Dwarf_Debug dbg,Dwarf_Error *err);
@@ -705,7 +705,7 @@ dbgsetup(Dwarf_Debug dbg,struct dwconf_s *setup_config_file_data)
     dwarf_set_frame_rule_initial_value(dbg,
         setup_config_file_data->cf_initial_rule_value);
     dwarf_set_frame_rule_table_size(dbg,
-        setup_config_file_data->cf_table_entry_count);
+        (Dwarf_Half)setup_config_file_data->cf_table_entry_count);
     dwarf_set_frame_cfa_value(dbg,
         setup_config_file_data->cf_cfa_reg);
     dwarf_set_frame_same_value(dbg,
@@ -931,7 +931,7 @@ process_one_file(
     const char * file_name,
     const char * tied_file_name,
     char *       temp_path_buf,
-    unsigned int temp_path_buf_len,
+    size_t       temp_path_buf_len,
     struct dwconf_s *l_config_file_data)
 {
     Dwarf_Debug dbg = 0;
@@ -953,8 +953,8 @@ process_one_file(
         /*  This will go for the real main file, whether
             an underlying dSYM or via debuglink or
             if those find nothing then the original. */
-        char *tb = temp_path_buf;
-        unsigned tblen = temp_path_buf_len;
+        char  *tb = temp_path_buf;
+        size_t tblen = temp_path_buf_len;
         title = "dwarf_init_path_dl fails.";
         if (glflags.gf_no_follow_debuglink) {
             tb = 0;

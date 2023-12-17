@@ -99,7 +99,7 @@ struct glflags_s glflags;
 
 static struct Macrocheck_Map_Entry_s *
 macrocheck_map_create_entry(Dwarf_Unsigned offset,
-    unsigned add_primary, unsigned add_secondary)
+    Dwarf_Unsigned add_primary, Dwarf_Unsigned add_secondary)
 {
     struct Macrocheck_Map_Entry_s *mp =
         (struct Macrocheck_Map_Entry_s *)
@@ -144,7 +144,7 @@ macrocheck_map_insert(Dwarf_Unsigned offset,
 {
     void *retval = 0;
     struct Macrocheck_Map_Entry_s *re = 0;
-    struct Macrocheck_Map_Entry_s *e;
+    struct Macrocheck_Map_Entry_s *e = 0;
 
     e  = macrocheck_map_create_entry(offset,add_prim,add_sec);
     /*  tsearch records e's contents unless e
