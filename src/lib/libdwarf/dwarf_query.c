@@ -461,7 +461,7 @@ dwarf_attrlist(Dwarf_Die die,
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return DW_DLV_ERROR;
         }
-        newattr_form = attr_form;
+        newattr_form = (Dwarf_Half)attr_form;
         if (attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6 = 0;
 
@@ -531,8 +531,9 @@ dwarf_attrlist(Dwarf_Die die,
                 return DW_DLV_ERROR;
             }
             new_attr->ar_attribute = attr;
-            new_attr->ar_attribute_form_direct = attr_form;
-            new_attr->ar_attribute_form = newattr_form;
+            new_attr->ar_attribute_form_direct = 
+                (Dwarf_Half)attr_form;
+            new_attr->ar_attribute_form = (Dwarf_Half)newattr_form;
             /*  Here the final address must be *inside* the
                 section, as we will read from there, and read
                 at least one byte, we think.
@@ -755,7 +756,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             implicit_const = abbrev_list->abl_implicit_const[i];
         }
         if (curr_attr == attrnum_in) {
-            *attr_form = curr_attr_form;
+            *attr_form = (Dwarf_Half)curr_attr_form;
             if (implicit_const_out) {
                 *implicit_const_out = implicit_const;
             }
@@ -1716,7 +1717,7 @@ dwarf_attr_offset(Dwarf_Die die, Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-int
+Dwarf_Unsigned
 dwarf_die_abbrev_code(Dwarf_Die die)
 {
     return die->di_abbrev_code;

@@ -137,7 +137,7 @@ set_up_section(Dwarf_Debug dbg,
         name we care about as possibly compressed, which
         is to say bigger than any standard section name. */
 #define SECNAMEMAX 30
-    int secnamelen = strlen(secname);
+    size_t secnamelen = strlen(secname);
     /* static const char *dprefix = ".debug_"; */
 #define DPREFIXLEN 7
     static const char *zprefix = ".zdebug_";

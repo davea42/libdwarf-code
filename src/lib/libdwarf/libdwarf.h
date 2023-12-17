@@ -2335,10 +2335,13 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
 
 /*! @brief Return the DIE abbrev code
 
-    The Abbrev code for a DIE is an integer assigned
-    by the compiler within a particular CU.
+    The Abbrev code for a DIE is a non-negative
+    integer assigned by the compiler within a particular CU.
     For .debug_names abbreviations the
-    situation is different.
+    situation is conceptually similar. The code values
+    are arbitrary but compilers are motivated to make
+    them small so the object size is as small as
+    possible.
 
     Returns the  abbrev code of the die. Cannot fail.
 
@@ -2347,7 +2350,7 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
     @return
     The abbrev code. of the DIE.
 */
-DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
+DW_API Dwarf_Unsigned dwarf_die_abbrev_code(Dwarf_Die dw_die);
 
 /*! @brief Return TRUE if the DIE has children
 

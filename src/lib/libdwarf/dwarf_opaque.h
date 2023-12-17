@@ -430,7 +430,7 @@ struct Dwarf_Section_s {
     const char * dss_standard_name;
 
     /* Object section number in object file. */
-    unsigned dss_number;
+    Dwarf_Unsigned dss_number;
 
     /*  These are elf flags and non-elf object should
         just leave these fields zero.  */
@@ -495,9 +495,9 @@ typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 struct Dwarf_dbg_sect_s {
     /*  Debug section name must not be freed, is quoted string.
         This is the name from the object file itself. */
-    const char *ds_name;
+    const char    *ds_name;
     /* The section number in object section numbering. */
-    unsigned ds_number;
+    Dwarf_Unsigned ds_number;
     /*   Debug section information, points to de_debug_*member
         (or the like) of the dbg struct.  */
     struct Dwarf_Section_s *ds_secdata;

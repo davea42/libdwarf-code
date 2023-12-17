@@ -367,7 +367,7 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     *total_table_length = tab_length;
     *length_out = length;
     *local_offset_size_out = local_offset_size;
-    *local_extension_size_out = local_extension_size;
+    *local_extension_size_out = (Dwarf_Half)local_extension_size;
     *version_out = version;
     *padding_out = padding;
     return DW_DLV_OK;
