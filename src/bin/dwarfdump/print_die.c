@@ -5764,12 +5764,16 @@ alloc_skip_branch_array(Dwarf_Unsigned no_of_ops,
     if (!no_of_ops) {
         return;
     }
+    if (no_of_ops >=  (Dwarf_Unsigned)0xffff) {
+        /* Something wrong. Give up on the array of branch info */
+        return;
+    }
     op_branch_checking->bh_ops_array = (struct OpBranchEntry_s *)
         calloc(no_of_ops,sizeof(struct OpBranchEntry_s));
     if (!op_branch_checking->bh_ops_array) {
         return;
     }
-    op_branch_checking->bh_opcount = no_of_ops;
+    op_branch_checking->bh_opcount = (Dwarf_Half)no_of_ops;
 }
 
 static Dwarf_Bool
@@ -6189,7 +6193,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             offsetforbranch);
     }
     if (oparray && oparray->bh_opcount &&
-        index <  oparray->bh_opcount) {
+        (Dwarf_Half)index <  oparray->bh_opcount) {
         echecking = oparray->bh_ops_array+ index;
         echecking->op = op;
         echecking->offset =  offsetforbranch;
