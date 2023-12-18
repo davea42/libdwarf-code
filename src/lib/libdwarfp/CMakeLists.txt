@@ -46,37 +46,29 @@ target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/
 target_compile_options(dwarfp PRIVATE ${DW_COMPILER_FLAGS}
     ${DW_FWALL})
 msvc_posix(dwarfp)
-set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
-set(LIBDIR lib${SUFFIX})
-set(BINDIR bin${SUFFIX})
+set_target_properties(dwarfp PROPERTIES PUBLIC_HEADER "libdwarfp.h")
 
 install(TARGETS dwarfp
-    RUNTIME DESTINATION ${BINDIR}		
-    LIBRARY DESTINATION ${LIBDIR}
-    ARCHIVE DESTINATION ${LIBDIR})
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libdwarfp"
+        )
 
 # The install has to be here, not in
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
-configure_file(libdwarfp.pc.cmake libdwarfp.pc @ONLY )
+configure_file(libdwarfp.pc.cmake libdwarfp.pc @ONLY)
 
-install(TARGETS dwarfp EXPORT libdwarfpTargets
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib)
-install(EXPORT libdwarfpTargets
-    FILE libdwarfp-targets.cmake
-
-    NAMESPACE libdwarfp::
-    DESTINATION lib/cmake/libdwarfp
-)
-install(
-    FILES cmake/libdwarfp-config.cmake
-    DESTINATION lib/cmake/libdwarfp
-)
-install(
-    FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarfp.h
-    DESTINATION include/libdwarfp)
-install( FILES ${PROJECT_BINARY_DIR}/src/lib/libdwarfp/libdwarfp.pc
-    DESTINATION lib/pkgconfig
-)
+install(TARGETS dwarfp  EXPORT libdwarfpTargets
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libdwarfp"
+        )
+install(EXPORT libdwarfpTargets FILE libdwarfp-targets.cmake
+        NAMESPACE libdwarfp::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarfp")
+install(FILES cmake/libdwarfp-config.cmake DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarfp")
+install(FILES "${PROJECT_BINARY_DIR}/src/lib/libdwarfp/libdwarfp.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
