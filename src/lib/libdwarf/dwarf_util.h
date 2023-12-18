@@ -237,8 +237,9 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             return DW_DLV_ERROR;             \
         }                                    \
         (dbg)->de_copy_word( (((char *)(&_ltmp)) +      \
-            sizeof(_ltmp) - (length)),(source), (length)) ; \
-        (dest) = (desttype)_ltmp;              \
+            sizeof(_ltmp) - (length)),(source), \
+            (unsigned long)(length)) ;       \
+        (dest) = _ltmp;                      \
     } while (0)
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source,\
@@ -261,8 +262,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             return DW_DLV_ERROR;                 \
         }                                        \
         (dbg)->de_copy_word((char *)(&_ltmp),      \
-            (source), (length)) ;                \
-        (dest) = (desttype)_ltmp;                \
+            (source), (unsigned long)(length)) ; \
+        (dest) = _ltmp;                          \
     } while (0)
 #endif
 
