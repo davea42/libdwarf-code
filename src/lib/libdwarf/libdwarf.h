@@ -8808,6 +8808,8 @@ DW_API int dwarf_get_section_info_by_name(Dwarf_Debug dw_dbg,
     @param dw_section_index
     Pass in an index, 0 through N-1 where
     N is the count returned from dwarf_get_section_count .
+    As an index type -int- works in practice, but should
+    really be Dwarf_Unsigned.
     @param dw_section_name
     On success returns a pointer to the section name
     as it appears in the object file.
