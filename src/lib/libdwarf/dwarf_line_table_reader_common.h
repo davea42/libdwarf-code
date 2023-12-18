@@ -260,7 +260,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    version = htmp;
+    version = (Dwarf_Half)htmp;
 
     line_context->lc_version_number = version;
     line_ptr += DWARF_HALF_SIZE;

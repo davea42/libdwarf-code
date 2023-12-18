@@ -889,7 +889,7 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
     for (l = 0; l < max_cols; ++l) {  /* L */
         Dwarf_Unsigned sec_off = 0;
         Dwarf_Unsigned sec_size = 0;
-        unsigned l_as_sect = secnums[l];
+        Dwarf_Unsigned l_as_sect = secnums[l];
         res = dwarf_get_xu_section_offset(xuhdr,n,l,
             &sec_off,&sec_size,error);
         if (res != DW_DLV_OK) {
