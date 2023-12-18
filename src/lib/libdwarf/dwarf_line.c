@@ -1218,7 +1218,7 @@ dwarf_srclines_b(Dwarf_Die die,
     if (linecount) {
         tcount++;
     }
-    *table_count = tcount;
+    *table_count = (Dwarf_Small)tcount;
     return res;
 }
 
@@ -2282,7 +2282,7 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     char mnbuf[100];
 
     dwarfstring_constructor_static(&f2,tnbuf,sizeof(tnbuf));
-    dwarf_get_LNCT_name(ltype,&typename);
+    dwarf_get_LNCT_name((unsigned int)ltype,&typename);
     if (!typename) {
         dwarfstring_append_printf_u(&f2,
             "Invalid attribute "

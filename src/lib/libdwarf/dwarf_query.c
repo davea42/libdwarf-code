@@ -515,7 +515,7 @@ dwarf_attrlist(Dwarf_Die die,
                 empty_local_attrlist(dbg,head_attr);
                 return DW_DLV_ERROR;
             }
-            newattr_form = attr_form;
+            newattr_form = (Dwarf_Half)attr_form;
         }
 
         if (attr) {
@@ -530,7 +530,7 @@ dwarf_attrlist(Dwarf_Die die,
                     " a Dwarf_Attribute record");
                 return DW_DLV_ERROR;
             }
-            new_attr->ar_attribute = attr;
+            new_attr->ar_attribute = (Dwarf_Half)attr;
             new_attr->ar_attribute_form_direct = 
                 (Dwarf_Half)attr_form;
             new_attr->ar_attribute_form = (Dwarf_Half)newattr_form;

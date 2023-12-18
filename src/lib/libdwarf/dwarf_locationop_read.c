@@ -68,7 +68,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     Dwarf_Error *error)
 {
     int len = 0;
-    Dwarf_Small op = *loc_ptr;
+    Dwarf_Half op = *loc_ptr;
     Dwarf_Unsigned operand = 0;
 
     len++;

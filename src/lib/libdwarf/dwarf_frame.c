@@ -474,7 +474,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 SER(DW_DLE_FRAME_REGISTER_COUNT_MISMATCH);
             }
             minregcount =
-                MIN(reg_count,cie->ci_initial_table->fr_reg_count);
+                (unsigned)MIN(reg_count,
+                cie->ci_initial_table->fr_reg_count);
             for ( ; curreg < minregcount ;
                 curreg++, t1reg++, t2reg++) {
                 *t1reg = *t2reg;
@@ -1811,7 +1812,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
         struct Dwarf_Reg_Rule_s *t3reg = localregtab;
-        unsigned minregcount =  MIN(table->fr_reg_count,reg_count);
+        unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,reg_count);
         unsigned curreg = 0;
 
         table->fr_loc = current_loc;
@@ -2333,7 +2334,8 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
     if (data_alignment_factor != NULL)
         *data_alignment_factor = cie->ci_data_alignment_factor;
     if (return_address_register != NULL)
-        *return_address_register = cie->ci_return_address_register;
+        *return_address_register = 
+            (Dwarf_Half)cie->ci_return_address_register;
     if (initial_instructions != NULL)
         *initial_instructions = cie->ci_cie_instr_start;
     if (initial_instructions_length != NULL) {

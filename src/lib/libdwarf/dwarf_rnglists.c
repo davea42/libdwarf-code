@@ -709,7 +709,7 @@ int dwarf_get_rnglist_head_basics(
     *rle_version = head->rh_version;
     *rnglists_index_returned = head->rh_index;
     *bytes_total_in_rle = head->rh_bytes_total;
-    *offset_size = head->rh_offset_size;
+    *offset_size = (Dwarf_Half)head->rh_offset_size;
     *address_size = (Dwarf_Half)head->rh_address_size;
     *segment_selector_size = 
         (Dwarf_Half)head->rh_segment_selector_size;

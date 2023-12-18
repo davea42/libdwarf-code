@@ -287,8 +287,8 @@ read_single_lle_entry(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     }
-    *bytes_count_out = count;
-    *entry_kind      = code;
+    *bytes_count_out = (unsigned)count;
+    *entry_kind      = (unsigned)code;
     *entry_operand1  = val1;
     *entry_operand2  = val2;
     *opsblocksize    = loc_ops_len;
@@ -672,7 +672,7 @@ int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c head,
             "dwarf_get_loclist_head_basics()");
         return DW_DLV_ERROR;
     }
-    *lkind = head->ll_kind;
+    *lkind = (Dwarf_Small)head->ll_kind;
     *lle_count = head->ll_locdesc_count;
     *lle_version = head->ll_cuversion;
     *loclists_index_returned = head->ll_index;

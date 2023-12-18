@@ -538,7 +538,8 @@ validate_lle_value(Dwarf_Debug dbg,
 
         dwarfstring_append_printf_s(&m,
             "DW_DLE_LOCATION_ERROR: For location kind %s (",
-            (char *)get_loc_kind_str(locdesc->ld_kind));
+            (char *)get_loc_kind_str(
+                (Dwarf_Small)locdesc->ld_kind));
         dwarfstring_append_printf_u(&m,"%u) the DW_LLE value is "
             "not properly set",
             locdesc->ld_kind);
@@ -563,7 +564,8 @@ validate_lle_value(Dwarf_Debug dbg,
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_s(&m,
             "DW_DLE_LOCATION_ERROR: For location kind %s (",
-            (char *)get_loc_kind_str(locdesc->ld_kind));
+            (char *)get_loc_kind_str(
+                (Dwarf_Small)locdesc->ld_kind));
         dwarfstring_append_printf_u(&m,"%u) the DW_LLEX value is "
             "not properly set",
             locdesc->ld_kind);
@@ -727,11 +729,11 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         break;
     case DW_LKIND_GNU_exp_list:
         /* DW_LKIND_GNU_exp_list */
-        locdesc->ld_lle_value = lle_op;
+        locdesc->ld_lle_value = (Dwarf_Small)lle_op;
         break;
     case DW_LKIND_expression:
         /*  This is a kind of fake, but better than 0 */
-        locdesc->ld_lle_value =  DW_LLE_start_end;
+        locdesc->ld_lle_value =  (Dwarf_Small)DW_LLE_start_end;
         break;
     case DW_LKIND_loclists:
         /* ld_lle_value already set */
@@ -753,7 +755,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
         }
     }
-    locdesc->ld_cents = op_count;
+    locdesc->ld_cents = (Dwarf_Half)op_count;
     locdesc->ld_s = block_loc;
 
     locdesc->ld_kind = lkind;
@@ -1865,7 +1867,7 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     *debug_addr_unavailable = desc->ld_index_failed;
     *loclist_expr_op_count_out = desc->ld_cents;
     *locdesc_entry_out = desc;
-    *loclist_source_out = desc->ld_kind;
+    *loclist_source_out = (Dwarf_Small)desc->ld_kind;
     *expression_offset_out = desc->ld_section_offset;
     *locdesc_offset_out = desc->ld_locdesc_offset;
     return DW_DLV_OK;

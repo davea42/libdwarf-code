@@ -1791,7 +1791,7 @@ elf_load_elf_header32(
         free(ehdr);
         return res;
     }
-    ep->f_machine = ehdr->ge_machine;
+    ep->f_machine = (unsigned)ehdr->ge_machine;
     ep->f_flags = ehdr->ge_flags;
     return res;
 }
@@ -1820,7 +1820,7 @@ elf_load_elf_header64(
         free(ehdr);
         return res;
     }
-    ep->f_machine = ehdr->ge_machine;
+    ep->f_machine = (unsigned)ehdr->ge_machine;
     ep->f_flags = ehdr->ge_flags;
     return res;
 }

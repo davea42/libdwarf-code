@@ -504,7 +504,8 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 data += DWARF_32BIT_SIZE;
                 *did_add_map = TRUE;
                 res = _dwarf_insert_in_group_map(dbg,
-                    comdat_group_number,val,
+                    (unsigned)comdat_group_number,
+                    (unsigned)val,
                     doasx.as_name,
                     error);
                 if (res != DW_DLV_OK) {
@@ -663,7 +664,8 @@ determine_target_group(Dwarf_Unsigned section_count,
             }
             /* !mapgroupnumber */
             res = _dwarf_insert_in_group_map(dbg,
-                groupnumber,obj_section_index,
+                (unsigned)groupnumber,
+                (unsigned)obj_section_index,
                 scn_name,
                 error);
             if (res != DW_DLV_OK) {
