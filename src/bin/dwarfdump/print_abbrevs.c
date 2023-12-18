@@ -214,7 +214,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             abbrev for entire CU. */
         tagname = "Abbrev 0: null abbrev entry";
     } else {
-        tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+        tagname = get_TAG_name((unsigned)tag,dwarf_names_print_on_error);
     }
     if ( glflags.gf_do_print_dwarf) {
         if (glflags.dense) {
@@ -258,7 +258,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     if (tag && glflags.gf_do_print_dwarf) {
         const char * child_name = 0;
 
-        child_name = get_children_name(child_flag,
+        child_name = get_children_name((int)(unsigned int)child_flag,
             dwarf_names_print_on_error);
         printf(" %s", child_name);
     }

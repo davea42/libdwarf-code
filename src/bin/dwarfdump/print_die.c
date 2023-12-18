@@ -2606,7 +2606,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     int ores = 0;
     Dwarf_Bool attribute_matchedpod = FALSE;
     int atres = 0;
-    int abbrev_code = dwarf_die_abbrev_code(die);
+    Dwarf_Unsigned abbrev_code = dwarf_die_abbrev_code(die);
     LoHiPc  lohipc;
     int indentprespaces = 0;
 
@@ -2720,7 +2720,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 if (glflags.verbose) {
                     Dwarf_Off agoff = 0;
                     Dwarf_Unsigned acount = 0;
-                    printf(" <abbrev %d",abbrev_code);
+                    printf(" <abbrev %" DW_PR_DUu ,abbrev_code);
                     if (glflags.gf_show_global_offsets) {
                         int agres = 0;
 
@@ -2767,7 +2767,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 if (glflags.verbose) {
                     Dwarf_Off agoff = 0;
                     Dwarf_Unsigned acount = 0;
-                    printf(" <abbrev %d",abbrev_code);
+                    printf(" <abbrev %" DW_PR_DUu,abbrev_code);
                     if (glflags.gf_show_global_offsets) {
                         int agres = 0;
 
@@ -5989,7 +5989,7 @@ op_has_no_operands(Dwarf_Small op)
     printed.
 */
 static Dwarf_Bool
-looks_like_string(unsigned int length,const unsigned char *bp)
+looks_like_string(unsigned long length,const unsigned char *bp)
 {
     const unsigned char *end = 0;
     if (bp[length-1]) {
@@ -6008,7 +6008,7 @@ looks_like_string(unsigned int length,const unsigned char *bp)
 
 static void
 show_contents(struct esb_s *string_out,
-    unsigned int length,const unsigned char * bp)
+    unsigned long length,const unsigned char * bp)
 {
     unsigned int i = 0;
 
@@ -6455,8 +6455,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 esb_append(string_out,
                     "ERROR: Null databyte pointer DW_OP_const_type ");
             } else {
-                show_contents(string_out,length,bp);
-                if (looks_like_string(length,bp)) {
+                show_contents(string_out,(unsigned long)length,bp);
+                if (looks_like_string((unsigned long)length,bp)) {
                     emit_op_indentation(string_out,
                         die_indent_level,index);
                     esb_append_printf_s(string_out,

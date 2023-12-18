@@ -577,7 +577,7 @@ main(int argc, char *argv[])
         process_one_file(
             esb_get_string(&global_file_name),
             esb_get_string(&global_tied_file_name),
-            temp_path_buf, temp_path_buf_len,
+            temp_path_buf, (unsigned int)temp_path_buf_len,
             glflags.config_file_data);
         flag_data_post_cleanup();
     } else {
@@ -703,18 +703,19 @@ dbgsetup(Dwarf_Debug dbg,struct dwconf_s *setup_config_file_data)
         return;
     }
     dwarf_set_frame_rule_initial_value(dbg,
-        setup_config_file_data->cf_initial_rule_value);
+        (Dwarf_Half)setup_config_file_data->cf_initial_rule_value);
     dwarf_set_frame_rule_table_size(dbg,
         (Dwarf_Half)setup_config_file_data->cf_table_entry_count);
     dwarf_set_frame_cfa_value(dbg,
-        setup_config_file_data->cf_cfa_reg);
+        (Dwarf_Half)setup_config_file_data->cf_cfa_reg);
     dwarf_set_frame_same_value(dbg,
-        setup_config_file_data->cf_same_val);
+        (Dwarf_Half)setup_config_file_data->cf_same_val);
     dwarf_set_frame_undefined_value(dbg,
-        setup_config_file_data->cf_undefined_val);
+        (Dwarf_Half)setup_config_file_data->cf_undefined_val);
     if (setup_config_file_data->cf_address_size) {
+        /*  In libdwarf we mostly use Dwarf_Half, but Dwarf_Small works ok here. */
         dwarf_set_default_address_size(dbg,
-            setup_config_file_data->cf_address_size);
+            (Dwarf_Small)setup_config_file_data->cf_address_size);
     }
     dwarf_set_harmless_error_list_size(dbg,50);
 }
@@ -2159,8 +2160,8 @@ char *nlo_debug_str      = ".debug.ws.";
 void
 build_linkonce_info(Dwarf_Debug dbg)
 {
-    int nCount = 0;
-    int section_index = 0;
+    Dwarf_Unsigned nCount = 0;
+    Dwarf_Unsigned section_index = 0;
     int res = 0;
 
     static char **linkonce_names[] = {
@@ -2199,11 +2200,15 @@ build_linkonce_info(Dwarf_Debug dbg)
 
     nCount = dwarf_get_section_count(dbg);
 
+    /*  FIXME: dwarf_get_section_info_by_index_a() only works for section indicies
+        as int. It works acceptably, but will fail with more than 32000 sections
+        (a very large number). */
     /* Ignore section with index=0 */
     for (section_index = 1;
         section_index < nCount;
         ++section_index) {
-        res = dwarf_get_section_info_by_index_a(dbg,section_index,
+        res = dwarf_get_section_info_by_index_a(dbg,
+            (int)(unsigned int)section_index,
             &section_name,
             &section_addr,
             &section_size,0,0,
