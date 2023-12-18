@@ -113,7 +113,7 @@ install(TARGETS dwarf
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libdwarf"
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         )
 
 configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY)
@@ -125,7 +125,7 @@ configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY)
 install(TARGETS dwarf EXPORT libdwarfTargets
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libdwarf")
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(EXPORT libdwarfTargets
         FILE libdwarf-targets.cmake
         NAMESPACE libdwarf::
