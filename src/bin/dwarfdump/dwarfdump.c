@@ -962,12 +962,12 @@ process_one_file(
             tblen = 0;
         }
         dres = dwarf_init_path_dl_a(file_name,
-            tb,tblen,
-            glflags.group_number,
-            glflags.gf_universalnumber,
+            tb,(unsigned int)tblen,
+            (unsigned int)glflags.group_number,
+            (unsigned int)glflags.gf_universalnumber,
             NULL, NULL, &dbg,
             glflags.gf_global_debuglink_paths,
-            glflags.gf_global_debuglink_count,
+            (unsigned int)glflags.gf_global_debuglink_count,
             &path_source,
             &onef_err);
     }

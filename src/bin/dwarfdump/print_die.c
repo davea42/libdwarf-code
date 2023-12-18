@@ -69,8 +69,8 @@ struct OpBranchEntry_s {
     Dwarf_Small    op;
 };
 struct OpBranchHead_s {
-    Dwarf_Half           opcount;
-    struct OpBranchEntry_s * ops_array;
+    Dwarf_Half               bh_opcount;
+    struct OpBranchEntry_s * bh_ops_array;
 };
 
 /*  Defaults to all 0, never changes */
@@ -5756,20 +5756,20 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 }
 
 static void
-alloc_skip_branch_array(Dwarf_Half no_of_ops,
+alloc_skip_branch_array(Dwarf_Unsigned no_of_ops,
     struct OpBranchHead_s *op_branch_checking)
 {
-    op_branch_checking->opcount = 0;
-    op_branch_checking->ops_array = 0;
+    op_branch_checking->bh_opcount = 0;
+    op_branch_checking->bh_ops_array = 0;
     if (!no_of_ops) {
         return;
     }
-    op_branch_checking->ops_array = (struct OpBranchEntry_s *)
+    op_branch_checking->bh_ops_array = (struct OpBranchEntry_s *)
         calloc(no_of_ops,sizeof(struct OpBranchEntry_s));
-    if (!op_branch_checking->ops_array) {
+    if (!op_branch_checking->bh_ops_array) {
         return;
     }
-    op_branch_checking->opcount = no_of_ops;
+    op_branch_checking->bh_opcount = no_of_ops;
 }
 
 static Dwarf_Bool
@@ -5784,7 +5784,7 @@ skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
         /* Infinite loop! */
         return FALSE;
     } else if (ein->target_offset < ein->offset) {
-        ec = op_branch_checking->ops_array;
+        ec = op_branch_checking->bh_ops_array;
         for ( ; i < index; ++i,++ec) {
             if ( ec->offset == ein->target_offset) {
                 return TRUE;
@@ -5793,8 +5793,8 @@ skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
         return FALSE;
     }
     i = index;
-    ec = op_branch_checking->ops_array+i;
-    for ( ; i < op_branch_checking->opcount; ++i,++ec) {
+    ec = op_branch_checking->bh_ops_array+i;
+    for ( ; i < op_branch_checking->bh_opcount; ++i,++ec) {
         if ( ec->offset == ein->target_offset) {
             return TRUE;
         }
@@ -5807,8 +5807,8 @@ check_skip_branch_offsets(struct OpBranchHead_s *op_branch_checking,
     struct esb_s *str)
 {
     Dwarf_Half i = 0;
-    Dwarf_Half high = op_branch_checking->opcount;
-    struct OpBranchEntry_s*e = op_branch_checking->ops_array;
+    Dwarf_Half high = op_branch_checking->bh_opcount;
+    struct OpBranchEntry_s*e = op_branch_checking->bh_ops_array;
 
     for ( ; i < high ; ++i,++e) {
         char *opname = "DW_OP_skip";
@@ -5838,18 +5838,18 @@ check_skip_branch_offsets(struct OpBranchHead_s *op_branch_checking,
 static void
 dealloc_skip_branch_array(struct OpBranchHead_s *op_branch_checking)
 {
-    if (op_branch_checking->opcount) {
-        free(op_branch_checking->ops_array);
-        op_branch_checking->ops_array = 0;
-        op_branch_checking->opcount = 0;
+    if (op_branch_checking->bh_opcount) {
+        free(op_branch_checking->bh_ops_array);
+        op_branch_checking->bh_ops_array = 0;
+        op_branch_checking->bh_opcount = 0;
     }
 }
 
 static Dwarf_Bool
 op_is_skip_or_branch(Dwarf_Debug dbg,
     Dwarf_Locdesc_c exprc,
-    int         index,
-    Dwarf_Error *err)
+    Dwarf_Unsigned  index,
+    Dwarf_Error    *err)
 {
     Dwarf_Small op = 0;
     Dwarf_Unsigned opd1 = 0;
@@ -5889,11 +5889,11 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned no_of_ops = 0;
     Dwarf_Unsigned i = 0;
-    Dwarf_Bool has_skip_or_branch = FALSE;
+    Dwarf_Bool     has_skip_or_branch = FALSE;
     struct OpBranchHead_s op_branch_checking;
-    int stackdepth = 0;
-    int maxstackdepth = 0;
-    int op_loop_count = 0;
+    int            stackdepth = 0;
+    int            maxstackdepth = 0;
+    Dwarf_Unsigned op_loop_count = 0;
 
     alloc_skip_branch_array(0,&op_branch_checking);
     /* ASSERT: locs != NULL */
@@ -5952,7 +5952,7 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
             die_indent_level,indentpostspaces);
 
         esb_append_printf_i(string_out,
-            "DW_OPs= %d ",no_of_ops);
+            "DW_OPs= %" DW_PR_DUu " ",no_of_ops);
         esb_append_printf_i(string_out,
             "maxstackdepth= %d",maxstackdepth);
         esb_append_printf_i(string_out,
@@ -5961,7 +5961,7 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
             /*  When DW_OP_bra/skip has us loop back
                 to an earlier DW_OPs. */
             esb_append_printf_i(string_out,
-                " loopcount= %d",op_loop_count);
+                " loopcount= %" DW_PR_DUu ,op_loop_count);
         }
         esb_append(string_out,"\n");
         append_indent_prefix(string_out,indentprespaces,
@@ -6188,9 +6188,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             "<blkoff 0x%04" DW_PR_DUx "> ",
             offsetforbranch);
     }
-    if (oparray && oparray->opcount &&
-        index <  oparray->opcount) {
-        echecking = oparray->ops_array+ index;
+    if (oparray && oparray->bh_opcount &&
+        index <  oparray->bh_opcount) {
+        echecking = oparray->bh_ops_array+ index;
         echecking->op = op;
         echecking->offset =  offsetforbranch;
     }

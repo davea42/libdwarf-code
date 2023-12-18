@@ -1513,7 +1513,7 @@ read_line_table_program(Dwarf_Debug dbg,
             _dwarf_printf(dbg,dwarfstring_string(&ma));
             dwarfstring_destructor(&ma);
             print_line_detail(dbg,dwarfstring_string(&mb),
-                opcode,(unsigned)(line_count+1),
+                (int)opcode,(unsigned)(line_count+1),
                 &regs,is_single_table,
                 is_actuals_table);
             dwarfstring_destructor(&mb);
@@ -2358,7 +2358,8 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                     print_line_detail(dbg,
                         "DW_LNE_end_sequence extended",
-                        ext_opcode, line_count+1,&regs,
+                        (int)ext_opcode, 
+                        (unsigned int)line_count+1,&regs,
                         is_single_table, is_actuals_table);
 #endif /* PRINTING_DETAILS */
                     curr_line->li_address = regs.lr_address;
