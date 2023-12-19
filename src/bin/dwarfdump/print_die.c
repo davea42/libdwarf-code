@@ -5955,8 +5955,8 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
         append_indent_prefix(string_out,indentprespaces,
             die_indent_level,indentpostspaces);
 
-        esb_append_printf_i(string_out,
-            "DW_OPs= %" DW_PR_DUu " ",no_of_ops);
+        esb_append_printf_u(string_out,
+            "DW_OPs= %u ",no_of_ops);
         esb_append_printf_i(string_out,
             "maxstackdepth= %d",maxstackdepth);
         esb_append_printf_i(string_out,
@@ -5964,8 +5964,8 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
         if (op_loop_count) {
             /*  When DW_OP_bra/skip has us loop back
                 to an earlier DW_OPs. */
-            esb_append_printf_i(string_out,
-                " loopcount= %" DW_PR_DUu ,op_loop_count);
+            esb_append_printf_u(string_out,
+                " loopcount= %u",op_loop_count);
         }
         esb_append(string_out,"\n");
         append_indent_prefix(string_out,indentprespaces,
