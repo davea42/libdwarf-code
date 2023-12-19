@@ -1,6 +1,7 @@
 # USING MSYS2 (WINDOWS) CMAKE, MESON, CONFIGURE
 
-Created 7 October 2023
+    Created 7 October 2023
+    Updated 19 December 2023
 
 msys2 provides an environment much like posix/unix/linux
 with programs precompiled for use on windows
@@ -9,7 +10,7 @@ installed in its own set of locations.
 Do not use the -DWALL option to cmake or
 --enable-wall to configure or the meson
 equivalent as it causes a minor warning
-about <b>I64u , from gcc
+about <b>I64u</b> , from gcc
 (treated as an error).
 
 When using configure note that building a static
@@ -66,6 +67,29 @@ To pass LIBDWARF_STATIC to the preprocessor with Visual Studio:
     Add LIBDWARF_STATIC to the values
     Click on OK to close the windows
 
+### Building with Visual Studio on Windows
+
+While Windows Visual Studio is not
+a supported environment the following
+may be of interest to some.
+
+Building in Windows Visual Studio is fairly
+straightforward.  We'll use
+the simplest possible setup (we hope).
+Using VS buttons and settings do:
+
+1. Main Panel: Click Git. Subpanel: click Clone Repository
+   In the subpanel fill in the clone source:
+   https://github.com/davea42/libdwarf-code
+   and the directory to place the clone.
+
+2. Main Panel: Click Git. Options list: click Cmake Setup.  
+   A Folder View panel (should show up) Click on the top-level CMakeLists.txt file.
+
+3. Main Panel:  Click Build. Options list: click Build All
+
+Expect a few warnings because the source uses Posix rather
+than Windows-only calls where applicable.
 
 ## Setting up msys2 on Windows
 
@@ -139,11 +163,11 @@ is something in your $PATH in msys2.
 Set an appropriate prefix whichever
 build tool you use.
 
-  ninja install
-  cp src/bin/dwarfdump/dwarfdump.conf to $HOME
-  # then
-  dwarfdump.exe
-  # which will give a short message  about
-  # No object file provided. In which case 
-  # dwarfdump is usable.
+    ninja install
+    cp src/bin/dwarfdump/dwarfdump.conf to $HOME
+    # then
+    dwarfdump.exe
+    # which will give a short message  about
+    # No object file provided. In which case 
+    # dwarfdump is usable.
 
