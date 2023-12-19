@@ -4,8 +4,7 @@ project(libdwarf C CXX)
 
 # libdwarf  
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
-option(BUILD_SHARED 
-    "build shared library libdwarf[p].so and use it" FALSE)
+option(BUILD_SHARED "build shared library libdwarf[p].so and use it" FALSE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
@@ -215,6 +214,8 @@ else()
   unset(DW_LIBDWARF_STATIC)
   set(BUILD_SHARED_LIBS YES)
 endif()
+
+include(GNUInstallDirs)
 
 add_subdirectory(src/lib/libdwarf)
 

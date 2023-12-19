@@ -30,13 +30,9 @@ target_include_directories(dwarfgen PRIVATE
 
 target_link_libraries(dwarfgen PRIVATE dwarfp dwarf)
 
-set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
-set(LIBDIR lib${SUFFIX})
-set(BINDIR bin${SUFFIX})
-
 install(TARGETS dwarfgen DESTINATION
-	RUNTIME DESTINATION ${BINDIR}		
-	LIBRARY DESTINATION ${LIBDIR}
-	ARCHIVE DESTINATION ${LIBDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 #install(FILES dwarfgen.1 DESTINATION share/man/man1)
