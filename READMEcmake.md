@@ -56,7 +56,9 @@ For dwarfexample:
 
     cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON /path/to/code
     make
+
 or
+
     cmake -G "Unix Makefiles" -DDO_TESTING=ON /path/to/code
     make
     # To list the tests
@@ -73,11 +75,15 @@ want to know what the test output is, use the following:
 
 In case one wishes to see the exact compilation/linking options
 passed at compile time use
+ 
     make VERBOSE=1
+
 instead of plain
+
     make
 
     cmake make install
+
 works reasonably.
 
 We suggest you use meson or configure for install
