@@ -74,16 +74,9 @@ want to know what the test output is, use the following:
     ctest --verbose -I 22
 
 In case one wishes to see the exact compilation/linking options
-passed at compile time use
+passed at compile time when using -G "Unix Makefiles":
  
     make VERBOSE=1
 
-instead of plain
-
-    make
-
-    cmake make install
-
-works reasonably.
-
-We suggest you use meson or configure for install
+With -G Ninja the generated build.ninja file shows
+the build details.
