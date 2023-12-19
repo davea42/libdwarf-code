@@ -1,3 +1,20 @@
+2023-12-19:  David Anderson
+    commit 7e22b9711fd7804187b681fb80fd315b13de6198
+    Merge: fe1a067e 028de444
+
+    Merge branch 'install' of https://github.com/flagarde/libdwarf-code into flagarde-install
+    Testing pull request
+
+    The branch updates and simplifies all the CMakeLists.txt files
+    to use include(GNUInstallDirs) and take advantage of all it does.
+    Works fine in all test environments (including VS).
+
+2023-12-18:  David Anderson
+    commit fe1a067ec073729ad9e1001db4498f3887c33d18
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2023-12-18:  David Anderson
     commit 22c352276446ac0c42e73f04573dc6cae50ca94b
 
