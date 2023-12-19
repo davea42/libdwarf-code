@@ -1,3 +1,243 @@
+2023-12-18:  David Anderson
+    commit 22c352276446ac0c42e73f04573dc6cae50ca94b
+
+    Due to a change signed to unsigned and an oversight
+    printing of DW_OP_ DWARF data could print ESB_ERR
+    at times Just a two line error.
+    Fixed.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-12-18:  David Anderson
+    commit 1dcc86df64507889f85a93004e6ffb0381adc04c
+
+    Avoid warning from VS C.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-12-18:  David Anderson
+    commit 61d824c2897de83dde230be667989467f868c8f2
+
+    Remove VS C warnings by adding safe casts.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+    Remove VS C warnings by changing a local variable type.
+    Rename file-local struct member names to have a common prefix bh_.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Harmless cast of argument to static function print_line_detail()
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2023-12-18:  David Anderson
+    commit 4a72b17e80f10458944dae4b2031d580804e045f
+
+    Added appropriate casts in 3 places
+    to silence VS C warnings.
+    These are an improvement for the human reader, too.
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-12-18:  David Anderson
+    commit 0948a0042285e5b1b611c0f778eac26d33197a1a
+
+    Warnings from VS C provoked another
+    nice change to macro READ_UNALIGNED_CK()
+    which is used all over the place.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2023-12-18:  David Anderson
+    commit 1e8b7bdc4c6d5c45b7218098e9d74f158f6d5763
+
+    Small adjustmets (mainly casts) to avoid warnings
+    from VS C compiler.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2023-12-18:  David Anderson
+    commit f91eddc2ac7c2719e99e06006c7501995e346c01
+
+    The BIGGEST_UINT #define and its uses are now gone.
+    It was never necessary in the macros it
+    was used in and it was arbitrary.
+    Should have been removed years ago.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2023-12-17:  David Anderson
+    commit e2730f58ade299fd5aa29d0dfcb7b14d92790eed
+
+    These remove the remaining type warnings from VS C
+    in dwarfdump.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2023-12-17:  David Anderson
+    commit 0a24f82f08da94bb0bc5994efa277f20a7adb09c
+
+    Added a comment for doxygen.
+    on dwarf_get_section_info_by_index_a()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-12-17:  David Anderson
+    commit fdcf13474576cd9c94197d2bf9cf80d0cd05baf2
+
+     Changes to be committed:
+    more type changes and casts to remove
+    VS warnings.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2023-12-17:  David Anderson
+    commit b90d83d5f8d02dc448468447e96db3228108e17e
+
+    Fixing many compiler warnings.
+    Changing the return type of another function
+    to Dwarf_Unsigned
+    so it actually makes sense.
+    Which will not break anyone's code.
+    (from VS)
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-12-17:  David Anderson
+    commit dc6a96ef8756a328dc3bf10d80c054aa9217ebcd
+
+    Changed library-internal data types (and added a very few casts)
+    to avoid type warnings by a compiler.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loc.h
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2023-12-17:  David Anderson
+    commit 49b5a83026a119ecba524b07841c87bd5a035ebf
+
+    Altering (mostly by making internal data Dwarf_Unsigned)
+    so that we avoid many warnings.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+    Fixed a mistaken return-value type from int to Dwarf_Unsigned.
+    See Changes in doc/libdwarf.dox
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-12-17:  David Anderson
+    commit def4e90753d756192359ef580cbd331631f87d26
+
+    Fixing many instances of unecessarily truncating integers
+    to not truncate by changing declared size to be appropriate.
+    Fixing a few (library-private) argument lists
+    to avoid integer truncation by using the right
+    data type.
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/lib/libdwarf/dwarf_line.h
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2023-12-17:  David Anderson
+    commit d58a0dcd9a3aad87c437a73e3f2fe9c37ea2cf38
+
+    Fixing some compiler warnings.
+            modified:   dd_macrocheck.c
+            modified:   dwarfdump.c
+            modified:   print_die.c
+
+2023-12-16:  David Anderson
+    commit 320e8c3b4a28cc1ffb7df55da8a10f06d016aaee
+
+    Dealing with compiler warnings.  A few required
+    actual correction of the source, most just
+    required casting.
+            modified:   src/bin/dwarfdump/dd_getopt.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2023-12-16:  David Anderson
+    commit 46f159a17a8c08f579238525fa2565a50f049a4b
+
+    The argument was formally incorrect before.
+    The correction should not cause any problem for
+    anyone.  Mistake noticed because a compiler
+    warning appeared highlighting callers.
+
+    @@ -1736,7 +1736,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
+         Dwarf_Unsigned expression_length,
+         Dwarf_Half address_size,
+         Dwarf_Half offset_size,
+    -    Dwarf_Small dwarf_version,
+    +    Dwarf_Half dwarf_version,
+
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+    dwarf_loclist_from_expr_c(Dwarf_Debug dw_dbg,
+         Dwarf_Unsigned dw_expression_length,
+         Dwarf_Half     dw_address_size,
+         Dwarf_Half     dw_offset_size,
+    -    Dwarf_Small    dw_dwarf_version,
+    +    Dwarf_Half     dw_dwarf_version,
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2023-12-15:  David Anderson
+    commit 1c53f94e90399b4cbf5f946d633b81a1a597e431
+
+    Now has a short section about linking against and
+    testing libdwarf.so
+
+    The short section about linking against libdwarf.a
+    has a tiny change (moved some words up to the
+    section about linking against libdwarf.so)
+            modified:   doc/libdwarf.dox
+
+2023-12-14:  Jeremy Rifkin
+    commit 4ccb40556f59f10fe7a34c3edace8808ffb9463c
+
+    Add ifndef-define for O_RDONLY in elf_load_headers and generic_init (#211)
+
+2023-12-14:  David Anderson
+    commit 6a9cfa3b9708bc04e90890cec84115b72ba8240c
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2023-12-14:  David Anderson
     commit 6e24c3cc2d9b0a7a1455b10327bbf9ae173e0a1f
 
