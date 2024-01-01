@@ -1,4 +1,34 @@
 2023-12-19:  David Anderson
+    commit e08f6bc975c87f27da0699cd6c232d3ccf04880e
+
+    New information.
+            modified:   READMEwin-msys2.md
+
+2023-12-19:  David Anderson
+    commit ae5a7cd3ab524c5abe9f990b1c6983b4cc75bce3
+
+    More clarifications.
+            modified:   READMEcmake.md
+
+2023-12-19:  David Anderson
+    commit 129b8b359dc9e168cf473852f95ccce3e92d938f
+
+    To make it look right.
+            modified:   READMEcmake.md
+
+2023-12-19:  David Anderson
+    commit 66f16a565b500bef2bb4e66ff39d946fe7d9fcb9
+
+            modified:   READMEcmake.md
+        Some clarifications and one error fixed.
+
+2023-12-19:  David Anderson
+    commit e12149c819f9436fb92a32c273d0d8035224b7b0
+
+    Now with GNUInstallDirs in CMakeLists.txt
+            modified:   ChangeLog
+
+2023-12-19:  David Anderson
     commit 7e22b9711fd7804187b681fb80fd315b13de6198
     Merge: fe1a067e 028de444
 
