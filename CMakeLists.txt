@@ -6,6 +6,10 @@ project(libdwarf C CXX)
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 option(BUILD_SHARED "build shared library libdwarf[p].so and use it" FALSE)
 
+option(ENABLE_DECOMPRESSION
+    "Enables support for compressed debug sections if both libz/libzstd are present"
+    TRUE)
+
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
 option(LIBDWARF_STATIC "add -DLIBDWARF_STATIC" FALSE)
@@ -178,15 +182,17 @@ else()
   message(STATUS "intptr_t value considered NO ")
 endif()
 
-# Zlib and ZSTD need to be found otherwise disable it
-find_package(ZLIB)
-find_package(ZSTD)
-if (ZLIB_FOUND AND ZSTD_FOUND ) 
-  set(HAVE_ZLIB TRUE)
-  set(HAVE_ZLIB_H TRUE)
-  set(HAVE_ZSTD TRUE)
-  set(HAVE_ZSTD_H TRUE)
-endif()
+if (ENABLE_DECOMPRESSION)
+  # Zlib and ZSTD need to be found otherwise disable it
+  find_package(ZLIB)
+  find_package(ZSTD)
+  if (ZLIB_FOUND AND ZSTD_FOUND )
+    set(HAVE_ZLIB TRUE)
+    set(HAVE_ZLIB_H TRUE)
+    set(HAVE_ZSTD TRUE)
+    set(HAVE_ZSTD_H TRUE)
+  endif()
+endif ()
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
