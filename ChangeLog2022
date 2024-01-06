@@ -8179,32 +8179,3 @@ Merge: 30c838ab f843484c
         Some doxygen comments added.
             modified:   src/lib/libdwarf/libdwarf.h
 
-    commit 09dc2de3f1de72197b76373fe09a15769972a6f0
-    Author: David Anderson <davea42@linuxmail.org>
-    Date:   Fri Dec 31 07:18:36 2021 -0800
-
-        Turned off sorting, want the ordering to be
-        as in libdwarf.h
-            modified:   doc/Doxyfile
-        Now with doxygen comments initiated.
-            modified:   src/lib/libdwarf/libdwarf.h
-
-    commit 8d60a7e39406733bbed28cb4511cb6cef579118f
-    Author: David Anderson <davea42@linuxmail.org>
-    Date:   Sun Dec 26 14:54:06 2021 -0800
-
-        Small changes.
-            modified:   ../src/lib/libdwarf/libdwarf.h
-
-    commit b7864fc2b51a655863a0a59c5b70128e7b4145bb
-    Author: David Anderson <davea42@linuxmail.org>
-    Date:   Sun Dec 26 14:18:27 2021 -0800
-
-        This is just a start with doxygen.
-            new file:   Doxyfile
-        Found some typedefs and a struct here
-        that are no longer used anywere, so removed
-        from libdwarf.h
-        Plus adding doxygen commands.
-            modified:   ../src/lib/libdwarf/libdwarf.h
-
