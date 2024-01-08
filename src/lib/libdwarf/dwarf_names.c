@@ -2824,6 +2824,27 @@ dwarf_get_LANG_name (unsigned int val,
     case DW_LANG_Mojo:
         *s_out = "DW_LANG_Mojo";
         return DW_DLV_OK;
+    case DW_LANG_GLSL:
+        *s_out = "DW_LANG_GLSL";
+        return DW_DLV_OK;
+    case DW_LANG_GLSL_ES:
+        *s_out = "DW_LANG_GLSL_ES";
+        return DW_DLV_OK;
+    case DW_LANG_HLSL:
+        *s_out = "DW_LANG_HLSL";
+        return DW_DLV_OK;
+    case DW_LANG_OpenCL_CPP:
+        *s_out = "DW_LANG_OpenCL_CPP";
+        return DW_DLV_OK;
+    case DW_LANG_CPP_for_OpenCL:
+        *s_out = "DW_LANG_CPP_for_OpenCL";
+        return DW_DLV_OK;
+    case DW_LANG_SYCL:
+        *s_out = "DW_LANG_SYCL";
+        return DW_DLV_OK;
+    case DW_LANG_Ruby:
+        *s_out = "DW_LANG_Ruby";
+        return DW_DLV_OK;
     case DW_LANG_lo_user:
         *s_out = "DW_LANG_lo_user";
         return DW_DLV_OK;
