@@ -566,12 +566,12 @@ _dwarf_object_detector_fd_a(int fd,
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-    lsval  = lseek(fd,fileoffsetbase,SEEK_SET);
+    lsval  = lseek(fd,(off_t)fileoffsetbase,SEEK_SET);
     if (lsval < 0) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    readval = read(fd,&h,readlen);
+    readval = read(fd,(void *)&h,readlen);
     if (readval != (ssize_t)readlen) {
         *errcode = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
