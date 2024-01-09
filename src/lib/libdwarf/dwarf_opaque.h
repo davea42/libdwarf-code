@@ -110,6 +110,8 @@ struct Dwarf_Attribute_s {
     Dwarf_Attribute ar_next;
 };
 
+#define CC_PROD_METROWERKS 1
+
 /*
     This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
@@ -171,6 +173,9 @@ struct Dwarf_CU_Context_s {
         compilation unit. */
     Dwarf_Small cc_address_size;
     Dwarf_Small cc_segment_selector_size;
+    /*  Normally zero, For the defective Metrowerks
+        compiler is set to CC_PROD_METROW */
+    Dwarf_Small cc_producer;
 
     /*  cc_debug_offset is the global offset in the section
         of the area length field of the CU.
@@ -182,6 +187,7 @@ struct Dwarf_CU_Context_s {
         right away when cu_context created.
         See cc_is_info flag. */
     Dwarf_Unsigned cc_debug_offset;
+
 
     /* === START DEBUG FISSION (Split Dwarf) data
         cc_signature is in the TU header

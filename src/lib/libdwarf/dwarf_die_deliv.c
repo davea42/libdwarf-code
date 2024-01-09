@@ -63,6 +63,7 @@ static void assign_correct_unit_type(Dwarf_CU_Context cu_context);
 static int find_cu_die_base_fields(Dwarf_Debug dbg,
     Dwarf_CU_Context cucon,
     Dwarf_Die        cudie,
+    Dwarf_Bool *bad_pc_form,
     Dwarf_Error     *error);
 
 static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
@@ -600,19 +601,24 @@ finish_cu_context_via_cudie_inner(
         &cudie, error);
     if (resdwo == DW_DLV_OK) {
         Dwarf_Half cutag = 0;
+        Dwarf_Bool bad_pc_form = FALSE;
         int resdwob = 0;
         resdwob = find_cu_die_base_fields(dbg,
             cu_context,
-            cudie,
+            cudie, &bad_pc_form,
             error);
         if (resdwob == DW_DLV_NO_ENTRY) {
-            /* The CU die has no children */
+            /* The CU die has no children or has
+               some other issue like DW_FORM_ref_addr 
+               on a low or high pc attribute. (Metrowerks) */
             if (local_cudie_return) {
                 *local_cudie_return = cudie;
             } else {
                 dwarf_dealloc_die(cudie);
             }
-            cu_context->cc_cu_die_has_children = FALSE;
+            if (!bad_pc_form) {
+                cu_context->cc_cu_die_has_children = FALSE;
+            }
             return DW_DLV_OK;
         }
         if (resdwob == DW_DLV_ERROR) {
@@ -1078,6 +1084,7 @@ _dwarf_setup_base_address(Dwarf_Debug dbg,
     Dwarf_Attribute  attr,
     Dwarf_Signed     at_addr_base_attrnum,
     Dwarf_CU_Context cucon,
+    Dwarf_Bool      *bad_pc_form,
     Dwarf_Error     *error)
 {
     int lres = 0;
@@ -1107,6 +1114,15 @@ _dwarf_setup_base_address(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     }
+    if (form == DW_FORM_ref_addr) {
+        /*  The old Macrowerks compiler did this
+            from confusion vs DW_FORM_addr.
+            Lets just say it is not good rather
+            than generating an error.
+        */
+        *bad_pc_form = TRUE;
+        return DW_DLV_NO_ENTRY;
+    }
     lres = dwarf_formaddr(attr,
         &cucon->cc_low_pc,error);
     if (lres == DW_DLV_OK) {
@@ -1121,6 +1137,68 @@ _dwarf_setup_base_address(Dwarf_Debug dbg,
     return lres;
 }
 
+static void
+_dwarf_set_children_flag(Dwarf_CU_Context cucon,
+    Dwarf_Die cudie)
+{
+    int chres = 0;
+    Dwarf_Half flag = 0;
+
+    /*  always winds up with cc_cu_die_has_children
+        set intentionally...to something. */
+    cucon->cc_cu_die_has_children = TRUE;
+    chres = dwarf_die_abbrev_children_flag(cudie,&flag);
+    /*  If chres is not DW_DLV_OK the assumption
+        of children remains true. */
+    if (chres == DW_DLV_OK) {
+        cucon->cc_cu_die_has_children = flag;
+    }
+}
+
+
+
+static int
+_dwarf_prod_contains(const char *ck, const char *prod)
+{
+    const char *cp = prod;
+    size_t len = strlen(ck);
+
+    for( ; *cp ; ++cp) {
+        if ( ck[0] != *cp) {
+           continue;
+        }
+        if (strncmp(ck,cp,len)) {
+            continue;
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/*  Here we make an effort to determine if it is
+    Metrowerks C */
+static void
+set_producer_type(Dwarf_Die die,
+    Dwarf_CU_Context cu_context)
+{
+    int res = 0;
+    Dwarf_Error error = 0;
+    char *producer = 0;
+
+    res = dwarf_die_text(die,DW_AT_producer,&producer,&error);
+    if (res == DW_DLV_ERROR) {
+         dwarf_dealloc_error(cu_context->cc_dbg,error);
+         error = 0;
+         return;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    if (_dwarf_prod_contains("Metrowerks",producer)) {
+        cu_context->cc_producer = CC_PROD_METROWERKS;
+    }
+}
+
 /*
     For a DWP/DWO the base fields
     of a CU are inherited from the skeleton.
@@ -1131,6 +1209,7 @@ static int
 find_cu_die_base_fields(Dwarf_Debug dbg,
     Dwarf_CU_Context cucon,
     Dwarf_Die cudie,
+    Dwarf_Bool *bad_pc_form,
     Dwarf_Error*    error)
 {
     Dwarf_CU_Context  cu_context = 0;
@@ -1191,10 +1270,14 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             case DW_FORM_strx3:
             case DW_FORM_strx4:
                 cucon->cc_at_strx_present = TRUE;
+                break;
             default:
                 break;
             }
             switch(attrnum) {
+            case DW_AT_producer: 
+                 set_producer_type(cudie,cu_context);
+                 break;
             case DW_AT_dwo_id:
             case DW_AT_GNU_dwo_id: {
                 Dwarf_Sig8 signature;
@@ -1409,10 +1492,13 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
         /* Prefer DW_AT_low_pc */
         Dwarf_Attribute attr = alist[low_pc_attrnum];
         battr = _dwarf_setup_base_address(dbg,"DW_AT_low_pc",
-            attr,at_addr_base_attrnum, cucon,error);
+            attr,at_addr_base_attrnum, cucon,
+            bad_pc_form,error);
         if (battr != DW_DLV_OK) {
             local_attrlist_dealloc(dbg,atcount,alist);
-            /* Something is badly wrong */
+            /*  Something is wrong, possibly
+                erroneous Macrowerks compiler. */
+            _dwarf_set_children_flag(cucon,cudie);
             return battr;
         }
     } else if (entry_pc_attrnum >= 0) {
@@ -1429,30 +1515,19 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             no DW_AT_low_pc. 19 May 2022. */
         Dwarf_Attribute attr = alist[entry_pc_attrnum];
         battr = _dwarf_setup_base_address(dbg,"DW_AT_entry_pc",
-            attr,at_addr_base_attrnum, cucon,error);
+            attr,at_addr_base_attrnum, cucon,
+            bad_pc_form,error);
         if (battr != DW_DLV_OK) {
             local_attrlist_dealloc(dbg,atcount,alist);
-            /* Something is badly wrong */
+            /* Something is wrong */
+            _dwarf_set_children_flag(cucon,cudie);
             return battr;
         }
     }
     local_attrlist_dealloc(dbg,atcount,alist);
     alist = 0;
     atcount = 0;
-    {
-        int chres = 0;
-        Dwarf_Half flag = 0;
-
-        /*  always winds up with cc_cu_die_has_children
-            set intentionally...to something. */
-        cucon->cc_cu_die_has_children = TRUE;
-        chres = dwarf_die_abbrev_children_flag(cudie,&flag);
-        /*  If chres is not DW_DLV_OK the assumption
-            of children remains true. */
-        if (chres == DW_DLV_OK) {
-            cucon->cc_cu_die_has_children = flag;
-        }
-    }
+    _dwarf_set_children_flag(cucon,cudie);
     return DW_DLV_OK;
 }
 

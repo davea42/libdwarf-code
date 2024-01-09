@@ -738,11 +738,13 @@ _dwarf_elf_object_access_internals_init(
                 as it will be caught elsewhere
                 if necessary. */
             continue;
-        } else if (section_type == SHT_REL ||
-            (!strncmp(".rel.",shp->gh_namestring,5))) {
+        } else if (section_type == SHT_REL) {
             localrel = RelocIsRel;
-        } else if (section_type == SHT_RELA ||
-            (!strncmp(".rela.",shp->gh_namestring,6))) {
+        } else if (section_type == SHT_RELA) {
+            localrel = RelocIsRela;
+        } else if (!strncmp(".rel.",shp->gh_namestring,5)) {
+            localrel = RelocIsRel;
+        } else if (!strncmp(".rela.",shp->gh_namestring,6)) {
             localrel = RelocIsRela;
         } else {
             continue;

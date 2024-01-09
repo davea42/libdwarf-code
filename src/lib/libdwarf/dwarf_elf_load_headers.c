@@ -53,6 +53,7 @@ calls
 
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* calloc() free() malloc() */
+#include <stdio.h> /* printf debugging */
 #include <string.h> /* memcpy() strcmp() strdup()
     strlen() strncmp() */
 
@@ -135,12 +136,17 @@ getbitsoncount(Dwarf_Unsigned v_in)
 
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
+    int sectype,
     int *is_rela,int *is_rel)
 {
     *is_rel = FALSE;
     *is_rela = FALSE;
     if (_dwarf_ignorethissection(sname)) {
         return FALSE;
+    }
+    if (sectype == SHT_RELA) {
+        *is_rela = TRUE;
+        return TRUE;
     }
     if (!strncmp(sname,".rel",4)) {
         if (!strncmp(sname,".rela.",6)) {
@@ -2138,6 +2144,7 @@ _dwarf_elf_setup_all_section_groups(
             psh->gh_section_group_number = DW_GROUPNUMBER_DWO;
             ep->f_dwo_group_section_count++;
         } else if (_dwarf_load_elf_section_is_dwarf(name,
+            psh->gh_type,
             &is_rela,&is_rel)) {
             if (!psh->gh_section_group_number) {
                 psh->gh_section_group_number = DW_GROUPNUMBER_BASE;

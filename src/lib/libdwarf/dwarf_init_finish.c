@@ -262,17 +262,16 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
 static int
 is_a_relx_section(const char *scn_name,int type,int *is_rela)
 {
+    if (type == SHT_RELA) {
+        *is_rela = TRUE;
+        return TRUE;
+    }
     if (_dwarf_startswith(scn_name,".rela.")) {
-
         *is_rela = TRUE;
         return TRUE;
     }
     if (_dwarf_startswith(scn_name,".rel.")) {
         *is_rela = FALSE;
-        return TRUE;
-    }
-    if (type == SHT_RELA) {
-        *is_rela = TRUE;
         return TRUE;
     }
     if (type == SHT_REL) {
@@ -859,10 +858,13 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
             res = is_section_name_known_already(dbg,scn_name);
             if (res == DW_DLV_OK) {
+#if 0
                 /* DUPLICATE */
-                free(sections);
                 DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
                     DW_DLV_ERROR);
+                /* Metrowerks does this nonsense */
+#endif
+                continue;
             }
             if (res == DW_DLV_ERROR) {
                 free(sections);
