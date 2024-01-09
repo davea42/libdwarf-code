@@ -1,3 +1,96 @@
+2024-01-09:  David Anderson
+    commit 501bf707bbf045ebaeb97f57d14f148f680f2121
+
+    Fixing warnings (VS) about arguments to posix functions.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+    This did not really fix the two warnings. There is something odd
+    in the declaration of posix read() and lseek() in VS
+    community edition 2022. 
+
+    The warnings complain of off_t to 'unsigned long'
+    and size_t to 'unsigned int' which seems to make no sense..
+    Linux and posix docs
+    agree on the argument and return types and the variables
+    are appropriately typed.
+
+2024-01-09:  David Anderson
+    commit 13cf9ff0ec8593e5bf494c4e33fd0da6b4727888
+
+    Now we can read DWARF2 produced by an obsolete
+    compiler from Metrowerks. It uses DW_FORM_ref_addr
+    where it means DW_FORM_addr (DW_AT_low_pc
+    for example). It sets the
+    relocation section type to SHT_RELA correctly
+    and then names the section with .rel (not .rela
+    as it should).
+    It has two .rel.debug_line sections for no reason.
+
+    libdwarf checks the CU die DW_AT_producer string
+    and notes when a CU was produced by the Metrowerks
+    compiler, recording that internally for use
+    in dealing with attributes and FORMs.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2024-01-08:  David Anderson
+    commit 71a912250c33bab0179cae60b88bfc9d5457ffb7
+
+    Latest DW_LANG names now present.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-01-06:  David Anderson
+    commit 60c15ba27c5693193b4c9cd7ef02cca7a05693ed
+
+    Moved some 2021 changes from 2022 to 2021
+            modified:   ChangeLog2021
+            modified:   ChangeLog2022
+
+2024-01-06:  David Anderson
+    commit 560449faedd9c9ce543d1757ae20486a707923a9
+
+    Added new DW_LANG codes (see dwarfstd.org)
+            modified:   dwarf.h
+
+2024-01-03:  David Anderson
+    commit cae2c6ae5363f050f65c7206b308412eed603b28
+    Merge: 146fa5e7 871cbd9b
+
+    Merge branch 'AlexDenisov-alexdenisov/add-an-option-to-disable-zlib-zstd'
+    Adding cmake option to avoid looking for compression libraries
+
+2024-01-03:  David Anderson
+    commit 871cbd9b832d9a50796767a59590dbe948bcdf20
+    Merge: 146fa5e7 5f310464
+
+    Merge branch 'alexdenisov/add-an-option-to-disable-zlib-zstd' of https://github.com/AlexDenisov/libdwarf-code into AlexDenisov-alexdenisov/add-an-option-to-disable-zlib-zstd
+    Adding option to cmake.  So zlib/libzstd ignored (if ignoring is requested)
+
+2024-01-03:  AlexDenisov
+    commit 5f310464c583682afdb0f607a864123001f181d8
+
+    Add a CMake option to disable libz/libzstd
+
+    Currently, the only way to disable these is to uninstall one of them
+    from the system, which is not very convenient.
+
+2024-01-01:  David Anderson
+    commit 146fa5e72f84c286477380c80a401e78a4d1d28d
+
+    Now just 2024
+            modified:   ChangeLog
+
+2024-01-01:  David Anderson
+    commit b3300492d09687397168b6426584db755c7bd1dd
+
+    Pure 2023 data
+            new file:   ChangeLog2023
+
 2024-01-01:  David Anderson
     commit a180535f2b4a4d0bf02b8ef2d76d639ca8136e9f
 
