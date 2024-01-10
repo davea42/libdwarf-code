@@ -74,7 +74,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     off_t   lsval = 0;
     /*  Named with u to remind the reader that this is
         an unsigned value. */
-    size_t         readlenu = 1000;
+    size_t         readlenu = 10000;
     unsigned char *readbuf = 0;
     unsigned int   tcrc = 0;
     unsigned int   init = 0;
@@ -131,7 +131,8 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         /*  Fix warning on Windows: read()'s
             3rd parameter is a unsigned const */
 #ifdef _WIN32
-        readreturnv = read(fd,readbuf,(unsigned const)readlenu);
+        readreturnv = (ssize_t)read(fd,readbuf,
+            (unsigned const)readlenu);
 #else
         readreturnv = read(fd,readbuf,readlenu);
 #endif

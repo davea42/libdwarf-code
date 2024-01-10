@@ -571,7 +571,12 @@ _dwarf_object_detector_fd_a(int fd,
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    readval = read(fd,(void *)&h,readlen);
+    /*  These reads are small. */
+#ifdef _WIN32
+    readval = (ssize_t)read(fd,&h,(unsigned const)readlen);
+#else
+    readval = read(fd,&h,readlen);
+#endif
     if (readval != (ssize_t)readlen) {
         *errcode = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
