@@ -566,7 +566,11 @@ _dwarf_object_detector_fd_a(int fd,
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
+#ifdef _WIN32
+    lsval  = (off_t)lseek(fd,(long)fileoffsetbase,SEEK_SET);
+#else
     lsval  = lseek(fd,(off_t)fileoffsetbase,SEEK_SET);
+#endif
     if (lsval < 0) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
