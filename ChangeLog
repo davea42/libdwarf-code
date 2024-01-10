@@ -1,3 +1,38 @@
+2024-01-10:  David Anderson
+    commit 62c214e548b72afa264e26c29ffd6db259f94fce
+
+    Altered the argument  of _dwarf_load_elf_section_is_dwarf()
+    to avoid a warning from VS (should have done this before now...)
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2024-01-10:  David Anderson
+    commit 498968ff7ef9cdaadb901dc6183db2a0139318a7
+
+    Now with _WIN32 arrange that lseek not generate a warning.
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+
+2024-01-10:  David Anderson
+    commit 31fe00fbc52c3fb66a6c99c4382dceb1d6c3395c
+
+    Arraned lseek to now avoid warnings from VS
+    (using ifdef _WIN32).
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2024-01-10:  David Anderson
+    commit ddd0cdc9c7fa6bab7b164a38e79d4030b53c9665
+
+    If a read is too big, do multiple reads.
+    If _WIN32 use extra casts to compile ok with VS.
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+
+2024-01-09:  David Anderson
+    commit b70779dcdf54c15d468e7c91e2a12a6083a0265e
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-01-09:  David Anderson
     commit 501bf707bbf045ebaeb97f57d14f148f680f2121
 
