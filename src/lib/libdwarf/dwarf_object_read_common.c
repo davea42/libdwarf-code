@@ -81,7 +81,11 @@ _dwarf_object_read_random(int fd, char *buf, off_t loc,
         *errc = DW_DLE_READ_OFF_END;
         return DW_DLV_ERROR;
     }
+#ifdef _WIN32
+    scode = (off_t)lseek(fd,(long)loc,SEEK_SET);
+#else
     scode = lseek(fd,loc,SEEK_SET);
+#endif
     if (scode == (off_t)-1) {
         *errc = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
