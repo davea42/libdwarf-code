@@ -136,7 +136,7 @@ getbitsoncount(Dwarf_Unsigned v_in)
 
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
-    int sectype,
+    Dwarf_Unsigned sectype,
     int *is_rela,int *is_rel)
 {
     *is_rel = FALSE;
