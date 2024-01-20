@@ -67,6 +67,11 @@ or
     # the letters 'self').
     ctest -R self
 
+To turn off linking with or using zlib or zstd libraries
+or headers there is an option to cmake as of libdwarf 0.9.1:
+
+    cmake -G Ninja -DENABLE_DECOMPRESSION=NO /path/to/code
+
 By default ctest just shows success or failure with no details.
 To debug a cmake test, for example if test 22 fails and you
 want to know what the test output is, use the following:
