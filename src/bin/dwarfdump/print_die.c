@@ -69,8 +69,8 @@ struct OpBranchEntry_s {
     Dwarf_Small    op;
 };
 struct OpBranchHead_s {
-    Dwarf_Half           opcount;
-    struct OpBranchEntry_s * ops_array;
+    Dwarf_Half               bh_opcount;
+    struct OpBranchEntry_s * bh_ops_array;
 };
 
 /*  Defaults to all 0, never changes */
@@ -116,8 +116,8 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
     Dwarf_Locdesc_c exprc,
-    int index,
-    Dwarf_Bool has_skip_or_branch,
+    Dwarf_Unsigned  index,
+    Dwarf_Bool      has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     int *stackchange,
     Dwarf_Signed *branchdistance,
@@ -2475,7 +2475,8 @@ dd_check_die_functions( Dwarf_Debug dbg,
     if (res == DW_DLV_OK) {
         dd_check_if_legal_offset(dbg,off,is_info);
     } else if (res == DW_DLV_ERROR) {
-        int err = dwarf_errno(error);
+        /* errno > 0 , < 1000 */
+        int err = (int)dwarf_errno(error);
         if (err == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
             /* OK */
         } else {
@@ -2605,7 +2606,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     int ores = 0;
     Dwarf_Bool attribute_matchedpod = FALSE;
     int atres = 0;
-    int abbrev_code = dwarf_die_abbrev_code(die);
+    Dwarf_Unsigned abbrev_code = dwarf_die_abbrev_code(die);
     LoHiPc  lohipc;
     int indentprespaces = 0;
 
@@ -2719,7 +2720,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 if (glflags.verbose) {
                     Dwarf_Off agoff = 0;
                     Dwarf_Unsigned acount = 0;
-                    printf(" <abbrev %d",abbrev_code);
+                    printf(" <abbrev %" DW_PR_DUu ,abbrev_code);
                     if (glflags.gf_show_global_offsets) {
                         int agres = 0;
 
@@ -2766,7 +2767,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 if (glflags.verbose) {
                     Dwarf_Off agoff = 0;
                     Dwarf_Unsigned acount = 0;
-                    printf(" <abbrev %d",abbrev_code);
+                    printf(" <abbrev %" DW_PR_DUu,abbrev_code);
                     if (glflags.gf_show_global_offsets) {
                         int agres = 0;
 
@@ -3683,7 +3684,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         res = dwarf_global_formref(attrib, &ref_goff, err);
         if (res == DW_DLV_ERROR) {
-            int dwerrno = dwarf_errno(*err);
+            /* errno > 0 , < 1000 */
+            int dwerrno = (int)dwarf_errno(*err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 /*  No need to stop, ref_sig8 refers out of
                     the current section. */
@@ -3704,7 +3706,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         /* Gives die offset in section. */
         res = dwarf_dieoffset(die, &die_goff, err);
         if (res == DW_DLV_ERROR) {
-            int dwerrno = dwarf_errno(*err);
+            /* errno > 0 , < 1000 */
+            int dwerrno = (int)dwarf_errno(*err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 /*  No need to stop, ref_sig8 refers out of
                     the current section. */
@@ -4953,7 +4956,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     case DW_AT_SUN_cf_kind:
     {
-        Dwarf_Half kind = 0;
+        Dwarf_Half     kind = 0;
         Dwarf_Unsigned tempud = 0;
         int wres = 0;
         struct esb_s cfkindstr;
@@ -4961,9 +4964,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor(&cfkindstr);
         wres = dwarf_formudata (attrib,&tempud, err);
         if (wres == DW_DLV_OK) {
-            kind = tempud;
+            kind = (Dwarf_Half)tempud;
             esb_append(&cfkindstr,
-                get_ATCF_name(kind,
+                get_ATCF_name((unsigned int)kind,
                 pd_dwarf_names_print_on_error));
             } else if (wres == DW_DLV_NO_ENTRY) {
                 esb_append(&cfkindstr,  "?");
@@ -5363,7 +5366,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             frres = dwarf_global_formref_b(attrib, &ref_goff,
                 &is_info2,err);
             if (frres == DW_DLV_ERROR) {
-                int myerr = dwarf_errno(*err);
+                /* myerr will be way less than 1000 */
+                int myerr = (int)dwarf_errno(*err);
                 if (myerr == DW_DLE_REF_SIG8_NOT_HANDLED) {
                     /*  DW_DLE_REF_SIG8_NOT_HANDLED */
                     /*  No offset available, it makes
@@ -5752,20 +5756,24 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 }
 
 static void
-alloc_skip_branch_array(Dwarf_Half no_of_ops,
+alloc_skip_branch_array(Dwarf_Unsigned no_of_ops,
     struct OpBranchHead_s *op_branch_checking)
 {
-    op_branch_checking->opcount = 0;
-    op_branch_checking->ops_array = 0;
+    op_branch_checking->bh_opcount = 0;
+    op_branch_checking->bh_ops_array = 0;
     if (!no_of_ops) {
         return;
     }
-    op_branch_checking->ops_array = (struct OpBranchEntry_s *)
-        calloc(no_of_ops,sizeof(struct OpBranchEntry_s));
-    if (!op_branch_checking->ops_array) {
+    if (no_of_ops >=  (Dwarf_Unsigned)0xffff) {
+        /* Something wrong. Give up on the array of branch info */
         return;
     }
-    op_branch_checking->opcount = no_of_ops;
+    op_branch_checking->bh_ops_array = (struct OpBranchEntry_s *)
+        calloc(no_of_ops,sizeof(struct OpBranchEntry_s));
+    if (!op_branch_checking->bh_ops_array) {
+        return;
+    }
+    op_branch_checking->bh_opcount = (Dwarf_Half)no_of_ops;
 }
 
 static Dwarf_Bool
@@ -5780,7 +5788,7 @@ skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
         /* Infinite loop! */
         return FALSE;
     } else if (ein->target_offset < ein->offset) {
-        ec = op_branch_checking->ops_array;
+        ec = op_branch_checking->bh_ops_array;
         for ( ; i < index; ++i,++ec) {
             if ( ec->offset == ein->target_offset) {
                 return TRUE;
@@ -5789,8 +5797,8 @@ skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
         return FALSE;
     }
     i = index;
-    ec = op_branch_checking->ops_array+i;
-    for ( ; i < op_branch_checking->opcount; ++i,++ec) {
+    ec = op_branch_checking->bh_ops_array+i;
+    for ( ; i < op_branch_checking->bh_opcount; ++i,++ec) {
         if ( ec->offset == ein->target_offset) {
             return TRUE;
         }
@@ -5803,8 +5811,8 @@ check_skip_branch_offsets(struct OpBranchHead_s *op_branch_checking,
     struct esb_s *str)
 {
     Dwarf_Half i = 0;
-    Dwarf_Half high = op_branch_checking->opcount;
-    struct OpBranchEntry_s*e = op_branch_checking->ops_array;
+    Dwarf_Half high = op_branch_checking->bh_opcount;
+    struct OpBranchEntry_s*e = op_branch_checking->bh_ops_array;
 
     for ( ; i < high ; ++i,++e) {
         char *opname = "DW_OP_skip";
@@ -5834,18 +5842,18 @@ check_skip_branch_offsets(struct OpBranchHead_s *op_branch_checking,
 static void
 dealloc_skip_branch_array(struct OpBranchHead_s *op_branch_checking)
 {
-    if (op_branch_checking->opcount) {
-        free(op_branch_checking->ops_array);
-        op_branch_checking->ops_array = 0;
-        op_branch_checking->opcount = 0;
+    if (op_branch_checking->bh_opcount) {
+        free(op_branch_checking->bh_ops_array);
+        op_branch_checking->bh_ops_array = 0;
+        op_branch_checking->bh_opcount = 0;
     }
 }
 
 static Dwarf_Bool
 op_is_skip_or_branch(Dwarf_Debug dbg,
     Dwarf_Locdesc_c exprc,
-    int         index,
-    Dwarf_Error *err)
+    Dwarf_Unsigned  index,
+    Dwarf_Error    *err)
 {
     Dwarf_Small op = 0;
     Dwarf_Unsigned opd1 = 0;
@@ -5883,13 +5891,13 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     struct esb_s   *string_out,
     Dwarf_Error    *err)
 {
-    Dwarf_Half no_of_ops = 0;
-    unsigned i = 0;
-    Dwarf_Bool has_skip_or_branch = FALSE;
+    Dwarf_Unsigned no_of_ops = 0;
+    Dwarf_Unsigned i = 0;
+    Dwarf_Bool     has_skip_or_branch = FALSE;
     struct OpBranchHead_s op_branch_checking;
-    int stackdepth = 0;
-    int maxstackdepth = 0;
-    int op_loop_count = 0;
+    int            stackdepth = 0;
+    int            maxstackdepth = 0;
+    Dwarf_Unsigned op_loop_count = 0;
 
     alloc_skip_branch_array(0,&op_branch_checking);
     /* ASSERT: locs != NULL */
@@ -5947,8 +5955,8 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
         append_indent_prefix(string_out,indentprespaces,
             die_indent_level,indentpostspaces);
 
-        esb_append_printf_i(string_out,
-            "DW_OPs= %d ",no_of_ops);
+        esb_append_printf_u(string_out,
+            "DW_OPs= %u ",no_of_ops);
         esb_append_printf_i(string_out,
             "maxstackdepth= %d",maxstackdepth);
         esb_append_printf_i(string_out,
@@ -5956,8 +5964,8 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
         if (op_loop_count) {
             /*  When DW_OP_bra/skip has us loop back
                 to an earlier DW_OPs. */
-            esb_append_printf_i(string_out,
-                " loopcount= %d",op_loop_count);
+            esb_append_printf_u(string_out,
+                " loopcount= %u",op_loop_count);
         }
         esb_append(string_out,"\n");
         append_indent_prefix(string_out,indentprespaces,
@@ -5985,7 +5993,7 @@ op_has_no_operands(Dwarf_Small op)
     printed.
 */
 static Dwarf_Bool
-looks_like_string(unsigned int length,const unsigned char *bp)
+looks_like_string(unsigned long length,const unsigned char *bp)
 {
     const unsigned char *end = 0;
     if (bp[length-1]) {
@@ -6004,7 +6012,7 @@ looks_like_string(unsigned int length,const unsigned char *bp)
 
 static void
 show_contents(struct esb_s *string_out,
-    unsigned int length,const unsigned char * bp)
+    unsigned long length,const unsigned char * bp)
 {
     unsigned int i = 0;
 
@@ -6021,7 +6029,7 @@ show_contents(struct esb_s *string_out,
 static void
 emit_op_indentation(struct esb_s *string_out,
     int die_indent_level,
-    int index)
+    Dwarf_Unsigned index)
 {
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         int indentprespaces = 0;
@@ -6128,8 +6136,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
     int         die_indent_level,
     Dwarf_Locdesc_c exprc,
-    int         index,
-    Dwarf_Bool  has_skip_or_branch,
+    Dwarf_Unsigned  index,
+    Dwarf_Bool      has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     int   *stackchange,
     Dwarf_Signed *branchdistance,
@@ -6184,9 +6192,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             "<blkoff 0x%04" DW_PR_DUx "> ",
             offsetforbranch);
     }
-    if (oparray && oparray->opcount &&
-        index <  oparray->opcount) {
-        echecking = oparray->ops_array+ index;
+    if (oparray && oparray->bh_opcount &&
+        (Dwarf_Half)index <  oparray->bh_opcount) {
+        echecking = oparray->bh_ops_array+ index;
         echecking->op = op;
         echecking->offset =  offsetforbranch;
     }
@@ -6434,7 +6442,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_GNU_const_type:
             {
             const unsigned char *bp = 0;
-            unsigned int length = 0;
+            Dwarf_Unsigned length = 0;
             /*  opd1 is cu-relative offset of type DIE.
                 we have a die in the relevant CU in the arg
                 list */
@@ -6451,8 +6459,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 esb_append(string_out,
                     "ERROR: Null databyte pointer DW_OP_const_type ");
             } else {
-                show_contents(string_out,length,bp);
-                if (looks_like_string(length,bp)) {
+                show_contents(string_out,(unsigned long)length,bp);
+                if (looks_like_string((unsigned long)length,bp)) {
                     emit_op_indentation(string_out,
                         die_indent_level,index);
                     esb_append_printf_s(string_out,
@@ -6815,7 +6823,7 @@ print_location_list(Dwarf_Debug dbg,
                 DROP_ERROR_INSTANCE(dbg,lresx,*llerr);
             }
         }
-        version = lle_version;
+        version = (Dwarf_Half)lle_version;
         /*  append_local_prefix(esbp); No,
             here the newline grates, causes blank
             line in the output. So. Just add 6 spaces.
@@ -7498,7 +7506,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 total_entries += entries;
                 total_bytes_formx += bytes_formx;
                 total_bytes_leb128 += bytes_leb128;
-                saved_rate = bytes_leb128 * 100 / bytes_formx;
+                saved_rate = (float)(bytes_leb128 * 100 / bytes_formx);
                 printf("%3d %-25s "
                     "%10" /*DW_PR_XZEROS*/ DW_PR_DUu /* Entries */
                     " "
@@ -7523,7 +7531,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
             Dwarf_Unsigned size = 0;
             int infoerr = 0;
 
-            saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
+            saved_rate = (float)((total_bytes_leb128 * 100) /
+                total_bytes_formx);
             printf("** Summary **                 "
                 "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
                 "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */
@@ -7545,8 +7554,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 attributes_encoding_do_init = TRUE;
                 return infoerr;
             }
-            saved_rate = (total_bytes_formx - total_bytes_leb128)
-                * 100 / size;
+            saved_rate = (float)((total_bytes_formx - total_bytes_leb128)
+                * 100 / size);
             if (saved_rate > 0) {
                 printf("\n** .debug_info size can be reduced "
                     "by %.0f%% **\n",
@@ -8139,7 +8148,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 esb_destructor(&lstr);
                 if (!glflags.gf_error_code_search_by_address) {
                     glflags.gf_error_code_search_by_address =
-                        dwarf_errno(*err);
+                        (int)dwarf_errno(*err);
                 }
                 return bres;
             }

@@ -96,7 +96,7 @@ static void dump_frame_rule(char *msg,
 
 static int _dwarf_initialize_fde_table(Dwarf_Debug dbg,
     struct Dwarf_Frame_s *fde_table,
-    unsigned table_real_data_size,
+    Dwarf_Unsigned table_real_data_size,
     Dwarf_Error * error);
 static void _dwarf_free_fde_table(struct Dwarf_Frame_s *fde_table);
 static void _dwarf_init_reg_rules_ru(
@@ -474,7 +474,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 SER(DW_DLE_FRAME_REGISTER_COUNT_MISMATCH);
             }
             minregcount =
-                MIN(reg_count,cie->ci_initial_table->fr_reg_count);
+                (unsigned)MIN(reg_count,
+                cie->ci_initial_table->fr_reg_count);
             for ( ; curreg < minregcount ;
                 curreg++, t1reg++, t2reg++) {
                 *t1reg = *t2reg;
@@ -1811,7 +1812,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
         struct Dwarf_Reg_Rule_s *t3reg = localregtab;
-        unsigned minregcount =  MIN(table->fr_reg_count,reg_count);
+        unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,reg_count);
         unsigned curreg = 0;
 
         table->fr_loc = current_loc;
@@ -2333,7 +2334,8 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
     if (data_alignment_factor != NULL)
         *data_alignment_factor = cie->ci_data_alignment_factor;
     if (return_address_register != NULL)
-        *return_address_register = cie->ci_return_address_register;
+        *return_address_register = 
+            (Dwarf_Half)cie->ci_return_address_register;
     if (initial_instructions != NULL)
         *initial_instructions = cie->ci_cie_instr_start;
     if (initial_instructions_length != NULL) {
@@ -2554,7 +2556,7 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
     reg_table->rt3_cfa_rule.dw_value_type =
         fde_table.fr_cfa_rule.ru_value_type;
     reg_table->rt3_cfa_rule.dw_regnum =
-        fde_table.fr_cfa_rule.ru_register;
+        (Dwarf_Half)fde_table.fr_cfa_rule.ru_register;
     reg_table->rt3_cfa_rule.dw_offset =
         (Dwarf_Unsigned)fde_table.fr_cfa_rule.ru_offset;
     reg_table->rt3_cfa_rule.dw_block =
@@ -2778,7 +2780,7 @@ dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde fde,
     int res = DW_DLV_ERROR;
     Dwarf_Debug dbg = 0;
 
-    int table_real_data_size = 0;
+    Dwarf_Unsigned table_real_data_size = 0;
 
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
 
@@ -3276,7 +3278,8 @@ dump_frame_rule(char *msg, struct Dwarf_Reg_Rule_s *reg_rule)
 Dwarf_Half
 dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Unsigned orig = dbg->de_frame_rule_initial_value;
+    Dwarf_Half orig = 
+       (Dwarf_Half)dbg->de_frame_rule_initial_value;
     dbg->de_frame_rule_initial_value = value;
     return orig;
 }
@@ -3295,7 +3298,8 @@ dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = dbg->de_frame_reg_rules_entry_count;
+    Dwarf_Half orig = 
+        (Dwarf_Half)dbg->de_frame_reg_rules_entry_count;
     dbg->de_frame_reg_rules_entry_count = value;
 
     /*  Take the caller-specified value, but do not
@@ -3322,7 +3326,7 @@ dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_cfa_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = dbg->de_frame_cfa_col_number;
+    Dwarf_Half orig = (Dwarf_Half)dbg->de_frame_cfa_col_number;
     dbg->de_frame_cfa_col_number = value;
     return orig;
 }
@@ -3330,14 +3334,16 @@ dwarf_set_frame_cfa_value(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_same_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = dbg->de_frame_same_value_number;
+    Dwarf_Half orig = 
+        (Dwarf_Half)dbg->de_frame_same_value_number;
     dbg->de_frame_same_value_number = value;
     return orig;
 }
 Dwarf_Half
 dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = dbg->de_frame_same_value_number;
+    Dwarf_Half orig = 
+        (Dwarf_Half)dbg->de_frame_same_value_number;
     dbg->de_frame_undefined_value_number = value;
     return orig;
 }
@@ -3357,11 +3363,11 @@ dwarf_set_default_address_size(Dwarf_Debug dbg,
 
 static int
 init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
-    unsigned count, Dwarf_Error * error)
+    Dwarf_Unsigned count, Dwarf_Error * error)
 {
     f->fr_reg_count = count;
     f->fr_reg = (struct Dwarf_Reg_Rule_s *)
-        calloc(sizeof(struct Dwarf_Reg_Rule_s), count);
+        calloc(sizeof(struct Dwarf_Reg_Rule_s), (size_t)count);
     if (f->fr_reg == 0) {
         if (error) {
             _dwarf_error(dbg, error, DW_DLE_DF_ALLOC_FAIL);
@@ -3375,7 +3381,7 @@ init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
 static int
 _dwarf_initialize_fde_table(Dwarf_Debug dbg,
     struct Dwarf_Frame_s *fde_table,
-    unsigned table_real_data_size,
+    Dwarf_Unsigned table_real_data_size,
     Dwarf_Error * error)
 {
     unsigned entry_size = sizeof(struct Dwarf_Frame_s);
@@ -3466,7 +3472,7 @@ _dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
     Dwarf_Unsigned initial_value)
 {
     struct Dwarf_Reg_Rule_s *r = base+first;
-    unsigned i = first;
+    Dwarf_Unsigned i = first;
     for (; i < last; ++i,++r) {
         r->ru_is_offset = 0;
         r->ru_value_type = DW_EXPR_OFFSET;

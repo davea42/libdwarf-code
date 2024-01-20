@@ -575,7 +575,7 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
     int errornumber,
     const char * section_name,
     Dwarf_Unsigned section_length,
-    int   cu_number,
+    Dwarf_Unsigned cu_number,
     Dwarf_Unsigned length_section_offset,
     Dwarf_Unsigned length_field,
     Dwarf_Error *error)

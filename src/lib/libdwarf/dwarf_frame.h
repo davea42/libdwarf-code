@@ -273,15 +273,15 @@ struct Dwarf_Cie_s {
     char *ci_augmentation;
     Dwarf_Unsigned ci_code_alignment_factor;
     Dwarf_Signed   ci_data_alignment_factor;
-    Dwarf_Small ci_return_address_register;
+    Dwarf_Unsigned ci_return_address_register;
     Dwarf_Small *ci_cie_start;
     Dwarf_Small *ci_cie_instr_start;
     Dwarf_Small *ci_cie_end;
     Dwarf_Debug ci_dbg;
     Dwarf_Frame ci_initial_table;
     Dwarf_Cie ci_next;
-    Dwarf_Small ci_length_size;
-    Dwarf_Small ci_extension_size;
+    Dwarf_Half ci_length_size;
+    Dwarf_Half ci_extension_size;
     Dwarf_Half ci_cie_version_number;
     enum Dwarf_augmentation_type ci_augmentation_type;
 
@@ -489,7 +489,7 @@ int _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Small *section_ptr_end,
     int use_gnu_cie_calc,
     Dwarf_Cie  cie_ptr_in,
-    Dwarf_Small address_size_in,
+    Dwarf_Half address_size_in,
     Dwarf_Fde *fde_ptr_out,
     Dwarf_Error *error);
 

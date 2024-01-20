@@ -260,7 +260,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    version = htmp;
+    version = (Dwarf_Half)htmp;
 
     line_context->lc_version_number = version;
     line_ptr += DWARF_HALF_SIZE;
@@ -1339,7 +1339,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
     /*  This is the operand of the latest fixed_advance_pc extended
         opcode. */
-    Dwarf_Half fixed_advance_pc = 0;
+    Dwarf_Unsigned fixed_advance_pc = 0;
 
     /*  Counts the number of lines in the line matrix. */
     Dwarf_Unsigned line_count = 0;
@@ -1513,7 +1513,8 @@ read_line_table_program(Dwarf_Debug dbg,
             _dwarf_printf(dbg,dwarfstring_string(&ma));
             dwarfstring_destructor(&ma);
             print_line_detail(dbg,dwarfstring_string(&mb),
-                opcode,line_count+1, &regs,is_single_table,
+                (int)opcode,(unsigned)(line_count+1),
+                &regs,is_single_table,
                 is_actuals_table);
             dwarfstring_destructor(&mb);
             dwarfstring_destructor(&ma);
@@ -1596,7 +1597,8 @@ read_line_table_program(Dwarf_Debug dbg,
 
 #ifdef PRINTING_DETAILS
                 print_line_detail(dbg,"DW_LNS_copy",
-                    opcode,line_count+1, &regs,is_single_table,
+                    opcode,(unsigned int)line_count+1,
+                    &regs,is_single_table,
                     is_actuals_table);
 #endif /* PRINTING_DETAILS */
                 if (dolines) {
@@ -1892,9 +1894,7 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_fixed_advance_pc:{
                 Dwarf_Unsigned fpc = 0;
                 int apres = 0;
-                /*READ_UNALIGNED_CK(dbg, fixed_advance_pc,
-                    Dwarf_Half, line_ptr,
-                    DWARF_HALF_SIZE,error,line_ptr_end); */
+
                 apres = _dwarf_read_unaligned_ck_wrapper(dbg,
                     &fpc,line_ptr,DWARF_HALF_SIZE,line_ptr_end,
                     error);
@@ -1933,7 +1933,18 @@ read_line_table_program(Dwarf_Debug dbg,
                         line_count);
                     return DW_DLV_ERROR;
                 }
-                regs.lr_address = regs.lr_address + fixed_advance_pc;
+                {   Dwarf_Unsigned oldad = regs.lr_address;
+                    regs.lr_address = oldad + fixed_advance_pc;
+                    if (regs.lr_address < oldad) {
+                        _dwarf_error_string(dbg, error,
+                            DW_DLE_LINE_TABLE_BAD,
+                            "DW_DLE_LINE_TABLE_BAD: "
+                            "DW_LNS_fixed_advance_pc "
+                            "overflows when added to current "
+                            "line table pc.");
+                        return DW_DLV_ERROR;
+                    }
+                }
                 regs.lr_op_index = 0;
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
@@ -1985,7 +1996,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     return DW_DLV_ERROR;
                 }
 
-                regs.lr_isa = utmp2;
+                regs.lr_isa = (Dwarf_Half)utmp2;
 
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
@@ -2347,7 +2358,8 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                     print_line_detail(dbg,
                         "DW_LNE_end_sequence extended",
-                        ext_opcode, line_count+1,&regs,
+                        (int)ext_opcode, 
+                        (unsigned int)line_count+1,&regs,
                         is_single_table, is_actuals_table);
 #endif /* PRINTING_DETAILS */
                     curr_line->li_address = regs.lr_address;

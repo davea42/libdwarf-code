@@ -1,17 +1,15 @@
 # Cmake on Unix/linux/MacOS/FreeBSD/OpenBSD
 Created 26 April 2019
-Updated 7 October 2023
+Updated 19 December 2023
 
 Consider switching entirely to meson for your build.
-
-There are two parts of this file:
-CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
 
 Unless a shared library is specifically requested
 cmake builds a static library: libdwarf.a
 
 For cmake, ignore the autogen.sh
-script in the base source directory.
+script in the base source directory, autogen.sh
+is only for configure.
 
 By default cmake builds just libdwarf and dwarfdump
 and libdwarf is a static (archive) library.
@@ -23,7 +21,13 @@ the following to the cmake command:
 Lets assume the base directory of the the libdwarf source in a
 directory named 'code' inside the directory '/path/to/' Always
 arrange to issue the cmake command in an empty directory.
-For example:
+
+If you are building a Shared Library you may need to
+install before running tests to allow the tests to work
+Use -DCMAKE_INSTALL_PREFIX=/some/path  to chose
+the install path.
+You can install in any temporary directory or
+in system directories and the tests will work. 
 
     # build the fast way
     mkdir /tmp/cmbld
@@ -32,15 +36,17 @@ For example:
     ninja
     ninja test
 
-    # much slower build
+    # slower build
     mkdir /tmp/cmbld
     cd /tmp/cmbld
-    cmake -DDO_TESTING:BOOL=TRUE  /path/to/code
+    cmake -G "Unix Makefiles" -DDO_TESTING:BOOL=TRUE  /path/to/code
     make
     ctest -R self
 
-The above will build libdwarf.dll or libdwarf-0.dll 
-and dwarfdump (linking to that dll). 
+It is best to specify -G explicitly since some versions of cmake
+seem to have a different default for -G than others.
+
+On Windows msys2 -DBUILD_SHARED=YES will build libdwarf.dll.
 
 To show all the available cmake options for 'code':
 
@@ -48,9 +54,12 @@ To show all the available cmake options for 'code':
 
 For dwarfexample:
 
-    cmake -G Ni  -DBUILD_DWARFEXAMPLE=ON /path/to/code
+    cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON /path/to/code
     make
-    cmake -DDO_TESTING=ON /path/to/code
+
+or
+
+    cmake -G "Unix Makefiles" -DDO_TESTING=ON /path/to/code
     make
     # To list the tests
     ctest -N
@@ -65,14 +74,9 @@ want to know what the test output is, use the following:
     ctest --verbose -I 22
 
 In case one wishes to see the exact compilation/linking options
-passed at compile time use
+passed at compile time when using -G "Unix Makefiles":
+ 
     make VERBOSE=1
-instead of plain
-    make
 
-cmake make install works somewhat usefully, but
-generates two libdwarf.pc files, only one of which
-is usable. It is unclear why two such.
-
-We suggest you use meson or configure for install
-
+With -G Ninja the generated build.ninja file shows
+the build details.

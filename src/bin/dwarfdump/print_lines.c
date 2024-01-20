@@ -688,8 +688,8 @@ print_line_context_record(Dwarf_Line_Context line_context,
     const char *name = 0;
     Dwarf_Small table_count = 0;
     struct esb_s bufr;
-    int include_dir_base = 1; /* DWARF2.3,4 */
-    int include_dir_limit = 0; /* set below */
+    Dwarf_Signed include_dir_base = 1; /* DWARF2.3,4 */
+    Dwarf_Signed include_dir_limit = 0; /* set below */
     char bufr_tmp[ESB_FIXED_ALLOC_SIZE];
 
     esb_constructor_fixed(&bufr,bufr_tmp,sizeof(bufr_tmp));

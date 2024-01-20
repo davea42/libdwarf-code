@@ -130,7 +130,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
     Dwarf_Error* error)
 {
     Dwarf_Unsigned count = 0;
-    unsigned leblen = 0;
+    Dwarf_Unsigned leblen = 0;
     unsigned code = 0;
     Dwarf_Unsigned val1 = 0;
     Dwarf_Unsigned val2 = 0;
@@ -202,7 +202,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
         }
         break;
     }
-    *bytes_count_out = count;
+    *bytes_count_out = (unsigned int)count;
     *entry_kind = code;
     *entry_operand1 = val1;
     *entry_operand2 = val2;
@@ -309,7 +309,7 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    buildhere->rc_version = version;
+    buildhere->rc_version = (Dwarf_Half)version;
     data += SIZEOFT16;
     localoff += SIZEOFT16;
 
@@ -709,9 +709,10 @@ int dwarf_get_rnglist_head_basics(
     *rle_version = head->rh_version;
     *rnglists_index_returned = head->rh_index;
     *bytes_total_in_rle = head->rh_bytes_total;
-    *offset_size = head->rh_offset_size;
-    *address_size = head->rh_address_size;
-    *segment_selector_size = head->rh_segment_selector_size;
+    *offset_size = (Dwarf_Half)head->rh_offset_size;
+    *address_size = (Dwarf_Half)head->rh_address_size;
+    *segment_selector_size = 
+        (Dwarf_Half)head->rh_segment_selector_size;
     rngcontext = head->rh_localcontext;
     if (rngcontext) {
         *overall_offset_of_this_context =
@@ -1056,7 +1057,7 @@ build_array_of_rle(Dwarf_Debug dbg,
     Dwarf_Small * data        = rctx->rh_rlepointer;
     Dwarf_Unsigned dataoffset = rctx->rh_rlearea_offset;
     Dwarf_Small *enddata      = rctx->rh_end_data_area;
-    unsigned address_size     = rctx->rh_address_size;
+    unsigned address_size     = (unsigned int)rctx->rh_address_size;
     Dwarf_Unsigned bytescounttotal= 0;
     Dwarf_Unsigned latestbaseaddr = 0;
     Dwarf_Bool foundbaseaddr        = FALSE;

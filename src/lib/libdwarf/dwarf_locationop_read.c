@@ -68,7 +68,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     Dwarf_Error *error)
 {
     int len = 0;
-    Dwarf_Small op = *loc_ptr;
+    Dwarf_Half op = *loc_ptr;
     Dwarf_Unsigned operand = 0;
 
     len++;
@@ -654,7 +654,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             Relocation to a different object file is up to
             the user, per DWARF5 Page 41.
             http://www.dwarfstd.org/ShowIssue.php?issue=100831.1 */
-        Dwarf_Small iplen = offset_size;
+        Dwarf_Half iplen = offset_size;
         if (version_stamp == DW_CU_VERSION2 /* 2 */ ) {
             iplen = address_size;
         }

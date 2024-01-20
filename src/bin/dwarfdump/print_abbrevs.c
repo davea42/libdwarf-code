@@ -116,7 +116,7 @@ attr_unknown(Dwarf_Unsigned attr)
     if (attr > DW_AT_hi_user) {
         return TRUE;
     }
-    res = dwarf_get_AT_name(attr,&n);
+    res = dwarf_get_AT_name((unsigned int)attr,&n);
     if (res == DW_DLV_NO_ENTRY) {
         return TRUE;
     }
@@ -128,7 +128,7 @@ is_valid_form_we_know(Dwarf_Unsigned form)
     int res = 0;
     const char *n = 0;
 
-    res = dwarf_get_FORM_name(form,&n);
+    res = dwarf_get_FORM_name((unsigned int)form,&n);
     if (res == DW_DLV_NO_ENTRY) {
         return FALSE;
     }
@@ -146,7 +146,7 @@ printdupab(struct abbrev_entry_s * lastaep)
         "0x%"  DW_PR_XZEROS DW_PR_DUx ,
         lastaep->ae_attr);
     esb_append_printf_s(&msg,
-        " (%s)", get_AT_name(lastaep->ae_attr,
+        " (%s)", get_AT_name((unsigned int)lastaep->ae_attr,
         dwarf_names_print_on_error));
     esb_append_printf_u(&msg,
         " %u times", lastaep->ae_dupcount);
@@ -170,7 +170,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
 {
     const char *tagname = "";
     struct abbrev_entry_s *entryarray =0;
-    unsigned               entryarray_size = 0;
+    Dwarf_Unsigned entryarray_size = 0;
     Dwarf_Unsigned abbrev_entry_count = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Half     tag = 0;
@@ -214,7 +214,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             abbrev for entire CU. */
         tagname = "Abbrev 0: null abbrev entry";
     } else {
-        tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+        tagname = get_TAG_name((unsigned)tag,dwarf_names_print_on_error);
     }
     if ( glflags.gf_do_print_dwarf) {
         if (glflags.dense) {
@@ -258,7 +258,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     if (tag && glflags.gf_do_print_dwarf) {
         const char * child_name = 0;
 
-        child_name = get_children_name(child_flag,
+        child_name = get_children_name((int)(unsigned int)child_flag,
             dwarf_names_print_on_error);
         printf(" %s", child_name);
     }
@@ -290,7 +290,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     entryarray = calloc(entryarray_size,
         sizeof(struct abbrev_entry_s));
     if (!entryarray) {
-        printf( "%s ERROR:  Malloc of %u abbrev_entry_s"
+        printf( "%s ERROR:  Malloc of %" DW_PR_DUu " abbrev_entry_s"
             " structs failed. Near section global offset 0x%"
             DW_PR_DUx "  .\n",
         glflags.program_name,entryarray_size,offset);
@@ -336,14 +336,14 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             }
             if (glflags.dense) {
                 printf(" <%ld>%s<%s>%s", (unsigned long) off,
-                    get_AT_name(attr,dwarf_names_print_on_error),
+                    get_AT_name((unsigned int)attr,dwarf_names_print_on_error),
                     get_FORM_name((Dwarf_Half) form,
                         dwarf_names_print_on_error),
                     esb_get_string(&m));
             } else if (!esb_string_len(&m))  {
                 printf("       <0x%08lx>              %-28s%s\n",
                     (unsigned long) off,
-                    get_AT_name(attr,
+                    get_AT_name((unsigned int)attr,
                         dwarf_names_print_on_error),
                     get_FORM_name((Dwarf_Half) form,
                         dwarf_names_print_on_error));
@@ -351,7 +351,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
                 printf("       <0x%08lx>"
                     "              %-28s%-20s%s\n",
                     (unsigned long) off,
-                    get_AT_name(attr,
+                    get_AT_name((unsigned int)attr,
                         dwarf_names_print_on_error),
                     get_FORM_name((Dwarf_Half) form,
                         dwarf_names_print_on_error),

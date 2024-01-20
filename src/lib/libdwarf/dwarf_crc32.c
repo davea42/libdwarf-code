@@ -57,7 +57,11 @@
     The crc is calculated based on reading
     the entire current open
     Dwarf_Debug dbg object file and all bytes in
-    the file are read to create  the crc.  */
+    the file are read to create  the crc.  
+
+    In Windows, where unsigned int is 16 bits, this
+    produces different output than on 32bit ints.
+*/
 int
 dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     Dwarf_Error *error)
@@ -70,7 +74,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     off_t   lsval = 0;
     /*  Named with u to remind the reader that this is
         an unsigned value. */
-    size_t         readlenu = 1000;
+    size_t         readlenu = 10000;
     unsigned char *readbuf = 0;
     unsigned int   tcrc = 0;
     unsigned int   init = 0;
@@ -127,7 +131,8 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         /*  Fix warning on Windows: read()'s
             3rd parameter is a unsigned const */
 #ifdef _WIN32
-        readreturnv = read(fd,readbuf,(unsigned const)readlenu);
+        readreturnv = (ssize_t)read(fd,readbuf,
+            (unsigned const)readlenu);
 #else
         readreturnv = read(fd,readbuf,readlenu);
 #endif
@@ -138,7 +143,8 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
             return DW_DLV_ERROR;
         }
         /*  Call the public API function so it gets tested too. */
-        tcrc = dwarf_basic_crc32(readbuf,readlenu,
+        tcrc = (unsigned int)dwarf_basic_crc32(readbuf,
+            (unsigned long)readlenu,
             (unsigned long)init);
         init = tcrc;
         size_left -= (off_t)readlenu;

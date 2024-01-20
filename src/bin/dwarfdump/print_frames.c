@@ -434,8 +434,9 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                             dwarf_errmsg(aterr));
                         /* the long name is horrible */
                         if (!glflags.gf_error_code_search_by_address){
+                            /* error codes never big numbers. */
                             glflags.gf_error_code_search_by_address=
-                                dwarf_errno(aterr);
+                                (int)dwarf_errno(aterr);
                         }
                     }
                     dwarf_dealloc(dbg,aterr,DW_DLA_ERROR);

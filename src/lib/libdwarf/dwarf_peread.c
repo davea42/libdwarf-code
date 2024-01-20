@@ -551,9 +551,9 @@ _dwarf_pe_load_dwarf_section_headers(
             IMAGE_SIZEOF_SHORT_NAME);
         /* Have NUL terminator now. */
         sec_outp->name = strdup(safe_name);
-
         res = pe_section_name_get(pep,
-            safe_name,strlen(safe_name),&expname,errcode);
+            safe_name,(unsigned int)strlen(safe_name),
+            &expname,errcode);
         if (res != DW_DLV_OK) {
             return res;
         }

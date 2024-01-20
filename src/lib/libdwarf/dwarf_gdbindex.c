@@ -63,7 +63,7 @@ Index-Section-Format.html#Index-Section-Format
 #if WORDS_BIGENDIAN   /* meaning on this host */
 #define READ_GDBINDEX(dest,desttype, source, length) \
     do {                                             \
-        BIGGEST_UINT _ltmp = 0;                      \
+        desttype _ltmp = 0;                      \
         _dwarf_memcpy_swap_bytes((((char *)(&_ltmp)) \
             + sizeof(_ltmp) - (length)),             \
             (source), (length)) ;                    \
@@ -72,7 +72,7 @@ Index-Section-Format.html#Index-Section-Format
 #else /* little-endian on this host */
 #define READ_GDBINDEX(dest,desttype, source, length) \
     do {                                             \
-        BIGGEST_UINT _ltmp = 0;                      \
+        desttype _ltmp = 0;                      \
         memcpy(((char *)(&_ltmp)) ,                  \
             (source), (length)) ;                    \
         (dest) = (desttype)_ltmp;                    \

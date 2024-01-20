@@ -110,6 +110,8 @@ struct Dwarf_Attribute_s {
     Dwarf_Attribute ar_next;
 };
 
+#define CC_PROD_METROWERKS 1
+
 /*
     This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
@@ -171,6 +173,9 @@ struct Dwarf_CU_Context_s {
         compilation unit. */
     Dwarf_Small cc_address_size;
     Dwarf_Small cc_segment_selector_size;
+    /*  Normally zero, For the defective Metrowerks
+        compiler is set to CC_PROD_METROW */
+    Dwarf_Small cc_producer;
 
     /*  cc_debug_offset is the global offset in the section
         of the area length field of the CU.
@@ -182,6 +187,7 @@ struct Dwarf_CU_Context_s {
         right away when cu_context created.
         See cc_is_info flag. */
     Dwarf_Unsigned cc_debug_offset;
+
 
     /* === START DEBUG FISSION (Split Dwarf) data
         cc_signature is in the TU header
@@ -430,7 +436,7 @@ struct Dwarf_Section_s {
     const char * dss_standard_name;
 
     /* Object section number in object file. */
-    unsigned dss_number;
+    Dwarf_Unsigned dss_number;
 
     /*  These are elf flags and non-elf object should
         just leave these fields zero.  */
@@ -495,9 +501,9 @@ typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 struct Dwarf_dbg_sect_s {
     /*  Debug section name must not be freed, is quoted string.
         This is the name from the object file itself. */
-    const char *ds_name;
+    const char    *ds_name;
     /* The section number in object section numbering. */
-    unsigned ds_number;
+    Dwarf_Unsigned ds_number;
     /*   Debug section information, points to de_debug_*member
         (or the like) of the dbg struct.  */
     struct Dwarf_Section_s *ds_secdata;
@@ -561,6 +567,9 @@ struct Dwarf_Tied_Data_s {
     dg_groupnum 1 is base
     dg_groupnum 2 is dwo
     dg_groupnum 3 and higher are COMDAT groups (if any).
+
+    We assume the number of groups will not exceed
+    event the Windows 16 bit int maximum.
 */
 struct Dwarf_Group_Data_s {
     /* For traditional DWARF the value is one, just one group. */
@@ -822,7 +831,7 @@ struct Dwarf_Debug_s {
 
 /* New style. takes advantage of dwarfstrings capability.
     This not a public function. */
-int _dwarf_printf(Dwarf_Debug dbg, const char * data);
+void  _dwarf_printf(Dwarf_Debug dbg, const char * data);
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;
 struct Dwarf_Chain_s {

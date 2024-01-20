@@ -33,6 +33,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <config.h>
 
 #include <stdlib.h> /* free() malloc() */
+#include <stdio.h> /* printf debugging */
 #include <string.h> /* memset() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -120,7 +121,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     Dwarf_Small    *data,
     Dwarf_Unsigned  dataoffset,
     Dwarf_Small    *enddata,
-    unsigned        address_size,
+    Dwarf_Half      address_size,
     unsigned       *bytes_count_out,
     unsigned       *entry_kind,
     Dwarf_Unsigned *entry_operand1,
@@ -131,7 +132,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     Dwarf_Error* error)
 {
     Dwarf_Unsigned count = 0;
-    unsigned int   leblen = 0;
+    Dwarf_Unsigned leblen = 0;
     unsigned int   code = 0;
     Dwarf_Unsigned val1 = 0;
     Dwarf_Unsigned val2 = 0;
@@ -241,7 +242,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
         count += address_size;
         DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
             dbg,error,enddata);
-        count += leblen;
+        count += (unsigned)leblen;
         res = counted_loc_descr(dbg,data,enddata,
             dataoffset,
             &loc_ops_overall_size,
@@ -276,8 +277,19 @@ read_single_lle_entry(Dwarf_Debug dbg,
         }
         break;
     }
-    *bytes_count_out = count;
-    *entry_kind      = code;
+    {
+        unsigned int v = (unsigned int)count;
+        if ((Dwarf_Unsigned)v != count) {
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "The number of bytes in a single "
+                "loclist entry is "
+                "too large to be reasonable");
+            return DW_DLV_ERROR;
+        }
+    }
+    *bytes_count_out = (unsigned)count;
+    *entry_kind      = (unsigned)code;
     *entry_operand1  = val1;
     *entry_operand2  = val2;
     *opsblocksize    = loc_ops_len;
@@ -353,7 +365,7 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    buildhere->lc_version = version;
+    buildhere->lc_version = (Dwarf_Half)version;
     data += SIZEOFT16;
 
     READ_UNALIGNED_CK(dbg,address_size,unsigned,data,
@@ -661,7 +673,7 @@ int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c head,
             "dwarf_get_loclist_head_basics()");
         return DW_DLV_ERROR;
     }
-    *lkind = head->ll_kind;
+    *lkind = (Dwarf_Small)head->ll_kind;
     *lle_count = head->ll_locdesc_count;
     *lle_version = head->ll_cuversion;
     *loclists_index_returned = head->ll_index;
@@ -791,7 +803,7 @@ int dwarf_get_loclist_lle(Dwarf_Debug dbg,
     Dwarf_Small *data = 0;
     Dwarf_Small *enddata = 0;
     int res = 0;
-    unsigned address_size = 0;
+    Dwarf_Half address_size = 0;
 
     CHECK_DBG(dbg,error,"dwarf_get_loclist_lle()");
     if (!dbg->de_loclists_context_count) {

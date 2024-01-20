@@ -262,17 +262,16 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
 static int
 is_a_relx_section(const char *scn_name,int type,int *is_rela)
 {
+    if (type == SHT_RELA) {
+        *is_rela = TRUE;
+        return TRUE;
+    }
     if (_dwarf_startswith(scn_name,".rela.")) {
-
         *is_rela = TRUE;
         return TRUE;
     }
     if (_dwarf_startswith(scn_name,".rel.")) {
         *is_rela = FALSE;
-        return TRUE;
-    }
-    if (type == SHT_RELA) {
-        *is_rela = TRUE;
         return TRUE;
     }
     if (type == SHT_REL) {
@@ -396,8 +395,8 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     data = secdata.dss_data;
     secend = data + secdata.dss_size;
     {
-        unsigned i = 1;
-        unsigned count = doas->as_size/doas->as_entrysize;
+        Dwarf_Unsigned i = 1;
+        Dwarf_Unsigned count = doas->as_size/doas->as_entrysize;
         Dwarf_Unsigned  fval = 0;
 
         /*  The fields treatments with  regard
@@ -498,13 +497,14 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     return resx;
                 }
                 if (!this_section_dwarf_relevant(doasx.as_name,
-                    doasx.as_type,&is_rela) ) {
+                    (int)doasx.as_type,&is_rela) ) {
                     continue;
                 }
                 data += DWARF_32BIT_SIZE;
                 *did_add_map = TRUE;
                 res = _dwarf_insert_in_group_map(dbg,
-                    comdat_group_number,val,
+                    (unsigned)comdat_group_number,
+                    (unsigned)val,
                     doasx.as_name,
                     error);
                 if (res != DW_DLV_OK) {
@@ -563,7 +563,7 @@ determine_target_group(Dwarf_Unsigned section_count,
 
     grp = &dbg->de_groupnumbers;
     grp->gd_number_of_groups = 0;
-    grp->gd_number_of_sections = section_count;
+    grp->gd_number_of_sections = (unsigned int)section_count;
     if (grp->gd_map) {
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_OK;
@@ -616,7 +616,8 @@ determine_target_group(Dwarf_Unsigned section_count,
             continue;
         }
         scn_name = doas.as_name;
-        if (!this_section_dwarf_relevant(scn_name,doas.as_type,
+        if (!this_section_dwarf_relevant(scn_name,
+            (int)doas.as_type,
             &is_rela) ) {
             continue;
         }
@@ -649,7 +650,8 @@ determine_target_group(Dwarf_Unsigned section_count,
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (is_a_relx_section(scn_name,doas.as_type,&is_rela)) {
+        if (is_a_relx_section(scn_name,(int)doas.as_type,
+            &is_rela)) {
             continue;
         }
 
@@ -661,7 +663,8 @@ determine_target_group(Dwarf_Unsigned section_count,
             }
             /* !mapgroupnumber */
             res = _dwarf_insert_in_group_map(dbg,
-                groupnumber,obj_section_index,
+                (unsigned)groupnumber,
+                (unsigned)obj_section_index,
                 scn_name,
                 error);
             if (res != DW_DLV_OK) {
@@ -784,7 +787,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         int is_rela = FALSE;
 
         res = _dwarf_section_get_target_group_from_map(dbg,
-            obj_section_index, &groupnumber,error);
+            (unsigned int)obj_section_index, &groupnumber,error);
         if (res == DW_DLV_OK ) {
             /* groupnumber is set. Fall through */
             mapgroupnumber = groupnumber;
@@ -817,11 +820,13 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (!this_section_dwarf_relevant(scn_name,doas.as_type,
+        if (!this_section_dwarf_relevant(scn_name,
+            (int)doas.as_type,
             &is_rela) ) {
             continue;
         }
-        if (!is_a_relx_section(scn_name,doas.as_type,&is_rela)
+        if (!is_a_relx_section(scn_name,(int)doas.as_type,
+            &is_rela)
             && !is_a_special_section_semi_dwarf(scn_name)) {
             /*  We do these actions only for group-related
                 sections.  Do for .debug_info etc,
@@ -853,10 +858,13 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
             res = is_section_name_known_already(dbg,scn_name);
             if (res == DW_DLV_OK) {
+#if 0
                 /* DUPLICATE */
-                free(sections);
                 DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
                     DW_DLV_ERROR);
+                /* Metrowerks does this nonsense */
+#endif
+                continue;
             }
             if (res == DW_DLV_ERROR) {
                 free(sections);
@@ -901,8 +909,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                     is a RELA one and the 'sh_info'
                     refers to a debug section, add the
                     relocation data. */
-                if (is_a_relx_section(scn_name,doas.as_type,
-                    &is_rela)) {
+                if (is_a_relx_section(scn_name,
+                    (int)doas.as_type, &is_rela)) {
                     if ( doas.as_info < section_count) {
                         if (sections[doas.as_info]) {
                             add_relx_data_to_secdata(
@@ -1069,7 +1077,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         ASSERT: setup_result == DW_DLV_ERROR
         here  */
     {
-        int myerr = 0;
+        Dwarf_Unsigned myerr = 0;
         dwarfstring msg;
 
         dwarfstring_constructor(&msg);
@@ -1713,8 +1721,11 @@ dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_offset,
     Dwarf_Error * error)
 {
-
+    Dwarf_Unsigned sectioncount = 0;
     CHECK_DBG(dbg,error,"dwarf_get_section_info_by_index_a()");
+
+    sectioncount = dwarf_get_section_count(dbg); 
+
     if (section_addr) {
         *section_addr = 0;
     }
@@ -1730,9 +1741,11 @@ dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
     if (section_offset) {
         *section_offset = 0;
     }
+    if (section_index < 0) {
+        return DW_DLV_NO_ENTRY;
+    }
     /* Check if we have a valid section index */
-    if (section_index >= 0 && section_index <
-        dwarf_get_section_count(dbg)) {
+    if ((Dwarf_Unsigned)section_index < sectioncount){ 
         int res = 0;
         int err = 0;
         struct Dwarf_Obj_Access_Section_a_s doas;
@@ -1768,18 +1781,18 @@ dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
 }
 
 /*  Get section count */
-int
+Dwarf_Unsigned
 dwarf_get_section_count(Dwarf_Debug dbg)
 {
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
 
     if (IS_INVALID_DBG(dbg)) {
-        return DW_DLV_NO_ENTRY;
+        return 0;
     }
     obj = dbg->de_obj_file;
     if (!obj) {
         /*  -1  */
-        return DW_DLV_NO_ENTRY;
+        return 0;
     }
     return obj->ai_methods->om_get_section_count(obj->ai_object);
 }

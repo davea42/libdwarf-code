@@ -54,7 +54,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  Neither off_t nor ssize_t is in C90.
     However, both are in Posix:
     IEEE Std 1003.1-1990, aka
-    ISO/IEC 9954-1:1990. */
+    ISO/IEC 9954-1:1990. 
+    This gets asked to read large sections sometimes. 
+    The Linux kernel allows at most 0x7ffff000
+    bytes in a read()*/
 int
 _dwarf_object_read_random(int fd, char *buf, off_t loc,
     size_t size, off_t filesize, int *errc)
@@ -62,6 +65,8 @@ _dwarf_object_read_random(int fd, char *buf, off_t loc,
     off_t scode = 0;
     ssize_t rcode = 0;
     off_t endpoint = 0;
+    size_t max_single_read = 0x1ffff000;
+    size_t remaining_bytes = 0;
 
     if (loc >= filesize) {
         /*  Seek can seek off the end. Lets not allow that.
@@ -76,16 +81,33 @@ _dwarf_object_read_random(int fd, char *buf, off_t loc,
         *errc = DW_DLE_READ_OFF_END;
         return DW_DLV_ERROR;
     }
+#ifdef _WIN32
+    scode = (off_t)lseek(fd,(long)loc,SEEK_SET);
+#else
     scode = lseek(fd,loc,SEEK_SET);
+#endif
     if (scode == (off_t)-1) {
         *errc = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    rcode = read(fd,buf,size);
-    if (rcode == -1 ||
-        (size_t)rcode != size) {
-        *errc = DW_DLE_READ_ERROR;
-        return DW_DLV_ERROR;
+    remaining_bytes = size;
+    while(remaining_bytes > 0) { 
+        if (remaining_bytes >= max_single_read) {
+            size = max_single_read;
+        }
+#ifdef _WIN32
+        rcode = (ssize_t)read(fd,buf,(unsigned const)size);
+#else
+        rcode = read(fd,buf,size);
+#endif
+        if (rcode == (ssize_t)-1 ||
+            (size_t)rcode != size) {
+            *errc = DW_DLE_READ_ERROR;
+            return DW_DLV_ERROR;
+        }
+        remaining_bytes -= size;
+        buf += size;
+        size = remaining_bytes;
     }
     return DW_DLV_OK;
 }

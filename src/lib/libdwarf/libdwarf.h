@@ -2335,10 +2335,13 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
 
 /*! @brief Return the DIE abbrev code
 
-    The Abbrev code for a DIE is an integer assigned
-    by the compiler within a particular CU.
+    The Abbrev code for a DIE is a non-negative
+    integer assigned by the compiler within a particular CU.
     For .debug_names abbreviations the
-    situation is different.
+    situation is conceptually similar. The code values
+    are arbitrary but compilers are motivated to make
+    them small so the object size is as small as
+    possible.
 
     Returns the  abbrev code of the die. Cannot fail.
 
@@ -2347,7 +2350,7 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
     @return
     The abbrev code. of the DIE.
 */
-DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
+DW_API Dwarf_Unsigned dwarf_die_abbrev_code(Dwarf_Die dw_die);
 
 /*! @brief Return TRUE if the DIE has children
 
@@ -4572,7 +4575,7 @@ DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned dw_expression_length,
     Dwarf_Half     dw_address_size,
     Dwarf_Half     dw_offset_size,
-    Dwarf_Small    dw_dwarf_version,
+    Dwarf_Half     dw_dwarf_version,
     Dwarf_Loc_Head_c* dw_loc_head,
     Dwarf_Unsigned  * dw_listlen,
     Dwarf_Error     * dw_error);
@@ -8805,6 +8808,8 @@ DW_API int dwarf_get_section_info_by_name(Dwarf_Debug dw_dbg,
     @param dw_section_index
     Pass in an index, 0 through N-1 where
     N is the count returned from dwarf_get_section_count .
+    As an index type -int- works in practice, but should
+    really be Dwarf_Unsigned.
     @param dw_section_name
     On success returns a pointer to the section name
     as it appears in the object file.
@@ -8951,8 +8956,18 @@ DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_comdat_groupnumber);
 
 /*! @brief Get section count (of object file sections).
+
+    Return the section count. Returns 0 if the
+    dw_debug argument is improper in any way. 
+
+    @param dw_dbt
+    @param dw_dbg
+    Pass in a valid Dwarf_Debug of interest.
+    @return
+    Returns the count of sections in the object file
+    or zero.
 */
-DW_API int dwarf_get_section_count(Dwarf_Debug dw_dbg);
+DW_API Dwarf_Unsigned dwarf_get_section_count(Dwarf_Debug dw_dbg);
 
 /*! @brief Get section sizes for many sections.
 

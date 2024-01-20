@@ -132,7 +132,7 @@ print_single_lle(Dwarf_Unsigned lineoffset,
     struct esb_s m;
 
     esb_constructor(&m);
-    res = dwarf_get_LLE_name(code,&name);
+    res = dwarf_get_LLE_name((unsigned int)code,&name);
     if (res != DW_DLV_OK) {
         /* ASSERT: res == DW_DLV_NO_ENTRY, see dwarf_names.c */
         esb_append_printf_u(&m, "<ERROR: lle code 0x%" DW_PR_DUx

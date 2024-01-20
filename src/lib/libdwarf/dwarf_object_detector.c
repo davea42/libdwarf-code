@@ -339,7 +339,7 @@ is_archive_magic(struct elf_header *h) {
     Return of DW_DLV_OK  it is a PE file we recognize. */
 static int
 is_pe_object(int fd,
-    unsigned long filesize,
+    Dwarf_Unsigned filesize,
     unsigned *endian,
     unsigned *offsetsize,
     int *errcode)
@@ -556,24 +556,31 @@ _dwarf_object_detector_fd_a(int fd,
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-    remaininglen = fsize - fileoffsetbase;
     if ((Dwarf_Unsigned)fsize <= fileoffsetbase) {
-        printf("FAIL: fsize <= offsetbase impossible\n");
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
+    remaininglen = (Dwarf_Unsigned)fsize - fileoffsetbase;
     if (remaininglen <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-
-    lsval  = lseek(fd,fileoffsetbase,SEEK_SET);
+#ifdef _WIN32
+    lsval  = (off_t)lseek(fd,(long)fileoffsetbase,SEEK_SET);
+#else
+    lsval  = lseek(fd,(off_t)fileoffsetbase,SEEK_SET);
+#endif
     if (lsval < 0) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
+    /*  These reads are small. */
+#ifdef _WIN32
+    readval = (ssize_t)read(fd,&h,(unsigned const)readlen);
+#else
     readval = read(fd,&h,readlen);
+#endif
     if (readval != (ssize_t)readlen) {
         *errcode = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;

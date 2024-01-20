@@ -215,13 +215,12 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
 
    for READ_UNALIGNED_CK the error code refers to host endianness.
 */
-typedef Dwarf_Unsigned BIGGEST_UINT;
 
 #ifdef WORDS_BIGENDIAN
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source,\
-    length,error,endptr)                                        \
-    do {                                     \
-        BIGGEST_UINT _ltmp = 0;              \
+    length,error,endptr)                        \
+    do {                                        \
+        desttype _ltmp = 0;                     \
         Dwarf_Byte_Ptr readend = (source)+(length); \
         if (readend <  (source)) {              \
             _dwarf_error_string((dbg), (error), \
@@ -238,14 +237,15 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
             return DW_DLV_ERROR;             \
         }                                    \
         (dbg)->de_copy_word( (((char *)(&_ltmp)) +      \
-            sizeof(_ltmp) - (length)),(source), (length)) ; \
-        (dest) = (desttype)_ltmp;              \
+            sizeof(_ltmp) - (length)),(source), \
+            (unsigned long)(length)) ;       \
+        (dest) = _ltmp;                      \
     } while (0)
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source,\
     length,error,endptr)                         \
     do  {                                        \
-        BIGGEST_UINT _ltmp = 0;                  \
+        desttype _ltmp = 0;                      \
         Dwarf_Byte_Ptr readend = (source)+(length); \
         if (readend < (source)) {                \
             _dwarf_error_string((dbg), (error),  \
@@ -262,8 +262,8 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
             return DW_DLV_ERROR;                 \
         }                                        \
         (dbg)->de_copy_word((char *)(&_ltmp),      \
-            (source), (length)) ;                \
-        (dest) = (desttype)_ltmp;                \
+            (source), (unsigned long)(length)) ; \
+        (dest) = _ltmp;                          \
     } while (0)
 #endif
 

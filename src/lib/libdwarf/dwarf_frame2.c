@@ -107,8 +107,7 @@ static int _dwarf_create_cie_from_start(Dwarf_Debug dbg,
 
 static int _dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg,
     Dwarf_Small * frame_ptr,
-    unsigned long
-    *size_of_augmentation_data,
+    Dwarf_Unsigned *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
     Dwarf_Small * section_end_pointer,
     char *augmentation,
@@ -904,7 +903,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     case aug_eh:{
         int err = 0;
-        unsigned long increment = 0;
+        Dwarf_Unsigned increment = 0;
 
         if (!use_gnu_cie_calc) {
             /* This should be impossible. */
@@ -1088,7 +1087,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Small *section_ptr_end,
     int          use_gnu_cie_calc,
     Dwarf_Cie    cie_ptr_in,
-    Dwarf_Small  address_size,
+    Dwarf_Half   address_size,
     Dwarf_Fde   *fde_ptr_out,
     Dwarf_Error *error)
 {
@@ -1978,10 +1977,9 @@ _dwarf_get_augmentation_type(Dwarf_Debug dbg,
 static int
 _dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg,
     Dwarf_Small * frame_ptr,
-    unsigned long *size_of_augmentation_data,
+    Dwarf_Unsigned *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
-    Dwarf_Small * section_ptr_end,
-    char *augmentation,
+    Dwarf_Small * section_ptr_end, char *augmentation,
     Dwarf_Error *error)
 {
     char *suffix = 0;

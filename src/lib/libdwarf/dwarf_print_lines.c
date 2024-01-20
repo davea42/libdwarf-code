@@ -25,7 +25,6 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
 
 #include <config.h>
@@ -236,8 +235,8 @@ print_include_directory_details(Dwarf_Debug dbg,
     dwarfstring_constructor_static(&m4,locallinebuf,
         sizeof(locallinebuf));
     if (line_version == DW_LINE_VERSION5) {
-        unsigned i = 0;
-        unsigned dfcount =
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned dfcount =
             line_context->lc_directory_entry_format_count;
 
         dwarfstring_constructor(&m4);
@@ -254,8 +253,8 @@ print_include_directory_details(Dwarf_Debug dbg,
             valpair = line_context->lc_directory_format_values +i;
             dwarfstring_append_printf_u(&m4,
                 "  format [%2u] ",i);
-            res = dwarf_get_LNCT_name(valpair->up_first,
-                &tname);
+            res = dwarf_get_LNCT_name((unsigned int)
+                valpair->up_first, &tname);
             if ( res != DW_DLV_OK) {
                 tname = "<unknown type>";
             }
@@ -264,7 +263,8 @@ print_include_directory_details(Dwarf_Debug dbg,
                 valpair->up_first);
             dwarfstring_append_printf_s (&m4,
                 " %-20s\n",(char *)tname);
-            res = dwarf_get_FORM_name(valpair->up_second,&fname);
+            res = dwarf_get_FORM_name((unsigned int)
+                valpair->up_second,&fname);
             if ( res != DW_DLV_OK) {
                 fname = "<unknown form>";
             }
@@ -448,8 +448,9 @@ print_file_entry_details(Dwarf_Debug dbg,
     dwarfstring_constructor_static(&m5,locallinebuf,
         sizeof(locallinebuf));
     if (line_version == DW_LINE_VERSION5) {
-        unsigned i = 0;
-        unsigned dfcount = line_context->lc_file_name_format_count;
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned dfcount = 
+            line_context->lc_file_name_format_count;
 
         dwarfstring_append_printf_u(&m5,
             "  file entry format count      %u\n",dfcount);
@@ -462,7 +463,8 @@ print_file_entry_details(Dwarf_Debug dbg,
             valpair = line_context->lc_file_format_values +i;
             dwarfstring_append_printf_u(&m5,
                 "  format [%2u] ",i);
-            res = dwarf_get_LNCT_name(valpair->up_first,&tname);
+            res = dwarf_get_LNCT_name((unsigned int)
+                valpair->up_first,&tname);
             if ( res != DW_DLV_OK) {
                 tname = "<unknown type>";
             }
@@ -471,7 +473,8 @@ print_file_entry_details(Dwarf_Debug dbg,
                 valpair->up_first);
             dwarfstring_append_printf_s(&m5,
                 " %-20s\n",(char *)tname);
-            res = dwarf_get_FORM_name(valpair->up_second,&fname);
+            res = dwarf_get_FORM_name((unsigned int)
+                valpair->up_second,&fname);
             if ( res != DW_DLV_OK) {
                 fname = "<unknown form>";
             }

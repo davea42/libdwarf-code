@@ -392,7 +392,7 @@ print_abblist_use(unsigned int indent)
         printf("[%3" DW_PR_DUu "] ",i);
         printf(" %4" DW_PR_DUu ,cur->ac_code);
         printf(" 0x%02x",cur->ac_tag);
-        dwarf_get_TAG_name(cur->ac_tag,&tagname);
+        dwarf_get_TAG_name((unsigned int)cur->ac_tag,&tagname);
         printf(" %-26s",tagname);
 
         printf(" 0x%04" DW_PR_DUx ,cur->ac_codeoffset);
@@ -467,10 +467,10 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
             break;
         }
         if (abblist) {
-            insert_ab_in_abblist(abbrev_code, abbrev_tag,
+            insert_ab_in_abblist(abbrev_code,(Dwarf_Half)abbrev_tag,
                 abbrev_offset,actual_attr_count);
         }
-        dwarf_get_TAG_name(abbrev_tag,&tagname);
+        dwarf_get_TAG_name((unsigned int)abbrev_tag,&tagname);
         printindent(indent+2);
         printf("[%4" DW_PR_DUu "] ",i);
         printf("     0x%" DW_PR_XZEROS DW_PR_DUx " ",abbrev_offset);
@@ -572,7 +572,7 @@ print_attr_array(unsigned int indent,
     Only dealing with local cu/tu (not foreighn tu)*/
 static void
 check_die_pub_offset( Dwarf_Debug dbg,
-    Dwarf_Bool        cu_hd_offset,
+    Dwarf_Unsigned    cu_hd_offset,
     Dwarf_Unsigned    local_die_offset)
 {
     Dwarf_Error error = 0;
@@ -645,7 +645,7 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
         return res;
     }
     printindent(indent);
-    dwarf_get_TAG_name(tag,&tagname);
+    dwarf_get_TAG_name((unsigned int)tag,&tagname);
     printf(
         "Nameindex %6" DW_PR_DUu
         " abbrevcode %4" DW_PR_DUu
@@ -872,7 +872,7 @@ print_names_table(unsigned int indent,
         printf(" %s",ptrtostr?sanitized(ptrtostr):"<null>");
         printf("\n");
         printindent(indent+4);
-        dwarf_get_TAG_name(abbrev_tag,&tagname);
+        dwarf_get_TAG_name((unsigned int)abbrev_tag,&tagname);
         printf("Entrypool= 0x%06" DW_PR_DUx ,
             offset_in_entrypool);
         printf(" abbrevcode=%4" DW_PR_DUu,
