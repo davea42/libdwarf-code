@@ -115,6 +115,8 @@ if dev_sanitize
   endforeach
 endif
 
+dev_decompression = get_option('decompression')
+
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 if cc.get_id() == 'msvc'
   libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS']
@@ -213,8 +215,11 @@ pkgconf.set('includedir', '${prefix}/@0@'.format(get_option('includedir')))
 pkgconf.set('pkgincludedir', '${prefix}/@0@'.format(get_option('includedir')) + '/libdwarf')
 pkgconf.set('VMAJ', v_maj)
 pkgconf.set('PACKAGE_VERSION', meson.project_version())
-pkgconf.set('requirements_libdwarf_pc', 'zlib')
-pkgconf.set('requirements_libdwarf_pc', 'libzstd')
+if dev_decompression
+  pkgconf.set('requirements_libdwarf_pc', 'zlib')
+  pkgconf.set('requirements_libdwarf_pc', 'libzstd')
+endif
+
 pkgconf.set('requirements_libdwarf_libs', '')
 
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
@@ -231,10 +236,13 @@ configure_file(
 
 configure_file(output : 'config.h', configuration : config_h)
 
+libdwarf_output = ('always')
+if dev_decompression
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
 message(['mesondebug zlib deps ',zlib_deps.found()])
 message(['mesondebug libzstd deps',libzstd_deps.found()])
+endif
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
 
