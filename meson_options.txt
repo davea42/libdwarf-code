@@ -28,3 +28,9 @@ option('wall',
   value : false,
   description : 'compile and link with compiler warning options'
 )
+
+option('decompression',
+  type : 'boolean',
+  value : true,
+  description : 'compile and link with zlib and zstd decompression libraries'
+)

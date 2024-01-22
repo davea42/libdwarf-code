@@ -128,6 +128,10 @@ For a faster build, adding additional checks:
     ninja install
     ninja test
 
+To build a libdwarf that does not refer to or link with
+decompression libraries zstd or zlib, add the meson
+option  "-Ddecompression=false"
+
 ## BUILDING example showing simple builds:
 
 This checks for the existence critical executables 
@@ -210,6 +214,11 @@ With `--enable-shared --disable-sttic"
 appended to the configure step,
 libdwarf.so is built and the runtimes
 built will reference libdwarf.so.
+
+As of version 0.9.1 the configure option
+"--disable-decompression" tells the build to compile
+libdwarf and dwarfdump with no reference to the zlib or
+zstd libraries.
 
 If you get a build failure that mentions
 something about test/ and missing .Po object files

@@ -63,6 +63,17 @@ AC_ARG_ENABLE([sanitize],
    ],
    [enable_sanitize="no"])
 
+AC_ARG_ENABLE([decompression],
+   [AS_HELP_STRING([--enable-decompression],
+                   [enable decompressing sections  @<:@default=yes@:>@])],
+   [
+    AS_IF(
+        [test "x${enableval}" = "xno"],
+        [enable_decompression="no"],
+        [enable_decompression="yes"])
+   ],
+   [enable_decompression="yes"])
+
 
 AC_ARG_ENABLE([wall],
    [AS_HELP_STRING([--enable-wall],
@@ -145,27 +156,36 @@ AS_IF(
 AM_CONDITIONAL([HAVE_DOC], [test "x${enable_doc}" = "xyes"])
 
 ### Checks for libraries
-
 requirements_libdwarf_pc=
-PKG_CHECK_MODULES([ZLIB], [zlib],
+AS_IF(
+    [test "x${enable_decompression}" = "xyes"],
     [
-     have_zlib="yes"
-     have_pc_zlib="yes"
-     requirements_libdwarf_pc=zlib
+        PKG_CHECK_MODULES([ZLIB], [zlib],
+            [
+             have_zlib="yes"
+             have_pc_zlib="yes"
+             requirements_libdwarf_pc=zlib
+            ],
+            [
+             have_zlib="no"
+             have_pc_zlib="no"
+            ])
+        PKG_CHECK_MODULES([ZSTD], [libzstd],
+            [
+             have_zstd="yes"
+             have_pc_zstd="yes"
+             requirements_libdwarf_pc="${requirements_libdwarf_pc} libzstd"
+            ],
+            [
+             have_zstd="no"
+             have_pc_zstd="no"
+            ])
     ],
-    [
-     have_zlib="no"
-     have_pc_zlib="no"
-    ])
-PKG_CHECK_MODULES([ZSTD], [libzstd],
-    [
-     have_zstd="yes"
-     have_pc_zstd="yes"
-     requirements_libdwarf_pc="${requirements_libdwarf_pc} libzstd"
-    ],
-    [
-     have_zstd="no"
-     have_pc_zstd="no"
+    [ 
+        have_zstd="no"
+        have_pc_zstd="no"
+        have_zlib="no"
+        have_pc_zlib="no"
     ])
 
 AC_SUBST([requirements_libdwarf_pc])
@@ -183,16 +203,26 @@ AC_CHECK_HEADERS([unistd.h sys/types.h malloc.h])
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h fcntl.h])
 
 AS_IF(
-    [test "x${have_zlib}" = "xno"],
-    [AC_CHECK_HEADERS([zlib.h],
-        [have_zlib="yes"],
-        [have_zlib="no"])])
-AS_IF(
-    [test "x${have_zstd}" = "xno"],
-    [AC_CHECK_HEADERS([zstd.h],
-        [have_zstd="yes"],
-        [have_zstd="no"])])
-
+    [test "x${enable_decompression}" = "xyes"],
+    [
+        AS_IF(
+            [test "x${have_zlib}" = "xno"],
+            [AC_CHECK_HEADERS([zlib.h],
+                [have_zlib="yes"],
+                [have_zlib="no"])])
+        AS_IF(
+            [test "x${have_zstd}" = "xno"],
+            [AC_CHECK_HEADERS([zstd.h],
+                [have_zstd="yes"],
+                [have_zstd="no"])])
+    ],
+    [
+        have_zstd="no"
+        have_pc_zstd="no"
+        have_zlib="no"
+        have_pc_zlib="no"
+    ])
+        
 ### for use in casts to uint to avoid 32bit warnings.
 ### Also needed by C++ cstdint
 AC_TYPE_UINTPTR_T
@@ -355,35 +385,47 @@ AS_IF(
 
 AC_FUNC_ALLOCA
 
-have_getehdr="no"
-have_getshdr="no"
-
 requirements_libdwarf_libs=
 AS_IF(
-    echo "dadebug zlib ${have_pc_zlib} ${have_zlib}"
-    [test "x${have_pc_zlib}" = "xno"  -a "x${have_zlib}" = "xyes"],
-    [AC_SEARCH_LIBS(
-        [uncompress], [z],
-        [
-         ZLIB_LIBS="-lz"
-         requirements_libdwarf_libs="-lz"
-         echo "dadebug req set lz"
-        ],
-        [have_zlib="no"])
+    [test "x${enable_decompression}" = "xyes"],
+    [
+        AS_IF(
+            echo "dadebug zlib ${have_pc_zlib} ${have_zlib}"
+            [test "x${have_pc_zlib}" = "xno"  -a "x${have_zlib}" = "xyes"],
+            [
+                AC_SEARCH_LIBS(
+                [uncompress], [z],
+                [
+                 ZLIB_LIBS="-lz"
+                 requirements_libdwarf_libs="-lz"
+                 echo "dadebug req set lz"
+                ],
+                [have_zlib="no"])
+            ])
+    ],
+    [
+        have_zlib="no"
     ])
 AS_IF(
-    echo "dadebug zstd ${have_pc_zstd} ${have_zstd}"
-    [test "x${have_pc_zstd}" = "xno"  -a "x${have_zstd}" = "xyes"],
-    [AC_SEARCH_LIBS(
-        [ZSTD_decompress], [zstd],
-        [
-         ZSTD_LIBS="-lzstd"
-         echo "dadebug req set zstd"
-         requirements_libdwarf_libs="${requirements_libdwarf_libs} -lzstd"
-        ],
-        [have_zstd="no"])
+    [test "x${enable_decompression}" = "xyes"],
+    [
+        AS_IF(
+            echo "dadebug zstd ${have_pc_zstd} ${have_zstd}"
+            [test "x${have_pc_zstd}" = "xno"  -a "x${have_zstd}" = "xyes"],
+            [
+                AC_SEARCH_LIBS(
+                [ZSTD_decompress], [zstd],
+                [
+                 ZSTD_LIBS="-lzstd"
+                 echo "dadebug req set zstd"
+                 requirements_libdwarf_libs="${requirements_libdwarf_libs} -lzstd"
+                ],
+                [have_zstd="no"])
+            ])
+    ],
+    [
+        have_zstd="no"
     ])
-
 
 AS_IF(
     [test "x${have_zlib}" = "xyes"],

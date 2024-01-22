@@ -53,8 +53,10 @@
 #include "dwarf_secname_ck.h"
 #include "dwarf_setup_sections.h"
 
-#if defined(HAVE_ZLIB_H) && defined(HAVE_ZSTD_H)
+#ifdef HAVE_ZLIB_H
 #include "zlib.h"
+#endif
+#ifdef HAVE_ZSTD_H
 #include "zstd.h"
 #endif
 
