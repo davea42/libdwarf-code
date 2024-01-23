@@ -6,7 +6,8 @@
     some original comments hard to follow.
     cctools-895  in its original form
     is available from https://opensource.apple.com/
-    see Developer Tools version 8.2.1. cctools-895/include/loader.h */
+    see Developer Tools version 8.2.1. cctools-895/include/loader.h
+    and cctools-1009.3/cctools/include/mach-o/loader.h */
 /*
 * Copyright (c) 1999-2010 Apple Inc.  All Rights Reserved.
 *
@@ -470,6 +471,25 @@ like environment variable */
 
 #define LC_VERSION_MIN_WATCHOS 0x30
 /* build for Watch min OS version */
+
+#define LC_NOTE 0x31 
+/* arbitrary data included within a Mach-O file */
+
+#define LC_BUILD_VERSION 0x32
+/* build for platform min OS version */
+
+#define LC_DYLD_EXPORTS_TRIE (0x33 | LC_REQ_DYLD)
+/* used with linkedit_data_command, payload is trie */
+
+#define LC_DYLD_CHAINED_FIXUPS (0x34 | LC_REQ_DYLD)
+/* used with linkedit_data_command */
+
+#define LC_FILESET_ENTRY (0x35 | LC_REQ_DYLD)
+/* used with fileset_entry_command */
+
+#define LC_ATOM_INFO 0x36
+/* used with linkedit_data_command */
+
 
 /*
 * A variable length string in a load command
