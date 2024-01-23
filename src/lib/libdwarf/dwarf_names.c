@@ -226,11 +226,11 @@ dwarf_get_TAG_name (unsigned int val,
     case DW_TAG_immutable_type:
         *s_out = "DW_TAG_immutable_type";
         return DW_DLV_OK;
-    case DW_TAG_TI_far_type:
-        *s_out = "DW_TAG_TI_far_type";
+    case DW_TAG_lo_user:
+        *s_out = "DW_TAG_lo_user";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
-        0x4080. DW_TAG_lo_user */
+        0x4080. DW_TAG_TI_far_type */
     case DW_TAG_MIPS_loop:
         *s_out = "DW_TAG_MIPS_loop";
         return DW_DLV_OK;

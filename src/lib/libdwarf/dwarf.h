@@ -158,8 +158,8 @@ extern "C" {
 /* TI = Texas Instruments, for DWARF in COFF */
 /* https://www.ti.com/lit/an/spraab5/spraab5.pdf?ts=1705994928599 */
  
-#define DW_TAG_TI_far_type              0x4080 /* TI */
 #define DW_TAG_lo_user                  0x4080 /* TI */
+#define DW_TAG_TI_far_type              0x4080 /* TI */
 #define DW_TAG_MIPS_loop                0x4081
 #define DW_TAG_TI_near_type             0x4081 /* TI */
 #define DW_TAG_TI_assign_register       0x4082 /* TI */
