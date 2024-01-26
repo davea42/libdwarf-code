@@ -236,8 +236,8 @@ configure_file(output : 'config.h', configuration : config_h)
 
 libdwarf_output = ('always')
 if dev_decompression
-libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
-libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
+  libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
+  libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
 endif
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
