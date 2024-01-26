@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-01-22 v0.9.1
+    @date 2024-01-26 v0.9.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -1004,6 +1004,11 @@
     is now of type <b>Dwarf_Unsigned</b>. The previous type
     if <b>int</b> never made sense in libdwarf.
     Callers will, in practice, see the same value as before.
+
+    All type-warnings issued by MSVC have been fixed.
+
+    Problems reading Macho (Apple) relocatable
+    object files have been fixed.
 
     Each of the build systems available now has an option
     which eliminates libdwarf references to the
