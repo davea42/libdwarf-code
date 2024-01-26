@@ -1,4 +1,26 @@
 2024-01-26:  David Anderson
+    commit cc343150beab8de77ae28c493ce8a83db152bda3
+
+    A compiler used R_386_GOTOFF for a relocation
+    for DWARF data.
+    Now that relocation is handled.
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+            modified:   src/lib/libdwarf/dwarf_elf_rel_detector.c
+
+2024-01-26:  David Anderson
+    commit bef1fc97f1da8e0a9e0609c2572fd79179a3b7bb
+
+    One place in generic_ehdr_from_64()
+    needed a check for e_shnum zero.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2024-01-26:  David Anderson
+    commit 001957b01a4ce47c258a23a6f7eb4acf19632acc
+
+    Bringing up to date.
+            modified:   ChangeLog
+
+2024-01-26:  David Anderson
     commit 872820898d7d3cb237b130efe33f3dc1768499d4
 
     Removed lots of debug message() commands
