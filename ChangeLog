@@ -1,3 +1,169 @@
+2024-01-26:  David Anderson
+    commit 872820898d7d3cb237b130efe33f3dc1768499d4
+
+    Removed lots of debug message() commands
+    that were just for debugging meson.build.
+            modified:   src/lib/libdwarf/meson.build
+
+2024-01-26:  David Anderson
+    commit f4219c32811ac50e61c478ccf3d89061843bfac6
+
+    Added note about zstd (in common use
+    in Linux before 2020) and libsztd-dev
+            modified:   README.md
+
+2024-01-26:  David Anderson
+    commit 916fd61c3d8ed3b5a59c8cd79ae2a19e8457f176
+
+    Fixed indent mistake (looked odd).
+            modified:   meson.build
+
+2024-01-26:  David Anderson
+    commit 778be0d1075eb133dc177483197786ea9314c02d
+
+    We delete
+    four message() meson commands
+    that were for debugging our use
+    of meson. These four are no longer needed.
+            modified:   meson.build
+
+2024-01-26:  David Anderson
+    commit 7eb45d468c05282be8ef7495136a62834df0e9e9
+
+    If e_shoff is zero we immediately declare there
+    is nothing here for DWARF and DW_DLV_NO_ENTRY
+    is returned.  Consistent with the generic Elf ABI
+    documentation.
+    No further checking for Elf corruption
+    or anything else is done.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2024-01-23:  David Anderson
+    commit c0cfba34ec80996426b5be2523f6447a2c9b7b39
+
+    Revized the new logic on segments/sections
+    for clarity and to catch corrupted object files
+    earlier.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-01-23:  David Anderson
+    commit f83ca35f17336f8723aebacc167793d71c0f723e
+
+    We now recognize a Mach-o object file (as opposed
+    to a DSYM) and just treating that slighly differently
+    lets libdwarf show the DWARF content.
+    (Because, unlike DSYM, an object file has both
+    executable code and DWARF data and a slight difference
+    in how certain names appear)
+
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-01-23:  David Anderson
+    commit 3f2098ff28255c186a84899b2cc10678b65a02a9
+
+    Reversed the order of two lines to preserve
+    a test result.  I don't have any TI binaries
+    and don't expect to, so the TI extension
+    overlapping DW_TAG_lo_user  is a beter choice
+    than DW_TAG_TI_far_type to show.
+            modified:   src/lib/libdwarf/dwarf.h
+
+    Regenerated with the updated dwarf.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-01-23:  David Anderson
+    commit adb7f61db003a82fdacfc22f2cdcac70788e75d6
+
+    Added in TI DWARF extension codes.
+            modified:   src/lib/libdwarf/dwarf.h
+    Regenerated.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-01-22:  David Anderson
+    commit 8670c9102cb57bd1dce156be1760bfb91b3f88a0
+
+    Notes on avoiding zlib and zstd
+            modified:   doc/libdwarf.dox
+
+2024-01-20:  David Anderson
+    commit 4f4e51dfb234bad27d9adb9338555e578ca4f340
+
+    Documenting the new command to turn off access
+    to decompression libraries for a build of libdwarf.
+
+    meson
+    To build a libdwarf that does not refer to or link with
+    decompression libraries zstd or zlib, add the meson
+    option  "-Ddecompression=false"
+
+    configure
+    As of version 0.9.1 the configure option
+    "--disable-decompression" tells the build to compile
+    libdwarf and dwarfdump with no reference to the zlib or
+    zstd libraries.
+
+    cmake
+    To turn off linking with or using zlib or zstd libraries
+    or headers there is an option to cmake add the cmake
+    option DENABLE_DECOMPRESSION=NO.
+
+            modified:   README.md
+            modified:   READMEcmake.md
+
+2024-01-20:  David Anderson
+    commit dafb9bc45af0b918ff80ab668617f73c9f5778d7
+
+    With cmake option -DENABLE_DECOMPRESSION=NO
+    libdwarf will build without any reference
+    to zlib.h or zstd.h or the respective libraries.
+
+            modified:   CMakeLists.txt
+
+2024-01-20:  David Anderson
+    commit 82214ba96ba9c6a02c5584fd1dd8803f71760bed
+
+    Now passing --disable-decompression to configure
+    turns off access to libz and zstd,
+    which is of use to some not expecting
+    to see compressed sections and missing
+    libz or zstd.
+            modified:   configure.ac
+
+2024-01-20:  David Anderson
+    commit 89604291e005b1b81efee9a11742edb6443cbedb
+
+    Now we define -Ddecompression=YES
+    as the default and library builders can
+    pass -Ddecompression=NO to the meson
+    command to turn off decompression and
+    avoid any dependency on libz or zstd.
+
+    Fixed a bug which would result in
+    a compile failure referencing includes
+    for libz.h and zstd.h if one had neither.
+    Doing set10('LIBZ_H',false) in meson
+    has the wrong effect, as LIBZ_H gets defined 0
+    so #ifdef LIBZ_H
+    finds LIBZ_H is defined.
+
+            modified:   meson.build
+            modified:   meson_options.txt
+            modified:   src/lib/libdwarf/meson.build
+
+2024-01-20:  David Anderson
+    commit 20e6efcbde6ba8fd964cde62c0e4c5b3ee3088b9
+
+    ifdefs for zstd.h and zlib.h were written in a
+    non-obvious way. Now in standard libdwarf form for clarity.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2024-01-10:  David Anderson
+    commit ecb8700f99a0e324ae910b4965cbea16f21f7711
+
+    up to date with git log: fixing VS warnings
+            modified:   ChangeLog
+
 2024-01-10:  David Anderson
     commit 62c214e548b72afa264e26c29ffd6db259f94fce
 
