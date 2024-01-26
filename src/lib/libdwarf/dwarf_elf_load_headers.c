@@ -233,6 +233,9 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
         ehdr->ge_shnum_extended = TRUE;
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
+        if (!ehdr->ge_shnum) {
+           return DW_DLV_NO_ENTRY;
+        }
         if (ehdr->ge_shnum < 3) {
             *errcode = DW_DLE_TOO_FEW_SECTIONS;
             return DW_DLV_ERROR;
@@ -299,6 +302,9 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
         ehdr->ge_shnum_extended = TRUE;
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
+        if (!ehdr->ge_shnum) {
+           return DW_DLV_NO_ENTRY;
+        }
         if (ehdr->ge_shnum < 3) {
             *errcode = DW_DLE_TOO_FEW_SECTIONS;
             return DW_DLV_ERROR;
