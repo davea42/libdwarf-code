@@ -177,8 +177,6 @@ endforeach
 # for this and test/meson.build
 project_source_base_root = meson.current_source_dir()
 project_build_base_root = meson.current_build_dir()
-message(['mesondebug set psbr',project_source_base_root])
-message(['mesondebug set pbbr',project_build_base_root])
 
 subdir('src/lib/libdwarf')
 subdir('src/bin/dwarfdump')
@@ -240,8 +238,6 @@ libdwarf_output = ('always')
 if dev_decompression
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
 libdwarf_output += ' always (libzstd: ' + (libzstd_deps.found() ? 'yes' : 'no') + ')'
-message(['mesondebug zlib deps ',zlib_deps.found()])
-message(['mesondebug libzstd deps',libzstd_deps.found()])
 endif
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
