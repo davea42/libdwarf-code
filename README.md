@@ -42,10 +42,13 @@ libdwarf/dwarfdump.
 
     Ubuntu: 
     sudo apt install xz pkgconf zlib1g zlib1g-dev libzstd1
+    sudo apt install libzstd-dev
+         
     # Use of libzstd1 is new in 0.4.3
     # zlib1g zlib1g-dev libzstd1 are all optional but
     # are required to read any DWARF data in compressed
-    # sections.
+    # sections. libzstd1 was used by many linux system utilities
+    # in Ubuntu 20.04.
     optional add: cmake meson ninja doxygen 
 
     FreeBSD:
