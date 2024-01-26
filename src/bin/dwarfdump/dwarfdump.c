@@ -130,6 +130,8 @@ static struct esb_s global_tied_file_name;
 
 static void print_machine_arch(Dwarf_Debug dbg);
 
+static void homeify(char *s, struct esb_s* out);
+
 static int process_one_file(
     const char * file_name,
     const char * tied_file_name,
@@ -512,15 +514,26 @@ main(int argc, char *argv[])
             &tpath_source,&errcode);
         if (res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
-                char *errmsg = dwarf_errmsg_by_number(errcode);
+                char *errmsg = 0;
+                struct esb_s m;
+
+                esb_constructor(&m);
+                errmsg = dwarf_errmsg_by_number(errcode);
+                homeify((char *)sanitized(tied_file_name),&m);
                 printf("%s ERROR:  can't open tied file"
                     ".. %s: %s\n",
-                    glflags.program_name, sanitized(tied_file_name),
+                    glflags.program_name, 
+                    esb_get_string(&m),
                     errmsg);
+                esb_destructor(&m);
             } else {
+                struct esb_s m;
+                esb_constructor(&m);
+                homeify((char *)sanitized(tied_file_name),&m);
                 printf(
                     "%s ERROR: tied file not an object file '%s'.\n",
-                    glflags.program_name, sanitized(tied_file_name));
+                    glflags.program_name, esb_get_string(&m));
+                esb_destructor(&m);
             }
             glflags.gf_count_major_errors++;
             global_destructors();
@@ -529,12 +542,21 @@ main(int argc, char *argv[])
         }
         if (ftype != tftype || endian != tendian ||
             offsetsize != toffsetsize) {
+            struct esb_s m;
+            struct esb_s mgf;
+
+            esb_constructor(&m);
+            esb_constructor(&mgf);
+            homeify((char *)sanitized(tied_file_name),&m);
+            homeify((char *)esb_get_string(&global_file_name),&mgf);
             printf("%s ERROR:  tied file \'%s\' and "
                 "main file \'%s\' not "
                 "the same kind of object!\n",
                 glflags.program_name,
-                sanitized(tied_file_name),
-                esb_get_string(&global_file_name));
+                esb_get_string(&m),
+                esb_get_string(&mgf));
+            esb_destructor(&m);
+            esb_destructor(&mgf);
             free(temp_path_buf);
             global_destructors();
             glflags.gf_count_major_errors++;
@@ -544,10 +566,16 @@ main(int argc, char *argv[])
         global_tiedfd = open_a_file(esb_get_string(
             &global_tied_file_name));
         if (global_tiedfd == -1) {
+            struct esb_s m;
+
+            esb_constructor(&m);
+            homeify((char *)sanitized(esb_get_string(
+                &global_tied_file_name)), &m);
             printf("%s ERROR:  can't open tied file"
                 "... %s\n",
                 glflags.program_name,
-                sanitized(esb_get_string(&global_tied_file_name)));
+                esb_get_string(&m));
+            esb_destructor(&m);
             global_destructors();
             glflags.gf_count_major_errors++;
             free(temp_path_buf);
@@ -977,7 +1005,13 @@ process_one_file(
                 "for section group %d \n",
                 file_name,glflags.group_number);
         } else {
-            printf("No DWARF information present in %s\n",file_name);
+            struct esb_s m;
+
+            esb_constructor(&m);
+            homeify((char *)file_name,&m);
+            printf("No DWARF information present in %s\n",
+                esb_get_string(&m));
+            esb_destructor(&m);
         }
         return dres;
     }
