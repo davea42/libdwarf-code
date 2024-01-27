@@ -122,6 +122,10 @@ configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY)
 # another CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/libdwarfConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/libdwarfConfig.cmake" INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/libdwarfConfigVersion.cmake" COMPATIBILITY SameMinorVersion)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libdwarfConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/libdwarfConfigVersion.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
 install(TARGETS dwarf EXPORT libdwarfTargets
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -130,5 +134,5 @@ install(EXPORT libdwarfTargets
         FILE libdwarf-targets.cmake
         NAMESPACE libdwarf::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
-install(FILES cmake/libdwarf-config.cmake DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
 install(FILES "${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+install(FILES "${CMAKE_SOURCE_DIR}/cmake/FindZSTD.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
