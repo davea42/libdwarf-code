@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf C CXX)
+project(libdwarf VERSION 0.9.1 LANGUAGES C CXX)
 
 # libdwarf  
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
