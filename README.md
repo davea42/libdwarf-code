@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 23 October 2023
+Updated 29 January 2024
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -9,6 +9,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
+    Version 0.9.1 Released 27 January   2024.
     Version 0.9.0 Released  8 December  2023.
     Version 0.8.0 Released 20 September 2023.
     Version 0.7.0 Released 20 May       2023.
@@ -42,10 +43,13 @@ libdwarf/dwarfdump.
 
     Ubuntu: 
     sudo apt install xz pkgconf zlib1g zlib1g-dev libzstd1
+    sudo apt install libzstd-dev
+         
     # Use of libzstd1 is new in 0.4.3
     # zlib1g zlib1g-dev libzstd1 are all optional but
     # are required to read any DWARF data in compressed
-    # sections.
+    # sections. libzstd1 was used by many linux system utilities
+    # in Ubuntu 20.04.
     optional add: cmake meson ninja doxygen 
 
     FreeBSD:

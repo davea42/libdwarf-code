@@ -210,8 +210,11 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shentsize,e->e_shentsize);
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
+    if (!ehdr->ge_shoff) {
+        return DW_DLV_NO_ENTRY;
+    }
     if (ehdr->ge_shoff < sizeof(dw_elf32_ehdr)) {
-        /* zero or offset is inside the header! */
+        /* offset is inside the header! */
         *errcode = DW_DLE_TOO_FEW_SECTIONS;
         return DW_DLV_ERROR;
     }
@@ -230,6 +233,9 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
         ehdr->ge_shnum_extended = TRUE;
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
+        if (!ehdr->ge_shnum) {
+           return DW_DLV_NO_ENTRY;
+        }
         if (ehdr->ge_shnum < 3) {
             *errcode = DW_DLE_TOO_FEW_SECTIONS;
             return DW_DLV_ERROR;
@@ -275,6 +281,9 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shentsize,e->e_shentsize);
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
+    if (!ehdr->ge_shoff) {
+        return DW_DLV_NO_ENTRY;
+    }
     if (ehdr->ge_shoff < sizeof(dw_elf64_ehdr)) {
         /* zero or offset is inside the header! */
         *errcode = DW_DLE_TOO_FEW_SECTIONS;
@@ -293,6 +302,9 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
         ehdr->ge_shnum_extended = TRUE;
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
+        if (!ehdr->ge_shnum) {
+           return DW_DLV_NO_ENTRY;
+        }
         if (ehdr->ge_shnum < 3) {
             *errcode = DW_DLE_TOO_FEW_SECTIONS;
             return DW_DLV_ERROR;

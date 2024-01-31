@@ -984,6 +984,9 @@ extern "C" {
 #ifndef R_386_32
 #define R_386_32                               1
 #endif /* R_386_32 */
+#ifndef R_386_GOTOFF
+#define R_386_GOTOFF                           9
+#endif /* R_386_GOTOFF */
 #ifndef R_386_GOTPC
 #define R_386_GOTPC                            10
 #endif /* R_386_GOTPC */
