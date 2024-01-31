@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-01-27 v0.9.2
+    @date 2024-01-31 v0.9.2
  
     @section draft Suggestions for improvement are welcome.
 
@@ -931,7 +931,7 @@
     - If you are building an application 
     - And are linking your application against a static library libdwarf.a
     - Then you must ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
-    - Then you must add -lz -lzstd to the link line of the build of your application.
+    - If libdwarf was built with zlib and zstd decompression library enabled you must add -lz -lzstd to the link line of the build of your application.
       
     To pass <b>LIBDWARF_STATIC</b> to the preprocessor with Visual
     Studio:
@@ -992,6 +992,10 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 0.9.1 to 0.9.2</b>
+
+    None at this time.
 
     <b>Changes 0.9.0 to 0.9.1</b>
 
