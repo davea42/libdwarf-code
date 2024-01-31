@@ -1,3 +1,41 @@
+2024-01-31:  David Anderson
+    commit 3a4b0d9a740ae5f724b411f07bc079c2fa73b076
+
+    Minor clarification documenting linking with libdwarf.a
+            modified:   doc/libdwarf.dox
+
+2024-01-31:  David Anderson
+    commit 4bb7383ae3ada308c3d44ec11f0c367e467a0c3f
+
+    Added to documentation of dwarf_crc32()
+    and dwarf_basic_crc32() and dwarf_crc32().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-01-31:  David Anderson
+    commit 182e935240f5dac5fd62d42ad13294758cb9824e
+
+    Fixed so no longer forcing read of
+    uninitialized memory.
+    valgrind noticed the bug.
+            modified:   fuzz/fuzz_crc.c
+
+    Added comments.
+            modified:   fuzz/fuzz_crc_32.c
+
+2024-01-31:  David Anderson
+    commit 74bccd58f8cf1a0dc60a76e88264d72c110a5069
+
+    Now with a test for a null pointer passed in.
+    There is no error return, but instead we
+    simply return 0.
+            modified:   src/lib/libdwarf/dwarf_crc.c
+
+2024-01-29:  David Anderson
+    commit 688afdc072c59d3a330c708e05c386fca991bb81
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-01-29:  David Anderson
     commit ff535a2c76858f3d9a50fb648fe00d9eaea4b8f7
 
