@@ -118,6 +118,9 @@ static const uint32_t crc32_table[256] =
     language but English) and the following is a translation
     into C. Just like every other crc calculation.
 
+    There is no error indicated if buf does not point
+    to a readable area of memory at least len bytes long!
+
     The unsigned int return will not get the same CRC as
     Linux/Macos if int/unsigned-int is 16 bits (Windows),
     but there the crc does not matter in practice.
@@ -129,7 +132,10 @@ dwarf_basic_crc32 (const unsigned char *buf,
     unsigned int crc)
 {
     const unsigned char *end = 0;
-
+   
+    if (!buf) {
+        return 0;
+    }
     crc = ~crc;
     for (end = buf + len; buf < end; ++buf)
         crc = crc32_table[(crc ^ *buf) & 0xff] ^ (crc >> 8);
