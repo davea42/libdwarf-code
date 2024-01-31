@@ -1,3 +1,49 @@
+2024-01-29:  David Anderson
+    commit ff535a2c76858f3d9a50fb648fe00d9eaea4b8f7
+
+    Added Jan 2024 release date (0.9.1)
+            modified:   README.md
+
+2024-01-28:  David Anderson
+    commit 6178ba8c12eaa55ae906ef68fb6bf518ef0b8b0d
+
+    Now all version 0.9.2 (no build or software change yet).
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-01-27:  David Anderson
+    commit 8de6f6e694a2dcd2222c9f4757d0c44a26a52b9b
+
+    Dated, marked releasing.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2024-01-26:  David Anderson
+    commit 9a8f0f761120bbbdb1f3f9442ed67b4c84e65c44
+
+    More messages use homefy() so regression tests
+    independent of that aspect of the path of
+    relevant strings.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2024-01-26:  David Anderson
+    commit 992fb90bdec76ee850758e5a2fcec60c69451f1d
+
+    Updated Changes a little.
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2024-01-26:  David Anderson
+    commit 0bae85ef5ac5eac3b5bf21aff32eb607be9db742
+
+    Now with latest git log
+            modified:   ChangeLog
+
 2024-01-26:  David Anderson
     commit cc343150beab8de77ae28c493ce8a83db152bda3
 

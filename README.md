@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 23 October 2023
+Updated 29 January 2024
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -9,6 +9,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
+    Version 0.9.1 Released 27 January   2024.
     Version 0.9.0 Released  8 December  2023.
     Version 0.8.0 Released 20 September 2023.
     Version 0.7.0 Released 20 May       2023.
