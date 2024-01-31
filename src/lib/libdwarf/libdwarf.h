@@ -8163,7 +8163,13 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
 
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns DW_DLV_OK
-    that is filled in.
+    that array is filled in.
+ 
+    Callers must guarantee dw_crcbuf points
+    to at least 4 bytes of writable memory.
+    Passing in a null dw_crcbug results in an 
+    immediate return of DW_DLV_NO_ENTRY and
+    the pointer is not used.
 
     @param dw_dbg
     Pass in an open dw_dbg.  When you attempted
@@ -8172,7 +8178,7 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
     The function reads the file into memory
     and performs a crc calculation.
     @param dw_crcbuf
-    Pass in a pointer to  a 4 byte area to hold
+    Pass in a pointer to a 4 byte area to hold
     the returned crc, on success the function
     puts the 4 bytes there.
     @param dw_error
@@ -8190,6 +8196,11 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
     not produce a return matching that of Linux/Macos if
     the compiler implements unsigned int or signed int as
     16 bits long.
+
+    The caller must guarantee that dw_buf is non-null
+    and pointing to dw_len bytes of readable memory.
+    If dw_buf is NULL then 0 is immediately returned
+    and there is no indication of error.
 
     @param dw_buf
     Pass in a pointer to some bytes on which the
