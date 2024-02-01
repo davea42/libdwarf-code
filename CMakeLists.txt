@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf C CXX)
+project(libdwarf VERSION 0.9.1 LANGUAGES C CXX)
 
 # libdwarf  
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
@@ -195,6 +195,7 @@ if (ENABLE_DECOMPRESSION)
     set(HAVE_ZLIB_H TRUE)
     set(HAVE_ZSTD TRUE)
     set(HAVE_ZSTD_H TRUE)
+    set(BUILT_WITH_ZLIB_AND_ZSTD TRUE)
   endif()
 endif ()
 
