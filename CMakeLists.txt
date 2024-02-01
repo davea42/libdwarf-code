@@ -195,6 +195,7 @@ if (ENABLE_DECOMPRESSION)
     set(HAVE_ZLIB_H TRUE)
     set(HAVE_ZSTD TRUE)
     set(HAVE_ZSTD_H TRUE)
+    set(BUILT_WITH_ZLIB_AND_ZSTD TRUE)
   endif()
 endif ()
 
