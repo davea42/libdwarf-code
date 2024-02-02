@@ -199,6 +199,14 @@ if (ENABLE_DECOMPRESSION)
   endif()
 endif ()
 
+if(NOT TARGET ZSTD::ZSTD)
+  if(TARGET zstd::libzstd_shared)
+    add_library(ZSTD::ZSTD ALIAS zstd::libzstd_shared)
+  else()
+    add_library(ZSTD::ZSTD ALIAS zstd::libzstd_static)
+  endif()
+endif()
+
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
 #  DW_FWALLXX are gnu C++ options.
