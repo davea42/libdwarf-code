@@ -95,7 +95,7 @@ calls
 #define O_CLOEXEC 0
 #endif /* O_CLOEXEC */
 
-#if 0
+#if 0 /* debugging only */
 /*  One example of calling this.
     place just before DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE
     dumpsizes(__LINE__,strsectlength,strpsh->gh_offset,
@@ -326,7 +326,7 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     return DW_DLV_OK;
 }
 
-#if 0 /* not used */
+#if 0 /* not needed */
 static int
 generic_phdr_from_phdr32(dwarf_elf_object_access_internals_t* ep,
     struct generic_phdr **phdr_out,

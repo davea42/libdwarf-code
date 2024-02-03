@@ -108,7 +108,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* A flag not public to users. */
 static int _dwarf_global_debuglink_crc_suppress;
 
-#if 0
+#if 0 /* debugging only */
 /* debugging only */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)

@@ -33,20 +33,6 @@
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() */
 
-#if 0
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* lseek() off_t size_t ssize_t? */
-#ifdef _WIN64
-#define lseek _lseeki64
-#endif
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek() off_t */
-#endif /* _WIN32 */
-#endif
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
