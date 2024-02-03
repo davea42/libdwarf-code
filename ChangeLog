@@ -29,6 +29,10 @@
     There is no error return, but instead we
     simply return 0.
             modified:   src/lib/libdwarf/dwarf_crc.c
+    CMakeLists.txt
+    src/lib/libdwarf/CMakeLists.txt
+    src/lib/libdwarf/cmake/libdwarf-config.cmake
+    src/lib/libdwarf/cmake/libdwarfConfig.cmake.in
 
 2024-01-29:  David Anderson
     commit 688afdc072c59d3a330c708e05c386fca991bb81
