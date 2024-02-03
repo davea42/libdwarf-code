@@ -37,8 +37,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-int _dwarf_object_read_random(int fd,char *buf,off_t loc,
-    size_t size,off_t filesize,int *errc);
+int _dwarf_object_read_random(int fd,char *buf,Dwarf_Unsigned loc,
+    Dwarf_Unsigned size,Dwarf_Unsigned filesize,int *errc);
 
 #ifdef __cplusplus
 }

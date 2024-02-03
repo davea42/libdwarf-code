@@ -156,7 +156,7 @@ CODINGSTYLE \
 dw-linetableheader.txt \
 CMakeLists.txt \
 libdwarf.pc.cmake \
-cmake/libdwarf-config.cmake \
+cmake/libdwarfConfig.cmake.in \
 meson.build \
 NEWS \
 README \

@@ -56,23 +56,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#if 0
-#include "dwarf_object_read_common.h"
-#include "dwarf_object_detector.h"
-#endif
-
-#if 0
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif /* O_RDONLY */
-#ifndef O_CLOEXEC
-#define O_CLOEXEC 0
-#endif /* O_CLOEXEC */
-#endif
-
 
 #if 0
 /* debugging only */
@@ -98,7 +81,9 @@ _dwarf_readr(int fd,
 {
 
     Dwarf_Signed rcode = 0;
-#if defined(_WIN32) && !defined(_WIN64)
+#ifdef _WIN64
+    Dwarf_Unsigned max_single_read = 0x1ffff000;
+#elif defined(_WIN32)
     Dwarf_Unsigned max_single_read = 0xffff;
 #else
     Dwarf_Unsigned max_single_read = 0x1ffff000;

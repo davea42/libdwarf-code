@@ -1,4 +1,5 @@
 /*
+
    Copyright (C) 2020 David Anderson. All Rights Reserved.
 
    This program is free software; you can redistribute it
@@ -32,14 +33,19 @@
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() */
 
+#if 0
 #ifdef _WIN32
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#include <io.h> /* lseek() off_t ssize_t */
+#include <io.h> /* lseek() off_t size_t ssize_t? */
+#ifdef _WIN64
+#define lseek _lseeki64
+#endif
 #elif defined HAVE_UNISTD_H
 #include <unistd.h> /* lseek() off_t */
 #endif /* _WIN32 */
+#endif
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -61,6 +67,12 @@
 
     In Windows, where unsigned int is 16 bits, this
     produces different output than on 32bit ints.
+
+    Since lseek() (all systems/versions) returns
+    a signed value, we check for < 0 as error
+    rather than just check for -1. So it is clear
+    to symbolic exectution that conversion to
+    unsigned does not lose bits.
 */
 int
 dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
@@ -68,17 +80,19 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
 {
     /*  off_t is signed,    defined by POSIX */
     /*  ssize_t is signed,  defined in POSIX */
+
     /*  size_t is unsigned, defined in C89. */
-    off_t   size_left = 0;
-    off_t   fsize = 0;
-    off_t   lsval = 0;
+    Dwarf_Unsigned   fsize = 0;
     /*  Named with u to remind the reader that this is
         an unsigned value. */
-    size_t         readlenu = 10000;
-    unsigned char *readbuf = 0;
+    Dwarf_Unsigned  readlenu = 10000;
+    Dwarf_Unsigned  size_left = 0;
+    const unsigned char *readbuf = 0;
     unsigned int   tcrc = 0;
     unsigned int   init = 0;
     int            fd = -1;
+    Dwarf_Unsigned   sz = 0;
+    int            res = 0;
 
     CHECK_DBG(dbg,error,"dwarf_crc32()");
     if (!crcbuf) {
@@ -93,23 +107,25 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     }
     fd = dbg->de_fd;
     if (dbg->de_filesize) {
-        fsize = size_left = (off_t)dbg->de_filesize;
+        fsize = (size_t)dbg->de_filesize;
     } else {
-        fsize = size_left = lseek(fd,0L,SEEK_END);
-        if (fsize   == (off_t)-1) {
+        res = _dwarf_seekr(fd,0,SEEK_END,&sz);
+        if (res != DW_DLV_OK) {
             _dwarf_error_string(dbg,error,DW_DLE_SEEK_ERROR,
                 "DW_DLE_SEEK_ERROR: dwarf_crc32 seek "
                 "to end fails");
             return DW_DLV_ERROR;
         }
+        fsize = sz;
     }
-    if (fsize <= (off_t)500) {
+    if (fsize <= (Dwarf_Unsigned)500) {
         /*  Not a real object file.
             A random length check. */
         return DW_DLV_NO_ENTRY;
     }
-    lsval  = lseek(fd,0L,SEEK_SET);
-    if (lsval < 0) {
+    size_left = fsize;
+    res = _dwarf_seekr(fd,0,SEEK_SET,0);
+    if (res != DW_DLV_OK) {
         _dwarf_error_string(dbg,error,DW_DLE_SEEK_ERROR,
             "DW_DLE_SEEK_ERROR: dwarf_crc32 seek "
             "to start fails");
@@ -123,23 +139,14 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         return DW_DLV_ERROR;
     }
     while (size_left > 0) {
-        ssize_t readreturnv = 0;
-
-        if (size_left < (off_t)readlenu) {
-            readlenu = (size_t)size_left;
+        if (size_left < readlenu) {
+            readlenu = size_left;
         }
-        /*  Fix warning on Windows: read()'s
-            3rd parameter is a unsigned const */
-#ifdef _WIN32
-        readreturnv = (ssize_t)read(fd,readbuf,
-            (unsigned const)readlenu);
-#else
-        readreturnv = read(fd,readbuf,readlenu);
-#endif
-        if (readreturnv != (ssize_t)readlenu) {
+        res = _dwarf_readr(fd,(char *)readbuf,readlenu,0);
+        if (res != DW_DLV_OK) {
             _dwarf_error_string(dbg,error,DW_DLE_READ_ERROR,
                 "DW_DLE_READ_ERROR: dwarf_crc32 read fails ");
-            free(readbuf);
+            free((unsigned char*)readbuf);
             return DW_DLV_ERROR;
         }
         /*  Call the public API function so it gets tested too. */
@@ -147,10 +154,10 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
             (unsigned long)readlenu,
             (unsigned long)init);
         init = tcrc;
-        size_left -= (off_t)readlenu;
+        size_left -= readlenu;
     }
     /*  endianness issues?  */
-    free(readbuf);
+    free((unsigned char*)readbuf);
     memcpy(crcbuf,(void *)&tcrc,4);
     return DW_DLV_OK;
 }

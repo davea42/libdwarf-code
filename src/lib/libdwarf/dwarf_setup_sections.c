@@ -171,7 +171,9 @@ set_up_section(Dwarf_Debug dbg,
         error: 'strcmp' reading 1 or more bytes
         from a region of size 0 [-Werror=stringop-overread]
         So we add -Wnostringop-overread to the build as the error is
-        a false positive. */
+        a false positive. We had to drop stringop-overread
+        references in compiler options, such turned off
+        valuable warnings. */
     if (postzprefix &&
         !strcmp(postzprefix,targname+DPREFIXLEN)) {
             /*  zprefix version matches the object section

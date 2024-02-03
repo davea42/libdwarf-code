@@ -34,18 +34,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* free() */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <string.h> /* memset() strlen() */
-
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* lseek() off_t ssize_t */
-#elif defined HAVE_UNISTD_H
+#ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek() off_t */
-#endif /* _WIN32 */
+#endif
 
 #ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() O_RDONLY */
+#include <fcntl.h> /* open() close() O_RDONLY */
 #endif /* HAVE_FCNTL_H */
 
 #include "dwarf.h"
@@ -539,49 +533,40 @@ _dwarf_object_detector_fd_a(int fd,
     int *errcode)
 {
     struct elf_header h;
-    size_t readlen = sizeof(h);
-    int res = 0;
-    off_t fsize = 0;
-    off_t lsval = 0;
-    ssize_t readval = 0;
+    Dwarf_Unsigned readlen = sizeof(h);
+    Dwarf_Unsigned fsize = 0;
     Dwarf_Unsigned remaininglen  = 0;
+    int            res = 0;
 
-    fsize = lseek(fd,0L,SEEK_END);
-    if (fsize < 0) {
+    res = _dwarf_seekr(fd,0,SEEK_END,&fsize);
+    if (res != DW_DLV_OK) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    if (fsize <= (off_t)readlen) {
+    if (fsize <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-    if ((Dwarf_Unsigned)fsize <= fileoffsetbase) {
+    if (fsize <= fileoffsetbase) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    remaininglen = (Dwarf_Unsigned)fsize - fileoffsetbase;
+    remaininglen = fsize - fileoffsetbase;
     if (remaininglen <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-#ifdef _WIN32
-    lsval  = (off_t)lseek(fd,(long)fileoffsetbase,SEEK_SET);
-#else
-    lsval  = lseek(fd,(off_t)fileoffsetbase,SEEK_SET);
-#endif
-    if (lsval < 0) {
+    /*  fileoffsetbase is non zero iff we have
+        an Apple Universal Binary. */
+    res = _dwarf_seekr(fd,fileoffsetbase,SEEK_SET,0);
+    if (res != DW_DLV_OK) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    /*  These reads are small. */
-#ifdef _WIN32
-    readval = (ssize_t)read(fd,&h,(unsigned const)readlen);
-#else
-    readval = read(fd,&h,readlen);
-#endif
-    if (readval != (ssize_t)readlen) {
+    res = _dwarf_readr(fd,(char *)&h,readlen,0);
+    if (res != DW_DLV_OK) {
         *errcode = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
     }

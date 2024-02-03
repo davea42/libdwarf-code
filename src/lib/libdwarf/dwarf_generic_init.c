@@ -233,7 +233,7 @@ dwarf_init_path_dl(const char *path,
 static void
 dump_header_fields(const char *w,Dwarf_Debug dbg)
 {
-    printf("dadebug dumping certain fields of %s\n",w);
+    printf("Dumping certain fields of %s\n",w);
     printf("ftype         : %d\n",dbg->de_ftype);
     printf("machine       : %llu\n",dbg->de_obj_machine);
     printf("flags         : 0x%llx\n",dbg->de_obj_flags);
