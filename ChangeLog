@@ -1,3 +1,115 @@
+2024-02-03:  David Anderson
+    commit f2790bb57f6e1a2f110cdd35370cf5b959f8f060
+
+    For _WIN64 using the built-in integer type __int64.
+    Now builds on Win10.
+    Altered #if 0 by adding /* debugging only */
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+
+2024-02-03:  David Anderson
+    commit 9c3081164c48dd50fdc00174e532928e08fa6bab
+
+    Remove blocks already marked #if 0
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+    Add comment following #if 0 indicating the block is for
+    debugging only.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2024-02-03:  David Anderson
+    commit 724fe687fa619909a0a24af2753d76e7c150a678
+
+    Splitting lseek() and read() code into
+    dwarf_seekr.c (new file) so other files
+    do not need Windows ifdefs or types.
+    -cmake/libdwarf-config.cmake \
+    +cmake/libdwarfConfig.cmake.in \
+            modified:   src/lib/libdwarf/Makefile.am
+
+    Change all types locally to be libdwarf types,
+    no longer need off_t or size_t here.
+    Call dwarf_seekr() and dwarf_reader().
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+
+    Removing unwanted blank line.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Change the text a #if 0 debug code block
+    so it no longer has 'dadebug' in it. Was Awkward.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+    Remove WIN ifdefs.
+    Change all types locally to be libdwarf types,
+    no longer need off_t or size_t here.
+    Call dwarf_seekr() and dwarf_reader().
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+
+    Change internal prototype to use only libdwarf-types
+    in _dwarf_object_read_random() as that calls
+    dwarf_seekr() dwarf_reader() and we no longer need
+    system types.
+            modified:   src/lib/libdwarf/dwarf_object_read_common.h
+
+    Remove the unwanted (for now) parts of Windows
+    ifdefs.
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+
+    Correct a comment about a certain gcc option.
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+
+2024-02-03:  David Anderson
+    commit f144bdbfcb2348a33986aa94318bf41ce1097fa6
+
+    Some cmake files were not listed at a change point.
+    Now they are.
+            modified:   ChangeLog
+
+2024-02-02:  David Anderson
+    commit d9bbb1299a31a3260a90862ec6af33890d700d4f
+
+    Moved lseek/read so we can concentrate the
+    changes required for  msys2/windows
+    special requirements into
+    one small source.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            new file:   src/lib/libdwarf/dwarf_seekr.c
+            modified:   src/lib/libdwarf/meson.build
+
+2024-02-01:  David Anderson
+    commit f4f16262d4bb02c534ca12742aa6ccca37815ae1
+
+    New month so the month changes in the first lines.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-02-01:  David Anderson
+    commit 21bb3067a534dabbdb1afc4bdf9b36f61674e239
+    Merge: 9cf659f3 95448e8b
+
+    Merge branch 'jeremy-rifkin-cmake-changes-for-zlib-zstd'
+    Fixing issues with cmake when zstd not there.
+
+2024-02-01:  David Anderson
+    commit 95448e8b75c16c0156737d416b4cfc571d3c128c
+    Merge: 9cf659f3 b8cf3548
+
+    Merge branch 'cmake-changes-for-zlib-zstd' of https://github.com/jeremy-rifkin/libdwarf-code into jeremy-rifkin-cmake-changes-for-zlib-zstd
+    cmake/zstd issues with build.
+
+2024-01-31:  Jeremy
+    commit b8cf3548112fd4cb68e8d4b89c6ce4348bc8745c
+
+    Quick fix
+
+2024-01-31:  David Anderson
+    commit 9cf659f3a607dcc69a911bba2109a07d7941987b
+
+    up to date with git log
+            modified:   ChangeLog
+
 2024-01-31:  David Anderson
     commit 3a4b0d9a740ae5f724b411f07bc079c2fa73b076
 
