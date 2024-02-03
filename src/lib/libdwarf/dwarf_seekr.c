@@ -42,9 +42,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <io.h> /* lseek() off_t ssize_t */
 #elif defined HAVE_UNISTD_H
 #include <unistd.h> /* lseek() off_t */
+#endif /* HAVE_UNISTD_H */
 #ifdef _WIN64
 #define lseek _lseeki64
-#endif
+#endif /* _WIN64 */
 #endif /* _WIN32 */
 
 #ifdef HAVE_FCNTL_H
