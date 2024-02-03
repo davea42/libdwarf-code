@@ -29,6 +29,7 @@ dwarf_rnglists.c
 dwarf_safe_arithmetic.c
 dwarf_safe_strcpy.c
 dwarf_secname_ck.c
+dwarf_seekr.c
 dwarf_setup_sections.c
 dwarf_string.h dwarf_string.c
 dwarf_stringsection.c

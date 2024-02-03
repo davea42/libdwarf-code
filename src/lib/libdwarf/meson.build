@@ -52,6 +52,7 @@ libdwarf_src = [
   'dwarf_setup_sections.c',
   'dwarf_ranges.c',
   'dwarf_rnglists.c',
+  'dwarf_seekr.c',
   'dwarf_str_offsets.c',
   'dwarf_string.c',
   'dwarf_stringsection.c',
