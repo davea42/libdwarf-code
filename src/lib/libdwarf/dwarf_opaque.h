@@ -1098,10 +1098,12 @@ Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(
 Dwarf_Byte_Ptr _dwarf_calculate_abbrev_section_end_ptr(
     Dwarf_CU_Context context);
 
-int _dwarf_readr(int fd, char *buf, Dwarf_Unsigned size,
+void _dwarf_closer(int fd);
+int  _dwarf_readr(int fd, char *buf, Dwarf_Unsigned size,
     Dwarf_Unsigned *sizeread);
-int _dwarf_seekr(int fd, Dwarf_Unsigned loc, int seektype,
+int  _dwarf_seekr(int fd, Dwarf_Unsigned loc, int seektype,
     Dwarf_Unsigned *out_loc);
+int  _dwarf_openr(const char *name);
 
 int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_Attribute attr,

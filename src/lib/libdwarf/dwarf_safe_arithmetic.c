@@ -35,10 +35,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memset() */
 #include <stdio.h> /* memset(), printf */
 
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -132,7 +128,7 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* ignoring add check here */
 /* See:
 https://stackoverflow.com/questions/3944505/
 detecting-signed-overflow-in-c-c

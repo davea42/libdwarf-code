@@ -58,17 +58,21 @@ calls
     strlen() strncmp() */
 
 /* Windows specific header files */
+#if 0
 #ifdef _WIN32
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 #include <io.h> /* close() off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() */
 #endif /* _WIN32 */
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* close() */
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h> /* open() O_RDONLY */
 #endif /* HAVE_FCNTL_H */
+#endif
+#endif /* 0 */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -84,16 +88,6 @@ calls
 #include "dwarf_object_read_common.h"
 #include "dwarf_util.h"
 #include "dwarf_secname_ck.h"
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif /* O_RDONLY */
-#ifndef O_CLOEXEC
-#define O_CLOEXEC 0
-#endif /* O_CLOEXEC */
 
 #if 0 /* debugging only */
 /*  One example of calling this.

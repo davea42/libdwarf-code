@@ -36,18 +36,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memset() strlen() */
 
 #ifdef _WIN32
-
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
 #include <io.h> /* lseek() off_t ssize_t */
+#endif /* _WIN32 */
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* close() */
+#endif /* HAVE_UNISTD_H */
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* open() O_RDONLY */
+#endif /* HAVE_FCNTL_H */
 
 #ifdef _WIN64
 #define lseek _lseeki64
 #endif /* _WIN64 */
-
-#endif /* _WIN32 */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek() off_t */
@@ -62,6 +67,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif /* O_BINARY */
+#ifndef O_RDONLY
+#define O_RDONLY 0
+#endif /* O_RDONLY */
+#ifndef O_CLOEXEC
+#define O_CLOEXEC 0
+#endif /* O_CLOEXEC */
+
 
 #if 0 /* debugging only */
 static void
@@ -148,4 +164,32 @@ _dwarf_seekr(int fd,
         *out_loc = (Dwarf_Unsigned)fsize;
     }
     return DW_DLV_OK;
+}
+
+void
+_dwarf_closer( int fd) 
+{
+#ifdef _WIN64 
+    _close(fd);
+#elif defined(_WIN32)
+    _close(fd);
+#else /* linux */
+    close(fd);
+#endif
+}
+
+int
+_dwarf_openr( const char *name)
+{
+
+    int fd = -1;
+#ifdef _WIN64 
+    fd = _open(name, O_RDONLY | O_BINARY|O_CLOEXEC);
+#elif defined(_WIN32)
+    fd = _open(name, O_RDONLY | O_BINARY|O_CLOEXEC);
+#else /* linux */
+    fd = open(name, O_RDONLY | O_BINARY|O_CLOEXEC);
+#endif
+    return fd;
+
 }

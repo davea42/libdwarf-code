@@ -53,10 +53,6 @@
 #include "dwarf_die_deliv.h"
 #include "dwarf_string.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-
 #define MINBUFLEN 1000
 
 #define MORE_BYTES      0x80

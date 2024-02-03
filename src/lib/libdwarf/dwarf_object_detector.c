@@ -34,6 +34,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* free() */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <string.h> /* memset() strlen() */
+
+#if 0
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek() off_t */
 #endif
@@ -41,6 +43,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h> /* open() close() O_RDONLY */
 #endif /* HAVE_FCNTL_H */
+#endif
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -52,16 +55,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_macho_loader.h"
 #include "dwarf_string.h"
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif /* O_RDONLY */
-#ifndef O_CLOEXEC
-#define O_CLOEXEC 0
-#endif /* O_CLOEXEC */
 
 /*  TYP, SIZEOFT32 and ASNAR
     mean we can use correctly-sized arrays of char for the
@@ -652,7 +645,7 @@ dwarf_object_detector_path_dSYM(
             *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
-        fd = open(outpath,O_RDONLY|O_BINARY|O_CLOEXEC);
+        fd = _dwarf_openr(outpath);
         if (fd < 0) {
             outpath[0] = 0;
             return DW_DLV_NO_ENTRY;
@@ -661,10 +654,10 @@ dwarf_object_detector_path_dSYM(
         res = dwarf_object_detector_fd(fd,
             ftype,endian,offsetsize,filesize,errcode);
         if (res != DW_DLV_OK) {
-            close(fd);
+            _dwarf_closer(fd);
             return res;
         }
-        close(fd);
+        _dwarf_closer(fd);
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -911,12 +904,12 @@ _dwarf_debuglink_finder_internal(
         /*  First, open the file to determine if it exists.
             If not, loop again */
 
-        pfd = open(pa,O_RDONLY|O_BINARY| O_CLOEXEC);
+        pfd = _dwarf_openr(pa);
         if (pfd  < 0) {
             /*  This is the usual path. */
             continue;
         }
-        close(pfd);
+        _dwarf_closer(pfd);
         /* ASSERT: never returns DW_DLV_ERROR */
         res = _dwarf_debuglink_finder_newpath(
             pa,crc,buildid_length, buildid,
@@ -975,7 +968,7 @@ dwarf_object_detector_path_b(
         if (res == DW_DLV_ERROR) {
             dwarfstring_destructor(&m);
             if (debuglink_fd != -1) {
-                close(debuglink_fd);
+                _dwarf_closer(debuglink_fd);
             }
             return res;
         }
@@ -989,7 +982,7 @@ dwarf_object_detector_path_b(
             lpathsource = DW_PATHSOURCE_basic;
         } else {
             if (debuglink_fd != -1) {
-                close(debuglink_fd);
+                _dwarf_closer(debuglink_fd);
                 debuglink_fd = -1;
             }
             dllenszt = dwarfstring_strlen(&m)+1;
@@ -1006,11 +999,11 @@ dwarf_object_detector_path_b(
             lpathsource = DW_PATHSOURCE_debuglink;
         }
         dwarfstring_destructor(&m);
-        fd = open(outpath,O_RDONLY|O_BINARY|O_CLOEXEC);
+        fd = _dwarf_openr(outpath);
         /* fall through to get fsize etc */
     } else {
         lpathsource = DW_PATHSOURCE_basic;
-        fd = open(path,O_RDONLY|O_BINARY|O_CLOEXEC);
+        fd = _dwarf_openr(path);
     }
     if (fd < 0) {
         if (pathsource) {
@@ -1026,6 +1019,6 @@ dwarf_object_detector_path_b(
     if (pathsource) {
         *pathsource = lpathsource;
     }
-    close(fd);
+    _dwarf_closer(fd);
     return res;
 }

@@ -68,6 +68,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include <string.h> /* strdup() */
 #include <stdio.h> /* debugging */
 
+#if 0
 #ifdef _WIN32
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
@@ -80,6 +81,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h> /* open() O_RDONLY */
 #endif /* HAVE_FCNTL_H */
+#endif
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -101,22 +103,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #define O_CLOEXEC 0
 #endif /* O_CLOEXEC */
 
-/*  This is the initialization set intended to
-    handle multiple object formats.
-    Created September 2018
-
-    The init functions here cannot process archives.
-    Archives cannot be read by libdwarf.
-*/
-static int
-open_a_file(const char * name)
-{
-    /* Set to a file number that cannot be legal. */
-    int fd = -1;
-
-    fd = open(name, O_RDONLY | O_BINARY|O_CLOEXEC);
-    return fd;
-}
 
 static int
 set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
@@ -345,11 +331,11 @@ dwarf_init_path_dl_a(const char *path,
         true_path_out_buffer && *true_path_out_buffer) {
         /* MacOS dSYM or GNU debuglink */
         file_path = true_path_out_buffer;
-        fd = open_a_file(true_path_out_buffer);
+        fd = _dwarf_openr(true_path_out_buffer);
     } else {
         /*  ASSERT: lpath_source = DW_PATHSOURCE_basic */
         file_path = (char *)path;
-        fd = open_a_file(path);
+        fd = _dwarf_openr(path);
     }
 
     if (fd == -1) {
@@ -363,7 +349,7 @@ dwarf_init_path_dl_a(const char *path,
             ftype,endian,offsetsize,filesize,
             groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
-            close(fd);
+            _dwarf_closer(fd);
             return res;
         }
         final_common_settings(dbg,file_path,fd,
@@ -380,7 +366,7 @@ dwarf_init_path_dl_a(const char *path,
             ftype,endian,offsetsize,filesize,
             groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
-            close(fd);
+            _dwarf_closer(fd);
             return res;
         }
         final_common_settings(dbg,file_path,fd,
@@ -395,7 +381,7 @@ dwarf_init_path_dl_a(const char *path,
             ftype,endian,offsetsize,filesize,
             groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
-            close(fd);
+            _dwarf_closer(fd);
             return res;
         }
         final_common_settings(dbg,file_path,fd,
@@ -405,7 +391,7 @@ dwarf_init_path_dl_a(const char *path,
         return res;
     }
     default:
-        close(fd);
+        _dwarf_closer(fd);
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE,
             DW_DLV_ERROR);
         /* Macro returns, cannot reach this line. */
@@ -536,7 +522,7 @@ dwarf_finish(Dwarf_Debug dbg)
         }
     }
     if (dbg->de_owns_fd) {
-        close(dbg->de_fd);
+        _dwarf_closer(dbg->de_fd);
         dbg->de_owns_fd = FALSE;
     }
     free((void *)dbg->de_path);

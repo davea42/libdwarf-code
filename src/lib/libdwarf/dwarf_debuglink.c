@@ -61,10 +61,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include "dwarf_string.h"
 #include "dwarf_debuglink.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-
 #define MINBUFLEN 1000
 
 static char  joinchar = '/';
