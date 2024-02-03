@@ -36,17 +36,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memset() strlen() */
 
 #ifdef _WIN32
+
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+
 #include <io.h> /* lseek() off_t ssize_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek() off_t */
-#endif /* HAVE_UNISTD_H */
+
 #ifdef _WIN64
 #define lseek _lseeki64
 #endif /* _WIN64 */
+
 #endif /* _WIN32 */
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* lseek() off_t */
+#endif /* HAVE_UNISTD_H */
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h> /* open() O_RDONLY */
