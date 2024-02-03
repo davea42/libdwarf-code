@@ -57,8 +57,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 
-#if 0
-/* debugging only */
+#if 0 /* debugging only */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -130,7 +129,7 @@ _dwarf_seekr(int fd,
         return DW_DLV_ERROR;
     }
 #ifdef _WIN64 
-    fsize = (Dwarf_Signed)lseek(fd,(LONG64)loc,seektype);
+    fsize = (Dwarf_Signed)lseek(fd,(__int64)loc,seektype);
 #elif defined(_WIN32)
     fsize = (Dwarf_Signed)lseek(fd,(off_t)loc,seektype);
 #else /* linux */
