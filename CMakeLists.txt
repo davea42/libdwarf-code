@@ -190,7 +190,7 @@ if (ENABLE_DECOMPRESSION)
     # Presumably in this case, the target has been found externally but set this flag just in case
     set(ZLIB_FOUND TRUE)
   endif()
-  if(NOT (TARGET ZSTD::ZSTD OR TARGET zstd::libzstd_shared OR zstd::libzstd_static))
+  if(NOT (TARGET ZSTD::ZSTD OR TARGET zstd::libzstd_shared OR TARGET zstd::libzstd_static))
     find_package(ZSTD)
   else()
     # Presumably in this case, the target has been found externally but set this flag just in case
