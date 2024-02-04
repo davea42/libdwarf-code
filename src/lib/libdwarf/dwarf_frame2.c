@@ -70,7 +70,7 @@
     tables for fast access into .eh_frame.
 */
 
-#if 0  /* FOR DEBUGGING */
+#if 0  /* dump_bytes FOR DEBUGGING */
 /* For debugging only. */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
@@ -253,7 +253,7 @@ validate_length(Dwarf_Debug dbg,
     return;
 }
 
-#if 0 /* FOR DEBUGGING */
+#if 0 /* print_prefix() FOR DEBUGGING */
 /* For debugging only. */
 static void
 print_prefix(struct cie_fde_prefix_s *prefix, int line)
@@ -425,9 +425,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         if (frame_ptr >= section_ptr_end) {
             _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
                 head_cie_ptr);
-#if 0
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
-#endif
             _dwarf_error_string(dbg, error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
                 "DW_DLE_DEBUG_FRAME_LENGTH_BAD: following "
@@ -769,7 +766,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 "with the CIE incomplete.  Corrupt Dwarf");
             return DW_DLV_ERROR;
         }
-#if 0
+#if 0 /* obsolete sgi exception table reference. Ignore. */
         /* REFERENCED *//* Not used in this instance */
         Dwarf_Unsigned exception_table_addr = 0;
         /* this is per egcs-1.1.2 as on RH 6.0 */

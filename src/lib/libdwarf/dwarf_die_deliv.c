@@ -81,7 +81,7 @@ static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
 
 static struct Dwarf_Sig8_s dwarfsig8zero;
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -2149,7 +2149,7 @@ _dwarf_ptr_CU_offset(Dwarf_CU_Context cu_context,
     *cu_off = (di_ptr - dataptr);
     return DW_DLV_OK;
 }
-#if 0 /* FOR DEBUGGING */
+#if 0 /* print_sib_offset() for debugging */
 /* Just for debug purposes */
 void print_sib_offset(Dwarf_Die sibling)
 {

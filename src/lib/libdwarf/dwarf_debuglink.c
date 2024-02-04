@@ -409,7 +409,7 @@ build_buildid_filename(dwarfstring *target,
     return;
 }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,unsigned char * start, unsigned len)
 {

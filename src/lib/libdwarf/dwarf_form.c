@@ -50,7 +50,7 @@
 #include "dwarf_die_deliv.h"
 #include "dwarf_str_offsets.h"
 #include "dwarf_string.h"
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,int line,
     Dwarf_Small * start, long len)
@@ -518,7 +518,7 @@ dwarf_formref(Dwarf_Attribute attr,
         /*  We need to look for a local reference here.
             The function we are in is only CU_local
             offsets returned. */
-#if 0
+#if 0  /* check for a local sig8 reference unimplemented. */
         Dwarf_Sig8 sig8;
         memcpy(&sig8,ptr,sizeof(Dwarf_Sig8));
         res = dwarf_find_die_given_sig8(dbg,
@@ -1063,7 +1063,7 @@ _dwarf_get_addr_index_itself(int theform,
         if the index refers
         to a local .debug_addr or a tied file .debug_addr
         so lets be cautious. */
-#if 0
+#if 0 /* Attempted check for index uncertain, unwise. Ignore. */
     if (!dbg->de_tied_data.td_tied_object &&
         index > dbg->de_filesize) {
         _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,

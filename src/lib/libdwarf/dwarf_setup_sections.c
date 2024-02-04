@@ -44,13 +44,6 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#if 0
-#include "dwarf_alloc.h"
-#include "dwarf_error.h"
-#include "dwarf_util.h"
-#include "dwarf_memcpy_swap.h"
-#include "dwarf_harmless.h"
-#endif /* 0 */
 #include "dwarf_string.h"
 #include "dwarf_secname_ck.h"
 #include "dwarf_setup_sections.h"

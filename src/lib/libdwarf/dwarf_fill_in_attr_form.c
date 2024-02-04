@@ -181,7 +181,7 @@ _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
             abbrev_list->abl_implicit_const_count++;
             abbrev_list->abl_implicit_const[i] = implicit_const;
         }
-#if 0
+#if 0  /* Do nothing special for DW_FORM_indirect here. Ignore. */
         if (attr_form == DW_FORM_indirect) {
             /*  Do nothing special here. Do not read
                 from the DIE till reading for

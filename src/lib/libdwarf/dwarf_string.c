@@ -625,7 +625,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     return res;
 }
 
-#if 0
+#if 0 /* Unused trimleadingzeros */
 /*  Counts hex chars. divide by two to get bytes from input
     integer. */
 static unsigned

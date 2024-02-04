@@ -1860,7 +1860,7 @@ _dwarf_filename(Dwarf_Line_Context context,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-#if 0
+#if 0 /* erroneous correctness check. Ignore. */
     if (fileno_in >= context->lc_file_entry_count) {
         _dwarf_error_string(dbg,error, DW_DLE_NO_FILE_NAME,
             "DW_DLE_NO_FILE_NAME "

@@ -71,7 +71,7 @@ dwarf_package_version(void)
     return PACKAGE_VERSION;
 }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -85,7 +85,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif /*0*/
-#if 0
+#if 0 /* dump_ab_list */
 static void
 dump_ab_list(const char *prefix,const char *msg,
     unsigned long hash_num,

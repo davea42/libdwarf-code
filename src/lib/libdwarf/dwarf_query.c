@@ -63,7 +63,7 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -1093,7 +1093,7 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     if (res2 != DW_DLV_OK) {
         return res2;
     }
-#if 0
+#if 0 /* An error check that is probably incorect. */
     Dwarf_Unsigned addrtabsize = 0;
     addrtabsize = dbg->de_debug_addr.dss_size;
     If there is  no .debug_addr the error here should

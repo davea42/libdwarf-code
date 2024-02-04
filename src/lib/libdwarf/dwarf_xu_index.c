@@ -88,7 +88,7 @@
 /* zerohashkey used as all-zero-bits for comparison. */
 static const Dwarf_Sig8 zerohashkey;
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {

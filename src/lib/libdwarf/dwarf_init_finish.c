@@ -181,7 +181,7 @@ add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     secdata->dss_is_rela = is_rela;
 }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -860,7 +860,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
             res = is_section_name_known_already(dbg,scn_name);
             if (res == DW_DLV_OK) {
-#if 0
+#if 0 /* Removed check for section duplication */
                 /* DUPLICATE */
                 DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
                     DW_DLV_ERROR);

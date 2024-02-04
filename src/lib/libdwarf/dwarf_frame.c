@@ -77,7 +77,7 @@
 
 #define MIN(a,b)  (((a) < (b))? (a):(b))
 
-#if 0 /* FOR DEBUGGING */
+#if 0 /* dump_bytes FOR DEBUGGING */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -302,7 +302,7 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
         free(cur);
     }
 }
-#if 0
+#if 0 /* printlist() for debugging */
 static void
 printlist(Dwarf_Frame_Instr x)
 {
@@ -3238,7 +3238,7 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
     return DW_DLV_OK;
 }
 
-#if 0  /* FOR DEBUGGING */
+#if 0  /* dump_frame_rule() FOR DEBUGGING */
 /* Used solely for debugging libdwarf. */
 static void
 dump_frame_rule(char *msg, struct Dwarf_Reg_Rule_s *reg_rule)

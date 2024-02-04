@@ -65,7 +65,7 @@
         return DW_DLV_ERROR;                              \
     }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {

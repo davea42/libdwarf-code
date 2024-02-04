@@ -57,7 +57,7 @@
 #include "dwarf_gnu_index.h"
 #include "dwarf_string.h"
 
-#if 0
+#if 0 /* dump_head */
 static void
 dump_head(const char *msg,int lno,
     struct Dwarf_Gnu_Index_Head_s *h)

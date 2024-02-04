@@ -68,21 +68,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include <string.h> /* strdup() */
 #include <stdio.h> /* debugging */
 
-#if 0
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() open() */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() */
-#endif /* _WIN32 */
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() O_RDONLY */
-#endif /* HAVE_FCNTL_H */
-#endif
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -92,17 +77,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_object_detector.h"
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif /* O_RDONLY */
-#ifndef O_CLOEXEC
-#define O_CLOEXEC 0
-#endif /* O_CLOEXEC */
-
 
 static int
 set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
@@ -214,8 +188,7 @@ dwarf_init_path_dl(const char *path,
     return res;
 }
 
-#if 0
-/*  for debugging */
+#if 0 /*  for debugging */
 static void
 dump_header_fields(const char *w,Dwarf_Debug dbg)
 {

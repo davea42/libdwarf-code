@@ -57,23 +57,6 @@ calls
 #include <string.h> /* memcpy() strcmp() strdup()
     strlen() strncmp() */
 
-/* Windows specific header files */
-#if 0
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() off_t */
-#endif /* _WIN32 */
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* close() */
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() O_RDONLY */
-#endif /* HAVE_FCNTL_H */
-#endif
-#endif /* 0 */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -89,7 +72,7 @@ calls
 #include "dwarf_util.h"
 #include "dwarf_secname_ck.h"
 
-#if 0 /* debugging only */
+#if 0 /* debugging only dumpsizes() */
 /*  One example of calling this.
     place just before DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE
     dumpsizes(__LINE__,strsectlength,strpsh->gh_offset,
@@ -320,7 +303,7 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     return DW_DLV_OK;
 }
 
-#if 0 /* not needed */
+#if 0 /* ngeneric_phdr_from_phdr32 not needed */
 static int
 generic_phdr_from_phdr32(dwarf_elf_object_access_internals_t* ep,
     struct generic_phdr **phdr_out,
@@ -859,7 +842,7 @@ _dwarf_generic_elf_load_symbols(
     }
     return res;
 }
-#if 0 /* not needed */
+#if 0 /* dwarf_load_elf_dynsym_symbols() not needed */
 int
 dwarf_load_elf_dynsym_symbols(
     dwarf_elf_object_access_internals_t *ep, int*errcode)
@@ -1094,7 +1077,7 @@ generic_rel_from_rel64(
     return DW_DLV_OK;
 }
 
-#if 0 /* not needed */
+#if 0 /* dwarf_load_elf_dynstr() not needed */
 int
 dwarf_load_elf_dynstr(
     dwarf_elf_object_access_internals_t *ep, int *errcode)

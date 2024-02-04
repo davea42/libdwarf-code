@@ -56,7 +56,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SIZEOFT32 4
 #define SIZEOFT64 8
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -1227,7 +1227,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* candiate??? for public api */
 int
 dwarf_get_loclists_entry_fields(
     Dwarf_Loc_Head_c head,

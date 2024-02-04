@@ -61,18 +61,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <config.h>
 #include <stdlib.h> /* calloc() free() malloc() */
 #include <string.h> /* memcpy() memset() strcmp() strdup() */
-
-#if 0
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close()off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /*off_t close() */
-#endif /* _WIN32 */
-#endif
-
 #include <stdio.h> /* debugging printf */
 
 #include "dwarf.h"
@@ -90,7 +78,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_macho_loader.h"
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -1397,7 +1385,7 @@ _dwarf_object_detector_universal_head_fd(
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* print_arch_item debugging */
 static void
 print_arch_item(unsigned int i,
     struct  Dwarf_Universal_Arch_s* arch)

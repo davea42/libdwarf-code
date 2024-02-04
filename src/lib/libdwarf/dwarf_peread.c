@@ -38,17 +38,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* atoi() calloc() free() malloc() */
 #include <string.h> /* memset() strdup() strlen() */
 
-#if 0
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /*  off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /*  off_t */
-#endif /* _WIN32*/
-#endif /* 0 */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -115,23 +104,6 @@ check_valid_string(char *tab,
     }
     return DW_DLV_ERROR;
 }
-
-#if 0
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        (t) = 0;                                  \
-        (func)(((char *)&(t))+tbyte ,&(s)[0],sizeof(s));  \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        (t) = 0;                                  \
-        (func)(&(t),&(s)[0],sizeof(s));               \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-#endif /*0*/
 
 /*  Name_array is 8 byte string, or it is supposed to be
     anyway.  */

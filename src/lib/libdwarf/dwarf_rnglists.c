@@ -56,7 +56,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SIZEOFT32 4
 #define SIZEOFT64 8
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -69,7 +69,7 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif /*0*/
-#if 0
+#if 0 /* dump_rh */
 static void
 dump_rh(const char *msg,
     int line,

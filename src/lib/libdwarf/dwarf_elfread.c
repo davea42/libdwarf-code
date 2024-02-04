@@ -66,17 +66,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
 
-#if 0
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() off_t */
-#endif /* _WIN32*/
-#endif
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"

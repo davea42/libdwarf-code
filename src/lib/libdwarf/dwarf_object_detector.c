@@ -35,16 +35,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <string.h> /* memset() strlen() */
 
-#if 0
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek() off_t */
-#endif
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() close() O_RDONLY */
-#endif /* HAVE_FCNTL_H */
-#endif
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
