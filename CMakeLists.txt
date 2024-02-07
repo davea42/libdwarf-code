@@ -186,9 +186,37 @@ if (ENABLE_DECOMPRESSION)
   # Zlib and ZSTD need to be found otherwise disable it
   if(NOT TARGET ZLIB::ZLIB)
     find_package(ZLIB)
+  else()
+    # Presumably in this case, the target has been found externally but set this flag just in case
+    set(ZLIB_FOUND TRUE)
   endif()
-  if(NOT TARGET ZSTD::ZSTD)
+  # This feels excessive, however perhaps better safe than sorry
+  if(
+    NOT (
+      TARGET zstd::libzstd_shared OR
+      TARGET zstd::libzstd_static OR
+      TARGET libzstd_shared OR
+      TARGET libzstd_static OR
+      TARGET ZSTD::ZSTD
+    )
+  )
     find_package(ZSTD)
+  else()
+    # Presumably in this case, the target has been found externally but set this flag just in case
+    set(ZSTD_FOUND TRUE)
+  endif()
+  # Unfortunately aliasing ZSTD::ZSTD to zstd::libzstd_shared/static can lead to problems for end-users, a variable
+  # is used
+  if(TARGET zstd::libzstd_shared)
+    set(ZSTD_LIB zstd::libzstd_shared)
+  elseif(TARGET zstd::libzstd_static)
+    set(ZSTD_LIB zstd::libzstd_static)
+  elseif(TARGET libzstd_shared)
+    set(ZSTD_LIB libzstd_shared)
+  elseif(TARGET libzstd_static)
+    set(ZSTD_LIB libzstd_static)
+  else()
+    set(ZSTD_LIB ZSTD::ZSTD)
   endif()
   if (ZLIB_FOUND AND ZSTD_FOUND )
     set(HAVE_ZLIB TRUE)
