@@ -6219,20 +6219,25 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
     @param dw_dbg
     The Dwarf_Debug whose .debug_str section we want to access.
     @param dw_offset
-    Pass in a a string offset. Start at 0, and
+    Pass in a string offset. Start at 0, and
     for the next call pass in dw_offset
     plus dw_strlen_of_string plus 1.
     @param dw_string
+    The caller must pass in a valid pointer to a char *.
     On success returns a pointer to a string from offset
     dw_offset. Never dealloc or free this string.
     @param dw_strlen_of_string
+    The caller must pass in a valid pointer to a Dwarf_Signed.
+    
     On success returns the strlen() of the string.
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
     The usual value: DW_DLV_OK etc.
-    If there is no such section or if dw_offset is >=
-    the section size it returns DW_DLV_NO_ENTRY.
+    If there is no such section it returns DW_DLV_NO_ENTRY.
+    If the dw_offset is greater than the section size,
+    or dw_string passed in is NULL or dw_strlen_of_string
+    is NULL the function returns DW_DLV_ERROR.
 */
 DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     Dwarf_Off        dw_offset,

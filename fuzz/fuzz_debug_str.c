@@ -57,7 +57,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (res != DW_DLV_OK) {
     dwarf_dealloc_error(dbg, error);
   } else {
-    Dwarf_Off dw_offset;
+    /* libdwarf does not require offset to be anything in
+       particular, and will work fine regardless
+       (possibly returning DW_DLV_ERROR or DW_DLV_OK).  But
+       valgrind generates a warning passing in the uninitialized
+       value so let us initialize it to ... something. */
+    Dwarf_Off dw_offset = 11;
     char *dw_string;
     Dwarf_Signed dw_strlen_of_string;
 
