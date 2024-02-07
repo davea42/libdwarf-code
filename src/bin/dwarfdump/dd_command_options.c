@@ -1205,8 +1205,9 @@ void arg_format_limit(void)
     int break_val = 0;
 
     if (!dwoptarg || !dwoptarg[0]) {
-        printf("ERROR The -H option requires a limit value\n");
+        printf("\nERROR The -H option requires a limit value\n");
         glflags.gf_count_major_errors++;
+        return;
     }
     break_val = atoi(dwoptarg);
     if (break_val > 0) {

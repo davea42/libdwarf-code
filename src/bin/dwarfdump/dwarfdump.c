@@ -2519,6 +2519,17 @@ add_to_unique_errors_table(char * error_text)
         set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
         set_unique_errors = (char **)realloc(set_unique_errors,
             set_unique_errors_size * sizeof(char*));
+        if (!set_unique_errors) {
+            static int ercount = 0;
+            if (!ercount) {
+                printf("\nERROR: Out of space recording unique"
+                    " errors. Attempting to continue. "
+                    " Message will not repeat.\n");
+                glflags.gf_count_major_errors++;
+            }
+            ++ercount;
+            return FALSE;
+        }
     }
 
     set_unique_errors[set_unique_errors_entries] = filtered_text;

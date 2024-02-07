@@ -290,11 +290,13 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     entryarray = calloc(entryarray_size,
         sizeof(struct abbrev_entry_s));
     if (!entryarray) {
-        printf( "%s ERROR:  Malloc of %" DW_PR_DUu " abbrev_entry_s"
+        printf( "\n%s ERROR:  Malloc of %" DW_PR_DUu " abbrev_entry_s"
             " structs failed. Near section global offset 0x%"
-            DW_PR_DUx "  .\n",
+            DW_PR_DUx " Trying to continue. .\n",
         glflags.program_name,entryarray_size,offset);
+        glflags.gf_count_major_errors++;
         entryarray_size = 0;
+        return DW_DLV_OK;
     }
     for (i = 0; i < abbrev_entry_count ; i++) {
         int aeres = 0;
@@ -461,7 +463,7 @@ print_all_abbrevs_for_cu(Dwarf_Debug dbg,
         }
         if (pres == DW_DLV_NO_ENTRY) {
             if (loopcount) {
-                /*  This is an incomplete final entry,
+                /*  This could be an incomplete final entry,
                     the trailing NUL byte for a CU
                     abbrev set  is missing
                     as of end of section. */
@@ -723,11 +725,18 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
         Dwarf_Unsigned last_abbrev_code = 0;
         Dwarf_Bool bMore                = TRUE;
 
-        if (abbrev_array == NULL) {
+        if (!abbrev_array ) {
             /* Allocate initial abbreviation array info */
             abbrev_array_size = ABBREV_ARRAY_INITIAL_SIZE;
             abbrev_array = (Dwarf_Unsigned *)
                 calloc(abbrev_array_size,sizeof(Dwarf_Unsigned));
+            if (!abbrev_array) {
+                printf("\nERROR: Unable to malloc "
+                    "abbrev_array to print abbrev data. "
+                    "Attempting to continue\n");
+                glflags.gf_count_major_errors++;
+                return;
+            }
         } else {
             /* Clear out values from previous CU */
             memset((void *)abbrev_array,0,
@@ -784,6 +793,15 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                             realloc(abbrev_array,
                             abbrev_array_size *
                             sizeof(Dwarf_Unsigned));
+                        if (!abbrev_array) {
+                            printf("\nERROR: Unable to "
+                                "realloc "
+                                "abbrev_array to "
+                                "print abbrev data. "
+                                "Attempting to continue\n");
+                            glflags.gf_count_major_errors++;
+                            return;
+                        }
                         /* Zero out the new bytes. */
                         memset(abbrev_array + old_size,0,
                             addl_size_bytes);
