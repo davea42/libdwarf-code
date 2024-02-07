@@ -7390,6 +7390,12 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         attributes_encoding_table = (a_attr_encoding *)calloc(
             DW_AT_lo_user,
             sizeof(a_attr_encoding));
+        if (!attributes_encoding_table) {
+            printf("\nERROR: Unable the check attributes "
+                "encoding as calloc failed. Trying to continue\n");
+            glflags.gf_count_major_errors++;
+            return;
+        }
         /* We use only 5 slots in the table, for quick access */
         /* index 0x0b */
         attributes_encoding_factor[DW_FORM_data1]=1; /* index 0x0b */

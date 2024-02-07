@@ -325,10 +325,22 @@ record_range_array_info_entry(Dwarf_Off die_off,Dwarf_Off range_off)
     /* Record a new detected range info. */
     if (range_array_count == range_array_size) {
         /* Resize range array */
-        range_array_size *= 2;
-        range_array = (Range_Array_Entry *)
+        Range_Array_Entry * nrp = 0;
+        Dwarf_Signed nsize = range_array_size*2;
+        nrp = (Range_Array_Entry *)
             realloc(range_array,
-            (range_array_size) * sizeof(Range_Array_Entry));
+            nsize * sizeof(Range_Array_Entry));
+        if (!nrp) {
+            printf("\nERROR: realloc fails building "
+                "range array entry %"
+			    DW_PR_DUu ". Attempting "
+                "to continue.\n",range_array_size+1);
+            glflags.gf_count_major_errors++;
+            return;
+        }
+        range_array = nrp;
+        range_array_size = nsize;
+        nrp = 0;
     }
     /* The 'die_off' is the Global Die Offset */
     range_array[range_array_count].die_off = die_off;
