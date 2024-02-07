@@ -2518,7 +2518,7 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
 
     case DW_FORM_data8:
         if (ltype != DW_LNCT_size &&
-            ltype != DW_LNCT_size) {
+            ltype != DW_LNCT_timestamp) {
             break;
         }
         READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,

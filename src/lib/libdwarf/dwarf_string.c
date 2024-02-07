@@ -74,6 +74,7 @@ dwarfstring_resize_to(struct dwarfstring_s *g,size_t newlen)
     size_t lastpos   = g->s_size - g->s_avail;
     size_t malloclen = newlen+1;
 
+    /*  ASSERT: malloclen > g->s_size at both call points */
     if (malloclen < minimumnewlen) {
         malloclen = minimumnewlen;
     }

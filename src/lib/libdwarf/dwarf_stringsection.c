@@ -66,7 +66,7 @@ dwarf_get_str(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    if (string == NULL) {
+    if (!string  || !returned_str_len) {
         _dwarf_error(dbg, error, DW_DLE_STRING_PTR_NULL);
         return DW_DLV_ERROR;
     }
