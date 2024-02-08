@@ -1993,7 +1993,8 @@ read_gs_section_group(
         }
         grouparray[0] = 1;
         /*  A .group section will have 0 to G sections
-            listed */
+            listed. Ignore the initial 'version' value
+            of 1 in [0] */
         dp = dp + DWARF_32BIT_SIZE;
         for ( i = 1; i < count; ++i,dp += DWARF_32BIT_SIZE) {
             Dwarf_Unsigned gseca = 0;
@@ -2014,7 +2015,6 @@ read_gs_section_group(
                 /*  Might be confused endianness by
                     the compiler generating the SHT_GROUP.
                     This is pretty horrible. */
-
                 if (gsecb >= ep->f_loc_shdr.g_count) {
                     *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                     free(data);

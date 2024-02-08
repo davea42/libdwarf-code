@@ -782,26 +782,33 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                         Dwarf_Unsigned old_size = abbrev_array_size;
                         size_t addl_size_bytes = old_size *
                             sizeof(Dwarf_Unsigned);
+                        Dwarf_Unsigned absize = abbrev_array_size*2;
+                        Dwarf_Unsigned * newab = 0;
 
                         /*  Resize abbreviation array.
                             Only a bogus abbreviation number
                             will iterate
                             more than once. The abhigh check.
                             prevents a runaway. */
-                        abbrev_array_size *= 2;
-                        abbrev_array = (Dwarf_Unsigned *)
+                        newab = (Dwarf_Unsigned *)
                             realloc(abbrev_array,
-                            abbrev_array_size *
-                            sizeof(Dwarf_Unsigned));
-                        if (!abbrev_array) {
-                            printf("\nERROR: Unable to "
-                                "realloc "
-                                "abbrev_array to "
-                                "print abbrev data. "
-                                "Attempting to continue\n");
-                            glflags.gf_count_major_errors++;
-                            return;
+                            absize * sizeof(Dwarf_Unsigned));
+                        if (!newab) {
+                            static int msgcount = 0;
+                            if (!msgcount) {
+                                /* just print this once. */
+                                printf("\nERROR: Unable to "
+                                    "realloc "
+                                    "abbrev_array to "
+                                    "print abbrev data. "
+                                    "Attempting to continue\n");
+                                glflags.gf_count_major_errors++;
+                                msgcount++;
+                                return;
+                            }
                         }
+                        abbrev_array = newab;
+                        abbrev_array_size = absize;
                         /* Zero out the new bytes. */
                         memset(abbrev_array + old_size,0,
                             addl_size_bytes);

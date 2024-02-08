@@ -70,8 +70,13 @@
     generate an leb with correct but useless trailing
     zero bytes (note the interaction with sign in the signed case).
     The value of BYTESLEBMAX is arbitrary but allows catching
-    corrupt data before dark.
-    Before April 2021 BYTESLEBMAX was 10.
+    corrupt data in a short time.
+    Before April 2021 BYTESLEBMAX was 10 as it was assumed
+    there were no 'useless' 0x80 high-order bytes in an LEB.
+    (0x80 meaning the 7 bits 'value' is zero)
+    However in DWARF6 (and at least one compiler before
+    DWARF6) a few high order bytes are allowed as padding.
+
 */
 #define BYTESLEBMAX 24
 #define BITSPERBYTE 8
@@ -83,15 +88,15 @@ _dwarf_skip_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
     char * endptr)
 {
-    unsigned       byte        = 0;
+    unsigned   byte        = 0;
     /*  The byte_length value will be a small non-negative integer. */
-    unsigned byte_length       = 1;
+    unsigned   byte_length = 1;
 
     if (leb128 >=endptr) {
         return DW_DLV_ERROR;
     }
 
-    byte = *leb128;
+    byte = *(unsigned char *)leb128;
     if ((byte & 0x80) == 0) {
         *leb128_length = 1;
         return DW_DLV_OK;
@@ -100,7 +105,7 @@ _dwarf_skip_leb128(char * leb128,
         if ((leb128+1) >=endptr) {
             return DW_DLV_ERROR;
         }
-        byte2 = *(leb128 + 1);
+        byte2 = *(unsigned char *)(leb128 + 1);
         if ((byte2 & 0x80) == 0) {
             *leb128_length = 2;
             return DW_DLV_OK;
@@ -117,7 +122,7 @@ _dwarf_skip_leb128(char * leb128,
             /*  Off end of available space. */
             return DW_DLV_ERROR;
         }
-        byte = *leb128;
+        byte = *(unsigned char *)leb128;
         if (byte & 0x80) {
             if (byte_length >=  BYTESLEBMAX)  {
                 /*  Too long. Not sane length. */
@@ -129,21 +134,22 @@ _dwarf_skip_leb128(char * leb128,
     }
     *leb128_length = byte_length;
     return DW_DLV_OK;
-
 }
-/*  Decode ULEB with checking. */
+/*  Decode ULEB with checking. 
+    Casting leb128 to (unsigned char *) as
+    the signedness of char * is unpredictable in C */
 int
 dwarf_decode_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Unsigned *outval,
     char * endptr)
 {
-    unsigned       byte        = 0;
+    unsigned int   byte        = 0;
     Dwarf_Unsigned word_number = 0;
     Dwarf_Unsigned number      = 0;
-    size_t shift               = 0;
+    unsigned long  shift       = 0; /* at least 32 bits, even Win32 */
     /*  The byte_length value will be a small non-negative integer. */
-    unsigned byte_length       = 0;
+    unsigned int  byte_length       = 0;
 
     if (leb128 >=endptr) {
         return DW_DLV_ERROR;
@@ -152,7 +158,7 @@ dwarf_decode_leb128(char * leb128,
         unpacks into 32 bits to make this as fast as possible.
         word_number is assumed big enough that the shift has a defined
         result. */
-    byte = *leb128;
+    byte = *(unsigned char *)leb128;
     if ((byte & 0x80) == 0) {
         if (leb128_length) {
             *leb128_length = 1;
@@ -162,11 +168,11 @@ dwarf_decode_leb128(char * leb128,
         }
         return DW_DLV_OK;
     } else {
-        unsigned       byte2        = 0;
+        unsigned int   byte2        = 0;
         if ((leb128+1) >=endptr) {
             return DW_DLV_ERROR;
         }
-        byte2 = *(leb128 + 1);
+        byte2 =  *(unsigned char *)(leb128 + 1);
         if ((byte2 & 0x80) == 0) {
             if (leb128_length) {
                 *leb128_length = 2;
@@ -189,7 +195,7 @@ dwarf_decode_leb128(char * leb128,
     shift = 0;
     byte_length = 1;
     for (;;) {
-        unsigned b = byte & 0x7f;
+        unsigned int b = byte & 0x7f;
         if (shift >= (sizeof(number)*BITSPERBYTE)) {
             /*  Shift is large. Maybe corrupt value,
                 maybe some padding high-end byte zeroes
@@ -220,7 +226,7 @@ dwarf_decode_leb128(char * leb128,
                     return DW_DLV_ERROR;
                 }
                 ++byte_length;
-                byte = *leb128;
+                byte = *(unsigned char *)leb128;
                 continue;
             }
             /*  Too big, corrupt data given the non-zero
@@ -250,24 +256,27 @@ dwarf_decode_leb128(char * leb128,
         if (leb128 >= endptr) {
             return DW_DLV_ERROR;
         }
-        byte = *leb128;
+        byte = *(unsigned char *)leb128;
     }
     return DW_DLV_ERROR;
 }
 
-/* Decode SLEB with checking */
+/* Decode SLEB with checking
+   Casting leb128 to (unsigned char *) as
+   the signedness of char * is unpredictable
+   in C */
 int
 dwarf_decode_signed_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Signed *outval,char * endptr)
 {
-    Dwarf_Unsigned byte  = 0;
-    unsigned int b       = 0;
-    Dwarf_Signed number  = 0;
-    size_t shift         = 0;
-    int    sign          = FALSE;
+    Dwarf_Unsigned byte   = 0;
+    unsigned int   b      = 0;
+    Dwarf_Signed   number = 0;
+    unsigned long  shift  = 0;
+    int            sign   = FALSE;
     /*  The byte_length value will be a small non-negative integer. */
-    unsigned byte_length = 1;
+    unsigned int   byte_length = 1;
 
     /*  byte_length being the number of bytes
         of data absorbed so far in
@@ -278,7 +287,7 @@ dwarf_decode_signed_leb128(char * leb128,
     if (leb128 >= endptr) {
         return DW_DLV_ERROR;
     }
-    byte   = *leb128;
+    byte   = *(unsigned char *)leb128;
     for (;;) {
         b = byte & 0x7f;
         if (shift >= (sizeof(number)*BITSPERBYTE)) {
@@ -307,7 +316,7 @@ dwarf_decode_signed_leb128(char * leb128,
                 if (leb128 >= endptr) {
                     return DW_DLV_ERROR;
                 }
-                byte = *leb128;
+                byte = *(unsigned char *)leb128;
                 continue;
             }
             /*  Too big, corrupt data given the non-zero
@@ -325,7 +334,7 @@ dwarf_decode_signed_leb128(char * leb128,
         if (leb128 >= endptr) {
             return DW_DLV_ERROR;
         }
-        byte = *leb128;
+        byte = *(unsigned char *)leb128;
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
             /*  Erroneous input. */
@@ -337,7 +346,7 @@ dwarf_decode_signed_leb128(char * leb128,
     }
     if (sign) {
         /* The following avoids undefined behavior. */
-        unsigned shiftlim = sizeof(Dwarf_Signed) * BITSPERBYTE -1;
+        unsigned int shiftlim = sizeof(Dwarf_Signed) * BITSPERBYTE -1;
         if (shift < shiftlim) {
             Dwarf_Signed y = (Dwarf_Signed)
                 (((Dwarf_Unsigned)1) << shift);

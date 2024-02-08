@@ -2516,10 +2516,13 @@ add_to_unique_errors_table(char * error_text)
     /*  Store the new text; check if we have space
         to store the error text */
     if (set_unique_errors_entries + 1 == set_unique_errors_size) {
-        set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
-        set_unique_errors = (char **)realloc(set_unique_errors,
-            set_unique_errors_size * sizeof(char*));
-        if (!set_unique_errors) {
+        char ** newsun = 0;
+        unsigned int newsun_size = set_unique_errors_size +
+            SET_UNIQUE_ERRORS_DELTA;
+
+        newsun = (char **)realloc(set_unique_errors,
+             newsun_size* sizeof(char*));
+        if (!newsun) {
             static int ercount = 0;
             if (!ercount) {
                 printf("\nERROR: Out of space recording unique"
@@ -2530,11 +2533,11 @@ add_to_unique_errors_table(char * error_text)
             ++ercount;
             return FALSE;
         }
+        set_unique_errors = newsun;
+        set_unique_errors_size = newsun_size;
     }
-
     set_unique_errors[set_unique_errors_entries] = filtered_text;
     ++set_unique_errors_entries;
-
     return FALSE;
 }
 
