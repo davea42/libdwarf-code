@@ -295,6 +295,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             DW_PR_DUx " Trying to continue. .\n",
         glflags.program_name,entryarray_size,offset);
         glflags.gf_count_major_errors++;
+        dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
         entryarray_size = 0;
         return DW_DLV_OK;
     }
@@ -803,9 +804,11 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                                     "print abbrev data. "
                                     "Attempting to continue\n");
                                 glflags.gf_count_major_errors++;
-                                msgcount++;
-                                return;
                             }
+                            msgcount++;
+                            destruct_abbrev_array();
+                            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+                            return;
                         }
                         abbrev_array = newab;
                         abbrev_array_size = absize;
