@@ -1,4 +1,27 @@
 
+id: DW202402-001
+fuzzer: ossfuzz id: 66646
+datereported: 2024-02-12
+reportedby: David Korczynski
+vulnerability: Reference memory outside of section.
+product: libdwarf
+description: The data pointer for DW_FORM_ref1  
+  was not being validated as pointing into the section before
+  being dereferenced.  Here reading a corrupted
+  DWARF section.  A library crash is likely.
+  This test failure happened to be on a 
+  DW_AT_abstract_origin attribute,
+  but the problem applies in many other situations.
+  All the other forms had checks.
+  This check has been missing for many years.
+datefixed: 2024-02-12
+references: regressiontests/ossfuzz66646/fuzz_findfuncbypc-5178544143532032
+gitfixid: 812f5db1c0fd4369e4c3b6bb8b132c70b6940320
+tarrelease: 
+endrec: DW202402-001
+
+
+
 id: DW202311-002
 fuzzer: ossfuzz id: 64496
 datereported: 2023-02-28
@@ -16,7 +39,7 @@ description: If the Dwarf_Debug was opened  with
 datefixed: 2023-11-25
 references: regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
 gitfixid:  d76cce559b898f7059ce5ffd82f3cfd58cb392fe
-tarrelease:
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202311-002
 
 id: DW202311-001
@@ -39,7 +62,7 @@ description: Passing a null Dwarf_Debug to
 datefixed: 2023-11-25
 references: regressiontests/ossfuzz56452/fuzz_debuglink-cs4231a-5927365017731072
 gitfixid: 1f6988307748f427566e3266695bb72d5384bf3d
-tarrelease:
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202311-001
 
 
@@ -56,7 +79,7 @@ description: A copy-paste error lead to
 datefixed: 2023-10-07
 references: regressiontests/ossfuzz63024/fuzz_init_path-5486726493372416
 gitfixid: 3a658bd1dd7437948cecbf82bb9b24f5f6122a7d
-tarrelease:
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202310-002
 
 id: DW202310-001
@@ -76,7 +99,7 @@ description: The heap buffer overflow was due
 datefixed: 2023-10-03
 references: regressiontests/ossfuzz62943/fuzz_init_path-5486726493372416
 gitfixid: aea77dad8745d9aad5275c3226e4e3156effa71f
-tarrelease:
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202310-001
 
 id: DW202309-004
@@ -96,7 +119,7 @@ description: The heap buffer overflow in
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
-tarrelease: 
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202309-004
 
 id: DW202309-003
@@ -115,7 +138,7 @@ description: The September 29 addition of Mach-O
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
-tarrelease: 
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202309-003
 
 id: DW202309-002
@@ -134,7 +157,7 @@ description: The September 29 addition of Mach-O
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
 gitfixid: gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
-tarrelease: 
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202309-002
 
 
@@ -158,7 +181,7 @@ description: Calling dwarf_get_fde_for_die() causes the
 datefixed: 2023-09-23
 references: regressiontests/ossfuzz62547/fuzz_stack_frame_access-5263709637050368
 gitfixid: cd741379bd0203a0875b413542d5f982606ae637
-tarrelease: 
+tarrelease: libdwarf-0.9.0.tar.xz 
 endrec: DW202309-001
 
 id: DW202308-001
