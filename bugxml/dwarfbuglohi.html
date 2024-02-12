@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of February 2024</p>
-<p> Record count: 171 </p>
+<p> Record count: 172 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5687,7 +5687,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: cd741379bd0203a0875b413542d5f982606ae637
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202309-002">165) DW202309-002</h3>
@@ -5719,7 +5719,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202309-003">166) DW202309-003</h3>
@@ -5751,7 +5751,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202309-004">167) DW202309-004</h3>
@@ -5784,7 +5784,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202310-001">168) DW202310-001</h3>
@@ -5817,7 +5817,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: aea77dad8745d9aad5275c3226e4e3156effa71f
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202310-002">169) DW202310-002</h3>
@@ -5846,7 +5846,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: 3a658bd1dd7437948cecbf82bb9b24f5f6122a7d
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202311-001">170) DW202311-001</h3>
@@ -5882,7 +5882,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: 1f6988307748f427566e3266695bb72d5384bf3d
 </p>
-<p>tarrelease: 
+<p>tarrelease: libdwarf-0.9.0.tar.xz
 </p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202311-002">171) DW202311-002</h3>
@@ -5914,6 +5914,40 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references:  regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
 </p>
 <p>gitfixid: d76cce559b898f7059ce5ffd82f3cfd58cb392fe
+</p>
+<p>tarrelease: libdwarf-0.9.0.tar.xz
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202402-001">172) DW202402-001</h3>
+<p>id: DW202402-001
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: ossfuzz id: 66646
+</p>
+<p>datereported: 2024-02-12
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Reference memory outside of section.
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  The data pointer for DW_FORM_ref1
+  was not being validated as pointing into the section before
+  being dereferenced.  Here reading a corrupted
+  DWARF section.  A library crash is likely.
+  This test failure happened to be on a
+  DW_AT_abstract_origin attribute,
+  but the problem applies in many other situations.
+  All the other forms had checks.
+  This check has been missing for many years.
+</p>
+<p>datefixed: 2024-02-12
+</p>
+<p>references:  regressiontests/ossfuzz66646/fuzz_findfuncbypc-5178544143532032
+</p>
+<p>gitfixid: 812f5db1c0fd4369e4c3b6bb8b132c70b6940320
 </p>
 <p>tarrelease: 
 </p>

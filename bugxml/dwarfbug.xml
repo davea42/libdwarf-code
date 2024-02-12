@@ -3,6 +3,41 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>ossfuzz id: 66646</fuzzer>
+
+<datereported>2024-02-12</datereported>
+
+<reportedby>David Korczynski</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> Reference memory outside of section.
+</vulnerability>
+
+<description> The data pointer for DW_FORM_ref1
+  was not being validated as pointing into the section before
+  being dereferenced.  Here reading a corrupted
+  DWARF section.  A library crash is likely.
+  This test failure happened to be on a
+  DW_AT_abstract_origin attribute,
+  but the problem applies in many other situations.
+  All the other forms had checks.
+  This check has been missing for many years.
+</description>
+
+<datefixed>2024-02-12</datefixed>
+
+<references> regressiontests/ossfuzz66646/fuzz_findfuncbypc-5178544143532032
+</references>
+
+<gitfixid>812f5db1c0fd4369e4c3b6bb8b132c70b6940320</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 64496</fuzzer>
 
 <datereported>2023-02-28</datereported>
@@ -31,7 +66,7 @@
 
 <gitfixid>d76cce559b898f7059ce5ffd82f3cfd58cb392fe</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -68,7 +103,7 @@
 
 <gitfixid>1f6988307748f427566e3266695bb72d5384bf3d</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -98,7 +133,7 @@
 
 <gitfixid>3a658bd1dd7437948cecbf82bb9b24f5f6122a7d</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -132,7 +167,7 @@
 
 <gitfixid>aea77dad8745d9aad5275c3226e4e3156effa71f</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -166,7 +201,7 @@
 
 <gitfixid>f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -199,7 +234,7 @@
 
 <gitfixid>f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -232,7 +267,7 @@
 
 <gitfixid>gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
@@ -268,7 +303,7 @@
 
 <gitfixid>cd741379bd0203a0875b413542d5f982606ae637</gitfixid>
 
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.0.tar.xz</tarrelease>
 
 </dwbug>
 <dwbug>
