@@ -1,4 +1,62 @@
 2024-02-12:  David Anderson
+    commit 7150fc069090261046fb5317beb061730ed89bab
+
+    Removing trailing whitespace, removing tab-characters.
+    Fixing indents, adjusting a few lines so
+    lines not longer than CODINGSTYLE.md calls for.
+            modified:   src/bin/dwarfdump/dd_elf_cputype.h
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_mac_cputype.h
+            modified:   src/bin/dwarfdump/dd_pe_cputype.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+2024-02-12:  David Anderson
+    commit aa06c5f7f5cb8f6ca49bfc297aa240f6baa65bac
+
+    Fixing indents and removing trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-02-12:  David Anderson
+    commit 33a0ed092f7d6b69d858182fbf7da8b8709930c4
+
+    Removing trailing whitespace and fixing indents.
+            modified:   src/lib/libdwarf/dwarf_crc.c
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_fill_in_attr_form.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_leb.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2024-02-12:  David Anderson
+    commit 20859c035fc6b5f85439b93ae5c3396a9ade8fbb
+
+    Log up to date now.
+            modified:   ChangeLog
+
+2024-02-12:  David Anderson
     commit 94e84e3c13b6d008f2753c364e1db3fb405e65bc
 
     New date. Mentions fix to DW202402-001.
