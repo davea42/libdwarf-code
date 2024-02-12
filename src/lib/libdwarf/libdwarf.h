@@ -79,7 +79,7 @@ extern "C" {
 
 /*
     libdwarf.h
-    $Revision: #9 $ $Date: 2008/01/17 $
+    Revision: #9  Date: 2008/01/17 
 
     For libdwarf consumers (reading DWARF2 and later)
 
@@ -3326,7 +3326,8 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     DW_DLV_OK.
 
     In referencing the array via a file-number from
-    a \b DW_AT_decl_file or \b DW_AT_call_file attribute one needs
+    a DW_AT_decl_file or
+    DW_AT_call_file attribute one needs
     to know if the CU is DWARF5 or not.
 
     Line Table Version numbers match compilation unit
@@ -3335,12 +3336,15 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     sometimes been used with DWARF4.
 
     For DWARF5:
-    The file-number from a \b DW_AT_decl_file or \b DW_AT_call_file
+
+    The file-number from a DW_AT_decl_file or 
+    DW_AT_call_file
     is the proper index into the array of string pointers.
 
     For DWARF2,3,4, including experimental line table
-    version 0xfe06 and a file-number from a \b DW_AT_decl_file
-    or \b DW_AT_call_file:
+    version 0xfe06 and a file-number from a 
+    DW_AT_decl_file or  DW_AT_call_file:
+
     -# If the file-number is zero there is no file name to find.
     -# Otherwise subtract one(1) from the file-number and
        use the new value as the index into the array
@@ -8975,9 +8979,8 @@ DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
 /*! @brief Get section count (of object file sections).
 
     Return the section count. Returns 0 if the
-    dw_debug argument is improper in any way. 
+    dw_dbg argument is improper in any way. 
 
-    @param dw_dbt
     @param dw_dbg
     Pass in a valid Dwarf_Debug of interest.
     @return
