@@ -1,3 +1,318 @@
+2024-02-12:  David Anderson
+    commit 94e84e3c13b6d008f2753c364e1db3fb405e65bc
+
+    New date. Mentions fix to DW202402-001.
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+    Making the dwarf_srcfiles() function argument
+    documentation a bit easier to read with
+    bold text.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-02-12:  David Anderson
+    commit 121632ddaf4f26f989187b0894c843dc05ee7661
+
+    Testing tiny tweak
+    DO NOT USE THIS COMMIT
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-02-12:  David Anderson
+    commit 26f4ec3d41b847d8146d916ebcf60ae0d1be29c5
+
+    Reflecting todays' vulnerability update.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-02-12:  David Anderson
+    commit 34dca30ac2d18936bea6555fb969d7cc4ca73ea5
+    Merge: bef12c75 38f28b27
+
+    Merge branch 'jeremy-rifkin-jr/srcfiles-note'
+    Using bold text to make reading libdwarf.h doxygen comments
+    easier related to DW_AT_call_file
+
+2024-02-12:  David Anderson
+    commit 38f28b275e88f33187cecaa2316b1d509063d713
+    Merge: bef12c75 520e2018
+
+    Merge branch 'jr/srcfiles-note' of https://github.com/jeremy-rifkin/libdwarf-code into jeremy-rifkin-jr/srcfiles-note
+    call_file fix.
+
+2024-02-12:  David Anderson
+    commit bef12c754df30f7c7929ae6aad310472e16ab69f
+
+    Documenting ossfuzz 66646 and its fix.
+            modified:   bugxml/data.txt
+
+2024-02-12:  David Anderson
+    commit 7bc8b4cd85d8b2419aca921df9191f8bd34d585e
+
+    Added comments explaining why there is no buffer overrun.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Added comments (and changed a couple local variables
+    to long from int) explaining why  the two-byte
+    leb number case is safe C with no indeterminate
+    result possible.
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+    Added a single easily verify able comment explaining
+    why a pointer cannot be NULL.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Renamed an internal function for clarity and
+    added comments explaining why there cannot
+    be a buffer overrun here.
+            modified:   src/lib/libdwarf/dwarf_string.c
+
+2024-02-12:  David Anderson
+    commit 812f5db1c0fd4369e4c3b6bb8b132c70b6940320
+
+    Fixing ossfuzz 66646. A vulnerability when
+    reading an object with a particular corruption in
+    the DWARF.  With DW_FORM_ref1 the library was
+    not validating the referenced address before
+    dereferencing.
+    See libdwarf vulnerability
+    list DW202402-001 for the details.
+    This bug has been present in the library for
+    many years.
+
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2024-02-11:  Jeremy
+    commit 520e20185262f96c9580cab157307b0890fc2c66
+
+    Make note of DW_AT_call_file in dwarf_srcfiles
+
+2024-02-09:  David Anderson
+    commit 6f960447511a3866960cbc14681462f6db75e4b4
+
+    In case of memory exhaustion ensure that allocations
+    going out of scope are freed.
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+
+    Instead of a = b use a = std::move(b)
+    where transfer of ownership is going on.
+    Improving efficiency.
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+
+2024-02-08:  David Anderson
+    commit 676600b9e96e8db8cd5b8415b2da7ab7b2b77771
+
+    DO NOT USE THIS COMMIT.
+    It fixes real problems, but is incomplete.
+
+    Handle realloc correctly.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+
+    Add comment about what an index i in read_gs_section_group()  means.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Extract Dwarf_Error creation to a small function.
+    Add a null test of abl_form for clarity and correctness.
+            modified:   src/lib/libdwarf/dwarf_fill_in_attr_form.c
+
+    Ensure dereference is on (unsigned char *)
+    instead of just (char *)
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+    Add readable null pointer checks using a helper
+    function to make reading the code easier.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-02-07:  David Anderson
+    commit 8cdcc531f310d1c5ae61da469d8056bdd36b77e7
+    Merge: 0c9b1fb3 32e92533
+
+    Merge branch 'jeremy-rifkin-jr/libdwarf-conan-changes'
+    Cmake improvements.
+
+2024-02-07:  David Anderson
+    commit 32e9253373e213ce39b282ee7ff248e86352648f
+    Merge: 0c9b1fb3 308b5533
+
+    Merge branch 'jr/libdwarf-conan-changes' of https://github.com/jeremy-rifkin/libdwarf-code into jeremy-rifkin-jr/libdwarf-conan-changes
+    cmake fixes
+
+2024-02-06:  David Anderson
+    commit 0c9b1fb3b1ca852f116405d82e1b08c8717dac8a
+
+    Like the previous call/recalloc changes these issues detected
+    by MSVC code analysis.
+
+    The dwarfdump ones just previous were real bugs.
+    These are real bugs too.
+
+    Check for a NULL dss_data field so a code-checking
+    system can see its checked without having to
+    actually understand why it cannot be NULL.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+
+             if (ltype != DW_LNCT_size &&
+    -            ltype != DW_LNCT_size) {
+    +            ltype != DW_LNCT_timestamp) {
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+    Added a simple assertion (a comment, not code) for the reader.
+            modified:   src/lib/libdwarf/dwarf_string.c
+
+    Added a check for a null input pointer, return DW_DLV_ERROR
+    if found.
+            modified:   src/lib/libdwarf/dwarf_stringsection.c
+
+    Moved things around so we can check for a null 'latestcontext'
+    before dereferencing it.
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2024-02-06:  David Anderson
+    commit 872d6f6dc2c7540fd1b98f8aeab494ec4723de56
+
+    Check for NULL return from calloc() and print ERROR message
+    if NULL.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Check for NULL return from realloc() and print ERROR message
+    if NULL.
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+2024-02-06:  David Anderson
+    commit a6a7da1fceca912850984806de49437d90d314f7
+
+    Use newlines to ensure no formatting surprise
+    and count this as ERROR for the error count to be
+    shown eventually.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    On realloc check for null return and print an ERROR
+    record if it is an error (but print at most once).
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    On calloc() check for null return amd print an ERROR
+    message.
+    Also, on calloc later on check for NULL return
+    and print an ERROR message.
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+
+2024-02-06:  David Anderson
+    commit 321b001e939dd9c437835f25a728978deaf2812a
+
+    -    Dwarf_Off dw_offset;
+    +    /* libdwarf does not require offset to be anything in
+    +       particular, and will work fine regardless
+    +       (possibly returning DW_DLV_ERROR or DW_DLV_OK).  But
+    +       valgrind generates a warning passing in the uninitialized
+    +       value so let us initialize it to ... something. */
+    +    Dwarf_Off dw_offset = 11;
+            modified:   fuzz/fuzz_debug_str.c
+
+        Additional doc on dwarf_get_str() for completeness.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-02-04:  Jeremy
+    commit 308b55331b564d4fdbe3bc6856712270e5b2395b
+
+    One more quick tweak for zstd targets
+
+2024-02-04:  Jeremy
+    commit 28e21ea25bbb7dcaa04ef3e52611158680d55042
+
+    Oops, copy paste error
+
+2024-02-03:  Jeremy
+    commit 2d8b0a15349ca634b212a11f2b2a97b9a85890a3
+
+    Small tweak
+
+2024-02-03:  Jeremy
+    commit 37929dc77552b4686899f0bd0afb7a9c02501b4a
+
+    Update patches
+
+2024-02-03:  David Anderson
+    commit 35e2f1434f39b7262d49f0a9de4f9cbee5815ff0
+
+    Removing many _WIN32 and related
+    ifdefs where they are not needed now, and
+    we deleted many off_t and size_t uses too
+    (meaning now we have dwarf_seekr.c).
+    Adding a comment on each #if 0 to explain what it is
+    (try grep 'if 0' *.c)
+
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_fill_in_attr_form.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2024-02-03:  David Anderson
+    commit a0d7b1844515fc7aa2093b48017fa2dc633b92ea
+
+    open/close moved to dwarf_seekr.c
+    as _dwarf_openr, _dwarf_closer
+    All direct uses converted to the _dwarf form
+    and no-longer-needed references to _WIN32
+    and off_t removed nearly everywhere.
+    Soon the new #if 0 ---- #endif instances
+    of unneeded stuff will be removed.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2024-02-03:  David Anderson
+    commit f39def9bfb0630307a42f2b9d53ab3eef9dfbdd0
+
+    Fixing ifdef nest
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+
+2024-02-03:  David Anderson
+    commit f0854c25f1f07dac516f8d8f953f7d72ca5b9fc2
+
+    Ifdef nest wrong for _WIN64 lseek define.
+            modified:   dwarf_seekr.c
+
+2024-02-03:  David Anderson
+    commit 8ae6edad4e9f116e3f7fc6ff4d18c92cd30533c1
+
+    Latest, all about dwarf_seakr.c
+            modified:   ChangeLog
+
 2024-02-03:  David Anderson
     commit f2790bb57f6e1a2f110cdd35370cf5b959f8f060
 
