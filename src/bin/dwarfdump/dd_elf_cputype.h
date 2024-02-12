@@ -1,4 +1,3 @@
- 
 #ifndef DD_ELF_CPUTYPE_H
 #define DD_ELF_CPUTYPE_H
 
@@ -13,7 +12,7 @@
 #define EM_MIPS        8  /* MIPS R3000 big-endian */
 #define EM_S370        9  /* IBM System/370 */
 #define EM_MIPS_RS3_LE    10  /* MIPS R3000 little-endian */
-#define EM_PARISC 15  /* HPPA */ 
+#define EM_PARISC 15  /* HPPA */
 #define EM_VPP500 17  /* Fujitsu VPP500 */
 #define EM_SPARC32PLUS    18  /* Sun's "v8plus" */
 #define EM_960        19  /* Intel 80960 */
@@ -32,35 +31,35 @@
 #define EM_RISCV  243 /* RISC-V */
 
 static const struct base_elf_cpu_s {
-   Dwarf_Unsigned value;
-   const char *name;
+    Dwarf_Unsigned value;
+    const char *name;
 } elf_cpubase [] = {
 { EM_NONE,  "Zero:No machine"},
 { EM_M32,   "AT&T WE 32100"},
-{ EM_SPARC,	"SUN SPARC "},
+{ EM_SPARC, "SUN SPARC "},
 { EM_386,   "Intel 80386 "},
 { EM_68K,   "Motorola m68k"},
 { EM_88K,   "Motorola m88k"},
 { EM_860,   "Intel 80860 "},
-{ EM_MIPS,        "MIPS R3000 big-endian"},
-{ EM_S370,	      "IBM System/370"},
+{ EM_MIPS,  "MIPS R3000 big-endian"},
+{ EM_S370,  "IBM System/370"},
 { EM_MIPS_RS3_LE, "MIPS R3000 little-endian"},
-{ EM_PARISC	,     "HPPA"},
-{ EM_VPP500	,     "Fujitsu VPP500"},
+{ EM_PARISC,     "HPPA"},
+{ EM_VPP500,     "Fujitsu VPP500"},
 { EM_SPARC32PLUS, "Sun v8plus"},
 { EM_960,         "Intel 80960"},
 { EM_PPC,         "PowerPC"},
-{ EM_PPC64,	      "PowerPC 64-bit"},
-{ EM_S390,	 "IBM S390"},
+{ EM_PPC64,       "PowerPC 64-bit"},
+{ EM_S390,        "IBM S390"},
 { EM_SPU,    "IBM SPU/SPC"},
 { EM_ARM,    "ARM"},
 { EM_SPARCV9,"SPARC v9 64-bit"},
-{ EM_IA_64,	 "Intel Merced"},
+{ EM_IA_64,  "Intel Merced"},
 { EM_MIPS_X, "Stanford MIPS-X"},
 { EM_X86_64, "AMD x86_64"},
 { EM_VAX,    "Digital VAX"},
-{ EM_AARCH64,"ARM AARCH64"}, 
-{ EM_RISCV,	 "RISC-V"},
+{ EM_AARCH64,"ARM AARCH64"},
+{ EM_RISCV,  "RISC-V"},
 {0,0}
 
 };
@@ -72,7 +71,7 @@ dd_elf_arch_name(Dwarf_Unsigned val)
 
     for ( ; v->name; ++v) {
         if (v->value == val) {
-            return v->name; 
+            return v->name;
         }
     }
     return "Unlisted Elf cpu architecture";

@@ -486,7 +486,8 @@ add_array_file_entry(unsigned k,
     macfile_entry *m = 0;
     /*  Room for the string, its NUL, and the entry struct
         fields. */
-    unsigned long  alloclen = (unsigned long)(sizeof(macfile_entry) + namelen);
+    unsigned long  alloclen = (unsigned long)
+        (sizeof(macfile_entry) + namelen);
 
     expand_array_file_if_required();
     m = (macfile_entry*) calloc(1,alloclen);

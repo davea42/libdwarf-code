@@ -214,7 +214,8 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             abbrev for entire CU. */
         tagname = "Abbrev 0: null abbrev entry";
     } else {
-        tagname = get_TAG_name((unsigned)tag,dwarf_names_print_on_error);
+        tagname = get_TAG_name((unsigned)tag,
+            dwarf_names_print_on_error);
     }
     if ( glflags.gf_do_print_dwarf) {
         if (glflags.dense) {
@@ -339,7 +340,8 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             }
             if (glflags.dense) {
                 printf(" <%ld>%s<%s>%s", (unsigned long) off,
-                    get_AT_name((unsigned int)attr,dwarf_names_print_on_error),
+                    get_AT_name((unsigned int)attr,
+                        dwarf_names_print_on_error),
                     get_FORM_name((Dwarf_Half) form,
                         dwarf_names_print_on_error),
                     esb_get_string(&m));

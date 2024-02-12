@@ -522,7 +522,7 @@ main(int argc, char *argv[])
                 homeify((char *)sanitized(tied_file_name),&m);
                 printf("%s ERROR:  can't open tied file"
                     ".. %s: %s\n",
-                    glflags.program_name, 
+                    glflags.program_name,
                     esb_get_string(&m),
                     errmsg);
                 esb_destructor(&m);
@@ -741,7 +741,8 @@ dbgsetup(Dwarf_Debug dbg,struct dwconf_s *setup_config_file_data)
     dwarf_set_frame_undefined_value(dbg,
         (Dwarf_Half)setup_config_file_data->cf_undefined_val);
     if (setup_config_file_data->cf_address_size) {
-        /*  In libdwarf we mostly use Dwarf_Half, but Dwarf_Small works ok here. */
+        /*  In libdwarf we mostly use Dwarf_Half,
+            but Dwarf_Small works ok here. */
         dwarf_set_default_address_size(dbg,
             (Dwarf_Small)setup_config_file_data->cf_address_size);
     }
@@ -2234,9 +2235,11 @@ build_linkonce_info(Dwarf_Debug dbg)
 
     nCount = dwarf_get_section_count(dbg);
 
-    /*  FIXME: dwarf_get_section_info_by_index_a() only works for section indicies
-        as int. It works acceptably, but will fail with more than 32000 sections
-        (a very large number). */
+    /*  FIXME: dwarf_get_section_info_by_index_a() only
+        works for section indicies
+        as int. It works acceptably, but will fail with
+        more than 32000 sections
+        (a very large number) with 32bit Windows. */
     /* Ignore section with index=0 */
     for (section_index = 1;
         section_index < nCount;
@@ -2521,7 +2524,7 @@ add_to_unique_errors_table(char * error_text)
             SET_UNIQUE_ERRORS_DELTA;
 
         newsun = (char **)realloc(set_unique_errors,
-             newsun_size* sizeof(char*));
+            newsun_size* sizeof(char*));
         if (!newsun) {
             static int ercount = 0;
             if (!ercount) {
@@ -2762,7 +2765,6 @@ print_machine_arch(Dwarf_Debug dbg)
             Dwarf_Unsigned flags = 0;
             Dwarf_Unsigned offset = 0;
 
-
             fres = dwarf_get_section_info_by_index_a(dbg,j,
                 &name,&addr,&size,&flags,&offset,&error);
             if (fres != DW_DLV_OK) {
@@ -2772,12 +2774,13 @@ print_machine_arch(Dwarf_Debug dbg)
                 " 0x%" DW_PR_XZEROS DW_PR_DUx
                 " 0x%" DW_PR_XZEROS DW_PR_DUx
                 " 0x%" DW_PR_XZEROS DW_PR_DUx
-                " 0x%" DW_PR_XZEROS DW_PR_DUx 
+                " 0x%" DW_PR_XZEROS DW_PR_DUx
                 " %s\n",j,offset,size,flags,addr,name);
         }
         if (fres == DW_DLV_ERROR) {
-            char *errm = dwarf_errmsg(error); 
-            printf("ERROR: dwarf_get_secion_info_by_index_a failed %s\n",
+            char *errm = dwarf_errmsg(error);
+            printf("ERROR: dwarf_get_secion_info_by_index_a "
+                "failed %s\n",
                 errm);
             dwarf_dealloc_error(dbg,error);
             glflags.gf_count_major_errors++;
