@@ -436,7 +436,8 @@ dwarf_attrlist(Dwarf_Die die,
         if (bres != DW_DLV_OK) {
             return bres;
         }
-        /*  Here we are guaranteed abbrev_list->abl_attr is non-null */
+        /*  Here we are guaranteed abbrev_list->abl_attr
+            is non-null */
     }
     /*  ASSERT  list->abl_addr and list->abl_form
         are non-null and if  list->abl_implicit_const_count > 0
@@ -532,7 +533,7 @@ dwarf_attrlist(Dwarf_Die die,
                 return DW_DLV_ERROR;
             }
             new_attr->ar_attribute = (Dwarf_Half)attr;
-            new_attr->ar_attribute_form_direct = 
+            new_attr->ar_attribute_form_direct =
                 (Dwarf_Half)attr_form;
             new_attr->ar_attribute_form = (Dwarf_Half)newattr_form;
             /*  Here the final address must be *inside* the

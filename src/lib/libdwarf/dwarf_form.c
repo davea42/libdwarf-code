@@ -444,7 +444,7 @@ show_not_ref_error(Dwarf_Debug dbg,
 
     /*DW_DLE_NOT_REF_FORM */
     dwarfstring_constructor(&m);
-    
+
     dwarf_get_FORM_name(form,&fname);
     dwarf_get_AT_name(attr,&aname);
     dwarfstring_append(&m,"DW_DLE_NOT_REF_FORM: ");
@@ -784,7 +784,7 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
 
     case DW_FORM_ref1:
         if (attr->ar_debug_ptr >= section_end) {
-            _dwarf_error_string(dbg, error, 
+            _dwarf_error_string(dbg, error,
                 DW_DLE_ATTR_FORM_OFFSET_BAD,
                 "DW_DLE_ATTR_FORM_OFFSET_BAD: "
                 "DW_FORM_ref1 outside of the section.");
@@ -841,7 +841,7 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
         That was first clearly documented in DWARF3.
         In DWARF4 these two forms are no longer references. */
     case DW_FORM_data4:
-        if (context_version >= DW_CU_VERSION4) { 
+        if (context_version >= DW_CU_VERSION4) {
             show_not_ref_error(dbg,error,attr->ar_attribute_form,
                 attr->ar_attribute);
             return DW_DLV_ERROR;
@@ -1318,7 +1318,7 @@ dwarf_formaddr(Dwarf_Attribute attr,
     }
     if (attrform == DW_FORM_addr ||
         (cu_context->cc_producer == CC_PROD_METROWERKS &&
-        attrform == DW_FORM_ref_addr) 
+        attrform == DW_FORM_ref_addr)
             /* Allowance of
             DW_FORM_ref_addr was a mistake. The value returned in that
             case is NOT an address it is a global debug_info

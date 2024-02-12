@@ -78,7 +78,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define O_CLOEXEC 0
 #endif /* O_CLOEXEC */
 
-
 #if 0 /* debugging only */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
@@ -150,7 +149,7 @@ _dwarf_seekr(int fd,
     if (sloc < 0) {
         return DW_DLV_ERROR;
     }
-#ifdef _WIN64 
+#ifdef _WIN64
     fsize = (Dwarf_Signed)lseek(fd,(__int64)loc,seektype);
 #elif defined(_WIN32)
     fsize = (Dwarf_Signed)lseek(fd,(off_t)loc,seektype);
@@ -167,9 +166,9 @@ _dwarf_seekr(int fd,
 }
 
 void
-_dwarf_closer( int fd) 
+_dwarf_closer( int fd)
 {
-#ifdef _WIN64 
+#ifdef _WIN64
     _close(fd);
 #elif defined(_WIN32)
     _close(fd);
@@ -183,7 +182,7 @@ _dwarf_openr( const char *name)
 {
 
     int fd = -1;
-#ifdef _WIN64 
+#ifdef _WIN64
     fd = _open(name, O_RDONLY | O_BINARY|O_CLOEXEC);
 #elif defined(_WIN32)
     fd = _open(name, O_RDONLY | O_BINARY|O_CLOEXEC);

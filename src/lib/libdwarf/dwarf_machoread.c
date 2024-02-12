@@ -57,7 +57,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
 #include <config.h>
 #include <stdlib.h> /* calloc() free() malloc() */
 #include <string.h> /* memcpy() memset() strcmp() strdup() */

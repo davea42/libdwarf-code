@@ -652,7 +652,7 @@ dwarf_srcfiles(Dwarf_Die die,
         if (res != DW_DLV_OK) {
             return res;
         }
-        for (ifp = baseindex; ifp < endindex; 
+        for (ifp = baseindex; ifp < endindex;
             ++ifp,fe2 = fe->fi_next ) {
             int sres = 0;
             char *name_out = 0;

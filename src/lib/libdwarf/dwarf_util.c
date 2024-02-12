@@ -634,7 +634,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
                 order of the entries, effectively, but
                 that does not seem significant. */
             if (newhash > htout->tb_highest_used_entry) {
-                htout->tb_highest_used_entry = 
+                htout->tb_highest_used_entry =
                     (unsigned long)newhash;
             }
             listent->abl_next = entry_out[newhash];
@@ -813,7 +813,7 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
     hash_num = hashable_val HT_MOD_OP
         (hash_table_base->tb_table_entry_count-1);
     if (hash_num > hash_table_base->tb_highest_used_entry) {
-        hash_table_base->tb_highest_used_entry = 
+        hash_table_base->tb_highest_used_entry =
             (unsigned long)hash_num;
     }
     entry_base = hash_table_base->tb_entries;
@@ -917,7 +917,7 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
         hash_num = new_hashable_val HT_MOD_OP
             (hash_table_base->tb_table_entry_count-1);
         if (hash_num > hash_table_base->tb_highest_used_entry) {
-            hash_table_base->tb_highest_used_entry = 
+            hash_table_base->tb_highest_used_entry =
                 (unsigned long)hash_num;
         }
 
@@ -1401,7 +1401,7 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     /*  copy errs errno to errt by building
         a new errt.
         variable if there is one!
-        Move the error from dbgs to dbgt. 
+        Move the error from dbgs to dbgt.
         Error numbers are all < 1000.
         */
     mydw_errno = (int)dwarf_errno(*errs);

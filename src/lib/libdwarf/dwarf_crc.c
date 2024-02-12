@@ -132,7 +132,7 @@ dwarf_basic_crc32 (const unsigned char *buf,
     unsigned int crc)
 {
     const unsigned char *end = 0;
-   
+
     if (!buf) {
         return 0;
     }

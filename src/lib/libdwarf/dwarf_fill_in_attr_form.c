@@ -60,7 +60,7 @@ build_alloc_ab_error(Dwarf_Debug dbg,
     dwarfstring_append_printf_s(&m,
         "DW_DLE_ALLOC_FAIL :"
         " Attempt to malloc space for %s ",
-        (char *)fieldname);        
+        (char *)fieldname);
     dwarfstring_append_printf_u(&m,
         " with %u entries failed.",
         count);

@@ -199,7 +199,7 @@ dwarfstring_append_length(struct dwarfstring_s *g,char *str,
     }
     memcpy(g->s_data + lastpos,str,slen);
     g->s_avail -= slen;
-    /*  Adding string terminating null byte. 
+    /*  Adding string terminating null byte.
         Space is guaranteed available to do this.*/
     g->s_data[g->s_size - g->s_avail] = 0;
     return TRUE;

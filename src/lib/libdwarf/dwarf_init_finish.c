@@ -1726,7 +1726,7 @@ dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
     Dwarf_Unsigned sectioncount = 0;
     CHECK_DBG(dbg,error,"dwarf_get_section_info_by_index_a()");
 
-    sectioncount = dwarf_get_section_count(dbg); 
+    sectioncount = dwarf_get_section_count(dbg);
 
     if (section_addr) {
         *section_addr = 0;
@@ -1747,7 +1747,7 @@ dwarf_get_section_info_by_index_a(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     /* Check if we have a valid section index */
-    if ((Dwarf_Unsigned)section_index < sectioncount){ 
+    if ((Dwarf_Unsigned)section_index < sectioncount){
         int res = 0;
         int err = 0;
         struct Dwarf_Obj_Access_Section_a_s doas;

@@ -135,7 +135,7 @@ _dwarf_skip_leb128(char * leb128,
     *leb128_length = byte_length;
     return DW_DLV_OK;
 }
-/*  Decode ULEB with checking. 
+/*  Decode ULEB with checking.
     Casting leb128 to (unsigned char *) as
     the signedness of char * is unpredictable in C */
 int
@@ -261,10 +261,10 @@ dwarf_decode_leb128(char * leb128,
     return DW_DLV_ERROR;
 }
 
-/* Decode SLEB with checking
-   Casting leb128 to (unsigned char *) as
-   the signedness of char * is unpredictable
-   in C */
+/*  Decode SLEB with checking
+    Casting leb128 to (unsigned char *) as
+    the signedness of char * is unpredictable
+    in C */
 int
 dwarf_decode_signed_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,

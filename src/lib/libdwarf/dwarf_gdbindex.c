@@ -195,10 +195,11 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     }
     data = dbg->de_debug_gdbindex.dss_data;
     if (!data) {
-        /* Should be impossible, dwarf_load_section() would
-           return DW_DLV_ERROR if dss_data could not be
-           set non-null */
-        _dwarf_error_string(dbg, error, DW_DLE_ERRONEOUS_GDB_INDEX_SECTION,
+        /*  Should be impossible, dwarf_load_section() would
+            return DW_DLV_ERROR if dss_data could not be
+            set non-null */
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ERRONEOUS_GDB_INDEX_SECTION,
             "DW_DLE_ERRONEOUS_GDB_INDEX_SECTION: "
             "We have non-zero (section) dss_size but "
             "null dss_data pointer");

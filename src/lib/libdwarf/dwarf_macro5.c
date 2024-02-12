@@ -643,7 +643,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
             &localstring, &lerr);
         if (resup != DW_DLV_OK) {
             if (resup == DW_DLV_ERROR) {
-                Dwarf_Unsigned myerrno = 
+                Dwarf_Unsigned myerrno =
                     (unsigned int)dwarf_errno(lerr);
                 if (myerrno == DW_DLE_NO_TIED_FILE_AVAILABLE) {
                     *macro_string =

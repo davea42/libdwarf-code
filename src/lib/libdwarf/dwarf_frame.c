@@ -1812,7 +1812,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
         struct Dwarf_Reg_Rule_s *t3reg = localregtab;
-        unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,reg_count);
+        unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,
+            reg_count);
         unsigned curreg = 0;
 
         table->fr_loc = current_loc;
@@ -2334,7 +2335,7 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
     if (data_alignment_factor != NULL)
         *data_alignment_factor = cie->ci_data_alignment_factor;
     if (return_address_register != NULL)
-        *return_address_register = 
+        *return_address_register =
             (Dwarf_Half)cie->ci_return_address_register;
     if (initial_instructions != NULL)
         *initial_instructions = cie->ci_cie_instr_start;
@@ -3276,10 +3277,11 @@ dump_frame_rule(char *msg, struct Dwarf_Reg_Rule_s *reg_rule)
 
     Returns the value that was present before we changed it here.  */
 Dwarf_Half
-dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg, Dwarf_Half value)
+dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg,
+    Dwarf_Half value)
 {
-    Dwarf_Half orig = 
-       (Dwarf_Half)dbg->de_frame_rule_initial_value;
+    Dwarf_Half orig =
+        (Dwarf_Half)dbg->de_frame_rule_initial_value;
     dbg->de_frame_rule_initial_value = value;
     return orig;
 }
@@ -3298,7 +3300,7 @@ dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = 
+    Dwarf_Half orig =
         (Dwarf_Half)dbg->de_frame_reg_rules_entry_count;
     dbg->de_frame_reg_rules_entry_count = value;
 
@@ -3334,7 +3336,7 @@ dwarf_set_frame_cfa_value(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_same_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = 
+    Dwarf_Half orig =
         (Dwarf_Half)dbg->de_frame_same_value_number;
     dbg->de_frame_same_value_number = value;
     return orig;
@@ -3342,7 +3344,7 @@ dwarf_set_frame_same_value(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = 
+    Dwarf_Half orig =
         (Dwarf_Half)dbg->de_frame_same_value_number;
     dbg->de_frame_undefined_value_number = value;
     return orig;

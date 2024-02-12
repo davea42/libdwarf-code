@@ -49,7 +49,7 @@
     The crc is calculated based on reading
     the entire current open
     Dwarf_Debug dbg object file and all bytes in
-    the file are read to create  the crc.  
+    the file are read to create  the crc.
 
     In Windows, where unsigned int is 16 bits, this
     produces different output than on 32bit ints.

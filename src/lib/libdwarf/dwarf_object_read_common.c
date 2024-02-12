@@ -45,8 +45,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  Neither off_t nor ssize_t is in C90.
     However, both are in Posix:
     IEEE Std 1003.1-1990, aka
-    ISO/IEC 9954-1:1990. 
-    This gets asked to read large sections sometimes. 
+    ISO/IEC 9954-1:1990.
+    This gets asked to read large sections sometimes.
     The Linux kernel allows at most 0x7ffff000
     bytes in a read()*/
 int
@@ -81,8 +81,8 @@ _dwarf_object_read_random(int fd, char *buf, Dwarf_Unsigned loc,
     }
     res = _dwarf_readr(fd,buf,size,0);
     if (res != DW_DLV_OK) {
-            *errc = DW_DLE_READ_ERROR;
-            return DW_DLV_ERROR;
+        *errc = DW_DLE_READ_ERROR;
+        return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
 }
