@@ -188,7 +188,6 @@ struct Dwarf_CU_Context_s {
         See cc_is_info flag. */
     Dwarf_Unsigned cc_debug_offset;
 
-
     /* === START DEBUG FISSION (Split Dwarf) data
         cc_signature is in the TU header
         of a type unit of a TU DIE (or for DW5 in the
@@ -655,7 +654,7 @@ struct Dwarf_Debug_s {
     Dwarf_Unsigned de_obj_flags;
 
     /*  number of bytes in a pointer of the target in various .debug_
-        sections. 4 in 32bit, 8 in MIPS 64, ia64. 
+        sections. 4 in 32bit, 8 in MIPS 64, ia64.
         This is taken from object file headers. */
     Dwarf_Small de_pointer_size;
 

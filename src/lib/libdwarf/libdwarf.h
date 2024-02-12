@@ -79,7 +79,7 @@ extern "C" {
 
 /*
     libdwarf.h
-    Revision: #9  Date: 2008/01/17 
+    Revision: #9  Date: 2008/01/17
 
     For libdwarf consumers (reading DWARF2 and later)
 
@@ -3337,12 +3337,12 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
     For DWARF5:
 
-    The file-number from a <b>DW_AT_decl_file</b> or 
+    The file-number from a <b>DW_AT_decl_file</b> or
     <b>DW_AT_call_file</b>
     is the proper index into the array of string pointers.
 
     For DWARF2,3,4, including experimental line table
-    version 0xfe06 and a file-number from a 
+    version 0xfe06 and a file-number from a
     <b>DW_AT_decl_file</b> or  <b>DW_AT_call_file</b>:
 
     -# If the file-number is zero there is no file name to find.
@@ -4845,7 +4845,6 @@ DW_API int dwarf_debug_addr_table(Dwarf_Debug dw_dbg,
 
 /*! @brief Return .debug_addr address given table index
 
-
     @param dw_dat
     Pass in a Dwarf_Debug_Addr_Table pointer.
     @param dw_entry_index
@@ -6233,7 +6232,7 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
     dw_offset. Never dealloc or free this string.
     @param dw_strlen_of_string
     The caller must pass in a valid pointer to a Dwarf_Signed.
-    
+
     On success returns the strlen() of the string.
     @param dw_error
     On error dw_error is set to point to the error details.
@@ -8174,10 +8173,10 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns DW_DLV_OK
     that array is filled in.
- 
+
     Callers must guarantee dw_crcbuf points
     to at least 4 bytes of writable memory.
-    Passing in a null dw_crcbug results in an 
+    Passing in a null dw_crcbug results in an
     immediate return of DW_DLV_NO_ENTRY and
     the pointer is not used.
 
@@ -8559,7 +8558,7 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
 
     These calls returning selected object header
     {machine architecture,flags)
-    and section (offset, flags) data 
+    and section (offset, flags) data
     are not of interest to most library callers:
     dwarf_machine_architecture(),
     dwarf_get_section_info_by_index_a(), and
@@ -8898,9 +8897,9 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     apply to DW_FTYPE_APPLEUNIVERSAL.
 
     dw_comdat_groupnumber only applies to DW_FTYPE_ELF.
-   
+
     Other than dw_dbg one can pass in NULL for any
-    pointer parameter whose value is not of interest. 
+    pointer parameter whose value is not of interest.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -8979,7 +8978,7 @@ DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
 /*! @brief Get section count (of object file sections).
 
     Return the section count. Returns 0 if the
-    dw_dbg argument is improper in any way. 
+    dw_dbg argument is improper in any way.
 
     @param dw_dbg
     Pass in a valid Dwarf_Debug of interest.

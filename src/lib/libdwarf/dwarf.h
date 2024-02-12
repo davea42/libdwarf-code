@@ -157,7 +157,7 @@ extern "C" {
 
 /* TI = Texas Instruments, for DWARF in COFF */
 /* https://www.ti.com/lit/an/spraab5/spraab5.pdf?ts=1705994928599 */
- 
+
 #define DW_TAG_lo_user                  0x4080 /* TI */
 #define DW_TAG_TI_far_type              0x4080 /* TI */
 #define DW_TAG_MIPS_loop                0x4081
@@ -166,7 +166,6 @@ extern "C" {
 #define DW_TAG_TI_ioport_type           0x4083 /* TI */
 #define DW_TAG_TI_restrict_type         0x4084 /* TI */
 #define DW_TAG_TI_onchip_type           0x4085 /* TI */
-
 
 /*  HP extensions: ftp://ftp.hp.com/pub/lang/tools/\
     WDB/wdb-4.0.tar.gz  */
@@ -1191,13 +1190,13 @@ most-likely-useful name. */
 #define DW_LANG_Assembly                0x0031 /* DWARF6 */
 #define DW_LANG_C_sharp                 0x0032 /* DWARF6 */
 #define DW_LANG_Mojo                    0x0033 /* DWARF6 */
-#define DW_LANG_GLSL 	                0x0034 /* DWARF6 */
-#define DW_LANG_GLSL_ES 	            0x0035 /* DWARF6 */
-#define DW_LANG_HLSL 	                0x0036 /* DWARF6 */
-#define DW_LANG_OpenCL_CPP 	            0x0037 /* DWARF6 */
-#define DW_LANG_CPP_for_OpenCL 	        0x0038 /* DWARF6 */
-#define DW_LANG_SYCL 	                0x0039 /* DWARF6 */
-#define DW_LANG_Ruby 	                0x0040 /* DWARF6 */
+#define DW_LANG_GLSL                    0x0034 /* DWARF6 */
+#define DW_LANG_GLSL_ES                 0x0035 /* DWARF6 */
+#define DW_LANG_HLSL                    0x0036 /* DWARF6 */
+#define DW_LANG_OpenCL_CPP              0x0037 /* DWARF6 */
+#define DW_LANG_CPP_for_OpenCL          0x0038 /* DWARF6 */
+#define DW_LANG_SYCL                    0x0039 /* DWARF6 */
+#define DW_LANG_Ruby                    0x0040 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */

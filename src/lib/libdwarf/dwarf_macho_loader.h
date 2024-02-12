@@ -472,7 +472,7 @@ like environment variable */
 #define LC_VERSION_MIN_WATCHOS 0x30
 /* build for Watch min OS version */
 
-#define LC_NOTE 0x31 
+#define LC_NOTE 0x31
 /* arbitrary data included within a Mach-O file */
 
 #define LC_BUILD_VERSION 0x32
@@ -489,7 +489,6 @@ like environment variable */
 
 #define LC_ATOM_INFO 0x36
 /* used with linkedit_data_command */
-
 
 /*
 * A variable length string in a load command
