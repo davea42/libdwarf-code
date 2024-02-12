@@ -436,6 +436,7 @@ dwarf_attrlist(Dwarf_Die die,
         if (bres != DW_DLV_OK) {
             return bres;
         }
+        /*  Here we are guaranteed abbrev_list->abl_attr is non-null */
     }
     /*  ASSERT  list->abl_addr and list->abl_form
         are non-null and if  list->abl_implicit_const_count > 0

@@ -144,12 +144,12 @@ dwarf_decode_leb128(char * leb128,
     Dwarf_Unsigned *outval,
     char * endptr)
 {
-    unsigned int   byte        = 0;
+    unsigned long  byte        = 0;
     Dwarf_Unsigned word_number = 0;
     Dwarf_Unsigned number      = 0;
     unsigned long  shift       = 0; /* at least 32 bits, even Win32 */
     /*  The byte_length value will be a small non-negative integer. */
-    unsigned int  byte_length       = 0;
+    unsigned int   byte_length       = 0;
 
     if (leb128 >=endptr) {
         return DW_DLV_ERROR;
@@ -168,7 +168,7 @@ dwarf_decode_leb128(char * leb128,
         }
         return DW_DLV_OK;
     } else {
-        unsigned int   byte2        = 0;
+        unsigned long byte2        = 0;
         if ((leb128+1) >=endptr) {
             return DW_DLV_ERROR;
         }
@@ -177,7 +177,7 @@ dwarf_decode_leb128(char * leb128,
             if (leb128_length) {
                 *leb128_length = 2;
             }
-            word_number = byte & 0x7f;
+            word_number =  byte & 0x7f;
             word_number |= (byte2 & 0x7f) << 7;
             if (outval) {
                 *outval = word_number;

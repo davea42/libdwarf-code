@@ -2003,14 +2003,16 @@ read_gs_section_group(
 
             memcpy(dblock,dp,DWARF_32BIT_SIZE);
             ASNAR(memcpy,gseca,dblock);
+            /*  Loading gseca and gsecb with different endianness.
+                Only one of them can be of any use. */
             ASNAR(_dwarf_memcpy_swap_bytes,gsecb,dblock);
             if (!gseca) {
+                /*  zero! Oops. No point in looking at gsecb */
                 free(data);
                 free(grouparray);
                 *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                 return DW_DLV_ERROR;
             }
-            grouparray[i] = gseca;
             if (gseca >= ep->f_loc_shdr.g_count) {
                 /*  Might be confused endianness by
                     the compiler generating the SHT_GROUP.
@@ -2021,10 +2023,11 @@ read_gs_section_group(
                     free(grouparray);
                     return DW_DLV_ERROR;
                 }
-                /* Ok. Yes, ugly. */
+                /*  Looks as though gsecb is the correct
+                    interpretation.  Yes, ugly. */
                 gseca = gsecb;
-                grouparray[i] = gseca;
             }
+            grouparray[i] = gseca;
             targpsh = ep->f_shdr + gseca;
             if (_dwarf_ignorethissection(targpsh->gh_namestring)){
                 continue;
