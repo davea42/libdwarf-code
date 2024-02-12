@@ -3326,8 +3326,8 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     DW_DLV_OK.
 
     In referencing the array via a file-number from
-    a DW_AT_decl_file or
-    DW_AT_call_file attribute one needs
+    a <b>DW_AT_decl_file</b> or
+    <b>DW_AT_call_file</b> attribute one needs
     to know if the CU is DWARF5 or not.
 
     Line Table Version numbers match compilation unit
@@ -3337,13 +3337,13 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
     For DWARF5:
 
-    The file-number from a DW_AT_decl_file or 
-    DW_AT_call_file
+    The file-number from a <b>DW_AT_decl_file</b> or 
+    <b>DW_AT_call_file</b>
     is the proper index into the array of string pointers.
 
     For DWARF2,3,4, including experimental line table
     version 0xfe06 and a file-number from a 
-    DW_AT_decl_file or  DW_AT_call_file:
+    <b>DW_AT_decl_file</b> or  <b>DW_AT_call_file</b>:
 
     -# If the file-number is zero there is no file name to find.
     -# Otherwise subtract one(1) from the file-number and
