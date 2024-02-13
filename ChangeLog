@@ -1,3 +1,18 @@
+2024-02-13:  David Anderson
+    commit f21e2f7687f3dca183026a1fb72ca1f0dcf8befa
+
+    DW_FORM_block1 was not checking to ensure the
+    pointer pointed inside the section.
+    Similar to the vulnerability in DW202402-001 (oss fuzz 66646)
+    Now it checks.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2024-02-12:  David Anderson
+    commit 5c6249045b9edcb4987d2d002cf9691cd98a13ea
+
+    Up to date now.
+            modified:   ChangeLog
+
 2024-02-12:  David Anderson
     commit 7150fc069090261046fb5317beb061730ed89bab
 
