@@ -1650,14 +1650,23 @@ _dwarf_formblock_internal(Dwarf_Debug dbg,
     section_start =
         _dwarf_calculate_info_section_start_ptr(cu_context,
         &section_length);
-
     switch (attr->ar_attribute_form) {
-
-    case DW_FORM_block1:
-        length = *(Dwarf_Small *) attr->ar_debug_ptr;
-        data = attr->ar_debug_ptr + sizeof(Dwarf_Small);
+    case DW_FORM_block1: {
+        Dwarf_Small *start       = attr->ar_debug_ptr;
+        Dwarf_Small *incremented = start + 1;
+        if ( incremented < start ||
+            incremented >= section_end) {
+            /*  Error if +1 overflows or if points out of section. */
+            generate_form_error(dbg,error,attr->ar_attribute_form,
+                DW_DLE_ATTR_FORM_BAD,
+                "DW_DLE_ATTR_FORM_BAD",
+                " DW_FORM_block1 offset invalid");
+            return DW_DLV_ERROR;
+        }
+        length = *start;
+        data   = incremented;
         break;
-
+    }
     case DW_FORM_block2:
         READ_UNALIGNED_CK(dbg, length, Dwarf_Unsigned,
             attr->ar_debug_ptr, DWARF_HALF_SIZE,
@@ -1686,7 +1695,7 @@ _dwarf_formblock_internal(Dwarf_Debug dbg,
         generate_form_error(dbg,error,attr->ar_attribute_form,
             DW_DLE_ATTR_FORM_BAD,
             "DW_DLE_ATTR_FORM_BAD",
-            "dwarf_formblock");
+            "dwarf_formblock() finds unknown form");
         return DW_DLV_ERROR;
     }
     /*  We have the data. Check for errors. */
