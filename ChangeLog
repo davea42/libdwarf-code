@@ -4,6 +4,7 @@
     DW_FORM_block1 was not checking to ensure the
     pointer pointed inside the section.
     Similar to the vulnerability in DW202402-001 (oss fuzz 66646)
+    which was about DW_FORM_ref1.
     Now it checks.
             modified:   src/lib/libdwarf/dwarf_form.c
 
