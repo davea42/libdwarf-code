@@ -72,14 +72,17 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   This test failure happened to be on a
   DW_AT_abstract_origin attribute,
   but the problem applies in many other situations.
-  All the other forms had checks.
+  Nearly the other forms had checks.
   This check has been missing for many years.
+  Similarly the requisite check was missing from
+  DW_FORM_block1 for many years and that too
+  was fixed so all the FORMs have checks now.
 </p>
-<p>datefixed: 2024-02-12
+<p>datefixed: 2024-02-13
 </p>
 <p>references:  regressiontests/ossfuzz66646/fuzz_findfuncbypc-5178544143532032
 </p>
-<p>gitfixid: 812f5db1c0fd4369e4c3b6bb8b132c70b6940320
+<p>gitfixid: f21e2f7687f3dca183026a1fb72ca1f0dcf8befa
 </p>
 <p>tarrelease: 
 </p>
