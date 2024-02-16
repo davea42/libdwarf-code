@@ -136,4 +136,4 @@ install(EXPORT libdwarfTargets
         NAMESPACE libdwarf::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
 install(FILES "${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-install(FILES "${PROJECT_SOURCE_DIR}/cmake/FindZSTD.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
+install(FILES "${PROJECT_SOURCE_DIR}/cmake/Findzstd.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
