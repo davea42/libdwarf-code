@@ -1,3 +1,78 @@
+2024-02-16:  David Anderson
+    commit aa5abd9caba8edf1bcbbc0243a36f0d34d48da59
+
+    cmake/FindZSTD.cmake
+    changed to to
+    cmake/Findzstd.cmake to match the preceding updates.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+2024-02-16:  David Anderson
+    commit 1865a08af4995673abed6284a225f3f9f3631f6c
+    Merge: 0982c845 c12e7d71
+
+    Merge branch 'uilianries-cmake/find-zstd'
+    Slight renaming of zstd stuff for
+    maximum compatibility.
+
+2024-02-16:  David Anderson
+    commit c12e7d71117dda88dfa7f12fd7a41a31519ef7bb
+    Merge: 0982c845 c437f0ad
+
+    Merge branch 'cmake/find-zstd' of https://github.com/uilianries/libdwarf-code into uilianries-cmake/find-zstd
+
+    Arranging to findzstd in source when necessary.
+
+2024-02-16:  Uilian Ries
+    commit c437f0ada3ab3a04eb80f9be54c27110607da1c5
+
+    Update zstd_found
+
+    Signed-off-by: Uilian Ries <uilianries@gmail.com>
+
+2024-02-16:  Uilian Ries
+    commit 6ffd41d39ba8e5db8651a35ac4f975baf786de4c
+
+    rename zstd target name
+
+    Signed-off-by: Uilian Ries <uilianries@gmail.com>
+
+2024-02-16:  Uilian Ries
+    commit e3651e6ff79313e5975e1a928a3e7a573fd2ea64
+
+    Use zstd_FOUND to follow archive name
+
+    Signed-off-by: Uilian Ries <uilianries@gmail.com>
+
+2024-02-16:  Uilian Ries
+    commit b7ffd22b99bbb304d90c47e27092f050103e2f23
+
+    Rename find zstd cmake
+
+    Signed-off-by: Uilian Ries <uilianries@gmail.com>
+
+2024-02-14:  David Anderson
+    commit 0982c845243375330641236dfe230b34d7aa77f1
+
+    Regenerated With update to DW202402-001.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-02-14:  David Anderson
+    commit 6231e29cf00526433c77b2027864a3a0ee9d0cf9
+
+    Now ChangeLog and DW202402-001 show fixed
+    on 13 February, as there were two places
+    with a missing check against corrupt DWARF.
+            modified:   ChangeLog
+            modified:   bugxml/data.txt
+
+2024-02-13:  David Anderson
+    commit 09eaf3402e9e384281a72ae034f723cd16dda0e4
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-02-13:  David Anderson
     commit f21e2f7687f3dca183026a1fb72ca1f0dcf8befa
 
