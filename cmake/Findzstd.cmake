@@ -53,7 +53,7 @@ endif ()
 find_library(ZSTD_LIBRARIES NAMES zstd)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ZSTD REQUIRED_VARS ZSTD_LIBRARIES ZSTD_INCLUDE_DIR ZSTD_VERSION VERSION_VAR ZSTD_VERSION)
+find_package_handle_standard_args(zstd REQUIRED_VARS ZSTD_LIBRARIES ZSTD_INCLUDE_DIR ZSTD_VERSION VERSION_VAR ZSTD_VERSION)
 
 if (zstd_FOUND)
     if (NOT TARGET ZSTD::ZSTD)
