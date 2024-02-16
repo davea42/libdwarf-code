@@ -203,7 +203,7 @@ if (ENABLE_DECOMPRESSION)
     find_package(ZSTD)
   else()
     # Presumably in this case, the target has been found externally but set this flag just in case
-    set(ZSTD_FOUND TRUE)
+    set(zstd_FOUND TRUE)
   endif()
   # Unfortunately aliasing ZSTD::ZSTD to zstd::libzstd_shared/static can lead to problems for end-users, a variable
   # is used
@@ -218,7 +218,7 @@ if (ENABLE_DECOMPRESSION)
   else()
     set(ZSTD_LIB ZSTD::ZSTD)
   endif()
-  if (ZLIB_FOUND AND ZSTD_FOUND )
+  if (ZLIB_FOUND AND zstd_FOUND )
     set(HAVE_ZLIB TRUE)
     set(HAVE_ZLIB_H TRUE)
     set(HAVE_ZSTD TRUE)
