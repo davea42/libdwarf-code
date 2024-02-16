@@ -200,7 +200,7 @@ if (ENABLE_DECOMPRESSION)
       TARGET ZSTD::ZSTD
     )
   )
-    find_package(ZSTD)
+    find_package(zstd)
   else()
     # Presumably in this case, the target has been found externally but set this flag just in case
     set(zstd_FOUND TRUE)
