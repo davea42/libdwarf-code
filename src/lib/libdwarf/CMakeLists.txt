@@ -105,7 +105,7 @@ target_include_directories(dwarf PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
-if(ZLIB_FOUND AND ZSTD_FOUND)
+if(ZLIB_FOUND AND zstd_FOUND)
   target_link_libraries(dwarf PRIVATE  ZLIB::ZLIB ${ZSTD_LIB} ) 
 endif()
 set_target_properties(dwarf PROPERTIES PUBLIC_HEADER "libdwarf.h;dwarf.h")
