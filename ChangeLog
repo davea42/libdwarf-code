@@ -1,3 +1,18 @@
+2024-02-17:  David Anderson
+    commit 404e6b1b14f60c81388d50b4239f81d461b3c3ad
+
+    Fixing DW202402-002, corrupt object caused
+    various libdwarf crashes with some
+    tailored/fuzzed object files.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_error.c
+
+2024-02-16:  David Anderson
+    commit 0cae09da0aac83b2563fc3a4e140952cc398012a
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-02-16:  David Anderson
     commit aa5abd9caba8edf1bcbbc0243a36f0d34d48da59
 

@@ -3,6 +3,44 @@
 <dwbug>
 <cve></cve>
 
+<fuzzer>hongg</fuzzer>
+
+<datereported>2024-02-16</datereported>
+
+<reportedby>ifygecko</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> crashes randomly on fuzzed object
+</vulnerability>
+
+<description> In a multiply-corrupted DWARF object
+  libdwarf may try to dealloc(free) an allocation twice.
+  Results are unpredictable and various.
+  This has been a possibility since we added code
+  to prevent leaks when generating 'unattached'
+  Dwarf_Error records (where there is no
+  Dwarf_Debug available at the point of error).
+  The problem was introduced in libdwarf-0.1.0
+  in 2021.
+</description>
+
+<datefixed>2024-02-17</datefixed>
+
+<references> regressiontests/hongg2024-02-16/SIGABRT-a.fuzz
+            SIGABRT-b.fuzz SIGABRT-c.fuzz SIGSEGV-d.fuzz
+            SIGSEGV-e.fuzz SIGSEGV-f.fuzz SIGSEGV-g.fuzz
+            SIGSEGV-h.fuzz SIGSEGV-i.fuzz SIGSEGV-k.fuzz
+</references>
+
+<gitfixid>404e6b1b14f60c81388d50b4239f81d461b3c3ad</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
 <fuzzer>ossfuzz id: 66646</fuzzer>
 
 <datereported>2024-02-12</datereported>

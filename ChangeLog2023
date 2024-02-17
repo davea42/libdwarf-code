@@ -6744,8 +6744,8 @@ The full set of changes in gdb dwarf2.def is:
     commit ade1be5d2efacaa23fbda4b4c1f08fcb8c0b3e4b
 
     Every return from the *LLVM* function has to
-    do certain hosekeeping
-    to avoid leaks (dwarf_finish(dhg) for example).
+    do certain housekeeping
+    to avoid leaks (dwarf_finish(dbg) for example).
     Several here failed to do that.
             modified:   fuzz/fuzz_rng.c
 
