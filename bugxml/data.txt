@@ -1,3 +1,22 @@
+id: DW202402-003
+fuzzer: hongg
+datereported: 2024-02-18
+reportedby: ifygecko
+vulnerability: crashes randomly reading fuzzed locllist 
+product: libdwarf
+description: A carefully corrupted loclists entry
+  can cause libdwarf to read outside of its
+  allowed areas.  A segmentation error
+  and libdwarf crash is likely. 
+  The bug has been present since the code was created
+  in June 2020.
+datefixed: 2024-02-18
+references: regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
+gitfixid: 6146dc696616d55ef049308974f89f255a45b1b6
+tarrelease:
+endrec: DW202402-003
+
+
 id: DW202402-002
 fuzzer: hongg
 datereported: 2024-02-16
