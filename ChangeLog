@@ -1,3 +1,36 @@
+2024-02-18:  David Anderson
+    commit 10bb558d058010c0fc0e4bbe540f023dd8267405
+
+    Was too agressive checking a pointer
+    in read_single_lle_entry() (if code is
+    DW_LLE_end_of_list we will not access another byte here).
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-02-18:  David Anderson
+    commit 1aeef71c6828a35411eacb856f456ca9f4fbe7a3
+
+    Recording fix of 202402-003
+            modified:   bugxml/data.txt
+
+2024-02-18:  David Anderson
+    commit ab20e055624a39e913e12ceb43634dae025f20ac
+
+    Removing trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2024-02-18:  David Anderson
+    commit 6146dc696616d55ef049308974f89f255a45b1b6
+
+    Fixing DW202402-003, reading outside of allowed area
+    in memory due to corrupted object.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-02-17:  David Anderson
+    commit 6380dc9a5b3eff3e265279e63a1d8651b280ea4f
+
+    Updated
+            modified:   ChangeLog
+
 2024-02-18:  Uilian Ries
     commit f2c565d4301afd8f675efeb2146b862a1ad7aa6c
 

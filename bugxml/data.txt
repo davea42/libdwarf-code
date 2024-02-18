@@ -12,7 +12,7 @@ description: A carefully corrupted loclists entry
   in June 2020.
 datefixed: 2024-02-18
 references: regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
-gitfixid: 6146dc696616d55ef049308974f89f255a45b1b6
+gitfixid: 10bb558d058010c0fc0e4bbe540f023dd8267405
 tarrelease:
 endrec: DW202402-003
 
