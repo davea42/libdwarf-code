@@ -144,7 +144,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
 
     /*  Some of these have a  Counted Location Description
         in them. */
-    if (data >= enddata || (data+1) >= enddata) {
+    if (data >= enddata) {
         _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
             "DW_DLE_LOCLISTS_ERROR: "
             "An lle entry begins past the end of "
