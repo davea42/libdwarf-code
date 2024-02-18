@@ -1,3 +1,26 @@
+2024-02-18:  Uilian Ries
+    commit f2c565d4301afd8f675efeb2146b862a1ad7aa6c
+
+    Fix zstd package name (#227)
+
+    Signed-off-by: Uilian Ries <uilianries@gmail.com>
+
+2024-02-17:  David Anderson
+    commit ecd8c3816174db161fb0f429815ea1a717e69d21
+
+    Now with fix to DW202402-002, crash in libdwarf
+    on fuzzed object file
+            modified:   ChangeLog
+    Minor wording change
+            modified:   ChangeLog2023
+
+    Updated 202402-002
+            modified:   bugxml/data.txt
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
 2024-02-17:  David Anderson
     commit 404e6b1b14f60c81388d50b4239f81d461b3c3ad
 
