@@ -277,7 +277,7 @@ _dwarf_remove_from_staticerrlist(Dwarf_Ptr *space)
             printf("libdwarfdetector rm from static err list at %u\n",
             i);
             fflush(stdout);
-#endif /* DEBUG_ALLOC */ 
+#endif /* DEBUG_ALLOC */
             staticerrlist[i] = 0;
             return;
         }
