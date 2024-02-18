@@ -144,6 +144,13 @@ read_single_lle_entry(Dwarf_Debug dbg,
 
     /*  Some of these have a  Counted Location Description
         in them. */
+    if (data >= enddata || (data+1) >= enddata) {
+        _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+            "DW_DLE_LOCLISTS_ERROR: "
+            "An lle entry begins past the end of "
+            "its allowed space. Corrupt DWARF.");
+        return DW_DLV_ERROR;
+    }
     code = *data;
     ++data;
     ++count;
@@ -279,12 +286,20 @@ read_single_lle_entry(Dwarf_Debug dbg,
     }
     {
         unsigned int v = (unsigned int)count;
+
         if ((Dwarf_Unsigned)v != count) {
             _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
                 "DW_DLE_LOCLISTS_ERROR: "
                 "The number of bytes in a single "
                 "loclist entry is "
                 "too large to be reasonable");
+            return DW_DLV_ERROR;
+        }
+        if (data > enddata) {
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "The end of an lle entry is past the end "
+                "of its allowed space");
             return DW_DLV_ERROR;
         }
     }
@@ -1000,15 +1015,15 @@ build_array_of_lle(Dwarf_Debug dbg,
     Dwarf_Unsigned i              = 0;
 
     for ( ; !done  ; ) {
-        unsigned entrylen = 0;
-        unsigned code = 0;
-        Dwarf_Unsigned val1 = 0;
-        Dwarf_Unsigned val2 = 0;
+        unsigned int    entrylen = 0;
+        unsigned int    code = 0;
+        Dwarf_Unsigned  val1 = 0;
+        Dwarf_Unsigned  val2 = 0;
         Dwarf_Locdesc_c e = 0;
-        Dwarf_Unsigned opsblocksize  = 0;
-        Dwarf_Unsigned opsoffset  = 0;
-        Dwarf_Small *ops = 0;
-        Dwarf_Block_c eops;
+        Dwarf_Unsigned  opsblocksize  = 0;
+        Dwarf_Unsigned  opsoffset  = 0;
+        Dwarf_Small    *ops = 0;
+        Dwarf_Block_c   eops;
 
         memset(&eops,0,sizeof(eops));
         res = read_single_lle_entry(dbg,
