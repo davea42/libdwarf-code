@@ -10,7 +10,7 @@ description: A carefully corrupted loclists entry
   sanity check. 
   A segmentation error and libdwarf crash is likely. 
   Similar code in dwarf_rnglists.c and that now
-  as the addtional checks.
+  has the addtional checks.
   The bugs have been present in both since the code was created
   in June 2020.
 datefixed: 2024-02-18
