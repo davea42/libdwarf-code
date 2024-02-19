@@ -116,7 +116,7 @@ free_rnglists_chain(Dwarf_Debug dbg, Dwarf_Chain head)
         }
     }
 }
-
+/*  See also read_single_lle_entry() for similar code */
 static int
 read_single_rle_entry(Dwarf_Debug dbg,
     Dwarf_Small   *data,
@@ -135,6 +135,13 @@ read_single_rle_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned val1 = 0;
     Dwarf_Unsigned val2 = 0;
 
+    if (data >= enddata) {
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            "DW_DLE_RNGLISTS_ERROR: "
+            "An rle entry begins past the end of "
+            "its allowed space. Corrupt DWARF.");
+        return DW_DLV_ERROR;
+    }
     code = *data;
     ++data;
     ++count;
@@ -202,6 +209,26 @@ read_single_rle_entry(Dwarf_Debug dbg,
         }
         break;
     }
+    {
+        unsigned int v = (unsigned int)count;
+
+        if ((Dwarf_Unsigned)v != count) {
+            _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+                "DW_DLE_RNGLISTS_ERROR: "
+                "The number of bytes in a single "
+                "rnglist entry is "
+                "too large to be reasonable");
+            return DW_DLV_ERROR;
+        }
+        if (data > enddata) {
+            _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+                "DW_DLE_RNGLISTS_ERROR: "
+                "The end of an rle entry is past the end "
+                "of its allowed space");
+            return DW_DLV_ERROR;
+        }
+    }
+
     *bytes_count_out = (unsigned int)count;
     *entry_kind = code;
     *entry_operand1 = val1;
