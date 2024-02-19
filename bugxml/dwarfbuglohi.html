@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of February 2024</p>
-<p> Record count: 173 </p>
+<p> Record count: 174 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5988,6 +5988,40 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
             SIGSEGV-h.fuzz SIGSEGV-i.fuzz SIGSEGV-k.fuzz
 </p>
 <p>gitfixid: 404e6b1b14f60c81388d50b4239f81d461b3c3ad
+</p>
+<p>tarrelease: 
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202402-003">174) DW202402-003</h3>
+<p>id: DW202402-003
+</p>
+<p>cve: 
+</p>
+<p>fuzzer: hongg
+</p>
+<p>datereported: 2024-02-18
+</p>
+<p>reportedby: ifygecko
+</p>
+<p>vulnerability:  crashes randomly reading fuzzed locllist
+</p>
+<p>product: libdwarf
+</p>
+<p>description:  A carefully corrupted loclists entry
+  can cause libdwarf to read outside of its
+  allowed areas in dwarf_loclists.c due to lack of a
+  sanity check.
+  A segmentation error and libdwarf crash is likely.
+  Similar code in dwarf_rnglists.c and that now
+  as the addtional checks.
+  The bugs have been present in both since the code was created
+  in June 2020.
+</p>
+<p>datefixed: 2024-02-18
+</p>
+<p>references:  regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
+</p>
+<p>gitfixid: 5cfbd87dff4fc3c3b595bb92ed886934945b372c
 </p>
 <p>tarrelease: 
 </p>

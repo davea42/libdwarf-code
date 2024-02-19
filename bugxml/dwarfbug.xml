@@ -5,6 +5,41 @@
 
 <fuzzer>hongg</fuzzer>
 
+<datereported>2024-02-18</datereported>
+
+<reportedby>ifygecko</reportedby>
+
+<product>libdwarf</product>
+
+<vulnerability> crashes randomly reading fuzzed locllist
+</vulnerability>
+
+<description> A carefully corrupted loclists entry
+  can cause libdwarf to read outside of its
+  allowed areas in dwarf_loclists.c due to lack of a
+  sanity check.
+  A segmentation error and libdwarf crash is likely.
+  Similar code in dwarf_rnglists.c and that now
+  as the addtional checks.
+  The bugs have been present in both since the code was created
+  in June 2020.
+</description>
+
+<datefixed>2024-02-18</datefixed>
+
+<references> regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
+</references>
+
+<gitfixid>5cfbd87dff4fc3c3b595bb92ed886934945b372c</gitfixid>
+
+<tarrelease></tarrelease>
+
+</dwbug>
+<dwbug>
+<cve></cve>
+
+<fuzzer>hongg</fuzzer>
+
 <datereported>2024-02-16</datereported>
 
 <reportedby>ifygecko</reportedby>
