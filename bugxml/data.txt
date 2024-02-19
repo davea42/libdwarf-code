@@ -6,13 +6,16 @@ vulnerability: crashes randomly reading fuzzed locllist
 product: libdwarf
 description: A carefully corrupted loclists entry
   can cause libdwarf to read outside of its
-  allowed areas.  A segmentation error
-  and libdwarf crash is likely. 
-  The bug has been present since the code was created
+  allowed areas in dwarf_loclists.c due to lack of a
+  sanity check. 
+  A segmentation error and libdwarf crash is likely. 
+  Similar code in dwarf_rnglists.c and that now
+  as the addtional checks.
+  The bugs have been present in both since the code was created
   in June 2020.
 datefixed: 2024-02-18
 references: regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
-gitfixid: 10bb558d058010c0fc0e4bbe540f023dd8267405
+gitfixid: 5cfbd87dff4fc3c3b595bb92ed886934945b372c 
 tarrelease:
 endrec: DW202402-003
 
