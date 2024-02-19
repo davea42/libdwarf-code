@@ -116,6 +116,7 @@ counted_loc_descr(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  See also read_single_rle_entry() for similar code */
 static int
 read_single_lle_entry(Dwarf_Debug dbg,
     Dwarf_Small    *data,
