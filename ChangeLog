@@ -1,4 +1,31 @@
 2024-02-18:  David Anderson
+    commit e01e2b71de93949c7bc4e00f166b434e9150b66e
+
+    Update to add reference to dwarf_rnglists.c
+            modified:   bugxml/data.txt
+
+2024-02-18:  David Anderson
+    commit 5cfbd87dff4fc3c3b595bb92ed886934945b372c
+
+    Added checks to match those added to dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-02-18:  David Anderson
+    commit 03810aefab9cc30a71f5e81f647240e8ac60154d
+
+    Added comment referring to dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-02-18:  David Anderson
+    commit 75c1e8bf984d0190cbb23d84e5fbc081101f35a8
+
+    Latest entries.
+            modified:   ChangeLog
+
+    corrected gitfixid:
+            modified:   bugxml/data.txt
+
+2024-02-18:  David Anderson
     commit 10bb558d058010c0fc0e4bbe540f023dd8267405
 
     Was too agressive checking a pointer
