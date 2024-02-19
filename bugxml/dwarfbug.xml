@@ -20,7 +20,7 @@
   sanity check.
   A segmentation error and libdwarf crash is likely.
   Similar code in dwarf_rnglists.c and that now
-  as the addtional checks.
+  has the additional checks.
   The bugs have been present in both since the code was created
   in June 2020.
 </description>
@@ -922,7 +922,7 @@
   The function was dereferencing an argument before
   the argument was checked. Now it is checked
   for null before any dereference.
-  In addtion, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
+  In addition, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
   called dwarf_highpc_b() with a Dwarf_Die that is
   uninitialized local variable (hence contents unpredictable).
   C code has no way to catch such a caller error.
@@ -1841,7 +1841,7 @@
 
 <datefixed>2023-03-25</datefixed>
 
-<references>  refressiontests/choi012/poc_file_08
+<references>  regressiontests/choi012/poc_file_08
 </references>
 
 <gitfixid>4a8a201cdb3408a2cfdc2946418b51b884140a2c</gitfixid>
@@ -1875,7 +1875,7 @@
 
 <datefixed>2023-03-25</datefixed>
 
-<references>  refressiontests/choi012/poc_file_07
+<references>  regressiontests/choi012/poc_file_07
 </references>
 
 <gitfixid>4a8a201cdb3408a2cfdc2946418b51b884140a2c</gitfixid>
@@ -1905,7 +1905,7 @@
 
 <datefixed>2023-03-25</datefixed>
 
-<references>  refressiontests/choi012/poc_file_06
+<references>  regressiontests/choi012/poc_file_06
 </references>
 
 <gitfixid>fd92b647e5e3a524be94b3b06c9efd14a8292946</gitfixid>
@@ -1937,7 +1937,7 @@
 
 <datefixed>2023-03-25</datefixed>
 
-<references>  refressiontests/choi011/README
+<references>  regressiontests/choi011/README
 </references>
 
 <gitfixid>fd92b647e5e3a524be94b3b06c9efd14a8292946</gitfixid>
@@ -5141,7 +5141,7 @@
 <preline> Bug report on sourceforge.net bug list for libdwarf.</preline>
 <preline> The bad pointer dereference is due to libdwarf</preline>
 <preline> not noticing that the DWARF in that file is corrupt.</preline>
-<preline> In addtion</preline>
+<preline> In addition</preline>
 <preline> The code was not noticing that it could dereference</preline>
 <preline> a pointer that pointed out of bounds in the end-sibling-list</preline>
 <preline> loop.</preline>

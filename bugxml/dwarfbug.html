@@ -71,7 +71,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   sanity check.
   A segmentation error and libdwarf crash is likely.
   Similar code in dwarf_rnglists.c and that now
-  as the addtional checks.
+  has the additional checks.
   The bugs have been present in both since the code was created
   in June 2020.
 </p>
@@ -946,7 +946,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   The function was dereferencing an argument before
   the argument was checked. Now it is checked
   for null before any dereference.
-  In addtion, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
+  In addition, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
   called dwarf_highpc_b() with a Dwarf_Die that is
   uninitialized local variable (hence contents unpredictable).
   C code has no way to catch such a caller error.
@@ -1837,7 +1837,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-03-25
 </p>
-<p>references:   refressiontests/choi012/poc_file_08
+<p>references:   regressiontests/choi012/poc_file_08
 </p>
 <p>gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
 </p>
@@ -1870,7 +1870,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-03-25
 </p>
-<p>references:   refressiontests/choi012/poc_file_07
+<p>references:   regressiontests/choi012/poc_file_07
 </p>
 <p>gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
 </p>
@@ -1899,7 +1899,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-03-25
 </p>
-<p>references:   refressiontests/choi012/poc_file_06
+<p>references:   regressiontests/choi012/poc_file_06
 </p>
 <p>gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
 </p>
@@ -1930,7 +1930,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>datefixed: 2023-03-25
 </p>
-<p>references:   refressiontests/choi011/README
+<p>references:   regressiontests/choi011/README
 </p>
 <p>gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
 </p>
@@ -5044,7 +5044,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
  Bug report on sourceforge.net bug list for libdwarf.
  The bad pointer dereference is due to libdwarf
  not noticing that the DWARF in that file is corrupt.
- In addtion
+ In addition
  The code was not noticing that it could dereference
  a pointer that pointed out of bounds in the end-sibling-list
  loop.
