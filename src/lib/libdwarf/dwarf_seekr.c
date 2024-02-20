@@ -51,6 +51,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_FCNTL_H */
 
 #ifdef _WIN64
+#ifdef lseek /* defined in msys2 in an io.h */
+#undef lseek
+#endif /* lseek */
 #define lseek _lseeki64
 #endif /* _WIN64 */
 
