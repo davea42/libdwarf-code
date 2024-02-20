@@ -1,3 +1,44 @@
+2024-02-20:  David Anderson
+    commit e0f331250a44fa5586b99d45b6ac9dd99d8d1733
+
+    A version of _WIN64 io.h has a #define for lseek.
+    So we #undef that and make the define we want.
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+
+2024-02-19:  David Anderson
+    commit 38a2dcaa988df2711ad673e4c28626f588bbe078
+
+    Regenerated.
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2024-02-19:  David Anderson
+    commit a36cd296960d38326bdce76740a974c4d1bdeca1
+
+    Corrected a few spelling errors.
+            modified:   data.txt
+
+2024-02-19:  David Anderson
+    commit 0f5b681bc1e5b554196ce435638fbc6303820a81
+
+    Typo: left out letter h .
+            modified:   bugxml/data.txt
+
+2024-02-18:  David Anderson
+    commit 5b402ffc6445a7a00eef2a61499d42867b83f885
+
+    now with latest gitfixid
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-02-18:  David Anderson
+    commit c879a34a5eb22c853b15a4ef84df3ba2364018f1
+
+    updated with latest.
+            modified:   ChangeLog
+
 2024-02-18:  David Anderson
     commit e01e2b71de93949c7bc4e00f166b434e9150b66e
 
