@@ -4,7 +4,6 @@
     A version of _WIN64 io.h has a #define for lseek.
     So we #undef that and make the define we want.
             modified:   src/lib/libdwarf/dwarf_seekr.c
-    .
 
 2024-02-19:  David Anderson
     commit 38a2dcaa988df2711ad673e4c28626f588bbe078
