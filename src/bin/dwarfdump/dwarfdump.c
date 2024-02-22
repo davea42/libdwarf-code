@@ -926,26 +926,55 @@ homeify(char *s, struct esb_s* out)
     char *home = getenv("HOME");
     size_t homelen = 0;
 
-    /*  In msys2 this Windows terminology
-        is not needed and causes trouble for
-        regression testing. */
-    char *winprefix = "C:/msys64/";
-    size_t winlen = 10;
+#ifdef _WIN32
+    /*  Windows In msys2 
+        $HOME might be C:\msys64\home\admin
+        which messes up regression testing.
+        For msys2 with a simple setup this
+        helps regressiontesting.
+    */
+    char *winprefix = "C:/msys64/home/";
+    char *domain = getenv("USERDOMAIN");
+    char *user = getenv("USER");
+    size_t winlen = 15;
 
-    if (0 == strncmp(s,winprefix,winlen)) {
-        /* leave the second / in winprefix in the string */
-        s = s+ winlen-1;
+    if (domain && !strcmp(domain,"MSYS")) {
+
+        if (strncmp(s,winprefix,winlen)) {
+            /* giving up, not msys2 */
+            esb_append(out,s);
+            return;
+        }
+        if (user) {
+            /*  \\home\\admin 
+                Change to $HOME
+                This is a crude way to get some
+                regressiontests to pass.
+            */
+            size_t userlen = strlen(user);
+            esb_append(out,"$HOME");
+            esb_append(out,s+winlen+userlen);
+            return;
+        } else {
+            /* giving up */
+            esb_append(out,s);
+            return;
+        }
     }
+#endif /* _WIN32 */
     if (!home) {
+        /* giving up */
         esb_append(out,s);
         return;
     }
     homelen = strlen(home);
     if (s[homelen] != '/') {
+        /* giving up */
         esb_append(out,s);
         return;
     }
     if (strncmp(s,(const char *)home,homelen)) {
+        /* giving up */
         esb_append(out,s);
         return;
     }
