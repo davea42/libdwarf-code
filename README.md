@@ -95,7 +95,7 @@ command.
 
 ### cmake build
 
-README.cmake has details on the available cmake options.
+READMEcmake.md has details on the available cmake options.
 
 We suggest that you will find meson a more satisfactory
 tool.
