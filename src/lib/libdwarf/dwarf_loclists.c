@@ -142,6 +142,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned loc_ops_len = 0;
     Dwarf_Small   *lopsdata = 0;
     Dwarf_Unsigned lopsoffset = 0;
+    Dwarf_Small   *startdata = 0;
 
     /*  Some of these have a  Counted Location Description
         in them. */
@@ -152,6 +153,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             "its allowed space. Corrupt DWARF.");
         return DW_DLV_ERROR;
     }
+    startdata = data;
     code = *data;
     ++data;
     ++count;
@@ -286,21 +288,29 @@ read_single_lle_entry(Dwarf_Debug dbg,
         break;
     }
     {
-        unsigned int v = (unsigned int)count;
+        /*  We want to avoid overflow in additions, and
+            the overall section size is a reasonable check
+            on count.  The sequence of tests is to
+            preserve a testing baseline: 
+            baselines/hongg2024-02-18-m.base 
+            otherwise we would test against sectionsize first.*/
+        Dwarf_Unsigned sectionsize = dbg->de_debug_loclists.dss_size;
 
-        if ((Dwarf_Unsigned)v != count) {
+        if (data > enddata || data < startdata ) {
+            /*  Corrupt data being read. */
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "The end of an lle entry is past the end "
+                "of its allowed space");
+            return DW_DLV_ERROR;
+        }
+        if (count > sectionsize) {
+            /*  Corrupt data being read. */
             _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
                 "DW_DLE_LOCLISTS_ERROR: "
                 "The number of bytes in a single "
                 "loclist entry is "
                 "too large to be reasonable");
-            return DW_DLV_ERROR;
-        }
-        if (data > enddata) {
-            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
-                "DW_DLE_LOCLISTS_ERROR: "
-                "The end of an lle entry is past the end "
-                "of its allowed space");
             return DW_DLV_ERROR;
         }
     }
