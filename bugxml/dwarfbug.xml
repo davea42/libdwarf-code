@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202402-003</dwid>
+
 <cve></cve>
 
 <fuzzer>hongg</fuzzer>
@@ -36,6 +38,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202402-002</dwid>
+
 <cve>CVE-2024-2002</cve>
 
 <fuzzer>hongg</fuzzer>
@@ -74,6 +78,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202402-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 66646</fuzzer>
@@ -112,6 +118,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202311-002</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 64496</fuzzer>
@@ -146,6 +154,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202311-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56452</fuzzer>
@@ -183,6 +193,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202310-002</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 63024</fuzzer>
@@ -213,6 +225,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202310-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 62943</fuzzer>
@@ -247,6 +261,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202309-004</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 62842</fuzzer>
@@ -281,6 +297,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202309-003</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 62834</fuzzer>
@@ -314,6 +332,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202309-002</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 62833</fuzzer>
@@ -347,6 +367,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202309-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 62547</fuzzer>
@@ -383,6 +405,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202308-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59576</fuzzer>
@@ -417,6 +441,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202307-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 60506</fuzzer>
@@ -449,6 +475,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-011</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 60090</fuzzer>
@@ -483,6 +511,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-010</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59950</fuzzer>
@@ -519,6 +549,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-009</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59775</fuzzer>
@@ -550,6 +582,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-008</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59699</fuzzer>
@@ -581,6 +615,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-007</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59602</fuzzer>
@@ -611,6 +647,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-006</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59727</fuzzer>
@@ -642,6 +680,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-005</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59717</fuzzer>
@@ -673,6 +713,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-004</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59595</fuzzer>
@@ -706,6 +748,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-003</dwid>
+
 <cve></cve>
 
 <fuzzer>shinibufa</fuzzer>
@@ -733,6 +777,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-002</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59519</fuzzer>
@@ -765,6 +811,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202306-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59517</fuzzer>
@@ -800,6 +848,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-010</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59478</fuzzer>
@@ -837,6 +887,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-009</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56451</fuzzer>
@@ -873,6 +925,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-008</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56492</fuzzer>
@@ -905,6 +959,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-007</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56474</fuzzer>
@@ -942,6 +998,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-006</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56472</fuzzer>
@@ -980,6 +1038,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-005</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56462</fuzzer>
@@ -1019,6 +1079,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-004</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56446</fuzzer>
@@ -1049,6 +1111,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-003</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 59091</fuzzer>
@@ -1082,6 +1146,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-002</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 58797</fuzzer>
@@ -1117,6 +1183,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202305-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 58769</fuzzer>
@@ -1152,6 +1220,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202304-004</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 58026</fuzzer>
@@ -1194,6 +1264,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202304-003</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57887</fuzzer>
@@ -1230,6 +1302,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202304-002</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57766</fuzzer>
@@ -1262,6 +1336,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202304-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57711</fuzzer>
@@ -1298,6 +1374,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-059</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57562</fuzzer>
@@ -1331,6 +1409,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-058</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57527</fuzzer>
@@ -1363,6 +1443,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-057</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -1397,6 +1479,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-056</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57516</fuzzer>
@@ -1435,6 +1519,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-055</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57485</fuzzer>
@@ -1463,6 +1549,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-054</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57463</fuzzer>
@@ -1492,6 +1580,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-053</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57443</fuzzer>
@@ -1523,6 +1613,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-052</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57442</fuzzer>
@@ -1555,6 +1647,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-051</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57437</fuzzer>
@@ -1587,6 +1681,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-050</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57429</fuzzer>
@@ -1618,6 +1714,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-049</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57408</fuzzer>
@@ -1650,6 +1748,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-048</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1683,6 +1783,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-047</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1717,6 +1819,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-046</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1748,6 +1852,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-045</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1783,6 +1889,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-044</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1819,6 +1927,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-043</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1850,6 +1960,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-042</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1884,6 +1996,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-041</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1914,6 +2028,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-040</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -1946,6 +2062,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-039</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56480</fuzzer>
@@ -1983,6 +2101,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-038</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57335</fuzzer>
@@ -2015,6 +2135,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-037</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57300</fuzzer>
@@ -2044,6 +2166,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-036</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57300</fuzzer>
@@ -2076,6 +2200,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-035</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57292</fuzzer>
@@ -2105,6 +2231,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-034</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57193</fuzzer>
@@ -2141,6 +2269,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-033</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57149</fuzzer>
@@ -2174,6 +2304,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-032</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57107</fuzzer>
@@ -2209,6 +2341,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-031</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57048</fuzzer>
@@ -2240,6 +2374,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-030</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 57027</fuzzer>
@@ -2272,6 +2408,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-029</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56993</fuzzer>
@@ -2303,6 +2441,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-028</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56958</fuzzer>
@@ -2332,6 +2472,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-027</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56906</fuzzer>
@@ -2360,6 +2502,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-026</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56897</fuzzer>
@@ -2390,6 +2534,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-025</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56895</fuzzer>
@@ -2422,6 +2568,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-024</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56807</fuzzer>
@@ -2453,6 +2601,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-023</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56568</fuzzer>
@@ -2487,6 +2637,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-022</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56497</fuzzer>
@@ -2516,6 +2668,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-021</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56487</fuzzer>
@@ -2545,6 +2699,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-020</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56458</fuzzer>
@@ -2576,6 +2732,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-019</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56454</fuzzer>
@@ -2605,6 +2763,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-018</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56807</fuzzer>
@@ -2636,6 +2796,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-017</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56450</fuzzer>
@@ -2671,6 +2833,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-016</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56476</fuzzer>
@@ -2701,6 +2865,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-015</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56489</fuzzer>
@@ -2731,6 +2897,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-014</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56478</fuzzer>
@@ -2761,6 +2929,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-013</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56460</fuzzer>
@@ -2791,6 +2961,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-012</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56456</fuzzer>
@@ -2822,6 +2994,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-011</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz id: 56453</fuzzer>
@@ -2854,6 +3028,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-010</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -2887,6 +3063,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-009</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56443</fuzzer>
@@ -2922,6 +3100,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-008</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56530</fuzzer>
@@ -2953,6 +3133,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-007</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56735</fuzzer>
@@ -2981,6 +3163,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-006</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56456</fuzzer>
@@ -3012,6 +3196,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-005</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56676</fuzzer>
@@ -3040,6 +3226,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-004</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56666</fuzzer>
@@ -3069,6 +3257,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-003</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56636</fuzzer>
@@ -3100,6 +3290,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-002</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56548</fuzzer>
@@ -3132,6 +3324,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202303-001</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz id: 56465</fuzzer>
@@ -3162,6 +3356,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202301-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -3192,6 +3388,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202212-001</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz</fuzzer>
@@ -3235,6 +3433,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202208-001</dwid>
+
 <cve></cve>
 
 <fuzzer>unspecified</fuzzer>
@@ -3269,6 +3469,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202207-001</dwid>
+
 <cve></cve>
 
 <fuzzer>ossfuzz</fuzzer>
@@ -3303,6 +3505,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202206-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -3337,6 +3541,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202205-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -3370,6 +3576,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-016</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-41240</fuzzer>
@@ -3406,6 +3614,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-015</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40896</fuzzer>
@@ -3439,6 +3649,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-014</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40895</fuzzer>
@@ -3471,6 +3683,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-013</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40802</fuzzer>
@@ -3505,6 +3719,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-012</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40801</fuzzer>
@@ -3536,6 +3752,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-011</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40799</fuzzer>
@@ -3570,6 +3788,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-010</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40627</fuzzer>
@@ -3602,6 +3822,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-009</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40729</fuzzer>
@@ -3637,6 +3859,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-008</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40731</fuzzer>
@@ -3668,6 +3892,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-005</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40674</fuzzer>
@@ -3699,6 +3925,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-004</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40673</fuzzer>
@@ -3731,6 +3959,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-003</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40671</fuzzer>
@@ -3767,6 +3997,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-002</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40669</fuzzer>
@@ -3803,6 +4035,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202111-001</dwid>
+
 <cve></cve>
 
 <fuzzer>oss-fuzz-40663</fuzzer>
@@ -3840,6 +4074,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202010-003</dwid>
+
 <cve>CVE-2020-28163</cve>
 
 <fuzzer></fuzzer>
@@ -3879,6 +4115,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202010-002</dwid>
+
 <cve>CVE-2020-28162</cve>
 
 <fuzzer></fuzzer>
@@ -3923,6 +4161,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW202010-001</dwid>
+
 <cve>CVE-2020-27545</cve>
 
 <fuzzer></fuzzer>
@@ -3964,6 +4204,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201907-001</dwid>
+
 <cve>CVE-2019-14249</cve>
 
 <fuzzer></fuzzer>
@@ -3990,6 +4232,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201801-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4023,6 +4267,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201712-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4057,6 +4303,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201711-002</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4089,6 +4337,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201711-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4122,6 +4372,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201709-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4152,6 +4404,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201706-001</dwid>
+
 <cve>CVE-2017-9998</cve>
 
 <fuzzer></fuzzer>
@@ -4190,6 +4444,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-007</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4242,6 +4498,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-006</dwid>
+
 <cve>CVE-2017-9052</cve>
 
 <fuzzer></fuzzer>
@@ -4290,6 +4548,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-005</dwid>
+
 <cve>CVE-2017-9053</cve>
 
 <fuzzer></fuzzer>
@@ -4339,6 +4599,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-004</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4392,6 +4654,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-003</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4446,6 +4710,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-002</dwid>
+
 <cve>CVE-2017-9054</cve>
 
 <fuzzer></fuzzer>
@@ -4498,6 +4764,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201703-001</dwid>
+
 <cve>CVE-2017-9055</cve>
 
 <fuzzer></fuzzer>
@@ -4550,6 +4818,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-008</dwid>
+
 <cve>CVE-2016-10254</cve>
 
 <fuzzer></fuzzer>
@@ -4585,6 +4855,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-007</dwid>
+
 <cve>CVE-2016-10255</cve>
 
 <fuzzer></fuzzer>
@@ -4621,6 +4893,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-006</dwid>
+
 <cve>CVE-2016-9480</cve>
 
 <fuzzer></fuzzer>
@@ -4686,6 +4960,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-005</dwid>
+
 <cve>CVE-2016-9558</cve>
 
 <fuzzer></fuzzer>
@@ -4716,6 +4992,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-004</dwid>
+
 <cve>CVE-2016-9275</cve>
 
 <fuzzer></fuzzer>
@@ -4747,6 +5025,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-003</dwid>
+
 <cve>CVE-2016-9276</cve>
 
 <fuzzer></fuzzer>
@@ -4777,6 +5057,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-002</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4817,6 +5099,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201611-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -4857,6 +5141,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201610-003</dwid>
+
 <cve>CVE-2016-8679</cve>
 
 <fuzzer></fuzzer>
@@ -4892,6 +5178,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201610-002</dwid>
+
 <cve>CVE-2016-8680</cve>
 
 <fuzzer></fuzzer>
@@ -4926,6 +5214,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201610-001</dwid>
+
 <cve>CVE-2016-8681</cve>
 
 <fuzzer></fuzzer>
@@ -4960,6 +5250,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201609-004</dwid>
+
 <cve>CVE-2016-7510</cve>
 
 <fuzzer></fuzzer>
@@ -5004,6 +5296,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201609-003</dwid>
+
 <cve>CVE-2016-7410</cve>
 
 <fuzzer></fuzzer>
@@ -5067,6 +5361,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201609-002</dwid>
+
 <cve>CVE-2016-7511</cve>
 
 <fuzzer></fuzzer>
@@ -5112,6 +5408,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201609-001</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -5166,6 +5464,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-020</dwid>
+
 <cve>CVE-2016-5027</cve>
 
 <fuzzer></fuzzer>
@@ -5206,6 +5506,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-019</dwid>
+
 <cve>CVE-2016-5028</cve>
 
 <fuzzer></fuzzer>
@@ -5237,6 +5539,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-018</dwid>
+
 <cve>CVE-2016-5029</cve>
 
 <fuzzer></fuzzer>
@@ -5287,6 +5591,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-017</dwid>
+
 <cve>CVE-2016-5030</cve>
 
 <fuzzer></fuzzer>
@@ -5349,6 +5655,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-016</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -5407,6 +5715,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-015</dwid>
+
 <cve>CVE-2016-5031</cve>
 
 <fuzzer></fuzzer>
@@ -5457,6 +5767,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-014</dwid>
+
 <cve>CVE-2016-5032</cve>
 
 <fuzzer></fuzzer>
@@ -5499,6 +5811,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-013</dwid>
+
 <cve>CVE-2016-5033</cve>
 
 <fuzzer></fuzzer>
@@ -5538,6 +5852,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-012</dwid>
+
 <cve>CVE-2016-5034</cve>
 
 <fuzzer></fuzzer>
@@ -5572,6 +5888,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-011</dwid>
+
 <cve>CVE-2016-5035</cve>
 
 <fuzzer></fuzzer>
@@ -5602,6 +5920,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-010</dwid>
+
 <cve>CVE-2016-5036</cve>
 
 <fuzzer></fuzzer>
@@ -5633,6 +5953,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-009</dwid>
+
 <cve>CVE-2016-5037</cve>
 
 <fuzzer></fuzzer>
@@ -5665,6 +5987,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-008</dwid>
+
 <cve>CVE-2016-5038</cve>
 
 <fuzzer></fuzzer>
@@ -5699,6 +6023,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-007</dwid>
+
 <cve>CVE-2016-5039</cve>
 
 <fuzzer></fuzzer>
@@ -5731,6 +6057,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-006</dwid>
+
 <cve></cve>
 
 <fuzzer></fuzzer>
@@ -5765,6 +6093,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-005</dwid>
+
 <cve>CVE-2016-5040</cve>
 
 <fuzzer></fuzzer>
@@ -5799,6 +6129,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-004</dwid>
+
 <cve>CVE-2016-5041</cve>
 
 <fuzzer></fuzzer>
@@ -5835,6 +6167,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-003</dwid>
+
 <cve>CVE-2016-5042</cve>
 
 <fuzzer></fuzzer>
@@ -5869,6 +6203,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-002</dwid>
+
 <cve>CVE-2016-5043</cve>
 
 <fuzzer></fuzzer>
@@ -5915,6 +6251,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201605-001</dwid>
+
 <cve>CVE-2016-5044</cve>
 
 <fuzzer></fuzzer>
@@ -5959,6 +6297,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201601-002</dwid>
+
 <cve>CVE-2016-2050</cve>
 
 <fuzzer></fuzzer>
@@ -6002,6 +6342,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201601-001</dwid>
+
 <cve>CVE-2016-2091</cve>
 
 <fuzzer></fuzzer>
@@ -6047,6 +6389,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201512-002</dwid>
+
 <cve>CVE-2015-8538</cve>
 
 <fuzzer></fuzzer>
@@ -6084,6 +6428,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201512-001</dwid>
+
 <cve>CVE-2015-8750</cve>
 
 <fuzzer></fuzzer>
@@ -6118,6 +6464,8 @@
 
 </dwbug>
 <dwbug>
+<dwid>DW201412-001</dwid>
+
 <cve>CVE-2014-9482</cve>
 
 <fuzzer></fuzzer>

@@ -296,7 +296,8 @@ class bugrecord:
 
         inpre = "n"
         s, inpre = xmlize(self._id, "n", inpre)
-        s = self.paraxml("<dwid>", s, "</dwid>")
+        t = self.paraxml("<dwid>", s, "</dwid>")
+        txt += [t]
 
         s, inpre = xmlize(self._cve, "n", inpre)
         t = self.paraxml("<cve>", s, "</cve>")
