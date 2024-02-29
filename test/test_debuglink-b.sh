@@ -42,7 +42,7 @@ fi
 
 if [ "x$top_srcdir" = "x.." ]
 then
-  # This case hopefully eliminates relative path to test dir. 
+  # This case hopefully eliminates relative path to test dir.
   top_srcdir=$top_blddir
 fi
 # bldloc is the executable directories.

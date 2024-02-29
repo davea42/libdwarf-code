@@ -1032,7 +1032,7 @@
 
     This did not really fix the two warnings. There is something odd
     in the declaration of posix read() and lseek() in VS
-    community edition 2022. 
+    community edition 2022.
 
     The warnings complain of off_t to 'unsigned long'
     and size_t to 'unsigned int' which seems to make no sense..

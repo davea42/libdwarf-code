@@ -16,7 +16,7 @@
 2019-11-07 David Anderson
      * simplereader.c: It was using %llx for printf
        (wrong) and is now using the DW_PR_DUx macros
-       as it should.  Avoiding errors 
+       as it should.  Avoiding errors
        when --enable-nonstandardprintf is needed.
 2019-10-21 David Anderson
      * findfuncbypc.c,frame1.c,simplereader.c: Be more

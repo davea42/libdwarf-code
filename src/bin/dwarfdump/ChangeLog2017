@@ -17,7 +17,7 @@
     * dwarfdump.c: Added a call to destruct_abbrev_array()
       per object so the archive case can work properly with -ka.
     * dwgetopt.c: Unused local variable 'found' deleted.
-    * print_abbrevs.c:  Now -ka can handle bogus large 
+    * print_abbrevs.c:  Now -ka can handle bogus large
       abbreviation number
       without crashing when checking abbreviations..
 2017-10-15 David Anderson
@@ -25,7 +25,7 @@
       names cases.
     * getopttest.c: Added tests of long (--)  argument names.
 2017-10-13 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-10-12 David Anderson
     * dwarfdump.c: Now more careful with archive
@@ -47,17 +47,17 @@
 2017-10-05 David Anderson
     * dwconf.c: Open the config file "r", not "rw".
 2017-09-26 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-08-22 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-08-21 David Anderson
     * CMakeLists.txt: Fix the TAG_TREE_SOURCES and TAG_ATTR_SOURCES
       entries.
     * Makefile.in: Fix a misuse of LD_LIBRARY_PATH and use
       LIBDWARF_PATH as the path to libdwarf.so.
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
     * common.c: #include changes help for builds on Windows.
       Rename a parameter to avoid accidental name-shadowing.
@@ -80,21 +80,21 @@
       configure or cmake.
     * configure: Regenerated
 2017-07-09 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-05-28 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-05-28 David Anderson
     * macrocheck.c: Trivial revision of main() declaration
       to our standard format.
     * print_reloc.c: We were reading one-past the end
-      of symtab entries(now fixed).  
+      of symtab entries(now fixed).
       Now relocation sections show the Elf section index
       and we print them in order as in the object file
       (earlier it printed in a fixed order not related to
       the object file).
-      Deleted the rel/rela section name arrays, 
+      Deleted the rel/rela section name arrays,
       we already have the section name at hand.
 2017-05-27 David Anderson
     * esb.c: For selftest now indents report lines
@@ -124,7 +124,7 @@
     * section_bitmaps.h: Now all the REL and RELA #defines are here
       so it's easy to see them all at once.  Now using indexes
       starting at 1, not bitfields. Faster,simpler, and for a given
-      dwarfdump run the switch from bitmaps  will expand 
+      dwarfdump run the switch from bitmaps  will expand
       static data by well under 20 bytes total.
 2017-05-18 David Anderson
     * dwarfdump.c: Fixed a small memory leak in special_program_name().
@@ -143,7 +143,7 @@
     * common.c: Use sanitized() on incoming strings we print.
     * print_aranges.c,print_debugfission.c: Names from elf now
       get sanitized() for printing.
-    * print_section_groups.c: Improved one interface. 
+    * print_section_groups.c: Improved one interface.
     * print_die.c: Critical fixes so we get the section names on output
       when we want them, and sanitized().
     * common.c, print_aranges.c, print_debugfission.c,print_ranges.c,
@@ -156,23 +156,23 @@
     * print_section_groups.c: Delete a printf left in
       for debugging.
 2017-05-13 David Anderson
-    * CMakeLists.txt, Makefile.in: Mention new 
+    * CMakeLists.txt, Makefile.in: Mention new
       print_section_groups.c or .o.
-    * dwarfdump.c: Add needed section names in 
+    * dwarfdump.c: Add needed section names in
       print_object_header() data.
       Implement glflags.gf_section_groups_flag.
     * print_section_groups.c: New, implementing handling of section
       groups (aka COMDAT).
 2017-04-20 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-04-17 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-04-16 David Anderson
     * CMakeLists.txt: Added in new files glflangs.c, .h
 2017-04-12 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-04-06 David Anderson
     * Makefile.in: Add glflags.o. Instead of dozens of
@@ -186,21 +186,21 @@
     * globals.h: Remove the flag global extern lines.
     * naming.c,print_abbrevs.c, print_aranges.c, print_die.c,
       print_frames.c, print_gdbindex.c, print_lines.c,
-      print locs.c, print_macro.c, print_macros.c, 
+      print locs.c, print_macro.c, print_macros.c,
       print_pubnames.c, print_ranges.c, print_static_funcs.c,
       print_static_vars.c, print_strings.c, print_types.c,
       print_weaknames.c: Using the new
       flag globals as glflags.gf_<member>
     * print_dnames.c: New for .debug_names printing.
 2017-04-06 David Anderson
-    * dwarfdump.c, Makefile.in, globals.h: 
+    * dwarfdump.c, Makefile.in, globals.h:
       This is a small start on dealing with DWARF5 .debug_names.
 2017-04-02 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-04-02 David Anderson
-    * dwarfdump.c: If printing group 2 (DWARF5 dwo sections) 
-      ensure that printing of those sections only possible 
+    * dwarfdump.c: If printing group 2 (DWARF5 dwo sections)
+      ensure that printing of those sections only possible
       in group 1 is turned off.
 2017-03-30 David Anderson
 2017-03-30 David Anderson
@@ -208,14 +208,14 @@
     * dwarfdump.c: Adding groupnumber option support.
     * sanitized.c: Removed trailing whitespace
 2017-03-24 David Anderson
-    * dwarfdump.c: Now argv[0] is checked before setting the 
+    * dwarfdump.c: Now argv[0] is checked before setting the
       program_name global variable.  If it contains /dwarfdump.O
       that part of the string is shortened to /dwarfdump.
       Doing this removes a need for the regressiontests to use sed
       and shortens the regressiontests runtime on a one machine from
       77 minutes to 23 minutes.
 2017-03-23 David Anderson
-    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update
       version string.
 2017-03-21 David Anderson
     * sanitized.c: Now all non-ascii bytes are changed to %xx
@@ -224,7 +224,7 @@
       %xx notation so the printf output looks sensible.
       These usually represent a corrupted string in an object file.
 2017-03-21 David Anderson
-    * print_die.c: Added casts to call args match with the 
+    * print_die.c: Added casts to call args match with the
       function declaration.  So a fussy compiler will
       be less likely to complain.
     * sanitized.c: Added explicit initializers to global variables.
@@ -237,5 +237,5 @@
       the purpose of the function.
 2017-01-23 David Anderson
     * dwarf_tsearchbal.c(dwarf_tsearch): In memory exhausted situation the
-      function could leak a little bit of memory.  
-     
+      function could leak a little bit of memory.
+

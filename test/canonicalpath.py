@@ -19,7 +19,7 @@ def dowinb(s):
     return w
 
 def printfixedcontent(sname,codepath):
-   for line in open(sname): 
+   for line in open(sname):
        w=dowinb(line.rstrip())
        if not codepath == 'xxxx':
            s = w.replace(codepath,"...std...")
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if patchwhere == "content":
         printfixedcontent(s,codepath)
         sys.exit(0)
-    # We are fixing the content 
+    # We are fixing the content
     w = os.path.abspath(s)
     w= dowinb(w)
     # patchwhere is "start"

@@ -1,16 +1,16 @@
 #!/bin/sh
 #
 # Makefile.am   set env var DWTOPSRCDIR, no args
-# CMakeLIsts.txt pass in 2 args  1.top source dir 
+# CMakeLIsts.txt pass in 2 args  1.top source dir
 #    no env vars.
 
 chkres() {
-r=$1 
-m=$2 
+r=$1
+m=$2
 if [ $r -ne 0 ]
 then
   echo "FAIL $m.  Exit status for the test $r"
-fi 
+fi
 }
 
 echo "Argument count: $#"
@@ -112,7 +112,7 @@ then
    cat $tx
    exit $r
 fi
-echo "Running: python3 ${localsrc}/test_dwdiff.py $b $tx" 
+echo "Running: python3 ${localsrc}/test_dwdiff.py $b $tx"
 python3 ${localsrc}/test_dwdiff.py $b $tx
 r=$?
 if [ $r -ne 0 ]

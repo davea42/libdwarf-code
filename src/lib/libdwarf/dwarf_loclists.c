@@ -291,8 +291,8 @@ read_single_lle_entry(Dwarf_Debug dbg,
         /*  We want to avoid overflow in additions, and
             the overall section size is a reasonable check
             on count.  The sequence of tests is to
-            preserve a testing baseline: 
-            baselines/hongg2024-02-18-m.base 
+            preserve a testing baseline:
+            baselines/hongg2024-02-18-m.base
             otherwise we would test against sectionsize first.*/
         Dwarf_Unsigned sectionsize = dbg->de_debug_loclists.dss_size;
 

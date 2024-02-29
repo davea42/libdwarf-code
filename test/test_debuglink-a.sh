@@ -42,7 +42,7 @@ fi
 if [ "x$top_srcdir" = "x.." ]
 then
   # Should never happen if run by make or equivalent
-  # This case hopefully eliminates relative path to test dir. 
+  # This case hopefully eliminates relative path to test dir.
   top_srcdir=$top_blddir
 fi
 # bld loc to find dwdebuglink executable.

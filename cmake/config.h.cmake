@@ -29,7 +29,7 @@
 #cmakedefine HAVE_SYS_TYPES_H 1
 
 
-/*  Define to the uintptr_t to the type of an unsigned integer 
+/*  Define to the uintptr_t to the type of an unsigned integer
     type wide enough to hold a pointer
     if the system does not define it. */
 #cmakedefine uintptr_t  ${uintptr_t}
@@ -87,7 +87,7 @@
 #cmakedefine PACKAGE_VERSION ${PACKAGE_VERSION}
 
 /* Version number of package */
-#cmakedefine VERSION   ${VERSION} 
+#cmakedefine VERSION   ${VERSION}
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

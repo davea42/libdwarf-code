@@ -44,7 +44,7 @@ public:
     Dwarf_Off get_type()      {return type_;};
     Dwarf_Off get_lineno()    {return lineno_;};
     Dwarf_Off get_lineindex() {return lineindex_;};
-    std::string& get_macro()  {return macro_; } 
+    std::string& get_macro()  {return macro_; }
 private:
     Dwarf_Off    cuDieOffset_;
     Dwarf_Off    offset_;

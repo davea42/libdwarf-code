@@ -4,9 +4,9 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
   ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
   ${PROJECT_BINARY_DIR}/config.h)
 
-add_executable(simplereader 
-   ${SIMPLE_READER_SOURCES} 
-   ${SIMPLE_READER_HEADERS} 
+add_executable(simplereader
+   ${SIMPLE_READER_SOURCES}
+   ${SIMPLE_READER_HEADERS}
    ${CONFIGURATION_FILES})
 set_folder(simplereader src/bin/dwarfexample)
 target_compile_definitions(simplereader PRIVATE CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib ${DW_LIBDWARF_STATIC})
@@ -40,18 +40,18 @@ set_source_group(JITREADER_HEADERS "Header Files"
     ../../lib/libdwarf/dwarf.h)
 
 set_source_group(JITREADER_SOURCES "Source Files" jitreader.c)
-add_executable(jitreader ${JITREADER_SOURCES} 
+add_executable(jitreader ${JITREADER_SOURCES}
     ${JITREADER_HEADERS} ${CONFIGURATION_FILES})
 set_folder(jitreader src/bin/dwarfexample)
 target_compile_definitions(jitreader PRIVATE
     CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib ${DW_LIBDWARF_STATIC})
 target_compile_options(jitreader PRIVATE ${DW_FWALL})
-target_link_libraries(jitreader PRIVATE 
+target_link_libraries(jitreader PRIVATE
 dwarf)
 
 set_source_group(SHOWSECTIONGROUPS_SOURCES "Source Files"
      showsectiongroups.c)
-add_executable(showsectiongroups ${SHOWSECTIONGROUPS_SOURCES} 
+add_executable(showsectiongroups ${SHOWSECTIONGROUPS_SOURCES}
     ${SHOWSECTIONGROUPS_HEADERS} ${CONFIGURATION_FILES})
 set_folder(jitreader src/bin/dwarfexample)
 target_compile_definitions(showsectiongroups PRIVATE

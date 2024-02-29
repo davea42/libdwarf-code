@@ -399,9 +399,9 @@ DW_FORM_CLASS_CONSTANT
 DW_AT_ghs_frames
 DW_FORM_CLASS_CONSTANT
 0xffffffff
-DW_AT_ghs_rso 
+DW_AT_ghs_rso
 DW_FORM_CLASS_CONSTANT
 0xffffffff
-DW_AT_ghs_subcpu 
+DW_AT_ghs_subcpu
 DW_FORM_CLASS_CONSTANT
 0xffffffff

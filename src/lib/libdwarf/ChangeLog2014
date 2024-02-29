@@ -45,7 +45,7 @@
        so we avoid adding (etc) to Dwarf_Ptr.
      * dwarf_gdbindex.c: Cast _dwarf_get_alloc() return properly.
      * dwarf_loc.c: Cast Dwarf_Ptr to char * in a couple places.
-     * dwarf_query.c,dwarf_sort_line.c,pro_arange.c: Change names of local 
+     * dwarf_query.c,dwarf_sort_line.c,pro_arange.c: Change names of local
        variables to avoid
        compiler warning about shadowing other locals.
      * dwarf_tsearchhash.c: Changed to avoid compiler warnings
@@ -54,7 +54,7 @@
        dwarf_get_SECT_name() and dwarf_get_MACRO_name().
      * pro_alloc.c: Add include of pro_alloc.h.
      * pro_forms.c: Made  _dwarf_add_AT_reference_internal()
-       static to avoid warning. 
+       static to avoid warning.
      * pro_types.c: Add include of pro_types.h.
 2014-08-02  David Anderson
      * dwarf_gdbindex.c: Fix an argument list by adding section name.
@@ -83,7 +83,7 @@
        No change in the code.
 2014-07-10  David Anderson
      * dwarf_error.c,libdwarf.h.in: Added new error codes.
-     * dwarf_xu_index.c: Now extracts the hash table 
+     * dwarf_xu_index.c: Now extracts the hash table
        values from .debug_tu_index and .debug_cu_index sections.
 2014-07-09  David Anderson
      * dwarf_alloc.c,dwarf_xu_index.c,dwarf_xu_index.h:
@@ -125,9 +125,9 @@
        a type unit.
      * dwarf_frame.h: Add commentary about pointers in the cie_fde_prefix_s
        structure.
-     * dwarf_global.c(_dwarf_internal_get_pubnames_like_data): Add 
+     * dwarf_global.c(_dwarf_internal_get_pubnames_like_data): Add
        commentary about the of fields.
-     * dwarf_opaque.h: Improve commentary about offsets. 
+     * dwarf_opaque.h: Improve commentary about offsets.
 2014-07-03  David Anderson
      * dwarf_die_deliv.c: Fixed CU type offset check. Created local variable
        so we do not repeat a calculation so the error does not recur and simplifying
@@ -225,7 +225,7 @@
        New de_debug* fields added for the new DebugFission
        sections.
      * dwarf_query.c: Using the revised _dwarf_get_size_of_val()
-       internal function. 
+       internal function.
        Handling DW_FORM_GNU_str_index, DW_FORM_strx.
        New functions (internal) for DW_FORM_strx, DW_FORM_addrx
        and the GNU version of these to avoid duplicating code.
@@ -250,7 +250,7 @@
        DW_FORM_GNU_addr_index.
      * libdwarf.h.in: 4 new error codes in DW_DLE_ list. Last now 248.
 2014-05-09  David Anderson
-     * Makefile.in: Write ar std-out to ar-output-temp 
+     * Makefile.in: Write ar std-out to ar-output-temp
        so the text is not needlessly filling a terminal window.
 2014-05-08  David Anderson
      * dwarf.h: Adds DW_AT_GNU_dwo_id, DW_AT_GNU_dwo_name and other
@@ -262,14 +262,14 @@
        Dwarf_Callback_Func.
      * pro_init.c: Implements the new dwarf_producer_init_d()
        function and initializes fields at runtime to select
-       what DWARF to emit. Messy and confusing initialization code 
+       what DWARF to emit. Messy and confusing initialization code
        rewritten to depend on the runtime arguments
        to dwarf_producer_init_d, not library compile-time.
      * pro_opaque.h: New runtime fields set by initialization code.
      * pro_reloc.c:  Fix a couple comment indentations.
      * pro_forms.c:  Add curly braces in an if to avoid
        a hard-to-find bug (there was none yet, but it was a trap...).
-     * pro_reloc_symbolic.c,pro_reloc_stream.c:  Remove use 
+     * pro_reloc_symbolic.c,pro_reloc_stream.c:  Remove use
        of obsolete callback functions.
      * pro_section.c: Ensure only IRIX isa/abi target generates
        an exception CIE entry. Remove use of obsolete
@@ -277,7 +277,7 @@
      * pro_util.h: Remove confusing and unreadable
        relocation number ifdefs that
        depended on settings at library compile-time. Most of the
-       content of the file is deleted now. See 
+       content of the file is deleted now. See
        isa_relocs[] in pro_init.c
      * dwarf_error.c: Added error code (used by producer code).
      * libdwarf2p.1.mm: Now version 1.36. Updated dwarf_producer_init()
@@ -286,7 +286,7 @@
 2014-04-14  David Anderson
      * pro_forms.c: Modified a comment about DW_FORM_ref_addr.
        No logic change.
-     * bldDWindex.sh: Deleted. This shell script was intended for 
+     * bldDWindex.sh: Deleted. This shell script was intended for
        DWARF2 postscript post-processing and was never useful.
 2014-04-12  David Anderson
      * dwarf_die_deliv.c,dwarf_query.c: Gets the version stamp passed to
@@ -381,8 +381,8 @@
      *  dwarf_opaque.h: Removed Dwarf_Alloc_Hdr_s references and simple malloc references.
         added de_alloc_tree as base of a hash database replacing most of dwarf_alloc.c.
      *  dwarf_query.c: Removed an unused local variable.
-     *  dwarf_alloc.h,dwarf_alloc.c: Removed simple malloc support and all the 
-        complicated code handling allocation record-keeping in favor of 
+     *  dwarf_alloc.h,dwarf_alloc.c: Removed simple malloc support and all the
+        complicated code handling allocation record-keeping in favor of
         much simpler code calling functions
         using a tsearch-like interface.
 2014-01-10  David Anderson

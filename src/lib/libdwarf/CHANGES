@@ -25,7 +25,7 @@ released-publically 64bit extension proposal
 dwarf data.
 This allows dwarf compilation units
 with 64bit section offsets and 32bit
-sections offsets to be mixed. 
+sections offsets to be mixed.
 So that offsets can grow very large with
 64-bit pointer applications (though 64bit pointers
 and 64bit offsets are not the same notion).

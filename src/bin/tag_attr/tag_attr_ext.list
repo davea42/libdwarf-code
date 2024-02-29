@@ -84,7 +84,7 @@ DW_AT_GNU_guarded_by    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded_by /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_guarded       /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
-DW_AT_MIPS_linkage_name 
+DW_AT_MIPS_linkage_name
 
 0xffffffff
 DW_TAG_enumeration_type

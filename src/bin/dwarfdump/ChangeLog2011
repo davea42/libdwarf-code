@@ -46,15 +46,15 @@
        are not in the normal locations.   Documented usable ways to
        deal with unusual situations at build time.
 2011-10-24  DavidAnderson <davea42@earthlink.net>
-     * common.c: Update version string.  
-     * dwarfdump.c: Update version string.  
+     * common.c: Update version string.
+     * dwarfdump.c: Update version string.
        To get '-c cu-name'  to work we need to set a local flag which is now set.
      * dwarfdump.1: Clearly identify the command line options where
        URI style input is expected.
 2011-10-23  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: Fix omission of a 'break' statement for case 'q'.
 2011-10-23  DavidAnderson <davea42@earthlink.net>
-     * dwarfdump.1: Now command line input strings 
+     * dwarfdump.1: Now command line input strings
        are translated from uri-style
      * dwarfdump.c: Translate input strings to from uri style to characters.
        Fix indentation mistakes.
@@ -98,7 +98,7 @@
        Calls of get_attr_value() now have extra argument, so
        fix them.
      * dwarfdump.conf: Having 'mips' be an ABI which really reflected
-       the IRIX abi and IRIX compilers was a mistake.   Now that 
+       the IRIX abi and IRIX compilers was a mistake.   Now that
        abi works for modern MIPS.
      * globals.h: get_attr_value() adds an argument.
      * print_die.c: Expanded the error messages in a couple type_offset_result
@@ -119,7 +119,7 @@
      * dwarfdump.c: Increased COMPILER_TABLE_MAX for better reporting.
        Provide a 'HARMLESS ERROR' title in output if there are any such.
        One issue is (for relocatable objects) libdwarf attempts to continue
-       even if relocations fail, and a relocation failure is now 
+       even if relocations fail, and a relocation failure is now
        counted as a harmless error (even if it turns out to be harmful!).
        When sorting compilers_detected, use the producer name to sort
        when error counts are identical.  If the compiler table fills up,
@@ -150,7 +150,7 @@
         into a compiler-target setting.  Refine the formx_print_value()
         so it is more complete (like dwarfdump2). Ensure show_form_itself()
         uses the argument, not a global, for the show-form test.
-      * naming.c:  Introduce a {} pair on an 'if' 
+      * naming.c:  Introduce a {} pair on an 'if'
         to reduce the possibility of future
         errors.
       * print_pubnames.c: Add error details to match dwarfdump2.
@@ -188,9 +188,9 @@
 2011-09-14  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c, common.c: Update version string.
 2011-09-08  DavidAnderson <davea42@earthlink.net>
-      * config.h, configure.in, dwconf.c, globals.h: Switch 
+      * config.h, configure.in, dwconf.c, globals.h: Switch
         compile dependency to configure time HAVE_STDAFX_H
-        instead a system-dependent ifdef. 
+        instead a system-dependent ifdef.
       * configure: regenerate.
 2011-09-08  DavidAnderson <davea42@earthlink.net>
       * print_frames.c: Ensure each tsearch tree pointer is zeroed
@@ -206,13 +206,13 @@
 2011-09-02  DavidAnderson <davea42@earthlink.net>
       * common.c,dwarfdump.c: Update version string.
 2011-06-07  DavidAnderson <davea42@earthlink.net>
-      * dwarfdump.c,common.c: Updated version string. 
-      * dwarfdump.c: Refactor setting of do_print_dwarf 
+      * dwarfdump.c,common.c: Updated version string.
+      * dwarfdump.c: Refactor setting of do_print_dwarf
         and do_check_dwarf into a function. Ensure that one of
         the refactored new functions is called in every case
         an option requires such call. Ensured indents ok.
-      * print_lines.c (print_line_numbers_this_cu): When not checking 
-        added a check to insure we don't try to call a 
+      * print_lines.c (print_line_numbers_this_cu): When not checking
+        added a check to insure we don't try to call a
         checking-related function.
 2011-06-07  DavidAnderson <davea42@earthlink.net>
       * CODINGSTYLE: Added this new document.

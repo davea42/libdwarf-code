@@ -15,7 +15,7 @@
       it matches libdwarf dwarf_leb.c.  A fix for certain bit
       pattern provoking undefined behavior in C..
 2016-11-01  David Anderson
-    * tag_attr.c,tag_common.h,tag_attr_ext.list: Adding 
+    * tag_attr.c,tag_common.h,tag_attr_ext.list: Adding
       Ada GNAT gcc attributes DW_AT_GNU_numerator,
       DW_AT_GNU_denominator, DW_AT_GNU_bias in the extended
       table for checking.
@@ -29,7 +29,7 @@
     * print_die.c: Ensure << applied to unsigned
       to avoid undefined operation. We were getting
       officially undefined behavior.
-    * tag_attr_ext.list: Removed trailing whitespace from 
+    * tag_attr_ext.list: Removed trailing whitespace from
       two lines.
 2016-09-30  David Anderson
     * makename.c: The unused static function value_hashfunc()
@@ -70,7 +70,7 @@
       normal exit. Destruct all static makename strings, abbrev
       data, sanitized strings, and ranges strings.
       Now all allocated memory is freed before a normal exit.
-    * esb.c: Added {} and commentary for clarity. 
+    * esb.c: Added {} and commentary for clarity.
       esb_destructor now a bit more careful (redundantly but
       helpful for a reader).
     * globals.h: Declared destructors allowing access to
@@ -153,7 +153,7 @@
 2016-06-08  David Anderson
     * sanitized.c: Remove trailing whitespace.
 2016-06-08  David Anderson
-    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c: 
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
       Update version string.
     * sanitized.c: Only fix strings that have bad
       characters in them. This improves dwarfdump performance.
@@ -187,8 +187,8 @@
     * print_aranges.c: Minor commentary change and
       rearranging lines for clarity.
     * print_die.c: formwith->form with
-      in an error message. 
-    * print_frames.c: Now checks for bogus expression block 
+      in an error message.
+    * print_frames.c: Now checks for bogus expression block
       lengths and bogus LEB values. LEB reading functions
       now here and static functions.
     * print_sections.c: Moved leb reading functions to print_frames.c
@@ -265,14 +265,14 @@
 2016-04-21  Carlos Alberto Enciso
     * globals.h: Do not define 'string' for a C++ build; it clashes with
       the 'std::string'.
-    * print_die.c: Minor typo error. 
+    * print_die.c: Minor typo error.
 2016-04-21  Carlos Alberto Enciso
     * For a WINDOWS version, display the 32/64 bits configuration.
 2016-04-21  Carlos Alberto Enciso
     * Use the _WIN32 macro to identify a WINDOWS specific code.
 2016-03-17  David Anderson
     * print_die.c(print_one_die_section): One dieprint_cu_goffset
-      Dwarf_Unsigned->Dwarf_Off. 
+      Dwarf_Unsigned->Dwarf_Off.
 2016-03-12  David Anderson
     * print_abbrevs.c(print_abbrevs): Printed output of an abbrev with code
       and tag but no attributes was simply wrong. Now fixed.
@@ -289,7 +289,7 @@
       references to other sections. Many argument lists got an additional argument or two.
 2016-03-07  David Anderson
     * dwarfdump.c: Update version string. Added CU_low_address so
-      CU_base_address is properly used only for the DWARF 
+      CU_base_address is properly used only for the DWARF
       CU 'base address' notion. Print CU_low_address in PRINT_CU_INFO().
     * common.c: Update version string
     * globals.h: New macro DROP_ERROR_INSTANCE(d,r,e) improves consistency
@@ -314,7 +314,7 @@
 2016-02-14  Carlos Alberto-Enciso
     * tag_attr_ext.list, tag_tree_ext.list: Adding
       DW_TAG_GNU_template_parameter_pack,DW_TAG_GNU_formal_parameter_pack.
-    * tag_tree.c: Printed wrong name from tag-tree table in 
+    * tag_tree.c: Printed wrong name from tag-tree table in
       a comment.
     * tag_common.h: Ext tag table rows count was higher than needed.
       Ext attr table rows increased to 11.
@@ -339,7 +339,7 @@
      * print_abbrevs.c, print_aranges.c,print_debugfission.c,
        print_die.c,print_frames.c, print_gdbindex.c, print_lines.c,
        print_pubnames.c, print_ranges.c, print_sections.c,
-       tag_attr.c, tag_tree.c: Add local Dwarf_Error and 
+       tag_attr.c, tag_tree.c: Add local Dwarf_Error and
        rename variables to avoid shadowing confusion.
 2016-02-10  David Anderson
      * globals.h: Change enum val from std to singledw5.
@@ -368,7 +368,7 @@
        to decide whether to print.
 2016-02-02  David Anderson
      * dwarfdump.c:  Get section sizes so we can do a better
-       sanity check on offsets (ie, call  
+       sanity check on offsets (ie, call
        dwarf_get_section_max_offsets_c()).
        Check DWARF2 macros for sanity just as we do DWARF5
        macros.  Read DWARF2 macros per-cu, not as a standalone
@@ -386,7 +386,7 @@
      * dwarfdump.c,common.c: Update version string.
      * print_die.c: Changed the most frequent global die
        offset values to print as GOFF=0x...
-       for uniformity with -G and space saving from the 
+       for uniformity with -G and space saving from the
        string 'global die offset'.
 2016-01-27  David Anderson
      * print_die.c: Added a helpertree find call on typedieoffset
@@ -460,7 +460,7 @@
      * dwarfdump.c: Made reset_overall_CU_error_data() a global.
        We now try to show CU name etc on case there is an error
        reading frame data. Update version strin.
-       Added DEBUG_FRAME DEBUG_FRAME_EH to the PRINT_CU_INFO() tests. 
+       Added DEBUG_FRAME DEBUG_FRAME_EH to the PRINT_CU_INFO() tests.
        New function: load_CU_error_data().
      * print_frames.c: Now uses a local Dwarf_Error
        in a few places (CU names for frames) instead
@@ -475,7 +475,7 @@
      * dwarf_tsearchbal.c: Added comment about compiler warning.
      * dwarf_macrocheck.c: Added missing return statement.
        Removed trailing whitespace. Fixed broken qsort_compare()
-     * macrocheck.h: Fixed trailing whitespace.  
+     * macrocheck.h: Fixed trailing whitespace.
      * print_abbrevs.c: Generalized an attribute count warning
        a bit (see GENERAL_MAX_ATTRIB_COUNT). Fixed the code
        handling the abbrev_array to be correct and a bit simpler.
@@ -487,10 +487,10 @@
      * print_abbrevs.c: If an abbreviation number is a bit
        goofy, accomodate it so we do not write to
        memory we did not allocate.  It will
-       be caught a bit later in the run as an invalid DIE 
+       be caught a bit later in the run as an invalid DIE
        or abbreviation.
      * print_die.c: When we switch sections inside a DIE print
-       save and restore current_section_id to get the best 
+       save and restore current_section_id to get the best
        reporting on errors/checks.
 2016-01-12  David Anderson
      * common.c,dwarfdump.c: Update version string.
@@ -506,4 +506,4 @@
      * print_macro.c: Now deals with imported macro units using
        macrocheck.c and .h.  Fixed bug for DW_MACRO_define/undef
        where we did improper string validity check.
-       
+

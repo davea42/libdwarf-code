@@ -128,7 +128,7 @@ test_adds(void)
 
     memset(dbg,0,sizeof(*dbg));
     for ( ; i < testcount; ++i) {
-        struct basis_s *b = &basis[i];       
+        struct basis_s *b = &basis[i];
         int res = 0;
 
         err = 0;
@@ -151,7 +151,7 @@ test_fails(void)
 
     memset(dbg,0,sizeof(*dbg));
     for ( ; i < testcount; ++i) {
-        struct basis_s *b = &fails[i];       
+        struct basis_s *b = &fails[i];
         int res = 0;
 
         err = 0;
@@ -174,7 +174,7 @@ int main(int argc,char *argv[])
     int i = 0;
     int op = 1;
 
-    for ( ; op < argc; ++op) { 
+    for ( ; op < argc; ++op) {
         char *opname = 0;
         opname = argv[op];
         if (!strcmp(opname,"--count")) {

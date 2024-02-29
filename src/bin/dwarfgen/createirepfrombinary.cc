@@ -791,7 +791,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
     int res = 0;
     IRPubsData  &pubdata = irep.pubnamedata();
 
-    res = dwarf_globals_by_type(dbg, 
+    res = dwarf_globals_by_type(dbg,
         DW_GL_GLOBALS,&globs,&gcnt, &error);
     if (res == DW_DLV_OK) {
         std::list<IRPub> &pubnames = pubdata.getPubnames();

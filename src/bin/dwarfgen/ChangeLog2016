@@ -4,7 +4,7 @@ David Anderson
      * Makefile.in: Now we have proper setting of CC
        and CFLAGS, which was missing before.
 2016-10-07  David Anderson
-     * dwarfgen.cc:For the reporting of .debug_str 
+     * dwarfgen.cc:For the reporting of .debug_str
        stats (just 3 lines of it)
        there is now a fixed prefix "Debug_Str:" so it is easier to
        verify things do not go wrong over time by just comparing

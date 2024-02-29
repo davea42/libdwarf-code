@@ -693,7 +693,7 @@ print_fde_instrs(Dwarf_Debug dbg,
 
     res = dwarf_get_fde_info_for_all_regs3(fde,arbitrary_addr ,
         &tab3,&actual_pc,error);
-    printf("function  Requested_pc 0x%" 
+    printf("function  Requested_pc 0x%"
         DW_PR_DUx " Actual addr of row 0x%" DW_PR_DUx "\n",
         arbitrary_addr,actual_pc);
     if (res != DW_DLV_OK) {
@@ -703,10 +703,10 @@ print_fde_instrs(Dwarf_Debug dbg,
         exit(EXIT_FAILURE);
     }
     /*  Now for an example of iterating through a range of addrs
-        efficiently, lets redo the above and iterate pc values. 
+        efficiently, lets redo the above and iterate pc values.
         the function called is new as of 0.9.0 October 2023. */
-    for (arbitrary_addr=lowpc; has_more_rows  ; 
-        arbitrary_addr = subsequent_pc) { 
+    for (arbitrary_addr=lowpc; has_more_rows  ;
+        arbitrary_addr = subsequent_pc) {
         res = dwarf_get_fde_info_for_all_regs3_b(fde,arbitrary_addr ,
             &tab3,&actual_pc,&has_more_rows, &subsequent_pc,error);
         if (res != DW_DLV_OK) {
@@ -715,8 +715,8 @@ print_fde_instrs(Dwarf_Debug dbg,
             printf("dwarf_get_fde_info_for_all_regs3_b failed!\n");
             exit(EXIT_FAILURE);
         }
-        printf("iterating Requested addr of row 0x%" DW_PR_DUx 
-           " Actual addr 0x%" DW_PR_DUx 
+        printf("iterating Requested addr of row 0x%" DW_PR_DUx
+           " Actual addr 0x%" DW_PR_DUx
            " More rows? %s Subsequent_pc 0x%" DW_PR_DUx "\n",
            arbitrary_addr,actual_pc,has_more_rows?"yes":"no",subsequent_pc);
     }

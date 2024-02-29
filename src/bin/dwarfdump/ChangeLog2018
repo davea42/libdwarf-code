@@ -83,8 +83,8 @@
       options shown.
 2018-10-26 David Anderson
     * dwarfdump.c: A single instance of a malloc
-      in main() had no associated free(). 
-      Memory Leak of a couple hundred bytes 
+      in main() had no associated free().
+      Memory Leak of a couple hundred bytes
       exactly once per run of dwarfdump.  Now we free().
 2018-10-19 David Anderson
     * command_options.c,glflags.c,glflags.h: New option
@@ -103,17 +103,17 @@
     * command_options.c: Add support for long name options that expect
       an argument by using the same code from the short options.
 2018-09-25 Carlos Alberto Enciso
-    * command_options.c: Add -he and --help-extended to display 
+    * command_options.c: Add -he and --help-extended to display
       usage for
       the long name options.
 2018-09-24 Carlos Alberto Enciso
     * command_options.c: Add support for long name options.
 2018-09-24 Carlos Alberto Enciso
-    * command_options.c: Add missing desriptions in the 
+    * command_options.c: Add missing desriptions in the
       usage message for
       -q, -U, -x line5 and -x noprintsettinggroups.
 2018-09-24 Carlos Alberto Enciso
-    * command_options.c: Add missing desriptions in the 
+    * command_options.c: Add missing desriptions in the
       usage message for
       -EI, -Em and -kw.
 2018-09-20 Carlos Alberto Enciso
@@ -145,8 +145,8 @@
       Printing of parts of an Elf32 header had the wrong
       printf format-- fixed.
     * print_die.c: An implicit fallthrough to case DW_AT_LOCATION
-      about line 2943 generates a warning with --enable-wall 
-      so added a comment to make it clear to readers 
+      about line 2943 generates a warning with --enable-wall
+      so added a comment to make it clear to readers
       this is intended.
 2018-09-02 David Anderson
     * Makefile.am: Changed the way to build tag_tree and tag_attr
@@ -172,7 +172,7 @@
     * runtests.sh: Handle the environment variable
       AM_TESTS_ENVIRONMENT sets: DWTOPSRCDIR
 2018-08-08 David Anderson
-    * Makefile.am: corrected dwarfdump_DATA 
+    * Makefile.am: corrected dwarfdump_DATA
       reference to be dwarfdumpdev_DATA
 2018-08-07 David Anderson
     * dwconf.c: Removed trailing whitespace.
@@ -180,13 +180,13 @@
       (space for a small string) so if it need change
       there is just one place to change it. Used in many
       files with esb_constructor_fixed()..
-    * print_abbrevs.c,print_die.c,print_locs.c,print_strings.c: 
+    * print_abbrevs.c,print_die.c,print_locs.c,print_strings.c:
       Refactored the section name printing
       into a function and call after calling libdwarf
       so the interesting section compression info
       is available to print.
     * print_aranges.c,print_pubnames.c, print_ranges.c,
-      print_static_funcs.c,print_static_vars.c,print_weaknames.c: 
+      print_static_funcs.c,print_static_vars.c,print_weaknames.c:
       Moved a libdwarf call above the
       section name print
       so the interesting section compression info
@@ -194,11 +194,11 @@
     * print_dnames.c,print_frames.c: Removed trailing whitespace, use
       DWARF_SECNAME_BUFFER_SIZE.
     * print_gdbindex.c,print_lines.c,print_macro.c,
-      print_macros.c,print_str_offsets.c: 
+      print_macros.c,print_str_offsets.c:
       Use  DWARF_SECNAME_BUFFER_SIZE .
     * true_section_name.c: Now prints compression values.
 2018-08-06 David Anderson
-    * globals.h: Added  DWARF_SECNAME_BUFFER_SIZE 
+    * globals.h: Added  DWARF_SECNAME_BUFFER_SIZE
       for the esb preallocation of section names.
     * print_abbrevs.c,print_aranges.c,print_debugfission.c,
       print_die.c,print_dnames.c,print_frames.c,
@@ -213,16 +213,16 @@
       the section name to have the compressed-notes appear.
     * print_ranges.c: In check_ranges_list() we do not want
       the section name to have the compressed-notes appear.
-    * true_section_name.c: Added a pointer argument to 
+    * true_section_name.c: Added a pointer argument to
       get_true_section_name() so it returns three distinct
       compression flags. one for .zdebug*, one for SHF_COMPRESSED,
       and one for a ZLIB initial byte group in the section.
 2018-08-05 David Anderson
     * Makefile.am: Fixed dwarfdump_CFLAGS to set
-      CONFPREFIX 
+      CONFPREFIX
     * command_options.c Fixed config_file_defaults[]
       to honor CONFPREFIX sensibly.
-    * globals.h: Declares get_true_section_name(), 
+    * globals.h: Declares get_true_section_name(),
       a new function/refactoring so section names print more
       usefully.
     * true_section_name.c: New. Implements get_true_section_name().
@@ -242,9 +242,9 @@
       content.
 2018-07-30 David Anderson
     * command_options.c: For abbreviation checking also try running
-      print_abbrevs() with its checks. 
+      print_abbrevs() with its checks.
     * print_abbrevs.c: If checking turn off normal printing, just
-      print checking issues. 
+      print checking issues.
 2018-07-30 David Anderson
     * tag_attr.list,tag_attr_ext.list,tag_common.h,tag_tree.list,
       tag_tree_ext.list: Some important relationships needed to be
@@ -266,7 +266,7 @@
     * common.c: Refines the ifdef HAVE_STDAFX_H.
     * dwarf_tsearch.h: Remove obsolete link in comment and
       substitute a valid link.
-    * dwarf_tsearchbal.c: Remove include of dwarf_incl.h and 
+    * dwarf_tsearchbal.c: Remove include of dwarf_incl.h and
       use config.h to set UNUSEDARG as appropriate.
     * dwconf.c,globals.h: Refines the ifdef HAVE_STDAFX_H.
     * uritablebuild.c: Reformat initial comments to fit
@@ -285,8 +285,8 @@
 2018-06-13 David Anderson
     * Remove mention of HAVE_NONSTANDARD_PRINTF.
 2018-06-13 David Anderson
-    * configure.ac: New option --enable-elf-open 
-      setting HAVE_ELF_OPEN 
+    * configure.ac: New option --enable-elf-open
+      setting HAVE_ELF_OPEN
     * config.h.in: HAVE_ELF_OPEN
     * configure.ac: Regenerated.
     * dwarfdump.c: Now uses open() unless HAVE_ELF_OPEN
@@ -314,7 +314,7 @@
 2018-06-09 David Anderson
     * esb.c, testesb.c: These now support and test %+d.
     * print_die.c: Used esb_constructor_fixed() and
-      esb_append_printf_s,_i,_u(), replacing 
+      esb_append_printf_s,_i,_u(), replacing
       many s[n]printf.
 2018-06-08 David Anderson
     * Makefile.in: Altered the esb testing lines.
@@ -326,10 +326,10 @@
 2018-06-07 David Anderson
     * print_frames.c: Vincent T. noticed unnecessary and/or
       incorrect casts, here fixed. Also fixed some too-long
-      lines -- changed the existing line break to a better place. 
+      lines -- changed the existing line break to a better place.
 2018-06-05 David Anderson
     * dwarfdump.c: Remove erroneous _MSC_VER
-      per Carlos Alberto Enciso. 
+      per Carlos Alberto Enciso.
       Change WIN32 to _WIN32.
 2018-05-26 David Anderson
     * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
@@ -354,7 +354,7 @@
 2018-05-22 David Anderson
     * esb.c: Changed INITIAL_ALLOC to 100 as experiments
       show that a length in a range near 100 gives
-      the best runtimes, by 10-20% user time. 
+      the best runtimes, by 10-20% user time.
 2018-05-22 David Anderson
     * glflags.c: Removed the c99 'for (int i=0;'
       and declare the 'i' separately.
@@ -366,7 +366,7 @@
     * print_frames.c: Change snprintf to esb_append.
       Change the name of a local pointer to make it clearer
       it is not the same as other similar local variables.
-      Use esb instead of char *, 
+      Use esb instead of char *,
       Change strcpy to safe_strcpy (and eliminate strcat).
     * print_gdbindex.c: Reinserted return statement that
       was accidentally dropped.
@@ -390,7 +390,7 @@
       and in calls to esb_allocate_more.
       Checks HAVE_VSNPRINTF. Added extra checks
       of esb_append_printf().
-      Moved one static function up in the source 
+      Moved one static function up in the source
       to eliminate an explicit prototype.
     * esb.h: Added comments documenting esb_s field use.
     * print_die.c,print_reloc.c,tag_attr.c,
@@ -401,15 +401,15 @@
       vsnprintf and completely removed esb_printf_append_ap()
       from esb.
 2018-05-15 David Anderson
-    * tmp-tt-table.c,tmp-ta-table.c,tmp-ta-ext-table.c, 
-      tmp-tt-ext-table.c: All endings changed from .c to .h 
+    * tmp-tt-table.c,tmp-ta-table.c,tmp-ta-ext-table.c,
+      tmp-tt-ext-table.c: All endings changed from .c to .h
       as these are all used via #include.
     * Makefile.in: Reflect the .c->.h change for these files.
     * checkutil.c,dwarf_tsearch.h,dwarf_tsearchbal.c,
       glflags.c,naming.c,naming.h,print_debugfission.c,
       print_die.c,print_frames.c,print_gdbindex.c,print_macros.c,
       print_pubnames.c,print_reloc.h,print_sections.c,
-      print_static_vars.c,uri.c,uritablebuild.c: 
+      print_static_vars.c,uri.c,uritablebuild.c:
       Removed trailing blank lines.
 2018-05-15 David Anderson
     * command_options.c: Removed an extra break on option -ER
@@ -431,7 +431,7 @@
       as the size. Fixed.
     * naming.c: Needed #ifndef TRIVIAL_NAMING
       around skipunder() to compile without warnings.
-    * section_bitmaps.c, section_bitmaps.h: Needed 
+    * section_bitmaps.c, section_bitmaps.h: Needed
       (void) as function argument list, for example
       set_all_sections_on(void) .
 2018-05-14 Carlos Alberto Enciso
@@ -475,8 +475,8 @@
       than one set of terms for the section contents.
     * dwarfdump.c,tag_attr.c,tag_tree.c:
       Update version string
-    * common.c: Update version string. 
-      Now that  usage text in full is only on request 
+    * common.c: Update version string.
+      Now that  usage text in full is only on request
       it now becomes stdout instead of stderr.
 2018-04-19 David Anderson
     * Makefile.in: Added additional lines to test native

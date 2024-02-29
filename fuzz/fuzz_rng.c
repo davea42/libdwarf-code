@@ -26,7 +26,7 @@ limitations under the License.
 
 
 /* Every return from this after dwarf_init_b()
-    has to call 
+    has to call
     dwarf_finish(dbg);
     close(fuzz_fd);
     unlink(filename);

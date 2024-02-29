@@ -42,13 +42,13 @@ staticbuild=n
 while [ $# -ne 0 ]
 do
   case $1 in
-   --static ) shared=n ; 
+   --static ) shared=n ;
      staticbuild=y
      configureopt="--enable-static --disable-shared"
      cmakeopt="-DBUILD_SHARED=NO -DBUILD_NON_SHARED=YES"
      mesonopt="--default-library static"
      shift  ;;
-   --shared ) shared=y ; 
+   --shared ) shared=y ;
      staticbuild=n
      configureopt="--enable-shared --disable-static"
      cmakeopt="-DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO"
@@ -64,10 +64,10 @@ if [ "x$enablewall" = "y" ]
 then
     configureopt="$configureopt --enable-wall"
     cmakeopt="$cmakeopt -DWALL=YES"
-    mesonopt="$mesonopt -Dwerror=true" 
+    mesonopt="$mesonopt -Dwerror=true"
 else
     cmakeopt="$cmakeopt"
-    mesonopt="$mesonopt -Dwerror=false" 
+    mesonopt="$mesonopt -Dwerror=false"
 fi
 echo "Build specific options:"
 echo " configure   : $configureopt"
@@ -89,11 +89,11 @@ then
   f=./configure.ac
 else
   if [ -f ../configure.ac ]
-  then 
+  then
     f=../configure.ac
   else
     echo "FAIL Running distribution test from the wrong place."
-    exit 
+    exit
   fi
 fi
 if [ ! -x ./configure ]
@@ -133,11 +133,11 @@ done
 safecd() {
   f=$1
   cd $f
-  chkres $? "cd $f failed $2" 
+  chkres $? "cd $f failed $2"
 }
 safemv() {
   s=$1
-  t=$2 
+  t=$2
   echo "mv $s $t"
   mv $s $t
   chkres $?  "mv $f $t failed  $3"
@@ -147,7 +147,7 @@ showinstalled()  {
   dir=$1
   msg=$2
   tmpdir=$3
-  
+
   echo "REPORT OF INSTALLED FILES  in $dir $msg"
   if [ ! -d $dir ]
   then
@@ -212,9 +212,9 @@ chkres $? "FAIL Section A 4b make install"
 showinstalled $ainstall "using configure" $atfout
 ls -lR $ainstall
 make dist
-chkres $? "FAIL make dist Section A" 
+chkres $? "FAIL make dist Section A"
 # We know there is just one tar.gz in $abld, that we just created
-ls -1 ./*tar.gz 
+ls -1 ./*tar.gz
 chkres $? "FAIL Section A  ls ./*tar.gz"
 safemv ./*.tar.gz $arelgz "FAIL Section A moving gz"
 ls -l $arelgz
@@ -249,7 +249,7 @@ safemv ./*.tar.gz $brelgz "FAIL Section B moving gz"
 ls -l $arelgz
 ls -l $brelgz
 # gzip does not build diffs quite identically to the byte.
-# Lots of diffs, So we do tar tf to get the file name list. 
+# Lots of diffs, So we do tar tf to get the file name list.
 echo "Now tar -tf on $arelgz and $brelgz "
 # Sort as freebsd64 manages a distinct order at times.
 tar -tf $arelgz | sort > $atfout
@@ -335,7 +335,7 @@ then
   # Building lidwarfp and dwarfgen.
   # You should not be building or installing dwarfgen
   # or libdwarfp, it is unlikely you have a use
-  # for lidwarfp and dwarfgen. 
+  # for lidwarfp and dwarfgen.
   cmake -G "Unix Makefiles" $cmakeopt $genoptb \
     -DCMAKE_INSTALL_PREFIX=$fcmakeinst \
     -DWALL=ON \

@@ -18,9 +18,9 @@ using configure,cmake, and meson.
 
 ## NOTE on linking against libdwarf.a
 
-If you are linking code against a static 
+If you are linking code against a static
 library libdwarf.a You must arrange to  define the
-macro LIBDWARF_STATIC in compiling your code that 
+macro LIBDWARF_STATIC in compiling your code that
 does a #include "libdwarf.h".
 See also READMEwin-msys2.md
 
@@ -28,7 +28,7 @@ See also READMEwin-msys2.md
 
 Mentioning some that might not be automatically
 in your base OS release. Restricting attention
-here to just building libdwarf and dwarfdump. 
+here to just building libdwarf and dwarfdump.
 
 Nothing in the project requires or references
 elf.h, libelf.h, or libelf as of 29 June 2023,
@@ -38,22 +38,22 @@ If the objects you work with do not have
 section content compressed
 with zlib(libz) or libzstd
 neither those libraries nor their header files
-are required for building/using 
+are required for building/using
 libdwarf/dwarfdump.
 
-    Ubuntu: 
+    Ubuntu:
     sudo apt install xz pkgconf zlib1g zlib1g-dev libzstd1
     sudo apt install libzstd-dev
-         
+
     # Use of libzstd1 is new in 0.4.3
     # zlib1g zlib1g-dev libzstd1 are all optional but
     # are required to read any DWARF data in compressed
     # sections. libzstd1 was used by many linux system utilities
     # in Ubuntu 20.04.
-    optional add: cmake meson ninja doxygen 
+    optional add: cmake meson ninja doxygen
 
     FreeBSD:
-    pkg install bash xz python3 gmake liblz4 zstd 
+    pkg install bash xz python3 gmake liblz4 zstd
     # libzstd is likely in /usr/local/lib and zstd.h
     # in /usr/local/include and the compiler may not look there
     # by default. All will still build fine without it and
@@ -64,7 +64,7 @@ libdwarf/dwarfdump.
     optional add: binutils cmake meson ninja doxygen
 
     Ensure that all the needed programs are in $PATH,
-    including python3.  
+    including python3.
     # candidate commane to make python3 visible (as root)
     # something like:
     cd /usr/local/bin ; ln -s python3.9 python3
@@ -75,7 +75,7 @@ This is always recommended as it's not necessary
 to have GNU autotools installed.
 These examples show doing a build in a directory
 different than the source as that is generally
-recommended practice. 
+recommended practice.
 
 ### GNU configure/autotools build
 
@@ -83,7 +83,7 @@ Note: if you get a build failure that mentions
 something about test/ and missing .Po object files
 add --disable-dependency-tracking to the configure
 command.
-    
+
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
@@ -127,7 +127,7 @@ For a faster build, adding additional checks:
 
     export CFLAGS="-g -pipe"
     export CXXFLAGS="-g -pipe"
-    meson /tmp/libdwarf-0.4.2 -Ddwarfexample=true 
+    meson /tmp/libdwarf-0.4.2 -Ddwarfexample=true
     ninja -j8
     ninja install
     ninja test
@@ -138,7 +138,7 @@ option  "-Ddecompression=false"
 
 ## BUILDING example showing simple builds:
 
-This checks for the existence critical executables 
+This checks for the existence critical executables
 such as cmake,meson,and ninja and only runs builds
 that could work. Useful in any supported
 environment.
@@ -194,7 +194,7 @@ do :
     brew install autoconf automake libtool
     # Then use the  Standard Linux Build lines above.
 
-### Options to meson on Linux/Unix 
+### Options to meson on Linux/Unix
 
 For the basic configuration options list , do:
     meson configure /path/to/code
@@ -202,12 +202,12 @@ For the basic configuration options list , do:
 To set options and show the resulting actual options:
 
     # Here  just setting one option.
-    meson setup  -Ddwarfexample=true  .  /home/davea/dwarf/code 
+    meson setup  -Ddwarfexample=true  .  /home/davea/dwarf/code
     meson configure .
 
 The meson configure output is very wide (just letting you know).
 
-### Options to configure/autotools on Linux/Unix 
+### Options to configure/autotools on Linux/Unix
 
 For the full options list , do:
 
@@ -237,10 +237,10 @@ https://www.gnu.org/savannah-checkouts/gnu/automake/history/automake-history.htm
 
 Other options of possible interest:
 
-    --enable-wall to turn on compiler diagnostics 
+    --enable-wall to turn on compiler diagnostics
     --enable-dwarfexample to compile the example programs.
 
-    configure -h     shows the options available.  
+    configure -h     shows the options available.
 
 Sanity checking:
 
@@ -253,12 +253,12 @@ configure by --enable-sanitize
 As of 0.9.0 meson builds default to be
 shared-library builds.
 These options go on the meson setup command line.
-the default can be explicity chosen with: 
+the default can be explicity chosen with:
 
     --default-library shared
 
 A static libdwarf (archive) libdwarf.a can be built with
-   
+
     --default-library static
 
 By default compiler warnings are errors.  Add the following
@@ -304,9 +304,9 @@ dwarf_get_universalbinary_count().
 
 The default build (with meson) is shared-library.
 to build with static (archive) libdwarf
-add 
+add
 
-    --default-library static 
+    --default-library static
 
 to the meson command line (applies to meson
 builds in Linux,Macos, and Windows-mingw).
@@ -322,7 +322,7 @@ See Options to meson on Windows (Msys2) above.
 struct Dwarf\_Obj\_Access\_Methods\_a\_s  changed
 for extended ELF so the library can handle section count values
 larger than 16bits.
-dwarf\_dnames\_abbrev\_by\_code() and 
+dwarf\_dnames\_abbrev\_by\_code() and
 dwarf\_dnames\_abbrev\_form\_by\_index()
 were removed from the API, better alternatives
 already existed.
@@ -363,7 +363,7 @@ you are sure the debuglink name-check alone is sufficient).
 A few  dealloc() functions changed name to have
 a consistent pattern for all such.
 Access to the DWARF5 .debug\_names section
-is now fully implemented. 
+is now fully implemented.
 
 See the <strong>Recent Changes</strong> section in
 libdwarf.pdf (in the release).
@@ -376,11 +376,11 @@ Or see (via download) the latest pdf html version [dwpdf].
 
 Notice the table of contents at the right edge of the html page.
 
-## Reading DWARF from memory 
+## Reading DWARF from memory
 
 If one has DWARF bytes in memory or in a
 kind of file system libdwarf cannot understand
-one should use 
+one should use
 
     dwarf_object_init_b()
     ...call libdwarf functions...
@@ -406,6 +406,6 @@ see
 
 and see the html [dwhtml] (www.prevanders.net/libdwarfdoc/index.html).
 
-The latest pdf is [dwpdf] (www.prevanders.net/libdwarf.pdf) 
+The latest pdf is [dwpdf] (www.prevanders.net/libdwarf.pdf)
 
 David Anderson.
