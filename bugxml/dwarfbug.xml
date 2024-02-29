@@ -36,7 +36,7 @@
 
 </dwbug>
 <dwbug>
-<cve></cve>
+<cve>CVE-2024-2002</cve>
 
 <fuzzer>hongg</fuzzer>
 
