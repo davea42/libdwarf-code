@@ -169,7 +169,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
               /* Dwarf_Unsigned u = 0; unused */
               Dwarf_Unsigned arraycount = 0;
               int sres = 0;
-                 
+
               sres = dwarf_discr_list(dbg, (Dwarf_Small *)tempb->bl_data,
                                       tempb->bl_len, &h, &arraycount, errp);
             }

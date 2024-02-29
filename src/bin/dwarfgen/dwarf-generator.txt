@@ -10,7 +10,7 @@ attrs.   indent to the tag they apply to.
 ;endsection x
 
 :label:
- [<level>] tag   
+ [<level>] tag
 	attr  [form name]  value
 
 any attr or tag may have a label.
@@ -48,9 +48,9 @@ Line table entries
 CIE entries
 
 FDE entries
-   
+
 
 mac  sec entries
 
 
- 
+

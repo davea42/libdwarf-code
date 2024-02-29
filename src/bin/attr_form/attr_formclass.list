@@ -82,7 +82,7 @@ DW_FORM_CLASS_BLOCK
 DW_FORM_CLASS_REFERENCE
 
 0xffffffff
-DW_AT_bit_size           
+DW_AT_bit_size
 DW_FORM_CLASS_CONSTANT
 DW_FORM_CLASS_BLOCK
 DW_FORM_CLASS_REFERENCE
@@ -275,7 +275,7 @@ DW_FORM_CLASS_BLOCK
 DW_AT_discr_value
 DW_FORM_CLASS_CONSTANT
 
-/*  An experiment in some DWARF4. Not DWARF2, nor 3 nor 5 
+/*  An experiment in some DWARF4. Not DWARF2, nor 3 nor 5
     Expect a DW_FORM_ref_sig8. */
 0xffffffff
 DW_AT_dwo_id
@@ -451,7 +451,7 @@ DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_ranges
-DW_FORM_CLASS_RNGLIST    
+DW_FORM_CLASS_RNGLIST
 DW_FORM_CLASS_RANGELISTPTR  /* DWARF4 */
 DW_FORM_CLASS_RNGLISTSPTR /* DWARF5 */
 

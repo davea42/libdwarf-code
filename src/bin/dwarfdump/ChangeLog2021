@@ -22,7 +22,7 @@
       the .dwarfdump.conf in use. The old and broken
       depencence on -v is gone.
     * glflags.c,glflags.h: New flag gf_show_dwarfdump_conf
-      for the new option. 
+      for the new option.
     * dwarfdump.1: Documented new option --show-dwarfdump-conf
 2021-03-05 David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-af-table.h,
@@ -45,9 +45,9 @@
     * dwarfdump-af-table.h,dwarfdump-ta-ext-table.h: Regenerated
       with the proper _ghs_ names.
 2021-02-20 David Anderson
-    * tag_attr.c,tag_tree.c: When creating 
+    * tag_attr.c,tag_tree.c: When creating
       the tables below insert the precise array
-      length in the array declarations so the 
+      length in the array declarations so the
       compiler can check them.
     * dwarfdump-ta-table.h,dwarfdump-tt-table.h:
       Regenerated, now with precise array sizes
@@ -81,18 +81,18 @@
       in the Elf archive case.
     * print_die.c: Added arguments to record_attr_form_use
       now that we check and count usages.
-    * print_tag_attributes_usage.c(reset_usage_rate_tag_tree): 
+    * print_tag_attributes_usage.c(reset_usage_rate_tag_tree):
       added reset function so printing of Elf archive
       member objects usages are correct.
     * tag_attr_ext.list: Added GHS attributes to list.
-    * tag_common.h: Increased column counts due to 
+    * tag_common.h: Increased column counts due to
       adding the GHS attributes to tag_attr_ext.list.
     * tag_tree.c: Added array size to emitted C
       source so compiler can check references when
       that emitted source is built into dwarfdump.
 2021-02-16 David Anderson
     * command_options.c,compiler_info.c,glflags.c,
-      glflags.h,print_tag_attributes_usage.c: 
+      glflags.h,print_tag_attributes_usage.c:
       sed 's/gf_check_attr_tag/gf_check_tag_attr/' fixed the
       ever-confusing name reversal unique to this flag.
     * print_die.c,dwarfdump.c: The above plus correcting
@@ -131,14 +131,14 @@
     * dwarfdump-af-table.h: Regenerated.
     * dwarfdump.c: When doing checks, set up
       the 3key tables using attr_form.c functions.
-    * naming.c,naming.h: Added new function 
+    * naming.c,naming.h: Added new function
       get_FORM_CLASS_name() to both.
     * print_abbrevs.c: Renaming per globals.h function rename.
     * print_die.c: Include attr_form.h, call
       record_attr_form_use(). Renamin here too per
       the globals.h function rename.
     * attr_form_build.c: Added idempotency
-      and __cplusplus guards to the output 
+      and __cplusplus guards to the output
       file generated: dwarfdump-af-table.h.
     * print_tag_attributes_usage.c: Improvements in
       the specificity of some summary header lines.
@@ -149,7 +149,7 @@
     * test-mach-o-32.base,testobjLE32PE.base,testuriLE64ELf.base,
       New baseline based on recent changes.
 2021-02-14 David Anderson
-    * print_die.c: Move the last few hundred lines to 
+    * print_die.c: Move the last few hundred lines to
       the new file print_tag_attributes_usage.c.
     * tag_common.c: Fixed large indent botch.
     * globals.h: Now with  print_tag_attributes_usage,
@@ -163,7 +163,7 @@
     * print_tag_attributes_usage.c: New file. Extracted
       this code (which prints a summary of tag/attr use)
       from print_die.c and put in this new file.
-    * Makefile.in: Regenerated.  
+    * Makefile.in: Regenerated.
     * dwarfdump.1: Made the description of -kE a bit more
       specific.
 2021-02-14 David Anderson
@@ -184,7 +184,7 @@
       load attr/form(class) standard matches.
     * tag_common.c: Added code to turn FORM_CLASS
       names into their enum values.
-    * tag_common.h: Added define of HAVE_USAGE_ATTR_FORMCLASS 
+    * tag_common.h: Added define of HAVE_USAGE_ATTR_FORMCLASS
       (not strictly necessary at this point).
 2021-02-13 David Anderson
     * print_die.c: Somehow hundreds of lines got indented
@@ -207,7 +207,7 @@
     * print_hipc_lopc_attr.c: Implement filling in
       LoHiPc_s and printing the calculated high_pc
       when appropriate.  Much easier to understand than
-      the earlier use of bSawLowp etc. 
+      the earlier use of bSawLowp etc.
 2021-01-29 David Anderson
    * tag_attr_ext.list: Added some DW_AT_GNU entries to
      DW_TAG_skeleton unit as common extensions.
@@ -223,7 +223,7 @@
      and fixed indents.
 2021-01-28 David Anderson
    * compiler_info.c: Added comments about an unusual
-     aspect of a couple arrays here. 
+     aspect of a couple arrays here.
    * dwarfdump.c: Removed a stray back-quote from a comment.
    * print_die.c: Revised printing of dwarf expressions
      and ensured such appear in more places. Revised error

@@ -90,7 +90,7 @@
         and DW_AT_call_file indexes are valid and warn if bad.
         Thanks to Carlos Alberto Enciso for the suggestion.
       * globals.h: Declare new fields for the  DW_AT_decl_file
-        DW_AT_call_file checks. 
+        DW_AT_call_file checks.
 2008-02-26 David Anderson <davea42@earthlink.net>
       * print_die.c (get_attr_value): Print DW_AT_call_file,
         DW_AT_call_line, DW_AT_call_column nicely.

@@ -106,9 +106,9 @@ else
 fi
 if [ "x$USERDOMAIN" = "xMSYS" ]
 then
-  havemsys2=yes 
+  havemsys2=yes
 else
-  havemsys2=no 
+  havemsys2=no
 fi
 echo "have make...................: $havemake"
 echo "have automake...............: $haveautomake"
@@ -141,7 +141,7 @@ chkres $? "cd to $tpath fails"
 rm -rf *
 
 echo "Building with configure, shared library"
-if [ "$havemake" = "no" ] 
+if [ "$havemake" = "no" ]
 then
    echo "SKIP configure shared library "
 else
@@ -167,7 +167,7 @@ fi
 
 echo ""
 echo "Building with configure, static library"
-if [ "$havemake" = "no" ] 
+if [ "$havemake" = "no" ]
 then
    echo "SKIP configure static library"
 elif [ "$havemsys2" = "yes"  ]
@@ -196,7 +196,7 @@ fi
 
 echo ""
 echo "Building with meson, shared library"
-if [ "$havemeson" = "no" -o "$haveninja" = "no" ] 
+if [ "$havemeson" = "no" -o "$haveninja" = "no" ]
 then
    echo "SKIP meson shared library"
 else
@@ -223,7 +223,7 @@ fi
 
 echo ""
 echo "Building with meson, static library"
-if [ "$havemeson" = "no" -o  "$haveninja" = "no" ] 
+if [ "$havemeson" = "no" -o  "$haveninja" = "no" ]
 then
    echo "SKIP meson static library"
 else
@@ -250,7 +250,7 @@ fi
 
 echo ""
 echo "Building with cmake, shared library"
-if [ "$havecmake" = "no" -o  "$haveninja" = "no" ] 
+if [ "$havecmake" = "no" -o  "$haveninja" = "no" ]
 then
    echo "SKIP cmake shared library"
 else
@@ -278,7 +278,7 @@ fi
 
 echo ""
 echo "Building with cmake, static library"
-if [ "$havecmake" = "no" -o  "$haveninja" = "no" ] 
+if [ "$havecmake" = "no" -o  "$haveninja" = "no" ]
 then
    echo "SKIP cmake static library"
 else
@@ -312,7 +312,7 @@ do
   echo "$i has $l files"
   rm /tmp/x.$$
 done
-cd $spath 
+cd $spath
 ndsecs=`date '+%s'`
 showminutes() {
    t=`expr  \( $2 \- $1 \+ 29  \) \/ 60`

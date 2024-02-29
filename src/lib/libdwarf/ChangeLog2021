@@ -20,7 +20,7 @@
       Fixed one too-long line by splitting to 2 lines.
 2021-05-20  David Anderson
     * dwarf_line.h: Modified libdwarf-internal functions
-      for LNCT handlng. Added a couple new functions 
+      for LNCT handlng. Added a couple new functions
       for that as well. Added new fields for reporting the DW_LNCT
       extensions beyond DWARF5.
     * dwarf_line.c: New helper functions to report properly
@@ -56,7 +56,7 @@
       repaired or not.
 2021-05-15  David Anderson
     * libdwarf2.1.mm: Added additional explanation
-      of an example call to the library  in the 
+      of an example call to the library  in the
       Dwarf_Error section. Now rev 3.27.
     * libdwarf2.1.pdf: Regenerated. Version 3.27.
 2021-05-13  David Anderson
@@ -91,17 +91,17 @@
 2021-02-24  David Anderson
     * dwarf.h: Now with the properly spelled _ghs_ names.
     * dwarf_names.c,dwarf_names_enum.h: Regenerated
-      with the properly 
+      with the properly
       spelled _ghs_ names.
 2021-02-19  David Anderson
     * dwarf.h: Many DWARF-extension name/value pairs were made
-      available to me, so those are now in dwarf.h. 
+      available to me, so those are now in dwarf.h.
     * dwarf_abbrev.c: An error issue with a corrupted
       object lead to an errormessage that read very
       confusingly.  I've updated the message to be
       a bit clearer.
     * dwarf_names.c,dwarf_names_enum.h: Regenerated.
-    * dwarf_query.c(dw_get_special_offset): Updated 
+    * dwarf_query.c(dw_get_special_offset): Updated
       so we get some additional form classes report d
       correctly on certain DW_AT extensions to the
       standard..
@@ -144,7 +144,7 @@
       and reuse.
     * dwarf_find_sigref.c: Now correctly finds the ref_sig8
       targets.  Does not yet reference any tied-file.
-    * dwarf_line.c: Minor refactoring to focus on the 
+    * dwarf_line.c: Minor refactoring to focus on the
       code flow, but also allowing (and reporting)
       when a compiler erroneously used DW_FORM_addr
       on DW_AT_stmt_list.
@@ -161,7 +161,7 @@
       three new small functions: calculate_next_cu_context_offset(),
       create_a_new_cu_context_record_on_list() and
       load_die_containing_section(). Much easier to understand
-      the flow now. 
+      the flow now.
     * dwarf_form.c: Clarified a comment.
     * dwarf_opaque.h: Corrected a comment about cc_unit_type
       field.

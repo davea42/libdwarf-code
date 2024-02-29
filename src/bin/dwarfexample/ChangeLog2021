@@ -1,5 +1,5 @@
-2021-06-18:   David Anderson 
-    
-2021-05-12:   David Anderson 
+2021-06-18:   David Anderson
+
+2021-05-12:   David Anderson
     * runtests.sh:  Now make check works whether
       the build done in- or out-of-build tree.

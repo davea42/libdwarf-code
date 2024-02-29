@@ -13,7 +13,7 @@
 2006-04-28 David Anderson <davea@sgi.com>
      * dwarfdump.conf: Now has x86_64 register names.
        x86_64 with help from Tom Hughes (verified
-       from independent sources). 
+       from independent sources).
        Added m68k register names and refined  x86 list
        by looking at various information-sources.
 2006-04-18 David Anderson <davea@sgi.com>
@@ -21,10 +21,10 @@
      * dwconf.c: Added fclose(conf_stream).
 2006-04-18 David Anderson <davea@sgi.com>
      * dwarfdump.c: Forgot to call key new functions for
-       handling variable-size frame data and different 
+       handling variable-size frame data and different
        frame rule initialization value.
      * dwconf.c: Add a default print for CFA in case of
-       an omission in dwarfdump.conf. 
+       an omission in dwarfdump.conf.
      * dwarfdump.conf: Move setup and rename the ABIs slightly.
 2006-04-17 David Anderson <davea@sgi.com>
      * dwarfdump.conf: Correct typos. Remove some register names.
@@ -46,11 +46,11 @@
        for ABIs specified at runtime.
      * dwarfdump.1: document -x commands.
      * globals.h: Minor changes to support dwarfdump.conf
-     * print_frames.c: Major changes to support a run-time description of 
+     * print_frames.c: Major changes to support a run-time description of
        the frames info and dwarfdump.conf.
-     * print_frames.h: Changes  to support a run-time description of 
+     * print_frames.h: Changes  to support a run-time description of
        the frames info and dwarfdump.conf.
-     * print_sections.c: Minor tweaks to support a run-time 
+     * print_sections.c: Minor tweaks to support a run-time
        description of the frames info and dwarfdump.conf.
 
 2006-03-31 David Anderson <davea@sgi.com>
@@ -60,14 +60,14 @@
        to separate file, separating loop logic from the printing
        of an entry from the loop.
 2006-03-31 David Anderson <davea@sgi.com>
-     * dwarfdump.c global.h print_sections.c: Preparing for 
+     * dwarfdump.c global.h print_sections.c: Preparing for
        dwarf3 frame interface.
      * print_die.c: Corrects handling of DW_AT_encoding (etc) value.
 2006-03-29 David Anderson <davea@sgi.com>
-     * print_sections.c: define DWARFDUMP_TURN_OFF_MIPS_REG_NAMES 
+     * print_sections.c: define DWARFDUMP_TURN_OFF_MIPS_REG_NAMES
        at compile time
        to turn off the MIPS register names printing.  Instead
-       (aside from cfa) use a name like  r4 (where the DWARF 
+       (aside from cfa) use a name like  r4 (where the DWARF
        register number follows the letter 'r').
        Indent. Initialize some local variables at declarations.
 2006-03-13 David Anderson <davea@sgi.com>
@@ -84,9 +84,9 @@
      * Makefile.in: Build attr/tag trees with
        individual commands to catch build errors.
      * tag_attr.c,tag_tree.c: Verify that
-       tables fit in the generated C code and check for 
+       tables fit in the generated C code and check for
        format errors in the *.list files.
-     * tag_attr.list, tag_tree.list: Added some valid entries. 
+     * tag_attr.list, tag_tree.list: Added some valid entries.
      * globals.h: add DWARF_ERROR3 macro for better diagnostics.
      * print_die.c: Show both sides of questionable tag relation
        in CHECK  -k diagnostic output.
@@ -114,7 +114,7 @@
         snprintf is for safety.
       * esb.h esb.c: Adding extensible string buffer (esb) code.
       * testesb.c: Test code for esb.c.
-      * print_reloc.c: size field is now Elf64_Xword for 
+      * print_reloc.c: size field is now Elf64_Xword for
         Elf64  as Elf64_Word is only 32 bits.
 
 2005-07-15 David Anderson <davea@sgi.com>
@@ -139,7 +139,7 @@
         array.  Adds checks and prints so that certain errors
         in pubnames-like sections are printed usefully (and dwarfdump
         then stops if libdwarf gave an error).
-        
+
 2005-03-21 David Anderson <davea@sgi.com>
       * dwarfdump.c: Add -F flag to
         request .eh_frame section print. Changed -f flag meaning
@@ -147,7 +147,7 @@
 	prints .debug_frame by default.
       * print_sections.c: avoid printing an eh_frame we don't understand.
 	Add new information per CU when printing line info: specifically
-        the line section offset.  
+        the line section offset.
       * globals.h: Added arguments to print_frames() for -F flag.
 
 2005-03-18 David Anderson <davea@sgi.com>
@@ -155,7 +155,7 @@
 
 2004-10-28 David Anderson <davea@sgi.com>
       * DWARFDUMPCOPYRIGHT config.h defs.h dwarfdump.c globals.h
-	makename.c makename.h print_die.c print_exception_tables.c 
+	makename.c makename.h print_die.c print_exception_tables.c
 	print_reloc.c print_sections.c tag_attr.c tag_attr.list
 	tag_tree.c tag_tree.list: Copyright update, SGI
         corporate address change.
@@ -194,13 +194,13 @@
        The indent control file .indent.pro contained:
   	-bad -bap -nbbo -br -ce -brs
   	-l72  -lc72  -hnl  -nprs
-  	-fca -i4  -lp -psl -npcs 
-        
+  	-fca -i4  -lp -psl -npcs
+
 
 
 2003-10-02   David Anderson <davea@sgi.com>
-     * dwarfdump.c: Add -g to indicate use of older 
-       location entry code in libdwarf.  So dwarf_loclist 
+     * dwarfdump.c: Add -g to indicate use of older
+       location entry code in libdwarf.  So dwarf_loclist
        and dwarf_loclist_n are testable.
      * globals.h: Added use_old_dwarf_loclist flag so one
        can choose the old dwarf_loclist() interface.
@@ -222,7 +222,7 @@
 	leaving simpler test.
       * print_die.c globals.h: print file name (from line info)
 	with DW_AT_decl_file, adding data from dwarf_srcfiles
-	to argument list of a few routines to make that possible. 
+	to argument list of a few routines to make that possible.
       * print_sections.c: moved "line number info" string print so
 	it prints for -v as well as normal  line ouput.
 
@@ -234,14 +234,14 @@
       * print_sections.c: macro printing now supported.
       * dwarfdump.c: removed erroneous dwarf_dealloc()
         of string returned by dwarf_errmsg().
- 
+
 2002-11-22  David Anderson <davea@sgi.com>
-      * dwarf_names.awk at_list.awk: Allow an name to have two 
-        spellings so the historical name preserved yet the dwarf3 
+      * dwarf_names.awk at_list.awk: Allow an name to have two
+        spellings so the historical name preserved yet the dwarf3
         version is supported. First name seen is used/reported
         by dwarfdump.
       * dwarf.h:   DW_TAG_template_type_param(eter)
-        DW_TAG_template_value_param(eter) DW_AT_namelist_itm(s)   
+        DW_TAG_template_value_param(eter) DW_AT_namelist_itm(s)
         are the ones with alternate spellings now.
         Added Universal Parallel C TAGs/Attributes in
 	user namespace.
@@ -264,17 +264,17 @@
 
 
 2000-07-14  Fred Fish  <fnf@ninemoons.com>
- 
+
       * configure.in (LOCATION_OF_LIBELFHEADER): Fix typo for configure
       variable to be tested and enclose libelf/libelf.h in <>.
       * configure: Regenerated.
-       
+
 2000-07-10  Fred Fish  <fnf@ninemoons.com>
- 
+
       * Makefile.in (install): Install dwarfdump.1 from $(srcdir).
 
 2000 June 12   davea@sgi.com
-  print_sections.c the DW_CFA_offset_extended print 
+  print_sections.c the DW_CFA_offset_extended print
 	did not multiply by data-alignment factor in the
 	-v -v detailed output.
 	And the offsets used %2d when the values were
@@ -288,19 +288,19 @@
 	right type to match the % format.
 2000 April 13 davea@sgi.com
   print_sections.c - 1.56
-        - A single byte of zero is a perfectly legitmate null 
-          abbreviation entry          (in .debug_abbrev) 
+        - A single byte of zero is a perfectly legitmate null
+          abbreviation entry          (in .debug_abbrev)
 	 now we print those directly and avoid a warning
           from dwarfdump
 
   print_die.c - 1.42
-        - Explain what combo checker is doing and make it 
-	  more maintainable (and fix bug which would 
+        - Explain what combo checker is doing and make it
+	  more maintainable (and fix bug which would
 	  not be hit, but was real enough (in combo checker),
 	  using too large a number as highest tag number).
 
   tag_tree.list - 1.2
-        - Add valid parent/child relationships so checker 
+        - Add valid parent/child relationships so checker
 	  does not report valid entries as bogus.
 
 
@@ -317,14 +317,14 @@
   she was using. Simple casts  (provided by her) fixed these.
 
 1999 July 21
-  davea@sgi.com 
+  davea@sgi.com
   print_sections changed to allow printing
   of dwarf-ish egcs c++ .eh_frame data
 
 
 1999 June 14
   Fred Fish fnf@ninemoons.com contributed
-  autoconf'ing of the libdwarf and dwarfdump source.  
+  autoconf'ing of the libdwarf and dwarfdump source.
 
 
 

@@ -3,7 +3,7 @@
 
 AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
-rebuild: tagattr 
+rebuild: tagattr
 	cp $(top_srcdir)/src/bin/tag_attr/tag_attr.list tmp-t2.c
 	$(CC) -DTRIVIAL_NAMING -I$(top_srcdir)/src/lib/libdwarf -E tmp-t2.c >tmp-tag-attr-build2.tmp
 	./tagattr -s -i tmp-tag-attr-build2.tmp -o dwarfdump-ta-table.h

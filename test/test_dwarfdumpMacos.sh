@@ -50,7 +50,7 @@ wc -l $b  $tx
 if [ $r -ne 0 ]
 then
   echo "$dd FAILED"
-  exit 1 
+  exit 1
 fi
 echo "if update required, mv $tx $b"
 # tx2 is a temp file, tx is the input and the output.
@@ -62,7 +62,7 @@ if [ $r -ne 0 ]
 then
   echo "FAIL  test_dwdiff $b $tx"
   echo "to update , mv $tx $b"
-  exit $r 
+  exit $r
 fi
 rm -f dwarfdump.conf
 rm -f $tx

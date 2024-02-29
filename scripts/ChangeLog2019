@@ -1,5 +1,5 @@
 2019-11-07 David Anderson
-     * run-all-tests.sh,buildandreleasetest.sh: Now handle 
+     * run-all-tests.sh,buildandreleasetest.sh: Now handle
        --enable-nonstandardprintf
        though that's not sufficient to let these work everywhere.
 2019-11-04 David Anderson

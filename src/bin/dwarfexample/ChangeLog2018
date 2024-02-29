@@ -20,8 +20,8 @@
       Removed unnecessary configure lines, regenerated
       configure.
 2018-06-13  David Anderson
-    * configure.ac: New option --enable-elf-open 
-      setting HAVE_ELF_OPEN 
+    * configure.ac: New option --enable-elf-open
+      setting HAVE_ELF_OPEN
     * config.h.in: HAVE_ELF_OPEN
     * configure.ac: Regenerated.
     * simplereader.c: Now uses open() unless HAVE_ELF_OPEN

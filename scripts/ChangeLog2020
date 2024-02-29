@@ -12,8 +12,8 @@
 2020-10-20 David Anderson
     * ddbuild.sh: Changes to sanitized.c meant a bit
       of changing for tag_tree etc.
-    * buildandreleasetest.sh: A major revision. 
-      Directory naming used in /tmp is now easier to 
+    * buildandreleasetest.sh: A major revision.
+      Directory naming used in /tmp is now easier to
       follow, and using a couple script functions
       eliminated many busywork lines.
 2020-02-25 David Anderson
@@ -24,6 +24,6 @@
       anyone seeing it will understand it is the code (libdwarf etc)
       fix script.
 2020-01-14 David Anderson
-    * buildandreleasetest.sh: The script element that finds 
+    * buildandreleasetest.sh: The script element that finds
       the version in configure.ac
       now also allows for 202xmmdd versions, not just 201xmmdd

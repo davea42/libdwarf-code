@@ -927,7 +927,7 @@ homeify(char *s, struct esb_s* out)
     size_t homelen = 0;
 
 #ifdef _WIN32
-    /*  Windows In msys2 
+    /*  Windows In msys2
         $HOME might be C:\msys64\home\admin
         which messes up regression testing.
         For msys2 with a simple setup this
@@ -946,7 +946,7 @@ homeify(char *s, struct esb_s* out)
             return;
         }
         if (user) {
-            /*  \\home\\admin 
+            /*  \\home\\admin
                 Change to $HOME
                 This is a crude way to get some
                 regressiontests to pass.

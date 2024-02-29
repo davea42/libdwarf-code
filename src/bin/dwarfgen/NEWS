@@ -3,4 +3,4 @@
   have a getopt-like functionality.  It reaches around to
   libdwarf for the source to dwgetopt, but it could
   equally well reach into dwarfdump for that source.
-  
+

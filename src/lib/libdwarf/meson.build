@@ -72,14 +72,14 @@ if dev_decompression
             include_directories: ['/opt/local/include'])
         endif
     endif
-  
+
     if not libzstd_deps.found()
         if fs.is_dir('/opt/local/lib') and fs.is_file('/opt/local/include/zstd.h')
             libzstd_deps = declare_dependency(link_args: ['-L/opt/local/lib','-lzstd' ],
              include_directories: ['/opt/local/include'])
         endif
     endif
-      
+
     if zlib_deps.found()
           message(['Have zlib'])
     else
@@ -88,7 +88,7 @@ if dev_decompression
               include_directories: ['/usr/local/include'])
         endif
     endif
-      
+
     if libzstd_deps.found()
         message(['Have libzstd'])
     else
@@ -98,10 +98,10 @@ if dev_decompression
               include_directories: ['/usr/local/include'])
       endif
     endif
-    
-    # Using set10 as false has the wrong effect, does not 
+
+    # Using set10 as false has the wrong effect, does not
     # match what compilers expect from #ifdef in C.
-    if zlib_deps.found() 
+    if zlib_deps.found()
         if libzstd_deps.found()
             config_h.set10('HAVE_ZSTD_H',true)
             config_h.set10('HAVE_ZSTD',true)

@@ -51,7 +51,7 @@
       * print_lines.c: print_one_die argument list changed, added
         the require argument..
       * dwarfdump.c: Added the -S option.
-       
+
       * configure.in: Add test to set HAVE_REGEX for the -S option.
       * dwarfdump.1: Document the -S options.
       * config.h.in: Set the default HAVE_REGEX
@@ -71,15 +71,15 @@
         print_sections.c,print_strings.c, print_locs.c,
         print_lines.c, print_pubnames.c,print_ranges.c,
         print_macros.c,print_types.c,tag_common.c,
-        print_weaknames.c, print_aranges.c: Include 
-        changed from dwarf_names.h to naming.h 
+        print_weaknames.c, print_aranges.c: Include
+        changed from dwarf_names.h to naming.h
       * tag_common.h: Removed the tag_name array, libdwarf
         provides the TAG, ATTR, etc name strings now.
       * dwarfdump.c:  Updated DWARFDUMP_VERSION string.
-      * tag_tree.c,tag_attr.c: Include changed from dwarf_names.h to 
+      * tag_tree.c,tag_attr.c: Include changed from dwarf_names.h to
         naming.h.  simplified long complicated lines, remove dbg argument
         to get_TAG_name.
-      * print_die.c,print_abbrevs.c:  Include changed from dwarf_names.h 
+      * print_die.c,print_abbrevs.c:  Include changed from dwarf_names.h
         to naming.h.
         Calls to get_TAG_name (etc) no longer have a dbg argument.
       * Makefile.in: We no longer build generated file names.c,
@@ -90,7 +90,7 @@
         so 'clean' now cleans them out.
 2009-05-04: David Anderson <davea42@earthlink.net>
       * common.h, common.c: Extracted simple utility routines
-        into their own files. 
+        into their own files.
       * dwarf_names.awk, at_list.awk: deleted. gennames.c replaces these.
       * tag_common.c, tag_common.h: Removed the simple utility
         routines from these files to simplify dependencies.
@@ -113,7 +113,7 @@
       * dwarfdump.c: Now calls the new
         libdwarf function dwarf_set_frame_cfa_value() and other
         such functions to specify all the values libdwarf needs.
-      * dwarfdump.conf: Sets the cfa_reg: value to 
+      * dwarfdump.conf: Sets the cfa_reg: value to
         a new higher value (1436) to avoid conflict with largest
         known register count.
       * dwconf.h: Corrected commentary on DW_FRAME_CFA_COL3.
@@ -138,14 +138,14 @@
         not this C dwarfdump.
       * dwconf.c: Initialize new frame regs configure data and
         parse it in the .conf file. Fixed old formatting mistakes.
-      * dwconf.h: Add new fields to frame regs configure struct. Make -R 
+      * dwconf.h: Add new fields to frame regs configure struct. Make -R
         be 1200 regs so that -R covers all the currently popular ABIs.
       * print_die.c, print_lines.c, print_frames.c: Change %# to
         0x%  so that zero prints with leading 0x consistently.
-      * dwarfdump.c: -R is now 1200 registers. So config function 
+      * dwarfdump.c: -R is now 1200 registers. So config function
         changed and usage message needed update.
       * dwarfdump.1: Change -R to 1200 and document -C.
-      * dwarfdump.conf: Add same_val_reg:  and undefined_val_reg: 
+      * dwarfdump.conf: Add same_val_reg:  and undefined_val_reg:
         initial values where needed or interesting.
       * print_macros.c: Fix old formatting mistake.
 2009-03-23: David Anderson <davea42@earthlink.net>
@@ -172,7 +172,7 @@
         into individual sourcefiles.
       * Makefile.in: Now lists the new sourcefiles.
       * print_sections.c: Deleted code moved to individual sourcefiles.
-        Added code to try to find the name from a DW_AT_abstract_origin 
+        Added code to try to find the name from a DW_AT_abstract_origin
 	DIE when a subprogram DIE itself has no DW_AT_name;
       * dwarfdump.c: Remove unused local variables. Use DWARFDUMP_VERSION
         #define to set version string.
@@ -219,9 +219,9 @@
         underbars, they uniformly start with 'tmp-'.
       * print_sections.c: Added the new argument required
         by the updated dwarf_names.c functions argument lists.
-      * tag_tree_ext.list: List 'common extensions' 
+      * tag_tree_ext.list: List 'common extensions'
         of tag->tag relationships.
-      * tag_attr_ext.list: List 'common extensions' 
+      * tag_attr_ext.list: List 'common extensions'
         of tag->attr relationships.
       * print_die.c: New 'common extension' tables used
         for checking tag->tag and tag->attr relationships
@@ -232,7 +232,7 @@
       * dwarfdump.c: Adding -C option, which exposes
         some 'common extensions' of dwarf uses as DWARF CHECK
         (-ka) warnings.  By default these extensions not reported
-        as warnings.  
+        as warnings.
       * tag_tree.c: Now generates base and extensions tables.
         Code in common with tag_attr.c is in tag_common* files.
       * tag_attr.c: Now generates base and extensions tables.
@@ -240,7 +240,7 @@
       * tag_common.c, tag_common.h: New files with the common
         data extracted from tag_tree.c and tag_attr.c
       * globals.h: global flag added for -C.
-      
+
 2009-02-14: David Anderson <davea42@earthlink.net>
       * configure.in: Define --enable-nonstandardprintf
       * config.h.in: new #undef HAVE_NONSTANDARD_PRINTF_64_FORMAT

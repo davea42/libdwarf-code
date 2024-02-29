@@ -291,7 +291,7 @@ def generatehtml(list2,headname, name):
         print("failed to open ", name, message)
         sys.exit(1)
     writeheader(file,headname)
-    write_line(file,"<p> Record count: %d </p>"%(len(list2))) 
+    write_line(file,"<p> Record count: %d </p>"%(len(list2)))
     for i,b in enumerate(list2):
         num = int(i) +1
         txt = b.generate_html(num)

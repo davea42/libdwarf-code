@@ -27,7 +27,7 @@ install before running tests to allow the tests to work
 Use -DCMAKE_INSTALL_PREFIX=/some/path  to chose
 the install path.
 You can install in any temporary directory or
-in system directories and the tests will work. 
+in system directories and the tests will work.
 
     # build the fast way
     mkdir /tmp/cmbld
@@ -63,7 +63,7 @@ or
     make
     # To list the tests
     ctest -N
-    # To run all the tests (their names start with 
+    # To run all the tests (their names start with
     # the letters 'self').
     ctest -R self
 
@@ -80,7 +80,7 @@ want to know what the test output is, use the following:
 
 In case one wishes to see the exact compilation/linking options
 passed at compile time when using -G "Unix Makefiles":
- 
+
     make VERBOSE=1
 
 With -G Ninja the generated build.ninja file shows

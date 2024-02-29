@@ -4,7 +4,7 @@
      * createirepformfrombinary.cc,irepattrtodbg.cc, irepform.h,
        ireptodbg.cc: Added support for DW_FORM_data16.
 2017-10-15  David Anderson
-     * dwarfgen.cc,general.h,ireptodbg.cc: Moved global 
+     * dwarfgen.cc,general.h,ireptodbg.cc: Moved global
        command-line options
        into a single global struct to clarify their use for
        a reader of the code. See 'cmdoptions'.
@@ -21,5 +21,5 @@
 2017-04-20  David Anderson
      * dwarfgen.cc: Use dwoptarg. Not optarg. oops.
 2017-04-20  David Anderson
-     * dwarfgen.cc: Added new options allowing 
+     * dwarfgen.cc: Added new options allowing
        specification of the desired dwarf version.

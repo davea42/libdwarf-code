@@ -13,7 +13,7 @@ DWversion
 2,3,4,5 meaning the DWARF standards
 x meaning gcc's experimental two level line table.
 
-2345x  1. unit_length (4 or 12 bytes) 
+2345x  1. unit_length (4 or 12 bytes)
 2345x  2. version (2 bytes, for x is 0xF006)
 5      2.1  address_size
 5      2.2  segment_selector_size

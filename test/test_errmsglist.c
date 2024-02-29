@@ -408,10 +408,10 @@ local_safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
             " from %u \n",(unsigned int)sizeof(pathbuf));
         exit(EXIT_FAILURE);
     }
-    _dwarf_safe_strcpy(targ,targlen,src,srclen); 
+    _dwarf_safe_strcpy(targ,targlen,src,srclen);
 }
 
-/*   
+/*
     ./test_errmsg_list -f /path.../libdwarf.h
     ./test_errmsg_list -t $top_srcdir
 

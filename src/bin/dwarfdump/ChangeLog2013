@@ -18,8 +18,8 @@
        to stdout instead of stderr. Making it much easier to
        have a usable output-with-errors in case of redirection.
        Updated version string.
-     * checkutil.c: If a certain pointer not set, just do nothing, 
-       there is no reason to abort.  
+     * checkutil.c: If a certain pointer not set, just do nothing,
+       there is no reason to abort.
        Added in a missing [ in a debug printf.
      * common.c: Updated version string.
 2013-07-30  David Anderson
@@ -36,7 +36,7 @@
         so we can check sibling attribute values.
         get_attr_value() now uses esb_s pointer.
       * globals.h: get_producer_name() now uses struct esb_s;
-      * print_aranges.c, print_pubnames.c:get_producer_name() 
+      * print_aranges.c, print_pubnames.c:get_producer_name()
         now uses struct esb_s;
       * dwconf.c: The use of esb_s means we need to consider
         an empty config-file-path as no path and look in default
@@ -45,7 +45,7 @@
       * dwarfdump/addrmap.c: Forgot to remove the addr_map_destroy()
         implementation in #ifndef HAVE_TSEARCH. Now it is removed.
 2013-02-03  David Anderson
-      * dwarfdump/addrmap.c: Implement HAVE_TDESTROY. 
+      * dwarfdump/addrmap.c: Implement HAVE_TDESTROY.
         tdestroy() is GNU only. Now we allow tsearch without
         tdestroy even though that means leaking every tsearch
         map we build.  dwarfdump2 has no such leak.

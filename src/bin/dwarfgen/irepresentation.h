@@ -115,7 +115,7 @@ public:
     ~ElfSymbols() {};
     ElfSymIndex getBaseTextSymbol() const {
         return baseTextAddressSymbol_;};
-    ElfSymIndex addElfSymbol(Dwarf_Unsigned val, 
+    ElfSymIndex addElfSymbol(Dwarf_Unsigned val,
         const std::string&name) {
         elfSymbols_.push_back(ElfSymbol(val,name,symstrtab_));
         ElfSymIndex indx(elfSymbols_.size()-1);

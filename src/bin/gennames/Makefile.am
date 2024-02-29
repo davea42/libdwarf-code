@@ -7,7 +7,7 @@
 AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = dwarf_names.h dwarf_names.c
-rebuild: gennames 
+rebuild: gennames
 	./gennames -o . -i $(top_srcdir)/src/lib/libdwarf
 	mv dwarf_names.c $(top_srcdir)/src/lib/libdwarf/dwarf_names.c
 

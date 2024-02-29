@@ -66,13 +66,13 @@ March 24, 2017
 September 20, 2016
   dwarfdump now frees all memory it used when it terminates normally.
   No malloc space left behind.
-  It gets a clean report from 
+  It gets a clean report from
       valgrind --leak-check=full  --show-leak-kinds=all
 May 5, 2016
   By default dwarfdump sanitizes strings, so if a corrupted
   DWARF file has non-printable bytes in a string they are
   each turned into %xx (% followed by
-  two hex digits for a single string character).  
+  two hex digits for a single string character).
   This is safe for terminals to print and shows the actual value.
   The '-x nosanitizestrings' option turns off this feature so bytes
   are shown as printf and your system show them.
@@ -80,7 +80,7 @@ May 5, 2016
   that may have bad effects if printed to a terminal (not,
   for example, space or tab characters).
   Nor are normal '%' in a string altered (in uri such would be
-  turned to %25 or to %%).  
+  turned to %25 or to %%).
 February  25, 2015
   Copied dwgetopt.c dwgetopt.h from libdwarf so dwarfdump can
   use dwgetopt() and still build without necessarily
@@ -96,7 +96,7 @@ January 08, 2015
 January 29, 2014
   Now using dwarf_tsearch() so tsearch is available on every platform.
 November 17, 2012
-  Added new checking options.  
+  Added new checking options.
   To get good relocation-handling dwarfdump now expects to read
   headers from libdwarf with the relocation numbers. That means
   building dwarfdump separate from the libdwarf source is no
@@ -145,7 +145,7 @@ March 29, 2011
   Now reports error summary by the compiler name, not just overall.
 January 26, 2010
   Changed the default frame-data register names from MIPS to
-  a generic set of registers.  
+  a generic set of registers.
   Try  '-x abi=mips' to get the traditional old MIPS register
   naming.
 June 22, 2009
@@ -184,7 +184,7 @@ Feb 14, 2009
   which makes it easy to get printf of Dwarf_Unsigned (etc)
   types correct even for non-standard compilers.
 December 30, 2008
-  Now we print the .debug_ranges section (with -N) 
+  Now we print the .debug_ranges section (with -N)
   and the data for DW_AT_ranges (with -i).
 December 8, 2008
   The -M option now causes printing of FORM details.
@@ -227,7 +227,7 @@ December 1, 2005
 
 August 1, 2005
   Now print_die.c deals with long loclists without a coredump.
-  Added esb.h esb.c (and testesb.c for testing) to encapsulate 
+  Added esb.h esb.c (and testesb.c for testing) to encapsulate
   getting space for possibly-long strings.
   Now print_die.c uses snprintf() not sprintf (hopefully this
   will not inconvenience anyone, snprintf() has been available
@@ -246,7 +246,7 @@ July 15, 2005
 
 Mar 21, 2005
   The -f flag now prints only .debug_frame data. The .eh_frame section
-  (GNU exceptions data) now prints with -F (not -a). 
+  (GNU exceptions data) now prints with -F (not -a).
   Printing gcc 3.3 or 3.4 .eh_frame with zR augmentation
   does not work at this time, so do not use -F
   to print such an object.
@@ -254,11 +254,11 @@ Mar 21, 2005
   line information.   This makes it much easier to correctly associate
   -l (or -v -l) output with -v -v -l when debugging a faulty
   linetable in an executable.
-  With -v -v -l (two -v) the output of line info continues to be a 
+  With -v -v -l (two -v) the output of line info continues to be a
   completely different format than zero or one -v, the two-v
   form showing the detailed line table opcodes.
-  With g++ 3.3.3 one sees bad line addresses at times as the 
-  DW_LNE_set_address address for header files do not always 
+  With g++ 3.3.3 one sees bad line addresses at times as the
+  DW_LNE_set_address address for header files do not always
   get their relocations applied.  I am told this is fixed in 3.4.x.
 
 
@@ -276,10 +276,10 @@ Oct 02, 2003
 
 June 14, 2001
   Now calling a new function dwarf_get_arange_cu_header_offset()
-  in libdwarf and printing the returned cu header offset for 
-  aranges entries.   Making it easier to track down internal 
+  in libdwarf and printing the returned cu header offset for
+  aranges entries.   Making it easier to track down internal
   errors in the dwarf2 data.  Also added small other
-  consistency checks, printing a message and exit()ing on 
+  consistency checks, printing a message and exit()ing on
   error.
 
 April 14, 2000
@@ -290,7 +290,7 @@ April 14, 2000
   is allowed to use
     the copyright published in that earlier libdwarf source
     on the earlier source
-  or to use 
+  or to use
     this new copyright on the earlier source,
   at their option.
 

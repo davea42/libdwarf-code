@@ -6,7 +6,7 @@
 # libdwarf/LIBDWARFCOPYRIGHT
 # or https://github.com/root-project/root/blob/master/LICENSE
 # For the list of contributors in the project that
-# created this cmake file see 
+# created this cmake file see
 # https://github.com/root-project/root/blob/master/README/CREDITS
 
 #.rst:

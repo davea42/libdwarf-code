@@ -1,7 +1,7 @@
 2009-12-30  DavidAnderson <davea42@earthlink.net>
      * configure: Regenerated with autoconf 2.64.
      * config.guess, config.sub: Delete these.
-     * configure.in, README: The --enable-nonshared 
+     * configure.in, README: The --enable-nonshared
        option was coded incorrectly. The configure
        options are --enable-shared and --disable-nonshared
        work correctly.  Options --disable-shared and --enable-nonshared work
@@ -13,7 +13,7 @@
        libdwarf.a
 2009-12-26  DavidAnderson <davea42@earthlink.net>
      * libdwarf.h, pro_section.c, pro_reloc_symbolic.c: Reformatted
-       a few lines that were badly formatted. 
+       a few lines that were badly formatted.
        Initialized local variables where a few were not initialized
        (this did not affect correctness, just readability).
 2009-11-27  DavidAnderson <davea42@earthlink.net>
@@ -23,7 +23,7 @@
        See dwarf_global_formref() documentation.
      * libdwarf2.1.pdf: Regenerate.
 2009-11-27  DavidAnderson <davea42@earthlink.net>
-     * libdwarf.h, dwarf_form.c, dwarf_query.c: Adding 
+     * libdwarf.h, dwarf_form.c, dwarf_query.c: Adding
        new form-class for the old DW_AT_MIPS_fde
        SGI/IRIX extension (offset into .debug_frame).
 2009-11-27  DavidAnderson <davea42@earthlink.net>
@@ -47,7 +47,7 @@
      * libdwarf.h: Added enum dwarf_form_class_e and
        dwarf_get_form_class() so clients have a simple
        way to get the  form-class mentioned in the DWARF
-       specification. 
+       specification.
      * dwarf_query.c:  Implemented dwarf_get_form_class().
      * dwarf_die_deliv.c:  Added dwarf_next_cu_header_b()
        function as more useful than dwarf_next_cu_header().
@@ -77,7 +77,7 @@
        This is revision 1.82.  Documented the new function
        dwarf_get_cie_index().
      * libdwarf2.1.pdf: Regenerated.
-     * dwarf.h: Corrected typo, DW_CFA_cfa_offset_extended_sf is 
+     * dwarf.h: Corrected typo, DW_CFA_cfa_offset_extended_sf is
        really spelled DW_CFA_offset_extended_sf.
        Added final new attributes, tag, language.
      * pro_alloc.c: Reformatting a comment so the line is not so long.
@@ -86,7 +86,7 @@
        This is revision 1.27. Document the new function
        dwarf_insert_fde_inst_bytes().
      * libdwarf2p.1.pdf: Regenerated.
-     * config.h.in: Added HAVE_WINDOWS_PATH. 
+     * config.h.in: Added HAVE_WINDOWS_PATH.
      * configure.in: Added --enable-windowspath to set
        HAVE_WINDOWS_PATH.
      * configure: Regenerated.
@@ -152,23 +152,23 @@
 
 2009-07-16  DavidAnderson <davea42@earthlink.net>
      * libdwarf.h: Add an error message define relating to rela relocations.
-     * dwarf_alloc.c: Add code to free malloc space (related 
+     * dwarf_alloc.c: Add code to free malloc space (related
        to rela relocations).
      * config.h.in: Add ifdef for Sun host machines so rela processing
        does not segv.
      * dwarf_opaque.h: Add a flag to the section data to note that we malloced
        space when rela relocations are involved.
-     * dwarf_elf_access.c: Refine is_32bit_abs_reloc() and  
-       is_64bit_abs_reloc() for easier debugging.  
+     * dwarf_elf_access.c: Refine is_32bit_abs_reloc() and
+       is_64bit_abs_reloc() for easier debugging.
        Add malloc call when doing rela processing
-       as some host libelf libraries make some libelf data areas read-only 
-       (Solaris and Irix for example). The malloc space avoids getting 
-       a segv. 
+       as some host libelf libraries make some libelf data areas read-only
+       (Solaris and Irix for example). The malloc space avoids getting
+       a segv.
 2009-07-13  DavidAnderson <davea42@earthlink.net>
      * dwarf_elf_access.c: some cases had = where == was
        needed in the reloc switch code.
 2009-07-05  DavidAnderson <davea42@earthlink.net>
-     * dwarf_opaque.h: New data for .rela and unify section data 
+     * dwarf_opaque.h: New data for .rela and unify section data
        information.  The changes will require consumers supporting
        non-elf-objects to make small (hopefully simple) changes.
      * dwarf_init_finish.c: Note existence of .rela sections.
@@ -180,7 +180,7 @@
        dwarf_vars.c, dwarf_pubtypes.c, dwarf_frame3.c, dwarf_funcs.c,
        dwarf_arange.c, dwarf_global.c, dwarf_init_finish.c,
        dwarf_line.c, dwarf_opaque.h, dwarf_string.c, dwarf_weaks.c
-       dwarf_util.c, dwarf_loc.c, dwarf_frame.c, dwarf_macro.c, 
+       dwarf_util.c, dwarf_loc.c, dwarf_frame.c, dwarf_macro.c,
        dwarf_types.c: Use simplified _dwarf_load_section() interface.
 
 2009-07-05  DavidAnderson <davea42@earthlink.net>
@@ -196,7 +196,7 @@
      * libdwarf2.1.pdf: Regenerated.
      * dwarf_opaque.h: New structure Dwarf_Section_s consolidates
        section information into one struct per section with
-       index and size so we remove many Dwarf_Debug_s fields. 
+       index and size so we remove many Dwarf_Debug_s fields.
      * dwarf_print_lines.c, dwarf_form.c, dwarf_query.c, dwarf_vars.c,
        dwarf_pubtypes.c, dwarf_frame3.c, dwarf_funcs.c,
        dwarf_alloc.c, dwarf_arange.c, dwarf_init_finish.c ,
@@ -229,7 +229,7 @@
         Remove code updating the DW_FRAME_CFA_COL row when finishing
         up establishing the current frame table.  The code should never
         have been there. Fixed some indentation of function
-        formal parameters.  Removed use of DW_FRAME_CFA_COL 
+        formal parameters.  Removed use of DW_FRAME_CFA_COL
         and use de_frame_cfa_col_number instead.
         In dwarf_get_fde_info_for_reg (the older interface)
         correctly return the cfa table column in the 'old style'.
@@ -255,7 +255,7 @@
 2009-05-07  DavidAnderson <davea42@earthlink.net>
       * Makefile.in: Ensure temp files all get deleted.
 2009-05-04  DavidAnderson <davea42@earthlink.net>
-      * dwarf_die_deliv.c: Update _dwarf_get_size_of_val() 
+      * dwarf_die_deliv.c: Update _dwarf_get_size_of_val()
         call (with its new address_size argument).
       * dwarf_frame.c: Use the new ci_address_size instead
         of de_pointer_size.
@@ -277,9 +277,9 @@
         insistence that every aranges group have the same
         address_size as the main elf object.
       * dwarf_query.c: Adding address size to internal calls.
-      * dwarf_print_lines.c: Added '(file number is %d)' 
+      * dwarf_print_lines.c: Added '(file number is %d)'
         to -l -v -v -v output as the
-        file number and traditional C zero-origin index index of a 
+        file number and traditional C zero-origin index index of a
         line table header are not the same value
         (see DWARF3 documentation, the end of section 6.2.5.3).
       * libdwarf2.1.mm: Documented dwarf_loclist_from_expr_a()
@@ -335,9 +335,9 @@
         for better error reporting.  Added dwarf_check_lineheader()
 	which allows some error reporting when not calling dwarf_print_lines().
       * dwarf_print_lines.c: Implements dwarf_check_lineheader() now.
-      * dwarf_sort_line.c: Match up with new arguments to 
+      * dwarf_sort_line.c: Match up with new arguments to
         dwarf_read_line_table_prefix().
-      * dwarf_line.c: Implement new arguments to 
+      * dwarf_line.c: Implement new arguments to
         dwarf_read_line_table_prefix() for better error reporting.
 	Allow erroneous ARM-compiler line table header to be used.
       * dwarf_line.h: Adding new argument to dwarf_read_line_table_prefix

@@ -4,8 +4,8 @@
 # for anyone to use in any way for any purpose.
 #
 # Assumes running from the build directory: path/test
-# which is sometimes 
-#    /var/tmp/bld/test 
+# which is sometimes
+#    /var/tmp/bld/test
 # Sets variables top_srcdir and top_blddir
 # If DWTOPSRCDIR is set on entry, top_srcdir
 # is set to the value of $DWTOPSRCDIR
@@ -58,7 +58,7 @@ cp "$top_srcdir/src/bin/dwarfdump/dwarfdump.conf" .
 # detects Windows msys3 mingw executable
 if [ -f $top_blddir/src/bin/dwarfdump/.libs/dwarfdump.exe ]
 then
-  bldx=$top_blddir/src 
+  bldx=$top_blddir/src
   dd=$bldx/bin/dwarfdump/.libs/dwarfdump.exe
   if [ ! -f  $bldx/bin/dwarfdump/.libs/libdwarf-*.dll ]
   then

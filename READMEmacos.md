@@ -1,4 +1,4 @@
-## MacOS builds of libdwarf and dwarfdump 
+## MacOS builds of libdwarf and dwarfdump
 
 Tested on up to date MacOS Ventura
 September 8, 2023
@@ -24,7 +24,7 @@ the port program will be in your $PATH ).
 
 port commands install in subdirectories of /opt/local.
 
-## Basic validation 
+## Basic validation
 
 At this point normal configure/cmake/meson
 builds should work and 'make check' works too.

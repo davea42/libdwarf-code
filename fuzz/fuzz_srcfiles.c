@@ -161,7 +161,7 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
   }
 
   Dwarf_Signed subprogram_count = 0;  /* init by davea*/
-  sres = dwarf_srclines_subprog_count(context, 
+  sres = dwarf_srclines_subprog_count(context,
       &subprogram_count, error);
   if (sres != DW_DLV_OK) {
     dwarf_srclines_dealloc_b(context);
@@ -175,7 +175,7 @@ int exampled(Dwarf_Die somedie, Dwarf_Error *error) {
   Dwarf_Signed dw_baseindex = 0;  /* init by davea*/
   Dwarf_Signed dw_count = 0;  /* init by davea*/
   Dwarf_Signed dw_endindex = 0; /* init by davea*/
-  sres = dwarf_srclines_files_indexes(context, 
+  sres = dwarf_srclines_files_indexes(context,
       &dw_baseindex, &dw_count,
       &dw_endindex, error);
   if (sres != DW_DLV_OK) {

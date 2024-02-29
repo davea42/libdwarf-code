@@ -10,7 +10,7 @@
        dwarf_loc_head_c_dealloc() was not iterating
        through the list of locdescs.  Fixed now.
 2015-12-19  David Anderson
-     * dwarf_macro5.c: specialcat() had a bug. Fixed 
+     * dwarf_macro5.c: specialcat() had a bug. Fixed
        indent/trailing whitespace.
      * dwarf_macro5.n: Fixed indent/trailing whitespace.
      * dwarf_line.c: Fixed indent/trailing whitespace.
@@ -40,7 +40,7 @@
        Now support for DWARF5 macros is nearly complete.
 
 2015-12-13  David Anderson
-     * dwarf_error.c: Add DW_DLE_MACRO_PAST_END 
+     * dwarf_error.c: Add DW_DLE_MACRO_PAST_END
      * libdwarf.h.in: Add DW_DLE_MACRO_PAST_END
        and dwarf_get_macro_ops_count() declaration.
      * dwarf_macro5.c: Implement dwarf_get_macro_ops_count()
@@ -53,7 +53,7 @@
 2015-12-11  David Anderson
      * dwarf_alloc.c: Remove () around simple return value.
      * dwarf_error.c: Two new error codes for DWARF5 macro section.
-     * dwarf5_macro.c,dwarf5_macro.h: Add functions 
+     * dwarf5_macro.c,dwarf5_macro.h: Add functions
        to let reader read/print
        .debug_macro section header.  Fixed _dwarf_macro_constructor
        declaration and implementation to return DW_DLV_OK.
@@ -84,7 +84,7 @@
      * Makefile.in: Bug building .so. Change $dwfzlib to $(dwfzlib)
        to fix.
 2015-11-30  David Anderson
-     * dwarf_alloc.c,dwarf_macro5.c,dwarf_macro5.h,libdwarf.h.in: 
+     * dwarf_alloc.c,dwarf_macro5.c,dwarf_macro5.h,libdwarf.h.in:
        Remove trailing whitespace.
 2015-11-30  David Anderson
      * Makefile.in: Add dwarf_macro5.o to build list.
@@ -109,7 +109,7 @@
 2015-11-27  David Anderson
      * dwarf_die_deliv.c: Added dwarf_get_die_section_name_b().
      * dwarf_line.c: Added dwarf_get_ranges_section_name()
-       dwarf_get_aranges_section_name(), 
+       dwarf_get_aranges_section_name(),
        dwarf_get_line_section_name_from_die(),
        dwarf_get_string_section_name.
      * libdwarf.h.in: Added new function names.
@@ -143,22 +143,22 @@
 2015-11-11 David Anderson
      * dwarf_opaque.h: Delete two useless blank lines.
 2015-11-09 David Anderson
-     * libdwarf.h.in: Removed unimplemented function 
+     * libdwarf.h.in: Removed unimplemented function
        declarationfrom the file.
      * libdwarf2.1.mm: Updated with new interface functions
        for DWARF5 and split dwarf. Version2.33
      * libdwarf2.1.mm: Regenerated.
 2015-11-08 David Anderson
-     * dwarf_alloc.c: Fixed indents, trailing whitespace.  
-     * dwarf_loc2.c: Fixed indents, trailing whitespace.  
+     * dwarf_alloc.c: Fixed indents, trailing whitespace.
+     * dwarf_loc2.c: Fixed indents, trailing whitespace.
      * dwarf_form.c: Made too-long line into 2 lines.
      * dwarf_loc.h: Removed duplicate Dwarf_Loc_c_s etc declarations.
-     * dwarf_util.c(_dwarf_error_mv_s_to_t),dwarf_util.h: New 
-       function to eliminate duplicative code.: 
+     * dwarf_util.c(_dwarf_error_mv_s_to_t),dwarf_util.h: New
+       function to eliminate duplicative code.:
      * dwarf_query.c): Fix bug in dwarf_get_offset_size().
        Use new _dwarf_error_mv_s_to_t() to get error on correct dbg.
        Fixed indents, trailing whitespace.
-     * dwarf_ranges.c: Use new _dwarf_error_mv_s_to_t() 
+     * dwarf_ranges.c: Use new _dwarf_error_mv_s_to_t()
        to get error on correct dbg.
        Fixed indents, trailing whitespace.
 2015-11-07 David Anderson
@@ -173,7 +173,7 @@
      * dwarf_loc.c: Correct the handling of split dwarf loclist.
      * dwarf_opaque.h: Add cc_ranges_base_present for split dwarf.
        Add _dwarf_get_ranges_base_attr_from_tied() for split dwarf.
-     * dwarf_query.c: Get and remember skeleton compilaton unit 
+     * dwarf_query.c: Get and remember skeleton compilaton unit
        DW_AT_[GNU_]ranges_base from tied objects for split dwarf.
      * dwarf_ranges.c: If a tied object present, look for ranges
        there, not in split dwarf object.
@@ -186,21 +186,21 @@
 2015-11-01 David Anderson
      * Makefile.in: Split out dwarf_loc2 to put the DWARF5
        expression code all in one place.
-     * dwarf_alloc.c,dwarf_alloc.h: Three new opaque 
+     * dwarf_alloc.c,dwarf_alloc.h: Three new opaque
        structs for DWARF5 expression interfaces.
      * dwarf_error.c: New error codes for DWARF5 expression interfaces.
      * dwarf_frame.c: Altered internal interfaces to support
        DWARF5 expression reading.
      * dwarf_loc.c: Refactored to support DWARF5 and moved
        some code into dwarf_loc2.c to segregate the new
-       interfaces for clarity.  
+       interfaces for clarity.
      * dwarf_loc.h: Definitions of new library-internal structs
        (opaque to callers).
      * dwarf_loc2.c: Contains the new DWARF5 location expression
        interface code. It is not separately compiled, it is
        #included by dwarf_loc.c.
      * dwarf_opaque.h: Commentary change.
-     * dwarf_query.c: dwarf_get_offset_size() new.  
+     * dwarf_query.c: dwarf_get_offset_size() new.
        Refactored to avoid duplicating code.
      * libdwarf.h.in: DWARF5 location expression interfaces
        refined and commentary improved.q
@@ -233,10 +233,10 @@
      * dwarf_error.c: Add DW_DLE 309 to 311 errors to descriptions array.
      * dwarf_form.c: Remove trailing whitespace. Reformat one line
        so it is not so long.
-     * dwarf_line.c: Add {} on if for clarity. 
+     * dwarf_line.c: Add {} on if for clarity.
        Fix whitespace endings.
      * dwarf_line_table_reader.c: Fix whitespace endings.
-     * dwarf_loc.c: Refactor loc. expr. reader into a 
+     * dwarf_loc.c: Refactor loc. expr. reader into a
        routine that reads one expression, _darf_read_loc_expr_op()..
        Add DWARF5 operators.
        Add preliminary dwo expression support (which will change
@@ -250,20 +250,20 @@
      * libdwarf.h.in: Rework some loclist commentary.
        Add first try at new loclist interfaces for DWARF2,3,4,5.
        New error codes for new loclist/dwo code.
-     * libdwarf2.1.mm: Rev 2.32. New wording on old loclist 
+     * libdwarf2.1.mm: Rev 2.32. New wording on old loclist
        interfaces.
 2015-10-15  David Anderson
      * dwarf_util.c,dwarf_query.c: Added DW_FORM_strp_sup as
        same idea as DW_FORM_GNU_strp_alt.
 2015-10-15  David Anderson
      * checkexamples.c: Fixed data type in the example code.
-     * dwarf.h: Updated comment about DW_FORM_GNU_strp_alt 
+     * dwarf.h: Updated comment about DW_FORM_GNU_strp_alt
      * dwarf_elf_access.c: Fixed trailing whitespace and
        removed debug printf that got left in.
      * dwarf_error.c: Add new TIED file errors.
        DW_DLE_NO_TIED_FILE_AVAILABLE, DW_DLE_NO_TIED_STRING_AVAILABLE.
      * dwarf_form.c: Added support for DW_FORM_GNU_strp_alt.
-     * dwarf_init_finish.c: #if 0 routine all_sig8bits_zero(). 
+     * dwarf_init_finish.c: #if 0 routine all_sig8bits_zero().
      * dwarf_line.c: Now always notice windows-like c: etc
        as start of a full path. Ensure directories with \ are
        turned to / in line tables. (for full such transforms
@@ -295,7 +295,7 @@
      * dwarf_alloc.c: Added constructor/destructor code to
        Dwarf_Line_Context allocator.
      * dwarf_elf_access.c: Added additional #defines so we
-       have the IA64 defines we need to compile certain 
+       have the IA64 defines we need to compile certain
        test cases on freebsd.
      * dwarf_error.c: Two new error codes for Dwarf_Line_Context
        checking.
@@ -304,16 +304,16 @@
        for dwarfdump.  Now only one body of line reading code
        to maintain.
      * dwarf_line.c: Moved code out to dwarf_line_table_reader_common.c
-       Refactored to support skeleton line tables (DWARF5) 
+       Refactored to support skeleton line tables (DWARF5)
        Eliminated an internal struct, it is no longer needed.
        a little better.
        Supports experimental two-level line tables too.
      * dwarf_print_lines.c: Uses dwarf_line_table_reader_common.c
        to do much of its work now.
-     * libdwarf.h.in: New interfaces for nicer access to 
+     * libdwarf.h.in: New interfaces for nicer access to
        line table headers.
      * libdwarf2.1.mm: Partial documentation of the new
-       libdwarf line table interfaces. 
+       libdwarf line table interfaces.
 2015-10-01  David Anderson
      * dwarf_global.h: Now the last __sgi related macro (else, endif)
        have /* __sgi */.
@@ -323,7 +323,7 @@
        The SGI IRIX only fields in dwarf_line.h ifdef __sgi now.
        And all code referencing them that way too. Balancing
        #endif has /* __sgi */ now for searchability.
-       Functions only usable on SGI IRIX only compiled in if __sgi 
+       Functions only usable on SGI IRIX only compiled in if __sgi
        macro defined.
      * libdwarf2.1.mm: Added a comment related to experimental
        two-level line tables.
@@ -334,9 +334,9 @@
 2015-09-29  David Anderson
      *  dwarf_line.c,dwarf_line.h,dwarf_line_table_reader_common.c,
         dwarf_print_lines.c: Moved the prefix reading subroutine
-        into common so the prefix-printing can have 
+        into common so the prefix-printing can have
         print code added (with ifdef so production does not
-        have it). 
+        have it).
 2015-09-29  David Anderson
      * dwarf_line.c,dwarf_line_table_reader_common.c,dwarf_print_lines.c,
        dwarf_line.h,dwarf_line2.c,libdwarf.h.in:
@@ -399,14 +399,14 @@ Changes not staged for commit:
        loop iteration.
      * dwarf_line.h: Added commentary.
 2015-09-23  David Anderson
-     * dwarf_abbref.c,dwarf_die_deliv.c,dwarf_init_finish.c,dwarf_query.c: Removed 
+     * dwarf_abbref.c,dwarf_die_deliv.c,dwarf_init_finish.c,dwarf_query.c: Removed
        unused local variables.
      * dwarf_line.c: Corrected bugs in the two-level line table
        support and improved error checking.
        Revamped the line table header reading code for clarity.
        See dw-linetableheader.txt .
      * dw-linetableheader.txt: The line table headers are a bit
-       complicated (mostly by the experimental two-level 
+       complicated (mostly by the experimental two-level
        line table support) so this file shows the header fields
        in order by version.
      * dwarf_form.c: Fixed nested comment, removed unused local variables..
@@ -426,7 +426,7 @@ Changes not staged for commit:
      * dwarf_line.c: An internal function now has a leading _
        and a context argument.. Added
        local names of popular pointers.
-     * dwarf_print_lines.c,dwarf_sort_line.c: An internal 
+     * dwarf_print_lines.c,dwarf_sort_line.c: An internal
        function now has a leading _ and a context argument..
      * dwarf_opaque.h: Added cc_segment_selector_size to contex structure.
      * libdwarf.h.in:  Added commentary on two-level line table functions etc.
@@ -439,7 +439,7 @@ Changes not staged for commit:
         Modified comment to reflect the current DWARF5 draft (we need not
         guess about correctness).
 2015-09-15  David Anderson
-     * dwarf_query.c, dwarf_form.c: We were failing 
+     * dwarf_query.c, dwarf_form.c: We were failing
        check for off-end-of debug_str_offsets section correctly
        and had a dwarf_dealloc where it was not wanted.
 2015-09-15  David Anderson
@@ -447,29 +447,29 @@ Changes not staged for commit:
        we were deleting a dwarf_error that might not be there.
        Now conditional on DW_DLV_ERROR. This and around line 605
        are the very rare situation we can turn one error code off
-       and possibly or definitely substitute another error. 
-       Normally we just return the original error as the 
+       and possibly or definitely substitute another error.
+       Normally we just return the original error as the
        'lowest level error.'
 2015-09-15  David Anderson
      * dwarf_elf_access.c: Added conditional
        R_MIPS_64  and  R_MIPS_TLS_TPREL64 defines
        as the headers I have for freebsd 32bit VM
-       do not define those and we need them for 
+       do not define those and we need them for
        testinga couple object files.
 2015-09-15  Carlos Alberto Enciso
-     * dwarf_elf_access.c: For Windows version, 
+     * dwarf_elf_access.c: For Windows version,
        some compilers generate
        EM_PPC64 elf type, but the generated code is 32 bits.
        Set the correct
        value for 'dbg->de_pointer_size'.
-     * dwarf_init_finish.c: For Windows version, 
+     * dwarf_init_finish.c: For Windows version,
        remove the incorrect hard
        code value for 'dbg->de_pointer_size'.
      * dwgetopt.h: Add the guard 'extern "C"'.
 2015-09-15  David Anderson and Carlos Alberto Enciso
      * dwarf_form.c (dwarf_formsig8_const): Was failing to
        return its return code.
-     * dwarf_xu_index.c (_dwarf_search_fission_for_offset): Was 
+     * dwarf_xu_index.c (_dwarf_search_fission_for_offset): Was
        failing to return its return code.
 2015-09-14  David Anderson
      * dwarf_form.c,dwarf_global.c,dwarf_line.c,dwarf_macro.c,dwarf_util.c:
@@ -488,11 +488,11 @@ Changes not staged for commit:
        dwarf_set_tied_dbg().
      * libdwarf2.1.pdf: Regenerated
 2015-09-13  David Anderson
-     * libdwarf.h.in,dwarf_error.c: New error code for 
+     * libdwarf.h.in,dwarf_error.c: New error code for
        improved string checking.
      * dwarf_form.c,dwarf_string.c:Now call the string checker
        on all strings and do a more thorough check.
-     * dwarf_util.c, dwarf_util.h: Revised the interfaces to the 
+     * dwarf_util.c, dwarf_util.h: Revised the interfaces to the
        string checker to make it more useful and accurate.
 2015-09-12  David Anderson
      * dwarf_die_deliv.c,dwarf_form.c,dwarf_opaque.h,
@@ -513,7 +513,7 @@ Changes not staged for commit:
        values incorrectly indented.
 2015-07-12  David Anderson
      * dwarf_init_finish.c: Added commentary about .rela
-     * dwgetopt.c,dwgetopt.h,dwgetopttest.c: Use dwoptind dwoptarg etc, 
+     * dwgetopt.c,dwgetopt.h,dwgetopttest.c: Use dwoptind dwoptarg etc,
        not optind, optarg, optopt opeerror etc.
      * gennames.h: use dwoptarg dwoptind, not optarg, optind.
 2015-05-08  David Anderson
@@ -548,7 +548,7 @@ Changes not staged for commit:
        readers (they were not real) Added new DWARF5
        section readers and the appropriate .dwo section readers.
      * dwarf_line.c,dwarf_loc.c: Added support for getting the correct  line
-     * dwarf_macro.c: Added comment that .debug_macinfo 
+     * dwarf_macro.c: Added comment that .debug_macinfo
        section not supported in DWP
        Package File (and .debug_macinfo is not in DWARF5).
        section offset in a DWP package file.
@@ -564,10 +564,10 @@ Changes not staged for commit:
        so it can all be read properly.
      * dwarf_xu_index.h: Added ifndef DWARF_XU_INDEX_H so #include
        more than once does not lead to difficulty.
-     * libdwarf.h.in: Added dwarf_get_IDX_name() and 
+     * libdwarf.h.in: Added dwarf_get_IDX_name() and
        dwarf_get_IDX_name(). Added fifteen new DW_DLE error codes.
        New function dwarf_die_from_hash_signature().
-     * libdwarf2.1.mm: Rev 2.27. Documented interfaces 
+     * libdwarf2.1.mm: Rev 2.27. Documented interfaces
        dwarf_next_cu_header_d(),dwarf_die_from_hash_signature(),
        dwarf_get_debugfission_for_die(),dwarf_get_debugfission_for_key().
      * libdwarf2.1.pdf: Regenerated.
@@ -581,8 +581,8 @@ Changes not staged for commit:
        DW_SUP_VERSION*, DW_CU_INDEX_VERSION5,
        DW_TU_INDEX_VERSION5, making version comparisons
        more precise and including DWARF5.
-     * dwarf_arange.c: CURRENT_VERSION_STAMP -> DW_ARANGES_VERSION2 
-     * dwarf_die_deliv.c,dwarf_global.c,dwarf_line.c, : Use the new 
+     * dwarf_arange.c: CURRENT_VERSION_STAMP -> DW_ARANGES_VERSION2
+     * dwarf_die_deliv.c,dwarf_global.c,dwarf_line.c, : Use the new
        DW_*_VERSION* version names.
      * dwarf_init_finish.c: Added to 3 comments.
      * dwarf_loc.c: Use the new DW_*_VERSION* version names.
@@ -597,7 +597,7 @@ Changes not staged for commit:
        missing their required argument.
 2015-03-09  David Anderson
     * dwgetopt.c: Fixed a bug in handling options.
-      See dwarfdump build for testing code 
+      See dwarfdump build for testing code
       and test runs for dwgetopt.c
 2015-02-22  David Anderson
     * dwgetopt.h, dwgetopt.c: Copied from dwarfdump so
@@ -613,7 +613,7 @@ Changes not staged for commit:
       not a completed standard these new things could change.
     * dwarf_die_deliv.c: Refactored calculation of end_of CU
       to ensure uniformity.  Added checks to catch attempts
-      to read past end and coredump (can happen when the DWARF is 
+      to read past end and coredump (can happen when the DWARF is
       erroneous). Notice when bogus attribute wraps memory
       so the next DIE would be at an earlier address in memory
       than the current die (DW_DLE_NEXT_DIE_LOW_ERROR).
@@ -622,7 +622,7 @@ Changes not staged for commit:
       end of the string section (.debug_str).
     * dwarf_opaque.h: Declare new internal
       function  _dwarf_calculate_section_end_ptr().
-    * dwarf_query.c(dwarf_attrlist): 
+    * dwarf_query.c(dwarf_attrlist):
       A little bit of refactoring/reordering done to catch
       errors.
       Created new function _dwarf_calculate_section_end_ptr().
@@ -647,14 +647,14 @@ Changes not staged for commit:
      * dwarf_opaque.h: Use Dwarf_Sig8 for the dfp_hash field.
      * libdwarf.h.in: dwarf_get_xu_hash_entry() uses Dwarf_Sig8 now.
 2015-01-30  David Anderson
-     * dwarf.h: Adding some DWARF5 defines. 
+     * dwarf.h: Adding some DWARF5 defines.
        Use with caution: DWARF5 is not yet final.
      * gennames.c: Local array needed to be bigger
        due to a longer attribute list.
 2015-01-28  David Anderson
      * libdwarf2.1.mm: Fixed .H 2 to .H 3 on
        dwarf_get_TAG_name etc.
-       Removed duplication of 3 lines of 
+       Removed duplication of 3 lines of
        Global Namespace operations.
        Added doc of dwarf_dwarf_get_debug_str_index()
        and fixed a level 2 header (starting the quoted
@@ -680,12 +680,12 @@ Changes not staged for commit:
      * dwarf_die_deliv.c: Added dwarf_get_debugfission_for_die().
        Now dwarfdump and other clients can access
        and print fission data for a specific CU easily.
-     * dwarf_init_finish.c(load_debugfission_tables): Deleted 
+     * dwarf_init_finish.c(load_debugfission_tables): Deleted
        unused local variable.
      * dwarf_opaque.h: Now uses libdwarf.h DW_FISSION_SECT_COUNT
        for clarity (libdwarf-only name).
      * libdwarf.h.in: Add DW_DLE_FISSION_VERSION_ERROR as part
-       of error checking. Add prototype for 
+       of error checking. Add prototype for
        dwarf_get_debugfission_for_die() and declare its struct argument.
 2015-01-18  David Anderson
      * dwarf_abbrev.c: Added comment, debugfission not supported
@@ -713,7 +713,7 @@ Changes not staged for commit:
        declaration before statements.
      * dwarf_util.c: Add comments about va_end().
 2015-01-11  David Anderson
-     * dwarf_init_finish.c(_dwarf_setup): For all returns 
+     * dwarf_init_finish.c(_dwarf_setup): For all returns
        in _dwarf_setup() free the sections malloc space.
 2015-01-08  David Anderson
      * cmplrs/dwarf_addr_finder.h: Fix a comment and remove a trailing

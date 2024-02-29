@@ -62,14 +62,14 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     dwarf_init_b(fuzz_fd, DW_GROUPNUMBER_ANY, errhand, errarg, &dbg, &error);
     /*  By not checking the return code, on a failed init
         we cannot dealloc the error field, so
-        there is a leak from 
+        there is a leak from
         _dwarf_special_no_dbg_error_malloc()  */
     /*  The library has no way to verify a non-null
         crcbuf points to a valid 4 byte block of memory.
         Passing in NULL results in returning DW_DLV_NO_ENTRY. */
     res = dwarf_crc32(dbg, crcbuf, &error);
     /*  Ignoring res! */
-     
+
     dwarf_finish(dbg);
   }
   close(fuzz_fd);

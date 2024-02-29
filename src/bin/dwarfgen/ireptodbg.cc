@@ -228,7 +228,7 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
     (void)Irep;
     (void)ourdie;
     (void)level;
-    
+
     if (!cmdoptions.transformHighpcToConst) {
         // No transformation of this sort requested.
         return;
@@ -649,7 +649,7 @@ HandleLineData(Dwarf_P_Debug dbg,
     Dwarf_Error lerror = 0;
     // We refer to files by fileno, this builds an index.
     pathToUnsignedType pathmap;
-    
+
     IRCULineData& ld = cu.getCULines();
     std::vector<IRCULine> & cu_lines = ld.get_cu_lines();
     //std::vector<IRCUSrcfile> &cu_srcfiles  = ld.get_cu_srcfiles();

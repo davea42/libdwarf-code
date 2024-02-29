@@ -46,7 +46,7 @@ README: README.md
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdwarf.pc
-if HAVE_DWARFGEN 
+if HAVE_DWARFGEN
 pkgconfig_DATA +=  libdwarfp.pc
 endif
 
@@ -73,7 +73,7 @@ m4/lt~obsolete.m4 \
 missing  \
 test-driver \
 $(distdir).tar.gz  \
-$(distdir).tar.xz 
+$(distdir).tar.xz
 
 EXTRA_DIST = \
 appveyor.yml \

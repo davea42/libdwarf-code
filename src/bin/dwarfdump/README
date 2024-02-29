@@ -9,7 +9,7 @@ directory then type
 
 Installation is a bit primitive.
       sudo make install
-may or may not work.   
+may or may not work.
 Some or all of the following might be required on Unix or Linux or MacOS:
       sudo mkdir -p /usr/local/share/man/man1/
       sudo mkdir -p /usr/local/lib
@@ -23,12 +23,12 @@ but you might as well have it. If the man page is not visible
 with 'man dwarfdump' try  'man manpath' for hints.
 
 If you don't need others using dwarfdump on your computer,
-just 
-    cp dwarfdump $HOME/bin/dwarfdump 
+just
+    cp dwarfdump $HOME/bin/dwarfdump
 (by convention many people put personal executables in $HOME/bin
 and fix up $PATH to refer there) which suffices as 'installation'.
-Also   
-    cp dwarfdump.conf $HOME 
+Also
+    cp dwarfdump.conf $HOME
 
 To use dwarf or libdwarf, you may want to install dwarf.h
 and libdwarf.h somewhere convenient.
@@ -60,12 +60,12 @@ If the libdwarf directory
 has both libdwarf.so and libdwarf.a, the libdwarf.so
 will be picked up and
   "./tag_tree_build: error while loading shared libraries:
-        libdwarf.so: cannot open shared object file:  
+        libdwarf.so: cannot open shared object file:
         No such file or directory"
 will probably result.
 Either: remove libdwarf.so  and rebuild or set
-the environment variable LD_LIBRARY_PATH to  the directory 
-containing the .so or use LDFLAGS to set rpath (see just below).   
+the environment variable LD_LIBRARY_PATH to  the directory
+containing the .so or use LDFLAGS to set rpath (see just below).
 It is perhaps simpler to ensure that the libdwarf directory
 only has an archive, not  a shared-library.
 But sometimes one wants a shared library.

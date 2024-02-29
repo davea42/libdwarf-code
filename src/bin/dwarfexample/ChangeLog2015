@@ -11,11 +11,11 @@
 2015-09-22  David Anderson
      * simplereader.c: Removed trailing whitespace.
 2015-09-15  Carlos Alberto Enciso
-     * simplereader.c:  Fix some C99 issues with 
+     * simplereader.c:  Fix some C99 issues with
        local variables declaration
        in main() and read_cu_list().
        Include the 'config.h' and 'stdafx.h' headers for Windows port.
-       Include the Dwarfdump generic open_a_file() and 
+       Include the Dwarfdump generic open_a_file() and
        close_a_file() calls.
 2015-06-19  David Anderson
      * frame1.c: Add printf and comments suggesting

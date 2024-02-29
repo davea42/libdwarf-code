@@ -154,7 +154,7 @@ buildreadelfobj() {
   #
   $rodir/configure --enable-wall $nonstdprintf
   chkres $? "N FAIL: configure $rodir/configure failed, giving up."
-  make 
+  make
   chkres $? "Oa FAIL: make in $rodir failed, giving up."
   make check
   chkres $? "Ob FAIL: make check in $rodir failed, giving up."
@@ -206,21 +206,21 @@ if [ -d $ddsrc ]
 then
   builddwarfdump $argval $nonstdprintf
   rundistcheck  $argval $nonstdprintf
-  chkres $? "FAIL rundistcheck" 
+  chkres $? "FAIL rundistcheck"
 else
   echo "dwarfdump make check etc not run"
 fi
 if [ -d $rosrc ]
 then
   buildreadelfobj
-  chkres $? "FAIL buildreadelfobj" 
+  chkres $? "FAIL buildreadelfobj"
 else
   echo "readelfobj make check etc not run"
 fi
 if [ -d $rtestsrc ]
 then
   runfullddtest $argval $nonstdprintf
-  chkres $? "FAIL runddtest" 
+  chkres $? "FAIL runddtest"
 else
   echo "dwarfdump regressiontests not run"
 fi

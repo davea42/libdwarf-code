@@ -16,7 +16,7 @@
 2018-09-21 David Anderson
     * dwarfgen.cc: S_IRUSR was defined incorrectly
       (when not provided by system headers). Fixed.
-    * CMakeLists.txt: Updated headers list to include all 
+    * CMakeLists.txt: Updated headers list to include all
       the local headers.
     * Makefile.am: Ensured config.h.in.cmake and
       dwarfgen.1 get into releases.
@@ -42,8 +42,8 @@
     * irepattrtodbg.cc: Removing some useless whitespace.
 2018-07-24 David Anderson
     * dwarfgen.cc: CallbackFunc() was awkwardly declared
-      (now more sensibly declared as static function, 
-      still extern "C" as it is called from C (libdwarf)) 
+      (now more sensibly declared as static function,
+      still extern "C" as it is called from C (libdwarf))
       ErrorHandler() was unused (now deleted).
 2018-07-23 David Anderson
     * createirepformfrombinary.cc: Removed unused local variable.
@@ -65,7 +65,7 @@
       unused (and now deleted).
       #define UNUSEDARG appropriately
       Mark arguments UNUSEDARG where appropriate.
-    * irepdie.h, irepform.h: Mark arguments 
+    * irepdie.h, irepform.h: Mark arguments
       UNUSEDARG where appropriate.
     * ireptodbg.cc:Fixed reinterpret casts to be
       the correct type, fixing signed/unsigned
@@ -103,7 +103,7 @@
      * configure: Regenerated
      * createirepformfrombinary.cc,createirepfrombinary.cc,
        irepattrtodbg.cc,ireptodbg.cc:
-       Removed unnecessary #includes 
+       Removed unnecessary #includes
      * dwarfgen.cc:  Removed unnecessary #includes.
        Switch from gelf.h (GNU only) to libelf.h.
 2018-06-14  David Anderson
