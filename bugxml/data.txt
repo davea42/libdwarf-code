@@ -21,6 +21,7 @@ endrec: DW202402-003
 
 
 id: DW202402-002
+cve: CVE-2024-2002
 fuzzer: hongg
 datereported: 2024-02-16
 reportedby: ifygecko
