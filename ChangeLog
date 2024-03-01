@@ -1,3 +1,104 @@
+2024-03-01:  David Anderson
+    commit cd5b3e0c2a3ae60686314db55f93d820da8a3f77
+
+    Now March, so month name changed.
+    And no longer generating trailing space.
+            modified:   dwarfbug.html
+            modified:   dwarfbuglohi.html
+
+2024-03-01:  David Anderson
+    commit 31316b1cbf40f276ba38d7847e25e4f19910ac11
+
+    Removing trailing space that was sometimes generated.
+            modified:   bugrecord.py
+
+2024-02-29:  David Anderson
+    commit 709f6db6503f4a6c5f822152a7190bfc348d1743
+
+    Adding commitment to what can be
+    done with corrupted DWARF
+            modified:   README.md
+
+2024-02-29:  Jeremy Rifkin
+    commit 62838e86639de916da1eba8fae44d50263353027
+
+    Remove trailing whitespace from files (#229)
+
+    * Remove trailing whitespace from files
+
+    * Remove whitespace from pdfbuild.sh
+
+    ---------
+
+    Co-authored-by: David Anderson <dandelot@linuxmail.org>
+
+2024-02-29:  David Anderson
+    commit 74619ee540ca07a82602712ffa2f791ccd6ff03c
+
+    dwarfbug.xml was missing a crucial field,
+    the DW  id.  Fixed.
+            modified:   bugxml/bugrecord.py
+            modified:   bugxml/dwarfbug.xml
+
+2024-02-29:  David Anderson
+    commit 4b156bb1dfcba8c1f7162a868fb140b1852a1089
+
+    Now showing the cve id for DW202402-002
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2024-02-29:  David Anderson
+    commit 18366de6ca34ba14360bb3ff20f8a4b6f19b26bd
+
+    DW202402-002 now has a CVE id:
+    CVE-2024-2002
+            modified:   data.txt
+
+2024-02-27:  David Anderson
+    commit e71470a37528da766f4b020f79f9095c17bbb414
+
+    Strengthing the test against corrupt loclists
+    or rnglists entries. An improvement related to
+    DW202402-003.
+    The concern was to fully harden checks when
+    running on 32bit-pointer OS.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-02-23:  David Anderson
+    commit c21fb4e8e957677094e7b66e3553e9c9503ceb53
+
+    Typo fixed:
+    -README.cmake has details on the available cmake options.
+    +READMEcmake.md has details on the available cmake options.
+            modified:   README.md
+
+2024-02-22:  David Anderson
+    commit 432bbf526d67859de5f8ed03e89080c90566a67b
+
+    This sort of works but does not really help
+    with regressiontests on msys2 windows
+            modified:   dwarfdump.c
+
+2024-02-21:  David Anderson
+    commit d6087deea132e89ac226a923872ab3ba09a04fef
+
+    Removing unwanted character
+            modified:   ChangeLog
+
+2024-02-21:  David Anderson
+    commit 8a75104e4052634d3832ef867c2938b8635daacc
+
+    one character added.
+            modified:   ChangeLog
+
+2024-02-20:  David Anderson
+    commit ce7f334659a6463a33e7e05c00033b2f7e5e7085
+
+    Tiny change required to run github workflow successfully.
+            modified:   ChangeLog
+
 2024-02-20:  David Anderson
     commit e0f331250a44fa5586b99d45b6ac9dd99d8d1733
 
