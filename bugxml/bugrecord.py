@@ -276,7 +276,7 @@ class bugrecord:
         l = main.strip()
         if len(l) > 0:
             out += l
-        out += term + "\n"
+        out += term 
         return out
 
     def paraxmlN(self, start, main, term):
@@ -288,7 +288,7 @@ class bugrecord:
             t, inpre = xmlize(l, "n", inpre)
             if len(t) > 0:
                 out += t
-        out += term + "\n"
+        out += term 
         return out
 
     def generate_xml(self):
