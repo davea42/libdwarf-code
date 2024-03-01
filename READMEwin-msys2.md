@@ -119,7 +119,7 @@ building and testing all the build mechanisms:
     basics
     pacman -Suy
     pacman -S base-devel git autoconf automake libtool
-    pacnam -S mingw-w64-x86_64-python3
+    pacman -S mingw-w64-x86_64-python3
     pacman -S mingw-w64-x86_64-toolchain
     pacman -S mingw-w64-x86_64-zlib
     pacman -S mingw-w64-x86_64-zstd
@@ -128,7 +128,7 @@ building and testing all the build mechanisms:
     extras for meson/cmake
     pacman -S mingw-w64-x86_64-meson
     pacman -S mingw-w64-x86_64-cmake
-    pacnam -S mingw-w64-x86_64-python3-pip
+    pacman -S mingw-w64-x86_64-python3-pip
 
     To create a distribution one needs xz:
     pacman -S mingw-w64-x86_64-xz

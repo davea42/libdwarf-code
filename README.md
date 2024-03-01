@@ -4,7 +4,7 @@ Updated 29 February 2024 (leap year!)
 
 ## Goal
 Libdwarf has been focused for years
-on both providing access to DWARF2 throuth
+on both providing access to DWARF2 through
 DWARF5 data in a portable
 way while also detecting and reporting
 if the DWARF is corrupted and avoiding
@@ -17,7 +17,7 @@ returned  by the library is meaningful.
 When the DWARF6 standard is released by the DWARF committee
 support will be added (as soon as
 reasonably possible) to libdwarf for all
-changes/additions while continuting to support
+changes/additions while continuing to support
 previous versions.
 
 ## github actions
@@ -84,7 +84,7 @@ libdwarf/dwarfdump.
 
     Ensure that all the needed programs are in $PATH,
     including python3.
-    # candidate commane to make python3 visible (as root)
+    # candidate command to make python3 visible (as root)
     # something like:
     cd /usr/local/bin ; ln -s python3.9 python3
 
@@ -233,7 +233,7 @@ For the full options list , do:
     /path/to/code/configure --help
 
 By default configure compiles and uses libdwarf.a.
-With `--enable-shared --disable-sttic"
+With `--enable-shared --disable-static"
 appended to the configure step,
 libdwarf.so is built and the runtimes
 built will reference libdwarf.so.
@@ -272,7 +272,7 @@ configure by --enable-sanitize
 As of 0.9.0 meson builds default to be
 shared-library builds.
 These options go on the meson setup command line.
-the default can be explicity chosen with:
+the default can be explicitly chosen with:
 
     --default-library shared
 
@@ -285,10 +285,10 @@ to let compilations continue:
 
     -Dwerror=false
 
-By default compiles are normal.  Add the following
-to add gcc -fsanitize checking in the build to catch
-various memory errors (the generated code is larger and
-slower than normal).
+By default compiles look for C/C++ language issues.
+Add the following to add gcc -fsanitize checking
+in the build to catch various memory errors
+(the generated code is larger and slower than normal).
 
     -Dsanitize=true
 
