@@ -245,8 +245,7 @@
     @subsubsection DW_DLV_OK
 
     When res == DW_DLV_OK
-    newdie is a valid pointer
-    pointer and when appropriate we should do
+    newdie is a valid pointer and when appropriate we should do
     dwarf_dealloc_die(newdie).
 
     @subsubsection DW_DLV_NO_ENTRY
