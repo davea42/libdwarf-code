@@ -7377,7 +7377,7 @@ DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
     sections as well.
     @param dw_count_of_index_entries
     On success set to the count of index entries in
-    this particlular block number.
+    this particular block number.
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
@@ -7541,7 +7541,7 @@ DW_API int dwarf_gdbindex_culist_array(
     If dw_entryindex is too large for the array
     the function returns DW_DLV_NO_ENTRY.
     @param dw_cu_offset
-    On success returns the CU offet for this list entry.
+    On success returns the CU offset for this list entry.
     @param dw_cu_length
     On success returns the CU length(in bytes)
     for this list entry.
@@ -7584,9 +7584,9 @@ DW_API int dwarf_gdbindex_types_culist_array(
     If the value is greater than dw_list_length-1
     the function returns DW_DLV_NO_ENTRY.
     @param dw_cu_offset
-    On success returns the types CU offet for this list entry.
+    On success returns the types CU offset for this list entry.
     @param dw_tu_offset
-    On success returns the tu offet for this list entry.
+    On success returns the tu offset for this list entry.
     @param dw_type_signature
     On success returns the type unit offset for this
     entry if the type has a signature.
@@ -8319,7 +8319,7 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
     @param dw_newerror
     Pass in a string whose content the function
     inserts as a harmless error (which
-    dwarf_get_harmless_error_list will retrieve.
+    dwarf_get_harmless_error_list will retrieve).
 */
 DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     char * dw_newerror);
