@@ -1,7 +1,26 @@
-# This is libdwarf README[.md]
+# This is libdwarf README.md
 
-Updated 29 January 2024
+Updated 29 February 2024 (leap year!)
 
+## Goal
+Libdwarf has been focused for years
+on both providing access to DWARF2 throuth
+DWARF5 data in a portable
+way while also detecting and reporting
+if the DWARF is corrupted and avoiding
+run-time crashes or memory leakage regardless
+how corrupted the DWARF being read may be.
+The intent is to provide ABI independent
+access to DWARF data and ensure that data
+returned  by the library is meaningful.
+
+When the DWARF6 standard is released by the DWARF committee
+support will be added (as soon as
+reasonably possible) to libdwarf for all
+changes/additions while continuting to support
+previous versions.
+
+## github actions
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
 
