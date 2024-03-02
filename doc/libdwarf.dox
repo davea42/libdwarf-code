@@ -232,7 +232,7 @@
         Dwarf_Die newdie = 0;
         int       res = 0;
 
-        res = dwarf_siblingof_b(die,&newdie,error);
+        res = dwarf_siblingof_c(die,&newdie,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -246,15 +246,22 @@
 
     When res == DW_DLV_OK
     newdie is a valid pointer and when appropriate we should do
-    dwarf_dealloc_die(newdie).
+    dwarf_dealloc_die(newdie). 
+    For other  libdwarf calls
+    the meaning depends on the function called,
+    so read the description of the function
+    you called for more information.
 
     @subsubsection DW_DLV_NO_ENTRY
 
     When res == DW_DLV_NO_ENTRY
     then newdie is not
     set and there is no error. It means
-    die was the last of a siblinglist. The exact
-    meaning of course depends on the function called.
+    die was the last of a siblinglist.
+    For other libdwarf calls the
+    meaning  depends on the function called,
+    so read the description of the function
+    you called for more information.
 
     @subsubsection DW_DLV_ERROR
 
@@ -269,13 +276,16 @@
     @endcode
     or both and report that somehow.
     
-    If it's a decently large program then you want to
-    free any local memory and return res. If a small
-    and unimportant program print something and exit
-    (likely leaking memory).
+    If it is a decently large
+    or long-running program then you want to
+    free any local memory you 
+    allocated and return res.
+    If it is a small
+    or experimental program print something and exit
+    (possibly leaking memory).
 
     If you want to discard the error report from the
-    dwarf_siblingof() call then possibly do
+    dwarf_siblingof_c() call then possibly do
     @code
         dwarf_dealloc_error(dbg,*error);
         *error = 0;
@@ -283,8 +293,8 @@
     @endcode
 
     Except in a special case involving function
-    dwarf_set_de_alloc_flag() (which is not usually
-    called), any dwarf_dealloc() that is needed will
+    dwarf_set_de_alloc_flag() (which you will not usually
+    call), any dwarf_dealloc() that is needed will
     happen automatically when you call dwarf_finish(). 
 
     @subsubsection A Slight Performance Enhancement
@@ -298,15 +308,23 @@
     Be sure to test using valgrind or -fsanitize to ensure your
     code really does the extra dwarf_dealloc calls
     needed since when using dwarf_set_de_alloc_flag(0)
-    dwarf_finish() only does limited cleanup. 
+    dwarf_finish() does only limited cleanup. 
 
     @section dwsec_cuplan Extracting Data Per Compilation Unit
 
     The library is designed to run a single pass
     through the set of Compilation Units (CUs), via
-    a sequence of calls to dwarf_next_cu_header_d()
-    and within a CU initiate a DIE scan using
-    dwarf_siblingof_b().  There is currently no
+    a sequence of calls to dwarf_next_cu_header_e().
+    (dwarf_next_cu_header_d() is supported but
+    its use requires that it be immediately followed
+    by a call to dwarf_siblingof_b().
+    see dwarf_next_cu_header_d(). )
+
+    Within a CU opened with dwarf_next_cu_header_e()
+    do something (if desired) on the CU_DIE
+    returned, and call dwarf_child() on the CU_DIE
+    to begin recursing through all DIEs. 
+    There is currently no
     provision for a second pass.
 
     The general plan:
@@ -324,7 +342,9 @@
     @endcode
 
     For an example
-    @see examplecuhdr 
+    @see examplecuhdre
+    or
+    @see examplecuhdrd
     Write your code to record relevant (to you)
     information from each CU as you go so your code
     has no need for a second pass through the CUs.
@@ -388,6 +408,7 @@
     @link string Strings can be read independently @endlink
 
     @link str_offsets String Offsets can be read independently @endlink
+
     @link debugaddr The addr table can be read independently @endlink
 
     Those functions allow starting at byte 0 of the
@@ -454,8 +475,9 @@
         to refer to it.
         DW_FRAME_CFA_COL defaults to 12290.
         There no such column in the table.
-        See libdwarf.h struct member rt3_cfa_rule
-        or function dwarf_get_fde_info_for_cfa_reg3_b .
+        See libdwarf.h struct Dwarf_Regtable3_s member rt3_cfa_rule
+        or function dwarf_get_fde_info_for_cfa_reg3_b()
+        or function dwarf_get_fde_info_for_cfa_reg3_c() .
 
     A set of functions allow these to be changed at
     runtime. The set should be called (if needed)
@@ -501,23 +523,31 @@
     Each has a set of 6 functions. 
   
     @code
-     Section         typename      Standard      main function
-    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4 dwarf_get_globals
-    .debug_pubtypes  Dwarf_Type    DWARF3,DWARF4 dwarf_get_pubtypes
+     Section         typename      Standard      
+    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4 
+    .debug_pubtypes  Dwarf_Global  DWARF3,DWARF4
     @endcode
 
+    These sections are accessed calling dwarf_globals_by_type()
+    using type of  DW_GL_GLOBALS or DW_GL_PUBTYPES.
+    Or call dwarf_get_pubtypes().
+
     The following four were defined in SGI/IRIX
-    compilers in the 1990s but never part of the
+    compilers in the 1990s but were never part of the
     DWARF standard.
+    These sections are accessed calling dwarf_globals_by_type()
+    using type of DW_GL_FUNCS,DW_GL_TYPES,DW_GL_VARS, or
+    DW_GL_WEAKS.
 
     It not likely you will encounter these.
 
     @code
-    .debug_funcs      Dwarf_Func   None          dwarf_get_funcs
-    .debug_typenames  Dwarf_Type   None          dwarf_get_types
-    .debug_vars       Dwarf_Var    None          dwarf_get_vars
-    .debug_weaks      Dwarf_Weak   None          dwarf_get_weaks
+    .debug_funcs      
+    .debug_typenames  
+    .debug_vars       
+    .debug_weaks     
     @endcode
+
 
     @section dwsec_noobj Reading DWARF with no object file present
 

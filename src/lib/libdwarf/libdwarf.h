@@ -528,7 +528,7 @@ typedef struct Dwarf_Regtable_Entry3_s {
     with register table size that fits in a 16 bit
     unsigned value.  */
 typedef struct Dwarf_Regtable3_s {
-    struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
+    struct Dwarf_Regtable_Entry3_s   
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
@@ -7084,7 +7084,11 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
     This accesses .debug_pubnames and .debug_names sections.
     Section .debug_pubnames is defined in DWARF2, DWARF3,
     and DWARF4.
-    Section .debug_names is defined in DWARF5.
+    Section .debug_names is defined in DWARF5 and contains
+    lots of information, but only the part of the wealth
+    of information that this interface allows can
+    be retrieved here. See dwarf_dnames_header() for
+    access to all. debug_names data.
 
     The code here, as of 0.4.3, September 3 2022,
     returns data from either section.
@@ -7109,6 +7113,7 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     Dwarf_Signed * dw_number_of_globals,
     Dwarf_Error  * dw_error);
 
+
 #define DW_GL_GLOBALS  0 /* .debug_pubnames  and .debug_names */
 #define DW_GL_PUBTYPES 1 /* .debug_pubtypes */
 /* the following are IRIX ONLY */
@@ -7116,9 +7121,28 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 #define DW_GL_TYPES    3 /* .debug_typenames */
 #define DW_GL_VARS     4 /* .debug_varnames */
 #define DW_GL_WEAKS    5 /* .debug_weaknames */
+/*! @brief Global debug_types access 
 
-/*  Same function name as 0.5.0 and earlier, but
-    the data type changes to Dwarf_Global */
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_pubtypes
+    On success returns an array of pointers to opaque
+    structs..
+    @param dw_number_of_pubtypes
+    On success returns the number of entries in the array.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if the section is not present.
+
+    Same function name as 0.5.0 and earlier, but
+    the data type changes to Dwarf_Global
+
+    dwarf_get_pubtypes() is an alternate name for
+    dwarf_globals_by_type(..,DW_GL_PUBTYPES,..).
+   
+*/
 DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
     Dwarf_Global** dw_pubtypes,
     Dwarf_Signed * dw_number_of_pubtypes,
@@ -9392,4 +9416,4 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* _LIBDWARF_H */
+
