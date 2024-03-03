@@ -94,6 +94,7 @@ dwarf_safe_strcpy.c \
 dwarf_safe_strcpy.h \
 dwarf_secname_ck.c \
 dwarf_secname_ck.h \
+dwarf_seekr.c \
 dwarf_setup_sections.c \
 dwarf_setup_sections.h \
 dwarf_ranges.c \
@@ -155,7 +156,7 @@ CODINGSTYLE \
 dw-linetableheader.txt \
 CMakeLists.txt \
 libdwarf.pc.cmake \
-cmake/libdwarf-config.cmake \
+cmake/libdwarfConfig.cmake.in \
 meson.build \
 NEWS \
 README \

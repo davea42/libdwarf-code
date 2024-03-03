@@ -14,7 +14,7 @@
 2020-12-24 David Anderson
     * runtests.sh: The 'last time' timestamp expansion
       got different strings out of libc depending on timezone.
-      We do not really care what the date/time is, so 
+      We do not really care what the date/time is, so
       now we trim off the date/time text portion.
     * testobjLE32PE.base: Now contains the trimmed
       data with 0x0 but no day or year or time
@@ -82,7 +82,7 @@
       Revised prototypes for printing .debug_macro data.
     * macrocheck.c: Major changes to support full printing
       and checking of .debug_macro data.
-    * macrocheck.h: extern decls for .debug_macro moved from 
+    * macrocheck.h: extern decls for .debug_macro moved from
       globals.h to here.
     * print_die.c: Revised dwarfdump arglists to deal
       with .debug_macro data and revised glflags names.
@@ -90,7 +90,7 @@
     * print_macinfo.c: To match revised import recording
       function args to add_macro_import().
     * print_macro.c: Major revisions to descend through
-      imported macros and print and assess-correctness. 
+      imported macros and print and assess-correctness.
     * runtests.sh: Changing comments to make it clearer
       what each test is.
     * testobjLE32PE.base: Updated baseline to match
@@ -177,14 +177,14 @@
 2020-11-23: David Anderson
     * glflags.h, glflags.c: Added field glflags.gf_max_space_indent
       with value 10 so that really deep TAG nesting does not
-      result in mostly blank thousand-character lines. 
+      result in mostly blank thousand-character lines.
       If there is a call for it, the value could be supplied
       by a new dwarfdump option.
-    * globals.h: Removed two functions defined and 
+    * globals.h: Removed two functions defined and
       only used in print_die.c.
     * print_die.c: Too deep nesting is unreadable so now
       when 10 or more deep the output uses for example ...100...
-      instead of hundreds of spaces to indicate depth.      
+      instead of hundreds of spaces to indicate depth.
       Indentation of DW_OP output changed in some cases.
 2020-11-22: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
@@ -201,7 +201,7 @@
     * print_die.c: When an attribute expression DW_OP is
       a DWARF5 reference to a DW_TAG the details of the
       reference are indented a little and printed on
-      the line after the DW_OP itself. 
+      the line after the DW_OP itself.
       Seems easier to read that way.
 2020-11-22: David Anderson
     * command_options.c: The option is now
@@ -220,7 +220,7 @@
       set of return values.
     * dwconf.h: Macro defines for the new return values.
     * print_die.c: Now allows printing expression operations
-      one per line. Which will be the default very soon. 
+      one per line. Which will be the default very soon.
 2020-11-21: David Anderson
     * print_frames.c: Error message improvements and
       refactored fde/cie printing to make it easier
@@ -232,19 +232,19 @@
 2020-11-17: David Anderson
     * command_options.c: Minor line shortening.
     * dwconf.c: Previous commit introduced a few bugs.
-      Fixed, and clearer now. 
+      Fixed, and clearer now.
 2020-11-16: David Anderson
     * command_options.c: Now accepts --format-expr-op-per-line
     * dwarfdump.1: Mentions the option.
     * dwarfdump.c: Small changes passing die_indent_level
       around so formatting looks sensible with the new option.
-    * dwconf.c: Now deals with 
+    * dwconf.c: Now deals with
       option:  --format-expr-op-per-line
       in dwarfdump.conf. the option: command must preceed every
       beginabi: command.
     * esb_using_functions.h: Adding die_indent level to another
       function prototype.
-    * glflags.c,glflags.h: Renamed the flag for the option to 
+    * glflags.c,glflags.h: Renamed the flag for the option to
       gf_expr_op_per_line.
     * print_die.c,print_frames.c,print_frames.h,
       print_hipc_lopc_attr.c,print_locs.c: Now passing
@@ -268,7 +268,7 @@
       reads the same way as other verbose tests. Fixed
       various lines to meet the libdwarf coding style.
     * tag_attr.c,tag_tree.c: Changed to meet the
-      libdwarf coding style. 
+      libdwarf coding style.
 2020-11-11: David Anderson
     * print_abbrevs.c: Fixing a mistake in the
       new code. The error lead to an
@@ -296,7 +296,7 @@
       output.
 
 2020-11-04: David Anderson
-    * globals.h,print_lines.c,print_die.c: Adding arguments for a 
+    * globals.h,print_lines.c,print_die.c: Adding arguments for a
       srcfiles array for the CU to
       to print_line_numbers_this_cu(). Now, with -vvv
       just printing line tables will print the dwarf_srcfiles
@@ -319,7 +319,7 @@
       print_macinfo_for_cu() now prints the file name
       (from srcfiles list) if it is DW_MACINFO_start_file.
     * print_macinfo.c: Nowuses passed-in srcfiles
-      to get the full path for the file index 
+      to get the full path for the file index
       DW_MACINFO_start_file.
     * print_macro.c: Prints the DWARF5 set_file macro
       correctly with name.
@@ -425,7 +425,7 @@
       that are being used now.
     * tag_tree.list: Added standard tag-tag relationships
       that are being used now.
-    * dwarfdump-ta-table.h: Regenerated.  
+    * dwarfdump-ta-table.h: Regenerated.
     * dwarfdump-tt-table.h: Regenerated.
 2020-10-17: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
@@ -450,7 +450,7 @@
       dwarfdump-tt-table.h: Regenerated with latest
       version string.
 2020-10-11: David Anderson
-    * command_options.c: Refined a wordy comment.  
+    * command_options.c: Refined a wordy comment.
     * dwarfdump.1: Document the new ability to
       get to GNU debuglink files automatically.
     * dwarfdump.c: Implement support for reading GNU
@@ -567,7 +567,7 @@
       the printed strings (just in case an object file is
       corrupted or maybe not plain ascii strings).
 2020-08-23: David Anderson
-    * dwarfdump-ta-ext-table.h: Regenerated 
+    * dwarfdump-ta-ext-table.h: Regenerated
     * tag_attr_ext.list: Added DW_AT_GNU_macros
       to the known-extensions list.
 2020-08-23: David Anderson
@@ -580,11 +580,11 @@
       whitespace, fixed indents.
 2020-08-23: David Anderson
     * checkutil.c: Removed #if 0 lines from previous
-      commit.  
+      commit.
     * dwarfdump.c: Removed debug printf lines.
     * print_die.c: Removed debug printf lines.
 2020-08-22: David Anderson
-    * checkutil.c: Temporary debug printf.  
+    * checkutil.c: Temporary debug printf.
     * dwarfdump.c: Revised pRangesInfo reset
       when we have a tied dbg, as in that case we often
       miss function/scope address ranges.  Temporary debug
@@ -614,7 +614,7 @@
       location data.
     * print_frames.c: Added short comments for clarity.
 2020-07-28: David Anderson
-    * dwarf_names.c: Regenerated.  
+    * dwarf_names.c: Regenerated.
     * print_die.c: Added DW_OP_GNU_variable_value to the table.
 2020-07-19: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
@@ -654,7 +654,7 @@
       case of errors (a function with no side effects but
       setting the glflags fields for use in error reports).
 2020-07-15: David Anderson
-    * CMakeLists.txt,Makefile.am: Added print_hipc_lopc_attr.c.  
+    * CMakeLists.txt,Makefile.am: Added print_hipc_lopc_attr.c.
     * Makefile.in: Regenerated.
     * print_die.c: Moved print_hipc_lopc_attribute() from
       here to print_hipc_lopc_attr.c.  Moved file-static
@@ -668,7 +668,7 @@
       can be called from more than one file in libdwarf.
       Added print_hipc_lopc_attribute() declaration as it
       is moved to its own source file.
-    * glflags.h: Added new member in_valid_code.  
+    * glflags.h: Added new member in_valid_code.
     * glflags.c: Added glflags.in_valid_code = FALSE,
       a new global-like variable to replace the old
       print_die.c static variable in_valid_code.  Adds a
@@ -689,8 +689,8 @@
       string.
 2020-07-13: David Anderson
     * CMAkeLists.txt: Adding print_debug_sup.c    .
-    * Makefile.am: Adding print_debug_sup.c  .    
-    * Makefile.in: Regenerated.  
+    * Makefile.am: Adding print_debug_sup.c  .
+    * Makefile.in: Regenerated.
     * command_options.c: Added
     flag  gf_debug_sup_flag
       amd --print-debug-sup options.
@@ -699,8 +699,8 @@
       DW_GNUIVIS_static value for the .debug_sup section.
     * dwarfdump.c: Adds check of gf_debug_sup_flag and
       call of print_debug_sup().
-    * glflags.h: Adds boolean gf_debug_sup_flag.  
-    * globals.h: Adds print_debug_sup() declaration.  
+    * glflags.h: Adds boolean gf_debug_sup_flag.
+    * globals.h: Adds print_debug_sup() declaration.
     * print_debug_sup.c: new to print .debug_sup.
 2020-07-11: David Anderson
     * print_debug_gnu.c: After printing the section
@@ -727,8 +727,8 @@
       DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES
       DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES
     * Makefile.am: Adding print_debug_gnu.[ch] to
-      the files list.  
-    * Makefile.in: Regenerated.  
+      the files list.
+    * Makefile.in: Regenerated.
     * command_options.c: Add --print-debug-gnu option
       to print these sections.
     * dwarfdump.c: Implement printing of these sections.
@@ -750,7 +750,7 @@
     * CMakeLists.txt, Makefile.am: Renamed print_dnames.c
     to
       print_debug_names.c
-    * Makefile.in: Regenerated.  
+    * Makefile.in: Regenerated.
     * command_options.c: Corrected the help text for
       --print-fission.    Added --print-debug_names, which
       does not yet do anything useful.
@@ -821,14 +821,14 @@
       the variable is doing.
     * print_frames.c: Suppresses some output when checking.
     * print_llex_codes.c: When checking suppress some
-      output.  
-    * print_loclists.c: Removed pointless {}.    
+      output.
+    * print_loclists.c: Removed pointless {}.
     * print_loclists_codes.c,print_original_loclist_linecodes.c:
       Suppresses some output when checking.
     * print_rnglists.c: Clarify which routines apply solely
       to printing raw rangelists.
     * tag_attr_ext.list: Added DW_AT_encoding to
-      common extensions 
+      common extensions
     * tag_common.h: Incremented
       EXT_ATTR_TABLE_ROWS 16
       so the tables can be rebuilt.
@@ -873,7 +873,7 @@
       and remove trailing whitespace.
 2020-06-10: David Anderson
     * CMakeLists.txt: Added print_loclists.c to the C
-      file list.    
+      file list.
     * runtests.sh: Changed the generated
       (temporary) filenames
       so it is easier to understand where to copy the new
@@ -887,8 +887,8 @@
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
       dwarfdump-tt-table.h : Updated  version string
 2020-06-09: David Anderson
-    * Makefile.am: New files due to refactoring.  
-    * Makefile.in: Regenerated.  
+    * Makefile.am: New files due to refactoring.
+    * Makefile.in: Regenerated.
     * command_options.c: Added --print-raw-loclists
       which prints all the details of .debug_lists but does
       not do any reference to .debug_info or .debug_addr
@@ -1067,9 +1067,9 @@
     * print_lines.c: Line formatting corrected.
     * print_macro.c: Line formatting corrected.
     * print_pubnames.c: Reflects new arglist to
-      get_producer_name().  
+      get_producer_name().
     * print_ranges.c: Line
-      formatting corrected.  
+      formatting corrected.
     * dwarf_errmsg_list.h: Added
       DW_DLE_USER_DECLARED_ERROR so
       dwarfdump can declare an error on its own.
@@ -1082,7 +1082,7 @@
       missing .debug_rnglists
       section support (coming soon).
 2020-04-22  David Anderson
-    * dwarfdump-ta-ext-table.h: regenerated 
+    * dwarfdump-ta-ext-table.h: regenerated
     * tag_attr_ext.list: Added to common extensions list
       DW_AT_GNU_pubnames DW_AT_GNU_pubtypes
       DW_AT_GNU_dwo_name DW_AT_GNU_ranges_base

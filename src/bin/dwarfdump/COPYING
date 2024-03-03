@@ -24,7 +24,7 @@ The files:
 	dwarfdump.c
 	and all the .h and .c files in this implementation of
 	dwarfdump are copyrighted according to the file
-	DWARFDUMPCOPYRIGHT.   
+	DWARFDUMPCOPYRIGHT.
 
 
 $Source: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/COPYING,v $

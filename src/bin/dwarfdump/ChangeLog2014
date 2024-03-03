@@ -28,7 +28,7 @@
        when not wanted.
 2014-08-02  David Anderson
      * print_debugfission.c, print_gdbindex.c: Use the section name
-       strings returned by section-open 
+       strings returned by section-open
        for object files that have them (like Elf).
 2014-07-12  David Anderson
      * print_die.c: Using a new interface to print the
@@ -49,7 +49,7 @@
      * Makefile.n: Add print_debugfission.o to the list.
      * globals.h: Add print_debugfission_index() interface.
      * print_debugfission.c: New file beginning to
-       support  print of .debug_tu_index and 
+       support  print of .debug_tu_index and
        .debug_cu_index sections  (DWARF5).
 2014-07-02  David Anderson
      * dwarfdump.c: A missing comma after DW_SECTNAME_GDB_INDEX
@@ -84,10 +84,10 @@
      *  dwarfdump.c,print_die.c: Fixed indent errors and
         removed trailing whitespace.
 2014-05-14  David Anderson
-     * print_die.c: Complete printing of DW_FORM_GNU_str_index, 
-       DW_FORM_GNU_addr_index, 
+     * print_die.c: Complete printing of DW_FORM_GNU_str_index,
+       DW_FORM_GNU_addr_index,
        DW_FORM_addrx, DW_FORM_constx.
-     * print_frames.c: Now supports DW_FORM_GNU_addr_index, 
+     * print_frames.c: Now supports DW_FORM_GNU_addr_index,
        DW_FORM_addrx, DW_FORM_constx.
      * dwarfdump.c: Update version string.
        Trivial text realignment of argument strings
@@ -127,7 +127,7 @@
 2014-01-29  David Anderson
       * addrmap.c addrmap.h checkutil.c,checkutil.h,
         common.c common.h,dwarf_tsearch.h,dwarfdump.c,dwconf.c,
-        dwconf.h,esb.c,esb.h,globals.h,makename.h,naming.c,naming.h: 
+        dwconf.h,esb.c,esb.h,globals.h,makename.h,naming.c,naming.h:
         Remove trailing whitespace.
       * print_abbrevs.c,print_aranges.c,print_die.c,print_frames.c,
         print_frames.h,
@@ -153,9 +153,9 @@
       * makename.c: Delete blank line and trailing space. Add cast
         so gcc -ansi compiles without complaint.
       * print_die.c, uri.c: Change // comments to /* */ comments.
-      * tag_attr.c: Add getopt.h include so gcc -ansi compiles 
+      * tag_attr.c: Add getopt.h include so gcc -ansi compiles
         without complaint.
-      * tag_tree.c: Add getopt.h and string.h include so gcc -ansi compiles 
+      * tag_tree.c: Add getopt.h and string.h include so gcc -ansi compiles
         without complaint. Add cast so strdup call to avoid warning.
       * addr_map.c: Add cast so strdup call does not cause warning gcc -ansi.
 2014-01-04  David Anderson

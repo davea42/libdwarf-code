@@ -1,3 +1,78 @@
+id: DW202402-003
+fuzzer: hongg
+datereported: 2024-02-18
+reportedby: ifygecko
+vulnerability: crashes randomly reading fuzzed locllist
+product: libdwarf
+description: A carefully corrupted loclists entry
+  can cause libdwarf to read outside of its
+  allowed areas in dwarf_loclists.c due to lack of a
+  sanity check.
+  A segmentation error and libdwarf crash is likely.
+  Similar code in dwarf_rnglists.c and that now
+  has the additional checks.
+  The bugs have been present in both since the code was created
+  in June 2020.
+datefixed: 2024-02-18
+references: regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
+gitfixid: 5cfbd87dff4fc3c3b595bb92ed886934945b372c
+tarrelease:
+endrec: DW202402-003
+
+
+id: DW202402-002
+cve: CVE-2024-2002
+fuzzer: hongg
+datereported: 2024-02-16
+reportedby: ifygecko
+vulnerability: crashes randomly on fuzzed object
+product: libdwarf
+description: In a multiply-corrupted DWARF object
+  libdwarf may try to dealloc(free) an allocation twice.
+  Results are unpredictable and various.
+  This has been a possibility since we added code
+  to prevent leaks when generating 'unattached'
+  Dwarf_Error records (where there is no
+  Dwarf_Debug available at the point of error).
+  The problem was introduced in libdwarf-0.1.0
+  in 2021.
+datefixed: 2024-02-17
+references: regressiontests/hongg2024-02-16/SIGABRT-a.fuzz
+            SIGABRT-b.fuzz SIGABRT-c.fuzz SIGSEGV-d.fuzz
+            SIGSEGV-e.fuzz SIGSEGV-f.fuzz SIGSEGV-g.fuzz
+            SIGSEGV-h.fuzz SIGSEGV-i.fuzz SIGSEGV-k.fuzz
+gitfixid: 404e6b1b14f60c81388d50b4239f81d461b3c3ad
+tarrelease:
+endrec: DW202402-002
+
+
+
+
+id: DW202402-001
+fuzzer: ossfuzz id: 66646
+datereported: 2024-02-12
+reportedby: David Korczynski
+vulnerability: Reference memory outside of section.
+product: libdwarf
+description: The data pointer for DW_FORM_ref1
+  was not being validated as pointing into the section before
+  being dereferenced.  Here reading a corrupted
+  DWARF section.  A library crash is likely.
+  This test failure happened to be on a
+  DW_AT_abstract_origin attribute,
+  but the problem applies in many other situations.
+  Nearly the other forms had checks.
+  This check has been missing for many years.
+  Similarly the requisite check was missing from
+  DW_FORM_block1 for many years and that too
+  was fixed so all the FORMs have checks now.
+datefixed: 2024-02-13
+references: regressiontests/ossfuzz66646/fuzz_findfuncbypc-5178544143532032
+gitfixid: f21e2f7687f3dca183026a1fb72ca1f0dcf8befa
+tarrelease:
+endrec: DW202402-001
+
+
 
 id: DW202311-002
 fuzzer: ossfuzz id: 64496
@@ -5,7 +80,7 @@ datereported: 2023-02-28
 reportedby: David Korczynski
 vulnerability: Null dereference from dwarf_gnu_debuglink()
 product: libdwarf
-description: If the Dwarf_Debug was opened  with 
+description: If the Dwarf_Debug was opened  with
   dwarf_init_object_b() there is no pathname known to libdwarf
   and the library was dereferencing a null pointer as a result.
   With the library bug fixed
@@ -16,7 +91,7 @@ description: If the Dwarf_Debug was opened  with
 datefixed: 2023-11-25
 references: regressiontests/ossfuzz64496/fuzz_debuglink-615437663823462
 gitfixid:  d76cce559b898f7059ce5ffd82f3cfd58cb392fe
-tarrelease:
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202311-002
 
 id: DW202311-001
@@ -29,7 +104,7 @@ description: Passing a null Dwarf_Debug to
   dwarf_add_debuglink_global_path() lead to  library crash.
   The code was not checking for a valid Dwarf_Debug Argument.
   The bug was present when the function was created in 2021
-  Moreover, oss fuzz originally noted the bug 
+  Moreover, oss fuzz originally noted the bug
   on 02 March 2023 but
   I can find no trace of a notification of the bug arriving
   before 24 November 2023.
@@ -39,7 +114,7 @@ description: Passing a null Dwarf_Debug to
 datefixed: 2023-11-25
 references: regressiontests/ossfuzz56452/fuzz_debuglink-cs4231a-5927365017731072
 gitfixid: 1f6988307748f427566e3266695bb72d5384bf3d
-tarrelease:
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202311-001
 
 
@@ -56,7 +131,7 @@ description: A copy-paste error lead to
 datefixed: 2023-10-07
 references: regressiontests/ossfuzz63024/fuzz_init_path-5486726493372416
 gitfixid: 3a658bd1dd7437948cecbf82bb9b24f5f6122a7d
-tarrelease:
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202310-002
 
 id: DW202310-001
@@ -67,23 +142,23 @@ vulnerability: Heap buffer overflow
 product: libdwarf
 description: The heap buffer overflow was due
   to a failure to do initial sanity checks on a
-  universal object. The object involved was 
+  universal object. The object involved was
   not large enough to have a complete universal
-  header.  
+  header.
   This bug was in the public repository
   for three days (in all-new code, for Apple
   Universal Binary objects).
 datefixed: 2023-10-03
 references: regressiontests/ossfuzz62943/fuzz_init_path-5486726493372416
 gitfixid: aea77dad8745d9aad5275c3226e4e3156effa71f
-tarrelease:
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202310-001
 
 id: DW202309-004
 fuzzer: ossfuzz id: 62842
 datereported: 2023-09-30
 reportedby: David Korczynski
-vulnerability: Heap buffer overflow  
+vulnerability: Heap buffer overflow
 product: libdwarf
 description: The heap buffer overflow in
   _dwarf_memcpy_swap_bytes was due a failure to check
@@ -96,7 +171,7 @@ description: The heap buffer overflow in
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62842/fuzz_findfuncbypc-4964619766333440.fuzz
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
-tarrelease: 
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202309-004
 
 id: DW202309-003
@@ -115,7 +190,7 @@ description: The September 29 addition of Mach-O
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62834/fuzz_init_path-4573857635500032
 gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
-tarrelease: 
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202309-003
 
 id: DW202309-002
@@ -134,7 +209,7 @@ description: The September 29 addition of Mach-O
 datefixed: 2023-10-01
 references: regressiontests/ossfuzz62833/fuzz_set_frame_all-4521858130903040
 gitfixid: gitfixid: f7c7e84e5a77915bb6570215887118d8e7759122
-tarrelease: 
+tarrelease:  libdwarf-0.9.0.tar.xz
 endrec: DW202309-002
 
 
@@ -148,17 +223,17 @@ product: libdwarf
 description: Calling dwarf_get_fde_for_die() causes the
   problem as its special handling in a user calling
   for fde destruction is wrong when dwarf_finish()
-  is calling for fde destruction.  
+  is calling for fde destruction.
   dwarf_finish() can refer to freed memory
   in trying to delete a CIE twice.
   The use after free has a dependence on the order nodes are seen
-  in the de_alloc_tree tdestroy() walk of the table 
+  in the de_alloc_tree tdestroy() walk of the table
   (the order is not predictable).
   Broken in release 0.8.0 and all previous releases.
 datefixed: 2023-09-23
 references: regressiontests/ossfuzz62547/fuzz_stack_frame_access-5263709637050368
 gitfixid: cd741379bd0203a0875b413542d5f982606ae637
-tarrelease: 
+tarrelease: libdwarf-0.9.0.tar.xz
 endrec: DW202309-001
 
 id: DW202308-001
@@ -472,7 +547,7 @@ description: Calling dwarf_highpc_b() lead to crash.
   the argument was checked. Now it is checked
   for null before any dereference.
 
-  In addtion, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
+  In addition, the test code, fuzz/fuzz_die_cu_attrs_loclist.c,
   called dwarf_highpc_b() with a Dwarf_Die that is
   uninitialized local variable (hence contents unpredictable).
   C code has no way to catch such a caller error.
@@ -1039,7 +1114,7 @@ description: The  command:
   It no longer does, due to earlier
   libdwarf fixes.
 datefixed: 2023-03-25
-references:  refressiontests/choi012/poc_file_08
+references:  regressiontests/choi012/poc_file_08
 gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-043
@@ -1060,7 +1135,7 @@ description: The  command:
   Before recent fixes to libdwarf this would
   also generate heap-use-after-free.
 datefixed: 2023-03-25
-references:  refressiontests/choi012/poc_file_07
+references:  regressiontests/choi012/poc_file_07
 gitfixid: 4a8a201cdb3408a2cfdc2946418b51b884140a2c
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-042
@@ -1077,7 +1152,7 @@ description: The  command:
   is now working, apparently fixed by earlier
   bug fixes in libdwarf.
 datefixed: 2023-03-25
-references:  refressiontests/choi012/poc_file_06
+references:  regressiontests/choi012/poc_file_06
 gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-041
@@ -1096,7 +1171,7 @@ description: The  command: dwarfdump --file-abi=
   dwoptarg variable is not set at all, leading
   to a segmentation violation.
 datefixed: 2023-03-25
-references:  refressiontests/choi011/README
+references:  regressiontests/choi011/README
 gitfixid: fd92b647e5e3a524be94b3b06c9efd14a8292946
 tarrelease: libdwarf-0.7.0.tar.xz
 endrec: DW202303-040
@@ -2616,7 +2691,7 @@ description:  3/7. An apparent heap overflow that
   The submission was with Ubuntu 14.04. With Ubuntu
   16.04 there is no sanitizer error report.
 
- 
+
  A portion of sanitizer output with Ubuntu 14.04:
  <pre>
   ==180106==ERROR: AddressSanitizer: heap-buffer-overflow
@@ -3123,7 +3198,7 @@ description: At line 1533 of dwarf_die_deliv.c a
  Bug report on sourceforge.net bug list for libdwarf.
  The bad pointer dereference is due to libdwarf
  not noticing that the DWARF in that file is corrupt.
- In addtion
+ In addition
  The code was not noticing that it could dereference
  a pointer that pointed out of bounds in the end-sibling-list
  loop.

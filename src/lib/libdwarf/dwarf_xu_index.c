@@ -88,7 +88,7 @@
 /* zerohashkey used as all-zero-bits for comparison. */
 static const Dwarf_Sig8 zerohashkey;
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -780,7 +780,7 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Unsigned m = 0;
-    Dwarf_Unsigned secnum_index = 0; 
+    Dwarf_Unsigned secnum_index = 0;
     Dwarf_Bool     found_secnum = FALSE;
     int res = 0;
 
@@ -869,7 +869,7 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned i = 0;
     Dwarf_Unsigned l = 0;
     Dwarf_Unsigned n = 1;
-    Dwarf_Unsigned max_cols = 
+    Dwarf_Unsigned max_cols =
         xuhdr->gx_column_count_sections;/* L */
     Dwarf_Unsigned secnums[DW_FISSION_SECT_COUNT];
     int res = 0;

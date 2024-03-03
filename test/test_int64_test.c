@@ -36,8 +36,8 @@ int failcount = 0;
 // Multiplies two 64-bit signed ints if possible.
 // Returns 0 on success, and puts the product of x and y into the result.
 // Returns 1 if there was an overflow.
-static 
-int 
+static
+int
 int64_mult(long long x, long long y, long long * result)
 {
     *result = 0;
@@ -63,7 +63,7 @@ void test_int64_mult_success(long long x, long long y, long long expected,int li
     }
     if (result != expected)
     {
-        fprintf(stderr, "wrong result: %lld %lld %lld %lld line %d\n", 
+        fprintf(stderr, "wrong result: %lld %lld %lld %lld line %d\n",
              x, y, expected, result,line);
         ++failcount;
     }
@@ -76,7 +76,7 @@ void test_int64_mult_success(long long x, long long y, long long expected,int li
     }
     if (result != expected)
     {
-        fprintf(stderr, "wrong result: %lld %lld %lld %lld line %d\n", 
+        fprintf(stderr, "wrong result: %lld %lld %lld %lld line %d\n",
             y, x, expected, result,line);
         ++failcount;
     }

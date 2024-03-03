@@ -35,19 +35,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <string.h> /* memset() strlen() */
 
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* lseek() off_t ssize_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek() off_t */
-#endif /* _WIN32 */
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() O_RDONLY */
-#endif /* HAVE_FCNTL_H */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -58,16 +45,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_macho_loader.h"
 #include "dwarf_string.h"
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif /* O_RDONLY */
-#ifndef O_CLOEXEC
-#define O_CLOEXEC 0
-#endif /* O_CLOEXEC */
 
 /*  TYP, SIZEOFT32 and ASNAR
     mean we can use correctly-sized arrays of char for the
@@ -114,7 +91,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* A flag not public to users. */
 static int _dwarf_global_debuglink_crc_suppress;
 
-#if 0
+#if 0 /* debugging only */
 /* debugging only */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
@@ -539,49 +516,40 @@ _dwarf_object_detector_fd_a(int fd,
     int *errcode)
 {
     struct elf_header h;
-    size_t readlen = sizeof(h);
-    int res = 0;
-    off_t fsize = 0;
-    off_t lsval = 0;
-    ssize_t readval = 0;
+    Dwarf_Unsigned readlen = sizeof(h);
+    Dwarf_Unsigned fsize = 0;
     Dwarf_Unsigned remaininglen  = 0;
+    int            res = 0;
 
-    fsize = lseek(fd,0L,SEEK_END);
-    if (fsize < 0) {
+    res = _dwarf_seekr(fd,0,SEEK_END,&fsize);
+    if (res != DW_DLV_OK) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    if (fsize <= (off_t)readlen) {
+    if (fsize <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-    if ((Dwarf_Unsigned)fsize <= fileoffsetbase) {
+    if (fsize <= fileoffsetbase) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    remaininglen = (Dwarf_Unsigned)fsize - fileoffsetbase;
+    remaininglen = fsize - fileoffsetbase;
     if (remaininglen <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-#ifdef _WIN32
-    lsval  = (off_t)lseek(fd,(long)fileoffsetbase,SEEK_SET);
-#else
-    lsval  = lseek(fd,(off_t)fileoffsetbase,SEEK_SET);
-#endif
-    if (lsval < 0) {
+    /*  fileoffsetbase is non zero iff we have
+        an Apple Universal Binary. */
+    res = _dwarf_seekr(fd,fileoffsetbase,SEEK_SET,0);
+    if (res != DW_DLV_OK) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    /*  These reads are small. */
-#ifdef _WIN32
-    readval = (ssize_t)read(fd,&h,(unsigned const)readlen);
-#else
-    readval = read(fd,&h,readlen);
-#endif
-    if (readval != (ssize_t)readlen) {
+    res = _dwarf_readr(fd,(char *)&h,readlen,0);
+    if (res != DW_DLV_OK) {
         *errcode = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
     }
@@ -667,7 +635,7 @@ dwarf_object_detector_path_dSYM(
             *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
-        fd = open(outpath,O_RDONLY|O_BINARY|O_CLOEXEC);
+        fd = _dwarf_openr(outpath);
         if (fd < 0) {
             outpath[0] = 0;
             return DW_DLV_NO_ENTRY;
@@ -676,10 +644,10 @@ dwarf_object_detector_path_dSYM(
         res = dwarf_object_detector_fd(fd,
             ftype,endian,offsetsize,filesize,errcode);
         if (res != DW_DLV_OK) {
-            close(fd);
+            _dwarf_closer(fd);
             return res;
         }
-        close(fd);
+        _dwarf_closer(fd);
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -926,12 +894,12 @@ _dwarf_debuglink_finder_internal(
         /*  First, open the file to determine if it exists.
             If not, loop again */
 
-        pfd = open(pa,O_RDONLY|O_BINARY| O_CLOEXEC);
+        pfd = _dwarf_openr(pa);
         if (pfd  < 0) {
             /*  This is the usual path. */
             continue;
         }
-        close(pfd);
+        _dwarf_closer(pfd);
         /* ASSERT: never returns DW_DLV_ERROR */
         res = _dwarf_debuglink_finder_newpath(
             pa,crc,buildid_length, buildid,
@@ -990,7 +958,7 @@ dwarf_object_detector_path_b(
         if (res == DW_DLV_ERROR) {
             dwarfstring_destructor(&m);
             if (debuglink_fd != -1) {
-                close(debuglink_fd);
+                _dwarf_closer(debuglink_fd);
             }
             return res;
         }
@@ -1004,7 +972,7 @@ dwarf_object_detector_path_b(
             lpathsource = DW_PATHSOURCE_basic;
         } else {
             if (debuglink_fd != -1) {
-                close(debuglink_fd);
+                _dwarf_closer(debuglink_fd);
                 debuglink_fd = -1;
             }
             dllenszt = dwarfstring_strlen(&m)+1;
@@ -1021,11 +989,11 @@ dwarf_object_detector_path_b(
             lpathsource = DW_PATHSOURCE_debuglink;
         }
         dwarfstring_destructor(&m);
-        fd = open(outpath,O_RDONLY|O_BINARY|O_CLOEXEC);
+        fd = _dwarf_openr(outpath);
         /* fall through to get fsize etc */
     } else {
         lpathsource = DW_PATHSOURCE_basic;
-        fd = open(path,O_RDONLY|O_BINARY|O_CLOEXEC);
+        fd = _dwarf_openr(path);
     }
     if (fd < 0) {
         if (pathsource) {
@@ -1041,6 +1009,6 @@ dwarf_object_detector_path_b(
     if (pathsource) {
         *pathsource = lpathsource;
     }
-    close(fd);
+    _dwarf_closer(fd);
     return res;
 }

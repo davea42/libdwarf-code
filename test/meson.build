@@ -148,7 +148,7 @@ if py3_exe.found()
     pyexec_name = join_paths(projectbase,'test','test_dwarfdump.py')
     test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase])
   endforeach
-endif  
+endif
 
 shscripttests =  []
 if get_option('dwarfexample') == true

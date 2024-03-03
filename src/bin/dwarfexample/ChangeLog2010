@@ -5,7 +5,7 @@ April 26, 2010 David Anderson <davea42@earthlink.net>
      and names with embedded spaces.
 March 31, 2010 David Anderson <davea42@earthlink.net>
    * simplereader.c: Added a new option --names which
-     shows additional detail on getting attributes and source 
+     shows additional detail on getting attributes and source
      file information.
 January 3, 2010 David Anderson <davea42@earthlink.net>
    * frame1.c, simplereader.c: Update copyright year.

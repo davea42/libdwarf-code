@@ -79,7 +79,7 @@ extern "C" {
 
 /*
     libdwarf.h
-    $Revision: #9 $ $Date: 2008/01/17 $
+    Revision: #9  Date: 2008/01/17
 
     For libdwarf consumers (reading DWARF2 and later)
 
@@ -528,7 +528,7 @@ typedef struct Dwarf_Regtable_Entry3_s {
     with register table size that fits in a 16 bit
     unsigned value.  */
 typedef struct Dwarf_Regtable3_s {
-    struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
+    struct Dwarf_Regtable_Entry3_s   
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
@@ -3326,8 +3326,9 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     DW_DLV_OK.
 
     In referencing the array via a file-number from
-    a DW_AT_decl_file attribute one needs to
-    know if the CU is DWARF5 or not.
+    a <b>DW_AT_decl_file</b> or
+    <b>DW_AT_call_file</b> attribute one needs
+    to know if the CU is DWARF5 or not.
 
     Line Table Version numbers match compilation unit
     version numbers except that an experimental line table
@@ -3335,11 +3336,15 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     sometimes been used with DWARF4.
 
     For DWARF5:
-    The file-number from a \b DW_AT_decl_file
+
+    The file-number from a <b>DW_AT_decl_file</b> or
+    <b>DW_AT_call_file</b>
     is the proper index into the array of string pointers.
 
     For DWARF2,3,4, including experimental line table
-    version 0xfe06 and a file-number from a \b DW_AT_decl_file:
+    version 0xfe06 and a file-number from a
+    <b>DW_AT_decl_file</b> or  <b>DW_AT_call_file</b>:
+
     -# If the file-number is zero there is no file name to find.
     -# Otherwise subtract one(1) from the file-number and
        use the new value as the index into the array
@@ -4840,7 +4845,6 @@ DW_API int dwarf_debug_addr_table(Dwarf_Debug dw_dbg,
 
 /*! @brief Return .debug_addr address given table index
 
-
     @param dw_dat
     Pass in a Dwarf_Debug_Addr_Table pointer.
     @param dw_entry_index
@@ -6219,20 +6223,25 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
     @param dw_dbg
     The Dwarf_Debug whose .debug_str section we want to access.
     @param dw_offset
-    Pass in a a string offset. Start at 0, and
+    Pass in a string offset. Start at 0, and
     for the next call pass in dw_offset
     plus dw_strlen_of_string plus 1.
     @param dw_string
+    The caller must pass in a valid pointer to a char *.
     On success returns a pointer to a string from offset
     dw_offset. Never dealloc or free this string.
     @param dw_strlen_of_string
+    The caller must pass in a valid pointer to a Dwarf_Signed.
+
     On success returns the strlen() of the string.
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
     The usual value: DW_DLV_OK etc.
-    If there is no such section or if dw_offset is >=
-    the section size it returns DW_DLV_NO_ENTRY.
+    If there is no such section it returns DW_DLV_NO_ENTRY.
+    If the dw_offset is greater than the section size,
+    or dw_string passed in is NULL or dw_strlen_of_string
+    is NULL the function returns DW_DLV_ERROR.
 */
 DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     Dwarf_Off        dw_offset,
@@ -7075,7 +7084,11 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
     This accesses .debug_pubnames and .debug_names sections.
     Section .debug_pubnames is defined in DWARF2, DWARF3,
     and DWARF4.
-    Section .debug_names is defined in DWARF5.
+    Section .debug_names is defined in DWARF5 and contains
+    lots of information, but only the part of the wealth
+    of information that this interface allows can
+    be retrieved here. See dwarf_dnames_header() for
+    access to all. debug_names data.
 
     The code here, as of 0.4.3, September 3 2022,
     returns data from either section.
@@ -7100,6 +7113,7 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     Dwarf_Signed * dw_number_of_globals,
     Dwarf_Error  * dw_error);
 
+
 #define DW_GL_GLOBALS  0 /* .debug_pubnames  and .debug_names */
 #define DW_GL_PUBTYPES 1 /* .debug_pubtypes */
 /* the following are IRIX ONLY */
@@ -7107,9 +7121,28 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 #define DW_GL_TYPES    3 /* .debug_typenames */
 #define DW_GL_VARS     4 /* .debug_varnames */
 #define DW_GL_WEAKS    5 /* .debug_weaknames */
+/*! @brief Global debug_types access 
 
-/*  Same function name as 0.5.0 and earlier, but
-    the data type changes to Dwarf_Global */
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_pubtypes
+    On success returns an array of pointers to opaque
+    structs..
+    @param dw_number_of_pubtypes
+    On success returns the number of entries in the array.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if the section is not present.
+
+    Same function name as 0.5.0 and earlier, but
+    the data type changes to Dwarf_Global
+
+    dwarf_get_pubtypes() is an alternate name for
+    dwarf_globals_by_type(..,DW_GL_PUBTYPES,..).
+   
+*/
 DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
     Dwarf_Global** dw_pubtypes,
     Dwarf_Signed * dw_number_of_pubtypes,
@@ -7368,7 +7401,7 @@ DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
     sections as well.
     @param dw_count_of_index_entries
     On success set to the count of index entries in
-    this particlular block number.
+    this particular block number.
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
@@ -7532,7 +7565,7 @@ DW_API int dwarf_gdbindex_culist_array(
     If dw_entryindex is too large for the array
     the function returns DW_DLV_NO_ENTRY.
     @param dw_cu_offset
-    On success returns the CU offet for this list entry.
+    On success returns the CU offset for this list entry.
     @param dw_cu_length
     On success returns the CU length(in bytes)
     for this list entry.
@@ -7575,9 +7608,9 @@ DW_API int dwarf_gdbindex_types_culist_array(
     If the value is greater than dw_list_length-1
     the function returns DW_DLV_NO_ENTRY.
     @param dw_cu_offset
-    On success returns the types CU offet for this list entry.
+    On success returns the types CU offset for this list entry.
     @param dw_tu_offset
-    On success returns the tu offet for this list entry.
+    On success returns the tu offset for this list entry.
     @param dw_type_signature
     On success returns the type unit offset for this
     entry if the type has a signature.
@@ -8163,7 +8196,13 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
 
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns DW_DLV_OK
-    that is filled in.
+    that array is filled in.
+
+    Callers must guarantee dw_crcbuf points
+    to at least 4 bytes of writable memory.
+    Passing in a null dw_crcbug results in an
+    immediate return of DW_DLV_NO_ENTRY and
+    the pointer is not used.
 
     @param dw_dbg
     Pass in an open dw_dbg.  When you attempted
@@ -8172,7 +8211,7 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
     The function reads the file into memory
     and performs a crc calculation.
     @param dw_crcbuf
-    Pass in a pointer to  a 4 byte area to hold
+    Pass in a pointer to a 4 byte area to hold
     the returned crc, on success the function
     puts the 4 bytes there.
     @param dw_error
@@ -8190,6 +8229,11 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
     not produce a return matching that of Linux/Macos if
     the compiler implements unsigned int or signed int as
     16 bits long.
+
+    The caller must guarantee that dw_buf is non-null
+    and pointing to dw_len bytes of readable memory.
+    If dw_buf is NULL then 0 is immediately returned
+    and there is no indication of error.
 
     @param dw_buf
     Pass in a pointer to some bytes on which the
@@ -8299,7 +8343,7 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
     @param dw_newerror
     Pass in a string whose content the function
     inserts as a harmless error (which
-    dwarf_get_harmless_error_list will retrieve.
+    dwarf_get_harmless_error_list will retrieve).
 */
 DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     char * dw_newerror);
@@ -8538,7 +8582,7 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
 
     These calls returning selected object header
     {machine architecture,flags)
-    and section (offset, flags) data 
+    and section (offset, flags) data
     are not of interest to most library callers:
     dwarf_machine_architecture(),
     dwarf_get_section_info_by_index_a(), and
@@ -8877,9 +8921,9 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     apply to DW_FTYPE_APPLEUNIVERSAL.
 
     dw_comdat_groupnumber only applies to DW_FTYPE_ELF.
-   
+
     Other than dw_dbg one can pass in NULL for any
-    pointer parameter whose value is not of interest. 
+    pointer parameter whose value is not of interest.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -8958,9 +9002,8 @@ DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
 /*! @brief Get section count (of object file sections).
 
     Return the section count. Returns 0 if the
-    dw_debug argument is improper in any way. 
+    dw_dbg argument is improper in any way.
 
-    @param dw_dbt
     @param dw_dbg
     Pass in a valid Dwarf_Debug of interest.
     @return
@@ -9373,4 +9416,4 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* _LIBDWARF_H */
+

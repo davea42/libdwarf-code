@@ -181,7 +181,7 @@ AS_IF(
              have_pc_zstd="no"
             ])
     ],
-    [ 
+    [
         have_zstd="no"
         have_pc_zstd="no"
         have_zlib="no"
@@ -222,7 +222,7 @@ AS_IF(
         have_zlib="no"
         have_pc_zlib="no"
     ])
-        
+
 ### for use in casts to uint to avoid 32bit warnings.
 ### Also needed by C++ cstdint
 AC_TYPE_UINTPTR_T

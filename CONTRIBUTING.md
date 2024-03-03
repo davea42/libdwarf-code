@@ -14,7 +14,7 @@ It's not necessary to actually modify
 libdwarf-regressiontests, but documenting
 (in some way) how this change can be tested is important.
 
-## Formalities 
+## Formalities
 If your contribution is just a few lines
 there is no paperwork to deal with.
 Generate a github pull request or generate
@@ -34,7 +34,7 @@ sign (email a pdf of the signed document).
 Either https://www.prevanders.net/generic_takebacklite.txt
 or
 https://www.prevanders.net/special_takebacklite.txt
-will do. We will sign to and return via email 
+will do. We will sign to and return via email
 a copy with all signatures.
 It is intended to assure the project that
 you have the right to contribute your code, that it's not
@@ -53,7 +53,7 @@ indents and no tabs.
 
 All contributions should be correct for all the supported
 platforms  (Linux (all), MacOS, and Windows Msys2) and
-supported endianness.  
+supported endianness.
 That's nearly always trivial and needs no special effort.
 
 

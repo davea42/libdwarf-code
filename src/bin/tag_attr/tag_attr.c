@@ -34,7 +34,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h" 
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_esb.h"

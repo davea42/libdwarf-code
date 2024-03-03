@@ -2246,24 +2246,24 @@ The full set of changes in gdb dwarf2.def is:
 
     2023-09-29
     Full AUB support is now public on github,
-    
+
     2023-09-30
     DW202309-002 ossfuzz id 62833
     DW202309-003 ossfuzz id 62834
     DW202309-004 ossfuzz id 62842
     reported. Bugs in AUB handling
     present publically for one day.
-    
+
     2023-10-01
     Pushed fix for the three bugs in AUB handling:
     DW202309-002 ossfuzz id 62833
     DW202309-003 ossfuzz id 62834
     DW202309-004 ossfuzz id 62842
-    
+
     2023-10-02
     DW202310-001 ossfuzz id 62943 reported
     on AUB handling.
-    
+
     2023-10-03
     Pushed fix to ossfuzz 62943 DW202310-001
 
@@ -3010,7 +3010,7 @@ The full set of changes in gdb dwarf2.def is:
     Changed > to >= .
     Around line 1615
     We lost track that this was an open bug.
-    Now fixed.  
+    Now fixed.
     It has been in existence for years.
             modified:   dwarf_frame2.c
 
@@ -3970,7 +3970,7 @@ The full set of changes in gdb dwarf2.def is:
     commit 9cae1be75ec333d2b8ab8800df4850ed77a8b025
 
     Fixing DW202306-009 ossfuzz id: 59775
-    
+
     A carefully fuzzed object could read one
     byte past the end of a frame section
     If the last thing in a frame section
@@ -5210,7 +5210,7 @@ The full set of changes in gdb dwarf2.def is:
     commit 162803c76d46a163403d12ca47a3a939d9fa8c04
 
     Refactored the setting up of section records
-    into dwarf_setup_sections.c 
+    into dwarf_setup_sections.c
     (moved from dwarf_init_finish.c) so we can
     get a timing baseline of what
     _dwarf_enter_section_in_de_debug_sections_array
@@ -6744,8 +6744,8 @@ The full set of changes in gdb dwarf2.def is:
     commit ade1be5d2efacaa23fbda4b4c1f08fcb8c0b3e4b
 
     Every return from the *LLVM* function has to
-    do certain hosekeeping
-    to avoid leaks (dwarf_finish(dhg) for example).
+    do certain housekeeping
+    to avoid leaks (dwarf_finish(dbg) for example).
     Several here failed to do that.
             modified:   fuzz/fuzz_rng.c
 

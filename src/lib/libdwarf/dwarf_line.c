@@ -652,7 +652,7 @@ dwarf_srcfiles(Dwarf_Die die,
         if (res != DW_DLV_OK) {
             return res;
         }
-        for (ifp = baseindex; ifp < endindex; 
+        for (ifp = baseindex; ifp < endindex;
             ++ifp,fe2 = fe->fi_next ) {
             int sres = 0;
             char *name_out = 0;
@@ -1860,7 +1860,7 @@ _dwarf_filename(Dwarf_Line_Context context,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-#if 0
+#if 0 /* erroneous correctness check. Ignore. */
     if (fileno_in >= context->lc_file_entry_count) {
         _dwarf_error_string(dbg,error, DW_DLE_NO_FILE_NAME,
             "DW_DLE_NO_FILE_NAME "
@@ -2518,7 +2518,7 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
 
     case DW_FORM_data8:
         if (ltype != DW_LNCT_size &&
-            ltype != DW_LNCT_size) {
+            ltype != DW_LNCT_timestamp) {
             break;
         }
         READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,

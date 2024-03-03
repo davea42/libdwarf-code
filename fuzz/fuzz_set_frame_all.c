@@ -47,12 +47,12 @@ static void dump_block(char *prefix, Dwarf_Small *data, Dwarf_Unsigned len);
     errors in corrupted objects, executing the program is
     guaranteed to leak memory when that class
     of errors is found in the object file being read.
-    
-    David Anderson 
+
+    David Anderson
 
     As of 30 May 2023 all the exit() calls (other
     than the open() call) are changed to
-    return; instead so we do not leak memory. 
+    return; instead so we do not leak memory.
     In addition the tab3.rt3_rules the code mallocs
     here is always freed here now. */
 

@@ -7390,6 +7390,12 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         attributes_encoding_table = (a_attr_encoding *)calloc(
             DW_AT_lo_user,
             sizeof(a_attr_encoding));
+        if (!attributes_encoding_table) {
+            printf("\nERROR: Unable the check attributes "
+                "encoding as calloc failed. Trying to continue\n");
+            glflags.gf_count_major_errors++;
+            return;
+        }
         /* We use only 5 slots in the table, for quick access */
         /* index 0x0b */
         attributes_encoding_factor[DW_FORM_data1]=1; /* index 0x0b */
@@ -7506,7 +7512,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 total_entries += entries;
                 total_bytes_formx += bytes_formx;
                 total_bytes_leb128 += bytes_leb128;
-                saved_rate = (float)(bytes_leb128 * 100 / bytes_formx);
+                saved_rate = (float)(bytes_leb128 * 100 /
+                    bytes_formx);
                 printf("%3d %-25s "
                     "%10" /*DW_PR_XZEROS*/ DW_PR_DUu /* Entries */
                     " "
@@ -7554,7 +7561,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 attributes_encoding_do_init = TRUE;
                 return infoerr;
             }
-            saved_rate = (float)((total_bytes_formx - total_bytes_leb128)
+            saved_rate = (float)((total_bytes_formx -
+                total_bytes_leb128)
                 * 100 / size);
             if (saved_rate > 0) {
                 printf("\n** .debug_info size can be reduced "

@@ -57,20 +57,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
 #include <config.h>
 #include <stdlib.h> /* calloc() free() malloc() */
 #include <string.h> /* memcpy() memset() strcmp() strdup() */
-
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() */
-#endif /* _WIN32 */
-
 #include <stdio.h> /* debugging printf */
 
 #include "dwarf.h"
@@ -88,7 +77,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_macho_loader.h"
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -237,9 +226,9 @@ macho_load_section (void *obj, Dwarf_Unsigned section_index,
             return DW_DLV_ERROR;
         }
         res = RRMOA(macho->mo_fd,
-            sp->loaded_data, (off_t)(inner+sp->offset),
-            (size_t)sp->size,
-            (off_t)(inner+macho->mo_filesize), error);
+            sp->loaded_data, (inner+sp->offset),
+            sp->size,
+            (inner+macho->mo_filesize), error);
         if (res != DW_DLV_OK) {
             free(sp->loaded_data);
             sp->loaded_data = 0;
@@ -258,7 +247,7 @@ _dwarf_destruct_macho_internals(
     Dwarf_Unsigned i = 0;
 
     if (mp->mo_destruct_close_fd) {
-        close(mp->mo_fd);
+        _dwarf_closer(mp->mo_fd);
         mp->mo_fd = -1;
     }
     if (mp->mo_commands){
@@ -316,7 +305,7 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
         return DW_DLV_ERROR;
     }
     res = RRMOA(mfp->mo_fd, &mh32, inner, sizeof(mh32),
-        (off_t)(inner+mfp->mo_filesize), errcode);
+        (inner+mfp->mo_filesize), errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -358,7 +347,7 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
         return DW_DLV_ERROR;
     }
     res = RRMOA(mfp->mo_fd, &mh64, inner, sizeof(mh64),
-        (off_t)(inner+mfp->mo_filesize), errcode);
+        (inner+mfp->mo_filesize), errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -424,8 +413,8 @@ load_segment_command_content32(
         *errcode = DW_DLE_MACH_O_SEGOFFSET_BAD;
         return DW_DLV_ERROR;
     }
-    res = RRMOA(mfp->mo_fd, &sc, (off_t)(inner+segoffset),
-        sizeof(sc), (off_t)(inner+filesize), errcode);
+    res = RRMOA(mfp->mo_fd, &sc, (inner+segoffset),
+        sizeof(sc), (inner+filesize), errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -483,7 +472,7 @@ load_segment_command_content64(
         return DW_DLV_ERROR;
     }
     res = RRMOA(mfp->mo_fd,&sc,inner+segoffset,
-        sizeof(sc), (off_t)(inner+filesize), errcode);
+        sizeof(sc), inner+filesize, errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -612,8 +601,8 @@ _dwarf_macho_load_dwarf_section_details32(
             return DW_DLV_ERROR;
         }
         res = RRMOA(mfp->mo_fd, &mosec,
-            (off_t)(inner+curoff), sizeof(mosec),
-            (off_t)(inner+mfp->mo_filesize), errcode);
+            inner+curoff, sizeof(mosec),
+            inner+mfp->mo_filesize, errcode);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -694,8 +683,8 @@ _dwarf_macho_load_dwarf_section_details64(
         }
 
         res = RRMOA(mfp->mo_fd, &mosec,
-            (off_t)(inner+curoff), sizeof(mosec),
-            (off_t)(inner+mfp->mo_filesize), errcode);
+            inner+curoff, sizeof(mosec),
+            inner+mfp->mo_filesize, errcode);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -823,8 +812,8 @@ _dwarf_load_macho_commands(
     mcp = mfp->mo_commands;
     for ( ; cmdi < mfp->mo_header.ncmds; ++cmdi,++mcp ) {
         res = RRMOA(mfp->mo_fd, &mc,
-            (off_t)(inner+curoff), sizeof(mc),
-            (off_t)(inner+mfp->mo_filesize), errcode);
+            inner+curoff, sizeof(mc),
+            inner+mfp->mo_filesize, errcode);
         if (res != DW_DLV_OK) {
             free(mfp->mo_commands);
             mfp->mo_commands = 0;
@@ -1395,7 +1384,7 @@ _dwarf_object_detector_universal_head_fd(
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* print_arch_item debugging */
 static void
 print_arch_item(unsigned int i,
     struct  Dwarf_Universal_Arch_s* arch)

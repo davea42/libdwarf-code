@@ -24,7 +24,7 @@ by default.
 Meson builds to a shared library by default.
 
 On msys2 with cmake one can generate a shared library
-build with: 
+build with:
 
     -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
 
@@ -52,7 +52,7 @@ On msys2 with configure one gets a shared library build with:
 
 ### NOTE on linking against libdwarf.a
 
-If you are are linking code against a static 
+If you are are linking code against a static
 library libdwarf.a you must arrange to define the
 macro LIBDWARF_STATIC in compiling your code that
 does a #include "libdwarf.h".
@@ -83,7 +83,7 @@ Using VS buttons and settings do:
    https://github.com/davea42/libdwarf-code
    and the directory to place the clone.
 
-2. Main Panel: Click Git. Options list: click Cmake Setup.  
+2. Main Panel: Click Git. Options list: click Cmake Setup.
    A Folder View panel (should show up) Click on the top-level CMakeLists.txt file.
 
 3. Main Panel:  Click Build. Options list: click Build All
@@ -119,22 +119,22 @@ building and testing all the build mechanisms:
     basics
     pacman -Suy
     pacman -S base-devel git autoconf automake libtool
-    pacnam -S mingw-w64-x86_64-python3 
+    pacman -S mingw-w64-x86_64-python3
     pacman -S mingw-w64-x86_64-toolchain
-    pacman -S mingw-w64-x86_64-zlib 
-    pacman -S mingw-w64-x86_64-zstd 
+    pacman -S mingw-w64-x86_64-zlib
+    pacman -S mingw-w64-x86_64-zstd
     pacman -S mingw-w64-x86_64-doxygen
 
     extras for meson/cmake
     pacman -S mingw-w64-x86_64-meson
     pacman -S mingw-w64-x86_64-cmake
-    pacnam -S mingw-w64-x86_64-python3-pip
+    pacman -S mingw-w64-x86_64-python3-pip
 
     To create a distribution one needs xz:
     pacman -S mingw-w64-x86_64-xz
 
     to list packages
-    pacman -Q 
+    pacman -Q
     to remove packages
     pacman -R  <packagename>
 
@@ -168,6 +168,6 @@ build tool you use.
     # then
     dwarfdump.exe
     # which will give a short message  about
-    # No object file provided. In which case 
+    # No object file provided. In which case
     # dwarfdump is usable.
 

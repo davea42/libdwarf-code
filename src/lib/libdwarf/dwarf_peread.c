@@ -38,15 +38,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* atoi() calloc() free() malloc() */
 #include <string.h> /* memset() strdup() strlen() */
 
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() off_t */
-#endif /* _WIN32*/
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -63,7 +54,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define DOS_HEADER_LEN 64
 
-#if 0
+#if 0 /* for debugging. */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -113,23 +104,6 @@ check_valid_string(char *tab,
     }
     return DW_DLV_ERROR;
 }
-
-#if 0
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        (t) = 0;                                  \
-        (func)(((char *)&(t))+tbyte ,&(s)[0],sizeof(s));  \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        (t) = 0;                                  \
-        (func)(&(t),&(s)[0],sizeof(s));               \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-#endif /*0*/
 
 /*  Name_array is 8 byte string, or it is supposed to be
     anyway.  */
@@ -270,8 +244,8 @@ load_optional_header32(dwarf_pe_object_access_internals_t *pep,
 
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&hdr,
-        (off_t)offset, sizeof(IMAGE_OPTIONAL_HEADER32_dw),
-        (off_t)pep->pe_filesize,
+        offset, sizeof(IMAGE_OPTIONAL_HEADER32_dw),
+        pep->pe_filesize,
         errcode);
     if (res != DW_DLV_OK) {
         return res;
@@ -309,8 +283,8 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     }
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&hdr,
-        (off_t)offset, sizeof(IMAGE_OPTIONAL_HEADER64_dw),
-        (off_t)pep->pe_filesize,
+        offset, sizeof(IMAGE_OPTIONAL_HEADER64_dw),
+        pep->pe_filesize,
         errcode);
     if (res != DW_DLV_OK) {
         return res;
@@ -426,8 +400,8 @@ pe_load_section (void *obj, Dwarf_Unsigned section_index,
         }
         res = _dwarf_object_read_random(pep->pe_fd,
             (char *)sp->loaded_data,
-            (off_t)sp->PointerToRawData, (size_t)read_length,
-            (off_t)pep->pe_filesize,
+            sp->PointerToRawData, (size_t)read_length,
+            pep->pe_filesize,
             error);
         if (res != DW_DLV_OK) {
             free(sp->loaded_data);
@@ -458,7 +432,7 @@ _dwarf_destruct_pe_access(
     }
     pep = (dwarf_pe_object_access_internals_t*)(aip->ai_object);
     if (pep->pe_destruct_close_fd && pep->pe_fd !=-1) {
-        close(pep->pe_fd);
+        _dwarf_closer(pep->pe_fd);
         pep->pe_fd = -1;
     }
     free((char *)pep->pe_path);
@@ -535,9 +509,9 @@ _dwarf_pe_load_dwarf_section_headers(
         int irrelevant = 0;
 
         res =  _dwarf_object_read_random(pep->pe_fd,
-            (char *)&filesect,(off_t)cur_offset,
+            (char *)&filesect,cur_offset,
             sizeof(filesect),
-            (off_t)pep->pe_filesize,
+            pep->pe_filesize,
             errcode);
         if (res != DW_DLV_OK) {
             return res;
@@ -650,7 +624,7 @@ _dwarf_load_pe_sections(
         return DW_DLV_ERROR;
     }
     res = _dwarf_object_read_random(pep->pe_fd,(char *)&dhinmem,
-        0, sizeof(dhinmem),(off_t)pep->pe_filesize, errcode);
+        0, sizeof(dhinmem),pep->pe_filesize, errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -698,8 +672,8 @@ _dwarf_load_pe_sections(
 
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&nt_sig_array[0],
-        (off_t)nt_address, sizeof(nt_sig_array),
-        (off_t)pep->pe_filesize,errcode);
+        nt_address, sizeof(nt_sig_array),
+        pep->pe_filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -721,8 +695,8 @@ _dwarf_load_pe_sections(
         return DW_DLV_ERROR;
     }
     res = _dwarf_object_read_random(pep->pe_fd,(char *)&ifh,
-        (off_t)pep->pe_nt_header_offset, sizeof(ifh),
-        (off_t)pep->pe_filesize,errcode);
+        pep->pe_nt_header_offset, sizeof(ifh),
+        pep->pe_filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -795,9 +769,9 @@ _dwarf_load_pe_sections(
         }
         memset(size_field,0,sizeof(size_field));
         res =  _dwarf_object_read_random(pep->pe_fd,
-            (char *)size_field, (off_t)pep->pe_string_table_offset,
+            (char *)size_field, pep->pe_string_table_offset,
             sizeof(size_field),
-            (off_t)pep->pe_filesize,errcode);
+            pep->pe_filesize,errcode);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -826,9 +800,9 @@ _dwarf_load_pe_sections(
         }
         res = _dwarf_object_read_random(pep->pe_fd,
             (char *)pep->pe_string_table,
-            (off_t)pep->pe_string_table_offset,
+            pep->pe_string_table_offset,
             (size_t)pep->pe_string_table_size,
-            (off_t)pep->pe_filesize,errcode);
+            pep->pe_filesize,errcode);
         if (res != DW_DLV_OK) {
             free(pep->pe_string_table);
             pep->pe_string_table = 0;

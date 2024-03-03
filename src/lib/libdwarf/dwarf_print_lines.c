@@ -449,7 +449,7 @@ print_file_entry_details(Dwarf_Debug dbg,
         sizeof(locallinebuf));
     if (line_version == DW_LINE_VERSION5) {
         Dwarf_Unsigned i = 0;
-        Dwarf_Unsigned dfcount = 
+        Dwarf_Unsigned dfcount =
             line_context->lc_file_name_format_count;
 
         dwarfstring_append_printf_u(&m5,

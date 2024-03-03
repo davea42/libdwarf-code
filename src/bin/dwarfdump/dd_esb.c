@@ -39,7 +39,6 @@
     pointer arguments of all kinds are not NULL.
 */
 
-
 #include <config.h>
 #include <stdarg.h> /* va_end() va_start() */
 #include <stdlib.h> /* exit() free() malloc() realloc() */

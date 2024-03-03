@@ -1,6 +1,6 @@
 project('libdwarf', ['c','cpp'],
   version: '0.9.2',
-  default_options : ['buildtype=debugoptimized', 
+  default_options : ['buildtype=debugoptimized',
   'warning_level=3', 'werror=true'],
   meson_version : '>=0.53'
 )
@@ -73,7 +73,7 @@ dev_cflags_try = [
   '-fno-omit-frame-pointer'
 ]
 sanitize_flags_try = [
-  '-fsanitize=address', 
+  '-fsanitize=address',
   '-fsanitize=leak',
   '-fsanitize=undefined'
 ]
@@ -85,7 +85,7 @@ if sys_windows
 else
   dev_cflags_try += '-fvisibility=hidden'
 endif
- 
+
 foreach cf: dev_cflags_try
   if cc.has_argument(cf)
     dev_cflags += cf
@@ -106,7 +106,7 @@ endforeach
 
 dwarf_link_args = []
 dev_sanitize = get_option('sanitize')
-if dev_sanitize 
+if dev_sanitize
   foreach cf: sanitize_flags_try
     if cc.has_argument(cf)
       dev_cflags += cf

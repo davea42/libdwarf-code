@@ -46,7 +46,7 @@ Section list:
     Macro Tests Commented
     Lookup Tables
     Memory allocation
-    Naming, namespace 
+    Naming, namespace
     Checking For Overflow
     Dwarfdump Flags Data
     Never use strcpy strcat strncpy
@@ -61,9 +61,9 @@ and an if is followed by a space and a left-parenthesis:
     if (condition) {
         do_something();
     }
-Done solely with space characters. 
+Done solely with space characters.
 
-Similarly, for is to have a single space after the r followed by 
+Similarly, for is to have a single space after the r followed by
 a left parenthesis.
 
     for (v; condition; v2) {
@@ -126,7 +126,7 @@ with blank lines:
         Dwarf_Unsigned line_width;
         Dwarf_Unsigned line_height;
         Dwarf_Unsigned line_thickness;
-        
+
         /*  Notice the _s on struct declarations
             And notice indent of this comment
             and the blank line above this comment to
@@ -140,15 +140,15 @@ Having both CamelCase in names and _ in the names
 used by the library
 is perhaps unusual, but it's been that way
 in the libdwarf source since the library was
-first written.  
+first written.
 So we stick with it in most cases.
 
 Never use a space before a function-call left parenthesis
-or a macro-call left parenthesis. 
+or a macro-call left parenthesis.
 
 Don't remove newlines just because things would still fit
 on one line if removal breaks the expected visual structure of
-the code.  
+the code.
 
 Eliminate trailing whitespace on any line. Also, avoid putting
 initial or final blank lines into any file, and never use
@@ -180,7 +180,7 @@ function definitions  in libdwarf should always take the following form:
 In dwarfdump, the code tends to follow this form
 too (but not always).
 
-Function prototypes inside libdwarf headers 
+Function prototypes inside libdwarf headers
 (as opposed to .c files)
 usually have the return type
 (and associated specifiers and qualifiers) the same
@@ -231,11 +231,11 @@ field in the code (with grep).
             and this is even worse as continuation.  Yuck! */
 
         /*  Comment here about ns_y with blank line above
-            and below to make it clear which line 
-            referred to. */  
+            and below to make it clear which line
+            referred to. */
         unsigned ns_y;
 
-        unsigned ns_z; 
+        unsigned ns_z;
     };
 
 ### Managing nested blocks
@@ -255,7 +255,7 @@ the following:
     foo = malloc (sizeof (foo_t));
     if (foo) { /* Yuck! The error return becomes
                hard to see.  */
-        ...  
+        ...
         /* lots of code to initialize foo */
         ...
         return DW_DLV_OK;
@@ -268,7 +268,7 @@ a pattern of handling exceptional cases early and returning:
 
     foo = malloc (sizeof (foo_t));
     /*  A test foo == NULL is fine but the following
-        is better as there is  no danger of 
+        is better as there is  no danger of
         turning == into = by accident. */
     if (!foo) {
         _dwarf_error(dbg,error,DW_DLE_MALLOC_RETURNS_NULL);
@@ -300,13 +300,13 @@ or
 
     if (foo = malloc (sizeof (foo_t))) {
 
-as the reader has to think carefully about it, 
+as the reader has to think carefully about it,
 whereas
 
     foo = malloc (sizeof (foo_t));
     if (foo) {
 
-is more transparent (in some sense) and 
+is more transparent (in some sense) and
 makes it easier to stop( in debugger) or
 add a printf in case this is a point where
 things might be going wrong somehow.
@@ -321,10 +321,10 @@ Also see "Managing nested blocks" just above.
 We use the following indent practice:
 
     switch(x) {
-    case a: { 
+    case a: {
         /*  Define&use local variables,  do something */
     }
-    case b: 
+    case b:
         /*  Do something, no new local variable
             needed. */
         break;
@@ -356,7 +356,7 @@ of the return values used in the library.
 ### Macro Tests Commented
 
     #ifdef SOME_MACRO
-    #else /* !SOME_MACRO */ 
+    #else /* !SOME_MACRO */
     #endif /* !SOME_MACRO */
 
     #ifdef OTHER_MACRO
@@ -400,7 +400,7 @@ so a careless user can simply call dwarf\_finish() at the end
 and all the allocated data will be freed that was not already
 freed via  user calls to dwarf\_dealloc().
 
-### Naming, namespace 
+### Naming, namespace
 Avoid conflicting with other libraries
 or with user code.  Anything publicly visible
 in headers or in the library (.a or .so or .dll)
@@ -421,7 +421,7 @@ Prefixes are:
 
 dwarf.h and libdwarf.h functions must have all arguments named
 with a leading dw\_ so that doxygen has names to work with
-and to make the function prototypes more readable. 
+and to make the function prototypes more readable.
 Ensure new functions or changes are reflected in
 the libdwarf.h doxygen comments.
 
@@ -509,7 +509,7 @@ This format is suggested, not required.
 
 ### Tools that help
 
-The 
+The
 
     github.com/davea42/libdwarf-dicheck project
 
@@ -519,7 +519,7 @@ program trimtrailing in that project removes trailing
 whitespace and changes a sequence of blank lines to a single
 blank line.
 
-The open-source project 
+The open-source project
 
     github.com/nimble-code/Cobra
 

@@ -2358,7 +2358,7 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                     print_line_detail(dbg,
                         "DW_LNE_end_sequence extended",
-                        (int)ext_opcode, 
+                        (int)ext_opcode,
                         (unsigned int)line_count+1,&regs,
                         is_single_table, is_actuals_table);
 #endif /* PRINTING_DETAILS */

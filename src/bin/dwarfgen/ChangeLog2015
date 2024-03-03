@@ -6,7 +6,7 @@
        zlib when present.
      * configure: Generated.
 2015-09-15  Carlos Alberto Enciso
-     * createirepformfrombinary.cc: include the 'stdafx.h' 
+     * createirepformfrombinary.cc: include the 'stdafx.h'
        for Windows port.
        Minor typo in the filename description.
      * createirepfrombinary.cc: include the 'stdafx.h' for Windows port.

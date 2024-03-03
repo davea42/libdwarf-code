@@ -66,15 +66,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
 
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() off_t */
-#endif /* _WIN32*/
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -252,9 +243,9 @@ elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
                 read_size = read_size_limit;
             }
             res = RRMOA(elf->f_fd,
-                (void *)read_target, (off_t)read_offset,
-                (size_t)read_size,
-                (off_t)elf->f_filesize, error);
+                (void *)read_target, read_offset,
+                read_size,
+                elf->f_filesize, error);
             if (res != DW_DLV_OK) {
                 free(sp->gh_content);
                 sp->gh_content = 0;
@@ -571,7 +562,7 @@ _dwarf_destruct_elf_nlaccess(
 
     /* if TRUE close f_fd on destruct.*/
     if (ep->f_destruct_close_fd) {
-        close(ep->f_fd);
+        _dwarf_closer(ep->f_fd);
     }
     ep->f_ident[0] = 'X';
     free(ep->f_path);

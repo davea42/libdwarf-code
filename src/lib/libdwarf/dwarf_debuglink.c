@@ -61,10 +61,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include "dwarf_string.h"
 #include "dwarf_debuglink.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-
 #define MINBUFLEN 1000
 
 static char  joinchar = '/';
@@ -413,7 +409,7 @@ build_buildid_filename(dwarfstring *target,
     return;
 }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,unsigned char * start, unsigned len)
 {
@@ -987,7 +983,6 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
             return res;
         }
     }
-
     if (!pdebuglink && !pbuildid) {
         if (dbg->de_path) {
             *debuglink_fullpath_returned = strdup(dbg->de_path);

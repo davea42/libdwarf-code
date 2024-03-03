@@ -26,10 +26,10 @@
      * CMakeLists.txt: Package Version 20191022.
        Revised the settings so PACKAGE_VERSION winds up
        in string quotes in config.h.
-     * config.h.in.cmake: Revisions so PACKAGE_VERSION winds up 
+     * config.h.in.cmake: Revisions so PACKAGE_VERSION winds up
        in string quotes in config.h.
 2019-10-21 David Anderson
-     * configure.ac : Added additional AC_CHECK_HEADERS.  
+     * configure.ac : Added additional AC_CHECK_HEADERS.
        Version 20191021
      * config.h.in, configure: Regenerated
 2019-10-18 David Anderson
@@ -37,7 +37,7 @@
      * config.h.in.cmake: Code the #cmakedefine for WORDS_BIGENDIAN
 2019-10-16 David Anderson
      * configure.ac: The use of AC_C_BIGENDIAN was incorrect
-       and a revised use works properly so config.h 
+       and a revised use works properly so config.h
        has WORDS_BIGENDIAN when it should.
      * configure: regenerated.
      * config.h.in: regenerated.
@@ -78,7 +78,7 @@
     * CMakeLists.txt: Ensure there is a reasonable
       definition of uintptr_t even if stdint.h missing.
     * Makefile.am:Add config.h.in.cmake to the list
-      of files. 
+      of files.
     * Makefile.in:Regenerate
     * config.h.in: Add HAVE_INTPTR_T and intptr_t.
     * config.h.in.cmake: Add the 1 to several HAV_*
@@ -91,7 +91,7 @@
       option to enable building with no stdint.h
       (c++ finds the #define of uintptr_t useless).
 2019-05-22  David Anderson
-    * CMakeLists.txt: check_include_file( "sys/elf_386.h" 
+    * CMakeLists.txt: check_include_file( "sys/elf_386.h"
       and check_include_file( "stdint.h" both had badly
       spelled (erronous) target variables.
 2019-05-21  David Anderson
@@ -131,7 +131,7 @@
       now adds -Werror so warnings are considered errors
       by gcc.
     * configure: regenerated.
-    * scripts/buildandreleasetest.sh: Now does a 
+    * scripts/buildandreleasetest.sh: Now does a
       full compile with WORDS_BIGENDIAN forced on.
       Since most testing is little-endian this forces
       a compile testing that the code
@@ -140,7 +140,7 @@
     * CMakeLists.txt: Added comment on how the find_package()
       command works. See cmake documentation.
     * cmake/FindLibElf.cmake: Added comment mentioning how
-      and where this is referenced. 
+      and where this is referenced.
 2019-05-07  David Anderson
     * CMakeLists.txt: Added CXX to the project languages
       so dwarfgen will build with cmake. Version 20190507.
@@ -160,7 +160,7 @@
     * configure: regenerated
 2019-05-02  David Anderson
     * scripts/buildstandardsource.sh: cmake has serious trouble
-      with semicolons so now this copies the base 
+      with semicolons so now this copies the base
       libdwarf.h.in to generated_libdwarf.in while changing
       struct Elf to struct _Elf. cmake can do a simple copy.
     * configure.cmake: Now just copies the right file with
@@ -168,7 +168,7 @@
     * scripts/buildstandardsource.sh: Now creates
       generated_libdwarf.h.in from libdwarf.h.in.
       using sed. Run by developer, not library users.
-    * scripts/fixlibdwarfelf.sh Now just copies the 
+    * scripts/fixlibdwarfelf.sh Now just copies the
       right file with Elf or _Elf to libdwarf.h
       (used by configure, not cmake).
 2019-05-02  David Anderson
@@ -183,7 +183,7 @@
       variable to correctly test for off64_t
       Does checking/setting for essentially all the needed HAVE_
       etc variables.
-      
+
 2019-05-01  David Anderson
     * README.cmake: Made more complete.
     * configure.cmake: Even more setup here.
@@ -196,7 +196,7 @@
     * configure.cmake: Now does a lot more setup here and
       using cmake (replacing some autoconf-like functions)
       And this now sets many things for each build directory,
-      reducing the size of */configure.cmake files. 
+      reducing the size of */configure.cmake files.
 2019-04-30  David Anderson
     * README.cmake: New, describes use of cmake.
     * cmake/LibdwarfMacros.cmake: Added a final newline
@@ -208,7 +208,7 @@
       Revised to be closer to configure as to what
       it does.
 2019-04-25  David Anderson
-    * configure.ac: Version 20190425. Updated 
+    * configure.ac: Version 20190425. Updated
       to recognize recent changes. And some
       #include/define updates for Windows.
 2019-04-22  David Anderson
@@ -227,11 +227,11 @@
     * NEWS: Now --disable-libelf just disables linking
       with libelf.  Elf files are read (libdwarf) and
       printf(dwarfdump). As always. The Elf reader detects
-      corrupted Elf early on. 
+      corrupted Elf early on.
 2019-02-24  David Anderson
     * configure.ac. Version 20190223. With --disable-libelf
-      most header checking is unnecessary and suppressed. 
-      All the checks for int32 and the like removed 
+      most header checking is unnecessary and suppressed.
+      All the checks for int32 and the like removed
       as we no longer use such types.
 2019-02-18  David Anderson
     * configure.ac: One can build forcing a non-elf build with

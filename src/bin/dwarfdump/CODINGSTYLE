@@ -42,7 +42,7 @@ Snsure every if() has {} to enclose the actions.
 
 Sse libdwarf.h types for all the data objects you define,
 though sometimes an 'unsigned' or 'int' or 'size_t' is
-ok in restricted circumstances.  Dwarf_Unsigned and 
+ok in restricted circumstances.  Dwarf_Unsigned and
 Dwarf_Signed are the preferred integer types for general use.
 
 ------------

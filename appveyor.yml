@@ -20,7 +20,7 @@ environment:
     - platform: x64
       CMAKE_GENERATOR_NAME: "Visual Studio 14 2015 Win64"
       CMAKE_OPTIONS: "-DBUILD_SHARED=ON -DBUILD_NON_SHARED=OFF"
-  
+
 configuration: Release
 
 install:
@@ -35,7 +35,6 @@ install:
 build_script:
   - cmake . -B_build -G "%CMAKE_GENERATOR_NAME%" -DLIBELF_ROOT=%LIBELF_INSTALL_PREFIX% %OPTIONS%
   - cmake --build _build --config %CONFIGURATION%
-  
+
 test_script:
   - cmake --build _build --config %CONFIGURATION% --target RUN_TESTS
-  

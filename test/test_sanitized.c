@@ -41,11 +41,11 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 #include "dd_minimal.h"
 #include "dd_sanitized.h"
 
-void dd_minimal_count_global_error(void) {} 
+void dd_minimal_count_global_error(void) {}
 
 /* Needed so dd_sanitized.c compiles here. */
 struct glflags_s {
-       int gf_no_sanitize_strings; 
+       int gf_no_sanitize_strings;
 } glflags;
 
 
@@ -82,7 +82,7 @@ const unsigned char s6[] = {'a',0x1,0x2,0xf4,'\n',0};
 const char *s7 = "ab\r\n";
 
 /*  We add in non-printable to test timing for that case */
-const char *s8 = 
+const char *s8 =
 "aaaa bbbb cccc dddd eeee ffff gggg"
 "aaaa bbbb cccc dddd eeee ffff gggg"
 "aaaa bbbb cccc dddd eeee ffff gggg\v"
@@ -98,49 +98,49 @@ const char *s8 =
 int main(void)
 {
     const char *out = 0;
-    {   
+    {
          char *exp = "abcd";
-         out = sanitized(s1); 
+         out = sanitized(s1);
          validate_san(__LINE__,
             exp,out,exp);
     }
-    {   
+    {
          char *exp = "ab\ncd";
-         out = sanitized(s2); 
+         out = sanitized(s2);
          validate_san(__LINE__,
             exp,out,exp);
     }
-    {   
+    {
          char *exp = "\ncd";
-         out = sanitized(s3); 
+         out = sanitized(s3);
          validate_san(__LINE__,
             exp,out,exp);
     }
-    {   
+    {
          char *exp = "ab\n";
-         out = sanitized(s4); 
+         out = sanitized(s4);
          validate_san(__LINE__,
             exp,out,exp);
     }
-    {   
+    {
          char *exp = "yy\tcd";
-         out = sanitized(s5); 
+         out = sanitized(s5);
          validate_san(__LINE__,
             exp,out,exp);
     }
-    {   
+    {
          char* exp = "a%01%02%f4\n";
-         out = sanitized((const char *)s6); 
+         out = sanitized((const char *)s6);
          validate_san(__LINE__,
             exp,out,exp);
     }
-    {   
+    {
 #ifdef _WIN32
          char* exp = "ab\r\n";
-#else 
+#else
          char* exp = "ab%0d\n";
 #endif
-         out = sanitized((const char *)s7); 
+         out = sanitized((const char *)s7);
          validate_san(__LINE__,
             exp,out,exp);
     }
@@ -148,7 +148,7 @@ int main(void)
     {
          int i = 0;
          for ( ; i < 5000000; ++i ) {
-             out = sanitized((const char *)s8); 
+             out = sanitized((const char *)s8);
              if (i == 2) {
                  printf("%s\n",out);
              }

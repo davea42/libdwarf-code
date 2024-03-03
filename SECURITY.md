@@ -19,7 +19,7 @@ release.
 
 One way to report is to add a Issue on the issues page for
 the project.
-Another is to email to libdwarf at linuxmail dot org 
+Another is to email to libdwarf at linuxmail dot org
 
 Normally we respond to a report within one day and provide
 fixes within a day or two.  We can provide the new version

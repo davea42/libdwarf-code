@@ -228,7 +228,7 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
     (void)Irep;
     (void)ourdie;
     (void)level;
-    
+
     if (!cmdoptions.transformHighpcToConst) {
         // No transformation of this sort requested.
         return;
@@ -323,7 +323,7 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         revisedattrs.push_back(attr);
         continue;
     }
-    attrs = revisedattrs;
+    attrs = std::move(revisedattrs);
 }
 
 /* Create a data16 data item out of nothing... */
@@ -409,7 +409,7 @@ addData16DataItem(Dwarf_P_Debug dbg,
         data16);
     attrc.setFormData(fc);
     revisedattrs.push_back(attrc);
-    attrs = revisedattrs;
+    attrs = std::move(revisedattrs);
     alreadydone = true;
 }
 
@@ -568,7 +568,7 @@ addImplicitConstItem(Dwarf_P_Debug dbg,
         0,myconstval);
     attrc.setFormData(fc);
     revisedattrs.push_back(attrc);
-    attrs = revisedattrs;
+    attrs = std::move(revisedattrs);
     ++alreadydone;
 }
 
@@ -649,7 +649,7 @@ HandleLineData(Dwarf_P_Debug dbg,
     Dwarf_Error lerror = 0;
     // We refer to files by fileno, this builds an index.
     pathToUnsignedType pathmap;
-    
+
     IRCULineData& ld = cu.getCULines();
     std::vector<IRCULine> & cu_lines = ld.get_cu_lines();
     //std::vector<IRCUSrcfile> &cu_srcfiles  = ld.get_cu_srcfiles();

@@ -82,8 +82,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     }
 
     Dwarf_Unsigned dw_index = 1;
-    Dwarf_Unsigned dw_abbrev_offset = 0; 
-    Dwarf_Unsigned dw_abbrev_code = 0; 
+    Dwarf_Unsigned dw_abbrev_offset = 0;
+    Dwarf_Unsigned dw_abbrev_code = 0;
     Dwarf_Unsigned dw_abbrev_tag = 0;
     Dwarf_Unsigned dw_array_size = 256;
     /*  This test code originally passed in uninitialized

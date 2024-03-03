@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-01-27 v0.9.2
+    @date 2024-03-01 v0.9.2
  
     @section draft Suggestions for improvement are welcome.
 
@@ -81,7 +81,7 @@
     only one of them is truly appropriate except
     in toy programs).
 
-    <b>A) The recommmended approach</b> is to 
+    <b>A) The recommended approach</b> is to 
     define a Dwarf_Error and initialize it to 0.
 
     @code
@@ -224,7 +224,7 @@
 
     So let us examine a case where anything could
     happen.  And here we are taking the 
-    <b>recommeded A)</b>
+    <b>recommended A)</b>
     method of using a non-null Dwarf_Error*:
 
     @code
@@ -232,7 +232,7 @@
         Dwarf_Die newdie = 0;
         int       res = 0;
 
-        res = dwarf_siblingof_b(die,&newdie,error);
+        res = dwarf_siblingof_c(die,&newdie,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -245,17 +245,23 @@
     @subsubsection DW_DLV_OK
 
     When res == DW_DLV_OK
-    newdie is a valid pointer
-    pointer and when appropriate we should do
-    dwarf_dealloc_die(newdie).
+    newdie is a valid pointer and when appropriate we should do
+    dwarf_dealloc_die(newdie). 
+    For other  libdwarf calls
+    the meaning depends on the function called,
+    so read the description of the function
+    you called for more information.
 
     @subsubsection DW_DLV_NO_ENTRY
 
     When res == DW_DLV_NO_ENTRY
     then newdie is not
     set and there is no error. It means
-    die was the last of a siblinglist. The exact
-    meaning of course depends on the function called.
+    die was the last of a siblinglist.
+    For other libdwarf calls the
+    meaning  depends on the function called,
+    so read the description of the function
+    you called for more information.
 
     @subsubsection DW_DLV_ERROR
 
@@ -270,13 +276,16 @@
     @endcode
     or both and report that somehow.
     
-    If it's a decently large program then you want to
-    free any local memory and return res. If a small
-    and unimportant program print something and exit
-    (likely leaking memory).
+    If it is a decently large
+    or long-running program then you want to
+    free any local memory you 
+    allocated and return res.
+    If it is a small
+    or experimental program print something and exit
+    (possibly leaking memory).
 
     If you want to discard the error report from the
-    dwarf_siblingof() call then possibly do
+    dwarf_siblingof_c() call then possibly do
     @code
         dwarf_dealloc_error(dbg,*error);
         *error = 0;
@@ -284,8 +293,8 @@
     @endcode
 
     Except in a special case involving function
-    dwarf_set_de_alloc_flag() (which is not usually
-    called), any dwarf_dealloc() that is needed will
+    dwarf_set_de_alloc_flag() (which you will not usually
+    call), any dwarf_dealloc() that is needed will
     happen automatically when you call dwarf_finish(). 
 
     @subsubsection A Slight Performance Enhancement
@@ -299,15 +308,23 @@
     Be sure to test using valgrind or -fsanitize to ensure your
     code really does the extra dwarf_dealloc calls
     needed since when using dwarf_set_de_alloc_flag(0)
-    dwarf_finish() only does limited cleanup. 
+    dwarf_finish() does only limited cleanup. 
 
     @section dwsec_cuplan Extracting Data Per Compilation Unit
 
     The library is designed to run a single pass
     through the set of Compilation Units (CUs), via
-    a sequence of calls to dwarf_next_cu_header_d()
-    and within a CU initiate a DIE scan using
-    dwarf_siblingof_b().  There is currently no
+    a sequence of calls to dwarf_next_cu_header_e().
+    (dwarf_next_cu_header_d() is supported but
+    its use requires that it be immediately followed
+    by a call to dwarf_siblingof_b().
+    see dwarf_next_cu_header_d(). )
+
+    Within a CU opened with dwarf_next_cu_header_e()
+    do something (if desired) on the CU_DIE
+    returned, and call dwarf_child() on the CU_DIE
+    to begin recursing through all DIEs. 
+    There is currently no
     provision for a second pass.
 
     The general plan:
@@ -325,7 +342,9 @@
     @endcode
 
     For an example
-    @see examplecuhdr 
+    @see examplecuhdre
+    or
+    @see examplecuhdrd
     Write your code to record relevant (to you)
     information from each CU as you go so your code
     has no need for a second pass through the CUs.
@@ -389,6 +408,7 @@
     @link string Strings can be read independently @endlink
 
     @link str_offsets String Offsets can be read independently @endlink
+
     @link debugaddr The addr table can be read independently @endlink
 
     Those functions allow starting at byte 0 of the
@@ -455,8 +475,9 @@
         to refer to it.
         DW_FRAME_CFA_COL defaults to 12290.
         There no such column in the table.
-        See libdwarf.h struct member rt3_cfa_rule
-        or function dwarf_get_fde_info_for_cfa_reg3_b .
+        See libdwarf.h struct Dwarf_Regtable3_s member rt3_cfa_rule
+        or function dwarf_get_fde_info_for_cfa_reg3_b()
+        or function dwarf_get_fde_info_for_cfa_reg3_c() .
 
     A set of functions allow these to be changed at
     runtime. The set should be called (if needed)
@@ -502,23 +523,31 @@
     Each has a set of 6 functions. 
   
     @code
-     Section         typename      Standard      main function
-    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4 dwarf_get_globals
-    .debug_pubtypes  Dwarf_Type    DWARF3,DWARF4 dwarf_get_pubtypes
+     Section         typename      Standard      
+    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4 
+    .debug_pubtypes  Dwarf_Global  DWARF3,DWARF4
     @endcode
 
+    These sections are accessed calling dwarf_globals_by_type()
+    using type of  DW_GL_GLOBALS or DW_GL_PUBTYPES.
+    Or call dwarf_get_pubtypes().
+
     The following four were defined in SGI/IRIX
-    compilers in the 1990s but never part of the
+    compilers in the 1990s but were never part of the
     DWARF standard.
+    These sections are accessed calling dwarf_globals_by_type()
+    using type of DW_GL_FUNCS,DW_GL_TYPES,DW_GL_VARS, or
+    DW_GL_WEAKS.
 
     It not likely you will encounter these.
 
     @code
-    .debug_funcs      Dwarf_Func   None          dwarf_get_funcs
-    .debug_typenames  Dwarf_Type   None          dwarf_get_types
-    .debug_vars       Dwarf_Var    None          dwarf_get_vars
-    .debug_weaks      Dwarf_Weak   None          dwarf_get_weaks
+    .debug_funcs      
+    .debug_typenames  
+    .debug_vars       
+    .debug_weaks     
     @endcode
+
 
     @section dwsec_noobj Reading DWARF with no object file present
 
@@ -931,7 +960,7 @@
     - If you are building an application 
     - And are linking your application against a static library libdwarf.a
     - Then you must ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
-    - Then you must add -lz -lzstd to the link line of the build of your application.
+    - If libdwarf was built with zlib and zstd decompression library enabled you must add -lz -lzstd to the link line of the build of your application.
       
     To pass <b>LIBDWARF_STATIC</b> to the preprocessor with Visual
     Studio:
@@ -993,6 +1022,13 @@
 
     We list these with newest first.
 
+    <b>Changes 0.9.1 to 0.9.2</b>
+
+    Vulnerability DW202402-001 (probable libdwarf
+    crash/segmentation-violation reading a carefully
+    crafted corrupt object file, a bug that
+    existed for many years) is fixed.
+
     <b>Changes 0.9.0 to 0.9.1</b>
 
     Version 0.9.1 released 27 January 2024
@@ -1015,7 +1051,7 @@
     Each of the build systems available now has an option
     which eliminates libdwarf references to the
     object section decompression libraries.
-    See the repective READMEs.
+    See the respective READMEs.
 
     <b>Changes 0.8.0 to 0.9.0</b>
 
@@ -1044,7 +1080,7 @@
     be supported for the forseeable future. However
     it would be easy to misuse as the requirement that
     dwarf_siblingof_b() be called immediately after
-    a successfull call to dwarf_next_cu_header_d()
+    a successful call to dwarf_next_cu_header_d()
     was never stated and that dependency was impossible
     to enforce. The dependency was an API mistake
     made in 1992.

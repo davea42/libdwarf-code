@@ -8,7 +8,7 @@
 
 here=`pwd`
 
-#if [ ! "$(top_srcdir)/doc" = "$here" ] 
+#if [ ! "$(top_srcdir)/doc" = "$here" ]
 #then
 #  echo "Run doc/make doc only in $(top_srcdir)/doc"
 #  echo "Give up as we are in $here"
@@ -53,13 +53,13 @@ if [ $c = "y" ]
 then
   doxygen
   ckres $? "doc doxygen FAIL "
-  cd latex 
+  cd latex
   ckres $? "doc cd to latex dir FAIL "
   make
   ckres $? "doc make latex fail"
   cd ..
   ckres $? "doc cd .. FAIL "
-  cp latex/refman.pdf libdwarf.pdf 
+  cp latex/refman.pdf libdwarf.pdf
   ckres $? "doc copy latex/refman.pdf libdwarf.pdf FAIL"
 fi
 

@@ -20,7 +20,7 @@
      * dwarf.h: Added comment about the gap in FORM number use
        just before 0x20.
 2010-03-30  DavidAnderson <davea42@earthlink.net>
-     * dwarf_frame2.c: Tightned up a harmless error 
+     * dwarf_frame2.c: Tightned up a harmless error
        message string and deleted an unused local variable.
      * dwarf_harmless.c: Detected more errors in the implementation
        and fixed them.
@@ -41,7 +41,7 @@
      * libdwarf.h: Aded new interface dwarf_get_arange_info_b(),
 2010-03-28  DavidAnderson <davea42@earthlink.net>
      * libdwarf.h: Adding dwarf_get_harmless_error_list(),
-       dwarf_insert_harmless_error(), and 
+       dwarf_insert_harmless_error(), and
        dwarf_set_harmless_error_list_size() functions.
        Some errors that are detectable are not sufficient
        to warrant rejecting an object or refusing to process it.
@@ -55,13 +55,13 @@
        macro.
      * dwarf_opaque.h: Add structure and field to record
        harmless errors for a dbg.
-     * dwarf_frame.h:  Add commentary. Change ci_length from 
+     * dwarf_frame.h:  Add commentary. Change ci_length from
        Dwarf_Word to Dwarf_Unsigned for consistency with other such
        length fields.
      * Makefile.in: Add dwarf_harmless.o to the list of objects.
      * dwarf_alloc.c: Add call to dwarf_harmless_cleanout() on
        close of a dbg.
-     * dwarf_init_finish.c: Add call to dwarf_harmless_init 
+     * dwarf_init_finish.c: Add call to dwarf_harmless_init
        to initialize the fields for recording harmless errors.
      * dwarf_frame2.c: Add handling of Arm "armcc+" augmentation
        string. Create validate_length() local function to check
@@ -93,7 +93,7 @@
        Initialize all local variables at the point of declaration.
        Refine some commentary.
        Use the CU version number to guide processing of some FORMs.
-     * dwarf_print_lines.c, dwarf_query.c: Use the CU-context 
+     * dwarf_print_lines.c, dwarf_query.c: Use the CU-context
        address size instead of the overall object address/offset size.
        Handle DW_LNE user extensions as well as possible.
      * dwarf_arange.c: Delete some erroneous code (already ifdefd out)
@@ -103,8 +103,8 @@
        and unusable fashion (DWARF4 documents it properly).
      * dwarf_die_deliv.c: Delete erroneous code (previously ifdefd out)
        as the address size need not match the de_pointer_size.
-     * dwarf_sort_line.c, dwarf_line.c: Deal with DW_DLE extended 
-       line operations past those defined by the standard 
+     * dwarf_sort_line.c, dwarf_line.c: Deal with DW_DLE extended
+       line operations past those defined by the standard
        (such as user-defined operations).
      * dwarf_line.h: For user-defined line extended operations, provide
        a sanity check of DW_LNE_LEN_MAX.
@@ -138,7 +138,7 @@
 2010-01-25  DavidAnderson <davea42@earthlink.net>
      * pro_opaque.h, pro_init.c, pro_section.c,
        pro_reloc_stream.c, pro_reloc_symbolic.c: Rename the function
-       pointer members de_func and de_func_b to 
+       pointer members de_func and de_func_b to
        de_callback_func and de_callback_func_b respectively.
 2010-01-17  DavidAnderson <davea42@earthlink.net>
      * dwarf.h, libdwarf.h: Updated commentary about frame interfaces.
@@ -152,7 +152,7 @@
      * config.h.in: Added support for configure
        --enable-oldframcol.
      * dwarf_init_finish.c: Added support for configure
-       --enable-oldframecol (see DW_FRAME_CFA_COL and 
+       --enable-oldframecol (see DW_FRAME_CFA_COL and
        DW_FRAME_CFA_COL3).  By default the frame column
        is now DW_FRAME_CFA_COL3.   --enable-oldframecol
        changes the default to DW_FRAME_CFA_COL.
@@ -165,8 +165,8 @@
      * dwarf_print_lines.c: Changed 'include files count'
        to 'files count'.
 2010-01-04  DavidAnderson <davea42@earthlink.net>
-     * pro_section.c, pro_opaque.h: A pretty-print tool 
-       generated some odd formatting (long ago) and there 
+     * pro_section.c, pro_opaque.h: A pretty-print tool
+       generated some odd formatting (long ago) and there
        were silly blank lines present as well. This makes things more
        readable.
 2010-01-03  DavidAnderson <davea42@earthlink.net>

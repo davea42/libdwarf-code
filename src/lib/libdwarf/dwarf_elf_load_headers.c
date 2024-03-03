@@ -57,19 +57,6 @@ calls
 #include <string.h> /* memcpy() strcmp() strdup()
     strlen() strncmp() */
 
-/* Windows specific header files */
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* close() off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* close() */
-#endif /* _WIN32 */
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() O_RDONLY */
-#endif /* HAVE_FCNTL_H */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -85,17 +72,7 @@ calls
 #include "dwarf_util.h"
 #include "dwarf_secname_ck.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-#ifndef O_RDONLY
-#define O_RDONLY 0
-#endif /* O_RDONLY */
-#ifndef O_CLOEXEC
-#define O_CLOEXEC 0
-#endif /* O_CLOEXEC */
-
-#if 0
+#if 0 /* debugging only dumpsizes() */
 /*  One example of calling this.
     place just before DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE
     dumpsizes(__LINE__,strsectlength,strpsh->gh_offset,
@@ -234,7 +211,7 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
         if (!ehdr->ge_shnum) {
-           return DW_DLV_NO_ENTRY;
+            return DW_DLV_NO_ENTRY;
         }
         if (ehdr->ge_shnum < 3) {
             *errcode = DW_DLE_TOO_FEW_SECTIONS;
@@ -303,7 +280,7 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     } else {
         ehdr->ge_shnum_in_shnum = TRUE;
         if (!ehdr->ge_shnum) {
-           return DW_DLV_NO_ENTRY;
+            return DW_DLV_NO_ENTRY;
         }
         if (ehdr->ge_shnum < 3) {
             *errcode = DW_DLE_TOO_FEW_SECTIONS;
@@ -326,7 +303,7 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     return DW_DLV_OK;
 }
 
-#if 0 /* not used */
+#if 0 /* ngeneric_phdr_from_phdr32 not needed */
 static int
 generic_phdr_from_phdr32(dwarf_elf_object_access_internals_t* ep,
     struct generic_phdr **phdr_out,
@@ -865,7 +842,7 @@ _dwarf_generic_elf_load_symbols(
     }
     return res;
 }
-#if 0 /* not needed */
+#if 0 /* dwarf_load_elf_dynsym_symbols() not needed */
 int
 dwarf_load_elf_dynsym_symbols(
     dwarf_elf_object_access_internals_t *ep, int*errcode)
@@ -1100,7 +1077,7 @@ generic_rel_from_rel64(
     return DW_DLV_OK;
 }
 
-#if 0 /* not needed */
+#if 0 /* dwarf_load_elf_dynstr() not needed */
 int
 dwarf_load_elf_dynstr(
     dwarf_elf_object_access_internals_t *ep, int *errcode)
@@ -2016,7 +1993,8 @@ read_gs_section_group(
         }
         grouparray[0] = 1;
         /*  A .group section will have 0 to G sections
-            listed */
+            listed. Ignore the initial 'version' value
+            of 1 in [0] */
         dp = dp + DWARF_32BIT_SIZE;
         for ( i = 1; i < count; ++i,dp += DWARF_32BIT_SIZE) {
             Dwarf_Unsigned gseca = 0;
@@ -2025,29 +2003,31 @@ read_gs_section_group(
 
             memcpy(dblock,dp,DWARF_32BIT_SIZE);
             ASNAR(memcpy,gseca,dblock);
+            /*  Loading gseca and gsecb with different endianness.
+                Only one of them can be of any use. */
             ASNAR(_dwarf_memcpy_swap_bytes,gsecb,dblock);
             if (!gseca) {
+                /*  zero! Oops. No point in looking at gsecb */
                 free(data);
                 free(grouparray);
                 *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                 return DW_DLV_ERROR;
             }
-            grouparray[i] = gseca;
             if (gseca >= ep->f_loc_shdr.g_count) {
                 /*  Might be confused endianness by
                     the compiler generating the SHT_GROUP.
                     This is pretty horrible. */
-
                 if (gsecb >= ep->f_loc_shdr.g_count) {
                     *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                     free(data);
                     free(grouparray);
                     return DW_DLV_ERROR;
                 }
-                /* Ok. Yes, ugly. */
+                /*  Looks as though gsecb is the correct
+                    interpretation.  Yes, ugly. */
                 gseca = gsecb;
-                grouparray[i] = gseca;
             }
+            grouparray[i] = gseca;
             targpsh = ep->f_shdr + gseca;
             if (_dwarf_ignorethissection(targpsh->gh_namestring)){
                 continue;

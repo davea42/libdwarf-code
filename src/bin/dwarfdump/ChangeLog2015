@@ -4,9 +4,9 @@
 2015-12-19  David Anderson
      * dwarfdump.c: Now we print macros alone by CU with -m
        (at least for DWARF5 macro format)
-     * print_lines.c(print_source_intro): Minor local 
+     * print_lines.c(print_source_intro): Minor local
        variable ordering change.
-     * print_macro.c(print_source_intro): Minor local 
+     * print_macro.c(print_source_intro): Minor local
        variable ordering change.
 2015-12-19  David Anderson
      * print_macro.c: Print the actual macro offset size we will use.
@@ -18,7 +18,7 @@
        global function get_address_size_and_max().
 2015-12-16  David Anderson
      * print_aranges.c, print_die.c: Ensure the four
-       error-reporting globals DIE_[CU_][global_]_offset are 
+       error-reporting globals DIE_[CU_][global_]_offset are
        set properly.
 2015-12-16  David Anderson
      * common.c: Update version string.
@@ -91,8 +91,8 @@
      * print_abbrevs.c(dwarf_get_array_info): Initialize local variable.
      * print_die.c(get_location_list): Initialize local variable.:
      * dwarf_loc.h: Add declaration of _dwarf_loc_block_sanity_check().
-     * dwarf_loc.c: Call new function  _dwarf_loc_block_sanity_check 
-     * dwarf_loc2.c: Implement and call new function 
+     * dwarf_loc.c: Call new function  _dwarf_loc_block_sanity_check
+     * dwarf_loc2.c: Implement and call new function
        _dwarf_loc_block_sanity_check to avoid duplicating code.
 2015-11-07  David Anderson
      * dwarfdump.1: Documented -x line5=.
@@ -103,7 +103,7 @@
        referenced err whereas *err was correct.
        Revised loclist output making it look a bit like DWARF5
        even for DWARF2,3,4 output. Reads better, I think.
-     * print_locs.c: -l gets a 'no longer supported' message 
+     * print_locs.c: -l gets a 'no longer supported' message
        as it was never safe to do anyway.
 2015-11-01  David Anderson
      * configure.in: Add -O0 to  --enable-wall.
@@ -116,12 +116,12 @@
        checking.
      * configure: Regenerate.
      * print_die.c:  Add DWARF5 DW_OPs  and .debug_loc.dwo loclists are
-       handled. 
+       handled.
        Now uses either latest (DWARF5)
        interfaces or earlier, repurposing the old -g option to select.
-     * print_frames.c,print_frames.h: Printing expressions 
-       (in .debug_frame, .eh_frame) 
-       now honors -g so DWARF5 expressions handled. 
+     * print_frames.c,print_frames.h: Printing expressions
+       (in .debug_frame, .eh_frame)
+       now honors -g so DWARF5 expressions handled.
      * print_lines.c: Fixed some formatting.
      * print_locs.c: Changes reflecting code calling into print_frames.c
 2015-10-26  David Anderson
@@ -168,7 +168,7 @@
      * print_die.c: Removed trailing whitespace and fixed indentation mistake.
      * print_lines.c: Fixed indentation and  inconsistencies
        in spelling line table field hints.
-       Leaving IA as has been for a long time 
+       Leaving IA as has been for a long time
        though it should be spelled IS.
 2015-09-19  David Anderson
      * print_lines.c: Tweaking two-level line table code, mostly
@@ -177,15 +177,15 @@
      * print_lines.c: Adding handling of experimental two-level
        line table.
 2015-09-15  Carlos Alberto Enciso
-     * common.c: For Windows version, add a symbol with the 
+     * common.c: For Windows version, add a symbol with the
        release date (taken from the distributed compressed archive),
-       to be used by print_version_details() for better 
+       to be used by print_version_details() for better
        tracking of versions.
-     * print_die.c: The text search (-S), now follows 
+     * print_die.c: The text search (-S), now follows
        the DW_AT_specification
-       and the DW_AT_abstract_origin attributes, 
+       and the DW_AT_abstract_origin attributes,
        to get the associated name;
-       this finds the declaration and definitions 
+       this finds the declaration and definitions
        DIEs for a member functions
        or the abstract and concrete instance DIEs for inlined functions.
        Fix some C99 issues with local variable declarations in
@@ -218,7 +218,7 @@
 2015-07-12  David Anderson
      * dwarfdump.c: Use dwoptind dwoptarg, not optind, optarg
      * dwgetopt.c,dwgetopt.h,dwgetopttest.c,tag_attr.c,
-       tag_tree.c: Use dwoptind dwoptarg etc, 
+       tag_tree.c: Use dwoptind dwoptarg etc,
        not optind, optarg, optopt op6error etc.
      * print_die.c: updated commentary.
 2015-05-07  David Anderson
@@ -245,15 +245,15 @@
      * print_die.c, print_lines.c: Removed instances
        of trailing whitespace.
 2015-03-09  David Anderson
-     * Makefile.in: added new tests of dwgetopt. 
+     * Makefile.in: added new tests of dwgetopt.
        Runs not only dwgetopt but system getopt.
      * dwarfdump.c: New function set_checks_off()
-       so if printing we don't do checks (intended 
+       so if printing we don't do checks (intended
        to be this way for a long time now).
        Updated version string.
      * 	common.c: Updated version string.
-     * print_die.c: Was not always recognizing unit DIES 
-       DW_TAG_partial_unit or DW_TAG_type_unit where it saw 
+     * print_die.c: Was not always recognizing unit DIES
+       DW_TAG_partial_unit or DW_TAG_type_unit where it saw
        DW_TAG_compile_unit. Now does so.
      * dwgetopt.c: Errors could lead to dwarfdump coredump. Fixed.
      * getopttest.c: Added several new tests. Now one
@@ -261,7 +261,7 @@
        (set at compile time of getopttest.c).
 2015-03-03  David Anderson
      * tag_attr.list: Removed DW_AT_sibling from DW_TAG_partial_unit.
-       DW_TAG_compile_unit. Removed DW_AT_containing_type from 
+       DW_TAG_compile_unit. Removed DW_AT_containing_type from
        DW_TAG_subprogram, DW_TAG_structure_type.
      * dwarfdump.c,common.c: Update version strings.
      * print_die.c: Fix indent mistakes. Add comment
@@ -283,7 +283,7 @@
        print_die.c. Add new ranges check functions.
        Range check error messages now appear later in the output,
        though the content is identical.
-     * tag_attr_ext.list: Add DW_TAG_GNU_call_site and 
+     * tag_attr_ext.list: Add DW_TAG_GNU_call_site and
        DW_TAG_GNU_call_site_parameter tag attr combinations.
      * tag_tree_ext.list: Add DW_TAG_GNU_call_site DW_TAG_call_site_parameter
 2015-02-22  David Anderson
@@ -293,7 +293,7 @@
        Copied from libdwarf dwgetopt.h
      * configure: regenerated
      * Makefile.in: build dwgetopt.o
-     * dwgetopt.c: Copied from libdwarf source. 
+     * dwgetopt.c: Copied from libdwarf source.
      * tag_attr.c,tag_tree.c: Now call dwgetopt() instead of getopt().
 
 2015-02-04  David Anderson
@@ -309,7 +309,7 @@
        from DWARF5. Since the DWARF5 standard not yet final
        these could change!
      * tag_attr_ext.list: Added new GNU attributes.
-     * tag_common.h:  updated DW_TAG_last and DW_AT_last 
+     * tag_common.h:  updated DW_TAG_last and DW_AT_last
         STD_TAG_TABLE_ROWS STD_ATTR_TABLE_COLUMNS values
        due to dwarf.h updates.
      * tag_tree.list: New entries from DWARF5.
@@ -331,7 +331,7 @@
        print_frames.h,print_reloc.h,print_sections.h,tag_common.h,uri.h:
        The address and URI for SGI is obsolete and there is no
        replacement so deleted some lines from the copyright
-       statements. 
+       statements.
 2015-01-30  David Anderson
      * common.c,dwarfdump.c: Update version string.
      * globals.h: Added format_sig8_string() to global functions.
@@ -352,7 +352,7 @@
        links dwgetopt.o into dwarfdump.
      * esb.c: Now prints PASS on success and counts errors.
      * dwarfdump.c: Now calls dwgetopt and includes dwgetopt.h
-       Added a new global so we recognize where needed 
+       Added a new global so we recognize where needed
        not to do some checks when checking (
        for debugfission some things not sensible).
      * globals.h: Removed cu_offset (not needed) and added

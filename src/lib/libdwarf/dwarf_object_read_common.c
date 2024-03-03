@@ -34,15 +34,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stddef.h> /* size_t */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 
-#ifdef _WIN32
-#ifdef HAVE_STDAFX_H
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <io.h> /* off_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* off_t */
-#endif /* _WIN32*/
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -54,19 +45,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  Neither off_t nor ssize_t is in C90.
     However, both are in Posix:
     IEEE Std 1003.1-1990, aka
-    ISO/IEC 9954-1:1990. 
-    This gets asked to read large sections sometimes. 
+    ISO/IEC 9954-1:1990.
+    This gets asked to read large sections sometimes.
     The Linux kernel allows at most 0x7ffff000
     bytes in a read()*/
 int
-_dwarf_object_read_random(int fd, char *buf, off_t loc,
-    size_t size, off_t filesize, int *errc)
+_dwarf_object_read_random(int fd, char *buf, Dwarf_Unsigned loc,
+    Dwarf_Unsigned size, Dwarf_Unsigned filesize, int *errc)
 {
-    off_t scode = 0;
-    ssize_t rcode = 0;
-    off_t endpoint = 0;
-    size_t max_single_read = 0x1ffff000;
-    size_t remaining_bytes = 0;
+    Dwarf_Unsigned endpoint = 0;
+    int res = 0;
 
     if (loc >= filesize) {
         /*  Seek can seek off the end. Lets not allow that.
@@ -75,39 +63,26 @@ _dwarf_object_read_random(int fd, char *buf, off_t loc,
         return DW_DLV_ERROR;
     }
     endpoint = loc+size;
+    if (endpoint < loc) {
+        /*  Overflow!  The object is corrupt. */
+        *errc = DW_DLE_READ_OFF_END;
+        return DW_DLV_ERROR;
+    }
     if (endpoint > filesize) {
         /*  Let us -not- try to read past end of object.
             The object is corrupt. */
         *errc = DW_DLE_READ_OFF_END;
         return DW_DLV_ERROR;
     }
-#ifdef _WIN32
-    scode = (off_t)lseek(fd,(long)loc,SEEK_SET);
-#else
-    scode = lseek(fd,loc,SEEK_SET);
-#endif
-    if (scode == (off_t)-1) {
+    res = _dwarf_seekr(fd,loc,SEEK_SET,0);
+    if (res != DW_DLV_OK) {
         *errc = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    remaining_bytes = size;
-    while(remaining_bytes > 0) { 
-        if (remaining_bytes >= max_single_read) {
-            size = max_single_read;
-        }
-#ifdef _WIN32
-        rcode = (ssize_t)read(fd,buf,(unsigned const)size);
-#else
-        rcode = read(fd,buf,size);
-#endif
-        if (rcode == (ssize_t)-1 ||
-            (size_t)rcode != size) {
-            *errc = DW_DLE_READ_ERROR;
-            return DW_DLV_ERROR;
-        }
-        remaining_bytes -= size;
-        buf += size;
-        size = remaining_bytes;
+    res = _dwarf_readr(fd,buf,size,0);
+    if (res != DW_DLV_OK) {
+        *errc = DW_DLE_READ_ERROR;
+        return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
 }

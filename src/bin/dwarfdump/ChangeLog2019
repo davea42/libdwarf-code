@@ -13,7 +13,7 @@
     * testobjLE32PE.test.c: Original source for the
       testobjLE32PE.exe testcase. Not compiled here, just
       present as documentation.
-    * Makefile.am: Name README.testcases and testobjLE32PE.test.c 
+    * Makefile.am: Name README.testcases and testobjLE32PE.test.c
       so the get into releases.
     * Makefile.in: Regenerated.
 2019-11-05 David Anderson
@@ -43,7 +43,7 @@
       included (from globals.h). Fixed.
     * getopttest.c: Added #include of config.h so
       the #ifdef around standard headers compiles.
-    * print_reloc_decls.h,print_reloc_test.c,testesb.c: With 
+    * print_reloc_decls.h,print_reloc_test.c,testesb.c: With
       full warnings this needed ifdefs to the simple
       testcode will build. And removal of unused
       variables.
@@ -76,7 +76,7 @@
        glflags.gf_gnu_debuglink_flag.
      * dwarfdump.c: Now we only print debuglink etc
        on request via --print-gnu-debuglink.
-       Now call the latest, best version of 
+       Now call the latest, best version of
        dwarf_gnu_debuglink() handling both .gnu_debuglink
        and .note.gnu.build-id sections.
 2019-10-02 David Anderson
@@ -95,7 +95,7 @@
        so we are guaranteed uintptr_t for TSEARCHASH.
      * macrocheck.c: Removed a pointless include of esb.h.
      * runtests.sh: Removed useless tests of the native
-       getopt as we never use it. 
+       getopt as we never use it.
        Ensure we get cc or gcc if at least one
        of them exists.
        Use rm -f and name with and without trailing .exe
@@ -140,7 +140,7 @@
      * glflags.h: Added boolean gf_gnu_debuglink_flag.
      * globals.h: Added prototype of print_secname()
        and now it is shared across dwarfdump.
-     * print_abbrevs.c,print_locs.c,print_strings.c: Deleted local 
+     * print_abbrevs.c,print_locs.c,print_strings.c: Deleted local
        print_secname(), call
        the shared one instead.
      * print_die.c: Make this print_secname() the
@@ -191,7 +191,7 @@
        the user may actually free what it points to.
        Use DW_TSHASHTYPE.  Correctly arrange const
        in casts.
-     * helpertree.c,macrocheck.c,print_die.c: Include 
+     * helpertree.c,macrocheck.c,print_die.c: Include
        stdint.h for tsearch.
 2019-05-24 David Anderson
      * checkutil.c: Change %lx to instead use "%" DW_PR_DUx
@@ -209,7 +209,7 @@
 2019-05-20 David Anderson
      * CMakeLists.txt: Added addrmap.h to the HEADERS list.
        Reflects new names for the options and adds the
-       compiler warning options. 
+       compiler warning options.
      * config.h.in.cmake: Adding in the necessary HAVE_*
        option defaults.
      * dwarfdump.c: Adds part of the HAVE_CUSTOM_LIBELF
@@ -224,7 +224,7 @@
        tag_tree_ext.list: Adding blank lines judiciously
        makes the table easier for humans to read.
 2019-05-14 David Anderson
-     * command_options.c: Removed unneeded trailing ',' 
+     * command_options.c: Removed unneeded trailing ','
        in initializer as it caused a warning in compile.
 2019-05-14 David Anderson
      * print_reloc_test.c: Without libelf (in which case
@@ -250,7 +250,7 @@
        libdwarf version string.
 2019-05-02 David Anderson
      * dwarfdump-ta-ext-table.h: Regenerated.
-     * tag_common.h: 16-> 15. Deleted a duplicate extension 
+     * tag_common.h: 16-> 15. Deleted a duplicate extension
        TAG->Attr combo recently added so need to regenerate.
 2019-05-02 David Anderson
      * helpertree.c: Deleted trailing blank line.
@@ -296,7 +296,7 @@
      * dwarf_names.c,dwarf_names.h: Regenerated.
        Version date update.
      * dwarfdump_ta_ext_table.h,dwarfdump-ta-table.h,
-       dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:  Regenerated. 
+       dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:  Regenerated.
      * tag_attr_ext.list. Added DW_TAG_class_type
        with common GNU extension DW_AT_containing_type
      * tag_common.h: Increased EXT_ATTR_TABLE_ROWS to 15.
@@ -358,7 +358,7 @@
 2019-03-07 David Anderson
      * print_pubnames.c(print_all_pubnames_style_records): A
        struct esb_s was constructed and filled but then never
-       destructed, leading to a memory leak. Eliminated it 
+       destructed, leading to a memory leak. Eliminated it
        entirely.
 2019-03-04 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
@@ -378,19 +378,19 @@
        also (for those sections) print the section CU-headers
        if dwarfdump -v.   Some error messages modified slightly
        to show the correct section name (as opposed to leaving it
-       off). Now can do the coded checks instead of ignoring them.  
+       off). Now can do the coded checks instead of ignoring them.
      * print_sections.c: Moved deal_with_name_offset_err() over
        to print_pubnames.c, where it is now a static function.
      * print_sections.h: Removed declarations of deal_with_name_offset_err()
        and print_pubname_style_entry() as those are now static functions
        in print_pubnames.c.
-     * print_static_funcs.c, print_static_vars.c: Now only print 
+     * print_static_funcs.c, print_static_vars.c: Now only print
        section name if there
        is content. Corrected a long-incorrect section name of this
        SGI-extension section you most likely have never seen.
        Deleted the old printing code, do it via call into
        print_pubnames.c.
-     * print_types.c,print_weaknames.c: Now only prints 
+     * print_types.c,print_weaknames.c: Now only prints
        section name if there is content.
        Deleted the old printing code, do it via call into
        print_pubnames.c.
@@ -409,7 +409,7 @@
        with or without libelf.
 2019-02-12 David Anderson
      * print_die.c: Delete _dwarf_memcpy_swap_bytes() as it
-       is no longer needed. Use the new 
+       is no longer needed. Use the new
        dwarf_uncompress_integer_block_a() interface as it
        is easier to use.
 2019-02-07 David Anderson
@@ -430,10 +430,10 @@
 2019-01-20 David Anderson
     * globals.h: Remove the code for *UINT* and
       all the ifdefs involved. No longer needed.
-    * print_die.c(get_FLAG_BLOCK_string): Remove 
+    * print_die.c(get_FLAG_BLOCK_string): Remove
       the__int32_t from this function (associated with
       DW_AT_SUN_func_offsets).  Simplify the printing
-      of these offsets. 
+      of these offsets.
 2019-01-14 David Anderson
     * dwarf_names.c, dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
@@ -447,4 +447,4 @@
       a final line of text is reported to standard-out.
 2019-01-02 David Anderson
     * ChangeLog: renamed ChangeLog 2018.
-    * Makefile.am: Added ChangeLog2018 to distribution files.  
+    * Makefile.am: Added ChangeLog2018 to distribution files.

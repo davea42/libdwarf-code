@@ -140,7 +140,8 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
                 errptr = &_dwarf_failsafe_error;
                 errptr->er_static_alloc = DE_STATIC;
 #ifdef DEBUG
-                printf("libdwarf no dbg, fullystatic, "
+                printf("libdwarf no dbg to dwarf_error_string,"
+                    " fullystatic, "
                     "using DE_STATIC alloc, addr"
                     " 0x%lx line %d %s\n",
                     (unsigned long)errptr,
@@ -150,7 +151,7 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
                 errptr->er_static_alloc = DE_MALLOC;
 
 #ifdef DEBUG
-                printf("libdwarf no dbg,leaks, "
+                printf("libdwarf no dbg, add to static_err_list "
                     "static DE_MALLOC alloc, addr"
                     " 0x%lx line %d %s\n",
                     (unsigned long)errptr,

@@ -40,7 +40,7 @@
     * configure: Regenerated.
 2018-08-24  David Anderson
     * README: Moved comments about common build problems
-      to the beginning of the text. 
+      to the beginning of the text.
       Removed trailing whitespace.
 2018-08-23  David Anderson
     * README: Added mention of the aclocal-missing configure/

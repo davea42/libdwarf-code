@@ -48,6 +48,27 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_util.h"
 #include "dwarf_string.h"
 
+static void
+build_alloc_ab_error(Dwarf_Debug dbg,
+    Dwarf_Unsigned count,
+    const char *fieldname,
+    Dwarf_Error *error)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append_printf_s(&m,
+        "DW_DLE_ALLOC_FAIL :"
+        " Attempt to malloc space for %s ",
+        (char *)fieldname);
+    dwarfstring_append_printf_u(&m,
+        " with %u entries failed.",
+        count);
+    _dwarf_error_string(dbg,error,DW_DLE_ALLOC_FAIL,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
 /*
     This is a pre-scan of the abbrev/form list.
     We will not handle DW_FORM_indirect here as that
@@ -67,43 +88,28 @@ _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
     abbrev_list->abl_attr = (Dwarf_Half*)
         calloc(abbrev_list->abl_abbrev_count,
             SIZEOFT16);
+    if (!abbrev_list->abl_attr) {
+        build_alloc_ab_error(dbg,abbrev_list->abl_abbrev_count,
+            "abbrev_list->abl_attr",error);
+        return DW_DLV_ERROR;
+    }
     abbrev_list->abl_form = (Dwarf_Half *)
         calloc(abbrev_list->abl_abbrev_count,
             SIZEOFT16);
+    if (!abbrev_list->abl_form) {
+        build_alloc_ab_error(dbg,abbrev_list->abl_abbrev_count,
+            "abbrev_list->abl_form",error);
+        return DW_DLV_ERROR;
+    }
     if (abbrev_list->abl_implicit_const_count > 0) {
         abbrev_list->abl_implicit_const = (Dwarf_Signed *)
         calloc(abbrev_list->abl_abbrev_count,
             sizeof(Dwarf_Signed));
         if (!abbrev_list->abl_implicit_const) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_ALLOC_FAIL :"
-                " Attempt to malloc space for "
-                "abbrev_list->abl_implicit_const "
-                "with %u entries failed.",
-                abbrev_list->abl_abbrev_count);
-            _dwarf_error_string(dbg,error,DW_DLE_ALLOC_FAIL,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
+            build_alloc_ab_error(dbg,abbrev_list->abl_abbrev_count,
+                "abbrev_list->abl_implicit_const",error);
             return DW_DLV_ERROR;
         }
-    }
-    if (!abbrev_list->abl_attr || !abbrev_list->abl_form ) {
-        dwarfstring m;
-
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_ALLOC_FAIL :"
-            " Attempt to malloc space for "
-            "abbrev_list->abl_attr or abl_form "
-            "with %u entries failed.",
-            abbrev_list->abl_abbrev_count);
-        _dwarf_error_string(dbg,error,DW_DLE_ALLOC_FAIL,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
     }
 
     for (i = 0; i < abbrev_list->abl_abbrev_count; ++i) {
@@ -141,18 +147,13 @@ _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
             return res;
         }
         if (attr_form > 0xffff) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append(&m,
+            _dwarf_error_string(dbg, error,
+                DW_DLE_ATTR_FORM_SIZE_BAD,
                 "DW_DLE_ATTR_FORM_SIZE_BAD :"
-                " reading attr_form");
-            dwarfstring_append(&m,"an abbrev list entry "
-                "the ULEB form number is too large. "
+                " reading attr_form of"
+                " an abbrev list entry: "
+                "the ULEB form number is too large "
                 "to be valid. Corrupt Dwarf.");
-            _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_SIZE_BAD,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         if (!_dwarf_valid_form_we_know(attr_form,attr)) {
@@ -181,7 +182,7 @@ _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
             abbrev_list->abl_implicit_const_count++;
             abbrev_list->abl_implicit_const[i] = implicit_const;
         }
-#if 0
+#if 0  /* Do nothing special for DW_FORM_indirect here. Ignore. */
         if (attr_form == DW_FORM_indirect) {
             /*  Do nothing special here. Do not read
                 from the DIE till reading for

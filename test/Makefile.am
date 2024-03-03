@@ -48,7 +48,7 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_sanitized.log \
   test_sanitized.trs \
   test_testesb.log \
-  test_testesb.trs 
+  test_testesb.trs
 
 clean-local:
 	-rm -f junk.*
@@ -115,7 +115,7 @@ test_dwarflebtest_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 
-test_int64_test_SOURCES = test_int64_test.c 
+test_int64_test_SOURCES = test_int64_test.c
 test_int64_test_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_int64_test_CPPFLAGS = -DTESTING \
 -DLIBDWARF_BUILD \
@@ -138,7 +138,7 @@ test_dwgetopt_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_dwgetopt_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump
- 
+
 test_errmsglist_SOURCES = test_errmsglist.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c
 test_errmsglist_CFLAGS = $(DWARF_CFLAGS_WARN)
@@ -216,7 +216,7 @@ test_makenametest_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_regex_SOURCES = test_regex.c \
-    $(top_srcdir)/src/bin/dwarfdump/dd_regex.c 
+    $(top_srcdir)/src/bin/dwarfdump/dd_regex.c
 test_regex_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_regex_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -267,12 +267,12 @@ test_tied_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 ### debuglink tests are difficult to support in Windows/mingw
-if HAVE_DEBUGLINK 
+if HAVE_DEBUGLINK
 if HAVE_DWARFEXAMPLE
   TESTS += test_debuglink-a.sh test_debuglink-b.sh
 endif
 endif
-TESTS += test_dwarfdumpLinux.sh  test_dwarfdumpPE.sh test_dwarfdumpMacos.sh 
+TESTS += test_dwarfdumpLinux.sh  test_dwarfdumpPE.sh test_dwarfdumpMacos.sh
 if HAVE_DWARFEXAMPLE
 TESTS += test_jitreaderdiff.sh
 endif
@@ -284,7 +284,7 @@ AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; \
     DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)';\
     export DWCOMPILERFLAGS ;
 
-### dummysource ignore is to be kept, but not used. 
+### dummysource ignore is to be kept, but not used.
 ### See buildingdummy.sh which is also not to be used.
 EXTRA_DIST= \
 buildingdummy.sh \

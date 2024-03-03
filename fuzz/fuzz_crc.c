@@ -57,12 +57,19 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   fuzz_fd = open(filename, O_RDONLY | O_BINARY);
   fsize = size_left = lseek(fuzz_fd, 0L, SEEK_END);
   readbuf = (unsigned char *)malloc(readlen);
+  /*  The read below will fail, so to avoid
+      reading uninitialized data we ensure
+      the data is initialized. */
+  memset((void *)readbuf,10,(size_t)readlen);
   if (fuzz_fd != -1) {
     while (size_left > 0) {
       if (size_left < readlen) {
         readlen = size_left;
       }
       readval = read(fuzz_fd, readbuf, readlen);
+      if (readval != readlen) {
+          /*  The read failed as it is expected to. */
+      }
       size_left -= readlen;
       tcrc = dwarf_basic_crc32(readbuf, readlen, init);
       init = tcrc;

@@ -1,5 +1,5 @@
 2007-12-09 DavidAnderson <davea42@earthlink.net>
-     * dwarf_sort_line.c dwarf_print_lines.c darf_frame.c: Forgot 
+     * dwarf_sort_line.c dwarf_print_lines.c darf_frame.c: Forgot
        to commit yesterday.
        Today's commit includes renaming _dwarf_fde_section_offset
        _dwarf_cie_section_offset, _dwarf_print_lines, _dwarf_ld_sort_lines
@@ -13,7 +13,7 @@
      * config.guess, config.sub: Updated to 2.61
      * acconfig.h: Deleted, removing autoconf complaint.
 2007-11-14 David Anderson <davea42@earthlink.net>
-      * dwarf_frame2.c (gnu_aug_encodings): Now allows 'S' augmentation 
+      * dwarf_frame2.c (gnu_aug_encodings): Now allows 'S' augmentation
         character in eh_frame.
 2007-10-16 David Anderson <davea42@earthlink.net>
       * dwarf_alloc.c: Reformat a comment.
@@ -22,8 +22,8 @@
         of a byte past section end.
       * dwarf_frame.c:  Changed spelling of a local variable
         so it is easier to grep for and to read.
-      * dwarf_macro.c (free_macro_stack): Was free()ing memory that 
-        _dwarf_get_alloc() had supplied, which could lead to core dump.  
+      * dwarf_macro.c (free_macro_stack): Was free()ing memory that
+        _dwarf_get_alloc() had supplied, which could lead to core dump.
         Fixed potential memory leaks (said leaks only possible with an
         error in the macro data, not  with valid macro section
         data).
@@ -45,7 +45,7 @@
       * dwarf.h: Update FSF address.
       * dwarf_opaque.h: Add DWARF4 entry (version stamp).
         Update FSF address.
-      * dwarf_die_deliv.c: Add check for .debug_info version 4 
+      * dwarf_die_deliv.c: Add check for .debug_info version 4
         (version stamp). Update FSF address.
       * libdwarf.h pro_macinfo.h pro_line.h dwarf_incl.h
         pro_alloc.h pro_section.h libdwarfdefs.h pro_util.h
@@ -85,7 +85,7 @@
 
 2007-07-03 David Anderson <davea42@earthlink.net>
       * libdwarf.h: Add declaration of dwarf_loclist_from_expr();
-      * dwarf_loc.c: Implement dwarf_loclist_from_expr() and add 
+      * dwarf_loc.c: Implement dwarf_loclist_from_expr() and add
         sign-extension macro calls to case DW_OP_const4s numbers.
         Removed unused local variables.
       * dwarf_form.c: Removed unused local variables.
@@ -101,8 +101,8 @@
       * README: added a note that a few warnings about conversions
         from pointer to integer are normal at libdwarf compile time.
 2007-05-25 David Anderson <davea42@earthlink.net>
-      * dwarf_frame2.c (_dwarf_get_fde_list_internal): 
-        Correct cie-list-creation so it adds to the tail of the list.  
+      * dwarf_frame2.c (_dwarf_get_fde_list_internal):
+        Correct cie-list-creation so it adds to the tail of the list.
         gcc 4.1.2 generates cie-use in an order the code did
         not properly handle.
 2007-05-08 David Anderson <davea42@earthlink.net>
@@ -162,9 +162,9 @@
       * dwarf_print_lines.c pro_section.c dwarf_query.c
         dwarf_alloc.c dwarf_arange.c dwarf_sort_line.c
         dwarf_global.c dwarf_line.c dwarf_abbrev.c
-        dwarf_frame2.c dwarf_util.c dwarf_loc.c dwarf_util.h 
+        dwarf_frame2.c dwarf_util.c dwarf_loc.c dwarf_util.h
         dwarf_die_deliv.c dwarf_frame.c dwarf_macro.c: Additions
-        to source for year 2007 now fit in with pre-existing 
+        to source for year 2007 now fit in with pre-existing
         copyright wording.  Effectively no change.
       * dwarf_srclines_dealloc.c: Now has the (always-intended) SGI
         LGPL copyright wording.
@@ -181,7 +181,7 @@
       * dwarf_form.c (dwarf_formsdata, dwarf_formudata): Use
         Dwarf_sfixed in dwarf_formsdata, document need for casts,
         Use Dwarf_Signed as type for READ_UNALIGNED macro use.
-        The only real correction here is for a 64bit long compiled 
+        The only real correction here is for a 64bit long compiled
         libdwarf reading 32bit dwarf_formsdata FORM_data4.
       * dwarf_base_types.h: Now Dwarf_sfixed64 and Dwarf_ufixed64
         are properly declared (so they are usable).
@@ -192,14 +192,14 @@
         Add a non-restrictive copyright notice.
 2007-02-23 David Anderson <davea42@earthlink.net
       * dwarf_util.h: now the macros use do{} while(0)
-      * pro_forms.c dwarf_print_lines.c pro_section.c dwarf_query.c 
+      * pro_forms.c dwarf_print_lines.c pro_section.c dwarf_query.c
         dwarf_arange.c dwarf_sort_line.c dwarf_global.c dwarf_line.c
         dwarf_abbrev.c dwarf_frame2.c dwarf_util.c dwarf_loc.c
         dwarf_die_deliv.c dwarf_frame.c: Now have ;
         after all dwarf_util.h macros. Also added local variable
         initializations (compiler noticed).
-      * dwarf_macro.c: was missing include of <stdlib.h> for free() 
-        declaration. 
+      * dwarf_macro.c: was missing include of <stdlib.h> for free()
+        declaration.
       * dwarf_print_lines.c pro_section.c dwarf_query.c dwarf_alloc.c
         dwarf_arange.c dwarf_sort_line.c dwarf_global.c dwarf_line.c
         dwarf_abbrev.c dwarf_srclines_dealloc.c dwarf_frame2.c

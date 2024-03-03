@@ -95,13 +95,13 @@ dd_tag_common.h \
 dd_uri.c \
 dd_uri.h \
 dd_utf8.h  \
-dd_utf8.c 
+dd_utf8.c
 
 dwarfdump_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_srcdir)/src/bin/dwarfdump
 
-dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump" 
+dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump"
 
 dwarfdump_LDADD = \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
@@ -138,4 +138,4 @@ NEWS \
 README \
 CODINGSTYLE \
 $(dwarfdumpdev_DATA) \
-$(dwarfdumpconf_DATA) 
+$(dwarfdumpconf_DATA)

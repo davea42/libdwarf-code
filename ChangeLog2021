@@ -7901,7 +7901,7 @@ Merge: 5d62dbd1 3b2f73fd
 dadebug ending report
 2021-05-31: David Anderson
     * CMakeLists.txt,configure.ac: version string is
-      0.1.0 
+      0.1.0
     * README mentions the new location of documentation:
       the doc directory, which we added just now.
 2021-05-28: David Anderson
@@ -7936,7 +7936,7 @@ dadebug ending report
       configure.ac and adding comment to keep these
       files in sync.
     * configure.ac: Added comment to keep the version
-      here and in CMakeLists.txt in sync. 
+      here and in CMakeLists.txt in sync.
       No other change.
 2021-05-12: David Anderson
     * CMakeLists.txt: Fixing a disastrous error removing

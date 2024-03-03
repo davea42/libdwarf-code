@@ -4,8 +4,8 @@
 #define DD_PE_CPUTYPE_H
 
 static const struct base_pe_cpu_s {
-   const char *name;
-   Dwarf_Unsigned value;
+    const char *name;
+    Dwarf_Unsigned value;
 } pe_cpubase [] = {
 {"I386", 0x014c},
 {"R3000", 0x0162},
@@ -38,7 +38,6 @@ static const struct base_pe_cpu_s {
 {"M32R", 0x9041},
 {"CEE", 0xc0ee},
 {0,0}
-
 };
 
 static const char *
@@ -52,7 +51,5 @@ dd_pe_arch_name(Dwarf_Unsigned val)
         }
     }
     return "Unlisted pe cpu architecture";
-} 
+}
 #endif /* DD_PE_CPUTYPE.H */
-
-

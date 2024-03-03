@@ -81,7 +81,7 @@ static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
 
 static struct Dwarf_Sig8_s dwarfsig8zero;
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -608,9 +608,9 @@ finish_cu_context_via_cudie_inner(
             cudie, &bad_pc_form,
             error);
         if (resdwob == DW_DLV_NO_ENTRY) {
-            /* The CU die has no children or has
-               some other issue like DW_FORM_ref_addr 
-               on a low or high pc attribute. (Metrowerks) */
+            /*  The CU die has no children or has
+                some other issue like DW_FORM_ref_addr
+                on a low or high pc attribute. (Metrowerks) */
             if (local_cudie_return) {
                 *local_cudie_return = cudie;
             } else {
@@ -1155,17 +1155,15 @@ _dwarf_set_children_flag(Dwarf_CU_Context cucon,
     }
 }
 
-
-
 static int
 _dwarf_prod_contains(const char *ck, const char *prod)
 {
     const char *cp = prod;
     size_t len = strlen(ck);
 
-    for( ; *cp ; ++cp) {
+    for (; *cp ; ++cp) {
         if ( ck[0] != *cp) {
-           continue;
+            continue;
         }
         if (strncmp(ck,cp,len)) {
             continue;
@@ -1187,9 +1185,9 @@ set_producer_type(Dwarf_Die die,
 
     res = dwarf_die_text(die,DW_AT_producer,&producer,&error);
     if (res == DW_DLV_ERROR) {
-         dwarf_dealloc_error(cu_context->cc_dbg,error);
-         error = 0;
-         return;
+        dwarf_dealloc_error(cu_context->cc_dbg,error);
+        error = 0;
+        return;
     }
     if (res == DW_DLV_NO_ENTRY) {
         return;
@@ -1275,9 +1273,9 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 break;
             }
             switch(attrnum) {
-            case DW_AT_producer: 
-                 set_producer_type(cudie,cu_context);
-                 break;
+            case DW_AT_producer:
+                set_producer_type(cudie,cu_context);
+                break;
             case DW_AT_dwo_id:
             case DW_AT_GNU_dwo_id: {
                 Dwarf_Sig8 signature;
@@ -2149,7 +2147,7 @@ _dwarf_ptr_CU_offset(Dwarf_CU_Context cu_context,
     *cu_off = (di_ptr - dataptr);
     return DW_DLV_OK;
 }
-#if 0 /* FOR DEBUGGING */
+#if 0 /* print_sib_offset() for debugging */
 /* Just for debug purposes */
 void print_sib_offset(Dwarf_Die sibling)
 {

@@ -51,7 +51,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_debugaddr.h"
 #include "dwarf_string.h"
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {

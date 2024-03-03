@@ -53,10 +53,6 @@
 #include "dwarf_die_deliv.h"
 #include "dwarf_string.h"
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif /* O_BINARY */
-
 #define MINBUFLEN 1000
 
 #define MORE_BYTES      0x80
@@ -75,7 +71,7 @@ dwarf_package_version(void)
     return PACKAGE_VERSION;
 }
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -89,7 +85,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif /*0*/
-#if 0
+#if 0 /* dump_ab_list */
 static void
 dump_ab_list(const char *prefix,const char *msg,
     unsigned long hash_num,
@@ -638,7 +634,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
                 order of the entries, effectively, but
                 that does not seem significant. */
             if (newhash > htout->tb_highest_used_entry) {
-                htout->tb_highest_used_entry = 
+                htout->tb_highest_used_entry =
                     (unsigned long)newhash;
             }
             listent->abl_next = entry_out[newhash];
@@ -817,7 +813,7 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
     hash_num = hashable_val HT_MOD_OP
         (hash_table_base->tb_table_entry_count-1);
     if (hash_num > hash_table_base->tb_highest_used_entry) {
-        hash_table_base->tb_highest_used_entry = 
+        hash_table_base->tb_highest_used_entry =
             (unsigned long)hash_num;
     }
     entry_base = hash_table_base->tb_entries;
@@ -921,7 +917,7 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
         hash_num = new_hashable_val HT_MOD_OP
             (hash_table_base->tb_table_entry_count-1);
         if (hash_num > hash_table_base->tb_highest_used_entry) {
-            hash_table_base->tb_highest_used_entry = 
+            hash_table_base->tb_highest_used_entry =
                 (unsigned long)hash_num;
         }
 
@@ -1405,7 +1401,7 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     /*  copy errs errno to errt by building
         a new errt.
         variable if there is one!
-        Move the error from dbgs to dbgt. 
+        Move the error from dbgs to dbgt.
         Error numbers are all < 1000.
         */
     mydw_errno = (int)dwarf_errno(*errs);

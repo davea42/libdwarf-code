@@ -44,7 +44,7 @@ Floor, Boston MA 02110-1301, USA.
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_string.h"
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,int line,
     Dwarf_Small * start, long len)
@@ -134,7 +134,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
             new_cu_offset =
                 _dwarf_calculate_next_cu_context_offset(
                 cu_context)) {
-#if 0
+#if 0 /* unnecessary load section call, we think. */
             lres = _dwarf_load_die_containing_section(dbg,
                 is_info,error);
             if (lres == DW_DLV_ERROR) {

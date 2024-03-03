@@ -1,5 +1,5 @@
 2007-12-09 DavidAnderson <davea42@earthlink.net>
-     * print_sections.c print_frames.c: Forgot to commit yesterday. 
+     * print_sections.c print_frames.c: Forgot to commit yesterday.
        yesterday's commit includes renaming _dwarf_fde_section_offset
        _dwarf_cie_section_offset, _dwarf_print_lines, _dwarf_ld_sort_lines
        to dwarf_* form while retaining support for the now obsolete
@@ -34,7 +34,7 @@
      * print_sections.c (dump_block): Removed superfluous return byte from
        printed characters. Removed unused variables.
      * print_die.c: A little refactoring for clarity.
-     * globals.h: dwarfdump_print_one_locdesc() is now a 
+     * globals.h: dwarfdump_print_one_locdesc() is now a
        global-to-dwarfdump function.
      * print_frames.c: Now (with -v) prints dwarf expression bytes
        in frame expressions readably.
@@ -48,18 +48,18 @@
      * dwarfdump.conf: Add new 'generic' abi for up to 1000 registers.
 
 2007-07-01 DavidAnderson <davea42@earthlink.net>
-     * print_frames.c: For DW_CFA_def_cfa_sf & DW_CFA_def_cfa_offset_sf 
+     * print_frames.c: For DW_CFA_def_cfa_sf & DW_CFA_def_cfa_offset_sf
        print a computed data alignment factor.
 2007-06-29 DavidAnderson <davea42@earthlink.net>
      * dwarfdump.1: Corrected spelling error.
 2007-05-25 DavidAnderson <davea42@earthlink.net>
-     * dwconf.h dwconf.c: Changed field name to 
+     * dwconf.h dwconf.c: Changed field name to
        cf_named_regs_table_size as old name was less than clear.
      * dwarfdump.c: Call frame table setup with
        cf_table_entry_count not cf_named_regs_table_size. The newly
        renamed field makes it clearer the call was wrong.
 2007-05-04 DavidAnderson <davea42@earthlink.net>
-     * print_die.c: printing of global offset of DIEs 
+     * print_die.c: printing of global offset of DIEs
        with -G is now more in the style of previous output.
 2007-04-18 Chris Quenelle <chris.quenelle@sun.com>
      * Makefile.in:

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf C CXX)
+project(libdwarf VERSION 0.9.1 LANGUAGES C CXX)
 
-# libdwarf  
+# libdwarf
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 option(BUILD_SHARED "build shared library libdwarf[p].so and use it" FALSE)
 
@@ -35,7 +35,7 @@ include_directories( ${PROJECT_BINARY_DIR} )
 macro(msvc_posix target)
     if(MSVC AND ("${MSVC_VERSION}" LESS 1900))
         # under VS 2015
-	target_compile_definitions(${target} PUBLIC 
+	target_compile_definitions(${target} PUBLIC
 	    snprintf=_snprintf)
     endif()
 endmacro()
@@ -60,7 +60,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     if (LIBDWARF_CRT STREQUAL "MT")
       message(STATUS "Using MT runtime by compile flag replacement")
       # taken from the CMake FAQ
-      foreach(flag_v 
+      foreach(flag_v
       CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG
       CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL
       CMAKE_C_FLAGS_RELWITHDEBINFO
@@ -120,7 +120,7 @@ include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
 set(VERSION 0.9.2)
-set(PACKAGE_VERSION "\"${VERSION}\"") 
+set(PACKAGE_VERSION "\"${VERSION}\"")
 set(PACKAGE_NAME "libdwarf" )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
 string(REGEX REPLACE "[\"]" "" tarname1 "${PACKAGE_STRING}" )
@@ -132,12 +132,12 @@ if (${isBigEndian})
   set ( WORDS_BIGENDIAN 1 )
 endif()
 
-check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H) 
-check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H ) 
+check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H)
+check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H )
 check_include_file( "stdint.h"        HAVE_STDINT_H   )
 check_include_file( "unistd.h"        HAVE_UNISTD_H   )
 check_include_file( "stdafx.h"        HAVE_STDAFX_H   )
-check_include_file( "fcntl.h"         HAVE_FCNTL_H   ) 
+check_include_file( "fcntl.h"         HAVE_FCNTL_H   )
 
 ### cmake provides no way to guarantee uint32_t present.
 ### configure does guarantee that.
@@ -164,7 +164,7 @@ else()
   set(uintptr_t "unsigned long long int" )
   message(STATUS "Setting #define uintptr_t " ${uintptr_t})
 endif()
-if (uintptr_t) 
+if (uintptr_t)
   message(STATUS "uintptr_t value considered YES ")
 else()
   message(STATUS "uintptr_t value considered NO ")
@@ -176,7 +176,7 @@ else()
   set(intptr_t "long long int" )
   message(STATUS "Setting #define intptr_t " ${intptr_t})
 endif()
-if (intptr_t) 
+if (intptr_t)
   message(STATUS "intptr_t value considered YES ")
 else()
   message(STATUS "intptr_t value considered NO ")
@@ -186,15 +186,44 @@ if (ENABLE_DECOMPRESSION)
   # Zlib and ZSTD need to be found otherwise disable it
   if(NOT TARGET ZLIB::ZLIB)
     find_package(ZLIB)
+  else()
+    # Presumably in this case, the target has been found externally but set this flag just in case
+    set(ZLIB_FOUND TRUE)
   endif()
-  if(NOT TARGET ZSTD::ZSTD)
-    find_package(ZSTD)
+  # This feels excessive, however perhaps better safe than sorry
+  if(
+    NOT (
+      TARGET zstd::libzstd_shared OR
+      TARGET zstd::libzstd_static OR
+      TARGET libzstd_shared OR
+      TARGET libzstd_static OR
+      TARGET ZSTD::ZSTD
+    )
+  )
+    find_package(zstd)
+  else()
+    # Presumably in this case, the target has been found externally but set this flag just in case
+    set(zstd_FOUND TRUE)
   endif()
-  if (ZLIB_FOUND AND ZSTD_FOUND )
+  # Unfortunately aliasing ZSTD::ZSTD to zstd::libzstd_shared/static can lead to problems for end-users, a variable
+  # is used
+  if(TARGET zstd::libzstd_shared)
+    set(ZSTD_LIB zstd::libzstd_shared)
+  elseif(TARGET zstd::libzstd_static)
+    set(ZSTD_LIB zstd::libzstd_static)
+  elseif(TARGET libzstd_shared)
+    set(ZSTD_LIB libzstd_shared)
+  elseif(TARGET libzstd_static)
+    set(ZSTD_LIB libzstd_static)
+  else()
+    set(ZSTD_LIB ZSTD::ZSTD)
+  endif()
+  if (ZLIB_FOUND AND zstd_FOUND )
     set(HAVE_ZLIB TRUE)
     set(HAVE_ZLIB_H TRUE)
     set(HAVE_ZSTD TRUE)
     set(HAVE_ZSTD_H TRUE)
+    set(BUILT_WITH_ZLIB_AND_ZSTD TRUE)
   endif()
 endif ()
 

@@ -52,7 +52,7 @@
 #include "dwarf_debugnames.h"
 #include "dwarf_string.h"
 
-#if 0
+#if 0 /* dump_bytes */
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -66,7 +66,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif /*0*/
-#if 0
+#if 0 /* dump_abbrev_record() */
 static void
 dump_abbrev_record(const char *msg,
     Dwarf_Unsigned abcode,

@@ -460,7 +460,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* _dwarf_get_aranges_addr_offsets Unused */
 /*
     This function returns DW_DLV_OK if it succeeds
     and DW_DLV_ERR or DW_DLV_OK otherwise.

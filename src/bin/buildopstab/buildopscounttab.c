@@ -384,7 +384,7 @@ int main(int argc, char**argv)
             "than makes any sense:"
             " Giving up\n");
         exit(EXIT_FAILURE);
-        
+
     }
     safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
     {

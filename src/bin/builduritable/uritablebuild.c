@@ -141,7 +141,7 @@ static void
 print_sanitize_entry(int c_in)
 {
     unsigned char c =  c_in & 0xff;
-    
+
     if (!c_in) {
         printf("0 /*%u*/,",c);
         return;

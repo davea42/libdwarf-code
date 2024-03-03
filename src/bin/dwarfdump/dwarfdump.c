@@ -522,7 +522,7 @@ main(int argc, char *argv[])
                 homeify((char *)sanitized(tied_file_name),&m);
                 printf("%s ERROR:  can't open tied file"
                     ".. %s: %s\n",
-                    glflags.program_name, 
+                    glflags.program_name,
                     esb_get_string(&m),
                     errmsg);
                 esb_destructor(&m);
@@ -741,7 +741,8 @@ dbgsetup(Dwarf_Debug dbg,struct dwconf_s *setup_config_file_data)
     dwarf_set_frame_undefined_value(dbg,
         (Dwarf_Half)setup_config_file_data->cf_undefined_val);
     if (setup_config_file_data->cf_address_size) {
-        /*  In libdwarf we mostly use Dwarf_Half, but Dwarf_Small works ok here. */
+        /*  In libdwarf we mostly use Dwarf_Half,
+            but Dwarf_Small works ok here. */
         dwarf_set_default_address_size(dbg,
             (Dwarf_Small)setup_config_file_data->cf_address_size);
     }
@@ -925,26 +926,55 @@ homeify(char *s, struct esb_s* out)
     char *home = getenv("HOME");
     size_t homelen = 0;
 
-    /*  In msys2 this Windows terminology
-        is not needed and causes trouble for
-        regression testing. */
-    char *winprefix = "C:/msys64/";
-    size_t winlen = 10;
+#ifdef _WIN32
+    /*  Windows In msys2
+        $HOME might be C:\msys64\home\admin
+        which messes up regression testing.
+        For msys2 with a simple setup this
+        helps regressiontesting.
+    */
+    char *winprefix = "C:/msys64/home/";
+    char *domain = getenv("USERDOMAIN");
+    char *user = getenv("USER");
+    size_t winlen = 15;
 
-    if (0 == strncmp(s,winprefix,winlen)) {
-        /* leave the second / in winprefix in the string */
-        s = s+ winlen-1;
+    if (domain && !strcmp(domain,"MSYS")) {
+
+        if (strncmp(s,winprefix,winlen)) {
+            /* giving up, not msys2 */
+            esb_append(out,s);
+            return;
+        }
+        if (user) {
+            /*  \\home\\admin
+                Change to $HOME
+                This is a crude way to get some
+                regressiontests to pass.
+            */
+            size_t userlen = strlen(user);
+            esb_append(out,"$HOME");
+            esb_append(out,s+winlen+userlen);
+            return;
+        } else {
+            /* giving up */
+            esb_append(out,s);
+            return;
+        }
     }
+#endif /* _WIN32 */
     if (!home) {
+        /* giving up */
         esb_append(out,s);
         return;
     }
     homelen = strlen(home);
     if (s[homelen] != '/') {
+        /* giving up */
         esb_append(out,s);
         return;
     }
     if (strncmp(s,(const char *)home,homelen)) {
+        /* giving up */
         esb_append(out,s);
         return;
     }
@@ -2234,9 +2264,11 @@ build_linkonce_info(Dwarf_Debug dbg)
 
     nCount = dwarf_get_section_count(dbg);
 
-    /*  FIXME: dwarf_get_section_info_by_index_a() only works for section indicies
-        as int. It works acceptably, but will fail with more than 32000 sections
-        (a very large number). */
+    /*  FIXME: dwarf_get_section_info_by_index_a() only
+        works for section indicies
+        as int. It works acceptably, but will fail with
+        more than 32000 sections
+        (a very large number) with 32bit Windows. */
     /* Ignore section with index=0 */
     for (section_index = 1;
         section_index < nCount;
@@ -2516,14 +2548,28 @@ add_to_unique_errors_table(char * error_text)
     /*  Store the new text; check if we have space
         to store the error text */
     if (set_unique_errors_entries + 1 == set_unique_errors_size) {
-        set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
-        set_unique_errors = (char **)realloc(set_unique_errors,
-            set_unique_errors_size * sizeof(char*));
-    }
+        char ** newsun = 0;
+        unsigned int newsun_size = set_unique_errors_size +
+            SET_UNIQUE_ERRORS_DELTA;
 
+        newsun = (char **)realloc(set_unique_errors,
+            newsun_size* sizeof(char*));
+        if (!newsun) {
+            static int ercount = 0;
+            if (!ercount) {
+                printf("\nERROR: Out of space recording unique"
+                    " errors. Attempting to continue. "
+                    " Message will not repeat.\n");
+                glflags.gf_count_major_errors++;
+            }
+            ++ercount;
+            return FALSE;
+        }
+        set_unique_errors = newsun;
+        set_unique_errors_size = newsun_size;
+    }
     set_unique_errors[set_unique_errors_entries] = filtered_text;
     ++set_unique_errors_entries;
-
     return FALSE;
 }
 
@@ -2748,7 +2794,6 @@ print_machine_arch(Dwarf_Debug dbg)
             Dwarf_Unsigned flags = 0;
             Dwarf_Unsigned offset = 0;
 
-
             fres = dwarf_get_section_info_by_index_a(dbg,j,
                 &name,&addr,&size,&flags,&offset,&error);
             if (fres != DW_DLV_OK) {
@@ -2758,12 +2803,13 @@ print_machine_arch(Dwarf_Debug dbg)
                 " 0x%" DW_PR_XZEROS DW_PR_DUx
                 " 0x%" DW_PR_XZEROS DW_PR_DUx
                 " 0x%" DW_PR_XZEROS DW_PR_DUx
-                " 0x%" DW_PR_XZEROS DW_PR_DUx 
+                " 0x%" DW_PR_XZEROS DW_PR_DUx
                 " %s\n",j,offset,size,flags,addr,name);
         }
         if (fres == DW_DLV_ERROR) {
-            char *errm = dwarf_errmsg(error); 
-            printf("ERROR: dwarf_get_secion_info_by_index_a failed %s\n",
+            char *errm = dwarf_errmsg(error);
+            printf("ERROR: dwarf_get_secion_info_by_index_a "
+                "failed %s\n",
                 errm);
             dwarf_dealloc_error(dbg,error);
             glflags.gf_count_major_errors++;

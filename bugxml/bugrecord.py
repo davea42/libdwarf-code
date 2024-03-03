@@ -73,7 +73,8 @@ def xmlize(linea, inhtml, inpre):
 
 def paraline(name, linea):
     out = ""
-    if len(linea) < 1:
+    strp = linea.strip()
+    if len(strp) < 1:
         out = "<p>" + name + ":" + "</p>"
         return out
     out = "<p>" + name + ": "
@@ -87,7 +88,7 @@ def paralines(name, lines):
     if len(lines) < 1:
         out = "<p>" + name + ":" + "</p>"
         return out
-    out = "<p>" + name + ": "
+    out = "<p>" + name + ":"
     for lin in lines:
         f, inpre = xmlize(lin, "y", inpre)
         out += f
@@ -220,6 +221,7 @@ class bugrecord:
         s, inp = xmlize(self._id, "y", inpre)
         t = paraline("id", s)
         txt += [t]
+
         s, inp = xmlize(self._cve, "y", inpre)
         t = paraline("cve", s)
         txt += [t]
@@ -274,7 +276,7 @@ class bugrecord:
         l = main.strip()
         if len(l) > 0:
             out += l
-        out += term + "\n"
+        out += term 
         return out
 
     def paraxmlN(self, start, main, term):
@@ -286,7 +288,7 @@ class bugrecord:
             t, inpre = xmlize(l, "n", inpre)
             if len(t) > 0:
                 out += t
-        out += term + "\n"
+        out += term 
         return out
 
     def generate_xml(self):
@@ -296,7 +298,8 @@ class bugrecord:
 
         inpre = "n"
         s, inpre = xmlize(self._id, "n", inpre)
-        s = self.paraxml("<dwid>", s, "</dwid>")
+        t = self.paraxml("<dwid>", s, "</dwid>")
+        txt += [t]
 
         s, inpre = xmlize(self._cve, "n", inpre)
         t = self.paraxml("<cve>", s, "</cve>")

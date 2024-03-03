@@ -229,7 +229,7 @@ _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
             (char *)calloc(1,
             DW_HARMLESS_ERROR_MSG_STRING_SIZE);
         dhp->dh_errors[i] = newstr;
-#if 0
+#if 0 /* Commentary about avoiding leak */
         /*  BAD IDEA. just use the NULL pointer,
             so we avoid problems later with
             freeing.  */

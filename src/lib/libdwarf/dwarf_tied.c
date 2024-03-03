@@ -181,11 +181,16 @@ _dwarf_loop_reading_debug_info_for_cu(
         latestcontext = tieddbg->de_info_reading.de_cu_context;
 
         if (has_signature) {
-            void *retval = 0;
-            Dwarf_Sig8 consign =
-                latestcontext->cc_signature;
-            void *entry =
-                _dwarf_tied_make_entry(&consign,latestcontext);
+            void      *retval = 0;
+            Dwarf_Sig8 consign;
+            void      *entry = 0;
+
+            if (!latestcontext) {
+                /* FAILED might be out of memory.*/
+                return DW_DLV_NO_ENTRY;
+            }
+            consign = latestcontext->cc_signature;
+            entry = _dwarf_tied_make_entry(&consign,latestcontext);
             if (!entry) {
                 return DW_DLV_NO_ENTRY;
             }

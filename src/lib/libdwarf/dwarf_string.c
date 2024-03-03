@@ -57,6 +57,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static unsigned long minimumnewlen = 30;
 
+/*  Here we set s_data to a valid pointer to a null byte, though
+    the s_size and s_avail are set to zero. */
 int
 dwarfstring_constructor(struct dwarfstring_s *g)
 {
@@ -67,21 +69,30 @@ dwarfstring_constructor(struct dwarfstring_s *g)
     return TRUE;
 }
 
+/*  We only increase the s_data space.
+    Only calling dwarfstring_destructor
+    eliminates space. */
 static int
-dwarfstring_resize_to(struct dwarfstring_s *g,size_t newlen)
+dwarfstring_add_to(struct dwarfstring_s *g,size_t newlen)
 {
     char *b          = 0;
+    /*  s_size - s_avail is the string without counting
+        the null following the string. So, is  strlen()  */
     size_t lastpos   = g->s_size - g->s_avail;
     size_t malloclen = newlen+1;
 
+    /*  ASSERT: newlen as well as malloclen  are
+        greater than g->s_size at both call points */
     if (malloclen < minimumnewlen) {
         malloclen = minimumnewlen;
     }
+    /*  Not zeroing the new buffer block. */
     b = malloc(malloclen);
     if (!b) {
         return FALSE;
     }
     if (lastpos > 0) {
+        /* Copying the non-null bytes in s_data. */
         memcpy(b,g->s_data,lastpos);
     }
     if (g->s_malloc) {
@@ -89,6 +100,13 @@ dwarfstring_resize_to(struct dwarfstring_s *g,size_t newlen)
         g->s_data = 0;
     }
     g->s_data = b;
+    /*  s_data[lastpos] is one past the end of anything
+        counted as string
+        in s_data at the point of call, and is guaranteed
+        to be safe as we increased the size of s_data, we did not
+        shrink.  And, too, we add 1 to newlen, always,
+        so space for a terminating null byte is guaranteed
+        available. */
     g->s_data[lastpos] = 0;
     g->s_size = newlen;
     g->s_avail = newlen - lastpos;
@@ -118,7 +136,7 @@ dwarfstring_constructor_fixed(struct dwarfstring_s *g,
     if (len == 0) {
         return TRUE;
     }
-    r = dwarfstring_resize_to(g,len);
+    r = dwarfstring_add_to(g,len);
     if (!r) {
         return FALSE;
     }
@@ -161,6 +179,8 @@ int
 dwarfstring_append_length(struct dwarfstring_s *g,char *str,
     size_t slen)
 {
+    /*  lastpos is the length of characters
+        without the null-terminator  we call it strlen */
     size_t lastpos = g->s_size - g->s_avail;
     int r          = 0;
 
@@ -171,7 +191,7 @@ dwarfstring_append_length(struct dwarfstring_s *g,char *str,
         size_t newlen = 0;
 
         newlen = g->s_size + slen+2;
-        r = dwarfstring_resize_to(g,newlen);
+        r = dwarfstring_add_to(g,newlen);
         if (!r) {
             /* Unable to resize, dare not do anything. */
             return FALSE;
@@ -179,6 +199,8 @@ dwarfstring_append_length(struct dwarfstring_s *g,char *str,
     }
     memcpy(g->s_data + lastpos,str,slen);
     g->s_avail -= slen;
+    /*  Adding string terminating null byte.
+        Space is guaranteed available to do this.*/
     g->s_data[g->s_size - g->s_avail] = 0;
     return TRUE;
 }
@@ -625,7 +647,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     return res;
 }
 
-#if 0
+#if 0 /* Unused trimleadingzeros */
 /*  Counts hex chars. divide by two to get bytes from input
     integer. */
 static unsigned

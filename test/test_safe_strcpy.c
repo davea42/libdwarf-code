@@ -34,21 +34,21 @@ test_safe_strcpy(void)
     int failcount = 0;
 
     printf("Entry test_safe_strcpy\n");
- 
-    memset(buf,1,sizeof(buf)); 
+
+    memset(buf,1,sizeof(buf));
     failcount += test1(buf,4,"abc",3,"abc",__LINE__);
-    memset(buf,1,sizeof(buf)); 
+    memset(buf,1,sizeof(buf));
     failcount += test1(buf,3,"abc",3,"ab",__LINE__);
-    memset(buf,1,sizeof(buf)); 
+    memset(buf,1,sizeof(buf));
     failcount += test1(buf,4,"abcde",5,"abc",__LINE__);
-    memset(buf,'z',sizeof(buf)); 
+    memset(buf,'z',sizeof(buf));
     buf[1] = 0;
     failcount += test1(buf,0,"abcde",5,"z",__LINE__);
-    memset(buf,'z',sizeof(buf)); 
+    memset(buf,'z',sizeof(buf));
     failcount += test1(buf,1,"abcde",5,"",__LINE__);
-    memset(buf,'z',sizeof(buf)); 
+    memset(buf,'z',sizeof(buf));
     failcount += test1(buf,1,"",5,"",__LINE__);
-    memset(buf,'z',sizeof(buf)); 
+    memset(buf,'z',sizeof(buf));
     failcount += test1(buf,1,"vv",2,"",__LINE__);
     return failcount;
 }
