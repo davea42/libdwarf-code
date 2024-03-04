@@ -9416,4 +9416,5 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+#endif /* _LIBDWARF_H */
 
