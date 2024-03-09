@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-03-01 v0.9.2
+    @date 2024-03-09 v0.9.2
  
     @section draft Suggestions for improvement are welcome.
 
@@ -74,12 +74,19 @@
     that single (same) thread.
  
     @section dwsec_error Error Handling in libdwarf
+
     Essentially every @e libdwarf call could involve dealing
     with an error (possibly data corruption in
     the object file).  Here we explain the two main
     approaches the library provides (though we think
     only one of them is truly appropriate except
     in toy programs).
+    In all cases where the library
+    returns an error code (almost every
+    library function does) the caller should
+    check whether the returned integer is
+    DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY
+    and then to act accordingly.
 
     <b>A) The recommended approach</b> is to 
     define a Dwarf_Error and initialize it to 0.
@@ -100,11 +107,20 @@
     DW_DLV_ERROR
     @endcode
   
-    If DW_DLV_ERROR is returned then error is set
+    If <b>DW_DLV_ERROR</b> is returned then error is set
     (by the library) to a pointer to important
-    details about the
-    error.  If DW_DLV_NO_ENTRY or DW_DLV_OK is
-    returned the error argument is ignored by the library.
+    details about the error and
+    the library will not pass back any data throuth
+    other pointer arguments.
+    If <b>DW_DLV_NO_ENTRY</b> is
+    returned the error argument is ignored by the library
+    and 
+    the library will not pass back any data throuth
+    pointer arguments.
+    If <b>DW_DLV_OK</b> is returned argument pointers that
+    are defined as ways to return data to your code
+    are used and values are set in your data by
+    the library.
 
     Some functions cannot possibly return some of these
     three values. As defined later for each function.
@@ -164,7 +180,7 @@
     to free the Dwarf_Error data because
     dwarf_finish() does not clean up
     a dwarf-init error. 
-    This works even though dbg will be NULL. 
+    This works even though <i>dbg</i> will be NULL. 
 
     For the <b>not recommended B)</b> approach:
 
@@ -208,9 +224,14 @@
             dwarf_errmsg(error));
     } 
     @endcode
-    because it returns.  The DW_DLV_ERROR code
+    because it returns rather than exiting.
+    It is not ideal.  The DW_DLV_ERROR code
     is returned from @e libdwarf and your code
-    can do what it likes with the error situation.
+    can do what it likes with the error situation, but
+    the library will continue from the error and
+    will return an error code on returning to your
+    libdwarf call but the calling function will not
+    know what the error was. 
 
     @code
     Dwarf_Ptr x = address of some struct I want in the errhandler;
@@ -239,6 +260,7 @@
         /*  Do something with newdie. */
         dwarf_dealloc_die(newdie);
         newdie = 0; 
+        return DW_DLV_OK;
     }
     @endcode
 
@@ -324,8 +346,11 @@
     do something (if desired) on the CU_DIE
     returned, and call dwarf_child() on the CU_DIE
     to begin recursing through all DIEs. 
-    There is currently no
-    provision for a second pass.
+    If you save the CU_DIE you can repeat  passes
+    beginning with dwarf_child() on the CU_DIE,
+    though it almost certainly faster to remember,
+    in your data structures,
+    what you need from the first pass.
 
     The general plan:
 
@@ -341,9 +366,9 @@
            in your structures and loop back to A.
     @endcode
 
-    For an example
+    For an example (best approach)
     @see examplecuhdre
-    or
+    or (second-best approach)
     @see examplecuhdrd
     Write your code to record relevant (to you)
     information from each CU as you go so your code
@@ -640,8 +665,8 @@
 
     @b Dwarf_Obj_Access_Section_a:
     Your implementation of a @b om_get_section_info
-    must fill in a few fields (leaving most
-    zero) for @e libdwarf. The fields here are
+    must fill in a few fields for @e libdwarf.
+    The fields here are
     standard Elf, but for most you can just use
     the value zero.  We assume here you will not be
     doing relocations at runtime.
@@ -746,8 +771,8 @@
     @see dwarf_sec_group_map
 
     If an object file has multiple groups
-    @e libdwarf will not reveal contents of the other
-    groups.
+    @e libdwarf will not reveal contents of more
+    than the simgle requested group.
     One must pass in another groupnumber
     to dwarf_init_path, meaning init
     a new Dwarf_Debug,  to get @e libdwarf to
@@ -1026,8 +1051,9 @@
 
     Vulnerability DW202402-001 (probable libdwarf
     crash/segmentation-violation reading a carefully
-    crafted corrupt object file, a bug that
-    existed for many years) is fixed.
+    crafted corrupt DWARF5 loclists or rnglists
+    section) is fixed. There are no known
+    vulnerabilites in libdwarf.
 
     <b>Changes 0.9.0 to 0.9.1</b>
 

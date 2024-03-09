@@ -248,7 +248,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
     The DWARF4 specification class definition suffices to
     describe all DWARF versions.
     See section 7.5.4, Attribute Encodings.
-    A return of DW_FORM_CLASS_UNKNOWN means we
+    A return of DW_FORM_CLASS_UNKNOWN means the library
     could not properly figure
     out what form-class it is.
 
@@ -350,11 +350,14 @@ typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 */
 typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
-/*  This provides access to data from sections
+/*! @typedef  Dwarf_Gnu_Index_Head
+    
+    A pointer to a struct Dwarf_Gnu_Index_Head_s
+    for sections
     .debug_gnu_pubtypes or .debug_gnu_pubnames.
     These are not standard DWARF, and can appear
     with gcc -gdwarf-5
-    */
+*/
 typedef struct Dwarf_Gnu_Index_Head_s * Dwarf_Gnu_Index_Head;
 
 /*! @typedef Dwarf_Dsc_Head
@@ -373,10 +376,22 @@ typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
 /*! @typedef dwarf_printf_callback_function_type
 
     Used as a function pointer to a user-written
-    callback function.
+    callback function. This provides a detailed
+    content of line table data
+
+    See dwarf_register_printf_callback() 
+
+    @param dw_user_pointer
+    Passes your callback  a pointer to space you allocated as
+    an identifier of some kind in calling
+    dwarf_register_printf_callback..
+    @param dw_linecontent
+    Passes your callback null-termindated string with
+    one line of detailed line table content.
+
 */
 typedef void (* dwarf_printf_callback_function_type)
-    (void * /*user_pointer*/, const char * /*linecontent*/);
+    (void * dw_user_pointer, const char * dw_linecontent);
 
 struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_user_pointer;
@@ -496,7 +511,8 @@ typedef struct Dwarf_Ranges_s {
 
         Note that this definition can only deal correctly
         with register numbers that fit in a 16 bit
-        unsigned value.  Changing this would be an incompatible
+        unsigned value.  Removing this
+        restriction would force an incompatible
         change to several functions in the libdwarf API.
 */
 
@@ -526,7 +542,8 @@ typedef struct Dwarf_Regtable_Entry3_s {
 
     Note that this definition can only deal correctly
     with register table size that fits in a 16 bit
-    unsigned value.  */
+    unsigned value.  
+*/
 typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
     Dwarf_Half                       rt3_reg_table_size;
@@ -535,7 +552,12 @@ typedef struct Dwarf_Regtable3_s {
 
 /* Opaque types for Consumer Library. */
 /*! @typedef Dwarf_Error
-    &error is used in most calls to return error details
+
+    @code
+    Dwarf_Error error = 0;
+    dres = dwarf_siblingof_c(in_die,&return_sib, &error);
+    @endcode
+    &error is used in calls to return error details
     when the call returns DW_DLV_ERROR.
 */
 typedef struct Dwarf_Error_s*      Dwarf_Error;
@@ -569,15 +591,31 @@ typedef struct Dwarf_Line_s*       Dwarf_Line;
 typedef struct Dwarf_Global_s*     Dwarf_Global;
 
 /*! @typedef Dwarf_Type
-    Used to reference a reference to an entry in
+    Before release 0.6.0 used to reference a reference
+    to an entry in
     the .debug_pubtypes section (as well as
     the SGI-only extension .debug_types).
+    However, we use Dwarf_Global instead now.
 */
 typedef struct Dwarf_Type_s*       Dwarf_Type;
 
-/* The next three are SGI extensions not used elsewhere. */
+/*! @typedef Dwarf_Func 
+    An SGI extension type which is no longer
+    used at all.
+    As of release 0.6.0 use Dwarf_Global instead.
+*/
 typedef struct Dwarf_Func_s*       Dwarf_Func;
+/*! @typedef Dwarf_Var 
+    An SGI extension type which is no longer
+    used at all.
+    As of release 0.6.0 use Dwarf_Global instead.
+*/
 typedef struct Dwarf_Var_s*        Dwarf_Var;
+/*! @typedef Dwarf_Weak 
+    An SGI extension type which is no longer
+    used at all.
+    As of release 0.6.0 use Dwarf_Global instead.
+*/
 typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 
 /*! @typedef Dwarf_Attribute
@@ -586,17 +624,19 @@ typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 typedef struct Dwarf_Attribute_s*  Dwarf_Attribute;
 
 /*! @typedef Dwarf_Abbrev
-    Used to reference a Dwarf_Abbrev, though
-    usually such are handled transparently
-    in the library
+    Used to reference a Dwarf_Abbrev.
+    Usually Dwarf_Abbrev are fully handled inside the library
+    so one rarely needs to declare the type.
 */
 typedef struct Dwarf_Abbrev_s*     Dwarf_Abbrev;
 
 /*! @typedef Dwarf_Fde
+
     Used to reference .debug_frame or .eh_frame FDE.
 */
 typedef struct Dwarf_Fde_s*        Dwarf_Fde;
 /*! @typedef Dwarf_Cie
+
     Used to reference .debug_frame or .eh_frame CIE.
 */
 typedef struct Dwarf_Cie_s*        Dwarf_Cie;
@@ -658,7 +698,16 @@ struct Dwarf_Macro_Details_s {
     Dwarf_Signed dmd_fileindex;/* the source file index */
     char *       dmd_macro;  /* macro name string */
 };
+/*! @typedef Dwarf_Macro_Details
+
+    A handy short name for a Dwarf_Macro_Details_S struct.
+*/
 typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
+
+/*! @typedef Dwarf_Debug_Fission_Per_CU
+
+    A handy short name for a Dwarf_Debug_Fission_Per_CU_s struct.
+*/
 typedef struct Dwarf_Debug_Fission_Per_CU_s
     Dwarf_Debug_Fission_Per_CU;
 
@@ -767,7 +816,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 /*! @} endgroup allstructs */
 
-/*! @defgroup framedefines Default stack frame #defines
+/*! @defgroup framedefines Default stack frame macros
     @{
 */
 /*  Special values for offset_into_exception_table field
