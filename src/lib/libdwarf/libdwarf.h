@@ -258,7 +258,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
 
     DWARF5:
     DW_FORM_CLASS_LOCLISTSPTR  is like DW_FORM_CLASS_LOCLIST
-    except that LOCLISTSPTR is aways a section offset,
+    except that LOCLISTSPTR is always a section offset,
     never an index, and LOCLISTSPTR is only referenced
     by DW_AT_loclists_base.
     Note DW_FORM_CLASS_LOCLISTSPTR spelling to distinguish
@@ -266,7 +266,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
 
     DWARF5:
     DW_FORM_CLASS_RNGLISTSPTR  is like DW_FORM_CLASS_RNGLIST
-    except that RNGLISTSPTR is aways a section offset,
+    except that RNGLISTSPTR is always a section offset,
     never an index. DW_FORM_CLASS_RNGLISTSPTR is only
     referenced by DW_AT_rnglists_base.
 */
@@ -386,13 +386,31 @@ typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
     an identifier of some kind in calling
     dwarf_register_printf_callback..
     @param dw_linecontent
-    Passes your callback null-termindated string with
+    Passes your callback null-terminated string with
     one line of detailed line table content.
 
 */
 typedef void (* dwarf_printf_callback_function_type)
     (void * dw_user_pointer, const char * dw_linecontent);
 
+/*! @typedef Dwarf_Printf_Callback_Info_s
+
+    If one wishes to print detailed line table
+    information one creates an instance of this
+    struct and fills in the fields and passes
+    the struct to the relevant init, for example,
+    dwarf_init_path().
+
+    @param dp_user_pointer
+    A pointer to data of use in a call back.
+    @param dp_fptr
+    @param dp_buffer
+    @param dp_buffer_len
+    @param dp_buffer_user_provided
+    @param dp_reserved.
+    Set to zero.
+
+*/
 struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_user_pointer;
     dwarf_printf_callback_function_type dp_fptr;
@@ -668,15 +686,18 @@ typedef struct Dwarf_Line_Context_s     *Dwarf_Line_Context;
 typedef struct Dwarf_Macro_Context_s    *Dwarf_Macro_Context;
 
 /*! @typedef Dwarf_Dnames_Head
+
     Used as the general reference to the DWARF5 .debug_names
     section.
 */
 typedef struct Dwarf_Dnames_Head_s      *Dwarf_Dnames_Head;
 
 /*! @typedef Dwarf_Handler
+
     Used in rare cases (mainly tiny programs)
     with dwarf_init_path() etc
-    initialization calls.
+    initialization calls to provide a pointer
+    to a generic-error-handler function you write.
 */
 typedef void  (*Dwarf_Handler)(Dwarf_Error dw_error,
     Dwarf_Ptr dw_errarg);
@@ -713,7 +734,7 @@ typedef struct Dwarf_Debug_Fission_Per_CU_s
 
 /* ===== BEGIN Obj_Access data ===== */
 /*! @typedef Dwarf_Obj_Access_Interface_a
-    Used for access to and settint up special data
+    Used for access to and setting up special data
     allowing access to DWARF even with no object
     files present
 */
@@ -721,7 +742,7 @@ typedef struct Dwarf_Obj_Access_Interface_a_s
     Dwarf_Obj_Access_Interface_a;
 
 /*! @typedef Dwarf_Obj_Access_Methods_a
-    Used for access to and settint up special data
+    Used for access to and setting up special data
     allowing access to DWARF even with no object
     files present
 */
@@ -1866,8 +1887,7 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     libdwarf v0.8.0 and earlier (and it also works
     for later versions).
 
-    This version will evenually be deprecated, but
-    that won't be for years.
+    This version will eventually be deprecated.
 
     The library keeps track of where it is in the object file
     and it knows where to find 'next'.
@@ -7436,14 +7456,14 @@ DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
     On success set to the offset, in .debug_info, of
     the data for this block.
     The returned offset may be outside the bounds
-    of the actual .debug_info section, sucn a possibility
+    of the actual .debug_info section, such a possibility
     does not cause the function to return DW_DLV_ERROR.
     @param dw_size_of_debug_info_area
     On success set to the size in bytes, in .debug_info, of
     the area this block refers to.
     The returned dw_ dw_size_of_debug_info_are
     plus dw_offset_into_debug_info may be outside the bounds
-    of the actual .debug_info section, sucn a possibility
+    of the actual .debug_info section, such a possibility
     does not cause the function to return DW_DLV_ERROR.
     Use  dwarf_get_section_max_offsets_d()
     to learn the size of .debug_info and optionally other
@@ -8084,7 +8104,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     Dwarf_Error                * dw_error);
 
 /*  END debugfission dwp .debug_cu_index
-    and .debug_tu_indexmeaningfumeaningfu operations. */
+    and .debug_tu_index meaningful operations. */
 
 /*! @} */
 
