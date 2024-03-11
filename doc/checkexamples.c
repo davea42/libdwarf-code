@@ -173,9 +173,12 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup example2 Attaching a tied dbg
-    @brief Attaching a tied dbg
 
-    By convention, open the base Dwarf_Debug using
+    @brief Attaching a base (tied) dbg to a split-DWARF object.
+
+    See DWARF5 Appendix F on Split-DWARF.
+
+    By libdwarf convention, open the split Dwarf_Debug using
     a dwarf_init call.  Then open
     the executable as the tied object.
     Then call dwarf_set_tied_dbg()
@@ -183,35 +186,36 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
     in the tied-dbg (the executable).
 
     With split dwarf your libdwarf calls after
-    than the initial open
-    are done against the base Dwarf_Dbg and
-    libdwarf automatically looks in the open tied dbg
+    the the initial open
+    are done against the split Dwarf_Dbg and
+    libdwarf automatically looks in the tied dbg
     when and as appropriate.
-    the tied-dbg can be detached too, see
+    the tied_dbg can be detached too, see
     example3 link, though you must call
     dwarf_finish() on the detached dw_tied_dbg,
-    the library will not do that for you..
+    the library will not do that for you.
 
-    @param tieddbg
+    @param split_dbg
+    @param tied_dbg
     @param error
     @return
-    Returns whatever DW_DLV appropriate
-    to the caller to deal with.
+    Returns DW_DLV_OK  or DW_DLV_ERROR or
+    DW_DLV_NO_ENTRY to the caller.
     @code
 */
-int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
+int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg,
     Dwarf_Error *error)
 {
     int res = 0;
 
     /*  The caller should have opened dbg
-        on the debug shared object/dwp,
+        on the split-dwarf object/dwp,
         an object with DWARF, but no executable
         code.
         And it should have opened tieddbg on the
         runnable shared object or executable. */
-    res = dwarf_set_tied_dbg(dbg,tieddbg,error);
-    /*  Let your caller (who initialized the dbg
+    res = dwarf_set_tied_dbg(split_dbg,tied_dbg,error);
+    /*  Let the caller (who initialized the dbg
         values) deal with doing dwarf_finish()
     */
     return res;
@@ -220,11 +224,14 @@ int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
 /*! @endcode */
 
 /*! @defgroup example3 Detaching a tied dbg
-    @brief Detaching a tied dbg
+
+    @brief Detaching a tied (executable) dbg
+
+    See DWARF5 Appendix F on Split-DWARF.
 
     With split dwarf your libdwarf calls after
     than the initial open
-    are done against the base Dwarf_Dbg and
+    are done against the split Dwarf_Dbg and
     libdwarf automatically looks in the open tied dbg
     when and as appropriate.
     the tied-dbg can be detached too, see
@@ -234,10 +241,10 @@ int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
 
     @code
 */
-int example3(Dwarf_Debug dbg,Dwarf_Error *error)
+int example3(Dwarf_Debug split_dbg,Dwarf_Error *error)
 {
     int res = 0;
-    res = dwarf_set_tied_dbg(dbg,NULL,error);
+    res = dwarf_set_tied_dbg(split_dbg,NULL,error);
     if (res != DW_DLV_OK) {
         /* Something went wrong*/
         return res;
@@ -358,7 +365,7 @@ int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
     int res = 0;
 
     /*  in_die might be NULL following a call
-        to dwarf_next_cu_header_d() 
+        to dwarf_next_cu_header_d()
         or a valid Dwarf_Die */
     res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, error);
     if (res == DW_DLV_OK) {
@@ -541,9 +548,9 @@ void myrecord_data_for_die(struct myrecords_struct *myrecords,
     Dwarf_Die d);
 int  my_needed_data_exists(struct myrecords_struct *myrecords);
 
-/*  Loop on DIE tree. */
+/*  Loop on DIE tree.  */
 static void
-record_die_and_siblingse(Dwarf_Debug dbg, Dwarf_Die in_die,
+record_die_and_siblings_e(Dwarf_Debug dbg, Dwarf_Die in_die,
     int is_info, int in_level,
     struct myrecords_struct *myrec,
     Dwarf_Error *error)
@@ -560,14 +567,15 @@ record_die_and_siblingse(Dwarf_Debug dbg, Dwarf_Die in_die,
 
         /*  Depending on your goals, the in_level,
             and the DW_TAG of cur_die, you may want
-            to skip the dwarf_child call. */
+            to skip the dwarf_child call. We descend
+            the DWARF-standard way of depth-first. */
         res = dwarf_child(cur_die,&child,error);
         if (res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_OK) {
-            record_die_and_siblingse(dbg,child,is_info,
+            record_die_and_siblings_e(dbg,child,is_info,
                 in_level+1,myrec,error);
             /* No longer need 'child' die. */
             dwarf_dealloc(dbg,child,DW_DLA_DIE);
@@ -641,10 +649,9 @@ int examplecuhdre(Dwarf_Debug dbg,
         /*  We have the cu_die .
             New in v0.9.0 because the connection of
             the CU_DIE to the CU header is clear
-            in the argument list. 
-            No call to siblingof() is appropriate here.
+            in the argument list.
             */
-        record_die_and_siblingse(dbg,cu_die,is_info,
+        record_die_and_siblings_e(dbg,cu_die,is_info,
             0, myrec,error);
         dwarf_dealloc_die(cu_die);
     }
@@ -786,13 +793,13 @@ int examplecuhdrd(Dwarf_Debug dbg,
                 .debug_info or .debug_types. */
             return res;
         }
-        /*  The CU will have a single sibling, a cu_die. 
+        /*  The CU will have a single sibling, a cu_die.
             It is essential to call this right after
             a call to dwarf_next_cu_header_d() because
             there is no explicit connection provided to
             dwarf_siblingof_b(), which returns a DIE
             from whatever CU was last accessed by
-            dwarf_next_cu_header_d()! 
+            dwarf_next_cu_header_d()!
             The lack of explicit connection was a
             design mistake in the API (made in 1992). */
 
@@ -1480,8 +1487,8 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 */
 int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
-    /*  It is an annoying historical mistake in libdwarf that the count
-        is a signed value. */
+    /*  It is an annoying historical mistake in libdwarf
+        that the count is a signed value. */
     Dwarf_Signed       count = 0;
     char             **srcfiles = 0;
     Dwarf_Signed       i = 0;
@@ -1493,8 +1500,8 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
     res = dwarf_srclines_b(somedie,&lineversion,
         &table_count,&line_context,error);
     if (res != DW_DLV_OK) {
-            /*  dwarf_finish() will dealloc srcfiles, not doing 
-                that here.  */
+        /*  dwarf_finish() will dealloc srcfiles, not doing
+            that here.  */
         return res;
     }
     res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
@@ -1505,10 +1512,10 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 
     for (i = 0; i < count; ++i) {
         Dwarf_Signed propernumber = 0;
-        
+
         /*  Use srcfiles[i] If you  wish to print 'i'
             mostusefully
-            you should reflect the numbering that 
+            you should reflect the numbering that
             a DW_AT_decl_file attribute would report in
             this CU. */
         if (lineversion ==  5) {
@@ -1516,7 +1523,8 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
         } else {
             propernumber = i+1;
         }
-        printf("File %4ld %s\n",(unsigned long)propernumber,srcfiles[i]);
+        printf("File %4ld %s\n",(unsigned long)propernumber,
+            srcfiles[i]);
         dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
         srcfiles[i] = 0;
     }
@@ -1951,23 +1959,23 @@ int exampledebugnames(Dwarf_Debug dbg,
 
     This example does not actually do the import at
     the correct time as this is just checking
-    import offsets, not creating a proper full 
+    import offsets, not creating a proper full
     list (in the proper order) of the
     macros with the imports inserted.
     Here we find the macro context for a DIE,
-       report those macro entries, noting
-       any macro_import in a list
-       loop extracting unchecked macro offsets from the list
-          note any import in a list
+        report those macro entries, noting
+        any macro_import in a list
+        loop extracting unchecked macro offsets from the list
+            note any import in a list
     Of course some functions are not implemented here...
 
     @code
 */
-int            has_unchecked_import_in_list(void);
+int   has_unchecked_import_in_list(void);
 Dwarf_Unsigned get_next_import_from_list(void);
-void           mark_this_offset_as_examined(
-                  Dwarf_Unsigned macro_unit_offset);
-void           add_offset_to_list(Dwarf_Unsigned offset);
+void  mark_this_offset_as_examined(
+    Dwarf_Unsigned macro_unit_offset);
+void  add_offset_to_list(Dwarf_Unsigned offset);
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
@@ -3032,7 +3040,7 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup example_rnglist_for_attribute Accessing a rnglists section
+/*! @defgroup example_rnglist_for_attribute Accessing rnglists section
     @brief Showing access to rnglists on an Attribute
 
     This is accessing DWARF5 .debug_rnglists.
