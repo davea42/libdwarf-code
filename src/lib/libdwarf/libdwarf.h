@@ -841,14 +841,16 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     @{
 */
 /*  Special values for offset_into_exception_table field
-    of dwarf fde's. */
-/*  The following value indicates that there is no
+    of dwarf fde's
+    The following value indicates that there is no
     Exception table offset
-    associated with a dwarf frame. */
+    associated with a dwarf frame.
+*/
 #define DW_DLX_NO_EH_OFFSET         (-1LL)
 /*  The following value indicates that the producer
     was unable to analyze the
-    source file to generate Exception tables for this function. */
+    source file to generate Exception tables for this function.
+*/
 #define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
 
 /* The augmenter string for CIE */
@@ -1655,8 +1657,6 @@ DW_API int dwarf_init_path_dl_a(const char * dw_path,
     Dwarf_Error*      dw_error);
 
 /*! @brief Initialization based on Unix/Linux (etc) path
-    This version allows specifying any number of debuglink
-    global paths to search on for debuglink targets.
 
     In case DW_DLV_ERROR returned be sure to
     call dwarf_dealloc_error even though
