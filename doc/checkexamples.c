@@ -31,15 +31,21 @@ cc -c -Wall -O0 -Wpointer-arith  \
 #define FALSE 0
 
 /*! @defgroup exampleinit Using dwarf_init_path()
+
     @brief Example of a libdwarf initialization call.
 
     An example calling  dwarf_init_path() and dwarf_finish()
     @param path
     Path to an object we wish to open.
     @param groupnumber
+    Desired groupnumber. Use DW_DW_GROUPNUMBER_ANY
+    unless you have reason to do otherwise.
+    @return
+    Returns the applicable result. DW_DLV_OK etc.
+
     @code
 */
-void exampleinit(const char *path, unsigned groupnumber)
+int exampleinit(const char *path, unsigned groupnumber)
 {
     static char true_pathbuf[FILENAME_MAX];
     unsigned tpathlen = FILENAME_MAX;
@@ -56,71 +62,10 @@ void exampleinit(const char *path, unsigned groupnumber)
         /*  Necessary call even though dbg is null!
             This avoids a memory leak.  */
         dwarf_dealloc_error(dbg,error);
-        return;
+        return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
         /*  Nothing we can do */
-        return;
-    }
-    printf("The file we actually opened is %s\n",
-        true_pathbuf);
-    /* Call libdwarf functions here */
-    dwarf_finish(dbg);
-}
-/*! @endcode */
-
-/*! @defgroup exampleinit_dl Using dwarf_init_path_dl()
-    @brief Example focused on GNU debuglink data
-
-    In case GNU debuglink data is followed the true_pathbuf
-    content will not match path.
-    The path actually used is copied to true_path_out.
-    In the case of MacOS dSYM the true_path_out
-    may not match path.
-    If debuglink missing from the Elf executable
-    or shared-object (ie, it is a normal
-    object!) or unusable by libdwarf or
-    true_path_buffer len is zero or true_path_out_buffer
-    is zero libdwarf accepts the path given as the object
-    to report on, no debuglink or dSYM processing will be used.
-
-    @sa https://sourceware.org/gdb/onlinedocs/\
-    gdb/Separate-Debug-Files.html
-
-    An example calling  dwarf_init_path_dl() and dwarf_finish()
-    @code
-*/
-int exampleinit_dl(const char *path, unsigned groupnumber,
-    Dwarf_Error *error)
-{
-    static char true_pathbuf[FILENAME_MAX];
-    static const char *glpath[3] = {
-        "/usr/local/debug",
-        "/usr/local/private/debug",
-        "/usr/local/libdwarf/debug"
-    };
-    unsigned tpathlen = FILENAME_MAX;
-    Dwarf_Handler errhand = 0;
-    Dwarf_Ptr errarg = 0;
-    Dwarf_Debug dbg = 0;
-    int res = 0;
-    unsigned char path_source = 0;
-
-    res = dwarf_init_path_dl(path,true_pathbuf,
-        tpathlen,groupnumber,errhand,
-        errarg,&dbg,
-        (char **)glpath,
-        3,
-        &path_source,
-        error);
-    if (res == DW_DLV_ERROR) {
-        /*  Necessary call even though dbg is null!
-            This avoids a memory leak.  */
-        dwarf_dealloc_error(dbg,*error);
-        *error = 0;
-        return DW_DLV_NO_ENTRY;
-    }
-    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     printf("The file we actually opened is %s\n",
@@ -131,8 +76,91 @@ int exampleinit_dl(const char *path, unsigned groupnumber,
 }
 /*! @endcode */
 
+/*! @defgroup exampleinit_dl Using dwarf_init_path_dl()
+
+    @brief Example focused on GNU debuglink data
+
+    In case GNU debuglink data is followed the true_pathbuf
+    content will not match path.
+    The path actually used is copied to true_path_out.
+
+    In the case of MacOS dSYM the true_path_out
+    may not match path.
+
+    If debuglink data is missing from the Elf executable
+    or shared-object (ie, it is a normal
+    object!) or unusable by libdwarf or
+    true_path_buffer len is zero or true_path_out_buffer
+    is zero libdwarf accepts the path given as the object
+    to report on, no debuglink or dSYM processing will be used.
+
+    @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+
+    An example calling  dwarf_init_path_dl() and dwarf_finish()
+
+    @param path
+    Path to an object we wish to open.
+    @param groupnumber
+    Desired groupnumber. Use DW_DW_GROUPNUMBER_ANY
+    unless you have reason to do otherwise.
+    @param error
+    A pointer we can use to record error details.
+    @return
+    Returns the applicable result. DW_DLV_OK etc.
+
+    @code
+*/
+int exampleinit_dl(const char *path, unsigned groupnumber, Dwarf_Error *error)
+{
+    static char true_pathbuf[FILENAME_MAX];
+    static const char *glpath[3] = {
+        "/usr/local/debug",
+        "/usr/local/private/debug",
+        "/usr/local/libdwarf/debug"
+    };
+    unsigned      tpathlen = FILENAME_MAX;
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr     errarg = 0;
+    Dwarf_Debug   dbg = 0;
+    int           res = 0;
+    unsigned char path_source = 0;
+
+    res = dwarf_init_path_dl(path,true_pathbuf,
+        tpathlen,groupnumber,errhand,
+        errarg,&dbg,
+        (char **)glpath,
+        3,
+        &path_source,
+        error);
+    if (res == DW_DLV_ERROR) {
+        /*  We are not returning dbg, so we must do:
+            dwarf_dealloc_error(dbg,*error);
+            here to free the error details. */
+        dwarf_dealloc_error(dbg,*error);
+        *error = 0;
+        return res;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    printf("The file we actually opened is %s\n",
+        true_pathbuf);
+    /* Call libdwarf functions here */
+    dwarf_finish(dbg);
+    return res;
+}
+/*! @endcode */
+
 /*! @defgroup example1 Using dwarf_attrlist()
+
     @brief Example showing dwarf_attrlist()
+
+    @param somedie
+    Pass in any valid relevant DIE pointer.
+    @param error
+    An error pointer we can use.
+    @return
+    Return DW_DLV_OK (etc).
 
     @code
 */
@@ -201,10 +229,10 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
     @return
     Returns DW_DLV_OK  or DW_DLV_ERROR or
     DW_DLV_NO_ENTRY to the caller.
+
     @code
 */
-int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg,
-    Dwarf_Error *error)
+int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg, Dwarf_Error *error)
 {
     int res = 0;
 
@@ -219,7 +247,6 @@ int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg,
         values) deal with doing dwarf_finish()
     */
     return res;
-
 }
 /*! @endcode */
 
@@ -2129,7 +2156,8 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 /*! @defgroup examplep2 Reading .debug_macinfo (DWARF2-4)
     @brief Example reading .debug_macinfo, DWARF2-4
 
-    @code */
+    @code
+*/
 
 void functionusingsigned(Dwarf_Signed s);
 
@@ -2183,7 +2211,8 @@ int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
 /*! @defgroup exampleq Extracting fde, cie lists.
     @brief Example Opening FDE and CIE lists
 
-    @code */
+    @code
+*/
 int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Cie *cie_data = 0;
@@ -2209,8 +2238,7 @@ int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 
     @code
 */
-int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
-    Dwarf_Error *error)
+int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,Dwarf_Error *error)
 {
     /*  Given a pc value
         for a function find the FDE and CIE data for
@@ -2220,11 +2248,11 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
         dwarf_get_fde_n() allows accessing all FDE/CIE
         data so one could build up an application-specific
         table of information if that is more useful.  */
-    Dwarf_Cie *cie_data = 0;
+    Dwarf_Cie   *cie_data = 0;
     Dwarf_Signed cie_count = 0;
-    Dwarf_Fde *fde_data = 0;
+    Dwarf_Fde   *fde_data = 0;
     Dwarf_Signed fde_count = 0;
-    int fres = 0;
+    int          fres = 0;
 
     fres = dwarf_get_fde_list_eh(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,error);
@@ -2232,6 +2260,7 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
         Dwarf_Fde myfde = 0;
         Dwarf_Addr low_pc = 0;
         Dwarf_Addr high_pc = 0;
+
         fres = dwarf_get_fde_at_pc(fde_data,mypcval,
             &myfde,&low_pc,&high_pc,
             error);
@@ -2850,8 +2879,8 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
 */
 void examplezb(void)
 {
-    const char * out = "unknown something";;
-    int res = 0;
+    const char * out = "unknown something";
+    int          res = 0;
 
     /*  The following is wrong, do not do it!
         Confusing TAG with ACCESS!  */
@@ -2862,12 +2891,12 @@ void examplezb(void)
     out = "<unknown TAG>"; /* Not a malloc'd string! */
     /* The following is meaningful.*/
     res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
+    (void)res; /*  avoids unused var compiler warning */
     /*  If res == DW_DLV_ERROR or DW_DLV_NO_ENTRY
         out will be the locally assigned static string.
         If res == DW_DLV_OK it will be a usable
         TAG name string. 
-        In no case should a returned string be free()d.
-    */
+        In no case should a returned string be free()d. */
 }
 /*! @endcode */
 
