@@ -206,8 +206,13 @@
     @endcode
     and pass bad_dw_errhandler (as a function pointer,
     no parentheses). 
-    The Dwarf_Ptr argument is the value you passed in as dw_errarg,
-    and can be anything.
+
+    The Dwarf_Ptr argument your error handler
+    function receives is the value you passed in as dw_errarg,
+    and can be anything, it allows you to associate
+    the callback with a particular dwarf_init* call
+    if you wish to make such an association.
+
     By doing an exit() you guarantee that your application
     abruptly stops.  This is only acceptable in toy
     or practice programs.
@@ -227,10 +232,10 @@
     because it returns rather than exiting.
     It is not ideal.  The DW_DLV_ERROR code
     is returned from @e libdwarf and your code
-    can do what it likes with the error situation, but
-    the library will continue from the error and
+    can do what it likes with the error situation.
+    The library will continue from the error and
     will return an error code on returning to your
-    libdwarf call but the calling function will not
+    libdwarf call ... but the calling function will not
     know what the error was. 
 
     @code
@@ -243,8 +248,8 @@
 
     @subsection dw_errorcall Error Handling Everywhere
 
-    So let us examine a case where anything could
-    happen.  And here we are taking the 
+    So let us examine a simple case where anything could
+    happen.  We are taking the 
     <b>recommended A)</b>
     method of using a non-null Dwarf_Error*:
 
@@ -255,11 +260,15 @@
 
         res = dwarf_siblingof_c(die,&newdie,error);
         if (res != DW_DLV_OK) {
+            /*  Whether DW_DLV_ERROR or DW_DLV_NO_ENTRY
+                (the latter is actually impossible
+                for this function) returning res is the
+                appropriate default thing to do. */
             return res;
         }
         /*  Do something with newdie. */
         dwarf_dealloc_die(newdie);
-        newdie = 0; 
+        newdie = 0; /* A good habit... */ 
         return DW_DLV_OK;
     }
     @endcode
@@ -297,6 +306,10 @@
     char * msg  = dwarf_errmsg(*error);
     @endcode
     or both and report that somehow.
+
+    The above three values are the only returns possible
+    from the great majority of @e libdwarf functions, and
+    for these functions the return type is always @b int .
     
     If it is a decently large
     or long-running program then you want to
