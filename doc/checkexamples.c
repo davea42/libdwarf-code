@@ -2921,7 +2921,7 @@ void examplezb(void)
     /*  If res == DW_DLV_ERROR or DW_DLV_NO_ENTRY
         out will be the locally assigned static string.
         If res == DW_DLV_OK it will be a usable
-        TAG name string. 
+        TAG name string.
         In no case should a returned string be free()d. */
 }
 /*! @endcode */

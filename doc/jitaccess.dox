@@ -40,7 +40,7 @@
     Another example is a non-standard file system,
     or file format, with the intent of obfuscating
     the file or the DWARF.
-    
+
     For this to work the code generator must generate standard DWARF.
 
     Overall the idea is a simple one: You write
@@ -53,7 +53,7 @@
     the interfaces so standard libdwarf can access
     your DWARF content.
 
-    You set up a little bit of data with that code 
+    You set up a little bit of data with that code
     (described below)
     and then you have essentially written the
     dwarf_init_path equivalent and you can access
@@ -65,7 +65,7 @@
     and how to make them work for you.
 
     @code
-    typedef struct Dwarf_Obj_Access_Interface_a_s 
+    typedef struct Dwarf_Obj_Access_Interface_a_s
         Dwarf_Obj_Access_Interface_a;
     struct Dwarf_Obj_Access_Interface_a_s {
         void                             *ai_object;
@@ -136,7 +136,6 @@
     In the description of the methods functions
     described later here, this pointer
     is named @b obj .
-    
 
     @b ai_methods
 
@@ -159,7 +158,7 @@
     and for most you can just fill in the value zero.
     For section index zero as_name should be set to
     an empty string (see below about section index numbers).
-  
+
     @b as_name: Here you set a section name via the pointer.
     The section names must be names as defined in the DWARF
     standard, so if such do not appear in your data
@@ -173,7 +172,7 @@
     where the bytes of the section are.
 
     @b as_offset: Just fill in zero.
- 
+
     @b as_size: Fill in the size, in bytes,
     of the section you are telling libdwarf about.
 
@@ -185,7 +184,6 @@
 
     @b as_entrysize: Just fill in one.
 
- 
     @subsection objaccessmethods Function Pointers
 
     @b struct Dwarf_Obj_Access_Methods_a_s:
@@ -207,7 +205,7 @@
     described now) it passes the ai_object pointer
     you provided to these functions as @b obj parameter .
 
-    This is the final part of your work for libdwarf. 
+    This is the final part of your work for libdwarf.
     In the source file with your code you will be
     allocating data, making a provision for
     an array (real or conceptual) for per-section data,
@@ -233,7 +231,7 @@
     section_index  - Zero-based index.
     return_section - Pointer to a structure in which
         section info will be placed.   Caller must
-        provide a valid pointer to a structure area. 
+        provide a valid pointer to a structure area.
         The structure's contents will be overwritten
         by the call to get_section_info.
     error          - A pointer to an integer in which an error
@@ -243,7 +241,7 @@
     DW_DLV_OK       - Everything ok.
     DW_DLV_ERROR    - Error occurred. Use 'error' to determine the
         libdwarf defined error.
-    DW_DLV_NO_ENTRY - No such section. 
+    DW_DLV_NO_ENTRY - No such section.
     @endcode
 
     @b om_get_byte_order
@@ -299,7 +297,7 @@
 
     This retrieves data you put into your @b ai_object
     struct that you filled out.
-    
+
     @code
     Parameters
     obj  -  Your data
@@ -356,7 +354,7 @@
 
     @b om_relocate_a_section
 
-    @code 
+    @code
     Leave this pointer NULL.
     If relocations are required it is probably simpler
     for you do to them yourself n your
@@ -378,7 +376,7 @@
     DW_DLV_ERROR - Error. Use 'error' to indicate
         a libdwarf-defined
         error number.
-    DW_DLV_NO_ENTRY - No such section.  
+    DW_DLV_NO_ENTRY - No such section.
     @endcode
 
 */

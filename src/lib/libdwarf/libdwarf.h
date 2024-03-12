@@ -426,7 +426,7 @@ struct Dwarf_Printf_Callback_Info_s {
     is Dwarf_Cmdline_Options.
 
     @var check_verbose_mode
-    
+
 */
 struct Dwarf_Cmdline_Options_s {
     Dwarf_Bool check_verbose_mode;
@@ -8403,7 +8403,7 @@ DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
     anything to stop early.
 
     You can change the list size from the default of
-    DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE 
+    DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE
     at any time for a Dwarf_Debug dbg.
 
     Harmless error data is dealloc'd by dwarf_finish().

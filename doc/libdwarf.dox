@@ -4,7 +4,7 @@
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
     @date 2024-03-12 v0.9.2
- 
+
     @section draft Suggestions for improvement are welcome.
 
     Your thoughts on the document?
@@ -22,7 +22,7 @@
     not a list.
 
     Thanks in advance for any suggestions.
- 
+
     @section dwsec_intro Introduction
 
     This document describes an interface to @e
@@ -72,7 +72,7 @@
     pointers must be opened within the same thread.
     And all @e libdwarf calls must be made from within
     that single (same) thread.
- 
+
     @section dwsec_error Error Handling in libdwarf
 
     Essentially every @e libdwarf call could involve dealing
@@ -88,7 +88,7 @@
     DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY
     and then act accordingly.
 
-    <b>A) The recommended approach</b> is to 
+    <b>A) The recommended approach</b> is to
     define a Dwarf_Error and initialize it to 0.
 
     @code
@@ -106,7 +106,7 @@
     DW_DLV_NO_ENTRY
     DW_DLV_ERROR
     @endcode
-  
+
     If <b>DW_DLV_ERROR</b> is returned then error is set
     (by the library) to a pointer to important
     details about the error and
@@ -145,7 +145,6 @@
     That is the whole picture. The library never
     calls exit() under any circumstances.
 
-    
     @subsection dw_errorinit Error Handling at Initialization
 
     Each initialization call (for example)
@@ -179,8 +178,8 @@
     @endcode
     to free the Dwarf_Error data because
     dwarf_finish() does not clean up
-    a dwarf-init error. 
-    This works even though <i>dbg</i> will be NULL. 
+    a dwarf-init error.
+    This works even though <i>dbg</i> will be NULL.
 
     For the <b>not recommended B)</b> approach:
 
@@ -192,7 +191,7 @@
     Dwarf_Handler function you write.
 
     If you wish to provide a dw_errhand, define a function
-    (this first example is not a good choice as it 
+    (this first example is not a good choice as it
     terminates the application!).
     @code
     void bad_dw_errhandler(Dwarf_Error error,Dwarf_Ptr ptr)
@@ -202,10 +201,10 @@
             (unsigned long)dwarf_errno(error),
             dwarf_errmsg(error));
         exit(1)
-    } 
+    }
     @endcode
     and pass bad_dw_errhandler (as a function pointer,
-    no parentheses). 
+    no parentheses).
 
     The Dwarf_Ptr argument your error handler
     function receives is the value you passed in as dw_errarg,
@@ -227,7 +226,7 @@
             (unsigned long)ptr,
             (unsigned long)dwarf_errno(error),
             dwarf_errmsg(error));
-    } 
+    }
     @endcode
     because it returns rather than exiting.
     It is not ideal.  The DW_DLV_ERROR code
@@ -236,7 +235,7 @@
     The library will continue from the error and
     will return an error code on returning to your
     libdwarf call ... but the calling function will not
-    know what the error was. 
+    know what the error was.
 
     @code
     Dwarf_Ptr x = address of some struct I want in the errhandler;
@@ -249,7 +248,7 @@
     @subsection dw_errorcall Error Handling Everywhere
 
     So let us examine a simple case where anything could
-    happen.  We are taking the 
+    happen.  We are taking the
     <b>recommended A)</b>
     method of using a non-null Dwarf_Error*:
 
@@ -268,7 +267,7 @@
         }
         /*  Do something with newdie. */
         dwarf_dealloc_die(newdie);
-        newdie = 0; /* A good habit... */ 
+        newdie = 0; /* A good habit... */
         return DW_DLV_OK;
     }
     @endcode
@@ -277,7 +276,7 @@
 
     When res == DW_DLV_OK
     newdie is a valid pointer and when appropriate we should do
-    dwarf_dealloc_die(newdie). 
+    dwarf_dealloc_die(newdie).
     For other  libdwarf calls
     the meaning depends on the function called,
     so read the description of the function
@@ -310,10 +309,10 @@
     The above three values are the only returns possible
     from the great majority of @e libdwarf functions, and
     for these functions the return type is always @b int .
-    
+
     If it is a decently large
     or long-running program then you want to
-    free any local memory you 
+    free any local memory you
     allocated and return res.
     If it is a small
     or experimental program print something and exit
@@ -330,7 +329,7 @@
     Except in a special case involving function
     dwarf_set_de_alloc_flag() (which you will not usually
     call), any dwarf_dealloc() that is needed will
-    happen automatically when you call dwarf_finish(). 
+    happen automatically when you call dwarf_finish().
 
     @subsubsection A Slight Performance Enhancement
     Very long running library access programs
@@ -343,7 +342,7 @@
     Be sure to test using valgrind or -fsanitize to ensure your
     code really does the extra dwarf_dealloc calls
     needed since when using dwarf_set_de_alloc_flag(0)
-    dwarf_finish() does only limited cleanup. 
+    dwarf_finish() does only limited cleanup.
 
     @section dwsec_cuplan Extracting Data Per Compilation Unit
 
@@ -358,7 +357,7 @@
     Within a CU opened with dwarf_next_cu_header_e()
     do something (if desired) on the CU_DIE
     returned, and call dwarf_child() on the CU_DIE
-    to begin recursing through all DIEs. 
+    to begin recursing through all DIEs.
     If you save the CU_DIE you can repeat  passes
     beginning with dwarf_child() on the CU_DIE,
     though it almost certainly faster to remember,
@@ -368,15 +367,15 @@
     The general plan:
 
     @code
-        create your local data structure(s) 
- 
-        A. Check your local data structures to see if 
-           you have what you need
-        B. If sufficient data present act on it,
-           ensuring your data structures are kept for
-           further use.
-        C. Otherwise Read a CU, recording relevant data
-           in your structures and loop back to A.
+        create your local data structure(s)
+
+        A.  Check your local data structures to see if
+            you have what you need
+        B.  If sufficient data present act on it,
+            ensuring your data structures are kept for
+            further use.
+        C.  Otherwise Read a CU, recording relevant data
+            in your structures and loop back to A.
     @endcode
 
     For an example (best approach)
@@ -388,7 +387,6 @@
     has no need for a second pass through the CUs.
     This is much much faster than allowing multiple
     passes would be.
-
 
     @section dwsec_linetabreg Line Table Registers
 
@@ -481,18 +479,18 @@
     Here are the five values.
 
     @b Table_Size: This sets the number of columns
-        in the theoretical table.  It starts at 
-        DW_FRAME_LAST_REG_NUM which defaults to 188. 
+        in the theoretical table.  It starts at
+        DW_FRAME_LAST_REG_NUM which defaults to 188.
         This is the only value you
         might need to change, given the defaults
         of the others are set reasonably large by
         default.
 
     @b Undefined_Value: A register number that means
-       the register value is undefined. For example due
-       to a call clobbering the register.
-       DW_FRAME_UNDEFINED_VAL defaults to  12288.
-       There no such column in the table.
+        the register value is undefined. For example due
+        to a call clobbering the register.
+        DW_FRAME_UNDEFINED_VAL defaults to  12288.
+        There no such column in the table.
 
     @b Same_Value: A register number that means
         the register value is the same as the value
@@ -531,18 +529,18 @@
 
     REQUIRED:
     @code
-       Table_Size      > the number of registers in the ABI.
-       Undefined_Value != Same_Value
-       CFA_Column      != Undefined_value
-       CFA_Column      != Same_value
-       Initial_Value   == Same_Value ||
-           (Initial_Value == Undefined_value)
-       Undefined_Value > Table_Size
-       Same_Value      > Table_Size
-       CFA_Column      > Table_Size
+    Table_Size      > the number of registers in the ABI.
+    Undefined_Value != Same_Value
+    CFA_Column      != Undefined_value
+    CFA_Column      != Same_value
+    Initial_Value   == Same_Value ||
+        (Initial_Value == Undefined_value)
+    Undefined_Value > Table_Size
+    Same_Value      > Table_Size
+    CFA_Column      > Table_Size
     @endcode
 
-    @section dwsec_pubnames .debug_pubnames etc DWARF2-DWARF4 
+    @section dwsec_pubnames .debug_pubnames etc DWARF2-DWARF4
 
     Each section consists of a header for a specific
     compilation unit (CU) followed by an a set of
@@ -558,11 +556,11 @@
     and tuples) or to treat it as a single array
     with CU data columns.
 
-    Each has a set of 6 functions. 
-  
+    Each has a set of 6 functions.
+
     @code
-     Section         typename      Standard      
-    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4 
+    Section          typename      Standard
+    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4
     .debug_pubtypes  Dwarf_Global  DWARF3,DWARF4
     @endcode
 
@@ -580,12 +578,11 @@
     It not likely you will encounter these.
 
     @code
-    .debug_funcs      
-    .debug_typenames  
-    .debug_vars       
-    .debug_weaks     
+    .debug_funcs
+    .debug_typenames
+    .debug_vars
+    .debug_weaks
     @endcode
-
 
     @section dwsec_noobj Reading DWARF with no object file present
 
@@ -631,7 +628,7 @@
     how to make them work for you.
 
     @code
-    typedef struct Dwarf_Obj_Access_Interface_a_s 
+    typedef struct Dwarf_Obj_Access_Interface_a_s
         Dwarf_Obj_Access_Interface_a;
     struct Dwarf_Obj_Access_Interface_a_s {
         void*                             ai_object;
@@ -649,7 +646,7 @@
         Dwarf_Small      (*om_get_length_size)(void* obj);
         Dwarf_Small      (*om_get_pointer_size)(void* obj);
         Dwarf_Unsigned   (*om_get_filesize)(void* obj);
-    
+
         Dwarf_Unsigned   (*om_get_section_count)(void* obj);
         int              (*om_load_section)(void* obj,
             Dwarf_Unsigned section_index,
@@ -698,7 +695,7 @@
     where the bytes of the section are.
 
     @b as_offset: Just fill in zero.
- 
+
     @b as_size: Fill in the size, in bytes,
     of the section you are telling @e libdwarf about.
 
@@ -719,7 +716,7 @@
     Dwarf_Obj_Access_Interface_s) that hides the
     library-specific and object-specific data that
     makes it possible to handle multiple object
-    formats and multiple libraries.  It's not
+    formats and multiple libraries.  It is not
     required that one handles multiple such in a
     single @e libdwarf archive/shared-library
     (but not ruled out either).  See
@@ -746,7 +743,7 @@
     of duplicate DWARF and duplicate CODE.
 
     Debug Fission allows compilers and linkers
-    to separate large amounts of DWARF from 
+    to separate large amounts of DWARF from
     the executable, shrinking disk space
     needed in the executable while allowing
     full debugging (which also applies to shared objects).
@@ -792,7 +789,7 @@
     access that group.
 
     When opening a Dwarf_Debug the following applies:
- 
+
     If DW_GROUPNUMBER_ANY is passed in @e libdwarf will
     choose either of DW_GROUPNUMBER_BASE(1) or
     DW_GROUPNUMBER_DWO (2) depending on the object
@@ -857,11 +854,11 @@
     objects to significantly shrink the size of
     the executable.
 
-    One is Macos dSYM.  It's a convention of placing
+    One is Macos dSYM.  It is a convention of placing
     the DWARF-containing object in a subdirectory
     tree.
 
-    The other is GNU debuglink and GNU
+    The other involves GNU debuglink and GNU
     debug_id. These are two distinct ways to provide
     names of alternative DWARF-containing objects
     elsewhere in a file system.
@@ -921,14 +918,14 @@
     If the alternate object name (with its
     null-terminator) is too long to fit
     in the buffer the call will return DW_DLV_ERROR
-    with dw_error providing error code 
+    with dw_error providing error code
     DW_DLE_PATH_SIZE_TOO_SMALL.
 
     If the alternate object name fits in the buffer
     @e libdwarf will open and use that alternate file
     in the returned Dwarf_Dbg.
 
-    It's up to callers to notice that 
+    It is up to callers to notice that
     dw_true_path_out_buffer now contains a string
     and callers will probably wish to do something
     with the string.
@@ -938,7 +935,7 @@
     then an alternative object was found and opened.
 
     The second function, dwarf_init_path_dl(),
-    is the same as dwarf_init_path() except 
+    is the same as dwarf_init_path() except
     the _dl version has three additional arguments,
     as follows:
 
@@ -946,10 +943,10 @@
     to strings with alternate GNU debuglink paths you
     want searched. For most people, passing in NULL
     suffices.
-    
+
     Pass in dw_dl_path_array_size, the number of elements
     in dw_dl_path_array.
-    
+
     Pass in dw_dl_path_source as NULL or a pointer to char.
     If non-null @e libdwarf will set it to one of three values:
 
@@ -960,7 +957,7 @@
     was found and is the one opened in dw_dbg.
     dw_true_path_out_buffer contains the dSYM
     object path.
-    
+
     DW_PATHSOURCE_debuglink which means a GNU debuglink
     or GNU debug-id
     path was found and names the one opened in dw_dbg.
@@ -990,18 +987,22 @@
     you <b>must not define LIBDWARF_STATIC</b>.
 
     For examples of this for all three build systems
-    read the project shell script 
+    read the project shell script
     @code
     scripts/allsimplebuilds.sh
     @endcode
 
     @section dwsec_static Linking against libdwarf.a
 
-    - If you are building an application 
+    - If you are building an application
     - And are linking your application against a static library libdwarf.a
-    - Then you must ensure that each source file compilation with an include of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined to your source compilation. 
-    - If libdwarf was built with zlib and zstd decompression library enabled you must add -lz -lzstd to the link line of the build of your application.
-      
+    - Then you must ensure that each source file compilation with an include
+      of libdwarf.h has the macro <b>LIBDWARF_STATIC</b> defined
+      to your source compilation.
+    - If libdwarf was built with zlib and zstd decompression library
+      enabled you must add -lz -lzstd to the link line of the build
+      of your application.
+
     To pass <b>LIBDWARF_STATIC</b> to the preprocessor with Visual
     Studio:
 
@@ -1030,7 +1031,7 @@
     know the crc comparison will pass.
 
     For such situations a special interface function
-    lets the 
+    lets the
     dwarf_init_path() or dwarf_init_path_dl()
     caller suppress the crc check without having
     any effect on anything else in @e libdwarf.
@@ -1051,7 +1052,7 @@
     dwarf_suppress_debuglink_crc(crc_check);
     /*  Now check res in the usual way. */
     @endcode
-    
+
     This pattern ensures the crc check is suppressed for this
     single dwarf_init_path() or dwarf_init_path_dl()
     call while leaving the setting unchanged for further
@@ -1107,7 +1108,7 @@
     depends entirely on the object file format),
     and dw_section_offset pointer argument to return
     the object-relevant offset of the section
-    (here too the meaning depends on the object format). 
+    (here too the meaning depends on the object format).
     Also added  dwarf_machine_architecture() which returns
     a few top level data items about the object
     libdwarf has opened, including the 'machine' and 'flags'
@@ -1136,9 +1137,9 @@
     universal binaries,
     which were not readable by earlier versions of the library.
 
-    We have new library functions 
+    We have new library functions
     dwarf_init_path_a(),
-    dwarf_init_path_dl_a(), and 
+    dwarf_init_path_dl_a(), and
     dwarf_get_universalbinary_count().
 
     The first two allow a caller to specify which
@@ -1149,9 +1150,9 @@
 
     The third lets callers retrieve the number
     being used.
-    
+
     These new calls do not replace anything so existing
-    code will work fine.  
+    code will work fine.
 
     Applying the previously
     existing calls dwarf_init_path() dwarf_init_path_dl()
@@ -1169,7 +1170,7 @@
 
     <b>Changes 0.7.0 to 0.8.0</b>
 
-    v0.8.0 released 2023-09-20 
+    v0.8.0 released 2023-09-20
 
     New functions dwarf_get_fde_info_for_reg3_c(),
     dwarf_get_fde_info_for_cfa_reg3_c() are defined.
@@ -1188,31 +1189,31 @@
 
     Vulnerabilities involving reading
     corrupt object files (created by fuzzing)
-    have been fixed: 
+    have been fixed:
     DW202308-001 (ossfuzz 59576),
     DW202307-001 (ossfuzz 60506),
     DW202306-011 (ossfuzz 59950),
-    DW202306-009 (ossfuzz 59755), 
+    DW202306-009 (ossfuzz 59755),
     DW202306-006 (ossfuzz 59727),
-    DW202306-005 (ossfuzz 59717), 
-    DW202306-004 (ossfuzz 59695), 
-    DW202306-002 (ossfuzz 59519), 
-    DW202306-001 (ossfuzz 59597). 
-    DW202305-010 (ossfuzz 59478). 
-    DW202305-009 (ossfuzz 56451). 
-    DW202305-008 (ossfuzz 56451), 
-    DW202305-007 (ossfuzz 56474), 
-    DW202305-006 (ossfuzz 56472), 
-    DW202305-005 (ossfuzz 56462), 
+    DW202306-005 (ossfuzz 59717),
+    DW202306-004 (ossfuzz 59695),
+    DW202306-002 (ossfuzz 59519),
+    DW202306-001 (ossfuzz 59597).
+    DW202305-010 (ossfuzz 59478).
+    DW202305-009 (ossfuzz 56451).
+    DW202305-008 (ossfuzz 56451),
+    DW202305-007 (ossfuzz 56474),
+    DW202305-006 (ossfuzz 56472),
+    DW202305-005 (ossfuzz 56462),
     DW202305-004 (ossfuzz 56446).
 
     <b>Changes 0.6.0 to 0.7.0</b>
 
-    v0.7.0 released 2023-05-20 
+    v0.7.0 released 2023-05-20
 
-    Elf section counts can exceed 16 bits 
+    Elf section counts can exceed 16 bits
     (on linux see <b>man 5 elf</b>)
-    so some function prototype members 
+    so some function prototype members
     of struct <b>Dwarf_Obj_Access_Methods_a_s</b>
     changed.
     Specifically, om_get_section_info()
@@ -1231,7 +1232,7 @@
     and the library: dwarf_dnames_abbrev_by_code()
     and dwarf_dnames_abbrev_form_by_index().
 
-    dwarf_dnames_abbrev_by_code() is slow and pointless. 
+    dwarf_dnames_abbrev_by_code() is slow and pointless.
     Use either dwarf_dnames_name() or
     dwarf_dnames_abbrevtable() instead, depending
     on what you want to accomplish.
@@ -1242,7 +1243,7 @@
 
     <b>Changes 0.5.0 to 0.6.0</b>
 
-    v0.6.0 released 2023-02-20 
+    v0.6.0 released 2023-02-20
     The dealloc required by dwarf_offset_list()
     was wrong. The call could crash libdwarf
     on systems with 32bit pointers.
@@ -1295,7 +1296,7 @@
     functions for Dwarf_Global apply to pubtypes
     data too.
 
-    No one should be referring to the 1990's SGI/IRIX
+    No one should be referring to the 1990s SGI/IRIX
     sections .debug_weaknames, .debug_funcnames,
     .debug_varnames, or .debug_typenames as they
     are not emitted by any compiler except from
@@ -1312,7 +1313,7 @@
 
     <b>Changes 0.4.2 to 0.5.0</b>
 
-    v0.5.0 released 2022-11-22 
+    v0.5.0 released 2022-11-22
     The handling of the .debug_abbrev data in
     libdwarf is now more cpu-efficient (measurably
     faster) so access to DIEs and attribute lists
@@ -1363,7 +1364,7 @@
     freed (if malloced, meaning a compressed section)
     until 9 September 2022.
 
-    It's now possible to run the build
+    It is now possible to run the build
     sanity tests in all three build mechanisms
     (configure,cmake,meson) on linux, MacOS, FreeBSD,
     and mingw msys2 (windows).  libdwarf README.md
@@ -1411,7 +1412,7 @@
 
     <b>Changes 0.3.4 to 0.4.0</b>
 
-    Removed the unused Dwarf_Error argument from 
+    Removed the unused Dwarf_Error argument from
     dwarf_return_empty_pubnames() as the function can only
     return DW_DLV_OK.
     dwarf_xu_header_free() renamed to dwarf_dealloc_xu_header().
