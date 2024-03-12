@@ -1,4 +1,4 @@
-/*!
+_D!
     @mainpage A Consumer Library Interface to DWARF
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
@@ -797,6 +797,8 @@
     If a groupnumber greater than two is passed in
     @e libdwarf accepts it, whether any sections
     corresponding to that groupnumber exist or not.
+    If the groupnumber is not an actual group
+    the init will call return DW_DLV_NO_ENTRY.
 
     For information on groups  "dwarfdump -i"
     on an object file will show all section group

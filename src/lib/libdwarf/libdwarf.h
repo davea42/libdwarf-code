@@ -363,7 +363,11 @@ typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
 
     Used as a function pointer to a user-written
     callback function. This provides a detailed
-    content of line table data
+    content of line table data.
+
+    The default contents of the callback data
+    are all zero bytes.  So no callbacks
+    involving this data will be done.
 
     See dwarf_register_printf_callback()
 
@@ -379,7 +383,7 @@ typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
 typedef void (* dwarf_printf_callback_function_type)
     (void * dw_user_pointer, const char * dw_linecontent);
 
-/*! @typedef Dwarf_Printf_Callback_Info_s
+/*! @struct Dwarf_Printf_Callback_Info_s
 
     If one wishes to print detailed line table
     information one creates an instance of this
@@ -387,15 +391,14 @@ typedef void (* dwarf_printf_callback_function_type)
     the struct to the relevant init, for example,
     dwarf_init_path().
 
-    @param dp_user_pointer
+    @var dp_user_pointer
     A pointer to data of use in a call back.
-    @param dp_fptr
-    @param dp_buffer
-    @param dp_buffer_len
-    @param dp_buffer_user_provided
-    @param dp_reserved.
+    @var dp_fptr
+    @var dp_buffer
+    @var dp_buffer_len
+    @var dp_buffer_user_provided
+    @var dp_reserved.
     Set to zero.
-
 */
 struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_user_pointer;
@@ -406,7 +409,7 @@ struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_reserved;
 };
 
-/*! @typedef Dwarf_Cmdline_Options.
+/*! @struct Dwarf_Cmdline_Options_s
 
     check_verbose_mode defaults to FALSE.
     If a libdwarf-calling program sets
@@ -418,10 +421,20 @@ struct Dwarf_Printf_Callback_Info_s {
     Or the libdwarf calling code can call
     dwarf_record_cmdline_options() to set
     the new value.
+
+    For convenience the type name for the struct
+    is Dwarf_Cmdline_Options.
+
+    @var check_verbose_mode
+    
 */
-typedef struct Dwarf_Cmdline_Options_s {
+struct Dwarf_Cmdline_Options_s {
     Dwarf_Bool check_verbose_mode;
-} Dwarf_Cmdline_Options;
+};
+/*! @typedef Dwarf_Cmdline_Options
+
+*/
+typedef struct Dwarf_Cmdline_Options_s Dwarf_Cmdline_Options;
 
 /*! @typedef Dwarf_Str_Offsets_Table
     Provides an access to the .debug_str_offsets
@@ -3720,7 +3733,7 @@ DW_API int dwarf_srclines_files_indexes(
     Has the md5ptr field so cases where DW_LNCT_MD5
     is present can return pointer to the MD5 value.
     With DWARF 5 index starts with 0.
-    dwarf_srclines_files_indexes makes
+    dwarf_srclines_files_indexes() makes
     indexing through the files easy.
 
     @see dwarf_srclines_files_indexes
@@ -3858,7 +3871,7 @@ DW_API int dwarf_srclines_version(Dwarf_Line_Context dw_line_context,
 
 /*! @brief Read Line beginstatement register
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3877,7 +3890,7 @@ DW_API int dwarf_linebeginstatement(Dwarf_Line dw_line,
 
 /*! @brief Read Line endsequence register flag
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3896,7 +3909,7 @@ DW_API int dwarf_lineendsequence(Dwarf_Line dw_line,
 
 /*! @brief Read Line line register
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3914,7 +3927,7 @@ DW_API int dwarf_lineno(Dwarf_Line dw_line,
 
 /*! @brief Read Line file register
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3949,7 +3962,7 @@ DW_API int dwarf_line_is_addr_set(Dwarf_Line dw_line,
 
 /*! @brief Return the address of the Dwarf_Line
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3967,7 +3980,7 @@ DW_API int dwarf_lineaddr(Dwarf_Line dw_line,
 
 /*! @brief Return a column number through the pointer
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3985,7 +3998,7 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
 
 /*! @brief Return the file name applicable to the Dwarf_Line
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -4006,7 +4019,7 @@ DW_API int dwarf_linesrc(Dwarf_Line dw_line,
 
 /*! @brief Return the basic_block line register.
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -4026,7 +4039,7 @@ DW_API int dwarf_lineblock(Dwarf_Line dw_line,
     will want all or none of them.  */
 /*! @brief Return various line table registers in one call
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -4106,7 +4119,7 @@ DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     with the messages (likely just print them).
     The lines passed back already have newlines.
 
-    @see dwarf_check_lineheader
+    @see dwarf_check_lineheader(b)
     @see Dwarf_Printf_Callback_Info_s
 
     @param dw_cu_die
@@ -4130,15 +4143,17 @@ DW_API int dwarf_check_lineheader_b(Dwarf_Die dw_cu_die,
     Does not use printf.
     Instead it calls back to the application using a function
     pointer once per line-to-print.  The lines passed back
-    already have any needed
-    newlines.
+    already have any needed newlines.
+
+    dwarfdump uses this function for verbose printing
+    of line table data.
 
     Failing to call the dwarf_register_printf_callback()
     function will prevent the lines from being passed back
     but such omission is not an error.
-    the same function, but focused on checking for errors
-    is
-    @see dwarf_check_lineheader_b
+    The same function, but focused on checking for errors
+    is dwarf_check_lineheader_b().
+
     @see Dwarf_Printf_Callback_Info_s
 
     @param dw_cu_die
@@ -4155,7 +4170,10 @@ DW_API int dwarf_print_lines(Dwarf_Die dw_cu_die,
 
 /*! @brief For line details this records callback details
 
-    For the structure you must fill in:
+    Not usually needed. It is a way to check
+    (while using the library) what callback
+    data is in use or to update that callback data.
+
     @see Dwarf_Printf_Callback_Info_s
 
     @param dw_dbg
@@ -8159,7 +8177,14 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
 /*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
 
     @{
-    When DWARF is separate from a normal shared object.
+    When DWARF sections are in a differenct object
+    than the executable or a normal shared object.
+    The special GNU section provides a way to name
+    the object file with DWARF.
+
+    libdwarf will attempt to use this data to find
+    the object file with DWARF.
+
     Has nothing to do with split-dwarf/debug-fission.
 */
 
@@ -8289,10 +8314,10 @@ DW_API int dwarf_suppress_debuglink_crc(int dw_suppress);
 
 /*! @brief Adding debuglink global paths
 
-    Only really inside dwarfexample/dwdebuglink.c
+    Used inside src/bin/dwarfexample/dwdebuglink.c
     so we can show all that is going on.
     The following has the explanation for how debuglink
-    and global paths interact.
+    and global paths interact:
     @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
 
     @param dw_dbg
@@ -8371,11 +8396,17 @@ DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
 /*! @defgroup harmless Harmless Error recording
 
     @{
-    The harmless error list is a circular buffer of
+    The harmless error list is a fixed size circular buffer of
     errors we note but which do not stop us from processing
     the object.  Created so dwarfdump or other tools
     can report such inconsequential errors without causing
     anything to stop early.
+
+    You can change the list size from the default of
+    DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE 
+    at any time for a Dwarf_Debug dbg.
+
+    Harmless error data is dealloc'd by dwarf_finish().
 */
 /*! @brief Default size of the libdwarf-internal circular list */
 #define DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE 4
@@ -8480,12 +8511,19 @@ DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     through the pointer @b dw_s_out and the value
     returned is DW_DLV_OK.
 
-    The strings are in static storage and must not be freed.
+    The strings returned on sucess are in static storage
+    and must not be freed.
+
+    These functions are generated from information
+    in dwarf.h, not hand coded functions.
 
     If DW_DLV_NO_ENTRY is returned the @b dw_val_in is not known and
     @b *s_out is not set. This is unusual.
 
     DW_DLV_ERROR is never returned.
+
+    The example referred to offers the suggested way
+    to use functions like these.
 
     @see examplezb
 
@@ -9178,8 +9216,8 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     @{
 
     Section Groups are defined in the extended
-    Elf ABI and are usually seen in relocatable
-    Elf object files.
+    Elf ABI and are seen in relocatable
+    Elf object files, not executables or shared objects.
 
     @link dwsec_sectiongroup Section Groups Overview @endlink
 
@@ -9489,11 +9527,10 @@ DW_API int dwarf_get_universalbinary_count(
 
     These are crucial for libdwarf itself.
     The dw_ftype returned is one of
-    DW_FTYPE_APPLEUNIVERSAL
-    DW_FTYPE_MACH_O
-    DW_FTYPE_ELF
-    DW_FTYPE_PE
-
+    DW_FTYPE_ELF,
+    DW_FTYPE_PE,
+    DW_FTYPE_MACH_O, or
+    DW_FTYPE_APPLEUNIVERSAL.
 */
 DW_API int dwarf_object_detector_path_b(const char * dw_path,
     char           *dw_outpath_buffer,
