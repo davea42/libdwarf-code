@@ -86,7 +86,7 @@ _D!
     library function does) the caller should
     check whether the returned integer is
     DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY
-    and then to act accordingly.
+    and then act accordingly.
 
     <b>A) The recommended approach</b> is to 
     define a Dwarf_Error and initialize it to 0.
@@ -110,12 +110,12 @@ _D!
     If <b>DW_DLV_ERROR</b> is returned then error is set
     (by the library) to a pointer to important
     details about the error and
-    the library will not pass back any data throuth
+    the library will not pass back any data through
     other pointer arguments.
     If <b>DW_DLV_NO_ENTRY</b> is
     returned the error argument is ignored by the library
-    and 
-    the library will not pass back any data throuth
+    and
+    the library will not pass back any data through
     pointer arguments.
     If <b>DW_DLV_OK</b> is returned argument pointers that
     are defined as ways to return data to your code
@@ -772,7 +772,7 @@ _D!
 
     If an object file has multiple groups
     @e libdwarf will not reveal contents of more
-    than the simgle requested group.
+    than the single requested group.
     One must pass in another groupnumber
     to dwarf_init_path, meaning init
     a new Dwarf_Debug,  to get @e libdwarf to
