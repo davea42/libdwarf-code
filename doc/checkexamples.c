@@ -359,10 +359,13 @@ void examplesecgroup(Dwarf_Debug dbg)
 }
 /*! @endcode */
 
-/*! @defgroup example4 Using dwarf_siblingofb()
+/*! @defgroup example4c Using dwarf_siblingof_c()
     @brief Example accessing a DIE sibling.
 
-    Access to each DIE on a sibling list
+    Access to each DIE on a sibling list.
+    This is the preferred form as it is
+    slightly more efficient than
+    dwarf_siblingof_b().
 
     @code
 */
@@ -384,6 +387,20 @@ int example4c(Dwarf_Die in_die,
     }
     return res;
 }
+/*! @endcode */
+
+/*! @defgroup example4b Using dwarf_siblingof_b()
+    @brief Example accessing a DIE sibling.
+
+    Access to each DIE on a sibling list
+    This is the older form, required after
+    dwarf_next_cu_header_d().
+
+    Better to use dwarf_next_cu_header_e() and
+    dwarf_siblingof_c().
+
+    @code
+*/
 int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
     Dwarf_Bool is_info,
     Dwarf_Error *error)
@@ -881,6 +898,8 @@ int example6(Dwarf_Debug dbg,Dwarf_Off die_offset,
 /*! @defgroup example7 Using dwarf_offset_given_die()
     @brief Example finding the section offset of a DIE
 
+    Here finding the offset of a CU-DIE.
+
     @code
 */
 int example7(Dwarf_Debug dbg, Dwarf_Die in_die,
@@ -1244,19 +1263,19 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Error*error)
 {
     Dwarf_Loc_Head_c head = 0;
-    Dwarf_Locdesc_c locentry = 0;
-    int res2 = 0;
+    Dwarf_Locdesc_c  locentry = 0;
+    int            res2 = 0;
     Dwarf_Unsigned rawlopc = 0;
     Dwarf_Unsigned rawhipc = 0;
-    Dwarf_Bool debug_addr_unavail = FALSE;
+    Dwarf_Bool     debug_addr_unavail = FALSE;
     Dwarf_Unsigned lopc = 0;
     Dwarf_Unsigned hipc = 0;
     Dwarf_Unsigned ulistlen = 0;
     Dwarf_Unsigned ulocentry_count = 0;
     Dwarf_Unsigned section_offset = 0;
     Dwarf_Unsigned locdesc_offset = 0;
-    Dwarf_Small lle_value = 0;
-    Dwarf_Small loclist_source = 0;
+    Dwarf_Small    lle_value = 0;
+    Dwarf_Small    loclist_source = 0;
     Dwarf_Unsigned i = 0;
 
     res2 = dwarf_loclist_from_expr_c(dbg,
@@ -1323,18 +1342,22 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 
     @param path
     Path to an object we wish to open.
-    @param groupnumber
+    @param error
+    Allows passing back error details to the caller.
+    @return
+    Return DW_DLV_OK etc.
+
     @code
 */
 int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     /* EXAMPLE: DWARF2-DWARF5  access.  */
-    Dwarf_Line  *linebuf = 0;
-    Dwarf_Signed linecount = 0;
-    Dwarf_Line  *linebuf_actuals = 0;
-    Dwarf_Signed linecount_actuals = 0;
+    Dwarf_Line    *linebuf = 0;
+    Dwarf_Signed   linecount = 0;
+    Dwarf_Line    *linebuf_actuals = 0;
+    Dwarf_Signed   linecount_actuals = 0;
     Dwarf_Line_Context line_context = 0;
-    Dwarf_Small  table_count = 0;
+    Dwarf_Small    table_count = 0;
     Dwarf_Unsigned lineversion = 0;
     int sres = 0;
     /* ... */
@@ -1345,7 +1368,7 @@ int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
     if (sres != DW_DLV_OK) {
         /*  Handle the DW_DLV_NO_ENTRY  or DW_DLV_ERROR
             No memory was allocated so there nothing
-            to dealloc. */
+            to dealloc here. */
         return sres;
     }
     if (table_count == 0) {
@@ -1475,18 +1498,19 @@ int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
     @see dwarf_srclines_b
     @see dwarf_srclines_from_linecontext
     @see dwarf_srclines_dealloc_b
+
     @code
 */
 int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed       count = 0;
     Dwarf_Line_Context context = 0;
-    Dwarf_Line *linebuf = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Line *line;
-    Dwarf_Small table_count =0;
-    Dwarf_Unsigned version = 0;
-    int sres = 0;
+    Dwarf_Line        *linebuf = 0;
+    Dwarf_Signed       i = 0;
+    Dwarf_Line        *line;
+    Dwarf_Small        table_count =0;
+    Dwarf_Unsigned     version = 0;
+    int                sres = 0;
 
     sres = dwarf_srclines_b(somedie,
         &version, &table_count,&context,error);
@@ -1569,17 +1593,17 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
     For 0.4.2 and earlier this returned .debug_pubnames
     content.
     As of version 0.5.0 (October 2022) this  returns
-    .debug_pubnames  (if it exists) and .debug_names
-    (if it exists) data.
+    .debug_pubnames  (if it exists) and the relevant
+    portion of  .debug_names (if .debug_names exists) data.
 
     @code
 */
 int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *globs = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_get_globals(dbg, &globs,&count, error);
     if (res != DW_DLV_OK) {
@@ -1612,10 +1636,10 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 */
 int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_PUBTYPES,
         &types,&count,error);
@@ -1637,7 +1661,6 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
-    You
 
     @code
 */
@@ -1671,10 +1694,10 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 */
 int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *funcs = 0;
-    Dwarf_Signed i = 0;
-    int fres = 0;
+    Dwarf_Signed  i = 0;
+    int           fres = 0;
 
     fres = dwarf_globals_by_type(dbg,DW_GL_FUNCS,
         &funcs,&count,error);
@@ -1699,10 +1722,10 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 */
 int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_TYPES,
         &types,&count,error);
@@ -1727,10 +1750,10 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 */
 int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *vars = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_VARS,
         &vars,&count,error);
@@ -1773,10 +1796,10 @@ int exampledebugnames(Dwarf_Debug dbg,
     Dwarf_Unsigned *dnentrycount,
     Dwarf_Error *error)
 {
-    int res = DW_DLV_OK;
-    Dwarf_Unsigned offset = 0;
+    int               res = DW_DLV_OK;
+    Dwarf_Unsigned    offset = 0;
     Dwarf_Dnames_Head dn  = 0;
-    Dwarf_Unsigned new_offset = 0;
+    Dwarf_Unsigned    new_offset = 0;
 
     for (   ;res == DW_DLV_OK; offset = new_offset) {
         Dwarf_Unsigned comp_unit_count = 0;
@@ -2008,13 +2031,13 @@ void  add_offset_to_list(Dwarf_Unsigned offset);
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
-    Dwarf_Unsigned  k = 0;
-    Dwarf_Unsigned version = 0;
+    Dwarf_Unsigned      k = 0;
+    Dwarf_Unsigned      version = 0;
     Dwarf_Macro_Context macro_context = 0;
-    Dwarf_Unsigned macro_unit_offset = 0;
-    Dwarf_Unsigned number_of_ops = 0;
-    Dwarf_Unsigned ops_total_byte_len = 0;
-    Dwarf_Bool is_primary = TRUE;
+    Dwarf_Unsigned      macro_unit_offset = 0;
+    Dwarf_Unsigned      number_of_ops = 0;
+    Dwarf_Unsigned      ops_total_byte_len = 0;
+    Dwarf_Bool          is_primary = TRUE;
 
     /*  Just call once each way to test both.
         Really the second is just for imported units.*/
@@ -2164,10 +2187,10 @@ void functionusingsigned(Dwarf_Signed s);
 int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
     Dwarf_Error*error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed         count = 0;
     Dwarf_Macro_Details *maclist = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Unsigned max = 500000; /* sanity limit */
+    Dwarf_Signed         i = 0;
+    Dwarf_Unsigned       max = 500000; /* sanity limit */
     int errv = 0;
 
     /*  This is for DWARF2,DWARF3, and DWARF4
@@ -2215,11 +2238,11 @@ int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
 */
 int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Cie *cie_data = 0;
+    Dwarf_Cie   *cie_data = 0;
     Dwarf_Signed cie_count = 0;
-    Dwarf_Fde *fde_data = 0;
+    Dwarf_Fde   *fde_data = 0;
     Dwarf_Signed fde_count = 0;
-    int fres = 0;
+    int          fres = 0;
 
     fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,error);
@@ -2294,8 +2317,8 @@ int examples(Dwarf_Cie cie,
 {
     Dwarf_Frame_Instr_Head head = 0;
     Dwarf_Unsigned         count = 0;
-    int res = 0;
-    Dwarf_Unsigned i = 0;
+    int                    res = 0;
+    Dwarf_Unsigned         i = 0;
 
     res = dwarf_expand_frame_instructions(cie,instruction,len,
         &head,&count, error);
@@ -2362,11 +2385,11 @@ int examples(Dwarf_Cie cie,
 */
 int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    int res = 0;
+    int                     res = 0;
     Dwarf_Str_Offsets_Table sot = 0;
-    Dwarf_Unsigned wasted_byte_count = 0;
-    Dwarf_Unsigned table_count = 0;
-    Dwarf_Error closeerror = 0;
+    Dwarf_Unsigned          wasted_byte_count = 0;
+    Dwarf_Unsigned          table_count = 0;
+    Dwarf_Error             closeerror = 0;
 
     res = dwarf_open_str_offsets_table_access(dbg, &sot,error);
     if (res == DW_DLV_NO_ENTRY) {
@@ -2454,10 +2477,10 @@ int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
     @code
 */
 static void cleanupbadarange(Dwarf_Debug dbg,
-    Dwarf_Arange *arange,
-    Dwarf_Signed i, Dwarf_Signed count)
+    Dwarf_Arange *arange, Dwarf_Signed i, Dwarf_Signed count)
 {
     Dwarf_Signed k = i;
+
     for ( ; k < count; ++k) {
         dwarf_dealloc(dbg,arange[k] , DW_DLA_ARANGE);
         arange[k] = 0;
@@ -2467,9 +2490,9 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     /*  It is a historical accident that the count is signed.
         No negative count is possible. */
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Arange *arange = 0;
-    int res = 0;
+    int           res = 0;
 
     res = dwarf_get_aranges(dbg, &arange,&count, error);
     if (res == DW_DLV_OK) {
@@ -2511,11 +2534,11 @@ void functionusingrange(Dwarf_Ranges *r);
 int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     Dwarf_Die die, Dwarf_Error*error)
 {
-    Dwarf_Signed count = 0;
-    Dwarf_Off  realoffset = 0;
-    Dwarf_Ranges *rangesbuf = 0;
+    Dwarf_Signed   count = 0;
+    Dwarf_Off      realoffset = 0;
+    Dwarf_Ranges  *rangesbuf = 0;
     Dwarf_Unsigned bytecount = 0;
-    int res = 0;
+    int            res = 0;
 
     res = dwarf_get_ranges_b(dbg,rangesoffset,die,
         &realoffset,
@@ -2551,8 +2574,8 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
     Dwarf_Unsigned symbol_table_offset = 0;
     Dwarf_Unsigned constant_pool_offset = 0;
     Dwarf_Unsigned section_size = 0;
-    const char * section_name = 0;
-    int res = 0;
+    const char *   section_name = 0;
+    int            res = 0;
 
     res = dwarf_gdbindex_header(dbg,&gindexptr,
         &version,&cu_list_offset, &types_cu_list_offset,
@@ -2618,7 +2641,7 @@ int examplewgdbindex(Dwarf_Gdbindex gdbindex,
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i = 0;
-    int res = 0;
+    int            res = 0;
 
     res = dwarf_gdbindex_addressarea(gdbindex, &list_len,error);
     if (res != DW_DLV_OK) {
@@ -2630,6 +2653,7 @@ int examplewgdbindex(Dwarf_Gdbindex gdbindex,
         Dwarf_Unsigned lowpc = 0;
         Dwarf_Unsigned highpc = 0;
         Dwarf_Unsigned cu_index = 0;
+
         res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
             &lowpc,&highpc,
             &cu_index,
@@ -2654,7 +2678,7 @@ int examplex(Dwarf_Gdbindex gdbindex,Dwarf_Error*error)
 {
     Dwarf_Unsigned symtab_list_length = 0;
     Dwarf_Unsigned i = 0;
-    int res = 0;
+    int            res = 0;
 
     res = dwarf_gdbindex_symboltable_array(gdbindex,
         &symtab_list_length,error);
@@ -2717,19 +2741,21 @@ int examplex(Dwarf_Gdbindex gdbindex,Dwarf_Error*error)
 /*! @defgroup exampley Reading cu and tu Debug Fission data
     @brief Example using dwarf_get_xu_index_header
 
+    Debug Fission is an older name for Split Dwarf.
+
     @code
 */
 int exampley(Dwarf_Debug dbg, const char *type,
     Dwarf_Error *error)
 {
     /* type is "tu" or "cu" */
-    int res = 0;
+    int                   res = 0;
     Dwarf_Xu_Index_Header xuhdr = 0;
-    Dwarf_Unsigned version_number = 0;
-    Dwarf_Unsigned offsets_count = 0; /*L */
-    Dwarf_Unsigned units_count = 0; /* M */
-    Dwarf_Unsigned hash_slots_count = 0; /* N */
-    const char * section_name = 0;
+    Dwarf_Unsigned        version_number = 0;
+    Dwarf_Unsigned        offsets_count = 0; /*L */
+    Dwarf_Unsigned        units_count = 0; /* M */
+    Dwarf_Unsigned        hash_slots_count = 0; /* N */
+    const char           *section_name = 0;
 
     res = dwarf_get_xu_index_header(dbg,
         type,
@@ -2761,7 +2787,6 @@ int examplez( Dwarf_Xu_Index_Header xuhdr,
     /*  hash_slots_count returned by
         dwarf_get_xu_index_header() */
     static Dwarf_Sig8 zerohashval;
-
     Dwarf_Unsigned h = 0;
 
     for (h = 0; h < hash_slots_count; h++) {
@@ -2835,6 +2860,7 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned col = 0;
+
     /*  We use  'offsets_count' returned by
         a dwarf_get_xu_index_header() call.
         We use 'index' returned by a
@@ -2842,7 +2868,7 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
     for (col = 0; col < offsets_count; col++) {
         Dwarf_Unsigned off = 0;
         Dwarf_Unsigned len = 0;
-        const char * name = 0;
+        const char    *name = 0;
         Dwarf_Unsigned num = 0;
         int res = 0;
 
@@ -3087,12 +3113,12 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     /*  attrvalue must be the DW_AT_ranges
         DW_FORM_rnglistx or DW_FORM_sec_offset value
         extracted from attr. */
-    int res = 0;
-    Dwarf_Half theform = 0;
-    Dwarf_Unsigned    entries_count;
-    Dwarf_Unsigned    global_offset_of_rle_set;
+    int                 res = 0;
+    Dwarf_Half          theform = 0;
+    Dwarf_Unsigned      entries_count;
+    Dwarf_Unsigned      global_offset_of_rle_set;
     Dwarf_Rnglists_Head rnglhead = 0;
-    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned      i = 0;
 
     res = dwarf_rnglists_get_rle_head(attr,
         theform,
@@ -3106,10 +3132,10 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     }
     for (i = 0; i < entries_count; ++i) {
         unsigned entrylen     = 0;
-        unsigned code         = 0;
+        unsigned       code         = 0;
         Dwarf_Unsigned rawlowpc  = 0;
         Dwarf_Unsigned rawhighpc = 0;
-        Dwarf_Bool debug_addr_unavailable = FALSE;
+        Dwarf_Bool     debug_addr_unavailable = FALSE;
         Dwarf_Unsigned lowpc  = 0;
         Dwarf_Unsigned highpc = 0;
 
