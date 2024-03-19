@@ -1065,11 +1065,11 @@
 
     <b>Changes 0.9.1 to 0.9.2</b>
 
-    Vulnerability DW202402-001 (probable libdwarf
-    crash/segmentation-violation reading a carefully
-    crafted corrupt DWARF5 loclists or rnglists
-    section) is fixed. There are no known
-    vulnerabilites in libdwarf.
+    Vulnerabilities DW204202-001, DW202402-002,DW202402-003
+    DW202403-001, could crash libdwarf given
+    a carefully corrupted (fuzzed) DWARF object file.
+    Now the library returns an error 
+    for these corruptions.
 
     <b>Changes 0.9.0 to 0.9.1</b>
 

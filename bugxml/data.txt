@@ -8,8 +8,12 @@ description: A carefully corrupted line table
   header can cause libdwarf to read outside of its
   allowed areas in a .debug_line section reading
   the file names part of the header.
-  The failure to check for end-of-section following the
-  very last byte in section has been present for many years. 
+  The failure to check for end-of-section before reading
+  past end-of-section at the very last byte in section
+  (at a very few specific
+  points in the line table reader code where a
+  valid line table header would not require a test)
+  has been present for many years. 
 datefixed: 2024-02-19
 references: regressiontests/ossfuzz67490/fuzz_srcfiles-5195296927711232
 gitfixid: 2930f3121ee6b07da405103934c329bbeca0382f
