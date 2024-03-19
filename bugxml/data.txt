@@ -12,7 +12,7 @@ description: A carefully corrupted line table
   very last byte in section has been present for many years. 
 datefixed: 2024-02-19
 references: regressiontests/ossfuzz67490/fuzz_srcfiles-5195296927711232
-gitfixid: 
+gitfixid: 2930f3121ee6b07da405103934c329bbeca0382f
 tarrelease:
 endrec: DW202403-001
 
