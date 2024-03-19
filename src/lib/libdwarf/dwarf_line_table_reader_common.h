@@ -911,6 +911,16 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     filename_entry_pairs[j].up_first;
                 Dwarf_Unsigned lnform =
                     filename_entry_pairs[j].up_second;
+
+                if (line_ptr >= line_ptr_end) {
+                    free(filename_entry_pairs);
+                    _dwarf_error_string(dbg, err,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
+                        "file name format count too large "
+                        "to be correct. Corrupt DWARF/");
+                    return DW_DLV_ERROR;
+                }
                 switch (lntype) {
                 /* The LLVM LNCT is documented in
                     https://releases.llvm.org/9.0.0/docs
@@ -1064,8 +1074,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 }
                 if (line_ptr > line_ptr_end) {
                     free(filename_entry_pairs);
-                    _dwarf_error(dbg, err,
-                        DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                    _dwarf_error_string(dbg, err,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
+                        "Reading line table header filenames "
+                        "runs off end of section. Corrupt Dwarf");
                     return DW_DLV_ERROR;
                 }
             }

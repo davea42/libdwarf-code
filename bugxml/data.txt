@@ -1,3 +1,22 @@
+id: DW202403-001
+fuzzer: ossfuzz id: 67490
+datereported: 2024-03-18
+reportedby: David Korczynski
+vulnerability: Reads past end of line table
+product: libdwarf
+description: A carefully corrupted line table
+  header can cause libdwarf to read outside of its
+  allowed areas in a .debug_line section reading
+  the file names part of the header.
+  The failure to check for end-of-section following the
+  very last byte in section has been present for many years. 
+datefixed: 2024-02-19
+references: regressiontests/ossfuzz67490/fuzz_srcfiles-5195296927711232
+gitfixid: 
+tarrelease:
+endrec: DW202403-001
+
+
 id: DW202402-003
 fuzzer: hongg
 datereported: 2024-02-18
