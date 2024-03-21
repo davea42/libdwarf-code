@@ -196,6 +196,13 @@ if get_option('dwarfexample') == true
   subdir('src/bin/dwarfexample')
 endif
 subdir('doc')
+
+configure_file(
+  input: 'src/bin/dwarfdump/dwarfdump.conf',
+  output: 'dwarfdump.conf',
+  copy: true
+)
+
 subdir('test')
 
 # Use config_h after all subdirs have set values
