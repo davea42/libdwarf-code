@@ -2,7 +2,7 @@ project('libdwarf', ['c','cpp'],
   version: '0.9.2',
   default_options : ['buildtype=debugoptimized',
   'warning_level=3', 'werror=true'],
-  meson_version : '>=0.53'
+  meson_version : '>=0.54'
 )
 
 # version 0.56 is the first version with project_source_root and
