@@ -53,6 +53,8 @@ libdwarfp = declare_dependency(
   link_with : libdwarfp_lib,
 )
 
+meson.override_dependency('libdwarfp', libdwarfp)
+
 install_headers(libdwarfp_header_src,
   install_dir : dir_pkginclude + '-' + v_maj
 )
