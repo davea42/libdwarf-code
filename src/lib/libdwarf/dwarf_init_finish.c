@@ -33,7 +33,6 @@
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() strcmp() strncmp() strlen() */
 #include <stdio.h> /* debugging */
-#include <zconf.h>
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -55,6 +54,7 @@
 
 #ifdef HAVE_ZLIB_H
 #include "zlib.h"
+#include "zconf.h"
 #endif
 #ifdef HAVE_ZSTD_H
 #include "zstd.h"

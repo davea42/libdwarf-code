@@ -1,7 +1,6 @@
 project('libdwarf', ['c','cpp'],
   version: '0.9.2',
-  default_options : ['buildtype=debugoptimized',
-  'warning_level=3', 'werror=true'],
+  default_options : ['warning_level=3'],
   meson_version : '>=0.54'
 )
 
@@ -48,6 +47,10 @@ sys_bsd = bsd.contains(host_machine.system())
 sys_windows = windows.contains(host_machine.system())
 sys_osx = osx.contains(host_machine.system())
 sys_sun = sun.contains(host_machine.system())
+
+if sys_windows
+  add_project_arguments('-D_CRT_SECURE_NO_WARNINGS', language: ['c', 'cpp'])
+endif
 
 # compiler
 

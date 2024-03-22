@@ -35,7 +35,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#include <io.h> /* lseek() off_t ssize_t */
+#include <io.h> /* lseek() off_t */
 #endif /* _WIN32 */
 
 #ifdef HAVE_UNISTD_H

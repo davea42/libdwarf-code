@@ -48,8 +48,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Debug dbg = 0;
   off_t size_left = 0;
   off_t fsize = 0;
-  ssize_t readlen = 1000;
-  ssize_t readval = 0;
+  ptrdiff_t readlen = 1000;
+  ptrdiff_t readval = 0;
   unsigned char *readbuf = 0;
   unsigned int tcrc = 0;
   unsigned int init = 0;

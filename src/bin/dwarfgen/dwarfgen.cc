@@ -326,7 +326,7 @@ public:
             }
             curoffset_ = v;
         }
-        ssize_t wrote = write(fd_,bytes,(size_t)length);
+        ptrdiff_t wrote = write(fd_,bytes,(size_t)length);
         if (wrote == -1) {
                cout << "dwarfgen: write length " << length<<
                    "fails " << endl;

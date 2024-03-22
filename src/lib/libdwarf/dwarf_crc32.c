@@ -59,7 +59,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     Dwarf_Error *error)
 {
     /*  off_t is signed,    defined by POSIX */
-    /*  ssize_t is signed,  defined in POSIX */
+    /*  ptrdiff_t is signed,  defined in C99 */
 
     /*  size_t is unsigned, defined in C89. */
     Dwarf_Unsigned   fsize = 0;

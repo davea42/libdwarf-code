@@ -25,12 +25,13 @@
 
 #ifdef _MSC_VER /* Macro to select VS compiler */
 #include <windows.h>
-typedef SSIZE_T ssize_t;
+#if _MSC_VER < 1900
 #ifdef _WIN64
 typedef long long off_t;
 #else
 typedef long off_t;
-#endif
+#endif // _WIN64
+#endif // _MSC_VER < 1900
 #endif /* _MSC_VER */
 
 #ifndef TRUE
