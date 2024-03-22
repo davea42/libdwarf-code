@@ -25,17 +25,12 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <stdlib.h> /* calloc() free() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dd_globals.h"
 #include "dd_tsearchbal.h"
 #include "dd_helpertree.h"
-#include "libdwarf_private.h" /* For malloc/calloc debug */
 
 #define TRUE 1
 #define FALSE 0

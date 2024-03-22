@@ -27,6 +27,13 @@
 */
 #ifndef DWARF_LOC_H
 #define DWARF_LOC_H
+
+#include "dwarf_base_types.h"
+#include "dwarf_opaque.h"
+#include "libdwarf.h"
+
+struct Dwarf_Loc_Head_c_s;
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -35,12 +35,12 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 */
 
 #include <config.h>
-
-#include <stddef.h> /* NULL size_t */
 #include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc()
+
     getenv() */
 #include <string.h> /* memset() strcmp() stricmp()
+
     strlen() strrchr() strstr() */
 
 /* Windows specific header files */
@@ -76,7 +76,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "dd_tag_common.h"
 #include "dd_addrmap.h"
 #include "dd_attr_form.h"
 #include "print_debug_gnu.h"
@@ -88,6 +87,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_mac_cputype.h"
 #include "dd_elf_cputype.h"
 #include "dd_pe_cputype.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -328,38 +329,6 @@ main(int argc, char *argv[])
     esb_constructor(&esb_short_cu_name);
     esb_constructor(&esb_long_cu_name);
     esb_constructor(&dwarf_error_line);
-#ifdef _WIN32
-    /*  Often we redirect the output to a file, but we have found
-        issues due to the buffering associated with stdout.
-        Some issues were fixed just by the use of 'fflush',
-        but the main issued remained.
-        The stdout stream is buffered, so will only display
-        what's in the buffer after it reaches a newline
-        (or when it's told to).
-        We have a few options to print immediately:
-        - Print to stderr instead using fprintf.
-        - Print to stdout and flush stdout whenever
-            we need it to using fflush.
-        - We can also disable buffering on stdout by using setbuf:
-            setbuf(stdout,NULL);
-            Make stdout unbuffered; this seems to work for all cases.
-        The problem is no longer present. Now, for practical
-        purposes, there is no stderr output, all is stdout.
-        September 2018.  */
-
-    /*  Calling setbuf() with NULL argument, it turns off
-        all buffering for the specified stream.
-        Then writing to and/or reading from the stream
-        will be exactly as directed by the program.
-        But if dwarfdump is used over a network drive,
-        it shows a dramatic
-        slowdown when sending the output to a file.
-        An operation that takes
-        couple of seconds, it was taking few hours. */
-    /*  setbuf(stdout,NULL); */
-    /*  Redirect stderr to stdout. */
-    /*  No more redirect needed. We only use stdout */
-#endif /* _WIN32 */
 
 #ifdef HAVE_UTF8
     {

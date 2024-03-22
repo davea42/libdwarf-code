@@ -28,7 +28,21 @@
    Fifth Floor, Boston MA 02110-1301, USA.
 
 */
+
+#ifndef DWARF_LINE_TABLE_READER_COMMON_H
+#define DWARF_LINE_TABLE_READER_COMMON_H
+
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "dwarf.h"
+#include "dwarf_alloc.h"
+#include "dwarf_error.h"
+#include "dwarf_line.h"
+#include "dwarf_string.h"
+#include "dwarf_util.h"
+#include "libdwarf_private.h"
 
 /*  This is #included twice. Once for
     libdwarf callers and one for dwarfdump which prints
@@ -2919,3 +2933,5 @@ read_line_table_program(Dwarf_Debug dbg,
 #endif /* PRINTING_DETAILS */
     return DW_DLV_OK;
 }
+
+#endif // DWARF_LINE_TABLE_READER_COMMON_H

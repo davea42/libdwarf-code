@@ -30,13 +30,10 @@
     for more information.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() snprintf() */
 #include <stdlib.h> /* exit() free() malloc() */
 #include <string.h> /* memset() strdup() strlen() strncmp() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 

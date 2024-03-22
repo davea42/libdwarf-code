@@ -32,6 +32,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef DWARF_SAFE_STRCPY_H
 #define DWARF_SAFE_STRCPY_H
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

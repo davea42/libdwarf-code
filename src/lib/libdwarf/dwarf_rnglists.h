@@ -31,6 +31,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef DWARF_RNGLISTS_H
 #define DWARF_RNGLISTS_H
+
+#include "dwarf_base_types.h"
+#include "dwarf_opaque.h"
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

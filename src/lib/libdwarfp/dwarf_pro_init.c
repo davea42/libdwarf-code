@@ -30,13 +30,8 @@
 */
 
 #include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <string.h> /* memset() strcmp() */
-
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif
 
 #ifdef DWARF_WITH_LIBELF
 #ifdef HAVE_LIBELF_H
@@ -52,9 +47,7 @@
 
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"
@@ -62,9 +55,7 @@
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_pro_section.h"        /* for MAGIC_SECT_NO */
 #include "dwarf_pro_reloc_symbolic.h"
-#include "dwarf_pro_reloc_stream.h"
 #include "dwarf_tsearch.h"
-#include "dwarf_string.h"
 
 #define IS_64BITPTR(dbg) ((dbg)->de_flags & DW_DLC_POINTER64 ? 1 : 0)
 #define ISA_IA64(dbg) ((dbg)->de_flags & DW_DLC_ISA_IA64 ? 1 : 0)

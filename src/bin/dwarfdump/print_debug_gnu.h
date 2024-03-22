@@ -30,4 +30,11 @@
 
 /*  To print .debug_gnu_pubnames, .debug_gnu_typenames */
 
+#ifndef PRINT_DEBUG_GNU_H
+#define PRINT_DEBUG_GNU_H
+
+#include "libdwarf.h"
+
 int print_debug_gnu(Dwarf_Debug dbg,Dwarf_Error *error);
+
+#endif // PRINT_DEBUG_GNU_H

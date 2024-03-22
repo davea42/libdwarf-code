@@ -27,6 +27,14 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_FRAME_H
+#define DWARF_PRO_FRAME_H
+
+#include "dwarf_base_types.h"
+#include "dwarf_pro_opaque.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 /*
     Largest register value that can be coded into
     the opcode since there are only 6 bits in the
@@ -120,3 +128,5 @@ struct Dwarf_P_Fde_s {
     Dwarf_Unsigned fde_inst_block_size;
     void *fde_block;
 };
+
+#endif // DWARF_PRO_FRAME_H

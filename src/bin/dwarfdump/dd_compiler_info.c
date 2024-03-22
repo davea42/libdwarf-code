@@ -24,12 +24,10 @@
   Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
-#include <stddef.h> /* NULL */
 #include <stdio.h>  /* stdout fprintf() printf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() */
 #include <string.h> /* memset() strcmp() stricmp()
+
     strlen() strncmp() */
 
 /* Windows specific header files */
@@ -37,7 +35,6 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_globals.h"
 #include "dd_makename.h"

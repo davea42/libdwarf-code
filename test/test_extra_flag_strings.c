@@ -29,18 +29,13 @@
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <string.h> /* memset() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
+#include "libdwarf_private.h"
 #include "libdwarfp.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
-#include "dwarf_string.h"
 
 static int errcount;
 

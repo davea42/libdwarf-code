@@ -28,7 +28,6 @@
 /*  This provides access to the DWARF5 .debug_names section. */
 
 #include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <stdio.h>
 #include <string.h> /* memcpy */
@@ -48,7 +47,6 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarf_global.h"
 #include "dwarf_debugnames.h"
 #include "dwarf_string.h"
 

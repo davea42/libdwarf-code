@@ -33,7 +33,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     file appropriate to reading DWARF debugging data.
 */
 
-#include <config.h>
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* atoi() calloc() free() malloc() */
 #include <string.h> /* memset() strdup() strlen() */
@@ -41,14 +40,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
 #include "dwarf_object_read_common.h"
-#include "dwarf_object_detector.h"
 #include "dwarf_pe_descr.h"
 #include "dwarf_peread.h"
 

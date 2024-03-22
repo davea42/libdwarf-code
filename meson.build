@@ -1,7 +1,6 @@
 project('libdwarf', ['c','cpp'],
   version: '0.9.2',
-  default_options : ['buildtype=debugoptimized',
-  'warning_level=3', 'werror=true'],
+  default_options : ['warning_level=3'],
   meson_version : '>=0.54'
 )
 
@@ -119,7 +118,7 @@ dev_decompression = get_option('decompression')
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 if cc.get_id() == 'msvc'
-  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS']
+  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS', '-D_CRT_SECURE_NO_WARNINGS' ]
 endif
 
 config_dir = [include_directories('.')]
@@ -133,6 +132,7 @@ header_checks = [
   'malloc.h',
   'stdint.h',
   'sys/stat.h',
+  'sys/types.h',
 ]
 
 if sys_windows == false

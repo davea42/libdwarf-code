@@ -28,13 +28,12 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <string.h> /* memcpy() strcpy() strlen() */
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"

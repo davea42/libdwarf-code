@@ -29,8 +29,6 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() strcmp() strncmp() strlen() */
 

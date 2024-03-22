@@ -27,6 +27,9 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 #ifndef GLFLAGS_H
 #define GLFLAGS_H
 
+#include "dd_checkutil.h"
+#include "libdwarf.h"
+
 /*  All the dwarfdump flags are gathered into a single
     global struct as it has been hard to know how many there
     were or what they were all for. */

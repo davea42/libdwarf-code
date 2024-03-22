@@ -29,18 +29,18 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() realloc() */
 #include <string.h> /* memset() */
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 
 static struct esb_s esb_string;
 

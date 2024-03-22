@@ -1,6 +1,8 @@
 #ifndef DD_ELF_CPUTYPE_H
 #define DD_ELF_CPUTYPE_H
 
+#include "libdwarf.h"
+
 #define EM_NONE        0  /* No machine */
 #define EM_M32         1  /* AT&T WE 32100 */
 #define EM_SPARC   2  /* SUN SPARC */

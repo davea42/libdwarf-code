@@ -27,10 +27,7 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* free() malloc() realloc() */
-#include <string.h> /* memset() strlen() */
 #include <time.h>   /* ctime() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

@@ -33,9 +33,10 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
     the Crittenden Lane address.  */
 
 #include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcmp() memset() strchr() strcmp()
+#include <stdio.h>
+
     strlen() strncmp() */
 
 #ifdef HAVE_STDINT_H
@@ -50,7 +51,6 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "print_frames.h"  /* for print_expression_operations() . */
 #include "dd_macrocheck.h"
 #include "dd_helpertree.h"
 #include "dd_opscounttab.h"
@@ -58,6 +58,8 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_attr_form.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 
 #define VSFBUFSZ 200
 #define DIE_STACK_SIZE 800  /* A hard limit. */

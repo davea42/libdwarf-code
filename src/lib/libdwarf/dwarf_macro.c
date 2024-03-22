@@ -28,8 +28,6 @@
 
 */
 
-#include <config.h>
-
 #include <limits.h> /* ULONG_MAX */
 #include <string.h> /* memcpy() strlen() */
 
@@ -39,8 +37,6 @@
 
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"

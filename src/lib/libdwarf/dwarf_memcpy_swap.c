@@ -29,9 +29,6 @@
 
 */
 
-#include <config.h>
-
-#include <stddef.h> /* size_t */
 #include <string.h> /* memcpy() */
 
 #include "dwarf_memcpy_swap.h"

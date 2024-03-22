@@ -23,6 +23,11 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
+#ifdef _MSC_VER /* Macro to select VS compiler */
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+#endif /* _MSC_VER */
+
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif

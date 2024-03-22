@@ -25,6 +25,13 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_RELOC_H
+#define DWARF_PRO_RELOC_H
+
+#include "dwarf_pro_opaque.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 int _dwarf_pro_pre_alloc_specific_reloc_slots(Dwarf_P_Debug dbg,
     Dwarf_P_Per_Reloc_Sect p_reloc,
     Dwarf_Unsigned newslots);
@@ -35,3 +42,5 @@ int _dwarf_pro_alloc_reloc_slots(Dwarf_P_Debug dbg,
 int _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
     int base_sec_index,
     void **relrec_to_fill);
+
+#endif // DWARF_PRO_RELOC_H

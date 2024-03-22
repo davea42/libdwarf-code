@@ -29,6 +29,8 @@ Portions Copyright (C) 2008-2023 David Anderson.  All Rights Reserved.
 #ifndef DWARF_ERRMSG_LIST_H
 #define DWARF_ERRMSG_LIST_H
 
+#include "libdwarf.h"
+
 /* Array to hold string representation of errors. Any time a
    define is added to the list in libdwarf.h, a string should be
    added to this Array

@@ -71,6 +71,14 @@
 
 */
 
+#ifndef DWARF_OPAQUE_H
+#define DWARF_OPAQUE_H
+
+#include <stddef.h>
+
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+
 struct Dwarf_Rnglists_Context_s;
 typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;
 struct Dwarf_Loclists_Context_s;
@@ -1142,3 +1150,5 @@ int _dwarf_skip_leb128(char * /*leb*/,
 
 int _dwarf_get_suppress_debuglink_crc(void);
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);
+
+#endif // DWARF_OPAQUE_H

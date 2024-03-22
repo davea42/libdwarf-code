@@ -49,27 +49,20 @@ calls
             or    calls generic_rel_from_rel64(ep,gsh,relp,grel...
 */
 
-#include <config.h>
-
-#include <stddef.h> /* size_t */
 #include <stdlib.h> /* calloc() free() malloc() */
-#include <stdio.h> /* printf debugging */
 #include <string.h> /* memcpy() strcmp() strdup()
+
     strlen() strncmp() */
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
-#include "dwarf_opaque.h"
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_reading.h"
 #include "dwarf_elf_defines.h"
 #include "dwarf_elfstructs.h"
 #include "dwarf_elfread.h"
-#include "dwarf_object_detector.h"
-#include "dwarf_object_read_common.h"
-#include "dwarf_util.h"
 #include "dwarf_secname_ck.h"
 
 #if 0 /* debugging only dumpsizes() */

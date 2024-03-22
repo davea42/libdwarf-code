@@ -27,16 +27,12 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL size_t */
 #include <string.h> /* memcpy() strlen() */
 
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

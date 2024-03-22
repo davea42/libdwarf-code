@@ -28,6 +28,7 @@
 #ifndef ADDRMAP_H
 #define ADDRMAP_H
 
+#include "libdwarf.h"
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

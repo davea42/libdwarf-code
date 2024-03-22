@@ -27,6 +27,16 @@
 
 // createirepfrombinary.h
 
+#ifndef CREATEIREPFROMBINARY_H
+#define CREATEIREPFROMBINARY_H
+
+#include <string>
+
+#include "irepresentation.h"
+
+class IRepresentation;
 
 void createIrepFromBinary(const std::string &infile,
    IRepresentation & irep);
+
+#endif // CREATEIREPFROMBINARY_H

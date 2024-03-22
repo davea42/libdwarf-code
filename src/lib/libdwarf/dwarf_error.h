@@ -30,6 +30,9 @@ Portions Copyright (C) 2011-2023 David Anderson. All Rights Reserved.
 
 #ifndef DWARF_ERROR_H
 #define DWARF_ERROR_H
+
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

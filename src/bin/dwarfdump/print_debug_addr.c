@@ -31,16 +31,15 @@ Copyright (C) 2022 David Anderson. All Rights Reserved.
 
 /*  To print .debug_gnu_pubnames, .debug_gnu_typenames */
 
-#include <config.h>
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
+#include "dd_glflags.h"
 
 static void
 print_sec_name(Dwarf_Debug dbg)

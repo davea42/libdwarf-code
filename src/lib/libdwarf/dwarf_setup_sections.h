@@ -31,6 +31,8 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "libdwarf.h"
+
 int _dwarf_enter_section_in_de_debug_sections_array(
     Dwarf_Debug dbg,
     const char *scn_name,

@@ -32,6 +32,9 @@
 // Creates a string table in a way consistent with
 // elf string tables. The zero index is a null byte always.
 
+#include <string>
+#include <cstring>
+
 class strtabdata {
 public:
     strtabdata(): data_(new char[1000]),

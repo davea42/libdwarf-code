@@ -33,21 +33,18 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
     SGI has moved from the Crittenden Lane address.
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() realloc() */
 #include <string.h> /* memset() */
+#include <stdio.h>
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
-#include "dd_sanitized.h"
 #include "dd_esb.h"
-#include "dd_esb_using_functions.h"
-
 #include "print_sections.h"
+#include "dd_glflags.h"
 
 /* The following relevent for one specific Linker. */
 #define SNLINKER_MAX_ATTRIB_COUNT  16

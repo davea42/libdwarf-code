@@ -27,6 +27,9 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_UTIL_H
+#define DWARF_PRO_UTIL_H
+
 /*  Definition of sizes of types. Independent of
     target or host, these are. */
 #define sizeof_ubyte(dbg) 1
@@ -35,3 +38,5 @@
 /* Computes amount of padding necessary to align n to a k-boundary. */
 /* Important: Assumes n, k both GREATER than zero. */
 #define PADDING(n, k) ( (k)-1 - ((n)-1)%(k) )
+
+#endif // DWARF_PRO_UTIL_H

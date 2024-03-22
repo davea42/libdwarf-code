@@ -28,6 +28,13 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
 */
 
+#ifndef DWARF_LINE_H
+#define DWARF_LINE_H
+
+#include "dwarf_base_types.h"
+#include "dwarf_opaque.h"
+#include "libdwarf.h"
+
 #define DW_EXTENDED_OPCODE   0
 
 /*
@@ -489,3 +496,5 @@ void _dwarf_print_line_context_record(Dwarf_Debug dbg,
 void _dwarf_context_src_files_destroy(Dwarf_Line_Context context);
 int _dwarf_add_to_files_list(Dwarf_Line_Context context,
     Dwarf_File_Entry fe);
+
+#endif // DWARF_LINE_H

@@ -30,6 +30,8 @@ Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
 
 */
 
+#include "libdwarf.h"
+
 /*  libelf) object access for the generic
     object file interface */
 

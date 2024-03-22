@@ -31,16 +31,15 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 
 /*  To print .debug_sup */
 
-#include <config.h>
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
+#include "dd_glflags.h"
 
 int
 print_debug_sup(Dwarf_Debug dbg,

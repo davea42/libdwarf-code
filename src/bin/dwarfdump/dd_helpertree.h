@@ -27,6 +27,8 @@
 #ifndef HELPERTREE_H
 #define HELPERTREE_H
 
+#include "libdwarf.h"
+
 /*  This is a tsearch tree  interface we may use in various ways
     where each different sort of use is a different
     Helpertree_Base_s instance. */

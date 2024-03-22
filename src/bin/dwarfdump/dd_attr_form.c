@@ -24,8 +24,6 @@
   Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* calloc() free() malloc() */
 
@@ -42,6 +40,7 @@
 #include "dd_naming.h"
 #include "dd_attr_form.h"
 #include "dwarfdump-af-table.h"
+#include "dd_glflags.h"
 
 #if 0
 static void

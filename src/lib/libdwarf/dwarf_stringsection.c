@@ -27,19 +27,13 @@
 
 */
 
-#include <config.h>
-
-#include <stddef.h> /* NULL, size_t */
 #include <string.h> /* strlen() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"

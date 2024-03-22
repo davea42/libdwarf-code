@@ -29,6 +29,10 @@
 
 */
 
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+#include "dwarf_opaque.h"
+
 struct  Dwarf_Str_Offsets_Table_s {
     /*  pointers are to dwarf-memory valid till Dwarf_Debug
         is closed..  None are to be deallocated. */

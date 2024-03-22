@@ -29,8 +29,6 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <stdlib.h> /* free() malloc() qsort() */
 #include <string.h> /* memcpy() strcmp() strcpy() strlen() */
@@ -50,7 +48,6 @@
 #include "dwarf_pro_die.h"
 #include "dwarf_pro_macinfo.h"
 #include "dwarf_pro_types.h"
-#include "dwarf_pro_dnames.h"
 
 struct Dwarf_Sort_Abbrev_s {
     Dwarf_Unsigned dsa_attr;

@@ -60,17 +60,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <config.h>
-
 #include <stddef.h> /* NULL */
-#include <stdio.h>  /* printf() */
 #include <stdlib.h> /* calloc() free() malloc() */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "libdwarf.h"
-#include "libdwarf_private.h"
 #include "dwarf_tsearch.h"
 
 /*  A table of primes used to size  and resize the hash table.

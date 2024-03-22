@@ -30,18 +30,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  Usage:  ./test_errmsg_list.c
     where an env var gives path to source tree */
 
-#include <config.h>
-
-#include <stddef.h> /* size_t */
 #include <stdio.h>  /* FILE fclose() fgets() fopen() printf() */
 #include <stdlib.h> /* atol() exit() getenv() */
 #include <string.h> /* strcmp() strlen() strncmp() */
 
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
-#include "dwarf_opaque.h"
 #include "dwarf_errmsg_list.h"
 
 /* We don't allow arbitrary DW_DLE line length. */

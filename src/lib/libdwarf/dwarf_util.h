@@ -30,7 +30,13 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved
 
 */
 
+#include <stddef.h>
+
 #include "dwarf_base_types.h"
+#include "dwarf_error.h"
+#include "dwarf_opaque.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 
 void
 _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,

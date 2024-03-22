@@ -28,8 +28,6 @@
 
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* stderr fflush() fprintf() */
 #include <stdlib.h> /* calloc() */
 
@@ -37,10 +35,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_util.h"
 #include "dwarf_alloc.h"

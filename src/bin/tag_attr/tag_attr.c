@@ -28,11 +28,10 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 */
 
 #include <config.h>
-
 #include <stdlib.h> /* exit() */
 #include <string.h> /* memset() */
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
@@ -40,7 +39,6 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "dd_esb.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
-#include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}

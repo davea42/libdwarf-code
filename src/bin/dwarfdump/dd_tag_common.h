@@ -29,6 +29,9 @@
 #ifndef tag_common_INCLUDED
 #define tag_common_INCLUDED
 
+#include <stdio.h>
+#include "libdwarf.h"
+
 /* The following is the magic token used to
    distinguish real tags/attrs from group-delimiters.
    Blank lines have been eliminated by an awk script.

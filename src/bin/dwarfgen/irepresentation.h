@@ -30,10 +30,16 @@
 // The internal (to dwarfgen) representation of debug information.
 // All the various components (info, frame, etc)
 // will be stored here in an internal-to-dwarfgen form.
-//
-//
-#include "irepform.h"
-#include "irepline.h"
+
+#ifndef IREPRESENTATION_H
+#define IREPRESENTATION_H
+
+#include <iostream>
+#include <ostream>
+#include <vector>
+
+#include "libdwarf.h"
+
 #include "irepdie.h"
 #include "irepmacro.h"
 #include "irepframe.h"
@@ -163,3 +169,5 @@ private:
     // .debug_types and its line data are in debugtypesdata_.
     IRDInfo  debugtypesdata_;
 };
+
+#endif // IREPRESENTATION_H

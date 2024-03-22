@@ -29,6 +29,10 @@ Portions Copyright 2012-2018 SN Systems Ltd. All rights reserved.
 
 #ifndef DWCONF_USING_FUNCTIONS_H
 #define DWCONF_USING_FUNCTIONS_H
+
+#include "libdwarf.h"
+#include "dd_dwconf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -37,31 +37,25 @@
 // irepattrtodbg.cc
 
 #include "config.h"
+#include "irepdie.h"
+#include "irepform.h"
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <stdlib.h> /* for exit() */
 #include <iostream>
-#include <sstream> // For BldName
-#include <iomanip> // iomanp for setw etc
 #include <string>
 #include <list>
 #include <map>
 #include <vector>
-#include <string.h> // For memset etc
+
 #include "general.h"
-#include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarfp.h"
-#include "libdwarf_private.h"
 #include "irepresentation.h"
-#include "ireptodbg.h"
 #include "irepattrtodbg.h"
 
 using std::string;

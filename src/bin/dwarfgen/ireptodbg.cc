@@ -37,26 +37,28 @@
 // ireptodbg.cc
 
 #include "config.h"
+#include "irepdie.h"
+#include "irepform.h"
+#include "irepframe.h"
+#include "irepline.h"
+#include "irepmacro.h"
+#include "ireppubnames.h"
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <stdlib.h> /* for exit() */
 #include <iostream>
 #include <string>
 #include <list>
 #include <map>
 #include <vector>
-#include <string.h> // For memset etc
-#include "strtabdata.h"
+#include <utility>
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarfp.h"
-#include "libdwarf_private.h"
 #include "irepresentation.h"
 #include "ireptodbg.h"
 #include "irepattrtodbg.h"

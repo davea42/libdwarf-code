@@ -74,29 +74,24 @@
 #include <unistd.h>
 #endif
 #include <stdlib.h> /* for exit() */
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <string>
-#include <cstring> // For memcpy
-#include <list>
-#include <map>
-#include <vector>
 #include <string.h> /* for strchr etc */
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <exception>
+#include <new>
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>  /* For open() S_IRUSR etc */
+#include <sys/types.h>  /* For open() S_IRUSR ssize_t etc */
 #endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>  /* For open() S_IRUSR etc */
-#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> //open
+
 #include "general.h"
 #include "dg_getopt.h"
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarfp.h"
-#include "libdwarf_private.h"
 #include "dwarf_elfstructs.h"
 #include "dwarf_elf_defines.h"
 #include "irepresentation.h"
@@ -108,6 +103,18 @@
 #endif /* HAVE_STDINT_H */
 #include <io.h>
 #endif /* _WIN32 */
+
+#ifdef _MSC_VER /* Macro to select VS compiler */
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+#if _MSC_VER < 1900
+#ifdef _WIN64
+typedef long long off_t;
+#else
+typedef long off_t;
+#endif // _WIN64
+#endif // _MSC_VER < 1900
+#endif /* _MSC_VER */
 
 #ifdef _WIN32
 #ifndef O_RDONLY

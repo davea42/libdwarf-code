@@ -29,7 +29,6 @@
 /*   Used by scripts/libbuild.sh. Not in libdwarf itself. */
 
 #include <config.h>
-#include <stddef.h> /* NULL size_t */
 #include <ctype.h>  /* isspace() */
 #include <errno.h>  /* errno */
 #include <stdio.h>  /* fgets() fprintf() printf() sscanf() */

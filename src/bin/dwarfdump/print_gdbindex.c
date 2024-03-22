@@ -25,18 +25,15 @@ Copyright 2014-2020 David Anderson. All rights reserved.
 
 */
 
-#include <config.h>
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-
-#include "print_sections.h"
+#include "dd_glflags.h"
 
 static const char *
 dw_dlv_string(int res)

@@ -27,6 +27,13 @@
 
 */
 
+#ifndef DWARF_TIED_DECLS_H
+#define DWARF_TIED_DECLS_H
+
+#include "dwarf_base_types.h"
+#include "dwarf_tsearch.h"
+#include "libdwarf.h"
+
 #define HASHSEARCH
 
 #ifdef HASHSEARCH
@@ -48,3 +55,5 @@ struct Dwarf_Tied_Entry_s {
 int _dwarf_tied_compare_function(const void *l, const void *r);
 void * _dwarf_tied_make_entry(Dwarf_Sig8 *key, Dwarf_CU_Context val);
 DW_TSHASHTYPE _dwarf_tied_data_hashfunc(const void *keyp);
+
+#endif // DWARF_TIED_DECLS_H

@@ -27,15 +27,9 @@
 
 */
 
-#include <config.h>
-
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
-#include "dwarf_pro_section.h"
 
 int
 dwarf_add_funcname_a(Dwarf_P_Debug dbg,

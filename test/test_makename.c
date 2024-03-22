@@ -39,18 +39,10 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
 */
 
 #include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "libdwarf.h"
-#include "dwarf_tsearch.h"
 #include "dd_makename.h"
-#include "dd_globals.h"
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}

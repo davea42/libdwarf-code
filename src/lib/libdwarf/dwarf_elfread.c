@@ -59,23 +59,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     internals record.
 */
 
-#include <config.h>
-
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* free() malloc() */
-#include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
 #include "dwarf_memcpy_swap.h"
-#include "dwarf_object_read_common.h"
-#include "dwarf_object_detector.h"
 #include "dwarf_elfstructs.h"
 #include "dwarf_elf_defines.h"
 #include "dwarf_elf_rel_detector.h"

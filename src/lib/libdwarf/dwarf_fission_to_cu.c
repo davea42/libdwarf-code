@@ -25,8 +25,6 @@
     Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include <string.h> /* memset() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -38,10 +36,7 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_alloc.h"
 #include "dwarf_error.h"
-#include "dwarf_util.h"
-#include "dwarf_string.h"
 #include "dwarf_str_offsets.h"
 #include "dwarf_loc.h"
 #include "dwarf_rnglists.h"

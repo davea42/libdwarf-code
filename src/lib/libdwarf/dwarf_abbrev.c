@@ -26,8 +26,6 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL size_t */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -39,12 +37,10 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "libdwarf_private.h"
 #include "dwarf_util.h"
 #include "dwarf_abbrev.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
-#include "dwarf_util.h"
 #include "dwarf_string.h"
 
 /*  For abbrevs we first count the entries.

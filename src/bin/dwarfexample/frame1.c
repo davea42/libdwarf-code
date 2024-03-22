@@ -24,8 +24,6 @@ for anyone to use for any purpose.
 */
 
 #include <config.h>
-
-#include <stddef.h> /* NULL */
 #include <stdio.h>  /* printf() snprintf() */
 #include <stdlib.h> /* exit() free() malloc() */
 #include <string.h> /* strcat() strcmp() strcpy() strncmp() */
@@ -40,7 +38,6 @@ for anyone to use for any purpose.
 #include <fcntl.h> /* open() O_RDONLY */
 #endif /* HAVE_FCNTL_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 

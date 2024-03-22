@@ -1,12 +1,8 @@
 /*   This test code is hereby placed in the public domain. */
 
-#include <config.h>
 #include <stdio.h> /* printf() */
-#include "dwarf.h"
-#include "libdwarf.h"
+
 #include "dd_regex.h"
-#include "dd_safe_strcpy.h"
-#include "dd_checkutil.h"
 #include "dd_glflags.h"
 
 struct glflags_s glflags;

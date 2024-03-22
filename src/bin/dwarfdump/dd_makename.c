@@ -38,16 +38,11 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 
 */
 
-#include <config.h>
-
 #include <stdio.h> /* free() */
 #include <stdlib.h> /* free() */
 #include <string.h> /* strcmp() strdup() */
 
-#include "dwarf.h"
-#include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dd_globals.h"
 #include "dd_tsearchbal.h"
 #include "dd_makename.h"
 #include "dd_minimal.h"

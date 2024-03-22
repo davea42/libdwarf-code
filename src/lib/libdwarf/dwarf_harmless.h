@@ -27,5 +27,14 @@
 
 */
 
+#ifndef DWARF_HARMLESS_H
+#define DWARF_HARMLESS_H
+
+#include "dwarf_opaque.h"
+
+struct Dwarf_Harmless_s;
+
 void _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size);
 void _dwarf_harmless_cleanout(struct Dwarf_Harmless_s *dhp);
+
+#endif // DWARF_HARMLESS_H

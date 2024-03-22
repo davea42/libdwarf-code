@@ -28,8 +28,6 @@
 */
 
 #include <config.h>
-
-#include <stddef.h> /* size_t */
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
 #include <string.h> /* memcpy() memset() */
@@ -39,7 +37,6 @@
 #endif /* HAVE_STDINT_H */
 
 #include "libdwarf.h"
-#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_tsearch.h"

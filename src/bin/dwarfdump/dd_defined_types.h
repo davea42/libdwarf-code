@@ -37,7 +37,4 @@
 
 #define OKAY 0
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif /* DEFINED_TYPES_H */

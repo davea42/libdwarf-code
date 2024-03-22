@@ -32,6 +32,8 @@
 #ifndef _LIBDWARFP_H
 #define _LIBDWARFP_H
 
+#include "libdwarf.h"
+
 #ifdef DWP_API
 #undef DWP_API
 #endif /* DWP_API */

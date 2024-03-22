@@ -36,17 +36,14 @@
 #include <stdint.h> /* uintptr_t */
 #endif
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
+#include "libdwarf_private.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"
-#include "dwarf_pro_arange.h"
 #include "dwarf_pro_section.h"
-#include "dwarf_pro_reloc.h"
 #include "dwarf_pro_dnames.h"
 
 static struct Dwarf_P_Dnames_Head_s staticdnames =

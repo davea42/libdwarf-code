@@ -29,6 +29,9 @@
 #ifndef PRO_ALLOC_H
 #define PRO_ALLOC_H
 
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

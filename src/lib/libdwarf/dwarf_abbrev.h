@@ -30,6 +30,10 @@
 #ifndef DWARF_ABBREV_H
 #define DWARF_ABBREV_H
 
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+#include "dwarf_opaque.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

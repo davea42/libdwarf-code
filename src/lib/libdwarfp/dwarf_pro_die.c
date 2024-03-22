@@ -30,23 +30,16 @@
 */
 
 #include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcpy() strcmp() strcpy() strlen() */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif
-
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
-#include "dwarf_pro_util.h"
 #include "dwarf_pro_alloc.h"
 #include "dwarf_pro_die.h"
 #include "dwarf_pro_section.h"

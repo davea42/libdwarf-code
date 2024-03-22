@@ -25,15 +25,7 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
-#include <stddef.h> /* size_t */
-
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
-#include "dwarf_opaque.h" /* For the function prototype */
 
 #define uint32_t unsigned int
 

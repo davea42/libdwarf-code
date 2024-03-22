@@ -28,14 +28,11 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <string.h> /* memcpy() */
 
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"

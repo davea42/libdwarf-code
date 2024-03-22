@@ -29,9 +29,6 @@
 
 */
 
-#include <config.h>
-
-#include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() strcmp() strncmp() strlen() */
 #include <stdio.h> /* debugging */
 
@@ -39,13 +36,9 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_string.h"
-#include "dwarf_secname_ck.h"
 #include "dwarf_setup_sections.h"
 
 /*  Used to add the specific information for a debug related section

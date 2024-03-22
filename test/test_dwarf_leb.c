@@ -27,16 +27,10 @@
 
 */
 
-#include <config.h>
-
-#include <stddef.h> /* size_t */
 #include <stdio.h>  /* printf() */
 
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_error.h"
 
 static void
 printinteresting(void)

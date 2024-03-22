@@ -31,6 +31,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 #ifndef DWARF_DEBUGLINK_H
 #define DWARF_DEBUGLINK_H
+
+#include "dwarf_string.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

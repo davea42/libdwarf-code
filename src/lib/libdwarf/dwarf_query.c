@@ -29,10 +29,7 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL size_t */
-#include <stdio.h> /* debugging printf */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"

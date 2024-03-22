@@ -31,6 +31,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef DWARF_DEBUGADDR_H
 #define DWARF_DEBUGADDR_H
+
+#include "libdwarf.h"
+#include "dwarf_opaque.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

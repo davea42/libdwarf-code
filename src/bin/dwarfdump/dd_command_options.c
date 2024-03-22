@@ -25,9 +25,12 @@
 
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* atoi() calloc() exit() free()
+#include <stdio.h>
+
+#include "dd_defined_types.h"
+#include "dd_glflags.h"
+
     malloc() strtol() */
 #include <string.h> /* strcmp() strdup() strlen() */
 
@@ -36,9 +39,9 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_globals.h"
+#include "dd_defined_types.h"
 #include "dd_dwconf.h"
 #include "dd_getopt.h"
 #include "dd_common.h"
@@ -51,7 +54,6 @@
 #include "dd_compiler_info.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
-#include "libdwarf_private.h" /* For malloc/calloc debug */
 
 static const char *remove_quotes_pair(const char *text);
 static char *special_program_name(char *n);

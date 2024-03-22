@@ -28,18 +28,15 @@ Portions Copyright 2008-2012 David Anderson. All rights reserved.
 
 */
 
-#include <config.h>
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-
-#include "print_sections.h"
+#include "dd_glflags.h"
 
 static void
 print_sec_name(Dwarf_Debug dbg)

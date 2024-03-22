@@ -25,11 +25,18 @@
 
 */
 
-
 //
 // ireppubnames.h
 //
 //
+
+#ifndef IREPPUBNAMES_H
+#define IREPPUBNAMES_H
+
+#include "libdwarf.h"
+
+#include <string>
+#include <list>
 
 class IRPub{
 public:
@@ -82,3 +89,5 @@ private:
    std::list<IRPub>  pubnames_;
    std::list<IRPub>  pubtypes_;
 };
+
+#endif // IREPPUBNAMES_H
