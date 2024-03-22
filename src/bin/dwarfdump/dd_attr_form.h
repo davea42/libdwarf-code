@@ -26,6 +26,9 @@
 
 #ifndef ATTR_FORM_H
 #define ATTR_FORM_H
+
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -31,6 +31,11 @@
 // irepline.h
 //
 
+#include <string>
+#include <vector>
+
+#include "libdwarf.h"
+
 class IRCULine {
 public:
     IRCULine(Dwarf_Addr addr,Dwarf_Bool isset,

@@ -3,6 +3,8 @@
 #ifndef DD_PE_CPUTYPE_H
 #define DD_PE_CPUTYPE_H
 
+#include "libdwarf.h"
+
 static const struct base_pe_cpu_s {
     const char *name;
     Dwarf_Unsigned value;

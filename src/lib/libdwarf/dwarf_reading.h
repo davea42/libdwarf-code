@@ -33,6 +33,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef DWARF_READING_H
 #define DWARF_READING_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

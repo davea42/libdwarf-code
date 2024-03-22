@@ -29,6 +29,8 @@
 #ifndef CHECKUTIL_H
 #define CHECKUTIL_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -48,6 +48,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#include <stdint.h>
+
 /*  configure/cmake ensure uintptr_t defined, but if not,
     possibly  "-Duintptr_t=unsigned long" might help  */
 #ifndef DW_TSHASHTYPE

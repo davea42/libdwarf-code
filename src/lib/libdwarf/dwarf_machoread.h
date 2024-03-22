@@ -33,6 +33,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef DWARF_MACHOREAD_H
 #define DWARF_MACHOREAD_H
 
+#include "libdwarf.h"
+
 struct Dwarf_Universal_Arch_s;
 struct Dwarf_Universal_Head_s {
     Dwarf_Unsigned au_magic;

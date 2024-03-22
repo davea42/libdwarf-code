@@ -57,8 +57,8 @@ strstrnocase.c
 
 #include <ctype.h> /* tolower() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
+#include "dd_defined_types.h"
 #include "dd_globals.h"
 
 Dwarf_Bool

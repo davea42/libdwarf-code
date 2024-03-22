@@ -27,6 +27,11 @@
 
 */
 
+#include "libdwarfp.h"
+
+#include "irepdie.h"
+#include "irepresentation.h"
+
 // irepattrtodbg.h
 
 void AddAttrToDie(Dwarf_P_Debug dbg,

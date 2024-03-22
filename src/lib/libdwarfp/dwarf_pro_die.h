@@ -27,6 +27,13 @@
 
 */
 
+#ifndef DWARF_PRO_DIE_H
+#define DWARF_PRO_DIE_H
+
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 /*
     This struct holds the abbreviation table, before they are written
     on disk. Holds a linked list of abbreviations, each consisting of
@@ -69,3 +76,5 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
 /* adds an attribute to a die */
 void _dwarf_pro_add_at_to_die(Dwarf_P_Die die,
     Dwarf_P_Attribute attr);
+
+#endif // DWARF_PRO_DIE_H

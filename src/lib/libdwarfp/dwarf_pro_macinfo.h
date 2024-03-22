@@ -26,6 +26,14 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_MACINFO_H
+#define DWARF_PRO_MACINFO_H
+
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 int _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Unsigned *nbufs,
     Dwarf_Error * error);
+
+#endif // DWARF_PRO_MACINFO_H

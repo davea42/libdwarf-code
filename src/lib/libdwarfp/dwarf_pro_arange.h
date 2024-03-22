@@ -26,6 +26,12 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_ARANGE_H
+#define DWARF_PRO_ARANGE_H
+
+#include "dwarf_pro_opaque.h"
+#include "libdwarf.h"
+
 /*
     If ag_end_symbol_index is zero,
     ag_length must be known and non-zero.
@@ -49,3 +55,5 @@ symbol */
         symbolic assem output,
         offset of end symbol */
 };
+
+#endif // DWARF_PRO_ARANGE_H

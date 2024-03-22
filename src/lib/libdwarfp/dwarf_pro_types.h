@@ -28,8 +28,17 @@
 
 /* pro_types.h */
 
+#ifndef DWARF_PRO_TYPES_H
+#define DWARF_PRO_TYPES_H
+
+#include "dwarf_pro_opaque.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 int _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     enum dwarf_sn_kind entrykind,
     int section_index,/* in de_elf_sects etc */
     Dwarf_Unsigned *nbufs_out,
     Dwarf_Error * error);
+
+#endif // DWARF_PRO_TYPES_H

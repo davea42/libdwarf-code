@@ -30,7 +30,6 @@ dwarf_debugnames.h \
 dwarf_debug_sup.c \
 dwarf_dsc.c \
 dwarf_dsc.h \
-dwarf_elf_access.h \
 dwarf_elf_defines.h \
 dwarf_elf_load_headers.c \
 dwarf_elfread.c \

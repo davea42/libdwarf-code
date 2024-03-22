@@ -31,6 +31,8 @@ Portions Copyright (C) 2008-2023  David Anderson. All Rights Reserved.
 #ifndef DWARF_BASE_TYPES_H
 #define DWARF_BASE_TYPES_H
 
+#include "libdwarf.h"
+
 #define true                    1
 #define false                   0
 

@@ -27,6 +27,11 @@
 
 */
 
+#ifndef DWARF_GDBINDEX_H
+#define DWARF_GDBINDEX_H
+
+#include "libdwarf.h"
+
 /*  The following is based on
     The gdb online documentation at
     https://sourceware.org/gdb/onlinedocs/gdb/
@@ -82,3 +87,5 @@ struct Dwarf_Gdbindex_s {
     struct Dwarf_Gdbindex_array_instance_s  gi_symboltablehdr;
     struct Dwarf_Gdbindex_array_instance_s  gi_cuvectorhdr;
 };
+
+#endif // DWARF_GDBINDEX_H

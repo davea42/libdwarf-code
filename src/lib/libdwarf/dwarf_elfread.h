@@ -31,6 +31,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef READELFOBJ_H
 #define READELFOBJ_H
 
+#include "libdwarf.h"
+
+#ifndef EI_NIDENT
+#define EI_NIDENT 16
+#endif /* EI_NIDENT */
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -270,10 +276,6 @@ enum RelocOffsetSize {
 
 int _dwarf_load_elf_relx(dwarf_elf_object_access_internals_t *ep,
     Dwarf_Unsigned secnum,enum RelocRela,int *errcode);
-
-#ifndef EI_NIDENT
-#define EI_NIDENT 16
-#endif /* EI_NIDENT */
 
 #ifndef SHN_XINDEX
 #define SHN_XINDEX 0xffff

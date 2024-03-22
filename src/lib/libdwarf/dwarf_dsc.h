@@ -26,6 +26,11 @@ Copyright (C) 2016-2023 David Anderson. All Rights Reserved.
 
 */
 
+#ifndef DWARF_DSC_H
+#define DWARF_DSC_H
+
+#include "libdwarf.h"
+
 /*  dsc_type: if 0, then dsc_low is a single discriminant value
     and dsc_high is zero..
     If 1, then dsc_low, dsc_high are a discriminant range
@@ -57,3 +62,5 @@ struct Dwarf_Dsc_Head_s {
 };
 
 void _dwarf_dsc_destructor(void *m);
+
+#endif // DWARF_DSC_H

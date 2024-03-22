@@ -29,7 +29,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+#ifndef IREPDIE_H
+#define IREPDIE_H
 
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "irepform.h"
+#include "irepline.h"
+
+#include <list>
+#include <map>
 
 //
 // irepdie.h
@@ -385,3 +394,5 @@ public:
 private:
    std::list<IRCUdata>  cudata_;
 };
+
+#endif // IREPDIE_H

@@ -27,6 +27,12 @@ Portions Copyright (C) 2021-2023 David Anderson. All Rights Reserved.
 
 */
 
+#ifndef DWARF_FRAME_H
+#define DWARF_FRAME_H
+
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+
 /*  The dwarf 2.0 standard dictates that only the following
     fields can be read when an unexpected augmentation string
     (in the cie) is encountered: CIE length, CIE_id, version and
@@ -507,3 +513,5 @@ int _dwarf_frame_constructor(Dwarf_Debug dbg,void * );
 void _dwarf_frame_destructor (void *);
 void _dwarf_fde_destructor (void *);
 void _dwarf_frame_instr_destructor(void *);
+
+#endif // DWARF_FRAME_H

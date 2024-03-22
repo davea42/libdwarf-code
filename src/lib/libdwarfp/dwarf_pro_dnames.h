@@ -25,6 +25,12 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_DNAMES_H
+#define DWARF_PRO_DNAMES_H
+
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 /*  The numbers here are almost all 32 bits.
     Not long  long ever.
     In the public function interfaces we'll use Dwarf_Unsigned though,
@@ -81,3 +87,5 @@ struct Dwarf_P_Dnames_s {
     Dwarf_Small  dn_index_entry_pool_size;
     Dwarf_Small  dn_index_entry_pool_used;
 };
+
+#endif // DWARF_PRO_DNAMES_H

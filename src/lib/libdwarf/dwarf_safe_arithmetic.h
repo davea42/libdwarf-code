@@ -29,6 +29,11 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef DWARF_SAFE_ARITHMETIC_H
+#define DWARF_SAFE_ARITHMETIC_H
+
+#include "libdwarf.h"
+
 /*  Thanks to David Grayson/
 codereview.stackexchange.com/questions/98791/
 safe-multiplication-of-two-64-bit-signed-integers
@@ -51,3 +56,5 @@ int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
     Dwarf_Signed *sum, Dwarf_Debug dbg,
     Dwarf_Error *error);
 #endif /* 0 */
+
+#endif // DWARF_SAFE_ARITHMETIC_H

@@ -28,6 +28,11 @@
   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef DWARF_GNU_INDEX_H
+#define DWARF_GNU_INDEX_H
+
+#include "libdwarf.h"
+
 /*  This is for accessing .debug_gnu_pubnames
     and .debug_gnu_pubtypes.
     It has nothing to do with .gdb_index. */
@@ -93,3 +98,5 @@ struct Dwarf_Gnu_Index_Head_s {
 };
 void _dwarf_gnu_index_head_destructor(void *incoming);
 void _dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head);
+
+#endif // DWARF_GNU_INDEX_H

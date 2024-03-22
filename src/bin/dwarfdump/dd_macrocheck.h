@@ -27,6 +27,8 @@ Copyright 2015-2016 David Anderson. All rights reserved.
 #ifndef MACROCHECK_H
 #define MACROCHECK_H
 
+#include "libdwarf.h"
+
 /* tsearch trees used in macro checking. */
 extern void * macro_check_tree; /* DWARF5 macros. */
 extern void * macinfo_check_tree; /* DWARF2,3,4 macros */

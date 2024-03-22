@@ -29,6 +29,11 @@
 #ifndef PRINT_FRAMES_H
 #define PRINT_FRAMES_H
 
+#include "libdwarf.h"
+
+#include "dd_dwconf.h"
+#include "dd_esb.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -25,6 +25,7 @@
 
 */
 
+#include "dd_defined_types.h"
 #include <config.h>
 
 #include <stdlib.h> /* atoi() calloc() exit() free()
@@ -36,7 +37,6 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_globals.h"
 #include "dd_dwconf.h"

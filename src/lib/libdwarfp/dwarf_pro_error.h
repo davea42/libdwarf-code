@@ -26,11 +26,19 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+
+#ifndef DWARF_PRO_ERROR_H
+#define DWARF_PRO_ERROR_H
+
 /* Handle error passing in the name of the Dwarf_P_Debug
    User must supply {} around the macro.
    Putting the {} here leads to macro uses that don't look like C.
    The error argument to dwarf_error is hard coded here as 'error'
 */
+
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 #define DWARF_P_DBG_ERROR(dbg,errval,retval) \
     _dwarf_p_error(dbg,error,errval); return(retval);
 
@@ -40,3 +48,5 @@ struct Dwarf_Error_s {
 
 void _dwarf_p_error(Dwarf_P_Debug dbg, Dwarf_Error * error,
     Dwarf_Unsigned errval);
+
+#endif // DWARF_PRO_ERROR_H

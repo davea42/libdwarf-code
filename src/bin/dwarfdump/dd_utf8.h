@@ -28,6 +28,8 @@ See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
 #ifndef DD_UTF8_H
 #define DD_UTF8_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

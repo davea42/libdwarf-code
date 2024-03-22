@@ -29,6 +29,14 @@
 // irepframe.h
 //
 
+#ifndef IREPFRAME_H
+#define IREPFRAME_H
+
+#include <string>
+#include <vector>
+
+#include "libdwarf.h"
+
 class IRCie {
 public:
     IRCie(): cie_byte_length_(0), version_(0),
@@ -182,3 +190,5 @@ private:
     std::vector<IRCie> ciedata_;
     std::vector<IRFde> fdedata_;
 };
+
+#endif // IREPFRAME_H

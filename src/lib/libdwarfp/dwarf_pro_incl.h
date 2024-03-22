@@ -28,6 +28,9 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_INCL_H
+#define DWARF_PRO_INCL_H
+
 /* The target address is given: the place in the source integer
    is to be determined.
 */
@@ -102,3 +105,5 @@
 
 /* Indicates no relocation needed. */
 #define NO_ELF_SYM_INDEX        0
+
+#endif // DWARF_PRO_INCL_H

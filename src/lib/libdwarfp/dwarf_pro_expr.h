@@ -25,10 +25,15 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_EXPR_H
+#define DWARF_PRO_EXPR_H
+
 /*  This is really a sanity limit. It could be increased
     as necesary for long dwarf expressions.
     Originally it was 20, and expressions longer than that
     are now pretty routine. 24 January 2021 */
+#include "libdwarf.h"
+#include "libdwarfp.h"
 #define MAXIMUM_LOC_EXPR_LENGTH 300
 
 struct Dwarf_P_Expr_s {
@@ -38,3 +43,5 @@ struct Dwarf_P_Expr_s {
     Dwarf_Unsigned ex_reloc_sym_index;
     Dwarf_Unsigned ex_reloc_offset;
 };
+
+#endif // DWARF_PRO_EXPR_H

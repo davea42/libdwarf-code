@@ -29,6 +29,14 @@
 // irepmacro.h
 //
 
+#ifndef IREPMACRO_H
+#define IREPMACRO_H
+
+#include <string>
+#include <vector>
+
+#include "libdwarf.h"
+
 class IRMacroRecord {
 public:
     IRMacroRecord() {};
@@ -61,3 +69,5 @@ public:
 private:
     std::vector<IRMacroRecord> macrorec_;
 };
+
+#endif // IREPMACRO_H

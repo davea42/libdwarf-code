@@ -26,6 +26,12 @@
 
 */
 
+#ifndef DWARF_MACRO5_H
+#define DWARF_MACRO5_H
+
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+
 /*
    dwarf_macro5.h
    For the DWARF5 .debug_macro section
@@ -149,3 +155,5 @@ struct Dwarf_Macro_Context_s {
 
 int _dwarf_macro_constructor(Dwarf_Debug dbg, void *m);
 void _dwarf_macro_destructor(void *m);
+
+#endif // DWARF_MACRO5_H

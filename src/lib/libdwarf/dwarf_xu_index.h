@@ -29,6 +29,8 @@
 
 */
 
+#include "libdwarf.h"
+
 /*  The following is based on
     The gdb online documentation at
     https://gcc.gnu.org/wiki/DebugFissionDWP

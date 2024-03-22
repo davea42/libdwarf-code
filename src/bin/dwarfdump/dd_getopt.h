@@ -39,6 +39,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef DD_GETOPT_H
+#define DD_GETOPT_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -86,3 +89,5 @@ int dwgetopt_long(int nargc, char *const nargv[],
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif // DD_GETOPT_H

@@ -29,6 +29,8 @@
 #ifndef DWARF_ALLOC_H
 #define DWARF_ALLOC_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

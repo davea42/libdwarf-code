@@ -30,6 +30,14 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#ifndef IREPFORM_H
+#define IREPFORM_H
+
+#include "libdwarf.h"
+#include "libdwarfp.h"
+#include <string>
+#include <cstring>
+#include <vector>
 
 //
 // irepform.h
@@ -746,3 +754,5 @@ private:
 // Factory Method.
 IRForm *formFactory(Dwarf_Debug dbg, Dwarf_Attribute attr,
     IRCUdata &cudata,IRAttr & irattr);
+
+#endif // IREPFORM_H

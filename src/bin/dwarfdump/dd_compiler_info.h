@@ -28,6 +28,8 @@
 #ifndef COMPILER_INFO_H
 #define COMPILER_INFO_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

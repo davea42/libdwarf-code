@@ -26,6 +26,11 @@
 
 */
 
+#ifndef DWARF_DEBUGNAMES_H
+#define DWARF_DEBUGNAMES_H
+
+#include "libdwarf.h"
+
 /*  Adjust this number to hope for best space and time efficiency. */
 #define ABB_PAIRS_MAX 10
 
@@ -119,3 +124,5 @@ struct Dwarf_Dnames_Head_s {
 };
 
 void _dwarf_dnames_destructor(void *m);
+
+#endif // DWARF_DEBUGNAMES_H

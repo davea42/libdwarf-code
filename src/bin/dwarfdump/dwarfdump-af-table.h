@@ -4,6 +4,8 @@
 #ifndef DWARFDUMP_AF_TABLE_H
 #define DWARFDUMP_AF_TABLE_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

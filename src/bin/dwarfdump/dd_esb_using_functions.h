@@ -28,6 +28,10 @@ Portions Copyright 2012-2018 SN Systems Ltd. All rights reserved.
 
 #ifndef ESB_USING_FUNCTIONS_H
 #define ESB_USING_FUNCTIONS_H
+
+#include "dd_esb.h"
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

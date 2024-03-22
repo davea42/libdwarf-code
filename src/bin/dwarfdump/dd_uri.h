@@ -28,6 +28,8 @@
 #ifndef URI_H
 #define URI_H
 
+#include "dd_esb.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

@@ -28,6 +28,12 @@ Portions Copyright (C) 2008-2023  David Anderson. All Rights Reserved.
 
 */
 
+#ifndef DWARF_DIE_DELIV_H
+#define DWARF_DIE_DELIV_H
+
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+
 /*
     This struct holds information about an abbreviation.
     It is put in the hash table for abbreviations for
@@ -76,3 +82,5 @@ struct Dwarf_Abbrev_List_s {
     Dwarf_Signed  *abl_implicit_const;
 
 };
+
+#endif // DWARF_DIE_DELIV_H

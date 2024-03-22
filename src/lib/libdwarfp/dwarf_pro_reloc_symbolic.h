@@ -26,6 +26,12 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_RELOC_SYMBOLIC_H
+#define DWARF_PRO_RELOC_SYMBOLIC_H
+
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 int _dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg,
     int base_sec_index,
     Dwarf_Unsigned offset,/* r_offset of reloc */
@@ -41,3 +47,5 @@ int _dwarf_pro_reloc_length_symbolic(Dwarf_P_Debug dbg,
     int reltarget_length);
 int _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed * new_sec_count);
+
+#endif // DWARF_PRO_RELOC_SYMBOLIC_H

@@ -29,6 +29,13 @@
 
 // ireptodbg.h
 
+#ifndef IREPTODBG_H
+#define IREPTODBG_H
+
+#include "libdwarfp.h"
+#include "irepresentation.h"
 
 void transform_irep_to_dbg(Dwarf_P_Debug dbg, IRepresentation & Irep,
     int cu_of_input_we_output);
+
+#endif // IREPTODBG_H

@@ -28,6 +28,12 @@
 
 */
 
+#ifndef DWARF_GLOBAL_H
+#define DWARF_GLOBAL_H
+
+#include "dwarf_opaque.h"
+#include "libdwarf.h"
+
 typedef struct Dwarf_Global_Context_s *Dwarf_Global_Context;
 
 /*
@@ -133,3 +139,5 @@ void _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
 #else  /* ! __sgi */
 #define FIX_UP_OFFSET_IRIX_BUG(ldbg,var,name)
 #endif /* __sgi */
+
+#endif // DWARF_GLOBAL_H

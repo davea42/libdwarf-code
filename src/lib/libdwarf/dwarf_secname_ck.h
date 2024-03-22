@@ -30,7 +30,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#ifndef DWARF_SECNAME_CK_H
+#define DWARF_SECNAME_CK_H
+
 /*  Mainly important for Elf */
 
 int _dwarf_startswith(const char * input,const char* ckfor);
 int _dwarf_ignorethissection(const char *scn_name);
+
+#endif // DWARF_SECNAME_CK_H

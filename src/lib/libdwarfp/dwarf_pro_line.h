@@ -28,6 +28,13 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_LINE_H
+#define DWARF_PRO_LINE_H
+
+#include "dwarf_pro_opaque.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 #define DW_LINE_VERSION2   2
 #define DW_LINE_VERSION3   3
 #define DW_LINE_VERSION4   4
@@ -119,3 +126,5 @@ struct Dwarf_P_Line_s {
     pro_line.c */
 void _dwarf_pro_reg_init(Dwarf_P_Debug dbg,Dwarf_P_Line);
 void _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg);
+
+#endif // DWARF_PRO_LINE_H

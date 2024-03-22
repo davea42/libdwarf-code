@@ -29,6 +29,8 @@
 #ifndef PRINT_SECTIONS_H
 #define PRINT_SECTIONS_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

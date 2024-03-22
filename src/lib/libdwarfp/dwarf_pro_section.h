@@ -27,6 +27,13 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_SECTION_H
+#define DWARF_PRO_SECTION_H
+
+#include "dwarf_pro_opaque.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
+
 /* relocation section names */
 extern const char *_dwarf_rel_section_names[];
 
@@ -109,3 +116,5 @@ int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     One is a convenient default for testing purposes.
 */
 #define SECTION_TYPE 1  /* SHT_PROGBITS in Elf. */
+
+#endif // DWARF_PRO_SECTION_H

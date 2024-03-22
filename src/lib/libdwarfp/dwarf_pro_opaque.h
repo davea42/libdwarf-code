@@ -29,7 +29,10 @@
 
 #ifndef DWARF_PRO_OPAQUE_H
 #define DWARF_PRO_OPAQUE_H
-#include "libdwarf_private.h"
+
+#include "dwarf_base_types.h"
+#include "libdwarf.h"
+#include "libdwarfp.h"
 
 #define TRUE                    1
 #define FALSE                   0

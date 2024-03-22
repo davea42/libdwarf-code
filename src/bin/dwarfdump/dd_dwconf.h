@@ -29,6 +29,8 @@
 #ifndef DWCONFIG_H
 #define DWCONFIG_H
 
+#include "libdwarf.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

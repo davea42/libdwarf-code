@@ -44,7 +44,7 @@ dwarf_alloc.h dwarf_arange.h dwarf_base_types.h
 dwarf_debugaddr.h
 dwarf_debuglink.h dwarf_die_deliv.h
 dwarf_debugnames.h dwarf_dsc.h
-dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h
+dwarf_elf_defines.h dwarf_elfread.h
 dwarf_elf_rel_detector.h
 dwarf_elfstructs.h
 dwarf_error.h dwarf_frame.h

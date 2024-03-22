@@ -28,6 +28,11 @@ Portions Copyright (C) 2011-2023 David Anderson. All Rights Reserved.
 
 */
 
+#ifndef DWARF_ARRANGE_H
+#define DWARF_ARRANGE_H
+
+#include "libdwarf.h"
+
 /*  This structure is used to read an arange into. */
 struct Dwarf_Arange_s {
 
@@ -58,3 +63,5 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     Dwarf_Off ** offsets,
     Dwarf_Signed * count,
     Dwarf_Error * error);
+
+#endif // DWARF_ARRANGE_H
