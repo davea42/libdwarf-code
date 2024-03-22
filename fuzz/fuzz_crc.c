@@ -23,6 +23,11 @@ limitations under the License.
 #include "dwarf.h"
 #include "libdwarf.h"
 
+#ifdef _MSC_VER /* Macro to select VS compiler */
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+#endif /* _MSC_VER */
+
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
@@ -48,8 +53,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Debug dbg = 0;
   off_t size_left = 0;
   off_t fsize = 0;
-  ptrdiff_t readlen = 1000;
-  ptrdiff_t readval = 0;
+  ssize_t readlen = 1000;
+  ssize_t readval = 0;
   unsigned char *readbuf = 0;
   unsigned int tcrc = 0;
   unsigned int init = 0;

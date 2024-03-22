@@ -48,10 +48,6 @@ sys_windows = windows.contains(host_machine.system())
 sys_osx = osx.contains(host_machine.system())
 sys_sun = sun.contains(host_machine.system())
 
-if sys_windows
-  add_project_arguments('-D_CRT_SECURE_NO_WARNINGS', language: ['c', 'cpp'])
-endif
-
 # compiler
 
 cc = meson.get_compiler('c')
@@ -122,7 +118,7 @@ dev_decompression = get_option('decompression')
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 if cc.get_id() == 'msvc'
-  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS']
+  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS', '-D_CRT_SECURE_NO_WARNINGS' ]
 endif
 
 config_dir = [include_directories('.')]
@@ -136,6 +132,7 @@ header_checks = [
   'malloc.h',
   'stdint.h',
   'sys/stat.h',
+  'sys/types.h',
 ]
 
 if sys_windows == false

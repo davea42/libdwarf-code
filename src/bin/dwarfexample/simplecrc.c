@@ -15,13 +15,16 @@
 #include <stdio.h>
 #include <stdlib.h> /* for exit(), C89 malloc */
 #include <unistd.h> /* for close */
-#include <sys/types.h> /* for off_t ptrdiff_t */
+#include <sys/types.h> /* for off_t */
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <malloc.h>
-#include <string.h> /* for memset */
-#include "dwarf.h"
 #include "libdwarf.h"
+
+#ifdef _MSC_VER /* Macro to select VS compiler */
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+#endif /* _MSC_VER */
 
 static void
 simple_test(const char *fname)
@@ -30,9 +33,9 @@ simple_test(const char *fname)
     off_t size_left = 0;
     off_t fsize = 0;
     off_t lsval = 0;
-    ptrdiff_t readlen = 1000;
+    ssize_t readlen = 1000;
     unsigned char *readbuf = 0;
-    ptrdiff_t readval = 0;
+    ssize_t readval = 0;
     unsigned int tcrc = 0;
     unsigned int init = 0;
 
@@ -72,7 +75,7 @@ simple_test(const char *fname)
             readlen = size_left;
         }
         readval = read(fd,readbuf,readlen);
-        if (readval != (ptrdiff_t)readlen) {
+        if (readval != (ssize_t)readlen) {
             printf("Fail 3\n");
             exit(EXIT_FAILURE);
         }
