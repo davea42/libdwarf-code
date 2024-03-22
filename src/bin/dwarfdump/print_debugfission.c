@@ -25,19 +25,15 @@
 
 */
 
-#include <config.h>
-
 #include <string.h> /* memset() strcmp() */
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "print_sections.h"
 
 static const char *
 dw_dlv_string(int res)

@@ -26,19 +26,13 @@
 
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() strdup() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
-#include "dwarf_pro_alloc.h"
 
 int
 dwarf_add_debug_sup(Dwarf_P_Debug dbg,

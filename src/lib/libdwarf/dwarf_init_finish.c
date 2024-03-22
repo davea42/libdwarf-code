@@ -30,10 +30,10 @@
 */
 
 #include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() strcmp() strncmp() strlen() */
 #include <stdio.h> /* debugging */
+#include <zconf.h>
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"

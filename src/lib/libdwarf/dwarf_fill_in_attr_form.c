@@ -29,8 +29,6 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "config.h"
-#include <stddef.h> /* NULL size_t */
 #include <stdlib.h> /* calloc() free() malloc() */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -41,9 +39,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_alloc.h"
 #include "dwarf_die_deliv.h"
-#include "dwarf_abbrev.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_string.h"

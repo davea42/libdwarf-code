@@ -34,8 +34,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    test_setupsections [--count <loopiterations>]
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strcmp() strlen() */
@@ -43,10 +41,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
-#include "dwarf_die_deliv.h"
 #include "dwarf_opaque.h"
-#include "dwarf_secname_ck.h"
 #include "dwarf_setup_sections.h"
 
 static int errcount;

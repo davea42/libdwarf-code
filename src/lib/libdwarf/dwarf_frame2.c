@@ -32,10 +32,10 @@
     and related helper functions for reading cie/fde data.  */
 
 #include <config.h>
-
 #include <stdlib.h> /* qsort() */
 #include <stdio.h> /* printf() */
 #include <string.h> /* memcpy() memset() strcmp()
+
     strncmp() strlen() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -55,7 +55,6 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_frame.h"
-#include "dwarf_arange.h" /* using Arange as a way to build a list */
 #include "dwarf_string.h"
 
 /*  For a little information about .eh_frame see

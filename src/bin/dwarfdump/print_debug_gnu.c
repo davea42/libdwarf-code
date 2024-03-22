@@ -31,7 +31,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 
 /*  To print .debug_gnu_pubnames, .debug_gnu_typenames */
 
-#include <config.h>
+#include <stdio.h>
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -43,6 +43,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "dd_sanitized.h"
 #include "print_debug_gnu.h"
 #include "print_sections.h"
+#include "dd_glflags.h"
 
 char *ikind_types[8] = {
     "none",

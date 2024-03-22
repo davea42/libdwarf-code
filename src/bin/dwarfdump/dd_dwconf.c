@@ -27,11 +27,11 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 */
 
-#include <config.h>
-
 #include <ctype.h>  /* isspace() */
 #include <stdlib.h> /* exit() free() getenv() realloc() strtoul() */
 #include <string.h> /* memset() strcmp() strlen()
+#include <stdio.h>
+
     strncmp() strrchr()*/
 
 /* Windows specific header files */
@@ -45,16 +45,14 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <windows.h>
 #endif /* _WIN32 */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dd_globals.h"
 #include "dd_dwconf.h"
 #include "dd_canonical_append.h"
 #include "dd_makename.h"
 #include "dd_sanitized.h"
 #include "dd_esb.h"
-#include "dd_safe_strcpy.h"
+#include "dd_glflags.h"
 
 /* The nesting level is arbitrary,  2 should suffice.
    But at least this prevents an infinite loop.

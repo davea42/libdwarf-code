@@ -30,6 +30,8 @@
 
 #include "dd_esb.h"
 
+struct esb_s;
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

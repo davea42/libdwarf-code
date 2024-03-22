@@ -29,8 +29,6 @@ See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
     codingstyle */
 
 #include "config.h"
-#include <stdio.h>
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_sanitized.h"
 #include "dd_utf8.h"

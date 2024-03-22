@@ -49,13 +49,11 @@
     See BADCH below.
     */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL size_t */
 #include <stdio.h>  /* printf() */
 #include <string.h> /* strlen() strchr() strcmp() strncmp() */
-#include "dd_minimal.h" /* dd_minimal_count_global_error */
 
+#include "dd_minimal.h" /* dd_minimal_count_global_error */
 #include "dd_getopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))

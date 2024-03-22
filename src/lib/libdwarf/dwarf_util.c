@@ -30,11 +30,8 @@
 */
 
 #include <config.h>
-
-#include <stddef.h> /* NULL size_t */
 #include <stdlib.h> /* free() */
 #include <string.h> /* memset() strlen() */
-#include <stdio.h> /*  for debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -45,11 +42,9 @@
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_abbrev.h"
-#include "dwarf_memcpy_swap.h"
 #include "dwarf_die_deliv.h"
 #include "dwarf_string.h"
 

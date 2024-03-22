@@ -37,8 +37,6 @@
 // Reads an object and inserts its dwarf data into
 // an object intended to hold all the dwarf data.
 
-#include "config.h"
-
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -51,16 +49,13 @@
 #include <iostream>
 #include <string>
 #include <list>
-#include <map>
 #include <vector>
-#include <string.h> // For memset etc
-#include "strtabdata.h"
+
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarfp.h"
 #include "libdwarf_private.h"
-#include "irepresentation.h"
-#include "createirepfrombinary.h"
+#include "irepdie.h"
+#include "irepform.h"
 
 // Microsoft preprocessor definition that wreaks havoc
 #ifdef interface

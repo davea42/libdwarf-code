@@ -26,17 +26,8 @@
 */
 
 #include <config.h>
-
 #include <stdio.h>  /* printf() */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dd_globals.h"
-#include "dwarf_tsearch.h"
 #include "dd_helpertree.h"
 
 /*  WARNING: the tree walk functions will, if presented **tree

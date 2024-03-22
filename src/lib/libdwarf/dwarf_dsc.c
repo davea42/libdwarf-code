@@ -26,8 +26,6 @@
 
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcpy() */
 
@@ -35,10 +33,8 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"

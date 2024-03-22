@@ -29,6 +29,7 @@
 #define COMPILER_INFO_H
 
 #include "libdwarf.h"
+#include "dd_glflags.h"
 
 #ifdef __cplusplus
 extern "C" {

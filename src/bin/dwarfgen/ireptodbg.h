@@ -35,6 +35,8 @@
 #include "libdwarfp.h"
 #include "irepresentation.h"
 
+class IRepresentation;
+
 void transform_irep_to_dbg(Dwarf_P_Debug dbg, IRepresentation & Irep,
     int cu_of_input_we_output);
 

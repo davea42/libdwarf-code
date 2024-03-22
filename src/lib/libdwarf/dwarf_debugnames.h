@@ -30,6 +30,7 @@
 #define DWARF_DEBUGNAMES_H
 
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
 
 /*  Adjust this number to hope for best space and time efficiency. */
 #define ABB_PAIRS_MAX 10

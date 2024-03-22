@@ -14,8 +14,6 @@ For use by anyone for any purpose.
    make rebuild
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* FILE fclose() fopen() fprintf() printf() */
 #include <stdlib.h> /* exit() getenv() */
 #include <string.h> /* strcmp() strcpy() strncmp() strlen() */

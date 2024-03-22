@@ -33,6 +33,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef DWARF_READING_H
 #define DWARF_READING_H
 
+// Macro defined here uses a function from the following header.
+#include "dwarf_object_read_common.h" // IWYU pragma: keep
 #include "libdwarf.h"
 
 #ifdef __cplusplus

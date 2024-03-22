@@ -13,14 +13,12 @@
     The C source is src/bin/dwarfexample/showsectiongroups.c
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* calloc() exit() free() */
 #include <string.h> /* strcmp() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
+
 #define FALSE 0
 
 char trueoutpath[2000];

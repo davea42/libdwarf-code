@@ -27,13 +27,12 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL size_t */
 #include <string.h> /* strlen() */
 
 #include "dd_canonical_append.h"
 #include "dd_safe_strcpy.h"
+
 /*  Given path strings, attempt to make a canonical file name:
     that is, avoid superfluous '/' so that no
     '//' (or worse) is created in the output. The path components

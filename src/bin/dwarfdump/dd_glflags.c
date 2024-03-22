@@ -28,8 +28,6 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
     global struct as it has been hard to know how many there
     were or what they were all for. */
 
-#include <config.h>
-
 #include <limits.h> /* INT_MAX */
 #include <string.h> /* strcmp() strlen() */
 

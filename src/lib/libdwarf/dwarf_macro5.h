@@ -31,6 +31,7 @@
 
 #include "dwarf_base_types.h"
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
 
 /*
    dwarf_macro5.h

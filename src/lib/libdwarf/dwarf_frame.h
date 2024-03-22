@@ -32,6 +32,9 @@ Portions Copyright (C) 2021-2023 David Anderson. All Rights Reserved.
 
 #include "dwarf_base_types.h"
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
+
+struct Dwarf_Cie_s;
 
 /*  The dwarf 2.0 standard dictates that only the following
     fields can be read when an unexpected augmentation string

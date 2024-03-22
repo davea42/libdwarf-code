@@ -34,6 +34,8 @@
     are now pretty routine. 24 January 2021 */
 #include "libdwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_opaque.h"
+
 #define MAXIMUM_LOC_EXPR_LENGTH 300
 
 struct Dwarf_P_Expr_s {

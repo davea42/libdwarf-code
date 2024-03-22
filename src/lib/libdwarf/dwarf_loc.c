@@ -28,8 +28,6 @@
 
 */
 
-#include <config.h>
-
 #include <string.h> /* memset() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

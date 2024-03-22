@@ -32,6 +32,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define READELFOBJ_H
 
 #include "libdwarf.h"
+#include "dwarf_elfstructs.h"
 
 #ifndef EI_NIDENT
 #define EI_NIDENT 16

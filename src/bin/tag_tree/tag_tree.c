@@ -28,21 +28,16 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 */
 
 #include <config.h>
-
-#include <ctype.h>  /* isspace() */
-#include <stdarg.h> /* va_end() va_list va_start() */
 #include <stdio.h>  /* FILE stderr fprintf() vfprintf() */
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strlen() strncmp() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
-#include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}

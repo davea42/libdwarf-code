@@ -30,13 +30,10 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strcmp() strlen() */
 
-#include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_string.h"
 

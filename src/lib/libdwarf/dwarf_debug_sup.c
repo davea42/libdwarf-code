@@ -33,23 +33,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*  This provides access to the DWARF5 .debug_sup section. */
 
-#include <config.h>
-
 #include <string.h> /* strlen() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarf_global.h"
 #include "dwarf_string.h"
 
 static void

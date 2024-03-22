@@ -15,12 +15,13 @@
     as 0,1,2 as that matches system getopt.h */
 #endif
 
-#include "config.h"
 #include <stdio.h>
 #include <string.h> /* for strchr etc */
 #include <stdlib.h> /* for exit() */
+
 #include "dd_getopt.h" /* for dwgetopt in dwarfdump */
 #include "dd_minimal.h"
+
 char *argv1[20];
 
 

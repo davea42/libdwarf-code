@@ -24,11 +24,9 @@ Copyright 2015-2020 David Anderson. All rights reserved.
   Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcpy() strcmp() strdup() strlen() */
-#include <stddef.h> /* size_t */
+#include <stdio.h>
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -37,8 +35,6 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
-#include "dd_uri.h"
-#include "dd_makename.h"
 #include "dd_tsearchbal.h"
 #include "print_sections.h"
 #include "dd_macrocheck.h"

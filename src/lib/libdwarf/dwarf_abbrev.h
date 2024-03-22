@@ -32,6 +32,7 @@
 
 #include "dwarf_base_types.h"
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
 
 #ifdef __cplusplus
 extern "C" {

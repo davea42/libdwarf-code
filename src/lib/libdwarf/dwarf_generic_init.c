@@ -61,22 +61,16 @@ dwarf_init_path_dl(path true_path and globals, dbg1
                                 else return NO_ENTRY
 */
 
-#include <config.h>
-
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* free() */
 #include <string.h> /* strdup() */
-#include <stdio.h> /* debugging */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_util.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
-#include "dwarf_object_detector.h"
 
 static int
 set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)

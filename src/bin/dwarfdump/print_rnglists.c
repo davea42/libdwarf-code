@@ -35,7 +35,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
     with the actual DIEs on hand.
 */
 
-#include <config.h>
+#include <stdio.h>
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -44,6 +44,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
+#include "dd_glflags.h"
 
 static void
 print_sec_name(Dwarf_Debug dbg)

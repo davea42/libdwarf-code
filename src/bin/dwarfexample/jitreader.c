@@ -9,9 +9,6 @@
     @code
 */
 
-#include <config.h>
-
-#include <stddef.h> /* NULL */
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strcmp() */

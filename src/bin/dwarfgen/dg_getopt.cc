@@ -49,10 +49,9 @@
     See BADCH below.
     */
 
-#include "config.h"
 #include <stdio.h>
 #include <string.h> /* for strchr etc */
-#include <stdlib.h> /* for exit() */
+
 #include "dg_getopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((char *)(a))

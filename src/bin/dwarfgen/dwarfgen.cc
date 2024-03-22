@@ -74,29 +74,24 @@
 #include <unistd.h>
 #endif
 #include <stdlib.h> /* for exit() */
-#include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <string>
-#include <cstring> // For memcpy
-#include <list>
-#include <map>
-#include <vector>
 #include <string.h> /* for strchr etc */
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <exception>
+#include <new>
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>  /* For open() S_IRUSR etc */
 #endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>  /* For open() S_IRUSR etc */
-#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> //open
+
 #include "general.h"
 #include "dg_getopt.h"
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarfp.h"
-#include "libdwarf_private.h"
 #include "dwarf_elfstructs.h"
 #include "dwarf_elf_defines.h"
 #include "irepresentation.h"

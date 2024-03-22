@@ -29,8 +29,6 @@
 
 */
 
-#include <config.h>
-
 #include <limits.h> /* INT_MAX and al. */
 #include <stddef.h> /* NULL */
 #include <string.h> /* memcpy() */

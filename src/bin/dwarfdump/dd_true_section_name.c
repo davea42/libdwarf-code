@@ -26,7 +26,7 @@
 
 /* SGI has moved from the Crittenden Lane address.  */
 
-#include <config.h>
+#include <stdio.h>
 
 #include "libdwarf.h"
 #include "libdwarf_private.h"

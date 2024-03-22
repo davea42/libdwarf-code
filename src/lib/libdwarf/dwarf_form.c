@@ -29,8 +29,6 @@
 
 */
 
-#include <config.h>
-
 #include <string.h>  /* memcpy() memset() */
 #include <stdio.h>  /* printf() */
 
@@ -47,9 +45,7 @@
 #include "dwarf_string.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarf_die_deliv.h"
 #include "dwarf_str_offsets.h"
-#include "dwarf_string.h"
 #if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,int line,

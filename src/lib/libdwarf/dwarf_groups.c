@@ -27,22 +27,14 @@
 */
 
 #include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h>  /* strcmp() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_util.h"
 #include "dwarf_error.h"

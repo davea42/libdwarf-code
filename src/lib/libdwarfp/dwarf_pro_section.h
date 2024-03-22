@@ -30,9 +30,12 @@
 #ifndef DWARF_PRO_SECTION_H
 #define DWARF_PRO_SECTION_H
 
+#include <stddef.h>
+
 #include "dwarf_pro_opaque.h"
 #include "libdwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_error.h"
 
 /* relocation section names */
 extern const char *_dwarf_rel_section_names[];

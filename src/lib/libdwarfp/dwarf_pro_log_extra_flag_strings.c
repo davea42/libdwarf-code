@@ -29,17 +29,12 @@
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() for tests */
 #include <string.h> /* strcmp() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "dwarf_string.h"
 #include "libdwarfp.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 
 /*  in the producer_init extras string.

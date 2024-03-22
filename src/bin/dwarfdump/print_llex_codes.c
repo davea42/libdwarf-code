@@ -29,18 +29,12 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
 /* SGI has moved from the Crittenden Lane address.  */
 
-#include <config.h>
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
-#include "dd_esb_using_functions.h"
-#include "dd_sanitized.h"
-#include "dd_helpertree.h"
-#include "dd_tag_common.h"
+#include "dd_glflags.h"
 
 /* Prints locentry descriptions for DW_LKIND_GNU_exp_list */
 

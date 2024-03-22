@@ -29,20 +29,11 @@
 */
 
 #include <config.h>
-
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memset() */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif
-
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfp.h"
-#include "dwarf_base_types.h"
-#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_alloc.h"
 #include "dwarf_tsearch.h"

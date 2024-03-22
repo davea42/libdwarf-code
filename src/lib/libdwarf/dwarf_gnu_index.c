@@ -37,10 +37,7 @@
     Split Dwarf (aka Debug Fission).
     They are not expected to be in an executable. */
 
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
-#include <stdio.h> /* debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"

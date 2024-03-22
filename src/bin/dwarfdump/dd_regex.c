@@ -124,14 +124,10 @@
     compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
     matches:    foo-foo fo-fo fob-fob foobar-foobar ...
 */
-#include <config.h>
-
 #include <stdio.h> /* printf() */
-#include "dwarf.h"
+
 #include "libdwarf.h"
 #include "dd_regex.h"
-#include "dd_safe_strcpy.h"
-#include "dd_checkutil.h"
 #include "dd_glflags.h"
 
 /*  This version corrects two bugs (see 'code by davea'

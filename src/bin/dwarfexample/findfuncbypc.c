@@ -16,8 +16,6 @@
         ./findfuncbypc --pc=0x10000 ./findfuncbypc
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* exit() */
 #include <string.h> /* memset() strcmp() strlen() strncmp() */

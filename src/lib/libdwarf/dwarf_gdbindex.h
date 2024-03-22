@@ -31,6 +31,7 @@
 #define DWARF_GDBINDEX_H
 
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
 
 /*  The following is based on
     The gdb online documentation at

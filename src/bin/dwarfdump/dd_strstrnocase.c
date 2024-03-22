@@ -53,8 +53,6 @@ strstrnocase.c
 
 */
 
-#include <config.h>
-
 #include <ctype.h> /* tolower() */
 
 #include "libdwarf.h"

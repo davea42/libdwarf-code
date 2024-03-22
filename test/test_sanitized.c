@@ -31,13 +31,10 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strcmp() */
+#include <stdio.h>
 
-#include "libdwarf_private.h"
-#include "dd_esb.h"
 #include "dd_minimal.h"
 #include "dd_sanitized.h"
 

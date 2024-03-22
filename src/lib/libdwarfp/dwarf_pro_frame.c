@@ -28,8 +28,6 @@
 
 */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <string.h> /* memcpy() strcpy() strlen() */
 

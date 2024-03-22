@@ -26,8 +26,6 @@
 
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* calloc() free() malloc() */
 #include <string.h> /* memset() strcat() strlen() */
 

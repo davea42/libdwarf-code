@@ -31,8 +31,6 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 #include <config.h>
-
-#include <stdio.h>  /* printf() */
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() memset() strcmp() strdup() strlen() */
 #ifdef HAVE_STDINT_H
@@ -48,14 +46,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include <unistd.h> /* getcwd */
 #endif /* _WIN32 */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
-#include "dwarf_global.h"
-#include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_string.h"

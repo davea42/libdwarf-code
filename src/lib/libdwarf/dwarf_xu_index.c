@@ -64,8 +64,6 @@
     tables look zero-origin.
 */
 
-#include <config.h>
-
 #include <string.h>  /* memcmp() memcpy() strcmp() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -75,7 +73,6 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"

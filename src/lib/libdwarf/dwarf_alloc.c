@@ -32,7 +32,6 @@
 */
 
 #include <config.h>
-
 #include <stdio.h>  /* fclose() */
 #include <stdlib.h> /* malloc() free() */
 #include <string.h> /* memset() */
@@ -45,7 +44,6 @@
 #include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"

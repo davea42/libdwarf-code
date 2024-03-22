@@ -34,6 +34,7 @@
 #include "dwarf_pro_opaque.h"
 #include "libdwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_base_types.h"
 
 #define DW_LINE_VERSION2   2
 #define DW_LINE_VERSION3   3

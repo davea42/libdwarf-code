@@ -28,7 +28,6 @@
 */
 
 #include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcpy() memset() */
@@ -36,12 +35,6 @@
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"

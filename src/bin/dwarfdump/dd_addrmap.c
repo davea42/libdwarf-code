@@ -29,8 +29,6 @@
 /*  If memory full  we do not exit, we just keep going as if
     all were well. */
 
-#include <config.h>
-
 #include <stddef.h> /* NULL */
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* strdup() */
@@ -40,12 +38,9 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "dd_globals.h"
 #include "dd_addrmap.h"
 #include "dd_tsearchbal.h"
-#include "libdwarf_private.h" /* For malloc/calloc debug */
 
 static struct Addr_Map_Entry *
 addr_map_create_entry(Dwarf_Unsigned k,char *name)

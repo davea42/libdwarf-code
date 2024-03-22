@@ -30,6 +30,7 @@
 
 #include "libdwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_opaque.h"
 
 /*  The numbers here are almost all 32 bits.
     Not long  long ever.

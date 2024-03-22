@@ -28,9 +28,7 @@
 
 */
 
-#include <config.h>
 #include <stdio.h>
-
 #include <string.h> /* strlen() */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"

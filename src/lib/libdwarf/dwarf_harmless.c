@@ -51,9 +51,6 @@
     slot unused (at least).   So a user request for
     N slots really gives the user N usable slots.  */
 
-#include <config.h>
-
-#include <stddef.h>  /* size_t */
 #include <stdlib.h>  /* free() malloc() */
 #include <string.h>  /* memcpy() strcpy() strlen() */
 
@@ -61,14 +58,10 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_util.h"
-#include "dwarf_frame.h"
 #include "dwarf_harmless.h"
 
 /*  Not user configurable. */

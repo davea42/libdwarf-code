@@ -4,10 +4,9 @@
   This trivial test program is hereby placed in the public domain.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <string.h>  /* strcmp() */
+
 #include "dd_canonical_append.h"
 #include "dd_minimal.h"
 

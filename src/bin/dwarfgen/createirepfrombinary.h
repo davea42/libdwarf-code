@@ -34,6 +34,8 @@
 
 #include "irepresentation.h"
 
+class IRepresentation;
+
 void createIrepFromBinary(const std::string &infile,
    IRepresentation & irep);
 

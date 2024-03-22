@@ -2,8 +2,6 @@
     This test code is hereby placed in the public domain
     for anyone to use in any way.  */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <string.h> /* strcmp() */
 #include <stdlib.h> /* exit() */

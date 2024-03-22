@@ -26,21 +26,19 @@
 */
 
 #include <config.h>
-
 #include <stdlib.h> /* exit() */
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_common.h"
-#include "dd_esb.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
 #include "dd_tsearchbal.h"
 #include "dd_attr_form.h"
-#include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
+
 /* works around ref to this via dd_getopt */
 void dd_minimal_count_global_error(void) {}
 

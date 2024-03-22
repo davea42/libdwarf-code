@@ -4,8 +4,6 @@
   This trivial test program is hereby placed in the public domain.
 */
 
-#include <config.h>
-
 #include <stdio.h>  /* printf() */
 #include <string.h> /* memset() strcmp() */
 

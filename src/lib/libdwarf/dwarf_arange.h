@@ -32,6 +32,7 @@ Portions Copyright (C) 2011-2023 David Anderson. All Rights Reserved.
 #define DWARF_ARRANGE_H
 
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
 
 /*  This structure is used to read an arange into. */
 struct Dwarf_Arange_s {

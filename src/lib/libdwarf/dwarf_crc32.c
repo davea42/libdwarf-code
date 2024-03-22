@@ -26,17 +26,11 @@
    Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-#include <config.h>
-
-#include <stddef.h> /* size_t */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() */
 
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_util.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"

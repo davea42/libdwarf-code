@@ -29,11 +29,9 @@
 */
 
 #include <config.h>
-
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memset() */
 #include <stdio.h> /* memset() */
-#include <limits.h> /* MAX/MIN() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -52,7 +50,6 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_frame.h"
-#include "dwarf_arange.h" /* Using Arange as a way to build a list */
 #include "dwarf_string.h"
 #include "dwarf_safe_arithmetic.h"
 

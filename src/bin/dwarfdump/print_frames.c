@@ -38,10 +38,9 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
     in doing a better job when the tsearch functions (part of
     POSIX) are available.  */
 
-#include <config.h>
-
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strlen() */
+#include <stdio.h>
 
 #include "dwarf.h"
 #include "libdwarf.h"

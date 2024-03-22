@@ -26,8 +26,6 @@ Floor, Boston MA 02110-1301, USA.
 
 */
 
-#include <config.h>
-
 #include <string.h> /* memcmp() */
 #include <stdio.h> /* printf() debugging */
 
@@ -40,10 +38,7 @@ Floor, Boston MA 02110-1301, USA.
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_alloc.h"
-#include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarf_string.h"
 #if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,int line,

@@ -32,6 +32,9 @@
 #define DWARF_GNU_INDEX_H
 
 #include "libdwarf.h"
+#include "dwarf_opaque.h"
+
+struct Dwarf_Gnu_Index_Head_s;
 
 /*  This is for accessing .debug_gnu_pubnames
     and .debug_gnu_pubtypes.

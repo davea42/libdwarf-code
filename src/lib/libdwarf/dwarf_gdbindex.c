@@ -31,18 +31,11 @@ Index-Section-Format.html#Index-Section-Format
 */
 
 #include <config.h>
-
 #include <string.h>  /* memcpy() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
@@ -51,7 +44,6 @@ Index-Section-Format.html#Index-Section-Format
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_string.h"
-#include "dwarf_memcpy_swap.h"
 #include "dwarf_gdbindex.h"
 
 /*  The dwarf_util macro READ_UNALIGNED

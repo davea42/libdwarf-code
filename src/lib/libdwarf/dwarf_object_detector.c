@@ -29,8 +29,6 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <config.h>
-
 #include <stdlib.h> /* free() */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <string.h> /* memset() strlen() */
@@ -38,7 +36,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_object_read_common.h"

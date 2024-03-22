@@ -31,10 +31,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <config.h>
 
-#include <stdlib.h> /* free() */
-#include <stdio.h>  /* SEEK_END SEEK_SET */
-#include <string.h> /* memset() strlen() */
-
 #ifdef _WIN32
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
@@ -56,19 +52,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* lseek */
 #define lseek _lseeki64
 #endif /* _WIN64 */
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek() off_t */
-#endif /* HAVE_UNISTD_H */
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h> /* open() O_RDONLY */
-#endif /* HAVE_FCNTL_H */
-
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 
 #ifndef O_BINARY

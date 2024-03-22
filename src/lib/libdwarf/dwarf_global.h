@@ -33,6 +33,7 @@
 
 #include "dwarf_opaque.h"
 #include "libdwarf.h"
+#include "dwarf_base_types.h"
 
 typedef struct Dwarf_Global_Context_s *Dwarf_Global_Context;
 

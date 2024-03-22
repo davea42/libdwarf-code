@@ -60,12 +60,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stddef.h> /* NULL size_t */
 #include <stdlib.h> /* calloc() free() malloc() */
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t */
-#endif /* HAVE_STDINT_H */
-
-#include "libdwarf.h"
-#include "libdwarf_private.h"
 #include "dd_tsearchbal.h"
 
 #define IMPLEMENTD15 1

@@ -28,9 +28,13 @@
 */
 
 #include "libdwarfp.h"
-
 #include "irepdie.h"
 #include "irepresentation.h"
+
+class IRAttr;
+class IRCUdata;
+class IRDie;
+class IRepresentation;
 
 // irepattrtodbg.h
 

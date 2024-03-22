@@ -28,10 +28,7 @@
 
 */
 
-#include <config.h>
 
-#include <stddef.h> /* NULL */
-#include <string.h> /* memcpy() */
 
 #ifdef DWARF_WITH_LIBELF
 #ifdef HAVE_LIBELF_H

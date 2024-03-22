@@ -40,6 +40,12 @@
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
+#include "irepdie.h"
+#include "irepform.h"
+#include "irepframe.h"
+#include "irepline.h"
+#include "irepmacro.h"
+#include "ireppubnames.h"
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -56,17 +62,12 @@
 #include <list>
 #include <map>
 #include <vector>
-#include <string.h> // For memset etc
-#include <sys/stat.h> //open
-#include <fcntl.h> //open
-#include "strtabdata.h"
+
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarfp.h"
 #include "libdwarf_private.h"
 #include "irepresentation.h"
 #include "createirepfrombinary.h"
-#include "general.h" // For IToHex()
 
 using std::string;
 using std::cout;

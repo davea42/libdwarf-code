@@ -28,15 +28,11 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
 */
 
-#include <config.h>
+#include <stdio.h>
 
-#include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_globals.h"
-#include "dd_naming.h"
-#include "dd_esb.h"
 #include "print_sections.h"
-#include "print_frames.h"
 
 int dwarf_names_print_on_error = 1;
 

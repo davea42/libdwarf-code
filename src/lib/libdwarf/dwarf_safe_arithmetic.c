@@ -29,18 +29,8 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <config.h>
-
-#include <stdlib.h> /* calloc() free() */
-#include <string.h> /* memset() */
-#include <stdio.h> /* memset(), printf */
-
-#include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_safe_arithmetic.h"
 
