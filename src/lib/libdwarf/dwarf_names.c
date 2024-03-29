@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 0.9.1 */
+/* Generated for source version 0.9.2 */
 
 /* BEGIN FILE */
 
@@ -3452,9 +3452,11 @@ dwarf_get_CFA_name (unsigned int val,
     case DW_CFA_METAWARE_info:
         *s_out = "DW_CFA_METAWARE_info";
         return DW_DLV_OK;
-    case DW_CFA_high_user:
-        *s_out = "DW_CFA_high_user";
+    case DW_CFA_hi_user:
+        *s_out = "DW_CFA_hi_user";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x3f. DW_CFA_high_user */
     case DW_CFA_advance_loc:
         *s_out = "DW_CFA_advance_loc";
         return DW_DLV_OK;
