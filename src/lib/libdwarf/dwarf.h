@@ -1425,7 +1425,8 @@ most-likely-useful name. */
     See http://sourceforge.net/p/elftoolchain/tickets/397/  */
 #define DW_CFA_METAWARE_info     0x34
 
-#define DW_CFA_high_user         0x3f
+#define DW_CFA_hi_user           0x3f
+#define DW_CFA_high_user         0x3f /* Misspelled. Do not use. */
 
 /* GNU exception header encoding.  See the Generic
    Elf Specification of the Linux Standard Base (LSB).
