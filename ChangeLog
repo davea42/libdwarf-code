@@ -1,3 +1,280 @@
+2024-03-26:  David Anderson
+    commit 732710959783712b800d826c6399798668ed3744
+
+    Clarifying aspects/detail of the library.
+            modified:   doc/jitaccess.dox
+            modified:   doc/libdwarf.dox
+
+2024-03-22:  David Anderson
+    commit 7a903fb2ab3c3204b1964b60ff62dbdd7d29d19a
+    Merge: da297e99 9944cb55
+
+    Merge branch 'judemille-windows-compat-fixes'
+    Added an undef of interface, a microsoft preprocessor
+    symbol (conflicts with libdwrf). In dwarfgen.
+    refinded a _WIN32 defined test to check __MSC_VER too.
+
+2024-03-21:  Julia DeMille
+    commit 9944cb551c864435595b34d35c16dc127b0b99a5
+
+    Minor fixes for compatibility with MSVC.
+
+    Signed-off-by: Julia DeMille <me@jdemille.com>
+
+2024-03-21:  Julia DeMille
+    commit da297e999161c0dbf7be2f1f9d9118e708b072eb
+
+    make dwarfdump tests work under Meson (#235)
+
+    the config file needs to be copied over. this adds that.
+
+    Signed-off-by: Julia DeMille <me@jdemille.com>
+
+2024-03-21:  Julia DeMille
+    commit d1ec01000c06a5cda3f3e8a902b99b19d18ec2df
+
+    override find_program/dependency in meson scripts (#234)
+
+    allows use as a wrap subproject more cleanly
+
+    Signed-off-by: Julia DeMille <me@jdemille.com>
+
+2024-03-21:  David Anderson
+    commit 45cbe6320611a2f4080039773b059df587cd8868
+
+    Update SECURITY.md
+
+    Updating release version list
+
+2024-03-19:  David Anderson
+    commit 456f89326b6e1d4c98b7755645e1414a7e979b31
+
+    Refined the description of DW202403-001
+            modified:   bugxml/data.txt
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+    Refinded the Changes for 0.9.2 to just list
+    the vulnerabilities.
+            modified:   doc/libdwarf.dox
+
+2024-03-19:  David Anderson
+    commit c20fdfd2b1b789c31634013321853f3419f8d338
+
+    More places fitting the pattern revealed by
+    DW202403-001 now have checks for off-the-end.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2024-03-19:  David Anderson
+    commit 1561153af3886ae37c205edb2670a71a2518287c
+
+    Added git fix id for DW202403-001
+            modified:   data.txt
+
+2024-03-19:  David Anderson
+    commit 2930f3121ee6b07da405103934c329bbeca0382f
+
+    Adding DW202403-001 ossfuzz id: 67490
+            modified:   data.txt
+
+    A carefully corrupted line table
+    header can cause libdwarf to read outside of its
+    allowed areas in a .debug_line section reading
+    the file names part of the header.
+    The failure to check for end-of-section following the
+    very last byte in section has been present for many years.
+            modified:   ../src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2024-03-12:  David Anderson
+    commit 18b0db98232fb01e01956998c72fde7f2851c7f2
+
+    Removing trailing whitespace
+            modified:   doc/checkexamples.c
+            modified:   doc/jitaccess.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+    And also shortened unnecessarily long lines,
+    doxygen aranges the output perfectly.
+            modified:   doc/libdwarf.dox
+
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2024-03-12:  David Anderson
+    commit 35ce243e85ba535405756a77c7f0d0b9700f310e
+
+    Changed REPEAT_BRIEF to NO to avoid duplicate reporting
+    of such in the examples.
+            modified:   doc/Doxyfile
+    Very small wording changes in the Dwarf_Error overview.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2024-03-12:  David Anderson
+    commit 335bd73b5d5574b1ff265a2e2f9ef4c48660aeab
+
+    Now with cleaned up examples.
+            modified:   doc/libdwarf.pdf
+
+2024-03-12:  David Anderson
+    commit f19e2f7bce2ed280dafbc63ac684bd0a6c76120f
+
+    Cleaning up the appearance of the examples.
+            modified:   doc/checkexamples.c
+
+2024-03-12:  David Anderson
+    commit 0d3b1b32da92f2ec869175ac89fd5c0bb33efc4e
+
+    Cleaning up doxygen so examples show as intended.
+    Fixed one new compiler warning.
+            modified:   doc/checkexamples.c
+
+2024-03-12:  David Anderson
+    commit 566db5f7de6b086e60ee46df8f577bbc1854a52a
+
+    First line corrupted by...me.
+    Fixed.
+            modified:   doc/libdwarf.dox
+
+2024-03-11:  Keith W. Campbell
+    commit ae236a51d5a12ba3fa841f287585db54b5c52d78
+
+    Fix a few typos (#233)
+
+    Signed-off-by: Keith W. Campbell <keithc@ca.ibm.com>
+
+2024-03-11:  David Anderson
+    commit 8e1f76a10afcd482d627851a6e62dd019d079e3a
+
+    Last changes to documentation today.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-11:  David Anderson
+    commit 8cc3c87acad24dd77b3ef5fd80a84102dd3973ef
+
+    Improvements in doxygen comments.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-11:  David Anderson
+    commit 5ce3e3b4126133fc24ef0a64844511b7ba02b51c
+
+    In a couple cases check for a NULL passed in
+    to avoid a crash.  Caller is not supposed
+    to pass in NULL here.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-03-11:  David Anderson
+    commit c5120f435c054f66f20ac8298e9eff556ad89bec
+
+    Improving the doxygen comments and
+    slight renaming where that clarifies.
+            modified:   checkexamples.c
+
+2024-03-10:  David Anderson
+    commit 4951e03840a5f1c43186d138a4d6698a1062ca83
+
+    Small corrections to doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-10:  David Anderson
+    commit cb434787be4fd9bc239aa1b7cd2e1896567a99cc
+
+    Corrected typos/spelling errors in doxygen comments.
+    Added doc of a typedef not previously
+    documented.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-09:  David Anderson
+    commit f7fd6a4d433ac67ec1fc2cd5fd494ff20a5c0e50
+
+    Small changes/fixes.
+            modified:   doc/libdwarf.dox
+    Improved doc of various types and structs.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-04:  David Anderson
+    commit 85511eb7266fd9febefabdc2007e5dfc9cbd2c37
+
+    And the last line (#ifndef) was missing.
+    Oh my.
+    Fixed.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-04:  David Anderson
+    commit 68f9a8bde980f3802a0e80ed40260a82739c54ac
+
+    Previous commit had a really horrible
+    mistake changing a struct. IT was only supposed
+    to have changes in *comments*.  Sorry.
+
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-03-01:  David Anderson
+    commit fb1cf56040690e4472f2812ff311fd71103512e6
+
+    Corrections and refinements of the contents of the first
+    page and related corrections/amplifications in libdwarf.h
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2024-03-01:  David Anderson
+    commit 138a6a7e38ab22b02371778547369d460917e1a6
+
+    The word 'pointer' was accidentally repeated
+    on a second line. Read oddly in the final document.
+    So deleted the repeat.
+            modified:   doc/libdwarf.dox
+
+2024-03-01:  David Anderson
+    commit a816ac80eee2c5c50785e8c952758e8ba4c9cf3e
+
+    Correcting spelling errors in doxygen comments.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2024-03-01:  David Anderson
+    commit 376fd48cd48df5f093dbb11f2fa119390b17c28b
+
+    Correcting some spelling errors.
+            modified:   libdwarf.dox
+
+2024-03-01:  David Anderson
+    commit a6acb2a2bcf6aa45594c34c202887802c194bcd4
+
+    Fixing spelling errors.
+            modified:   README.md
+            modified:   READMEwin-msys2.md
+
+2024-03-01:  David Anderson
+    commit 307c9207d67b61918612d79320c3e3469d152dd7
+
+    Regenerated without all those blank lines.
+            modified:   dwarfbug.xml
+
+2024-03-01:  David Anderson
+    commit f45fcc456fa9a06bcd4a900741ec672022eb1c2d
+
+    Was generating many blank lines in xml output,
+    but no longer does that.
+            modified:   bugrecord.py
+
+2024-03-01:  David Anderson
+    commit c3bd59a8d76b8379d53674b255fbc96e7f434dde
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2024-03-01:  David Anderson
     commit cd5b3e0c2a3ae60686314db55f93d820da8a3f77
 
