@@ -1,4 +1,18 @@
 2024-03-31:  David Anderson
+    commit 91a2f965f4ce97ef4c579e351e5c7b9af3e43a5f
+
+    Small clarifications related to 'line table registers'
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2024-03-31:  David Anderson
+    commit 974026f41778c137f036302558742cb1949937bb
+
+    Now up to date.
+            modified:   ChangeLog
+
+2024-03-31:  David Anderson
     commit 486aa3314e4682850eee5d04ccf5a9520689cb71
 
     Now with Changes note about DW_CFA_hi_user (adding
