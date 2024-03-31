@@ -400,8 +400,10 @@
     Certain functions on Dwarf_Line data
     return values for these 'registers'
     as these are the data available for
-    debuggers and other tools  to relate
-    code addresses to source file locations.
+    debuggers and other tools to relate
+    a code address to a source file name and
+    possibly also to a line number and column-number
+    within the source file.
 
     @code
     address
