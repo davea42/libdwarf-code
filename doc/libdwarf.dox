@@ -1087,6 +1087,9 @@
     a carefully corrupted (fuzzed) DWARF object file.
     Now the library returns an error 
     for these corruptions.
+    DW_CFA_high_user (in dwarf.h) was a misspelling.
+    Added the correct spelling DW_CFA_hi_user and
+    a comment on the incorrect spelling.
 
     <b>Changes 0.9.0 to 0.9.1</b>
 
