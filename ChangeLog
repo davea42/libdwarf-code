@@ -1,3 +1,39 @@
+2024-03-31:  David Anderson
+    commit 486aa3314e4682850eee5d04ccf5a9520689cb71
+
+    Now with Changes note about DW_CFA_hi_user (adding
+    this correct spelling).
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2024-03-29:  David Anderson
+    commit e18caf454e2d6d0fc8a5d086f8f65162d560a113
+
+    Regenerated to show version 0.9.2 and to reflect the correct
+    spelling DW_CFA_hi_user .
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-03-29:  David Anderson
+    commit e87496e5cb8ded20e89509e7f05f5742da23f2ce
+
+    DW_CFA_hi_user was misspelled DW_CFA_high_user
+    here (not in the DWARF standard).
+    Now both spellings are in the header.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2024-03-29:  David Anderson
+    commit cf7814ac772672f8ba401125240802aba4d756a9
+
+    Bringing up to date.
+            modified:   ChangeLog
+    now pdf up to date.
+            modified:   doc/libdwarf.pdf
+
 2024-03-26:  David Anderson
     commit 732710959783712b800d826c6399798668ed3744
 
