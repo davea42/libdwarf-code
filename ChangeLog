@@ -1,3 +1,20 @@
+2024-04-02:  David Anderson
+    commit c8306b7f24655ee8b7b1038ca1ccb188c9ad4374
+
+    Finalizing release.
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+    New month, changing report month.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-03-31:  David Anderson
+    commit 7db13b474570b3f9eef8f49bf8623694bf92ef3c
+
+    Clarifications documentation.
+            modified:   ChangeLog
+
 2024-03-31:  David Anderson
     commit 91a2f965f4ce97ef4c579e351e5c7b9af3e43a5f
 
