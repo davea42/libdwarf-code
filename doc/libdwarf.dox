@@ -1084,6 +1084,8 @@
 
     <b>Changes 0.9.1 to 0.9.2</b>
 
+    Version 0.9.2 released 2 April 2024
+
     Vulnerabilities DW202402-001, DW202402-002,DW202402-003,
     and DW202403-001 could crash @e libdwarf given
     a carefully corrupted (fuzzed) DWARF object file.
