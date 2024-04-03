@@ -8,9 +8,6 @@
 #endif /* HAVE_USAGE_TAG_ATTR */
 
 #ifdef HAVE_USAGE_TAG_ATTR
-#include "dwarf.h"
-#include "libdwarf.h"
-
 typedef struct {
     unsigned int count; /* Attribute count */
     Dwarf_Half attr;    /* Attribute value */

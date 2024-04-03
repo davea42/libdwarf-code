@@ -299,8 +299,6 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define HAVE_USAGE_TAG_ATTR 1\n");
         fprintf(fileOut,"#endif /* HAVE_USAGE_TAG_ATTR */\n\n");
         fprintf(fileOut,"#ifdef HAVE_USAGE_TAG_ATTR\n");
-        fprintf(fileOut,"#include \"dwarf.h\"\n");
-        fprintf(fileOut,"#include \"libdwarf.h\"\n\n");
         fprintf(fileOut,"typedef struct {\n");
         fprintf(fileOut,"    unsigned int count; /* Tag count */\n");
         fprintf(fileOut,"    Dwarf_Half tag;     /* Tag value */\n");
