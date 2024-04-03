@@ -30,8 +30,6 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved
 
 */
 
-#include "dwarf_base_types.h"
-
 void
 _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     Dwarf_Unsigned targ, Dwarf_Unsigned sectionlen);
