@@ -37,6 +37,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcmp() memset() strchr() strcmp()
     strlen() strncmp() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t */

@@ -31,6 +31,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 
 #include <stdlib.h> /* exit() */
 #include <string.h> /* memset() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"

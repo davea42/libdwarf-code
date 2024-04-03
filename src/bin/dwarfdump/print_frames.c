@@ -42,6 +42,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strlen() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"

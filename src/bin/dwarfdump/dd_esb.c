@@ -43,6 +43,7 @@
 #include <stdarg.h> /* va_end() va_start() */
 #include <stdlib.h> /* exit() free() malloc() realloc() */
 #include <string.h> /* memcpy() memset() strlen() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 #include "dd_esb.h"
 #include "libdwarf_private.h" /* For malloc/calloc debug */
 #include "dd_minimal.h" /* For dwarfdump error count */

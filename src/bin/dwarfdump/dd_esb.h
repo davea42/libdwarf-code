@@ -36,8 +36,6 @@ Portions Copyright 2011-2018 David Anderson. All Rights Reserved.
 #ifndef ESB_H
 #define ESB_H
 
-#include <stdio.h> /* FILE */
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

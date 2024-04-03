@@ -35,6 +35,7 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strcmp() */
+#include <stdio.h> /* FILE printf etc */
 
 #include "libdwarf_private.h"
 #include "dd_esb.h"

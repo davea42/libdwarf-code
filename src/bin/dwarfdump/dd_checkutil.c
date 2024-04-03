@@ -60,6 +60,7 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t */

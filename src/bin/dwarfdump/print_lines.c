@@ -32,6 +32,7 @@ Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
 
 #include <string.h> /* strcmp() strlen() */
 #include <time.h>   /* ctime() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"

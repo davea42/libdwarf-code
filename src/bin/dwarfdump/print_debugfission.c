@@ -28,6 +28,7 @@
 #include <config.h>
 
 #include <string.h> /* memset() strcmp() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"

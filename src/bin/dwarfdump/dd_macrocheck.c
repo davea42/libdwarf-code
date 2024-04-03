@@ -51,6 +51,7 @@
 #include <config.h>
 
 #include <stdlib.h> /* calloc() free() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"

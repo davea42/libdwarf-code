@@ -29,6 +29,7 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcpy() strcmp() strdup() strlen() */
 #include <stddef.h> /* size_t */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"

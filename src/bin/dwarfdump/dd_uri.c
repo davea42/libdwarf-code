@@ -27,6 +27,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 */
 
 #include <config.h>
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"

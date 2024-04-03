@@ -29,6 +29,7 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 */
 
 #include <config.h>
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"

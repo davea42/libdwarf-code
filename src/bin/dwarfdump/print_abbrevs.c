@@ -37,6 +37,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 #include <stdlib.h> /* calloc() free() realloc() */
 #include <string.h> /* memset() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"

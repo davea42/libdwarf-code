@@ -30,6 +30,7 @@
 #include <stdlib.h> /* atoi() calloc() exit() free()
     malloc() strtol() */
 #include <string.h> /* strcmp() strdup() strlen() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

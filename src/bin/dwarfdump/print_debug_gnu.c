@@ -32,6 +32,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 /*  To print .debug_gnu_pubnames, .debug_gnu_typenames */
 
 #include <config.h>
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"

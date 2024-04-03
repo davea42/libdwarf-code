@@ -28,6 +28,7 @@
 #include <config.h>
 
 #include <stdlib.h> /* exit() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -101,7 +102,6 @@ static const char *usage[] = {
     "       common extensions))",
     ""
 };
-
 
 const char *program_name = 0;
 char *input_name = 0;

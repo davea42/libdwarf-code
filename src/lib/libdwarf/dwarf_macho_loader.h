@@ -44,8 +44,8 @@ extern "C" {
 #endif /* __cplusplus */
 
 #if 0 /* Not used here. DavidA. September 2018 */
-/*  #include changed to #xnclude so 
-    casual readers will not be confused.
+    #include changed to #xnclude so casual readers will not
+    be confused.
 /*
 * This file describes the format of mach object files.
 */

@@ -26,8 +26,7 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 */
 
 #include <config.h>
-
-#include <stdio.h>
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 #include <string.h>
 #include <stdlib.h>
 #include "dwarf.h"

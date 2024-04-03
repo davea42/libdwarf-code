@@ -30,6 +30,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 /* SGI has moved from the Crittenden Lane address.  */
 
 #include <config.h>
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"

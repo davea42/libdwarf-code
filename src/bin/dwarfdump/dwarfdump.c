@@ -37,7 +37,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
-#include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
+#include <stdio.h>  /* FILE stdout stderr fprintf() printf()
+    sprintf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc()
     getenv() */
 #include <string.h> /* memset() strcmp() stricmp()

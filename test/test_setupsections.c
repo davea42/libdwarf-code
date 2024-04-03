@@ -118,7 +118,6 @@ offsetof(struct Dwarf_Debug_s,de_debug_line),
 },
 };
 
-
 static void
 test_adds(void)
 {
@@ -167,7 +166,6 @@ test_fails(void)
     }
 }
 
-
 int main(int argc,char *argv[])
 {
     int lim = 1;
@@ -185,7 +183,6 @@ int main(int argc,char *argv[])
             }
         }
     }
-
 
     for( ; i < lim; ++i) {
         test_adds();

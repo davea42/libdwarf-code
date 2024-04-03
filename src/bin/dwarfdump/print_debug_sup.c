@@ -32,6 +32,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 /*  To print .debug_sup */
 
 #include <config.h>
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"

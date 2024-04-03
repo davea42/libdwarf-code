@@ -32,6 +32,7 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 
 #include <limits.h> /* INT_MAX */
 #include <string.h> /* strcmp() strlen() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"
