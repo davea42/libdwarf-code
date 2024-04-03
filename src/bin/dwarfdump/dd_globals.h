@@ -32,10 +32,6 @@ Portions Copyright 2012-2018 SN Systems Ltd. All rights reserved.
 extern "C" {
 #endif
 
-#include "dd_defined_types.h"
-#include "dd_checkutil.h"
-#include "dd_glflags.h"
-
 #define DWARF_SECNAME_BUFFER_SIZE 50
 #define ESB_FIXED_ALLOC_SIZE 300
 

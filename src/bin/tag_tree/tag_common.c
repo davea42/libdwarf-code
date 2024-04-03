@@ -37,6 +37,9 @@ Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
 #include <ctype.h>    /*  For isspace() declaration */
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_tag_common.h"

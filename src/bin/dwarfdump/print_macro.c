@@ -34,6 +34,9 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"
@@ -45,7 +48,6 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "dd_macrocheck.h"
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
-#include "dd_glflags.h"
 
 /*  See the comments at the beginning of macrocheck.c */
 
