@@ -28,7 +28,6 @@
    Fifth Floor, Boston MA 02110-1301, USA.
 
 */
-#include <stdio.h>
 
 /*  This is #included twice. Once for
     libdwarf callers and one for dwarfdump which prints
