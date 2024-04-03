@@ -20,12 +20,11 @@ test1(char *buf,unsigned blen,
     _dwarf_safe_strcpy(buf,blen,inp,ilen);
     if (strcmp(buf,expres)) {
         printf("Line %d expected %s got %s\n",
-             line,expres,buf);
+            line,expres,buf);
         return 1;
     }
     return 0;
 }
-
 
 static int
 test_safe_strcpy(void)

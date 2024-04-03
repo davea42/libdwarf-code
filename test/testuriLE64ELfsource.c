@@ -28,8 +28,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 /*  This is the source that the relocatable testuriLE64ELf.obj
     is built from */
-/*cc -c -gdwarf-5 -I ../src/bin/dwarfdump -I../src/lib/libdwarf -o testuriLE64ELf.obj testuriLE64ELf.c */
-
+/*cc -c -gdwarf-5 -I ../src/bin/dwarfdump \
+    -I../src/lib/libdwarf -o testuriLE64ELf.obj testuriLE64ELf.c */
 
 /*#include <config.h> */
 

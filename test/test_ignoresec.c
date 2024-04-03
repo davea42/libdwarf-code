@@ -115,7 +115,6 @@ static const char *keeps[] = {
 0
 };
 
-
 static void
 test_keeps(void)
 {
@@ -125,7 +124,6 @@ test_keeps(void)
         check_instance(keeps[i],i,FALSE,res,__LINE__);
     }
 }
-
 
 int main(void)
 {

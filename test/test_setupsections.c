@@ -54,12 +54,12 @@ static int errcount;
 struct Dwarf_Debug_s dbgs;
 Dwarf_Debug dbg = &dbgs;
 struct basis_s {
-   const char *name;
-   unsigned    group_number;
-   unsigned    secdataoff;
-   int         duperr;
-   int         emptyerr;
-   int         havedwarf;
+    const char *name;
+    unsigned    group_number;
+    unsigned    secdataoff;
+    int         duperr;
+    int         emptyerr;
+    int         havedwarf;
 };
 struct basis_s basis[] = {
 {".debug_info",
@@ -71,7 +71,7 @@ DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,TRUE
 {".debug_line",
 DW_GROUPNUMBER_BASE,
 offsetof(struct Dwarf_Debug_s,de_debug_line),
- DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
 },
 #if 0
 {".debug_line.dwo",
@@ -104,17 +104,17 @@ DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,TRUE
 {".debug_",
 DW_GROUPNUMBER_BASE,
 offsetof(struct Dwarf_Debug_s,de_debug_line),
- DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
 },
 {".rel",
 DW_GROUPNUMBER_BASE,
 offsetof(struct Dwarf_Debug_s,de_debug_line),
- DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
 },
 {".rela",
 DW_GROUPNUMBER_BASE,
 offsetof(struct Dwarf_Debug_s,de_debug_line),
- DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
+DW_DLE_DEBUG_LINE_DUPLICATE,0, FALSE
 },
 };
 
@@ -184,10 +184,10 @@ int main(int argc,char *argv[])
         }
     }
 
-    for( ; i < lim; ++i) {
+    for ( ; i < lim; ++i) {
         test_adds();
     }
-    for( ; i < lim; ++i) {
+    for ( ; i < lim; ++i) {
         test_fails();
     }
     if (errcount) {

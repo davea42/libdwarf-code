@@ -400,7 +400,8 @@ check_msg_lengths(const char *path)
 static char pathbuf[2000];
 static char pathbuferrm[2000];
 static void
-local_safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
+local_safe_strcpy(char *targ,char *src,
+    unsigned targlen, unsigned srclen)
 {
     if (srclen > targlen) {
         printf("Target name does not fit in buffer.\n"
@@ -429,7 +430,7 @@ main(int argc, char **argv)
 
     pathbuf[0] = 0;
     if (argc > 1) {
-        for( argn = 1; argn < argc; ++argn){
+        for (argn = 1; argn < argc; ++argn){
             if (!strcmp(argv[1],"-f")) {
                 argn += 1;
                 if (argn >= argc) {

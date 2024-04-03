@@ -422,7 +422,7 @@ test3(Dwarf_Debug dbg)
         dbg->de_gnu_global_path_count,
         executablepath,linkstring,
         &linkstring_fullpath,
-#if  0
+#if 0
         crc,
 #endif
         buildid,
