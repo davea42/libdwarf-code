@@ -310,7 +310,8 @@ dwarf_need_debug_names_section(Dwarf_P_Debug dbg)
     Called exactly once per execution.
 */
 int
-dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Unsigned *count,
+dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg,
+    Dwarf_Unsigned *count,
     Dwarf_Error * error)
 {
     /*  Section data in written out in a number of buffers. Each

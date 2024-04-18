@@ -38,9 +38,9 @@ extern const char *_dwarf_sectnames[];
     whole into the relocation section. Whether its 32 bit or
     64 bit will be obtained from Dwarf_Debug pointer.  */
 
-/* struct stores a chunk of data pertaining to a section.
-   Following ds_next we find the rest of the data for
-   the section.  */
+/*  struct stores a chunk of data pertaining to a section.
+    Following ds_next we find the rest of the data for
+    the section.  */
 struct Dwarf_P_Section_Data_s {
     int            ds_elf_sect_no; /* elf section number */
     char          *ds_data;        /* data contained in section */
