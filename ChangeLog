@@ -1,4 +1,39 @@
 2024-04-19:  David Anderson
+    commit 713a4060556e76adf21b47ff705df686767f2ff4
+
+    Now produces,on stdout, a new list of the
+    names that have duplicate values (we only
+    retain one for dwarfdump-naming purposes,
+    as via dwarf_get_AT_name() etc).
+    I reviewed the list and found a couple
+    instances  we
+    were genering correctly but not choosing
+    the best name where there are multiple.
+            modified:   src/bin/gennames/gennames.c
+
+    Alter the order in a couple places so the right
+    name shows up from gennames.c
+            modified:   src/lib/libdwarf/dwarf.h
+
+    Regenerated
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-04-19:  David Anderson
+    commit 15adc9cbecefd79d28d7d82bf458cde654ac32c0
+
+    Split two lines to avoid violating codingstyle.
+
+    Left one line too long as it is a web reference
+    so splitting it will make it wrong.
+            modified:   doc/checkexamples.c
+
+2024-04-19:  David Anderson
+    commit eca6017c7adc41ff7874bac8bc2b293d0677df7d
+
+    Up to date with git log.
+            modified:   ChangeLog
+
+2024-04-19:  David Anderson
     commit c36e70a69a33ecb0db50ce654f0ea5129d1081a0
 
     Fixed the instances violating the project
