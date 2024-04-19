@@ -30,7 +30,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
 //
 // irepdie.h
 //
@@ -43,7 +42,8 @@ public:
     IRAttr():attr_(0),finalform_(0),initialform_(0),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
         };
-    IRAttr(Dwarf_Half attr,Dwarf_Half finalform, Dwarf_Half initialform):
+    IRAttr(Dwarf_Half attr,Dwarf_Half finalform,
+        Dwarf_Half initialform):
         attr_(attr),finalform_(finalform),initialform_(initialform),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
     };
@@ -52,7 +52,7 @@ public:
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
-        if(r.formdata_) {
+        if (r.formdata_) {
             formdata_ =  r.formdata_->clone();
         } else {
             formdata_ = 0;
@@ -61,14 +61,14 @@ public:
     ~IRAttr() {
         delete formdata_; };
     IRAttr & operator=( const IRAttr &r) {
-        if(this == &r) {
+        if (this == &r) {
             return *this;
         }
         attr_ = r.attr_;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
-        if(formdata_) {
+        if (formdata_) {
             delete formdata_;
             formdata_ =  r.formdata_->clone();
         } else {
@@ -87,7 +87,7 @@ public:
     };
     enum Dwarf_Form_Class getFormClass() const {return formclass_; };
     void dropFormData() {
-        if(formdata_)
+        if (formdata_)
         {delete formdata_; formdata_ = 0; };
         }
     void setFormData(IRForm *f) {
@@ -121,12 +121,12 @@ public:
     };
     std::string  getName() {
         std::list<IRAttr>::iterator it = attrs_.begin();
-        for( ; it != attrs_.end() ; ++it) {
+        for ( ; it != attrs_.end() ; ++it) {
             if (it->getAttrNum() == DW_AT_name) {
                 IRForm *f = it->getFormData();
                 const IRFormString * isv =
                     dynamic_cast<const IRFormString *>(f);
-                if(isv) {
+                if (isv) {
                     return isv->getString();
                 }
             }
@@ -136,7 +136,7 @@ public:
     std::list<IRAttr> & getAttributes() {return attrs_; };
     std::list<IRDie> & getChildren() {return children_; };
     bool hasNewestChild(IRDie **lastch) { size_t N = children_.size();
-        if(N < 1) {
+        if (N < 1) {
             return false;
         }
         *lastch = &children_.back();
@@ -152,27 +152,27 @@ public:
         cuRelativeOffset_ = cuoff;
     };
     Dwarf_Unsigned getGlobalOffset() const { return globalOffset_;};
-    Dwarf_Unsigned getCURelativeOffset() const { return cuRelativeOffset_;};
+    Dwarf_Unsigned getCURelativeOffset() const {
+        return cuRelativeOffset_;};
     void setGeneratedDie(Dwarf_P_Die p_die) {
         generatedDie_ = p_die;};
     Dwarf_P_Die getGeneratedDie() const { return generatedDie_;};
     unsigned getTag() {return tag_; }
 
 private:
-   // We rely on the IRDie container being one which does not
-   // invalidate pointers with addition/deletion.
-   std::list<IRDie>  children_;
+    // We rely on the IRDie container being one which does not
+    // invalidate pointers with addition/deletion.
+    std::list<IRDie>  children_;
 
-   std::list<IRAttr> attrs_;
-   unsigned tag_;
-   // The following are data from input.
-   Dwarf_Unsigned globalOffset_;
-   Dwarf_Unsigned cuRelativeOffset_;
+    std::list<IRAttr> attrs_;
+    unsigned tag_;
+    // The following are data from input.
+    Dwarf_Unsigned globalOffset_;
+    Dwarf_Unsigned cuRelativeOffset_;
 
-   // the following is generated during output.
-   Dwarf_P_Die generatedDie_;
+    // the following is generated during output.
+    Dwarf_P_Die generatedDie_;
 };
-
 
 struct OffsetFormEntry {
     OffsetFormEntry(): off_(0),form_(0){};
@@ -201,7 +201,8 @@ struct ClassReferenceFixupData {
         target_(d) {};
     Dwarf_P_Debug dbg_;
     //  The source die and attrnum suffice because the definition of
-    //  DWARF guarantees only one attribute of any given attribute number
+    //  DWARF guarantees only one attribute of any
+    //  given attribute number
     //  can exist on a given DIE.
     Dwarf_Half attrnum_;
     Dwarf_P_Die sourcedie_;
@@ -247,12 +248,14 @@ public:
         cudie_offset_(0) ,
         dwarf32bit_(0){};
     ~IRCUdata() { };
-    bool hasMacroData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
+    bool hasMacroData(Dwarf_Unsigned *offset_out,
+        Dwarf_Unsigned *cudie_off) {
         *offset_out = macrodata_offset_;
         *cudie_off = cudie_offset_;
         return has_macrodata_;
     }
-    bool hasLineData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
+    bool hasLineData(Dwarf_Unsigned *offset_out,
+        Dwarf_Unsigned *cudie_off) {
         *offset_out = linedata_offset_;
         *cudie_off = cudie_offset_;
         return has_linedata_;
@@ -285,7 +288,7 @@ public:
     IRDie * getLocalDie(Dwarf_Unsigned localoff) {
         std::map<Dwarf_Unsigned,IRDie*>::iterator pos;
         pos = cuOffInLocalToIRDie_.find(localoff);
-        if(pos != cuOffInLocalToIRDie_.end()) {
+        if (pos != cuOffInLocalToIRDie_.end()) {
             return pos->second;
         }
         return NULL;
@@ -300,13 +303,13 @@ public:
     // Use  cuOffInLocalToIRDie_ and
     // cuOffInLocalToIRAttr_ to update attr targets.
     void updateReferenceAttrDieTargets() {
-        for(std::list<OffsetFormEntry>::iterator it =
+        for (std::list<OffsetFormEntry>::iterator it =
             cuOffInLocalToIRFormRef_.begin();
             it != cuOffInLocalToIRFormRef_.end();
             ++it) {
             IRFormReference* r = it->form_;
             IRDie * tdie = getLocalDie(it->off_);
-            if(tdie) {
+            if (tdie) {
                 r->setTargetInDie(tdie);
             } else {
                 // Missing die in r
@@ -356,7 +359,8 @@ private:
     Dwarf_Unsigned cudie_offset_;
     bool dwarf32bit_;
     IRCULineData      cu_lines_;
-    // If true, is 32bit dwarf,else 64bit. Gives the size of a reference.
+    // If true, is 32bit dwarf,else 64bit.
+    // Gives the size of a reference.
     IRDie   cudie_;
 
     // Refers to cu-local offsets in the input CU and which DIE
@@ -378,10 +382,10 @@ private:
 
 class IRDInfo {
 public:
-   IRDInfo() {};
-   ~IRDInfo() {};
-   IRCUdata &lastCU() { return cudata_.back(); }
-   std::list<IRCUdata>& getCUData() {return cudata_; };
+    IRDInfo() {};
+    ~IRDInfo() {};
+    IRCUdata &lastCU() { return cudata_.back(); }
+    std::list<IRCUdata>& getCUData() {return cudata_; };
 private:
-   std::list<IRCUdata>  cudata_;
+    std::list<IRCUdata>  cudata_;
 };

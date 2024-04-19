@@ -83,7 +83,6 @@ int dwgetopt_long(int nargc, char *const nargv[],
     const struct dwoption* longopts,
     int *longindex);
 
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

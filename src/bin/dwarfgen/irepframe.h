@@ -1,27 +1,37 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
+Copyright (C) 2010-2013 David Anderson.  All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the example nor the
-    names of its contributors may be used to endorse or promote products
-    derived from this software without specific prior written permission.
+Redistribution and use in source and binary forms, with
+or without modification, are permitted provided that the
+following conditions are met:
 
-  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
-  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
-  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* Redistributions of source code must retain the above
+    copyright notice, this list of conditions and the following
+    disclaimer.
+
+* Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimer in the documentation and/or other materials
+    provided with the distribution.
+
+* Neither the name of the example nor the names of its
+    contributors may be used to endorse or promote products
+    derived from this software without specific prior written
+    permission.
+
+THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+NO EVENT SHALL David Anderson BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -41,13 +51,14 @@ public:
         Dwarf_Signed data_align, Dwarf_Half return_reg_rule,
         const void * init_instrs, Dwarf_Unsigned instrs_len):
         cie_byte_length_(length), version_(version),
-        augmentation_(augmentation), code_alignment_factor_(code_align),
+        augmentation_(augmentation),
+        code_alignment_factor_(code_align),
         data_alignment_factor_(data_align),
         return_address_register_rule_(return_reg_rule)
         {
             const Dwarf_Small *x =
                 reinterpret_cast<const Dwarf_Small *>(init_instrs);
-            for(Dwarf_Unsigned i = 0; i < instrs_len; ++i) {
+            for (Dwarf_Unsigned i = 0; i < instrs_len; ++i) {
                 initial_instructions_.push_back(x[i]);
             }
         }
@@ -104,18 +115,21 @@ public:
     IRFde(Dwarf_Addr low_pc,Dwarf_Unsigned func_length,
         Dwarf_Ptr fde_bytes, Dwarf_Unsigned fde_length,
         Dwarf_Off cie_offset,Dwarf_Signed cie_index_in,
-        Dwarf_Off fde_offset): low_pc_(low_pc), func_length_(func_length),
+        Dwarf_Off fde_offset):
+        low_pc_(low_pc),
+        func_length_(func_length),
         cie_offset_(cie_offset), cie_index_(cie_index_in),
         fde_offset_(fde_offset)  {
             const Dwarf_Small *x =
                 reinterpret_cast<const Dwarf_Small *>(fde_bytes);
-            for(Dwarf_Unsigned i = 0; i < fde_length; ++i) {
+            for (Dwarf_Unsigned i = 0; i < fde_length; ++i) {
                 fde_bytes_.push_back(x[i]);
             }
         };
     ~IRFde() {};
     Dwarf_Unsigned cie_index() { return cie_index_; };
-    void get_fde_base_data(Dwarf_Addr *lowpc, Dwarf_Unsigned * funclen,
+    void get_fde_base_data(Dwarf_Addr *lowpc,
+        Dwarf_Unsigned * funclen,
         Dwarf_Unsigned *cie_index_input) {
             *lowpc = low_pc_;
             *funclen = func_length_;
@@ -124,7 +138,7 @@ public:
     void get_fde_instrs_into_ir(Dwarf_Ptr ip,Dwarf_Unsigned len   )  {
         const Dwarf_Small *x =
         reinterpret_cast<const Dwarf_Small *>(ip);
-        for(Dwarf_Unsigned i = 0; i < len; ++i) {
+        for (Dwarf_Unsigned i = 0; i < len; ++i) {
             fde_instrs_.push_back(x[i]);
         }
         };
@@ -171,7 +185,7 @@ public:
         fdedata_.push_back(fdedata);
         unsigned findex = fdedata_.size() -1;
         Dwarf_Signed cindex = fdedata.cie_index();
-        if( cindex != -1) {
+        if (cindex != -1) {
             IRCie & mycie =  ciedata_[cindex];
             mycie.insert_fde_index(findex);
         }
