@@ -99,11 +99,11 @@ static void ParseDefinitionsAndWriteOutput(void);
 
 /* To store entries from dwarf.h */
 typedef struct {
-    char     prefixname[MAX_NAME_LEN];  /* short name */
-    char     name[MAX_NAME_LEN];  /* short name */
-    unsigned value; /* value */
+    char     ad_prefixname[MAX_NAME_LEN];  /* short name */
+    char     ad_name[MAX_NAME_LEN];  /* short name */
+    unsigned ad_value;              /* value */
     /* Original spot in array.   Lets us guarantee a stable sort. */
-    unsigned original_position;
+    unsigned ad_original_position;
 } array_data;
 
 /*  A group_array is a grouping from dwarf.h.
@@ -221,9 +221,9 @@ PrintArray(void)
     int i;
     for (i = 0; i < array_count; ++i) {
         printf("%d: Name %s_%s, Value 0x%04x\n",
-            i,grouparray[i].prefixname,
-            grouparray[i].name,
-            grouparray[i].value);
+            i,grouparray[i].ad_prefixname,
+            grouparray[i].ad_name,
+            grouparray[i].ad_value);
     }
 }
 #endif /* TRACE_ARRAY */
@@ -232,16 +232,16 @@ PrintArray(void)
 static int
 Compare(array_data *elem1,array_data *elem2)
 {
-    if (elem1->value < elem2->value) {
+    if (elem1->ad_value < elem2->ad_value) {
         return -1;
     }
-    if (elem1->value > elem2->value) {
+    if (elem1->ad_value > elem2->ad_value) {
         return 1;
     }
-    if (elem1->original_position < elem2->original_position) {
+    if (elem1->ad_original_position < elem2->ad_original_position) {
         return -1;
     }
-    if (elem1->original_position > elem2->original_position) {
+    if (elem1->ad_original_position > elem2->ad_original_position) {
         return 1;
     }
     return 0;
@@ -413,6 +413,7 @@ GenerateOneSet(void)
 {
     unsigned u;
     unsigned prev_value = 0;
+    char * prev_name = "";
     char *prefix_id = prefix + prefix_root_len;
 
 #ifdef TRACE_ARRAY
@@ -444,23 +445,30 @@ GenerateOneSet(void)
 
     for (u = 0; u < array_count; ++u) {
         /* Check if value already dumped */
-        if (u > 0 && group_array[u].value == prev_value) {
+        if (u > 0 && group_array[u].ad_value == prev_value) {
             fprintf(f_names_c,
                 "    /*  Skipping alternate spelling of value\n");
             fprintf(f_names_c,
                 "        0x%x. %s_%s */\n",
                 (unsigned)prev_value,
                 prefix,
-                group_array[u].name);
+                group_array[u].ad_name);
+            printf("0x%04x: Skip "
+                "%s_%s Keep %s_%s\n",
+                (unsigned)prev_value,
+                prefix,
+                group_array[u].ad_name,
+                prefix,prev_name);
             continue;
         }
-        prev_value = group_array[u].value;
+        prev_value = group_array[u].ad_value;
+        prev_name = group_array[u].ad_name;
 
         /* Generate entries for 'dwarf_names.c' */
         fprintf(f_names_c,"    case %s_%s:\n",
-            prefix,group_array[u].name);
+            prefix,group_array[u].ad_name);
         fprintf(f_names_c,"        *s_out = \"%s_%s\";\n",
-            prefix,group_array[u].name);
+            prefix,group_array[u].ad_name);
         fprintf(f_names_c,"        return DW_DLV_OK;\n");
     }
 
@@ -565,11 +573,11 @@ ParseDefinitionsAndWriteOutput(void)
                     second_underscore,MAX_NAME_LEN);
                 exit(EXIT_FAILURE);
             }
-            _dwarf_safe_strcpy(group_array[array_count].name,
+            _dwarf_safe_strcpy(group_array[array_count].ad_name,
                 MAX_NAME_LEN,second_underscore,
                 strlen(second_underscore));
-            group_array[array_count].value = v;
-            group_array[array_count].original_position = array_count;
+            group_array[array_count].ad_value = v;
+            group_array[array_count].ad_original_position = array_count;
             ++array_count;
         }
     }
