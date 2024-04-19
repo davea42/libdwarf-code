@@ -34,8 +34,8 @@
 #include <errno.h>  /* errno */
 #include <stdio.h>  /* fgets() fprintf() printf() sscanf() */
 #include <stdlib.h> /* exit() qsort() strtoul() */
-#include <string.h> /* strchr() strcmp() strcpy() strlen() strncmp() */
-
+#include <string.h> /* strchr() strcmp() strcpy() strlen()
+    strncmp() */
 #include "libdwarf_private.h"
 #include "dd_getopt.h"
 #include "dwarf_safe_strcpy.h"

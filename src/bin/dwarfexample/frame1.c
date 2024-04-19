@@ -716,9 +716,10 @@ print_fde_instrs(Dwarf_Debug dbg,
             exit(EXIT_FAILURE);
         }
         printf("iterating Requested addr of row 0x%" DW_PR_DUx
-           " Actual addr 0x%" DW_PR_DUx
-           " More rows? %s Subsequent_pc 0x%" DW_PR_DUx "\n",
-           arbitrary_addr,actual_pc,has_more_rows?"yes":"no",subsequent_pc);
+            " Actual addr 0x%" DW_PR_DUx
+            " More rows? %s Subsequent_pc 0x%" DW_PR_DUx "\n",
+            arbitrary_addr,actual_pc,has_more_rows?"yes":"no",
+            subsequent_pc);
     }
     print_regtable(&tab3);
 

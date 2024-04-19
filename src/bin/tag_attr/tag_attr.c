@@ -49,7 +49,6 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 
 void dd_minimal_count_global_error(void) {}
 
-
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 
 /* Expected input format
