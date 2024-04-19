@@ -1,3 +1,260 @@
+2024-04-19:  David Anderson
+    commit c36e70a69a33ecb0db50ce654f0ea5129d1081a0
+
+    Fixed the instances violating the project
+    codingstyle. No logic change.
+            modified:   src/bin/builduritable/uritablebuild.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/tag_attr.c
+
+2024-04-18:  David Anderson
+    commit d248b698829560ae5361b9c7ac177b59e1d79f6a
+
+    Made it consitent with the project codingstyle.
+    No change in functionality or logic.
+            modified:   src/bin/dwarfgen/createirepfrombinary.h
+            modified:   src/bin/dwarfgen/dg_getopt.h
+            modified:   src/bin/dwarfgen/general.h
+            modified:   src/bin/dwarfgen/irepattrtodbg.h
+            modified:   src/bin/dwarfgen/irepdie.h
+            modified:   src/bin/dwarfgen/irepform.h
+            modified:   src/bin/dwarfgen/irepframe.h
+            modified:   src/bin/dwarfgen/irepline.h
+            modified:   src/bin/dwarfgen/irepmacro.h
+            modified:   src/bin/dwarfgen/ireppubnames.h
+
+2024-04-18:  David Anderson
+    commit 6c761f6df684a5ae3afc864b557cc7f801fd0b5e
+
+    Changes to follow the project codingstyle.
+    No logic changes.
+            modified:   src/bin/dwarfgen/dg_getopt.cc
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/dwarfgen/ireppubnames.h
+            modified:   src/bin/dwarfgen/irepresentation.h
+            modified:   src/bin/dwarfgen/ireptodbg.h
+            modified:   src/bin/dwarfgen/strtabdata.h
+
+2024-04-18:  David Anderson
+    commit 68374db250043f623b77e666a1329b8d0798446d
+
+    Changes just follow the project codingstyle.
+    No logic changes.
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.h
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2024-04-05:  David Anderson
+    commit 459c9153fbc3d6a15f52f382480daaad48d06656
+
+    This getts errors but useless errors.
+            deleted:    scorecards.yml
+
+2024-04-03:  David Anderson
+    commit bc88d4f9d521a881214e5899ad4b897e7c86dfe7
+
+    Removed #includes, moved them to .c files
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+    All these needed new includes (extracted from
+    dd_globals.h)
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_helpertree.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_makename.c
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_strstrnocase.c
+            modified:   src/bin/dwarfdump/dd_true_section_name.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_addr.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+            modified:   src/bin/dwarfdump/print_section_groups.c
+            modified:   src/bin/dwarfdump/print_sections.c
+            modified:   src/bin/dwarfdump/print_str_offsets.c
+            modified:   src/bin/dwarfdump/print_strings.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_common.c
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   test/test_helpertree.c
+            modified:   test/test_makename.c
+            modified:   test/testuriLE64ELfsource.c
+
+2024-04-03:  David Anderson
+    commit ca7f73e36cfea85099a569f12fd204b670db310d
+
+    Regenerated, now with no #include present in them.
+            modified:   dwarfdump/dwarfdump-ta-table.h
+            modified:   dwarfdump/dwarfdump-tt-table.h
+
+    These create the above headers, and no longer
+    insert #includes in the generated headers.
+            modified:   tag_attr/tag_attr.c
+            modified:   tag_tree/tag_tree.c
+
+2024-04-03:  David Anderson
+    commit 803f8f04ebd60b7a3529cd811a7ec5a24dd279c4
+
+    Corrected violations of the libdwarf codingstyle.
+    No change in the tests themselves.
+            modified:   test_dwarf_leb.c
+            modified:   test_errmsglist.c
+            modified:   test_getopt.c
+            modified:   test_ignoresec.c
+            modified:   test_int64_test.c
+            modified:   test_linkedtopath.c
+            modified:   test_safe_strcpy.c
+            modified:   test_sanitized.c
+            modified:   test_setupsections.c
+            modified:   testuriLE64ELfsource.c
+
+2024-04-03:  David Anderson
+    commit 0f97fa50a173df710ea29c584c7388ccc74ddb0b
+
+    Removed the only #include  in dd_esb.h
+            modified:   src/bin/dwarfdump/dd_esb.h
+
+    all these needed FILE declared and many needed
+    printf. So now include stdio.h where needed.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_true_section_name.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_addr.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+            modified:   src/bin/dwarfdump/print_sections.c
+            modified:   src/bin/dwarfdump/print_str_offsets.c
+            modified:   src/bin/dwarfdump/print_strings.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   test/test_esb.c
+            modified:   test/test_sanitized.c
+            modified:   test/test_setupsections.c
+    Fixed nested comment
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+
+2024-04-03:  David Anderson
+    commit d40eb7fb6eef5186a1f24aa3cc1d4ff9a3f0ea68
+
+    Some #if 0'd lines that are not needed
+    have been changed from #include to #xnclude so
+    readers do not get the impression we need those
+    references.
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+
+2024-04-03:  David Anderson
+    commit 16110eabf11844c268b26452a326f2a79d6fbc97
+
+    Regenerated by 'make rebuild'
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-04-03:  David Anderson
+    commit c7135da82b82a995e4bc88636b186f2f0884181e
+
+    tool/updatesemanticversion.py 0.9.3
+    to update the version.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-04-03:  David Anderson
+    commit 06fce3a250b5181c35d8782d11488e2644411bb8
+
+    Removed #include "dwarf_base_types.h"
+    It is not needed here.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2024-04-03:  David Anderson
+    commit 8125c8e6b6b7dd70da135cf16cfb50b4df75e7a6
+
+    Removing  #include of stdio.h
+            modified:   ../../lib/libdwarf/dwarf_line_table_reader_common.h
+
+2024-04-02:  David Anderson
+    commit 5e43a5ab73cb00c8a46660b361366a8c9c3c93c9
+
+    Adding release xz name
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-04-02:  David Anderson
+    commit 437eebd9062625263a301610ef3402f81e73ac72
+
+    Added release tar name: libdwarf-0.9.2.tar.xz
+    to applicable vulnerabililities.
+            modified:   bugxml/data.txt
+
+2024-04-02:  David Anderson
+    commit 45c318f152b0cd804cdbdafe99726a62fbf298c0
+
+    Ready for release.
+            modified:   ChangeLog
+
 2024-04-02:  David Anderson
     commit c8306b7f24655ee8b7b1038ca1ccb188c9ad4374
 
