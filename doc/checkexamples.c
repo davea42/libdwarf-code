@@ -110,7 +110,8 @@ int exampleinit(const char *path, unsigned groupnumber)
 
     @code
 */
-int exampleinit_dl(const char *path, unsigned groupnumber, Dwarf_Error *error)
+int exampleinit_dl(const char *path, unsigned groupnumber,
+    Dwarf_Error *error)
 {
     static char true_pathbuf[FILENAME_MAX];
     static const char *glpath[3] = {
@@ -232,7 +233,8 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
 
     @code
 */
-int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg, Dwarf_Error *error)
+int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg,
+    Dwarf_Error *error)
 {
     int res = 0;
 
