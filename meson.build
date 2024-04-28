@@ -1,7 +1,9 @@
 project('libdwarf', ['c','cpp'],
   version: '0.9.3',
-  default_options : ['buildtype=debugoptimized',
-  'warning_level=3', 'werror=true'],
+  default_options : [
+    'buildtype=debugoptimized',
+    'warning_level=3',
+  ],
   meson_version : '>=0.54'
 )
 
