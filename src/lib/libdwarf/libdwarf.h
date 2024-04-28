@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "0.9.2"
+#define DW_LIBDWARF_VERSION "0.9.3"
 #define DW_LIBDWARF_VERSION_MAJOR 0
 #define DW_LIBDWARF_VERSION_MINOR 9
-#define DW_LIBDWARF_VERSION_MICRO 2
+#define DW_LIBDWARF_VERSION_MICRO 3
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -126,20 +126,6 @@ extern "C" {
 #define DW_GROUPNUMBER_ANY  0
 #define DW_GROUPNUMBER_BASE 1
 #define DW_GROUPNUMBER_DWO  2
-
-/*  Special values for offset_into_exception_table field
-    of dwarf fde's. */
-/*  The following value indicates that there is no
-    Exception table offset
-    associated with a dwarf frame. */
-#define DW_DLX_NO_EH_OFFSET         (-1LL)
-/*  The following value indicates that the producer
-    was unable to analyze the
-    source file to generate Exception tables for this function. */
-#define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
-
-/* The augmenter string for CIE */
-#define DW_CIE_AUGMENTER_STRING_V0  "z"
 
 /*  FRAME special values */
 /*  The following 3 are assigned numbers, but
@@ -248,7 +234,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
     The DWARF4 specification class definition suffices to
     describe all DWARF versions.
     See section 7.5.4, Attribute Encodings.
-    A return of DW_FORM_CLASS_UNKNOWN means we
+    A return of DW_FORM_CLASS_UNKNOWN means the library
     could not properly figure
     out what form-class it is.
 
@@ -258,7 +244,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
 
     DWARF5:
     DW_FORM_CLASS_LOCLISTSPTR  is like DW_FORM_CLASS_LOCLIST
-    except that LOCLISTSPTR is aways a section offset,
+    except that LOCLISTSPTR is always a section offset,
     never an index, and LOCLISTSPTR is only referenced
     by DW_AT_loclists_base.
     Note DW_FORM_CLASS_LOCLISTSPTR spelling to distinguish
@@ -266,7 +252,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
 
     DWARF5:
     DW_FORM_CLASS_RNGLISTSPTR  is like DW_FORM_CLASS_RNGLIST
-    except that RNGLISTSPTR is aways a section offset,
+    except that RNGLISTSPTR is always a section offset,
     never an index. DW_FORM_CLASS_RNGLISTSPTR is only
     referenced by DW_AT_rnglists_base.
 */
@@ -350,11 +336,14 @@ typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 */
 typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
-/*  This provides access to data from sections
+/*! @typedef  Dwarf_Gnu_Index_Head
+
+    A pointer to a struct Dwarf_Gnu_Index_Head_s
+    for sections
     .debug_gnu_pubtypes or .debug_gnu_pubnames.
     These are not standard DWARF, and can appear
     with gcc -gdwarf-5
-    */
+*/
 typedef struct Dwarf_Gnu_Index_Head_s * Dwarf_Gnu_Index_Head;
 
 /*! @typedef Dwarf_Dsc_Head
@@ -373,11 +362,44 @@ typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
 /*! @typedef dwarf_printf_callback_function_type
 
     Used as a function pointer to a user-written
-    callback function.
+    callback function. This provides a detailed
+    content of line table data.
+
+    The default contents of the callback data
+    are all zero bytes.  So no callbacks
+    involving this data will be done.
+
+    See dwarf_register_printf_callback()
+
+    @param dw_user_pointer
+    Passes your callback  a pointer to space you allocated as
+    an identifier of some kind in calling
+    dwarf_register_printf_callback..
+    @param dw_linecontent
+    Passes your callback null-terminated string with
+    one line of detailed line table content.
+
 */
 typedef void (* dwarf_printf_callback_function_type)
-    (void * /*user_pointer*/, const char * /*linecontent*/);
+    (void * dw_user_pointer, const char * dw_linecontent);
 
+/*! @struct Dwarf_Printf_Callback_Info_s
+
+    If one wishes to print detailed line table
+    information one creates an instance of this
+    struct and fills in the fields and passes
+    the struct to the relevant init, for example,
+    dwarf_init_path().
+
+    @var dp_user_pointer
+    A pointer to data of use in a call back.
+    @var dp_fptr
+    @var dp_buffer
+    @var dp_buffer_len
+    @var dp_buffer_user_provided
+    @var dp_reserved.
+    Set to zero.
+*/
 struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_user_pointer;
     dwarf_printf_callback_function_type dp_fptr;
@@ -387,7 +409,7 @@ struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_reserved;
 };
 
-/*! @typedef Dwarf_Cmdline_Options.
+/*! @struct Dwarf_Cmdline_Options_s
 
     check_verbose_mode defaults to FALSE.
     If a libdwarf-calling program sets
@@ -399,10 +421,20 @@ struct Dwarf_Printf_Callback_Info_s {
     Or the libdwarf calling code can call
     dwarf_record_cmdline_options() to set
     the new value.
+
+    For convenience the type name for the struct
+    is Dwarf_Cmdline_Options.
+
+    @var check_verbose_mode
+
 */
-typedef struct Dwarf_Cmdline_Options_s {
+struct Dwarf_Cmdline_Options_s {
     Dwarf_Bool check_verbose_mode;
-} Dwarf_Cmdline_Options;
+};
+/*! @typedef Dwarf_Cmdline_Options
+
+*/
+typedef struct Dwarf_Cmdline_Options_s Dwarf_Cmdline_Options;
 
 /*! @typedef Dwarf_Str_Offsets_Table
     Provides an access to the .debug_str_offsets
@@ -496,7 +528,8 @@ typedef struct Dwarf_Ranges_s {
 
         Note that this definition can only deal correctly
         with register numbers that fit in a 16 bit
-        unsigned value.  Changing this would be an incompatible
+        unsigned value.  Removing this
+        restriction would force an incompatible
         change to several functions in the libdwarf API.
 */
 
@@ -526,16 +559,22 @@ typedef struct Dwarf_Regtable_Entry3_s {
 
     Note that this definition can only deal correctly
     with register table size that fits in a 16 bit
-    unsigned value.  */
+    unsigned value.
+*/
 typedef struct Dwarf_Regtable3_s {
-    struct Dwarf_Regtable_Entry3_s   
+    struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
 
 /* Opaque types for Consumer Library. */
 /*! @typedef Dwarf_Error
-    &error is used in most calls to return error details
+
+    @code
+    Dwarf_Error error = 0;
+    dres = dwarf_siblingof_c(in_die,&return_sib, &error);
+    @endcode
+    &error is used in calls to return error details
     when the call returns DW_DLV_ERROR.
 */
 typedef struct Dwarf_Error_s*      Dwarf_Error;
@@ -569,15 +608,31 @@ typedef struct Dwarf_Line_s*       Dwarf_Line;
 typedef struct Dwarf_Global_s*     Dwarf_Global;
 
 /*! @typedef Dwarf_Type
-    Used to reference a reference to an entry in
+    Before release 0.6.0 used to reference a reference
+    to an entry in
     the .debug_pubtypes section (as well as
     the SGI-only extension .debug_types).
+    However, we use Dwarf_Global instead now.
 */
 typedef struct Dwarf_Type_s*       Dwarf_Type;
 
-/* The next three are SGI extensions not used elsewhere. */
+/*! @typedef Dwarf_Func
+    An SGI extension type which is no longer
+    used at all.
+    As of release 0.6.0 use Dwarf_Global instead.
+*/
 typedef struct Dwarf_Func_s*       Dwarf_Func;
+/*! @typedef Dwarf_Var
+    An SGI extension type which is no longer
+    used at all.
+    As of release 0.6.0 use Dwarf_Global instead.
+*/
 typedef struct Dwarf_Var_s*        Dwarf_Var;
+/*! @typedef Dwarf_Weak
+    An SGI extension type which is no longer
+    used at all.
+    As of release 0.6.0 use Dwarf_Global instead.
+*/
 typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 
 /*! @typedef Dwarf_Attribute
@@ -586,17 +641,19 @@ typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 typedef struct Dwarf_Attribute_s*  Dwarf_Attribute;
 
 /*! @typedef Dwarf_Abbrev
-    Used to reference a Dwarf_Abbrev, though
-    usually such are handled transparently
-    in the library
+    Used to reference a Dwarf_Abbrev.
+    Usually Dwarf_Abbrev are fully handled inside the library
+    so one rarely needs to declare the type.
 */
 typedef struct Dwarf_Abbrev_s*     Dwarf_Abbrev;
 
 /*! @typedef Dwarf_Fde
+
     Used to reference .debug_frame or .eh_frame FDE.
 */
 typedef struct Dwarf_Fde_s*        Dwarf_Fde;
 /*! @typedef Dwarf_Cie
+
     Used to reference .debug_frame or .eh_frame CIE.
 */
 typedef struct Dwarf_Cie_s*        Dwarf_Cie;
@@ -628,15 +685,18 @@ typedef struct Dwarf_Line_Context_s     *Dwarf_Line_Context;
 typedef struct Dwarf_Macro_Context_s    *Dwarf_Macro_Context;
 
 /*! @typedef Dwarf_Dnames_Head
+
     Used as the general reference to the DWARF5 .debug_names
     section.
 */
 typedef struct Dwarf_Dnames_Head_s      *Dwarf_Dnames_Head;
 
 /*! @typedef Dwarf_Handler
+
     Used in rare cases (mainly tiny programs)
     with dwarf_init_path() etc
-    initialization calls.
+    initialization calls to provide a pointer
+    to a generic-error-handler function you write.
 */
 typedef void  (*Dwarf_Handler)(Dwarf_Error dw_error,
     Dwarf_Ptr dw_errarg);
@@ -658,13 +718,22 @@ struct Dwarf_Macro_Details_s {
     Dwarf_Signed dmd_fileindex;/* the source file index */
     char *       dmd_macro;  /* macro name string */
 };
+/*! @typedef Dwarf_Macro_Details
+
+    A handy short name for a Dwarf_Macro_Details_S struct.
+*/
 typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
+
+/*! @typedef Dwarf_Debug_Fission_Per_CU
+
+    A handy short name for a Dwarf_Debug_Fission_Per_CU_s struct.
+*/
 typedef struct Dwarf_Debug_Fission_Per_CU_s
     Dwarf_Debug_Fission_Per_CU;
 
 /* ===== BEGIN Obj_Access data ===== */
 /*! @typedef Dwarf_Obj_Access_Interface_a
-    Used for access to and settint up special data
+    Used for access to and setting up special data
     allowing access to DWARF even with no object
     files present
 */
@@ -672,7 +741,7 @@ typedef struct Dwarf_Obj_Access_Interface_a_s
     Dwarf_Obj_Access_Interface_a;
 
 /*! @typedef Dwarf_Obj_Access_Methods_a
-    Used for access to and settint up special data
+    Used for access to and setting up special data
     allowing access to DWARF even with no object
     files present
 */
@@ -767,18 +836,20 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 /*! @} endgroup allstructs */
 
-/*! @defgroup framedefines Default stack frame #defines
+/*! @defgroup framedefines Default stack frame macros
     @{
 */
 /*  Special values for offset_into_exception_table field
-    of dwarf fde's. */
-/*  The following value indicates that there is no
+    of dwarf fde's
+    The following value indicates that there is no
     Exception table offset
-    associated with a dwarf frame. */
+    associated with a dwarf frame.
+*/
 #define DW_DLX_NO_EH_OFFSET         (-1LL)
 /*  The following value indicates that the producer
     was unable to analyze the
-    source file to generate Exception tables for this function. */
+    source file to generate Exception tables for this function.
+*/
 #define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
 
 /* The augmenter string for CIE */
@@ -1451,7 +1522,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     the error details.
     @return DW_DLV_OK etc.
 
-    @link dwsec_separatedebug  Details on separate DWARF object access @endlink
+    @link dwsec_separatedebug Details on separate DWARF object access @endlink
     @see dwarf_init_path_dl dwarf_init_b
     @see exampleinit
 */
@@ -1540,7 +1611,7 @@ DW_API int dwarf_init_path_a(const char * dw_path,
     the error details.
     @return DW_DLV_OK etc.
 
-    @link dwsec_separatedebug  Details on separate DWARF object access @endlink
+    @link dwsec_separatedebug Details on separate DWARF object access @endlink
     @see exampleinit_dl
     */
 DW_API int dwarf_init_path_dl(const char * dw_path,
@@ -1584,9 +1655,7 @@ DW_API int dwarf_init_path_dl_a(const char * dw_path,
     unsigned char   * dw_dl_path_source,
     Dwarf_Error*      dw_error);
 
-/*! @brief Initialization based on Unix/Linux (etc) path
-    This version allows specifying any number of debuglink
-    global paths to search on for debuglink targets.
+/*! @brief Initialization based on Unix/Linux (etc) fd
 
     In case DW_DLV_ERROR returned be sure to
     call dwarf_dealloc_error even though
@@ -1636,6 +1705,10 @@ DW_API int dwarf_init_b(int dw_fd,
     May return DW_DLV_NO_ENTRY
     but no further information is available.
     Normally returns DW_DLV_OK.
+
+    There is nothing the caller can do with the return
+    value except report it somehow.  Most callers
+    ignore the return value.
 */
 DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
 
@@ -1689,20 +1762,33 @@ DW_API int dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* dw_obj,
     The init call dw_obj data is not freed
     by the call to dwarf_object_finish.
     @return
-    The return value DW_DLV_OK etc is pretty useless, there
-    is not much you can do with it.
+    The return value DW_DLV_OK etc is useless,
+    one could possibly report it somehow.  Callers
+    usually ignore the return value.
 */
 DW_API int dwarf_object_finish(Dwarf_Debug dw_dbg);
 
 /*! @brief Use with split dwarf.
 
-    @param dw_basedbg
-    Pass in an open dbg, on an object file
-    with (normally) lots of DWARF..
+    In libdwarf usage the  object file being reported
+    on [a] is opened with dwarf_init_path() or the like.
+    If that object file [a] is a split-dwarf object
+    then important data needed to report all of what is
+    in the object file [a] needs an open Dwarf_Debug on
+    the base object file [b] (usually the base executable
+    object).  Here we call that executable object file [b]
+    the @e tied object.
+
+    See DWARF5 Appendix F.
+
+    @param dw_split_dbg
+    Pass in an open dbg, on a split-dwarf object file
+    with (normally) lots of DWARF but no executable code.
     @param dw_tied_dbg
     Pass in an open dbg on an executable
-    which has minimal DWARF to save space
-    in the executable.
+    (we call it a @e tied dbg here)
+    which has minimal DWARF (to save space
+    in the executable).
     @param dw_error
     In case return is DW_DLV_ERROR
     dw_error is set to point to
@@ -1712,7 +1798,7 @@ DW_API int dwarf_object_finish(Dwarf_Debug dw_dbg);
     @see example2
     @see example3
 */
-DW_API int dwarf_set_tied_dbg(Dwarf_Debug dw_basedbg,
+DW_API int dwarf_set_tied_dbg(Dwarf_Debug dw_split_dbg,
     Dwarf_Debug  dw_tied_dbg,
     Dwarf_Error* dw_error);
 
@@ -1741,6 +1827,17 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     and it knows where to find 'next'.
 
     It returns the CU_DIE pointer through dw_cu_die;
+
+    dwarf_next_cu_header_e() is preferred over
+    dwarf_next_cu_header_d() as the latter requires
+    a second (immediate) step to access the CU-DIE
+    of the CU.
+
+    With the CU-DIE returned by dwarf_next_cu_header_e()
+    one calls dwarf_child() first (the CU-DIE has
+    no siblings) and then one calls dwarf_siblingof_c() and
+    dwarf_child() appropriately to descend the tree of
+    DIEs.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -1817,8 +1914,7 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     libdwarf v0.8.0 and earlier (and it also works
     for later versions).
 
-    This version will evenually be deprecated, but
-    that won't be for years.
+    This version will eventually be deprecated.
 
     The library keeps track of where it is in the object file
     and it knows where to find 'next'.
@@ -1876,6 +1972,18 @@ DW_API int dwarf_siblingof_c(Dwarf_Die    dw_die,
     Dwarf_Error *dw_error);
 
 /*! @brief Return the first DIE or the next sibling DIE.
+
+    This function follows dwarf_next_cu_header_d()
+    to return the CU-DIE that dwarf_next_cu_header_d()
+    implies but does not reveal.
+
+    Aside from the special case required use
+    of dwarf_siblingof_b()
+    immediately following
+    dwarf_next_cu_header_d(), dwarf_siblingof_c()
+    is the faster function.
+
+    This function will eventually be deprecated.
 
     @param dw_dbg
     The Dwarf_Debug one is operating on.
@@ -1964,7 +2072,7 @@ DW_API int dwarf_cu_header_basics(Dwarf_Die dw_die,
     @param dw_return_childdie
     Returns the first child through the pointer.
     For subsequent dies siblings of the first, use
-    dwarf_siblingof_b().
+    dwarf_siblingof_c().
     @param dw_error
     The usual Dwarf_Error*.
     @return
@@ -1981,6 +2089,9 @@ DW_API int dwarf_child(Dwarf_Die dw_die,
 /*! @brief Deallocate (free) a DIE.
     @param dw_die
     Frees (deallocs) memory associated with this Dwarf_Die.
+
+    DIEs not freed explicitly will be freed by
+    dwarf_finish().
 */
 DW_API void dwarf_dealloc_die( Dwarf_Die dw_die);
 
@@ -2021,8 +2132,8 @@ DW_API int dwarf_die_from_hash_signature(Dwarf_Debug dw_dbg,
     The global offset of the DIE in the appropriate
     section.
     @param dw_is_info
-    Pass TRUE if the target is .debug_info, else
-    pass FALSE if the target is .debug_types.
+    Pass TRUE if the target is .debug_info.
+    Pass FALSE if the target is .debug_types.
     @param dw_return_die
     On  success this returns a DIE pointer to
     the found DIE.
@@ -2093,7 +2204,7 @@ DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
     So we can associate a DIE's abbreviations with the contents
     the abbreviations section.
     Useful for detailed printing and analysis of
-    abbreviations
+    abbreviations.
 
     @param dw_die
     The DIE of interest
@@ -2147,6 +2258,9 @@ DW_API int dwarf_dieoffset(Dwarf_Die dw_die,
 
 /*! @brief Extract address given address index. DWARF5
 
+    Useful for checking for compiler/linker errors
+    in the creation of DWARF5.
+
     @param dw_die
     The DIE of interest
     @param dw_index
@@ -2181,6 +2295,10 @@ DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int dw_form);
     the global debug_info section offset of the CU DIE
     in the CU containing the given_die
     (the passed in DIE can be any DIE).
+
+    This does not identify whether the section is
+    .debug_info or .debug_types, use
+    dwarf_get_die_infotypes_flag() to determine the section.
 
     @see dwarf_get_cu_die_offset_given_cu_header_offset_b
     @see example7
@@ -2229,6 +2347,10 @@ DW_API int dwarf_get_cu_die_offset_given_cu_header_offset_b(
 
     @see dwarf_CU_dieoffset_given_die
 
+    This does not identify whether the section is
+    .debug_info or .debug_types, use
+    dwarf_get_die_infotypes_flag() to determine the section.
+
     @param dw_die
     The DIE being queried.
     @param dw_return_offset
@@ -2243,6 +2365,11 @@ DW_API int dwarf_die_CU_offset(Dwarf_Die dw_die,
     Dwarf_Error*     dw_error);
 
 /*! @brief Return the offset length of the entire CU of a DIE.
+
+    This does not identify whether the section is
+    .debug_info or .debug_types, use
+    dwarf_get_die_infotypes_flag() to determine the section.
+
     @param dw_die
     The DIE being queried.
     @param dw_return_CU_header_offset
@@ -2298,7 +2425,7 @@ DW_API int dwarf_attr(Dwarf_Die dw_die,
     Do not free the string.
     Many attributes allow various forms that directly or
     indirectly contain strings and this
-    follows all of them to their string.
+    returns the string.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -2335,7 +2462,7 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
 
 /*! @brief Return the DIE abbrev code
 
-    The Abbrev code for a DIE is a non-negative
+    The Abbrev code for a DIE is a positive
     integer assigned by the compiler within a particular CU.
     For .debug_names abbreviations the
     situation is conceptually similar. The code values
@@ -2355,7 +2482,7 @@ DW_API Dwarf_Unsigned dwarf_die_abbrev_code(Dwarf_Die dw_die);
 /*! @brief Return TRUE if the DIE has children
 
     @param dw_die
-    A DIE.
+    A valid DIE pointer (not NULL).
     @param dw_ab_has_child
     Sets TRUE though the pointer if the DIE
     has children.
@@ -2373,6 +2500,10 @@ DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     This is used by dwarfdump (when
     dwarfdump is checking for valid DWARF)
     to try to catch a corrupt DIE tree.
+
+    This does not identify whether the section is
+    .debug_info or .debug_types, use
+    dwarf_get_die_infotypes_flag() to determine the section.
 
     @see example_sibvalid
 
@@ -2475,6 +2606,11 @@ DW_API int dwarf_get_die_address_size(Dwarf_Die dw_die,
 
 /* Get both offsets (local and global) */
 /*! @brief Return section and CU-local offsets of a DIE
+
+    This does not identify whether the section is
+    .debug_info or .debug_types, use
+    dwarf_get_die_infotypes_flag() to determine the section.
+
     @param dw_die
     The DIE of interest.
     @param dw_global_offset
@@ -2529,12 +2665,6 @@ DW_API int dwarf_get_version_of_die(Dwarf_Die dw_die,
 DW_API int dwarf_lowpc(Dwarf_Die dw_die,
     Dwarf_Addr * dw_returned_addr,
     Dwarf_Error* dw_error);
-
-/*  When the highpc attribute is of class  'constant'
-    it is not an address, it is an offset from the
-    base address (such as lowpc) of the function.
-    This is therefore a required interface for DWARF4
-    style DW_AT_highpc.  */
 
 /*! @brief Return the DW_AT_hipc address value
 
@@ -2603,7 +2733,7 @@ DW_API int dwarf_dietype_offset(Dwarf_Die dw_die,
     Dwarf_Bool  * dw_is_info,
     Dwarf_Error * dw_error);
 
-/*! @brief Return the value of the attribute  DW_AT_byte_size
+/*! @brief Return the value of the attribute DW_AT_byte_size
 
     @param dw_die
     The DIE of interest.
@@ -2618,7 +2748,7 @@ DW_API int dwarf_bytesize(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_size,
     Dwarf_Error*     dw_error);
 
-/*! @brief Return the value of the attribute  DW_AT_bitsize
+/*! @brief Return the value of the attribute DW_AT_bitsize
 
     @param dw_die
     The DIE of interest.
@@ -2657,6 +2787,7 @@ DW_API int dwarf_bitoffset(Dwarf_Die dw_die,
     Dwarf_Half     * dw_attrnum,
     Dwarf_Unsigned * dw_returned_offset,
     Dwarf_Error*     dw_error);
+
 /*! @brief Return the value of the DW_AT_language attribute.
 
     The DIE should be a CU DIE.
@@ -2689,8 +2820,8 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
 DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_order,
     Dwarf_Error*     dw_error);
-
 /*! @} */
+
 /*! @defgroup attrform DIE Attribute and Attribute-Form Details
     @{
     Access to the details of DIEs
@@ -3345,21 +3476,21 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     version 0xfe06 and a file-number from a
     <b>DW_AT_decl_file</b> or  <b>DW_AT_call_file</b>:
 
-    -# If the file-number is zero there is no file name to find.
-    -# Otherwise subtract one(1) from the file-number and
-       use the new value as the index into the array
-       of string pointers.
+    -#  If the file-number is zero there is no file name to find.
+    -#  Otherwise subtract one(1) from the file-number and
+        use the new value as the index into the array
+        of string pointers.
 
     The name strings returned are each assembled in the
     following way by dwarf_srcfiles():
 
-    -# The file number denotes a name in the line table header.
-    -# If the name is not a full path (i.e. not starting
-       with / in posix/linux/MacOS) then prepend the appropriate
-       directory string from the line table header.
-    -# If the name is still not a full path then prepend
-       the content of the DW_AT_comp_dir attribute
-       of the CU DIE.
+    -#  The file number denotes a name in the line table header.
+    -#  If the name is not a full path (i.e. not starting
+        with / in posix/linux/MacOS) then prepend the appropriate
+        directory string from the line table header.
+    -#  If the name is still not a full path then prepend
+        the content of the DW_AT_comp_dir attribute
+        of the CU DIE.
 
     To retrieve the line table version call
     dwarf_srclines_b() and dwarf_srclines_version().
@@ -3602,7 +3733,7 @@ DW_API int dwarf_srclines_files_indexes(
     Has the md5ptr field so cases where DW_LNCT_MD5
     is present can return pointer to the MD5 value.
     With DWARF 5 index starts with 0.
-    dwarf_srclines_files_indexes makes
+    dwarf_srclines_files_indexes() makes
     indexing through the files easy.
 
     @see dwarf_srclines_files_indexes
@@ -3740,7 +3871,7 @@ DW_API int dwarf_srclines_version(Dwarf_Line_Context dw_line_context,
 
 /*! @brief Read Line beginstatement register
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3759,7 +3890,7 @@ DW_API int dwarf_linebeginstatement(Dwarf_Line dw_line,
 
 /*! @brief Read Line endsequence register flag
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3778,7 +3909,7 @@ DW_API int dwarf_lineendsequence(Dwarf_Line dw_line,
 
 /*! @brief Read Line line register
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3796,7 +3927,7 @@ DW_API int dwarf_lineno(Dwarf_Line dw_line,
 
 /*! @brief Read Line file register
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3831,7 +3962,7 @@ DW_API int dwarf_line_is_addr_set(Dwarf_Line dw_line,
 
 /*! @brief Return the address of the Dwarf_Line
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3849,7 +3980,7 @@ DW_API int dwarf_lineaddr(Dwarf_Line dw_line,
 
 /*! @brief Return a column number through the pointer
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3867,7 +3998,7 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
 
 /*! @brief Return the file name applicable to the Dwarf_Line
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3888,7 +4019,7 @@ DW_API int dwarf_linesrc(Dwarf_Line dw_line,
 
 /*! @brief Return the basic_block line register.
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3908,7 +4039,7 @@ DW_API int dwarf_lineblock(Dwarf_Line dw_line,
     will want all or none of them.  */
 /*! @brief Return various line table registers in one call
 
-    @link dwsec_linetabreg Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3988,7 +4119,7 @@ DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     with the messages (likely just print them).
     The lines passed back already have newlines.
 
-    @see dwarf_check_lineheader
+    @see dwarf_check_lineheader(b)
     @see Dwarf_Printf_Callback_Info_s
 
     @param dw_cu_die
@@ -4012,15 +4143,17 @@ DW_API int dwarf_check_lineheader_b(Dwarf_Die dw_cu_die,
     Does not use printf.
     Instead it calls back to the application using a function
     pointer once per line-to-print.  The lines passed back
-    already have any needed
-    newlines.
+    already have any needed newlines.
+
+    dwarfdump uses this function for verbose printing
+    of line table data.
 
     Failing to call the dwarf_register_printf_callback()
     function will prevent the lines from being passed back
     but such omission is not an error.
-    the same function, but focused on checking for errors
-    is
-    @see dwarf_check_lineheader_b
+    The same function, but focused on checking for errors
+    is dwarf_check_lineheader_b().
+
     @see Dwarf_Printf_Callback_Info_s
 
     @param dw_cu_die
@@ -4037,7 +4170,10 @@ DW_API int dwarf_print_lines(Dwarf_Die dw_cu_die,
 
 /*! @brief For line details this records callback details
 
-    For the structure you must fill in:
+    Not usually needed. It is a way to check
+    (while using the library) what callback
+    data is in use or to update that callback data.
+
     @see Dwarf_Printf_Callback_Info_s
 
     @param dw_dbg
@@ -7113,7 +7249,6 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     Dwarf_Signed * dw_number_of_globals,
     Dwarf_Error  * dw_error);
 
-
 #define DW_GL_GLOBALS  0 /* .debug_pubnames  and .debug_names */
 #define DW_GL_PUBTYPES 1 /* .debug_pubtypes */
 /* the following are IRIX ONLY */
@@ -7121,7 +7256,7 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 #define DW_GL_TYPES    3 /* .debug_typenames */
 #define DW_GL_VARS     4 /* .debug_varnames */
 #define DW_GL_WEAKS    5 /* .debug_weaknames */
-/*! @brief Global debug_types access 
+/*! @brief Global debug_types access
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -7141,7 +7276,7 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 
     dwarf_get_pubtypes() is an alternate name for
     dwarf_globals_by_type(..,DW_GL_PUBTYPES,..).
-   
+
 */
 DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
     Dwarf_Global** dw_pubtypes,
@@ -7387,14 +7522,14 @@ DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
     On success set to the offset, in .debug_info, of
     the data for this block.
     The returned offset may be outside the bounds
-    of the actual .debug_info section, sucn a possibility
+    of the actual .debug_info section, such a possibility
     does not cause the function to return DW_DLV_ERROR.
     @param dw_size_of_debug_info_area
     On success set to the size in bytes, in .debug_info, of
     the area this block refers to.
     The returned dw_ dw_size_of_debug_info_are
     plus dw_offset_into_debug_info may be outside the bounds
-    of the actual .debug_info section, sucn a possibility
+    of the actual .debug_info section, such a possibility
     does not cause the function to return DW_DLV_ERROR.
     Use  dwarf_get_section_max_offsets_d()
     to learn the size of .debug_info and optionally other
@@ -8035,14 +8170,21 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     Dwarf_Error                * dw_error);
 
 /*  END debugfission dwp .debug_cu_index
-    and .debug_tu_indexmeaningfumeaningfu operations. */
+    and .debug_tu_index meaningful operations. */
 
 /*! @} */
 
 /*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
 
     @{
-    When DWARF is separate from a normal shared object.
+    When DWARF sections are in a differenct object
+    than the executable or a normal shared object.
+    The special GNU section provides a way to name
+    the object file with DWARF.
+
+    libdwarf will attempt to use this data to find
+    the object file with DWARF.
+
     Has nothing to do with split-dwarf/debug-fission.
 */
 
@@ -8172,10 +8314,10 @@ DW_API int dwarf_suppress_debuglink_crc(int dw_suppress);
 
 /*! @brief Adding debuglink global paths
 
-    Only really inside dwarfexample/dwdebuglink.c
+    Used inside src/bin/dwarfexample/dwdebuglink.c
     so we can show all that is going on.
     The following has the explanation for how debuglink
-    and global paths interact.
+    and global paths interact:
     @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
 
     @param dw_dbg
@@ -8254,11 +8396,17 @@ DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
 /*! @defgroup harmless Harmless Error recording
 
     @{
-    The harmless error list is a circular buffer of
+    The harmless error list is a fixed size circular buffer of
     errors we note but which do not stop us from processing
     the object.  Created so dwarfdump or other tools
     can report such inconsequential errors without causing
     anything to stop early.
+
+    You can change the list size from the default of
+    DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE
+    at any time for a Dwarf_Debug dbg.
+
+    Harmless error data is dealloc'd by dwarf_finish().
 */
 /*! @brief Default size of the libdwarf-internal circular list */
 #define DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE 4
@@ -8363,12 +8511,19 @@ DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     through the pointer @b dw_s_out and the value
     returned is DW_DLV_OK.
 
-    The strings are in static storage and must not be freed.
+    The strings returned on sucess are in static storage
+    and must not be freed.
+
+    These functions are generated from information
+    in dwarf.h, not hand coded functions.
 
     If DW_DLV_NO_ENTRY is returned the @b dw_val_in is not known and
     @b *s_out is not set. This is unusual.
 
     DW_DLV_ERROR is never returned.
+
+    The example referred to offers the suggested way
+    to use functions like these.
 
     @see examplezb
 
@@ -9061,8 +9216,8 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     @{
 
     Section Groups are defined in the extended
-    Elf ABI and are usually seen in relocatable
-    Elf object files.
+    Elf ABI and are seen in relocatable
+    Elf object files, not executables or shared objects.
 
     @link dwsec_sectiongroup Section Groups Overview @endlink
 
@@ -9372,11 +9527,10 @@ DW_API int dwarf_get_universalbinary_count(
 
     These are crucial for libdwarf itself.
     The dw_ftype returned is one of
-    DW_FTYPE_APPLEUNIVERSAL
-    DW_FTYPE_MACH_O
-    DW_FTYPE_ELF
-    DW_FTYPE_PE
-
+    DW_FTYPE_ELF,
+    DW_FTYPE_PE,
+    DW_FTYPE_MACH_O, or
+    DW_FTYPE_APPLEUNIVERSAL.
 */
 DW_API int dwarf_object_detector_path_b(const char * dw_path,
     char           *dw_outpath_buffer,
@@ -9416,4 +9570,4 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
+#endif /* _LIBDWARF_H */

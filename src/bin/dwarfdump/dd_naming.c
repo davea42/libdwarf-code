@@ -29,9 +29,13 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 /* SGI has moved from the Crittenden Lane address.  */
 
 #include <config.h>
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_makename.h"
 #include "dd_naming.h"

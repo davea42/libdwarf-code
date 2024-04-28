@@ -62,6 +62,11 @@
 #include "irepresentation.h"
 #include "createirepfrombinary.h"
 
+// Microsoft preprocessor definition that wreaks havoc
+#ifdef interface
+#undef interface
+#endif
+
 using std::string;
 using std::cout;
 using std::cerr;

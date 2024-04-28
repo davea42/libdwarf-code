@@ -59,6 +59,9 @@ strstrnocase.c
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 
 Dwarf_Bool

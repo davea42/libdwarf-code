@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 0.9.1 */
+/* Generated for source version 0.9.3 */
 
 /* BEGIN FILE */
 
@@ -226,11 +226,11 @@ dwarf_get_TAG_name (unsigned int val,
     case DW_TAG_immutable_type:
         *s_out = "DW_TAG_immutable_type";
         return DW_DLV_OK;
-    case DW_TAG_lo_user:
-        *s_out = "DW_TAG_lo_user";
+    case DW_TAG_TI_far_type:
+        *s_out = "DW_TAG_TI_far_type";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
-        0x4080. DW_TAG_TI_far_type */
+        0x4080. DW_TAG_lo_user */
     case DW_TAG_MIPS_loop:
         *s_out = "DW_TAG_MIPS_loop";
         return DW_DLV_OK;
@@ -957,9 +957,9 @@ dwarf_get_AT_name (unsigned int val,
         *s_out = "DW_AT_HP_block_index";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
-        0x2000. DW_AT_TI_veneer */
-    /*  Skipping alternate spelling of value
         0x2000. DW_AT_lo_user */
+    /*  Skipping alternate spelling of value
+        0x2000. DW_AT_TI_veneer */
     case DW_AT_MIPS_fde:
         *s_out = "DW_AT_MIPS_fde";
         return DW_DLV_OK;
@@ -2944,11 +2944,11 @@ dwarf_get_CC_name (unsigned int val,
     case DW_CC_pass_by_value:
         *s_out = "DW_CC_pass_by_value";
         return DW_DLV_OK;
-    case DW_CC_lo_user:
-        *s_out = "DW_CC_lo_user";
+    case DW_CC_GNU_renesas_sh:
+        *s_out = "DW_CC_GNU_renesas_sh";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
-        0x40. DW_CC_GNU_renesas_sh */
+        0x40. DW_CC_lo_user */
     case DW_CC_GNU_borland_fastcall_i386:
         *s_out = "DW_CC_GNU_borland_fastcall_i386";
         return DW_DLV_OK;
@@ -3420,11 +3420,11 @@ dwarf_get_CFA_name (unsigned int val,
     case DW_CFA_val_expression:
         *s_out = "DW_CFA_val_expression";
         return DW_DLV_OK;
-    case DW_CFA_lo_user:
-        *s_out = "DW_CFA_lo_user";
+    case DW_CFA_TI_soffset_extended:
+        *s_out = "DW_CFA_TI_soffset_extended";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
-        0x1c. DW_CFA_TI_soffset_extended */
+        0x1c. DW_CFA_lo_user */
     /*  Skipping alternate spelling of value
         0x1c. DW_CFA_low_user */
     case DW_CFA_MIPS_advance_loc8:
@@ -3452,9 +3452,11 @@ dwarf_get_CFA_name (unsigned int val,
     case DW_CFA_METAWARE_info:
         *s_out = "DW_CFA_METAWARE_info";
         return DW_DLV_OK;
-    case DW_CFA_high_user:
-        *s_out = "DW_CFA_high_user";
+    case DW_CFA_hi_user:
+        *s_out = "DW_CFA_hi_user";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x3f. DW_CFA_high_user */
     case DW_CFA_advance_loc:
         *s_out = "DW_CFA_advance_loc";
         return DW_DLV_OK;

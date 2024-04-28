@@ -236,7 +236,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
                 ((Dwarf_Small*)ip) +sbyte; \
             _dwarf_memcpy_swap_bytes((char *)(op),      \
                 (const void *)ipi,  \
-                 ol);               \
+                ol);               \
         }                           \
     } while (0)
 #else // LITTLEENDIAN
@@ -247,7 +247,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
                 (const void *)ip;   \
             memset(op,0,ol);        \
             memcpy(((char *)(op)),  \
-               ipi,il);             \
+                ipi,il);             \
         } else {                    \
             const void *ipi =       \
                 (const void *)ip;   \
@@ -325,17 +325,17 @@ public:
         if (curoffset_ != offset) {
             off_t v = lseek(fd_,offset,SEEK_SET);
             if (v == (off_t)-1) {
-               cout << "dwarfgen: fseek to " << offset<<
-                   " fails " << endl;
-               exit(1);
+                cout << "dwarfgen: fseek to " << offset<<
+                    " fails " << endl;
+                exit(1);
             }
             curoffset_ = v;
         }
         ssize_t wrote = write(fd_,bytes,(size_t)length);
         if (wrote == -1) {
-               cout << "dwarfgen: write length " << length<<
-                   "fails " << endl;
-               exit(1);
+            cout << "dwarfgen: write length " << length<<
+                "fails " << endl;
+            exit(1);
         }
         curoffset_ += length;
     }
@@ -365,18 +365,18 @@ class ByteBlob {
 public:
     ByteBlob() {bytes_ = 0; len_=0;};
     ByteBlob(unsigned char *bytes,size_t len) {
-       bytes_ = bytes;
-       len_ = len;
+        bytes_ = bytes;
+        len_ = len;
     };
     void setBlob(unsigned char *bytes,size_t len) {
-       if (len_) {
-           cout << "dwarfgen: Duplicate ByteBlob setting " <<
-              "for length "<< len_ << " to length"
-              <<  len << endl;
-           exit(1);
-       }
-       bytes_ = bytes;
-       len_ = len;
+        if (len_) {
+            cout << "dwarfgen: Duplicate ByteBlob setting " <<
+                "for length "<< len_ << " to length"
+                <<  len << endl;
+            exit(1);
+        }
+        bytes_ = bytes;
+        len_ = len;
     };
     unsigned char *bytes_;
     Dwarf_Unsigned len_;
@@ -422,7 +422,6 @@ public:
         e_ptrbytesize_=0; e_hdrlen_ = 0;
     };
 };
-
 
 class SectionForDwarf {
 public:
@@ -1013,49 +1012,47 @@ create_debug_sup_content(Dwarf_P_Debug dbg)
 static void
 calculate_all_offsets(void)
 {
-     Dwarf_Unsigned total_length = 0;
-     Dwarf_Unsigned ehdr_length = 0;
-     Dwarf_Unsigned section_headers_length = 0;
-     Dwarf_Unsigned sechdr_length = 0;
-     Dwarf_Unsigned section_content_len = 0;
+    Dwarf_Unsigned total_length = 0;
+    Dwarf_Unsigned ehdr_length = 0;
+    Dwarf_Unsigned section_headers_length = 0;
+    Dwarf_Unsigned sechdr_length = 0;
+    Dwarf_Unsigned section_content_len = 0;
 
-     if (dwelfheader.elf_is_32bit()) {
+    if (dwelfheader.elf_is_32bit()) {
         ehdr_length = sizeof(dw_elf32_ehdr);
         sechdr_length = sizeof(dw_elf32_shdr);
         total_length +=  ehdr_length;
-     } else {
+    } else {
         ehdr_length += sizeof(dw_elf64_ehdr);
         sechdr_length = sizeof(dw_elf64_shdr);
         total_length += ehdr_length;
-     }
-     dwelfheader.e_shentsize_ = sechdr_length;
-     dwelfheader.e_hdrlen_ = ehdr_length;
-     dwelfheader.e_shnum_ = dwsectab.size();
-     dwelfheader.e_ehsize_ = ehdr_length;
+    }
+    dwelfheader.e_shentsize_ = sechdr_length;
+    dwelfheader.e_hdrlen_ = ehdr_length;
+    dwelfheader.e_shnum_ = dwsectab.size();
+    dwelfheader.e_ehsize_ = ehdr_length;
 
-     for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
+    for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
         it != dwsectab.end();
         it++) {
         SectionForDwarf &sec = *it;
         sec.sh_offset_ = total_length;
         section_content_len += sec.sh_size_;
         total_length += sec.sh_size_;
-     }
+    }
+    section_headers_length = sechdr_length*dwsectab.size();
+    total_length += section_headers_length;
 
-     section_headers_length = sechdr_length*dwsectab.size();
-     total_length += section_headers_length;
-
-
-     Dwarf_Unsigned curoff = ehdr_length;
-     for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
+    Dwarf_Unsigned curoff = ehdr_length;
+    for (vector<SectionForDwarf>::iterator it = dwsectab.begin();
         it != dwsectab.end();
         it++) {
         SectionForDwarf &sec = *it;
         sec.sh_offset_= curoff;
         curoff += sec.sh_size_;
-     }
-     dwelfheader.e_shoff_ = ehdr_length + section_content_len;
-     dwelfheader.e_shnum_ = dwsectab.size();
+    }
+    dwelfheader.e_shoff_ = ehdr_length + section_content_len;
+    dwelfheader.e_shnum_ = dwsectab.size();
 }
 
 // Gets all the data from libdwarfp and writes
@@ -1105,7 +1102,6 @@ write_object_file(Dwarf_P_Debug dbg,
     cout << " output image size in bytes " << finalsize << endl;
     dwwriter.closeFile();
 }
-
 
 static unsigned char text[4] = {0,0,0,0};
 
@@ -1162,7 +1158,9 @@ InsertDataIntoElf(Dwarf_Unsigned d,Dwarf_P_Debug dbg)
 #if 0
 {
     if (!scn) {
-        cout << "dwarfgen: Unable to _dwarf_elf_getscn on disk transform # "
+        cout <<
+            "dwarfgen: Unable to _dwarf_elf_getscn "
+            "on disk transform # "
             << d << endl;
         exit(1);
     }
@@ -1172,7 +1170,8 @@ InsertDataIntoElf(Dwarf_Unsigned d,Dwarf_P_Debug dbg)
 
     DW_Elf_Data* ed = _dwarf_elf_newdata(scn);
     if (!ed) {
-        cout << "dwarfgen: _dwarf_elf_newdata died on transformed index "
+        cout <<
+            "dwarfgen: _dwarf_elf_newdata died on transformed index "
             << d << endl;
         exit(1);
     }
@@ -1286,7 +1285,7 @@ findelfbuf(SectionForDwarf &scn,
             exit(1);
         }
         char *lclptr = reinterpret_cast<char *>(bb.bytes_) +
-             localoff;
+            localoff;
         return lclptr;
     }
     cout << " Relocation at offset  " << offset  <<
@@ -1477,13 +1476,9 @@ write_elf_header(void)
             &dwelfheader.e_ehsize_,
             sizeof(dwelfheader.e_ehsize_));
         datap = (unsigned char *)&dwelfheader.e_64_;
-     }
-     //cout << "Writing Elf header content "
-     //   " at offset 0"  << endl;
-     dwwriter.wwrite(0,dwelfheader.e_hdrlen_,datap);
+    }
+    dwwriter.wwrite(0,dwelfheader.e_hdrlen_,datap);
 }
-
-
 
 // Returns pointer to the content, len of each is
 // dwelfheader.e_shentsize_
@@ -1543,7 +1538,6 @@ copy_section_hdr_data (SectionForDwarf&sec)
     /* not reached */
 }
 
-
 static void
 write_section_contents(void)
 {
@@ -1584,7 +1578,6 @@ write_section_headers()
         headeroff += dwelfheader.e_shentsize_;
     }
 }
-
 
 //  We write  elf header, sections, section headers.
 Dwarf_Unsigned

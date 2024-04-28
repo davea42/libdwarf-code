@@ -31,10 +31,14 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 
 #include <stdlib.h> /* exit() */
 #include <string.h> /* memset() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_esb.h"
@@ -44,7 +48,6 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}
-
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 
@@ -323,8 +326,6 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define HAVE_USAGE_TAG_ATTR 1\n");
         fprintf(fileOut,"#endif /* HAVE_USAGE_TAG_ATTR */\n\n");
         fprintf(fileOut,"#ifdef HAVE_USAGE_TAG_ATTR\n");
-        fprintf(fileOut,"#include \"dwarf.h\"\n");
-        fprintf(fileOut,"#include \"libdwarf.h\"\n\n");
         fprintf(fileOut,"typedef struct {\n");
         fprintf(fileOut,"    unsigned int count;"
             " /* Attribute count */\n");

@@ -33,6 +33,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <stdlib.h> /* exit() free() getenv() realloc() strtoul() */
 #include <string.h> /* memset() strcmp() strlen()
     strncmp() strrchr()*/
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 /* Windows specific header files */
 #ifdef _WIN32
@@ -48,6 +49,9 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_dwconf.h"
 #include "dd_canonical_append.h"

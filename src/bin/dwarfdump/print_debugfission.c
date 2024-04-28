@@ -28,10 +28,14 @@
 #include <config.h>
 
 #include <string.h> /* memset() strcmp() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"

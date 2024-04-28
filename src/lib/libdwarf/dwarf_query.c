@@ -1729,6 +1729,8 @@ dwarf_arrayorder(Dwarf_Die die,
 /*  Return DW_DLV_OK if ok
     DW_DLV_ERROR if failure.
 
+    attr must be a valid attribute pointer.
+
     If the die and the attr are not related the result is
     meaningless.  */
 int
@@ -1753,6 +1755,9 @@ dwarf_attr_offset(Dwarf_Die die, Dwarf_Attribute attr,
 Dwarf_Unsigned
 dwarf_die_abbrev_code(Dwarf_Die die)
 {
+    if (!die) {
+        return 0;
+    }
     return die->di_abbrev_code;
 }
 
@@ -1763,6 +1768,9 @@ dwarf_die_abbrev_code(Dwarf_Die die)
 int
 dwarf_die_abbrev_children_flag(Dwarf_Die die,Dwarf_Half *ab_has_child)
 {
+    if (!die) {
+        return DW_DLV_ERROR;
+    }
     if (die->di_abbrev_list) {
         *ab_has_child = die->di_abbrev_list->abl_has_child;
         return DW_DLV_OK;

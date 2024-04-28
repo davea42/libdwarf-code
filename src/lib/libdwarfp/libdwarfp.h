@@ -392,8 +392,8 @@ DWP_API int dwarf_add_AT_data16(Dwarf_P_Die /*ownerdie*/,
 
 /*  November 2018. DW_AT_implicit const generation. */
 DWP_API int dwarf_add_AT_implicit_const(Dwarf_P_Die /*ownerdie*/,
-    Dwarf_Half /*attrnum*/,
-    Dwarf_Signed /*signed_value*/,
+    Dwarf_Half    /*attrnum*/,
+    Dwarf_Signed  /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error * /*error*/);
 
@@ -405,7 +405,8 @@ DWP_API int dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Error * /*error*/);
 
 /*  Preferred as of December 2018. */
-DWP_API int dwarf_add_AT_const_value_signedint_a(Dwarf_P_Die /*ownerdie*/,
+DWP_API int dwarf_add_AT_const_value_signedint_a(
+    Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Signed    /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);

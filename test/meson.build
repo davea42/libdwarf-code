@@ -139,6 +139,12 @@ pyscripttests = [
 builddir = project_build_base_root
 message(['mesondebug test builds ',builddir])
 
+configure_file(
+  input: '../src/bin/dwarfdump/dwarfdump.conf',
+  output: 'dwarfdump.conf',
+  copy: true
+)
+
 py3_exe = import('python').find_installation(required:false)
 if py3_exe.found()
   foreach testscr : pyscripttests

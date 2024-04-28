@@ -60,13 +60,15 @@ if (lib_type == 'static')
   dwarfdump_args += ['-DLIBDWARF_STATIC']
 endif
 
-executable('dwarfdump', dwarfdump_src,
+dwarfdump_exe = executable('dwarfdump', dwarfdump_src,
   c_args : [ dev_cflags, libdwarf_args, dwarfdump_args ],
   link_args :  dwarf_link_args ,
   dependencies : libdwarf,
   include_directories : config_dir,
   install : true
 )
+
+meson.override_find_program('dwarfdump', dwarfdump_exe)
 
 install_data('dwarfdump.conf',
   install_dir : pkgdwarfdump

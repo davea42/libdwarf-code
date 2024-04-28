@@ -35,6 +35,9 @@
 
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dwarf_tsearch.h"
 #include "dd_helpertree.h"

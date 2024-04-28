@@ -37,7 +37,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
-#include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
+#include <stdio.h>  /* FILE stdout stderr fprintf() printf()
+    sprintf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc()
     getenv() */
 #include <string.h> /* memset() strcmp() stricmp()
@@ -66,6 +67,9 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_makename.h"
 #include "dd_macrocheck.h"

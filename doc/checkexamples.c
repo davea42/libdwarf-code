@@ -31,15 +31,21 @@ cc -c -Wall -O0 -Wpointer-arith  \
 #define FALSE 0
 
 /*! @defgroup exampleinit Using dwarf_init_path()
-    @brief A libdwarf initialization call.
+
+    @brief Example of a libdwarf initialization call.
 
     An example calling  dwarf_init_path() and dwarf_finish()
     @param path
     Path to an object we wish to open.
     @param groupnumber
+    Desired groupnumber. Use DW_DW_GROUPNUMBER_ANY
+    unless you have reason to do otherwise.
+    @return
+    Returns the applicable result. DW_DLV_OK etc.
+
     @code
 */
-void exampleinit(const char *path, unsigned groupnumber)
+int exampleinit(const char *path, unsigned groupnumber)
 {
     static char true_pathbuf[FILENAME_MAX];
     unsigned tpathlen = FILENAME_MAX;
@@ -56,71 +62,10 @@ void exampleinit(const char *path, unsigned groupnumber)
         /*  Necessary call even though dbg is null!
             This avoids a memory leak.  */
         dwarf_dealloc_error(dbg,error);
-        return;
+        return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
         /*  Nothing we can do */
-        return;
-    }
-    printf("The file we actually opened is %s\n",
-        true_pathbuf);
-    /* Call libdwarf functions here */
-    dwarf_finish(dbg);
-}
-/*! @endcode */
-
-/*! @defgroup exampleinit_dl Using dwarf_init_path_dl()
-    @brief Initialization focused on GNU debuglink data
-
-    In case GNU debuglink data is followed the true_pathbuf
-    content will not match path.
-    The path actually used is copied to true_path_out.
-    In the case of MacOS dSYM the true_path_out
-    may not match path.
-    If debuglink missing from the Elf executable
-    or shared-object (ie, it is a normal
-    object!) or unusable by libdwarf or
-    true_path_buffer len is zero or true_path_out_buffer
-    is zero libdwarf accepts the path given as the object
-    to report on, no debuglink or dSYM processing will be used.
-
-    @sa https://sourceware.org/gdb/onlinedocs/\
-    gdb/Separate-Debug-Files.html
-
-    An example calling  dwarf_init_path_dl() and dwarf_finish()
-    @code
-*/
-int exampleinit_dl(const char *path, unsigned groupnumber,
-    Dwarf_Error *error)
-{
-    static char true_pathbuf[FILENAME_MAX];
-    static const char *glpath[3] = {
-        "/usr/local/debug",
-        "/usr/local/private/debug",
-        "/usr/local/libdwarfdd/debug"
-    };
-    unsigned tpathlen = FILENAME_MAX;
-    Dwarf_Handler errhand = 0;
-    Dwarf_Ptr errarg = 0;
-    Dwarf_Debug dbg = 0;
-    int res = 0;
-    unsigned char path_source = 0;
-
-    res = dwarf_init_path_dl(path,true_pathbuf,
-        tpathlen,groupnumber,errhand,
-        errarg,&dbg,
-        (char **)glpath,
-        3,
-        &path_source,
-        error);
-    if (res == DW_DLV_ERROR) {
-        /*  Necessary call even though dbg is null!
-            This avoids a memory leak.  */
-        dwarf_dealloc_error(dbg,*error);
-        *error = 0;
-        return DW_DLV_NO_ENTRY;
-    }
-    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     printf("The file we actually opened is %s\n",
@@ -131,8 +76,92 @@ int exampleinit_dl(const char *path, unsigned groupnumber,
 }
 /*! @endcode */
 
+/*! @defgroup exampleinit_dl Using dwarf_init_path_dl()
+
+    @brief Example focused on GNU debuglink data
+
+    In case GNU debuglink data is followed the true_pathbuf
+    content will not match path.
+    The path actually used is copied to true_path_out.
+
+    In the case of MacOS dSYM the true_path_out
+    may not match path.
+
+    If debuglink data is missing from the Elf executable
+    or shared-object (ie, it is a normal
+    object!) or unusable by libdwarf or
+    true_path_buffer len is zero or true_path_out_buffer
+    is zero libdwarf accepts the path given as the object
+    to report on, no debuglink or dSYM processing will be used.
+
+    @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+
+    An example calling  dwarf_init_path_dl() and dwarf_finish()
+
+    @param path
+    Path to an object we wish to open.
+    @param groupnumber
+    Desired groupnumber. Use DW_DW_GROUPNUMBER_ANY
+    unless you have reason to do otherwise.
+    @param error
+    A pointer we can use to record error details.
+    @return
+    Returns the applicable result. DW_DLV_OK etc.
+
+    @code
+*/
+int exampleinit_dl(const char *path, unsigned groupnumber,
+    Dwarf_Error *error)
+{
+    static char true_pathbuf[FILENAME_MAX];
+    static const char *glpath[3] = {
+        "/usr/local/debug",
+        "/usr/local/private/debug",
+        "/usr/local/libdwarf/debug"
+    };
+    unsigned      tpathlen = FILENAME_MAX;
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr     errarg = 0;
+    Dwarf_Debug   dbg = 0;
+    int           res = 0;
+    unsigned char path_source = 0;
+
+    res = dwarf_init_path_dl(path,true_pathbuf,
+        tpathlen,groupnumber,errhand,
+        errarg,&dbg,
+        (char **)glpath,
+        3,
+        &path_source,
+        error);
+    if (res == DW_DLV_ERROR) {
+        /*  We are not returning dbg, so we must do:
+            dwarf_dealloc_error(dbg,*error);
+            here to free the error details. */
+        dwarf_dealloc_error(dbg,*error);
+        *error = 0;
+        return res;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    printf("The file we actually opened is %s\n",
+        true_pathbuf);
+    /* Call libdwarf functions here */
+    dwarf_finish(dbg);
+    return res;
+}
+/*! @endcode */
+
 /*! @defgroup example1 Using dwarf_attrlist()
-    @brief Showing dwarf_attrlist()
+
+    @brief Example showing dwarf_attrlist()
+
+    @param somedie
+    Pass in any valid relevant DIE pointer.
+    @param error
+    An error pointer we can use.
+    @return
+    Return DW_DLV_OK (etc).
 
     @code
 */
@@ -173,9 +202,12 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup example2 Attaching a tied dbg
-    @brief Attaching a tied dbg
 
-    By convention, open the base Dwarf_Debug using
+    @brief Example attaching base dbg to a split-DWARF object.
+
+    See DWARF5 Appendix F on Split-DWARF.
+
+    By libdwarf convention, open the split Dwarf_Debug using
     a dwarf_init call.  Then open
     the executable as the tied object.
     Then call dwarf_set_tied_dbg()
@@ -183,48 +215,52 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
     in the tied-dbg (the executable).
 
     With split dwarf your libdwarf calls after
-    than the initial open
-    are done against the base Dwarf_Dbg and
-    libdwarf automatically looks in the open tied dbg
+    the the initial open
+    are done against the split Dwarf_Dbg and
+    libdwarf automatically looks in the tied dbg
     when and as appropriate.
-    the tied-dbg can be detached too, see
+    the tied_dbg can be detached too, see
     example3 link, though you must call
     dwarf_finish() on the detached dw_tied_dbg,
-    the library will not do that for you..
+    the library will not do that for you.
 
-    @param tieddbg
+    @param split_dbg
+    @param tied_dbg
     @param error
     @return
-    Returns whatever DW_DLV appropriate
-    to the caller to deal with.
+    Returns DW_DLV_OK  or DW_DLV_ERROR or
+    DW_DLV_NO_ENTRY to the caller.
+
     @code
 */
-int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
+int example2(Dwarf_Debug split_dbg, Dwarf_Debug tied_dbg,
     Dwarf_Error *error)
 {
     int res = 0;
 
     /*  The caller should have opened dbg
-        on the debug shared object/dwp,
+        on the split-dwarf object/dwp,
         an object with DWARF, but no executable
         code.
         And it should have opened tieddbg on the
         runnable shared object or executable. */
-    res = dwarf_set_tied_dbg(dbg,tieddbg,error);
-    /*  Let your caller (who initialized the dbg
+    res = dwarf_set_tied_dbg(split_dbg,tied_dbg,error);
+    /*  Let the caller (who initialized the dbg
         values) deal with doing dwarf_finish()
     */
     return res;
-
 }
 /*! @endcode */
 
 /*! @defgroup example3 Detaching a tied dbg
-    @brief Detaching a tied dbg
+
+    @brief Example detaching a tied (executable) dbg
+
+    See DWARF5 Appendix F on Split-DWARF.
 
     With split dwarf your libdwarf calls after
     than the initial open
-    are done against the base Dwarf_Dbg and
+    are done against the split Dwarf_Dbg and
     libdwarf automatically looks in the open tied dbg
     when and as appropriate.
     the tied-dbg can be detached too, see
@@ -234,10 +270,10 @@ int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
 
     @code
 */
-int example3(Dwarf_Debug dbg,Dwarf_Error *error)
+int example3(Dwarf_Debug split_dbg,Dwarf_Error *error)
 {
     int res = 0;
-    res = dwarf_set_tied_dbg(dbg,NULL,error);
+    res = dwarf_set_tied_dbg(split_dbg,NULL,error);
     if (res != DW_DLV_OK) {
         /* Something went wrong*/
         return res;
@@ -247,7 +283,7 @@ int example3(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplesecgroup Examining Section Group data
-    @brief Accessing Section Group data
+    @brief Example accessing Section Group data
 
     With split dwarf your libdwarf calls after
     than the initial open
@@ -325,10 +361,13 @@ void examplesecgroup(Dwarf_Debug dbg)
 }
 /*! @endcode */
 
-/*! @defgroup example4 Using dwarf_siblingofb()
-    @brief Accessing a DIE sibling.
+/*! @defgroup example4c Using dwarf_siblingof_c()
+    @brief Example accessing a DIE sibling.
 
-    Access to each DIE on a sibling list
+    Access to each DIE on a sibling list.
+    This is the preferred form as it is
+    slightly more efficient than
+    dwarf_siblingof_b().
 
     @code
 */
@@ -350,6 +389,20 @@ int example4c(Dwarf_Die in_die,
     }
     return res;
 }
+/*! @endcode */
+
+/*! @defgroup example4b Using dwarf_siblingof_b()
+    @brief Example accessing a DIE sibling.
+
+    Access to each DIE on a sibling list
+    This is the older form, required after
+    dwarf_next_cu_header_d().
+
+    Better to use dwarf_next_cu_header_e() and
+    dwarf_siblingof_c().
+
+    @code
+*/
 int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
     Dwarf_Bool is_info,
     Dwarf_Error *error)
@@ -358,7 +411,7 @@ int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
     int res = 0;
 
     /*  in_die might be NULL following a call
-        to dwarf_next_cu_header_d() 
+        to dwarf_next_cu_header_d()
         or a valid Dwarf_Die */
     res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, error);
     if (res == DW_DLV_OK) {
@@ -374,7 +427,7 @@ int example4b(Dwarf_Debug dbg,Dwarf_Die in_die,
 /*! @endcode */
 
 /*! @defgroup example5 Using dwarf_child()
-    @brief Accessing a DIE child
+    @brief Example accessing a DIE child
 
     If the DIE has children (for example
     inner scopes in a function or members of
@@ -405,12 +458,12 @@ void example5(Dwarf_Die in_die)
 /*! @endcode */
 
 /*! @defgroup example_sibvalid using dwarf_validate_die_sibling
-    @brief A DIE tree validation.
+    @brief Example of a DIE tree validation.
 
     Here we show how one uses
     dwarf_validate_die_sibling().
     Dwarfdump uses this function as a part of its
-    valdation of DIE trees.
+    validation of DIE trees.
 
     It is not something you need to use.
     But one must use it in a specific pattern
@@ -473,7 +526,7 @@ int example_sibvalid(Dwarf_Debug dbg,
             if (child) {
                 dwarf_dealloc_die(child);
             }
-            printf("dwarf_siblinof_b ERROR\n");
+            printf("dwarf_siblingof_b ERROR\n");
             return DW_DLV_ERROR;
         }
         if (sibres == DW_DLV_NO_ENTRY) {
@@ -508,7 +561,7 @@ int example_sibvalid(Dwarf_Debug dbg,
 /*! @endcode */
 
 /*! @defgroup examplecuhdre Example walking CUs(e)
-    @brief Accessing all CUs looking for specific items(e).
+    @brief Example examining CUs looking for specific items(e).
 
     Loops through as many CUs as needed, stops
     and returns once a CU provides the desired data.
@@ -541,9 +594,9 @@ void myrecord_data_for_die(struct myrecords_struct *myrecords,
     Dwarf_Die d);
 int  my_needed_data_exists(struct myrecords_struct *myrecords);
 
-/*  Loop on DIE tree. */
+/*  Loop on DIE tree.  */
 static void
-record_die_and_siblingse(Dwarf_Debug dbg, Dwarf_Die in_die,
+record_die_and_siblings_e(Dwarf_Debug dbg, Dwarf_Die in_die,
     int is_info, int in_level,
     struct myrecords_struct *myrec,
     Dwarf_Error *error)
@@ -560,14 +613,15 @@ record_die_and_siblingse(Dwarf_Debug dbg, Dwarf_Die in_die,
 
         /*  Depending on your goals, the in_level,
             and the DW_TAG of cur_die, you may want
-            to skip the dwarf_child call. */
+            to skip the dwarf_child call. We descend
+            the DWARF-standard way of depth-first. */
         res = dwarf_child(cur_die,&child,error);
         if (res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_OK) {
-            record_die_and_siblingse(dbg,child,is_info,
+            record_die_and_siblings_e(dbg,child,is_info,
                 in_level+1,myrec,error);
             /* No longer need 'child' die. */
             dwarf_dealloc(dbg,child,DW_DLA_DIE);
@@ -641,10 +695,9 @@ int examplecuhdre(Dwarf_Debug dbg,
         /*  We have the cu_die .
             New in v0.9.0 because the connection of
             the CU_DIE to the CU header is clear
-            in the argument list. 
-            No call to siblingof() is appropriate here.
+            in the argument list.
             */
-        record_die_and_siblingse(dbg,cu_die,is_info,
+        record_die_and_siblings_e(dbg,cu_die,is_info,
             0, myrec,error);
         dwarf_dealloc_die(cu_die);
     }
@@ -655,7 +708,7 @@ int examplecuhdre(Dwarf_Debug dbg,
 
 /*! @defgroup examplecuhdrd Example walking CUs(d)
 
-    @brief Accessing all CUs looking for specific items(d).
+    @brief Example accessing all CUs looking for specific items(d).
 
     Loops through as many CUs as needed, stops
     and returns once a CU provides the desired data.
@@ -786,13 +839,13 @@ int examplecuhdrd(Dwarf_Debug dbg,
                 .debug_info or .debug_types. */
             return res;
         }
-        /*  The CU will have a single sibling, a cu_die. 
+        /*  The CU will have a single sibling, a cu_die.
             It is essential to call this right after
             a call to dwarf_next_cu_header_d() because
             there is no explicit connection provided to
             dwarf_siblingof_b(), which returns a DIE
             from whatever CU was last accessed by
-            dwarf_next_cu_header_d()! 
+            dwarf_next_cu_header_d()!
             The lack of explicit connection was a
             design mistake in the API (made in 1992). */
 
@@ -816,7 +869,7 @@ int examplecuhdrd(Dwarf_Debug dbg,
 
 /*! @defgroup example6 Using dwarf_offdie_b()
 
-    @brief Accessing a DIE by its offset
+    @brief Example accessing a DIE by its offset
 
     @code
 */
@@ -845,7 +898,9 @@ int example6(Dwarf_Debug dbg,Dwarf_Off die_offset,
 /*! @endcode */
 
 /*! @defgroup example7 Using dwarf_offset_given_die()
-    @brief Finding the section offset of a CU DIE and the DIE
+    @brief Example finding the section offset of a DIE
+
+    Here finding the offset of a CU-DIE.
 
     @code
 */
@@ -875,7 +930,7 @@ int example7(Dwarf_Debug dbg, Dwarf_Die in_die,
 
 /* See also example1, which is more complete */
 /*! @defgroup example8 Using  dwarf_attrlist()
-    @brief Calling dwarf_attrlist()
+    @brief Example Calling dwarf_attrlist()
 
     @code
 */
@@ -901,7 +956,7 @@ int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampleoffset_list Using dwarf_offset_list()
-    @brief Using dwarf_offset_list
+    @brief Example using dwarf_offset_list
 
     An example calling  dwarf_offset_list
 
@@ -943,7 +998,7 @@ int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
 /*! @endcode */
 
 /*! @defgroup explainformblock Documenting Form_Block
-    @brief Documents Form_Block content
+    @brief Example documents Form_Block content
 
     Used with certain location information functions,
     a frame expression function, expanded
@@ -973,7 +1028,7 @@ int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
 */
 
 /*! @defgroup examplediscrlist Using dwarf_discr_list()
-    @brief Using dwarf_discr_list and dwarf_formblock
+    @brief Example using dwarf_discr_list, dwarf_formblock
 
     An example calling dwarf_get_form_class,
     dwarf_discr_list, and dwarf_formblock.
@@ -1096,7 +1151,7 @@ int example_discr_list(Dwarf_Debug dbg,
 /*! @endcode */
 
 /*! @defgroup example_loclistcv5 Location/expression access
-    @brief Access to DWARF2-5 loclists and loc-expressions
+    @brief Example using DWARF2-5 loclists and loc-expressions
 
     Valid for DWARF2 and later DWARF.
 
@@ -1196,7 +1251,7 @@ int example_loclistcv5(Dwarf_Attribute someattr,
 /*! @endcode */
 
 /*! @defgroup example_locexprc Reading a location expression
-    @brief Getting the details of a location expression
+    @brief Example getting details of a location expression
 
     @see example_loclistcv5
 
@@ -1210,19 +1265,19 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Error*error)
 {
     Dwarf_Loc_Head_c head = 0;
-    Dwarf_Locdesc_c locentry = 0;
-    int res2 = 0;
+    Dwarf_Locdesc_c  locentry = 0;
+    int            res2 = 0;
     Dwarf_Unsigned rawlopc = 0;
     Dwarf_Unsigned rawhipc = 0;
-    Dwarf_Bool debug_addr_unavail = FALSE;
+    Dwarf_Bool     debug_addr_unavail = FALSE;
     Dwarf_Unsigned lopc = 0;
     Dwarf_Unsigned hipc = 0;
     Dwarf_Unsigned ulistlen = 0;
     Dwarf_Unsigned ulocentry_count = 0;
     Dwarf_Unsigned section_offset = 0;
     Dwarf_Unsigned locdesc_offset = 0;
-    Dwarf_Small lle_value = 0;
-    Dwarf_Small loclist_source = 0;
+    Dwarf_Small    lle_value = 0;
+    Dwarf_Small    loclist_source = 0;
     Dwarf_Unsigned i = 0;
 
     res2 = dwarf_loclist_from_expr_c(dbg,
@@ -1277,7 +1332,7 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 /*! @endcode */
 
 /*! @defgroup examplec Using dwarf_srclines_b()
-    @brief example using dwarf_srclines_b()
+    @brief Example using dwarf_srclines_b()
 
     An example calling dwarf_srclines_b
 
@@ -1289,18 +1344,22 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 
     @param path
     Path to an object we wish to open.
-    @param groupnumber
+    @param error
+    Allows passing back error details to the caller.
+    @return
+    Return DW_DLV_OK etc.
+
     @code
 */
 int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     /* EXAMPLE: DWARF2-DWARF5  access.  */
-    Dwarf_Line  *linebuf = 0;
-    Dwarf_Signed linecount = 0;
-    Dwarf_Line  *linebuf_actuals = 0;
-    Dwarf_Signed linecount_actuals = 0;
+    Dwarf_Line    *linebuf = 0;
+    Dwarf_Signed   linecount = 0;
+    Dwarf_Line    *linebuf_actuals = 0;
+    Dwarf_Signed   linecount_actuals = 0;
     Dwarf_Line_Context line_context = 0;
-    Dwarf_Small  table_count = 0;
+    Dwarf_Small    table_count = 0;
     Dwarf_Unsigned lineversion = 0;
     int sres = 0;
     /* ... */
@@ -1311,7 +1370,7 @@ int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
     if (sres != DW_DLV_OK) {
         /*  Handle the DW_DLV_NO_ENTRY  or DW_DLV_ERROR
             No memory was allocated so there nothing
-            to dealloc. */
+            to dealloc here. */
         return sres;
     }
     if (table_count == 0) {
@@ -1437,22 +1496,23 @@ int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampled Using dwarf_srclines_b() and linecontext
-    @brief Another example of using dwarf_srclines_b()
+    @brief Example two using dwarf_srclines_b()
     @see dwarf_srclines_b
     @see dwarf_srclines_from_linecontext
     @see dwarf_srclines_dealloc_b
+
     @code
 */
 int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed       count = 0;
     Dwarf_Line_Context context = 0;
-    Dwarf_Line *linebuf = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Line *line;
-    Dwarf_Small table_count =0;
-    Dwarf_Unsigned version = 0;
-    int sres = 0;
+    Dwarf_Line        *linebuf = 0;
+    Dwarf_Signed       i = 0;
+    Dwarf_Line        *line;
+    Dwarf_Small        table_count =0;
+    Dwarf_Unsigned     version = 0;
+    int                sres = 0;
 
     sres = dwarf_srclines_b(somedie,
         &version, &table_count,&context,error);
@@ -1475,13 +1535,13 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplee Using dwarf_srcfiles()
-    @brief Getting source file names given a DIE
+    @brief Example getting source file names given a DIE
     @code
 */
 int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
-    /*  It is an annoying historical mistake in libdwarf that the count
-        is a signed value. */
+    /*  It is an annoying historical mistake in libdwarf
+        that the count is a signed value. */
     Dwarf_Signed       count = 0;
     char             **srcfiles = 0;
     Dwarf_Signed       i = 0;
@@ -1493,8 +1553,8 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
     res = dwarf_srclines_b(somedie,&lineversion,
         &table_count,&line_context,error);
     if (res != DW_DLV_OK) {
-            /*  dwarf_finish() will dealloc srcfiles, not doing 
-                that here.  */
+        /*  dwarf_finish() will dealloc srcfiles, not doing
+            that here.  */
         return res;
     }
     res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
@@ -1505,10 +1565,10 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 
     for (i = 0; i < count; ++i) {
         Dwarf_Signed propernumber = 0;
-        
+
         /*  Use srcfiles[i] If you  wish to print 'i'
             mostusefully
-            you should reflect the numbering that 
+            you should reflect the numbering that
             a DW_AT_decl_file attribute would report in
             this CU. */
         if (lineversion ==  5) {
@@ -1516,7 +1576,8 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
         } else {
             propernumber = i+1;
         }
-        printf("File %4ld %s\n",(unsigned long)propernumber,srcfiles[i]);
+        printf("File %4ld %s\n",(unsigned long)propernumber,
+            srcfiles[i]);
         dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
         srcfiles[i] = 0;
     }
@@ -1529,22 +1590,22 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplef Using dwarf_get_globals()
-    @brief Access to global symbol names
+    @brief Example using global symbol names
 
     For 0.4.2 and earlier this returned .debug_pubnames
     content.
     As of version 0.5.0 (October 2022) this  returns
-    .debug_pubnames  (if it exists) and .debug_names
-    (if it exists) data.
+    .debug_pubnames  (if it exists) and the relevant
+    portion of  .debug_names (if .debug_names exists) data.
 
     @code
 */
 int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *globs = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_get_globals(dbg, &globs,&count, error);
     if (res != DW_DLV_OK) {
@@ -1565,7 +1626,7 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampleg Using dwarf_globals_by_type()
-    @brief Reading .debug_pubtypes
+    @brief Example reading .debug_pubtypes
 
     The .debug_pubtypes section was in DWARF4,
     it could appear as an extension
@@ -1577,10 +1638,10 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 */
 int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_PUBTYPES,
         &types,&count,error);
@@ -1598,11 +1659,10 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampleh Reading .debug_weaknames (nonstandard)
-    @brief The section was IRIX/MIPS only
+    @brief Example. weaknames was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
-    You
 
     @code
 */
@@ -1627,7 +1687,7 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplej Reading .debug_funcnames (nonstandard)
-    @brief The section was IRIX/MIPS only
+    @brief Example. funcnames was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1636,10 +1696,10 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 */
 int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *funcs = 0;
-    Dwarf_Signed i = 0;
-    int fres = 0;
+    Dwarf_Signed  i = 0;
+    int           fres = 0;
 
     fres = dwarf_globals_by_type(dbg,DW_GL_FUNCS,
         &funcs,&count,error);
@@ -1655,7 +1715,7 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 /*! @endcode */
 
 /*! @defgroup examplel Reading .debug_types (nonstandard)
-    @brief The section was IRIX/MIPS only
+    @brief Example .debug_types was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1664,10 +1724,10 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 */
 int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_TYPES,
         &types,&count,error);
@@ -1683,7 +1743,7 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplen Reading .debug_varnames data (nonstandard)
-    @brief The section was IRIX/MIPS only
+    @brief Example .debug_varnames was IRIX/MIPS only
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1692,10 +1752,10 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 */
 int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Global *vars = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
     res = dwarf_globals_by_type(dbg,DW_GL_VARS,
         &vars,&count,error);
@@ -1708,9 +1768,11 @@ int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
     dwarf_globals_dealloc(dbg, vars, count);
     return DW_DLV_OK;
 }
+/*! @endcode */
 
 /*! @defgroup exampledebugnames Reading .debug_names data
-    @brief exampledebugnames Showing access to .debug_names
+
+    @brief Example access to .debug_names
 
     This is accessing DWARF5 .debug_names, a section
     intended to provide fast access to DIEs.
@@ -1729,8 +1791,6 @@ int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
     and the following is all taken care of for you
     by dwarf_get_globals().
 
-    FIXME
-
     @code
 */
 #define MAXPAIRS 8 /* The standard defines 5.*/
@@ -1738,10 +1798,10 @@ int exampledebugnames(Dwarf_Debug dbg,
     Dwarf_Unsigned *dnentrycount,
     Dwarf_Error *error)
 {
-    int res = DW_DLV_OK;
-    Dwarf_Unsigned offset = 0;
+    int               res = DW_DLV_OK;
+    Dwarf_Unsigned    offset = 0;
     Dwarf_Dnames_Head dn  = 0;
-    Dwarf_Unsigned new_offset = 0;
+    Dwarf_Unsigned    new_offset = 0;
 
     for (   ;res == DW_DLV_OK; offset = new_offset) {
         Dwarf_Unsigned comp_unit_count = 0;
@@ -1939,10 +1999,12 @@ int exampledebugnames(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
+/*! @endcode */
 
 /*! @defgroup examplep5 Reading .debug_macro data (DWARF5)
 
-    @brief An example reading DWARF5 macro data
+    @brief Example reading DWARF5 macro data
+
     This builds an list or some other data structure
     (not defined) to give an import somewhere to list
     the import offset and then later to enquire
@@ -1951,33 +2013,33 @@ int exampledebugnames(Dwarf_Debug dbg,
 
     This example does not actually do the import at
     the correct time as this is just checking
-    import offsets, not creating a proper full 
+    import offsets, not creating a proper full
     list (in the proper order) of the
     macros with the imports inserted.
     Here we find the macro context for a DIE,
-       report those macro entries, noting
-       any macro_import in a list
-       loop extracting unchecked macro offsets from the list
-          note any import in a list
+        report those macro entries, noting
+        any macro_import in a list
+        loop extracting unchecked macro offsets from the list
+            note any import in a list
     Of course some functions are not implemented here...
 
     @code
 */
-int            has_unchecked_import_in_list(void);
+int   has_unchecked_import_in_list(void);
 Dwarf_Unsigned get_next_import_from_list(void);
-void           mark_this_offset_as_examined(
-                  Dwarf_Unsigned macro_unit_offset);
-void           add_offset_to_list(Dwarf_Unsigned offset);
+void  mark_this_offset_as_examined(
+    Dwarf_Unsigned macro_unit_offset);
+void  add_offset_to_list(Dwarf_Unsigned offset);
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
-    Dwarf_Unsigned  k = 0;
-    Dwarf_Unsigned version = 0;
+    Dwarf_Unsigned      k = 0;
+    Dwarf_Unsigned      version = 0;
     Dwarf_Macro_Context macro_context = 0;
-    Dwarf_Unsigned macro_unit_offset = 0;
-    Dwarf_Unsigned number_of_ops = 0;
-    Dwarf_Unsigned ops_total_byte_len = 0;
-    Dwarf_Bool is_primary = TRUE;
+    Dwarf_Unsigned      macro_unit_offset = 0;
+    Dwarf_Unsigned      number_of_ops = 0;
+    Dwarf_Unsigned      ops_total_byte_len = 0;
+    Dwarf_Bool          is_primary = TRUE;
 
     /*  Just call once each way to test both.
         Really the second is just for imported units.*/
@@ -2117,19 +2179,20 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 /* @endcode */
 
 /*! @defgroup examplep2 Reading .debug_macinfo (DWARF2-4)
-    @brief Reading .debug_macinfo, DWARF2-4
+    @brief Example reading .debug_macinfo, DWARF2-4
 
-    @code */
+    @code
+*/
 
 void functionusingsigned(Dwarf_Signed s);
 
 int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
     Dwarf_Error*error)
 {
-    Dwarf_Signed count = 0;
+    Dwarf_Signed         count = 0;
     Dwarf_Macro_Details *maclist = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Unsigned max = 500000; /* sanity limit */
+    Dwarf_Signed         i = 0;
+    Dwarf_Unsigned       max = 500000; /* sanity limit */
     int errv = 0;
 
     /*  This is for DWARF2,DWARF3, and DWARF4
@@ -2171,16 +2234,17 @@ int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
 /*! @endcode */
 
 /*! @defgroup exampleq Extracting fde, cie lists.
-    @brief Opening FDE and CIE lists
+    @brief Example Opening FDE and CIE lists
 
-    @code */
+    @code
+*/
 int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Cie *cie_data = 0;
+    Dwarf_Cie   *cie_data = 0;
     Dwarf_Signed cie_count = 0;
-    Dwarf_Fde *fde_data = 0;
+    Dwarf_Fde   *fde_data = 0;
     Dwarf_Signed fde_count = 0;
-    int fres = 0;
+    int          fres = 0;
 
     fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,error);
@@ -2195,12 +2259,11 @@ int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampler Reading the .eh_frame section
-    @brief  Access to .eh_frame
+    @brief Example access to .eh_frame
 
     @code
 */
-int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
-    Dwarf_Error *error)
+int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,Dwarf_Error *error)
 {
     /*  Given a pc value
         for a function find the FDE and CIE data for
@@ -2210,11 +2273,11 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
         dwarf_get_fde_n() allows accessing all FDE/CIE
         data so one could build up an application-specific
         table of information if that is more useful.  */
-    Dwarf_Cie *cie_data = 0;
+    Dwarf_Cie   *cie_data = 0;
     Dwarf_Signed cie_count = 0;
-    Dwarf_Fde *fde_data = 0;
+    Dwarf_Fde   *fde_data = 0;
     Dwarf_Signed fde_count = 0;
-    int fres = 0;
+    int          fres = 0;
 
     fres = dwarf_get_fde_list_eh(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,error);
@@ -2222,6 +2285,7 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
         Dwarf_Fde myfde = 0;
         Dwarf_Addr low_pc = 0;
         Dwarf_Addr high_pc = 0;
+
         fres = dwarf_get_fde_at_pc(fde_data,mypcval,
             &myfde,&low_pc,&high_pc,
             error);
@@ -2245,7 +2309,7 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
 /*! @endcode */
 
 /*! @defgroup examples Using  dwarf_expand_frame_instructions
-    @brief  Example using dwarf_expand_frame_instructions
+    @brief Example using dwarf_expand_frame_instructions
 
     @code
 */
@@ -2255,8 +2319,8 @@ int examples(Dwarf_Cie cie,
 {
     Dwarf_Frame_Instr_Head head = 0;
     Dwarf_Unsigned         count = 0;
-    int res = 0;
-    Dwarf_Unsigned i = 0;
+    int                    res = 0;
+    Dwarf_Unsigned         i = 0;
 
     res = dwarf_expand_frame_instructions(cie,instruction,len,
         &head,&count, error);
@@ -2309,7 +2373,7 @@ int examples(Dwarf_Cie cie,
 /*! @endcode */
 
 /*! @defgroup examplestrngoffsets Reading string offsets section data
-    @brief examplestrngoffsets
+    @brief Example accessing the string offsets section
 
     An example accessing the string offsets section
     @param dbg
@@ -2323,11 +2387,11 @@ int examples(Dwarf_Cie cie,
 */
 int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    int res = 0;
+    int                     res = 0;
     Dwarf_Str_Offsets_Table sot = 0;
-    Dwarf_Unsigned wasted_byte_count = 0;
-    Dwarf_Unsigned table_count = 0;
-    Dwarf_Error closeerror = 0;
+    Dwarf_Unsigned          wasted_byte_count = 0;
+    Dwarf_Unsigned          table_count = 0;
+    Dwarf_Error             closeerror = 0;
 
     res = dwarf_open_str_offsets_table_access(dbg, &sot,error);
     if (res == DW_DLV_NO_ENTRY) {
@@ -2399,7 +2463,7 @@ int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
 /* @endcode */
 
 /*! @defgroup exampleu Reading an aranges section
-    @brief Reading .debug_aranges
+    @brief Example reading .debug_aranges
 
     An example accessing the .debug_aranges
     section. Looking all the aranges entries.
@@ -2415,10 +2479,10 @@ int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
     @code
 */
 static void cleanupbadarange(Dwarf_Debug dbg,
-    Dwarf_Arange *arange,
-    Dwarf_Signed i, Dwarf_Signed count)
+    Dwarf_Arange *arange, Dwarf_Signed i, Dwarf_Signed count)
 {
     Dwarf_Signed k = i;
+
     for ( ; k < count; ++k) {
         dwarf_dealloc(dbg,arange[k] , DW_DLA_ARANGE);
         arange[k] = 0;
@@ -2428,9 +2492,9 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     /*  It is a historical accident that the count is signed.
         No negative count is possible. */
-    Dwarf_Signed count = 0;
+    Dwarf_Signed  count = 0;
     Dwarf_Arange *arange = 0;
-    int res = 0;
+    int           res = 0;
 
     res = dwarf_get_aranges(dbg, &arange,&count, error);
     if (res == DW_DLV_OK) {
@@ -2464,7 +2528,7 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplev Example getting .debug_ranges data
-    @brief Accessing ranges data.
+    @brief Example accessing ranges data.
 
     @code
 */
@@ -2472,11 +2536,11 @@ void functionusingrange(Dwarf_Ranges *r);
 int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     Dwarf_Die die, Dwarf_Error*error)
 {
-    Dwarf_Signed count = 0;
-    Dwarf_Off  realoffset = 0;
-    Dwarf_Ranges *rangesbuf = 0;
+    Dwarf_Signed   count = 0;
+    Dwarf_Off      realoffset = 0;
+    Dwarf_Ranges  *rangesbuf = 0;
     Dwarf_Unsigned bytecount = 0;
-    int res = 0;
+    int            res = 0;
 
     res = dwarf_get_ranges_b(dbg,rangesoffset,die,
         &realoffset,
@@ -2498,7 +2562,7 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
 /*! @endcode */
 
 /*! @defgroup examplew Reading gdbindex data
-    @brief Accessing  gdbindex section data
+    @brief Example accessing  gdbindex section data
 
     @code
 */
@@ -2512,8 +2576,8 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
     Dwarf_Unsigned symbol_table_offset = 0;
     Dwarf_Unsigned constant_pool_offset = 0;
     Dwarf_Unsigned section_size = 0;
-    const char * section_name = 0;
-    int res = 0;
+    const char *   section_name = 0;
+    int            res = 0;
 
     res = dwarf_gdbindex_header(dbg,&gindexptr,
         &version,&cu_list_offset, &types_cu_list_offset,
@@ -2570,7 +2634,7 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplewgdbindex Reading  gdbindex addressarea
-    @brief Accessing gdbindex addressarea data
+    @brief Example accessing gdbindex addressarea data
 
     @code
 */
@@ -2579,7 +2643,7 @@ int examplewgdbindex(Dwarf_Gdbindex gdbindex,
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i = 0;
-    int res = 0;
+    int            res = 0;
 
     res = dwarf_gdbindex_addressarea(gdbindex, &list_len,error);
     if (res != DW_DLV_OK) {
@@ -2591,6 +2655,7 @@ int examplewgdbindex(Dwarf_Gdbindex gdbindex,
         Dwarf_Unsigned lowpc = 0;
         Dwarf_Unsigned highpc = 0;
         Dwarf_Unsigned cu_index = 0;
+
         res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
             &lowpc,&highpc,
             &cu_index,
@@ -2615,7 +2680,7 @@ int examplex(Dwarf_Gdbindex gdbindex,Dwarf_Error*error)
 {
     Dwarf_Unsigned symtab_list_length = 0;
     Dwarf_Unsigned i = 0;
-    int res = 0;
+    int            res = 0;
 
     res = dwarf_gdbindex_symboltable_array(gdbindex,
         &symtab_list_length,error);
@@ -2674,8 +2739,11 @@ int examplex(Dwarf_Gdbindex gdbindex,Dwarf_Error*error)
     return DW_DLV_OK;
 }
 /*! @endcode */
+
 /*! @defgroup exampley Reading cu and tu Debug Fission data
     @brief Example using dwarf_get_xu_index_header
+
+    Debug Fission is an older name for Split Dwarf.
 
     @code
 */
@@ -2683,13 +2751,13 @@ int exampley(Dwarf_Debug dbg, const char *type,
     Dwarf_Error *error)
 {
     /* type is "tu" or "cu" */
-    int res = 0;
+    int                   res = 0;
     Dwarf_Xu_Index_Header xuhdr = 0;
-    Dwarf_Unsigned version_number = 0;
-    Dwarf_Unsigned offsets_count = 0; /*L */
-    Dwarf_Unsigned units_count = 0; /* M */
-    Dwarf_Unsigned hash_slots_count = 0; /* N */
-    const char * section_name = 0;
+    Dwarf_Unsigned        version_number = 0;
+    Dwarf_Unsigned        offsets_count = 0; /*L */
+    Dwarf_Unsigned        units_count = 0; /* M */
+    Dwarf_Unsigned        hash_slots_count = 0; /* N */
+    const char           *section_name = 0;
 
     res = dwarf_get_xu_index_header(dbg,
         type,
@@ -2721,7 +2789,6 @@ int examplez( Dwarf_Xu_Index_Header xuhdr,
     /*  hash_slots_count returned by
         dwarf_get_xu_index_header() */
     static Dwarf_Sig8 zerohashval;
-
     Dwarf_Unsigned h = 0;
 
     for (h = 0; h < hash_slots_count; h++) {
@@ -2795,6 +2862,7 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned col = 0;
+
     /*  We use  'offsets_count' returned by
         a dwarf_get_xu_index_header() call.
         We use 'index' returned by a
@@ -2802,7 +2870,7 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
     for (col = 0; col < offsets_count; col++) {
         Dwarf_Unsigned off = 0;
         Dwarf_Unsigned len = 0;
-        const char * name = 0;
+        const char    *name = 0;
         Dwarf_Unsigned num = 0;
         int res = 0;
 
@@ -2839,28 +2907,29 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
 */
 void examplezb(void)
 {
-    const char * out = 0;
-    int res = 0;
+    const char * out = "unknown something";
+    int          res = 0;
 
-    /* The following is wrong, do not do it! */
+    /*  The following is wrong, do not do it!
+        Confusing TAG with ACCESS!  */
     res = dwarf_get_ACCESS_name(DW_TAG_entry_point,&out);
     /*  Nothing one does here with 'res' or 'out'
         is meaningful. */
 
+    out = "<unknown TAG>"; /* Not a malloc'd string! */
     /* The following is meaningful.*/
     res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
-    if ( res == DW_DLV_OK) {
-        /*  Here 'out' is a pointer one can use which
-            points to the string "DW_TAG_entry_point". */
-    } else {
-        /*  Here 'out' has not been touched, it is
-            uninitialized.  Do not use it. */
-    }
+    (void)res; /*  avoids unused var compiler warning */
+    /*  If res == DW_DLV_ERROR or DW_DLV_NO_ENTRY
+        out will be the locally assigned static string.
+        If res == DW_DLV_OK it will be a usable
+        TAG name string.
+        In no case should a returned string be free()d. */
 }
 /*! @endcode */
 
 /*! @defgroup exampledebuglink Using GNU debuglink data
-    @brief exampledebuglink Showing dwarf_add_debuglink_global_path
+    @brief Example showing dwarf_add_debuglink_global_path
 
     An example using both dwarf_add_debuglink_global_path
     and dwarf_gnu_debuglink .
@@ -2941,8 +3010,8 @@ int exampledebuglink(Dwarf_Debug dbg, Dwarf_Error* error)
 }
 /*! @endcode */
 
-/*! @defgroup example_raw_rnglist Accesing accessing raw rnglist
-    @brief Showing access to rnglist
+/*! @defgroup example_raw_rnglist Accessing accessing raw rnglist
+    @brief Example showing access to rnglist
 
     This is accessing DWARF5 .debug_rnglists.
 
@@ -3032,8 +3101,8 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup example_rnglist_for_attribute Accessing a rnglists section
-    @brief Showing access to rnglists on an Attribute
+/*! @defgroup example_rnglist_for_attribute Accessing rnglists section
+    @brief Example showing access to rnglists on an Attribute
 
     This is accessing DWARF5 .debug_rnglists.
     The section first appears in DWARF5.
@@ -3046,12 +3115,12 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     /*  attrvalue must be the DW_AT_ranges
         DW_FORM_rnglistx or DW_FORM_sec_offset value
         extracted from attr. */
-    int res = 0;
-    Dwarf_Half theform = 0;
-    Dwarf_Unsigned    entries_count;
-    Dwarf_Unsigned    global_offset_of_rle_set;
+    int                 res = 0;
+    Dwarf_Half          theform = 0;
+    Dwarf_Unsigned      entries_count;
+    Dwarf_Unsigned      global_offset_of_rle_set;
     Dwarf_Rnglists_Head rnglhead = 0;
-    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned      i = 0;
 
     res = dwarf_rnglists_get_rle_head(attr,
         theform,
@@ -3065,10 +3134,10 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     }
     for (i = 0; i < entries_count; ++i) {
         unsigned entrylen     = 0;
-        unsigned code         = 0;
+        unsigned       code         = 0;
         Dwarf_Unsigned rawlowpc  = 0;
         Dwarf_Unsigned rawhighpc = 0;
-        Dwarf_Bool debug_addr_unavailable = FALSE;
+        Dwarf_Bool     debug_addr_unavailable = FALSE;
         Dwarf_Unsigned lowpc  = 0;
         Dwarf_Unsigned highpc = 0;
 

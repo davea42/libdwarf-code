@@ -50,6 +50,9 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
 #include "libdwarf.h"
 #include "dwarf_tsearch.h"
 #include "dd_makename.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_minimal.h"
 

@@ -44,17 +44,19 @@ extern "C" {
 #endif /* __cplusplus */
 
 #if 0 /* Not used here. DavidA. September 2018 */
+    #include changed to #xnclude so casual readers will not
+    be confused.
 /*
 * This file describes the format of mach object files.
 */
-#include <stdint.h>
+#xnclude <stdint.h>
 
 /*
 * <mach/machine.h> is needed here for
 * the cpu_type_t and cpu_subtype_t types
 * and contains the constants for the possible values of these types.
 */
-#include <mach/machine.h>
+#xnclude <mach/machine.h>
 
 /*
 * <mach/vm_prot.h> is needed here for the
@@ -62,15 +64,15 @@ extern "C" {
 * constants that are or'ed together for the
 * possible values of this type.
 */
-#include <mach/vm_prot.h>
+#xnclude <mach/vm_prot.h>
 
 /*
 * <machine/thread_status.h> is expected to define
 * the flavors of the thread
 * states and the structures of those flavors for each machine.
 */
-#include <mach/machine/thread_status.h>
-#include <architecture/byte_order.h>
+#xnclude <mach/machine/thread_status.h>
+#xnclude <architecture/byte_order.h>
 #endif /* 0 */
 
 #ifndef TYP

@@ -28,7 +28,6 @@
    Fifth Floor, Boston MA 02110-1301, USA.
 
 */
-#include <stdio.h>
 
 /*  This is #included twice. Once for
     libdwarf callers and one for dwarfdump which prints
@@ -782,6 +781,15 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     format_values[j].up_first;
                 Dwarf_Unsigned lnform =
                     format_values[j].up_second;
+                if (line_ptr >= line_ptr_end) {
+                    free(format_values);
+                    format_values = 0;
+                    _dwarf_error_string(dbg, err,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        " Running off end of line table"
+                        " reading directory path");
+                    return DW_DLV_ERROR;
+                }
                 switch (lntype) {
                 case DW_LNCT_path: {
                     char *inc_dir_ptr = 0;
@@ -851,6 +859,14 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
+        if (line_ptr >= line_ptr_end) {
+            free(filename_entry_pairs);
+            _dwarf_error_string(dbg, err,
+                DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
+                "reading filename format entries");
+            return DW_DLV_ERROR;
+        }
         for (i = 0; i < filename_format_count; i++) {
             dres=read_uword_de(&line_ptr,
                 &filename_entry_pairs[i].up_first,
@@ -900,7 +916,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 malloc(sizeof(struct Dwarf_File_Entry_s));
             if (curline == NULL) {
                 free(filename_entry_pairs);
-                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL: "
+                    "Unable to malloc Dwarf_File_Entry_s");
                 return DW_DLV_ERROR;
             }
             memset(curline,0,sizeof(*curline));
@@ -911,6 +929,16 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     filename_entry_pairs[j].up_first;
                 Dwarf_Unsigned lnform =
                     filename_entry_pairs[j].up_second;
+
+                if (line_ptr >= line_ptr_end) {
+                    free(filename_entry_pairs);
+                    _dwarf_error_string(dbg, err,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
+                        "file name format count too large "
+                        "to be correct. Corrupt DWARF/");
+                    return DW_DLV_ERROR;
+                }
                 switch (lntype) {
                 /* The LLVM LNCT is documented in
                     https://releases.llvm.org/9.0.0/docs
@@ -1064,8 +1092,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 }
                 if (line_ptr > line_ptr_end) {
                     free(filename_entry_pairs);
-                    _dwarf_error(dbg, err,
-                        DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                    _dwarf_error_string(dbg, err,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
+                        "Reading line table header filenames "
+                        "runs off end of section. Corrupt Dwarf");
                     return DW_DLV_ERROR;
                 }
             }
@@ -1106,6 +1137,15 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             free(subprog_entry_types);
             return DW_DLV_ERROR;
         }
+        if (line_ptr >= line_ptr_end) {
+            free(subprog_entry_types);
+            _dwarf_error_string(dbg, err,
+                DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
+                "Line table forms odd, experimental libdwarf");
+            return DW_DLV_ERROR;
+        }
+
         subprog_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
             subprog_format_count);
         if (subprog_entry_forms == NULL) {
@@ -1180,6 +1220,17 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         for (i = 0; i < subprogs_count; i++) {
             struct Dwarf_Subprog_Entry_s *curline =
                 line_context->lc_subprogs + i;
+            if (line_ptr >= line_ptr_end) {
+                free(subprog_entry_types);
+                free(subprog_entry_forms);
+                _dwarf_error_string(dbg, err,
+                    DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                    "DW_DLE_LINE_NUMBER_HEADER_ERROR:"
+                    " Reading suprogram entry subprogs"
+                    " in experimental line table"
+                    " we run off the end of the table");
+                return DW_DLV_ERROR;
+            }
             for (j = 0; j < subprog_format_count; j++) {
                 Dwarf_Unsigned lntype =
                     subprog_entry_types[j];

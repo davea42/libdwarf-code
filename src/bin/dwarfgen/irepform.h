@@ -30,7 +30,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-
 //
 // irepform.h
 //
@@ -69,7 +68,7 @@ public:
         return new IRFormUnknown(*this);
     }
     IRFormUnknown & operator=(const IRFormUnknown &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -86,7 +85,8 @@ private:
 // An address class entry refers to some part
 // (normally a loadable) section of the object file.
 // Not to DWARF info. Typically into .text or .data for example.
-// We therefore want a section number and offset (generally useless for us)
+// We therefore want a section number and offset
+// (generally useless for us)
 // or preferably  an elf symbol as that has a value
 // and an elf section number.
 // We often/usually know neither here so we do not even try.
@@ -101,7 +101,7 @@ public:
     IRFormAddress(IRFormInterface *);
     ~IRFormAddress() {};
     IRFormAddress & operator=(const IRFormAddress &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -142,7 +142,7 @@ public:
     IRFormBlock(IRFormInterface *);
     ~IRFormBlock() {};
     IRFormBlock & operator=(const IRFormBlock &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -232,7 +232,7 @@ public:
         data16_ = data16;
     };
     IRFormConstant & operator=(const IRFormConstant &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -302,7 +302,7 @@ public:
     IRFormExprloc(IRFormInterface *);
     ~IRFormExprloc() {};
     IRFormExprloc & operator=(const IRFormExprloc &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -339,7 +339,6 @@ private:
     std::vector<char> exprlocdata_;
 };
 
-
 class IRFormFlag : public IRForm {
 public:
     IRFormFlag():
@@ -351,7 +350,7 @@ public:
     IRFormFlag(IRFormInterface*);
     ~IRFormFlag() {};
     IRFormFlag & operator=(const IRFormFlag &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         initialform_ = r.initialform_;
         finalform_ = r.finalform_;
         formclass_ = r.formclass_;
@@ -383,7 +382,6 @@ private:
     Dwarf_Bool flagval_;
 };
 
-
 class IRFormLinePtr : public IRForm {
 public:
     IRFormLinePtr():
@@ -394,7 +392,7 @@ public:
     IRFormLinePtr(IRFormInterface *);
     ~IRFormLinePtr() {};
     IRFormLinePtr & operator=(const IRFormLinePtr &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -428,7 +426,6 @@ private:
     };
 };
 
-
 class IRFormLoclistPtr : public IRForm {
 public:
     IRFormLoclistPtr():
@@ -439,7 +436,7 @@ public:
     IRFormLoclistPtr(IRFormInterface *);
     ~IRFormLoclistPtr() {};
     IRFormLoclistPtr & operator=(const IRFormLoclistPtr &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -473,7 +470,6 @@ private:
     };
 };
 
-
 class IRFormMacPtr : public IRForm {
 public:
     IRFormMacPtr():
@@ -484,7 +480,7 @@ public:
     IRFormMacPtr(IRFormInterface *);
     ~IRFormMacPtr() {};
     IRFormMacPtr & operator=(const IRFormMacPtr &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -518,7 +514,6 @@ private:
     };
 };
 
-
 class IRFormRangelistPtr : public IRForm {
 public:
     IRFormRangelistPtr():
@@ -529,7 +524,7 @@ public:
     IRFormRangelistPtr(IRFormInterface *);
     ~IRFormRangelistPtr() {};
     IRFormRangelistPtr & operator=(const IRFormRangelistPtr &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -573,7 +568,7 @@ public:
     IRFormFramePtr(IRFormInterface *);
     ~IRFormFramePtr() {};
     IRFormFramePtr & operator=(const IRFormFramePtr &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -607,8 +602,6 @@ private:
     };
 };
 
-
-
 class IRFormReference : public IRForm {
 public:
     IRFormReference():
@@ -622,7 +615,7 @@ public:
     IRFormReference(IRFormInterface *);
     ~IRFormReference() {};
     IRFormReference & operator=(const IRFormReference &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -697,7 +690,6 @@ private:
     // RT_GLOBAL. FIXME
 };
 
-
 class IRFormString: public IRForm {
 public:
     IRFormString():
@@ -717,7 +709,7 @@ public:
         return new IRFormString(*this);
     }
     IRFormString & operator=(const IRFormString &r) {
-        if(this == &r) return *this;
+        if (this == &r) return *this;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
@@ -741,7 +733,6 @@ private:
     std::string formdata_;
     Dwarf_Unsigned strpoffset_;
 };
-
 
 // Factory Method.
 IRForm *formFactory(Dwarf_Debug dbg, Dwarf_Attribute attr,

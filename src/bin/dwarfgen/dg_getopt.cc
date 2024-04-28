@@ -317,7 +317,8 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
         dwoptopt = *place++;
     }
     /* See if option letter is one the caller wanted... */
-    if (dwoptopt == ':' || (oli = strchr((char *)ostr, dwoptopt)) == NULL) {
+    if (dwoptopt == ':' ||
+        (oli = strchr((char *)ostr, dwoptopt)) == NULL) {
         if (*place == 0) {
             ++dwoptind;
         }

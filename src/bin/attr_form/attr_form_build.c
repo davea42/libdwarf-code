@@ -28,10 +28,14 @@
 #include <config.h>
 
 #include <stdlib.h> /* exit() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_esb.h"
@@ -101,7 +105,6 @@ static const char *usage[] = {
     "       common extensions))",
     ""
 };
-
 
 const char *program_name = 0;
 char *input_name = 0;

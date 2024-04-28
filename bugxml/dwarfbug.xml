@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202403-001</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 67490</fuzzer>
+<datereported>2024-03-18</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Reads past end of line table
+</vulnerability>
+<description> A carefully corrupted line table
+  header can cause libdwarf to read outside of its
+  allowed areas in a .debug_line section reading
+  the file names part of the header.
+  The failure to check for end-of-section before reading
+  past end-of-section at the very last byte in section
+  (at a very few specific
+  points in the line table reader code where a
+  valid line table header would not require a test)
+  has been present for many years.
+</description>
+<datefixed>2024-02-19</datefixed>
+<references> regressiontests/ossfuzz67490/fuzz_srcfiles-5195296927711232
+</references>
+<gitfixid>2930f3121ee6b07da405103934c329bbeca0382f</gitfixid>
+<tarrelease>libdwarf-0.9.2.tar.xz</tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202402-003</dwid>
 <cve></cve>
 <fuzzer>hongg</fuzzer>
@@ -23,7 +49,7 @@
 <references> regressiontests/hongg2024-02-18/SIGSEGV-m.fuzz
 </references>
 <gitfixid>5cfbd87dff4fc3c3b595bb92ed886934945b372c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.2.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202402-002</dwid>
@@ -51,7 +77,7 @@
             SIGSEGV-h.fuzz SIGSEGV-i.fuzz SIGSEGV-k.fuzz
 </references>
 <gitfixid>404e6b1b14f60c81388d50b4239f81d461b3c3ad</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.2.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202402-001</dwid>
@@ -79,7 +105,7 @@
 <references> regressiontests/ossfuzz66646/fuzz_findfuncbypc-5178544143532032
 </references>
 <gitfixid>f21e2f7687f3dca183026a1fb72ca1f0dcf8befa</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.9.2.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202311-002</dwid>

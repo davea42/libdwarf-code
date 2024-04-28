@@ -51,10 +51,14 @@
 #include <config.h>
 
 #include <stdlib.h> /* calloc() free() */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_tsearchbal.h"
 #include "dd_macrocheck.h"

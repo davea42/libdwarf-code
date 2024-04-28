@@ -124,7 +124,6 @@ print_ctype_entry(int c)
     printf("1, /* 0x%02x */\n",c);
 }
 
-
 /*  This mirrors what dwarfdump has long done via code
     in do_sanity_insert() in dd_sanitized.c.
     We are dropping special treatment of \r here

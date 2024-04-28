@@ -60,6 +60,7 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#include <stdio.h> /* FILE decl for dd_esb.h */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t */
@@ -68,6 +69,9 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_glflags.h"
 #include "dd_esb.h"

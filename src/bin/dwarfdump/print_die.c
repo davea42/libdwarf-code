@@ -37,6 +37,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include <stdlib.h> /* calloc() free() */
 #include <string.h> /* memcmp() memset() strchr() strcmp()
     strlen() strncmp() */
+#include <stdio.h> /* FILE decl for dd_esb.h, printf etc */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t */
@@ -45,6 +46,9 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */

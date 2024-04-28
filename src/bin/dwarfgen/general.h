@@ -53,11 +53,11 @@ extern struct CmdOptions {
 template <typename T >
 std::string IToHex(T v,unsigned l=0)
 {
-    if(v == 0) {
+    if (v == 0) {
         // For a zero value, ostringstream does not insert 0x.
         // So we do zeroes here.
         std::string out = "0x0";
-        if(l > 3)  {
+        if (l > 3)  {
             out.append(l-3,'0');
         }
         return out;

@@ -35,6 +35,7 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 
 #include <stdlib.h> /* exit() */
 #include <string.h> /* strcmp() */
+#include <stdio.h> /* FILE printf etc */
 
 #include "libdwarf_private.h"
 #include "dd_esb.h"
@@ -45,10 +46,8 @@ void dd_minimal_count_global_error(void) {}
 
 /* Needed so dd_sanitized.c compiles here. */
 struct glflags_s {
-       int gf_no_sanitize_strings;
+    int gf_no_sanitize_strings;
 } glflags;
-
-
 
 static int failcount = 0;
 
@@ -94,65 +93,64 @@ const char *s8 =
 "aaaa bbbb cccc dddd eeee ffff gggg"
 "aaaa bbbb cccc dddd eeee ffff gggg";
 
-
 int main(void)
 {
     const char *out = 0;
     {
-         char *exp = "abcd";
-         out = sanitized(s1);
-         validate_san(__LINE__,
+        char *exp = "abcd";
+        out = sanitized(s1);
+        validate_san(__LINE__,
             exp,out,exp);
     }
     {
-         char *exp = "ab\ncd";
-         out = sanitized(s2);
-         validate_san(__LINE__,
+        char *exp = "ab\ncd";
+        out = sanitized(s2);
+        validate_san(__LINE__,
             exp,out,exp);
     }
     {
-         char *exp = "\ncd";
-         out = sanitized(s3);
-         validate_san(__LINE__,
+        char *exp = "\ncd";
+        out = sanitized(s3);
+        validate_san(__LINE__,
             exp,out,exp);
     }
     {
-         char *exp = "ab\n";
-         out = sanitized(s4);
-         validate_san(__LINE__,
+        char *exp = "ab\n";
+        out = sanitized(s4);
+        validate_san(__LINE__,
             exp,out,exp);
     }
     {
-         char *exp = "yy\tcd";
-         out = sanitized(s5);
-         validate_san(__LINE__,
+        char *exp = "yy\tcd";
+        out = sanitized(s5);
+        validate_san(__LINE__,
             exp,out,exp);
     }
     {
-         char* exp = "a%01%02%f4\n";
-         out = sanitized((const char *)s6);
-         validate_san(__LINE__,
+        char* exp = "a%01%02%f4\n";
+        out = sanitized((const char *)s6);
+        validate_san(__LINE__,
             exp,out,exp);
     }
     {
 #ifdef _WIN32
-         char* exp = "ab\r\n";
+        char* exp = "ab\r\n";
 #else
-         char* exp = "ab%0d\n";
+        char* exp = "ab%0d\n";
 #endif
-         out = sanitized((const char *)s7);
-         validate_san(__LINE__,
+        out = sanitized((const char *)s7);
+        validate_san(__LINE__,
             exp,out,exp);
     }
 #ifdef TIMING
     {
-         int i = 0;
-         for ( ; i < 5000000; ++i ) {
-             out = sanitized((const char *)s8);
-             if (i == 2) {
-                 printf("%s\n",out);
-             }
-         }
+        int i = 0;
+        for ( ; i < 5000000; ++i ) {
+            out = sanitized((const char *)s8);
+            if (i == 2) {
+                printf("%s\n",out);
+            }
+        }
     }
 #endif /* TIMING */
     sanitized_string_destructor();

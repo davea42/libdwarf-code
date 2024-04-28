@@ -11,7 +11,7 @@
 #define LIBDWARF_PRIVATE_H
 #define DW_PR_XZEROS "08"
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 #define DW_PR_DUx "I64x"
 #define DW_PR_DSx "I64x"
 #define DW_PR_DUu "I64u"
