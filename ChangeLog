@@ -1,3 +1,24 @@
+2024-04-28:  David Anderson
+    commit b454fb67f267deae3e45f2685d845f0fd133e5b5
+
+    Tiny changes to (perhaps) avoid a couple warnings
+    from an msvc compiler.
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2024-04-28:  Julia DeMille
+    commit a4465045c373ba8f7c7b4c0a4cf863ecf4999549
+
+    Disable default werror=true in Meson manifest (#239)
+
+    Under MSVC, `/WX` (the equivalent to `-Werror`) will cause the build to crash and burn. This makes it not default to making the build crash and burn.
+
+2024-04-19:  David Anderson
+    commit 4436b83de65fdc9df9e011decf2f643fb345b892
+
+    up to date with git log
+            modified:   ChangeLog
+
 2024-04-19:  David Anderson
     commit 713a4060556e76adf21b47ff705df686767f2ff4
 
