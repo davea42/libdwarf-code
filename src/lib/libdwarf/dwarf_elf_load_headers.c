@@ -1968,7 +1968,9 @@ read_gs_section_group(
             free(data);
             return res;
         }
-        groupmallocsize = count * sizeof(Dwarf_Unsigned);
+        /*  Adding 1 is silly but possibly avoids a warning
+            from a particular compiler. */
+        groupmallocsize =  (1+count) * sizeof(Dwarf_Unsigned);
         if (groupmallocsize >= ep->f_filesize) {
             free(data);
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
