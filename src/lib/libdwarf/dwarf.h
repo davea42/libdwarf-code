@@ -728,6 +728,7 @@ extern "C" {
 #define DW_AT_APPLE_property                    0x3fed
 #define DW_AT_APPLE_objc_direct                 0x3fee
 #define DW_AT_APPLE_sdk                         0x3fef
+#define DW_AT_APPLE_origin                      0x3ff0
 
 #define DW_AT_hi_user                           0x3fff
 
@@ -1197,6 +1198,8 @@ most-likely-useful name. */
 #define DW_LANG_CPP_for_OpenCL          0x0038 /* DWARF6 */
 #define DW_LANG_SYCL                    0x0039 /* DWARF6 */
 #define DW_LANG_Ruby                    0x0040 /* DWARF6 */
+#define DW_LANG_Move                    0x0041 /* DWARF6 */
+#define DW_LANG_Hylo                    0x0042 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
