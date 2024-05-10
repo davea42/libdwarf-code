@@ -1,3 +1,48 @@
+2024-05-10:  David Anderson
+    commit 91a1ad4db2b63eeea1a8d7af120a420c751dacd2
+
+    Documenting heuristic change in
+    reading PE object files.
+            modified:   doc/libdwarf.dox
+
+2024-05-10:  David Anderson
+    commit 039569ed7903f132ad891a49a231378c6ea44077
+
+    A heuristic sanity check on section VirtualSize
+    was too concervative at s00MB, a PE object file had a section
+    over 200MB in size.
+    Increased the heuristic limit to 1000MB.
+            modified:   dwarf_peread.c
+
+2024-05-02:  David Anderson
+    commit 42367fc3195c0dd2cab059e15a87ed33f5f96e49
+
+    Regenerated with May as the current month.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-05-02:  David Anderson
+    commit e4aeec03c68e356270c2d1f36cb4ea66a72376ec
+
+    Regenerated so has latest producer defines.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-05-02:  David Anderson
+    commit 8010af428ed7961738badddd9378fd78d25658d9
+
+    Just heard of some producer-values:
+    define DW_AT_APPLE_origin                      0x3ff0
+
+    define DW_LANG_Move                    0x0041 /* DWARF6 */
+    define DW_LANG_Hylo                    0x0042 /* DWARF6 */
+            modified:   src/lib/libdwarf/dwarf.h
+
+2024-04-28:  David Anderson
+    commit 35223db561852306ed1e7aec9bcfc045fad147d3
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-04-28:  David Anderson
     commit b454fb67f267deae3e45f2685d845f0fd133e5b5
 
