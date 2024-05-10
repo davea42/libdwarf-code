@@ -1459,9 +1459,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_ARITHMETIC_OVERFLOW             501
 #define DW_DLE_UNIVERSAL_BINARY_ERROR          502
 #define DW_DLE_UNIV_BIN_OFFSET_SIZE_ERROR      503
+#define DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL  504
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        503
+#define DW_DLE_LAST        504
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 

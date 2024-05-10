@@ -560,23 +560,23 @@ _dwarf_pe_load_dwarf_section_headers(
             Dwarf_Unsigned limit = 100*pep->pe_filesize;
             if (limit < pep->pe_filesize) {
                 /* An overflow. Bad. */
-                *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+                *errcode = DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL;
                 return DW_DLV_ERROR;
             }
             if (sec_outp->VirtualSize >
-                ((Dwarf_Unsigned)1000*
+                ((Dwarf_Unsigned)2000*
                 (Dwarf_Unsigned)1000*
                 (Dwarf_Unsigned)1000)) {
                 /*  Likely unreasonable.
                     the hard limit written this way
                     simply for clarity.
                     Hard to know what to set it to. */
-                *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+                *errcode = DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL;
                 return DW_DLV_ERROR;
             }
             if (sec_outp->VirtualSize > limit) {
                 /* Likely totally unreasonable. Bad. */
-                *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+                *errcode = DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL;
                 return DW_DLV_ERROR;
             }
         }
