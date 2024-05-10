@@ -564,10 +564,10 @@ _dwarf_pe_load_dwarf_section_headers(
                 return DW_DLV_ERROR;
             }
             if (sec_outp->VirtualSize >
-                ((Dwarf_Unsigned)200*
+                ((Dwarf_Unsigned)1000*
                 (Dwarf_Unsigned)1000*
                 (Dwarf_Unsigned)1000)) {
-                /*  Likely totally unreasonable.
+                /*  Likely unreasonable.
                     the hard limit written this way
                     simply for clarity.
                     Hard to know what to set it to. */
