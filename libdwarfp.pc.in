@@ -6,7 +6,7 @@ pkgincludedir=@includedir@/libdwarf-@VMAJ@
 
 Name: libdwarfp
 Description: DWARF debug symbols producer library
-Version: @PACKAGE_VERSION@
+Version: @PROJECT_VERSION@
 Requires.private: @requirements_libdwarfp_pc@
 Requires: libdwarf
 Libs: -L${libdir} -ldwarfp

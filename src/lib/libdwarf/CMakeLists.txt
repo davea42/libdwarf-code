@@ -69,7 +69,7 @@ dwarf_macho_loader.h
 dwarf_memcpy_swap.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files"
-    ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
+    ${PROJECT_SOURCE_DIR}/cmake/config.h.in
     ${PROJECT_BINARY_DIR}/config.h)
 
 # The -DPIC is so we find the right DW_API value in libdwarf.h
@@ -109,7 +109,7 @@ if(ZLIB_FOUND AND zstd_FOUND)
   target_link_libraries(dwarf PRIVATE  ZLIB::ZLIB ${ZSTD_LIB} )
 endif()
 set_target_properties(dwarf PROPERTIES PUBLIC_HEADER "libdwarf.h;dwarf.h")
-
+set_target_properties(dwarf PROPERTIES VERSION "${PROJECT_VERSION}" SOVERSION "${PROJECT_VERSION_MAJOR}")
 install(TARGETS dwarf
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -117,7 +117,7 @@ install(TARGETS dwarf
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         )
 
-configure_file(libdwarf.pc.cmake libdwarf.pc @ONLY)
+configure_file(libdwarf.pc.in libdwarf.pc @ONLY)
 
 # The install has to be here, not in
 # another CMakeLists.txt  to make install work properly
