@@ -1,9 +1,9 @@
-/*!
+*!
     @mainpage A Consumer Library Interface to DWARF
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-05-10 v0.9.3
+    @date 2024-05-21 v0.9.3
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1087,7 +1087,13 @@
     A heuristic sanity check for PE object files was too conservative
     in limiting VirtualSize to 200MB.  A library user has
     an exe with .debug_info size of over 200MB.
-    Increased the limit to be 1000MB.
+    Increased the limit to be 2000MB and changed the names of the
+    errors for the three heuristic checks to include _HEURISTIC_ so it is
+    easier to know the kind of error/failure it is.
+
+    When doing a shared-library build with cmake we were not emitting
+    the correct .so version names nor setting SONAME with the
+    correct version name. This long-standing mistake is now fixed.
 
     <b>Changes 0.9.1 to 0.9.2</b>
 
