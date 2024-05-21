@@ -19,7 +19,6 @@ ar-lib
 compile
 config.guess
 config.h
-config.h.in
 config.log
 config.sub
 configure
