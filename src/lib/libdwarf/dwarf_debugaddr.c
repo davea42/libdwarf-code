@@ -132,95 +132,135 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     if (dw_section_offset >= section_size) {
         return DW_DLV_NO_ENTRY;
     }
-    curlocaloffset = 0;
-    data = section_start + dw_section_offset;
-    READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
-        data,offset_size,exten_size,
-        error,
-        section_size,end_data);
-    if (arealen > section_size ||
-        (arealen + offset_size +exten_size) > section_size) {
-        dwarfstring m;
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_SECTION_SIZE_ERROR: A .debug_addr "
-            "area size of 0x%x ",arealen);
-        dwarfstring_append_printf_u(&m,
-            "at offset 0x%x ",dw_section_offset);
-        dwarfstring_append_printf_u(&m,
-            "is larger than the entire section size of "
-            "0x%x. Corrupt DWARF.",section_size);
-        _dwarf_error_string(dbg,error,
-            DW_DLE_SECTION_SIZE_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
+    if (dbg->de_debug_addr_version == DW_CU_VERSION4) { 
+        /*  Create a table from what we know. */
+        address_size = dbg->de_debug_addr_address_size;
+        offset_size = dbg->de_debug_addr_offset_size;
+        tab.da_address_size = address_size;
+        tab.da_length_size = offset_size;
+        tab.da_length = section_size;
+        tab.da_version = dbg->de_debug_addr_version; 
+        end_data = section_start + section_size;
+        tab.da_end_table = end_data;
+        /*  Must be zero. */
+        if (dw_section_offset) {
+            _dwarf_error_string(dbg,error,DW_DLE_DEBUG_ADDR_ERROR,
+                "DW_DLE_DEBUG_ADDR_ERROR: DWARF4 extension "
+                ".debug_addr has non-zero offset. Impossible");
+            return DW_DLV_ERROR;
+        }
+        tab.da_table_section_offset = dw_section_offset;
+        tab.da_data_entries = section_start;
+        tab.da_entry_count= section_size/tab.da_address_size;
+        /*  One past end of this Debug Addr Table */
+        tab.da_end_table = end_data;
+        if (tab.da_address_size != 4 && tab.da_address_size != 8 &&
+            tab.da_address_size != 2) {
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                " DW_DLE_ADDRESS_SIZE_ERROR: The "
+                " .debug_addr DWARF4 address size "
+                "of %u is not supported.",address_size);
+            _dwarf_error_string(dbg,error,DW_DLE_ADDRESS_SIZE_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        offset_one_past_end = section_size;
+        tab.da_dbg = dbg;
+    } else {
+        /* all other cases, assume DWARF5 table. */
+        curlocaloffset = 0;
+        data = section_start + dw_section_offset;
+        READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
+            data,offset_size,exten_size,
+            error,
+            section_size,end_data);
+        if (arealen > section_size ||
+            (arealen + offset_size +exten_size) > section_size) {
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_SECTION_SIZE_ERROR: A .debug_addr "
+                "area size of 0x%x ",arealen);
+            dwarfstring_append_printf_u(&m,
+                "at offset 0x%x ",dw_section_offset);
+            dwarfstring_append_printf_u(&m,
+                "is larger than the entire section size of "
+                "0x%x. Corrupt DWARF.",section_size);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_SECTION_SIZE_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        tab.da_dbg = dbg;
+        tablelen = arealen - 4; /* 4: the rest of the header */
+        tab.da_length = tablelen;
+        curlocaloffset = offset_size + exten_size;
+        offset_one_past_end = dw_section_offset
+            + curlocaloffset + 4 /*rest of header */
+            + tablelen;
+        end_data = section_start + offset_one_past_end;
+        tab.da_end_table = end_data;
+        READ_UNALIGNED_CK(dbg,version,Dwarf_Half,data,
+            SIZEOFT16,error,end_data);
+        if (version != DW_CU_VERSION5) {
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_VERSION_STAMP_ERROR: "
+                "The .debug_addr version should be 5 "
+                "but we find %u instead.",version);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_VERSION_STAMP_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        tab.da_version = version;
+        data += SIZEOFT16;
+        curlocaloffset += SIZEOFT16;
+        READ_UNALIGNED_CK(dbg,address_size,Dwarf_Small,data,
+            1,error,end_data);
+        if (address_size != 4 && address_size != 8 &&
+            address_size != 2) {
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                " DW_DLE_ADDRESS_SIZE_ERROR: The "
+                " .debug_addr address size "
+                "of %u is not supported.",address_size);
+            _dwarf_error_string(dbg,error,DW_DLE_ADDRESS_SIZE_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        tab.da_address_size = address_size;
+        data++;
+        curlocaloffset++;
+    
+        READ_UNALIGNED_CK(dbg,segment_selector_size,Dwarf_Small,data,
+            1,error,end_data);
+        if (segment_selector_size != 0) {
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append(&m,
+                " DW_DLE_DEBUG_ADDR_ERROR: The "
+                " .debug_addr segment selector size "
+                "of non-zero is not supported.");
+            _dwarf_error_string(dbg,error,DW_DLE_DEBUG_ADDR_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        /*  We do not record segment selector size,
+            as it is not supported. */
+        curlocaloffset++;
+        data++;
+        tab.da_data_entries = data;
     }
-    tab.da_dbg = dbg;
-    tablelen = arealen - 4; /* 4: the rest of the header */
-    tab.da_length = tablelen;
-    curlocaloffset = offset_size + exten_size;
-    offset_one_past_end = dw_section_offset
-        + curlocaloffset + 4 /*rest of header */
-        + tablelen;
-    end_data = section_start + offset_one_past_end;
-    tab.da_end_table = end_data;
-    READ_UNALIGNED_CK(dbg,version,Dwarf_Half,data,
-        SIZEOFT16,error,end_data);
-    if (version != DW_CU_VERSION5) {
-        dwarfstring m;
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_VERSION_STAMP_ERROR: "
-            "The .debug_addr version should be 5 "
-            "but we find %u instead.",version);
-        _dwarf_error_string(dbg,error,
-            DW_DLE_VERSION_STAMP_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
-    }
-    tab.da_version = version;
-    data += SIZEOFT16;
-    curlocaloffset += SIZEOFT16;
-    READ_UNALIGNED_CK(dbg,address_size,Dwarf_Small,data,
-        1,error,end_data);
-    if (address_size != 4 && address_size != 8 &&
-        address_size != 2) {
-        dwarfstring m;
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            " DW_DLE_ADDRESS_SIZE_ERROR: The "
-            " .debug_addr address size "
-            "of %u is not supported.",address_size);
-        _dwarf_error_string(dbg,error,DW_DLE_ADDRESS_SIZE_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
-    }
-    tab.da_address_size = address_size;
-    data++;
-    curlocaloffset++;
-
-    READ_UNALIGNED_CK(dbg,segment_selector_size,Dwarf_Small,data,
-        1,error,end_data);
-    if (segment_selector_size != 0) {
-        dwarfstring m;
-        dwarfstring_constructor(&m);
-        dwarfstring_append(&m,
-            " DW_DLE_DEBUG_ADDR_ERROR: The "
-            " .debug_addr segment selector size "
-            "of non-zero is not supported.");
-        _dwarf_error_string(dbg,error,DW_DLE_DEBUG_ADDR_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
-    }
-    /*  We do not record segment selector size,
-        as it is not supported. */
-    curlocaloffset++;
-    data++;
-    tab.da_data_entries = data;
     /*  Now we are at the beginning of the actual table */
     {
         Dwarf_Unsigned entry_count = 0;
