@@ -155,7 +155,7 @@ ChangeLog2020 \
 CODINGSTYLE \
 dw-linetableheader.txt \
 CMakeLists.txt \
-libdwarf.pc.cmake \
+libdwarf.pc.in \
 cmake/libdwarfConfig.cmake.in \
 meson.build \
 NEWS \
