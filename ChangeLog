@@ -1,3 +1,172 @@
+2024-05-27:  David Anderson
+    commit 654fbed827a8e70cfe07adafa9380839bfdb8ef7
+
+    To avoid a warning about ' PROJECT VERSION not set ' in
+    building with meson,
+    add the following lines (each in its proper place)
+    +config_h.set_quoted('PROJECT_VERSION', meson.project_version())
+
+    +pkgconf.set('PROJECT_VERSION', meson.project_version())
+
+            modified:   meson.build
+
+2024-05-27:  David Anderson
+    commit d2b133c3eeb1dd32efd525999ba979b9d677e9ba
+
+    New code line got warning from MSVC. Fixed.
+    -        address_size = dbg->de_debug_addr_address_size;
+    +        address_size = (Dwarf_Small)dbg->de_debug_addr_address_size;
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2024-05-27:  David Anderson
+    commit 0e06bf6f333393ee871f91822482d21eb1e00569
+
+    So make dist works again.
+
+    -libdwarf.pc.cmake \
+    +libdwarf.pc.in \
+            modified:   src/lib/libdwarf/Makefile.am
+
+    -libdwarfp.pc.cmake \
+    +libdwarfp.pc.in \
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2024-05-27:  David Anderson
+    commit 7513fdec7589339e147bde4dcce60078e62e7826
+
+    Changed  cmake/config.h.cmake to
+    cmake/config.h.in as that name was
+    recently changed so cmake shared library builds
+    worked properly.
+            modified:   Makefile.am
+
+2024-05-27:  David Anderson
+    commit 0bdecb161756e8ec58fdb8eb39f680095acfa426
+
+    Refined the doxygen comment on dwarf_debug_addr_table().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-05-27:  David Anderson
+    commit 31431a6d0aa400773f6b5efe96a331fde1d8490e
+
+    Updated words on the .debug_addr table
+    when in DWARF4 in the GNU extension format.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-05-27:  David Anderson
+    commit 1f54d6bc42f97226bbfd9232f4ae9cad16329a7b
+
+    Refining the -h output about --print-debug-addr
+    when reporting on DWARF4.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2024-05-27:  David Anderson
+    commit 731832c08f22a80a706431b0df0014c3c42a08b2
+
+    Commentary added on printing .debug_addr where
+    it is the DWARF4 GNU extension of .debug_addr.
+            modified:   doc/libdwarf.dox
+
+2024-05-27:  David Anderson
+    commit 6d7ca552fe91bb67c0d6cc4a785f0397fb7a0072
+
+    Now, for DWARF4 GNU .debug_addr extension we
+    create a table so we can print the raw
+    section sensibly from dwarfdump.
+            modified:   dwarf_debugaddr.c
+            modified:   dwarf_debugaddr.h
+
+2024-05-27:  David Anderson
+    commit 4e2916e4b9920c4c37859e077aeefd843735c986
+
+    Initialize the three new fields in Dwarf_Debug_s
+    used for DWARF5 GNU extension .debug_addr printing.
+            modified:   dwarf_die_deliv.c
+
+2024-05-27:  David Anderson
+    commit b979381e7ec7a34dd89f2e2b3f8ebaea4cda9ea3
+
+    Added
+        Dwarf_Half de_debug_addr_version;
+        Dwarf_Half de_debug_addr_offset_size;
+        Dwarf_Half de_debug_addr_address_size;
+    to Dwarf_Debug_s so we can print DWARF4
+    GNU .debug_addr extension data with no API change.
+            modified:   dwarf_opaque.h
+
+2024-05-27:  David Anderson
+    commit ac5c78fc5d76c5027857d104bf7c49c961b4b067
+
+    Added doxygen comment on dwarf_debug_addr_table()
+    related to the DWARF4 GNU extension version of .debug_addr
+            modified:   libdwarf.h
+
+2024-05-21:  David Anderson
+    commit a54dbb55b436978efc87f854560d2d2253d79e42
+
+    Up to date with latest Changes
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2024-05-21:  David Anderson
+    commit 3194780e9d304cd6f42ea4aa72828e27c861ec85
+
+    In Recent Changes:
+    noting the cmake soname etc correction
+    so shared-libraries generated have the
+    correct semantic version name.
+            modified:   doc/libdwarf.dox
+
+2024-05-21:  David Anderson
+    commit c6fe59c5cad197e650170fa87e7ef04a1a3e7135
+    Merge: af6b8f2c 3c18ecc5
+
+    Merge branch 'flagarde-soname'
+    Merging fix for cmake shared install not having correct version
+    or soname.
+
+2024-05-21:  David Anderson
+    commit 3c18ecc5c08036cee019ee6ae32efb4f09927cbc
+
+    Two instances: config.h.cmake -> config.h.in
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+
+2024-05-21:  flagarde
+    commit d4ecbb934cc057c77fa796d03b896e5d5f0dab97
+
+    Add config.h.in
+
+2024-05-21:  flagarde
+    commit 8a63be630bd7f4e529fff13efb3a303c12cd9456
+
+    Add soversion
+
+2024-05-10:  David Anderson
+    commit af6b8f2c380d06c2a6bc592f56592f733047ccab
+
+    Renaming  DW_DLE_PE_SECTION_SIZE_ERROR
+    to  DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL
+    so any failure of the three such tests are
+    clearly reported.  Should never happen.
+
+    DW_DLE_PE_SECTION_SIZE_ERROR remains valid and applies
+    as a hard object file error found in a
+    specific test (not a heuristic).
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-05-10:  David Anderson
+    commit ee53f0b6c99fc8cdaa3ae77af0196fb20e16177a
+
+    Now with latest changes from git log
+            modified:   ChangeLog
+
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
 2024-05-10:  David Anderson
     commit 91a1ad4db2b63eeea1a8d7af120a420c751dacd2
 
