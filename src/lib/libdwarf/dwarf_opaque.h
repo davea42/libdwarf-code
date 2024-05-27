@@ -826,6 +826,17 @@ struct Dwarf_Debug_s {
         file is sometimes needed
         and referenced.*/
     struct Dwarf_Tied_Data_s de_tied_data;
+
+    /*  The following two are used to detect a DWARF4
+        .debug_addr (a GNU extension) and attempt
+        to print a raw .debug_addr section.  Simply
+        assuming the first CU seen values for these
+        work for everything in the GNU extenstion
+        .debug_addr section. Only needed if the version
+        here is 4 (DWARF4). */ 
+    Dwarf_Half de_debug_addr_version;
+    Dwarf_Half de_debug_addr_offset_size;
+    Dwarf_Half de_debug_addr_address_size;
 };
 
 /* New style. takes advantage of dwarfstrings capability.
