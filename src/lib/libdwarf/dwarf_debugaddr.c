@@ -134,7 +134,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     }
     if (dbg->de_debug_addr_version == DW_CU_VERSION4) { 
         /*  Create a table from what we know. */
-        address_size = dbg->de_debug_addr_address_size;
+        address_size = (Dwarf_Small)dbg->de_debug_addr_address_size;
         offset_size = dbg->de_debug_addr_offset_size;
         tab.da_address_size = address_size;
         tab.da_length_size = offset_size;
