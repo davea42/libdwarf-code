@@ -4922,8 +4922,12 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
     immediate interest.
 
     It is only intended to enable printing of the
-    simple .debug_addr section (by dwarfdump).
+    simple DWARF5 .debug_addr section (by dwarfdump).
     Not at all clear it is of any other use.
+
+    When emitting DWARF4, gcc may emit a GNU-specified
+    .debug_addr format and this function will return
+    an error for that extension of DWARF4.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
