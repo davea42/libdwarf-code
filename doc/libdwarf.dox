@@ -453,9 +453,11 @@
     section and provide a length so you can calculate
     the next section offset to call or refer to.
 
-    Usually that works fine.  But if there is some
+    Usually that works fine.  If there is some
     random data somewhere outside of referenced
-    areas the reader function may fail, returning
+    areas or the data format is a gcc extension
+    of an early DWARF version the reader
+    function may fail, returning
     DW_DLV_ERROR.  Such an error is neither a
     compiler bug nor a @e libdwarf bug.
 
