@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-05-21 v0.9.3
+    @date 2024-05-27 v0.9.3
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1085,6 +1085,9 @@
     We list these with newest first.
 
     <b>Changes 0.9.2 to 0.9.3</b>
+
+    dwarf_debug_addr_table() now supports reading
+    the DWARF4 GNU extension .debug_addr table.
 
     A heuristic sanity check for PE object files was too conservative
     in limiting VirtualSize to 200MB.  A library user has
