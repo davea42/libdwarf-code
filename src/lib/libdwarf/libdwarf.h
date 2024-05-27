@@ -4926,8 +4926,8 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
 
     When emitting DWARF4, gcc may emit a GNU-specified
     .debug_addr format. If some CU has been opened then
-    this call will mostly work, but the whole table
-    will all the entries for all CUs.
+    this call will work, but the single table
+    will have all the entries for all CUs.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
