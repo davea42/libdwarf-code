@@ -132,14 +132,14 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     if (dw_section_offset >= section_size) {
         return DW_DLV_NO_ENTRY;
     }
-    if (dbg->de_debug_addr_version == DW_CU_VERSION4) { 
+    if (dbg->de_debug_addr_version == DW_CU_VERSION4) {
         /*  Create a table from what we know. */
         address_size = (Dwarf_Small)dbg->de_debug_addr_address_size;
         offset_size = dbg->de_debug_addr_offset_size;
         tab.da_address_size = address_size;
         tab.da_length_size = offset_size;
         tab.da_length = section_size;
-        tab.da_version = dbg->de_debug_addr_version; 
+        tab.da_version = dbg->de_debug_addr_version;
         end_data = section_start + section_size;
         tab.da_end_table = end_data;
         /*  Must be zero. */
@@ -240,7 +240,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
         tab.da_address_size = address_size;
         data++;
         curlocaloffset++;
-    
+
         READ_UNALIGNED_CK(dbg,segment_selector_size,Dwarf_Small,data,
             1,error,end_data);
         if (segment_selector_size != 0) {

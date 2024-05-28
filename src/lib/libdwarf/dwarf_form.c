@@ -1330,7 +1330,7 @@ dwarf_formaddr(Dwarf_Attribute attr,
             the reference form. It is
             address-sized so that the linker can easily update it, but
             it is a reference inside the debug_info section. No longer
-            allowed. */
+            allowed except for Metrowerks C. */
         ) {
         Dwarf_Small *section_end =
             _dwarf_calculate_info_section_end_ptr(cu_context);
