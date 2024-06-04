@@ -245,7 +245,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
             title_printed = TRUE;
             printf("   [goff      ][loff      ] "
                 "entryname            "
-                "val1       val2   entrylen\n");
+                "val1       val2 entrylen\n");
         }
         print_single_rle(curoffset,
             code,v1,v2,entrylen,goff);
