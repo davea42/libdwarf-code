@@ -213,8 +213,8 @@ _dwarf_loop_reading_debug_info_for_cu(
                     int res = _dwarf_tied_compare_function(
                         targsig,entry);
                     if (!res) {
-                         /* Found match,  stop looping */
-                         return DW_DLV_OK;
+                        /* Found match,  stop looping */
+                        return DW_DLV_OK;
                     }
                     continue;
                 } else {
