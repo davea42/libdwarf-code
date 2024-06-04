@@ -44,7 +44,7 @@ extern "C" {
     array of data entries, so dwarf_debugaddr.c
     creates a table from data in Dwarf_Debug_S
     assuming every CU has the
-    same address_size and version as in the initial 
+    same address_size and version as in the initial
     .debug_info CU. */
 
 struct Dwarf_Debug_Addr_Table_s {
