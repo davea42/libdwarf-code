@@ -77,23 +77,92 @@ dump_rh(const char *msg,
 {
     printf("Rnglists_Head: %s  line %d\n",
         msg,line);
-    printf("  count of entries: "
+    printf("  count of entries: %"
         DW_PR_DUu
         "  (0x%" DW_PR_DUx ")\n",
         head->rh_count,head->rh_count);
-    printf("  rh_rnglists     : %p\n",(void *)) head->rh_rnglists);
-    if (head->rh_first) {
-        printf("  rh_first    : %" DW_PR_DUu "\n", head->rh_first);
-    if (head->rh_last) {
-        printf("  rh_last     :  %" DW_PR_DUu "\n",head->rh_last);
-    }
-    printf("  rh_bytes total  : %" DW_PR_DUu
-        "  (0x%" DW_PR_DUx ")\n",head->rh_bytes_total,
-        head->rh_bytes_total);
+    printf("  rh__offset_size  : %p\n",
+        (void *) head->rh_offset_size);
+    printf("  rh_rnglists     : %p\n",(void *) head->rh_rnglists);
+    printf("  rh_index    : %lu\n",
+        (unsigned long)head->rh_index);
+    printf("  rh_first    : %lu\n",
+        (unsigned long)head->rh_first);
+    printf("  rh_last     :  %lu\n",
+        (unsigned long)head->rh_last);
+    printf("  rh_bytes total  : %lu (0x%lx)\n",
+        (unsigned long)head->rh_bytes_total,
+        (unsigned long)head->rh_bytes_total);
     printf("  CU Context      : %p",(void *)head->rh_context);
     printf("  Rnglists Context:  %p",(void *)head->rh_localcontext);
 }
 #endif
+#if 0
+static void
+dump_rc(const char *msg,
+    int line,
+    Dwarf_Rnglists_Context rc)
+{
+    printf("Rnglists_Context %s line %d index %lu\n", msg,
+        line,
+        (unsigned long)rc->rc_index);
+    printf(" rc_header_offset  0x%lx\n",
+        (unsigned long)rc->rc_header_offset);
+    printf(" rc_length  0x%lx\n",
+        (unsigned long)rc->rc_length);
+    printf(" rc_offset_size  0x%lu\n",
+        (unsigned long)rc->rc_offset_size);
+    printf(" rc_version  0x%lu\n",
+        (unsigned long)rc->rc_version);
+    printf(" rc_address_size  0x%lu\n",
+        (unsigned long)rc->rc_address_size);
+    printf(" rc_address_size  0x%lu\n",
+        (unsigned long)rc->rc_address_size);
+    printf(" rc_offset_entry_count  0x%lu\n",
+        (unsigned long)rc->rc_offset_entry_count);
+    printf(" rc_offsets_off_in_sect  0x%lu\n",
+        (unsigned long)rc->rc_offsets_off_in_sect);
+    printf(" rc_first_rnglist_offset  0x%lx\n",
+        (unsigned long)rc->rc_first_rnglist_offset);
+    printf(" rc_past_last_rnglist_offset  0x%lx\n",
+        (unsigned long)rc->rc_past_last_rnglist_offset);
+}
+#endif
+
+/*  The DWARF5 standard does not make it clear that
+    there should be a rnglists_base even in a dwp object.
+    Table F.1 implies such is not needed.
+    gcc seems to leave it off in the dwp.
+    ibase is an offset in the array of offsets in a rnglist,
+    which only makes sense for DW_FORM_rnglistx and
+    in that case there is no base.
+    We are dealing with DW_FORM_rnglistx */
+int
+_dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
+    Dwarf_Unsigned indexval,
+    Dwarf_Unsigned *ibase)
+{
+    Dwarf_Rnglists_Context rctx = 0;
+    if (IS_INVALID_DBG(dbg)) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (!dbg->de_debug_rnglists.dss_size) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (!dbg->de_rnglists_context_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    /*  This implicit base can only work if the 0-th
+        Rnglists_Context is appropriate here. */
+    rctx = dbg->de_rnglists_context[0];
+    if (indexval > rctx->rc_offset_entry_count) {
+        /*  We are not using base offset, we
+            will not see a DW_FORM_rnglistx */
+        return DW_DLV_NO_ENTRY;
+    }
+    *ibase = rctx->rc_offsets_off_in_sect;
+    return DW_DLV_OK;
+}
 
 /*  Used in case of error reading the
     rnglists headers (not referring to Dwarf_Rnglists_Head
@@ -350,7 +419,6 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     buildhere->rc_version = (Dwarf_Half)version;
     data += SIZEOFT16;
     localoff += SIZEOFT16;
-
     READ_UNALIGNED_CK(dbg,address_size,unsigned,data,
         SIZEOFT8,error,end_data);
     if (address_size != 4 && address_size != 8 &&
@@ -408,7 +476,6 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     if (offset_entry_count ){
         buildhere->rc_offsets_array = data;
     }
-
     lists_len = offset_size *offset_entry_count;
     if (offset_entry_count >= secsize_dbg ||
         lists_len >= secsize_dbg) {
@@ -1050,7 +1117,8 @@ dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head h)
     return;
 }
 
-/*  Caller will eventually free as appropriate. */
+/*  Appends to singly-linked list.
+    Caller will eventually free as appropriate. */
 static int
 alloc_rle_and_append_to_list(Dwarf_Debug dbg,
     Dwarf_Rnglists_Head rctx,
@@ -1088,24 +1156,24 @@ alloc_rle_and_append_to_list(Dwarf_Debug dbg,
     in case we return DW_DLV_ERROR*/
 static int
 build_array_of_rle(Dwarf_Debug dbg,
-    Dwarf_Rnglists_Head rctx,
+    Dwarf_Rnglists_Head rhd,
     Dwarf_Error *error)
 {
     int res = 0;
-    Dwarf_Small * data        = rctx->rh_rlepointer;
-    Dwarf_Unsigned dataoffset = rctx->rh_rlearea_offset;
-    Dwarf_Small *enddata      = rctx->rh_end_data_area;
-    unsigned address_size     = (unsigned int)rctx->rh_address_size;
+    Dwarf_Small * data        = rhd->rh_rlepointer;
+    Dwarf_Unsigned dataoffset = rhd->rh_rlearea_offset;
+    Dwarf_Small *enddata      = rhd->rh_end_data_area;
+    unsigned address_size     = (unsigned int)rhd->rh_address_size;
     Dwarf_Unsigned bytescounttotal= 0;
     Dwarf_Unsigned latestbaseaddr = 0;
     Dwarf_Bool foundbaseaddr        = FALSE;
     int done = FALSE;
     Dwarf_Bool no_debug_addr_available = FALSE;
 
-    if (rctx->rh_cu_base_address_present) {
+    if (rhd->rh_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
             and it is a base address. */
-        latestbaseaddr = rctx->rh_cu_base_address;
+        latestbaseaddr = rhd->rh_cu_base_address;
         foundbaseaddr  = TRUE;
     }
     for ( ; !done  ; ) {
@@ -1124,7 +1192,7 @@ build_array_of_rle(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        res = alloc_rle_and_append_to_list(dbg,rctx,&e,error);
+        res = alloc_rle_and_append_to_list(dbg,rhd,&e,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -1144,7 +1212,7 @@ build_array_of_rle(Dwarf_Debug dbg,
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
-                    dbg,rctx->rh_context,val1,&addr1,
+                    dbg,rhd->rh_context,val1,&addr1,
                     error);
             }
             if (res != DW_DLV_OK) {
@@ -1163,7 +1231,7 @@ build_array_of_rle(Dwarf_Debug dbg,
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
-                    dbg,rctx->rh_context,val1,&addr1,
+                    dbg,rhd->rh_context,val1,&addr1,
                     error);
             }
             if (res != DW_DLV_OK) {
@@ -1177,7 +1245,7 @@ build_array_of_rle(Dwarf_Debug dbg,
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
-                    dbg,rctx->rh_context,val2,&addr2,
+                    dbg,rhd->rh_context,val2,&addr2,
                     error);
             }
             if (res != DW_DLV_OK) {
@@ -1194,7 +1262,7 @@ build_array_of_rle(Dwarf_Debug dbg,
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
-                    dbg,rctx->rh_context,val1,&addr1,
+                    dbg,rhd->rh_context,val1,&addr1,
                     error);
             }
             if (res != DW_DLV_OK) {
@@ -1251,14 +1319,14 @@ build_array_of_rle(Dwarf_Debug dbg,
         }
         }
     }
-    if (rctx->rh_count > 0) {
+    if (rhd->rh_count > 0) {
         Dwarf_Rnglists_Entry* array = 0;
         Dwarf_Rnglists_Entry cur = 0;
         Dwarf_Unsigned i = 0;
 
         /*  Creating an array of pointers. */
         array = (Dwarf_Rnglists_Entry*)malloc(
-            rctx->rh_count *sizeof(Dwarf_Rnglists_Entry));
+            rhd->rh_count *sizeof(Dwarf_Rnglists_Entry));
         if (!array) {
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: Out of memory in "
@@ -1266,16 +1334,16 @@ build_array_of_rle(Dwarf_Debug dbg,
                 "into a pointer array");
             return DW_DLV_ERROR;
         }
-        cur = rctx->rh_first;
-        for ( ; i < rctx->rh_count; ++i) {
+        cur = rhd->rh_first;
+        for ( ; i < rhd->rh_count; ++i) {
             array[i] = cur;
             cur = cur->rle_next;
         }
-        rctx->rh_rnglists = array;
-        rctx->rh_first = 0;
-        rctx->rh_last = 0;
+        rhd->rh_rnglists = array;
+        rhd->rh_first = 0;
+        rhd->rh_last = 0;
     }
-    rctx->rh_bytes_total = bytescounttotal;
+    rhd->rh_bytes_total = bytescounttotal;
     return DW_DLV_OK;
 }
 
@@ -1288,7 +1356,10 @@ dwarf_rnglists_get_rle_head(
     Dwarf_Half     theform,
     /*  attr_val is either an offset
         (theform == DW_FORM_sec_offset)
-        or an index DW_FORM_rnglistx. */
+        to a specific rangelist entry set  or
+        or a rnglistx index DW_FORM_rnglistx
+        at that index is the local offset of
+        a specific rangelist entry set.  */
     Dwarf_Unsigned attr_val,
     Dwarf_Rnglists_Head *head_out,
     Dwarf_Unsigned      *entries_count_out,
@@ -1325,33 +1396,50 @@ dwarf_rnglists_get_rle_head(
     dbg = ctx->cc_dbg;
     CHECK_DBG(dbg,error,
         "dwarf_rnglists_get_rle_head() via attribute");
+
     array = dbg->de_rnglists_context;
+
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
     }
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */
-            offset_in_rnglists = attr_val;
+    offset_in_rnglists = attr_val;
     if (is_rnglistx) {
         if (ctx->cc_rnglists_base_present) {
             offset_in_rnglists = ctx->cc_rnglists_base;
+        } else  if (ctx->cc_is_dwo) {
+            /*  Generate a base and set as 'present'
+                by looking at the location offset
+                table that we are supposedly indexing into.
+                finding what the table value is.
+                An implicit rnglists_base.
+                Will not work with multiple rnglists! */
+                int ires = 0;
+                Dwarf_Unsigned ibase = 0;
+                ires = _dwarf_implicit_rnglists_base(dbg,
+                    attr_val,&ibase);
+                if (ires != DW_DLV_OK) {
+                    dwarfstring m;
 
-        } else {
-            /* FIXME: check in tied file for a cc_rnglists_base */
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_RNGLISTS_ERROR: rnglists table index of"
-                " %u"  ,attr_val);
-            dwarfstring_append(&m,
-                " is unusable unless it is in a tied file."
-                " Possibly libdwarf is incomplete.FIXME");
-            _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
+                    dwarfstring_constructor(&m);
+                    dwarfstring_append_printf_u(&m,
+                        "DW_DLE_RNGLISTS_ERROR: rnglists table"
+                        " index of"
+                        " %u"  ,attr_val);
+                    dwarfstring_append(&m,
+                        " is unusable, there is no default "
+                        " rnglists base address ");
+                    _dwarf_error_string(dbg,error,
+                        DW_DLE_RNGLISTS_ERROR,
+                        dwarfstring_string(&m));
+                    dwarfstring_destructor(&m);
+                    return DW_DLV_ERROR;
+            }
+            ctx->cc_rnglists_base_present = TRUE;
+            ctx->cc_rnglists_base         = ibase;
+            offset_in_rnglists = ibase;
         }
     } else {
         offset_in_rnglists = attr_val;
