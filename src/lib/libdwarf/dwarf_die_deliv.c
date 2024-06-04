@@ -59,6 +59,96 @@
 #define MINIMUM_ADDRESS_SIZE 2
 #define MAXIMUM_ADDRESS_SIZE 8
 
+#if 0
+#include "dwarf_rnglists.h" /* for debugging declaration */
+static void
+dumprnglists_context(Dwarf_Rnglists_Context *rnglists,
+    Dwarf_Unsigned count)
+{
+    Dwarf_Rnglists_Context prc = 0;
+    Dwarf_Unsigned i = 0;
+    printf("Rnglists_Context count: 0x%lu\n",(unsigned long)count);
+
+    for ( ; i < count; ++i) {
+        prc = rnglists[i];
+        printf("[%3lu] Rnglists_Context rc_index  : %lu\n",
+            (unsigned long)i,
+            (unsigned long)prc->rc_index);
+        printf("      hed offset  : %lu\n",
+            (unsigned long)prc->rc_header_offset);
+        printf("      rc_length : %lu\n",
+            (unsigned long)prc->rc_length);
+        printf("      Version: %u offset size: "
+            "%u address_size: %u \n",
+            prc->rc_version,prc->rc_offset_size,
+            prc->rc_address_size);
+        printf("      offset_entry count : %lu\n",
+            (unsigned long)prc->rc_offset_entry_count);
+        printf("      offsets offset_ : %lu\n",
+            (unsigned long)prc->rc_offsets_off_in_sect);
+    }
+}
+static void
+dumpcu_context_list( Dwarf_CU_Context first)
+{
+    Dwarf_CU_Context ctx = 0;
+    unsigned cc = 0;
+
+    for ( ctx = first; ctx  ; ctx = ctx->cc_next, ++cc) {
+        printf("[%3u] CU_Context rnglists_base     "
+            "      : 0x%lx\n",cc,
+            (unsigned long)ctx->cc_rnglists_base);
+        printf("     rnglists_base_contr_size: 0x%lx\n",
+            (unsigned long)ctx->cc_rnglists_base_contr_size);
+        printf("     rnglists_base_present   : 0x%lx\n",
+            (unsigned long)ctx->cc_rnglists_base_present);
+        printf("     rnglists_header_length_present: %lu\n",
+            (unsigned long)ctx->cc_rnglists_header_length_present);
+        printf("     ranges_base             : 0x%lx\n",
+            (unsigned long)ctx->cc_ranges_base);
+        printf("     ranges_base present     : 0x%lx\n",
+            (unsigned long)ctx->cc_ranges_base_present);
+    }
+}
+static void
+dump_rnglists_data(const char *msg,
+    Dwarf_Debug dbg,Dwarf_CU_Context cucon)
+{
+    printf("Debugging dump_rnglists_data %s\n",msg);
+    if (!dbg->de_debug_rnglists.dss_data) {
+        printf("No de_rnglists section\n");
+    }
+    if (!dbg->de_rnglists_context_count) {
+        printf("No de_rnglists contexts\n");
+    } else {
+        dumprnglists_context(dbg->de_rnglists_context,
+        dbg->de_rnglists_context_count);
+    }
+    if (dbg->de_info_reading.de_cu_context_list) {
+        if (cucon) {
+            dumpcu_context_list(cucon);
+        } else {
+            dumpcu_context_list(
+                dbg->de_info_reading.de_cu_context_list);
+        }
+    } else {
+        printf("No debug_info cu contexts\n");
+    }
+    if (dbg->de_types_reading.de_cu_context_list) {
+        if (cucon) {
+            dumpcu_context_list(cucon);
+        } else {
+            dumpcu_context_list(
+                dbg->de_types_reading.de_cu_context_list);
+        }
+    } else {
+        printf("No debug_types cu contexts\n");
+    }
+    fflush(stdout);
+
+}
+#endif
+
 static void assign_correct_unit_type(Dwarf_CU_Context cu_context);
 static int find_cu_die_base_fields(Dwarf_Debug dbg,
     Dwarf_CU_Context cucon,
@@ -1510,7 +1600,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
 
         /*  Pretending that DW_AT_entry_pc with no
             DW_AT_low_pc is a valid base address for
-            loccation lists.
+            location lists.
             DW_AT_producer 4.2.1 (Based on Apple Inc. build 5658)
             (LLVM build 2336.1.00) uses DW_AT_entry_pc as the
             base address (DW_AT_entry_pc first appears in DWARF3).
@@ -1977,7 +2067,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         }
         if (tres == DW_DLV_ERROR && error) {
             /*  We'll assume any errors will be
-                discovered later. Lets get our CU_context
+                discovered later. Lets get our
                 finished.
                 if error NULL it's a caller issue
                 and there is nothing we can do here */
