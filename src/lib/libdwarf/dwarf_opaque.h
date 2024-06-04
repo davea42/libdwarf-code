@@ -307,14 +307,14 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_macro_header_length_present;
 
     /*  DW_SECT_RNGLISTS  */
-    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
-    Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
     /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
         but was unused. See dwarf_die_deliv.c for details. */
     Dwarf_Unsigned cc_ranges_base;
     /*  DW_AT_GNU_ranges_base is a GNU extension, DW4  */
     Dwarf_Bool     cc_ranges_base_present;
     /* .debug_rnglists */
+    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
+    Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
     Dwarf_Bool     cc_rnglists_base_present; /* DW5 */
     Dwarf_Bool     cc_rnglists_header_length_present;
 
@@ -833,7 +833,7 @@ struct Dwarf_Debug_s {
         assuming the first CU seen values for these
         work for everything in the GNU extenstion
         .debug_addr section. Only needed if the version
-        here is 4 (DWARF4). */ 
+        here is 4 (DWARF4). */
     Dwarf_Half de_debug_addr_version;
     Dwarf_Half de_debug_addr_offset_size;
     Dwarf_Half de_debug_addr_address_size;
@@ -1120,6 +1120,14 @@ int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     Dwarf_Block * return_block,
     Dwarf_Error * error);
+
+/*  for a .dwp, gcc assumes the rnglists_base is
+    optional, which, it seens, can only work
+    when referring to  the initial rnglists table. */
+int
+_dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
+    Dwarf_Unsigned indexval,
+    Dwarf_Unsigned *ibase);
 
 int _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Small *data,
