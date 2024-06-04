@@ -63,6 +63,13 @@ struct Dwarf_Rnglists_Context_s {
     unsigned        rc_version; /* 5 */
     Dwarf_Small     rc_address_size;
     Dwarf_Small     rc_segment_selector_size;
+
+    /*  The next three are the table of offsets.
+        used by DW_FORM_rnglistx.
+        The count may be zero if no DW_FORM_rnglistx.
+        If they exist the
+        index values in the array are offsets into area starting
+        with rc_first_rnglist_offset */
     Dwarf_Unsigned  rc_offset_entry_count;
 
     /* offset in the section of the offset entries */
@@ -70,8 +77,12 @@ struct Dwarf_Rnglists_Context_s {
 
     /* Do not free. Points into section memory */
     Dwarf_Small   * rc_offsets_array;
+    /* End table of offsets */
 
-    /*  Offset in the .debug_rnglists section of the
+    /*  Now to the rnglists. If DW_AT_ranges FORM is
+        DW_FORM_sec_offset those offsets are inside
+        here.
+        Offset in the .debug_rnglists section of the
         first rangelist in the set of rangelists for the
         CU. */
     Dwarf_Unsigned  rc_first_rnglist_offset;
