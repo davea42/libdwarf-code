@@ -463,7 +463,6 @@ extern "C" {
 
 #define DW_AT_TI_veneer                         0x2000  /* TI */
 
-
 #define DW_AT_MIPS_fde                          0x2001 /* MIPS/SGI */
 #define DW_AT_TI_symbol_name                    0x2001 /* TI */
 #define DW_AT_MIPS_loop_begin                   0x2002 /* MIPS/SGI */
