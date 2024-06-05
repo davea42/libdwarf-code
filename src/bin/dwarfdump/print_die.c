@@ -1028,7 +1028,7 @@ print_die_and_children(Dwarf_Debug dbg,
 #endif
     /* A CU_die has a single child */
     local_symbols_already_begun = FALSE;
-    res  =print_die_and_children_internal(dbg,
+    res  = print_die_and_children_internal(dbg,
         in_die_in, dieprint_cu_goffset, is_info,
         srcfiles,srcfiles_count,
         offset_array,offset_count,err);
