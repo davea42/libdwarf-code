@@ -44,6 +44,7 @@
 #include "dwarf_string.h"
 #include "dwarf_str_offsets.h"
 #include "dwarf_loc.h"
+#include "dwarf_loclists.h"
 #include "dwarf_rnglists.h"
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
