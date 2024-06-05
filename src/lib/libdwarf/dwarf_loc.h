@@ -44,60 +44,6 @@ struct Dwarf_Loc_Chain_s {
     Dwarf_Loc_Chain lc_next;
 };
 
-/*  Dwarf_Loclists_Context_s contains the data from
-    the .debug_loclists
-    section headers (if that section exists).  Dwarf 2,3,4 .debug_loc
-    has no such data.  The array (one of these per header in
-    .debug_loclists) is recorded in Dwarf_Debug. These
-    are filled in at startup at the same time .debug_info
-    is opened.  Nothing of this struct is exposed to
-    libdwarf callers */
-struct Dwarf_Loclists_Context_s {
-    Dwarf_Debug    lc_dbg;
-    Dwarf_Unsigned lc_index; /* An index  assigned by
-        libdwarf to each loclists context. Starting
-        with zero at the zero offset in .debug_loclists. */
-
-    /* Offset of the .debug_loclists header involved. */
-    Dwarf_Unsigned  lc_header_offset;
-    Dwarf_Unsigned  lc_length;
-    unsigned long   lc_magic;
-
-    /* Many places in in libdwarf this is called length_size. */
-    Dwarf_Small     lc_offset_size;
-
-    /*  rc_extension_size is zero unless this is standard
-        DWARF3 and later 64bit dwarf using the extension mechanism.
-        64bit DWARF3 and later: rc_extension_size is 4.
-        64bit DWARF2 MIPS/IRIX: rc_extension_size is zero.
-        32bit DWARF:            rc_extension_size is zero.  */
-    Dwarf_Small     lc_extension_size;
-    Dwarf_Small     lc_address_size;
-    Dwarf_Small     lc_segment_selector_size;
-    Dwarf_Half      lc_version; /* 5 */
-    Dwarf_Unsigned  lc_offset_entry_count;
-
-    /* offset in the section of the offset entries */
-    Dwarf_Unsigned  lc_offsets_off_in_sect;
-
-    /* Do not free. Points into section memory */
-    Dwarf_Small   * lc_offsets_array;
-
-    /*  Offset in the .debug_loclists section of the
-        first loclist in the set of loclists for the
-        CU. */
-    Dwarf_Unsigned  lc_first_loclist_offset;
-    Dwarf_Unsigned  lc_past_last_loclist_offset;
-
-    /* pointer to 1st byte of loclist header*/
-    Dwarf_Small *  lc_loclists_header;
-    /*  pointer to first byte of the loclist data
-        for loclist involved. Do not free. */
-    Dwarf_Small    *lc_startaddr;
-    /*  pointer one past end of the loclist data. */
-    Dwarf_Small    *lc_endaddr;
-};
-
 /*  Contains info on an uninterpreted block of data,
     the data is DWARF location expression operators.  */
 struct Dwarf_Block_c_s {
