@@ -1121,14 +1121,6 @@ int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_Block * return_block,
     Dwarf_Error * error);
 
-/*  for a .dwp, gcc assumes the rnglists_base is
-    optional, which, it seens, can only work
-    when referring to  the initial rnglists table. */
-int
-_dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
-    Dwarf_Unsigned indexval,
-    Dwarf_Unsigned *ibase);
-
 int _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Small *data,
     Dwarf_Small *section_start,
