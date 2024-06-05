@@ -137,7 +137,7 @@ dump_rc(const char *msg,
     which only makes sense for DW_FORM_rnglistx and
     in that case there is no base.
     We are dealing with DW_FORM_rnglistx */
-int
+static int
 _dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
     Dwarf_Unsigned indexval,
     Dwarf_Unsigned *ibase)
@@ -1220,6 +1220,10 @@ build_array_of_rle(Dwarf_Debug dbg,
                 e->rle_index_failed = TRUE;
                 e->rle_cooked1 = 0;
                 foundbaseaddr = FALSE;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                }
             } else {
                 foundbaseaddr = TRUE;
                 e->rle_cooked1 = addr1;
@@ -1238,6 +1242,10 @@ build_array_of_rle(Dwarf_Debug dbg,
                 no_debug_addr_available = TRUE;
                 e->rle_index_failed = TRUE;
                 e->rle_cooked1 = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                }
             } else {
                 e->rle_cooked1 = addr1;
             }
@@ -1252,7 +1260,10 @@ build_array_of_rle(Dwarf_Debug dbg,
                 no_debug_addr_available = TRUE;
                 e->rle_index_failed = TRUE;
                 e->rle_cooked2 = 0;
-                return res;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                }
             } else {
                 e->rle_cooked2 = addr2;
             }
@@ -1270,8 +1281,10 @@ build_array_of_rle(Dwarf_Debug dbg,
                 e->rle_index_failed = TRUE;
                 e->rle_cooked2 = 0;
                 e->rle_cooked1 = 0;
-                return res;
-
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                }
             } else {
                 e->rle_cooked1 = addr1;
                 e->rle_cooked2 = val2+addr1;
