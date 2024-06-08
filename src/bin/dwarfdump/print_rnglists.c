@@ -87,6 +87,10 @@ print_offset_entry_table(Dwarf_Debug dbg,
         if (e == 0) {
             printf("   Location Offset Table at 0x%" DW_PR_XZEROS
                DW_PR_DUx  "\n",offset_of_offset_array);
+            printf("   (Added 0x%" DW_PR_DUx 
+                " to value for actual offsets)",
+                offset_of_offset_array);
+               
             printf("   [goff][loff][index]\n");
         }
         hasnewline = FALSE;
@@ -105,6 +109,8 @@ print_offset_entry_table(Dwarf_Debug dbg,
         loff += offset_size;
         goff += offset_size;
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx, value);
+        printf("(0x%" DW_PR_XZEROS DW_PR_DUx ")", value +
+           offset_of_offset_array);
         col++;
         if (col == colmax) {
             printf("\n");

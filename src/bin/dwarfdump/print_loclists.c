@@ -49,6 +49,20 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 
+#if 0
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+#endif /* 0 */
+
 static void
 print_sec_name(Dwarf_Debug dbg)
 {
@@ -86,6 +100,9 @@ print_offset_entry_table(Dwarf_Debug dbg,
             printf("   Location Offset Table :\n");
             printf("   Location Offset Table at 0x%" DW_PR_XZEROS
                DW_PR_DUx  "\n",offset_of_offset_array);
+            printf("   (Added 0x%" 
+               DW_PR_DUx  " to value for actual offsets)\n",
+               offset_of_offset_array);
             printf("   [goff][loff][index]\n");
         }
         hasnewline = FALSE;
@@ -95,7 +112,6 @@ print_offset_entry_table(Dwarf_Debug dbg,
             return res;
         }
         if (col == 0) {
-            printf("   [%2" DW_PR_DUu "]",e);
             printf("   [0x%" DW_PR_XZEROS DW_PR_DUx "]",
                   goff);
             printf("[0x%" DW_PR_XZEROS DW_PR_DUx "]",
@@ -104,6 +120,7 @@ print_offset_entry_table(Dwarf_Debug dbg,
 
         }
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx, value);
+        printf("(0x%" DW_PR_XZEROS DW_PR_DUx ")", value+offset_of_offset_array);
         loff += offset_size;
         goff += offset_size;
         col++;
@@ -152,6 +169,9 @@ print_single_lle(Dwarf_Unsigned lineoffset,
     const char *name = "";
     struct esb_s m;
 
+#if 0
+printf("dadebug line %d file %s\n",__LINE__,__FILE__);
+#endif
     esb_constructor(&m);
     res = dwarf_get_LLE_name((unsigned int)code,&name);
     if (res != DW_DLV_OK) {
@@ -185,6 +205,9 @@ print_single_lle(Dwarf_Unsigned lineoffset,
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         break;
     case DW_LLE_offset_pair:
+#if 0
+printf("dadebug line %d file %s\n",__LINE__,__FILE__);
+#endif
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
@@ -228,7 +251,8 @@ print_single_lle(Dwarf_Unsigned lineoffset,
     return res;
 }
 
-/*  Prints the raw content. Exactly as in .debug_loclists */
+/*  Prints the raw content. Exactly as in .debug_loclists 
+    Similar to .debug_rnglists */
 static int
 print_entire_loclist(Dwarf_Debug dbg,
     Dwarf_Unsigned contextnumber,
@@ -357,7 +381,7 @@ print_raw_all_loclists(Dwarf_Debug dbg,
             segment_selector_size);
         printf("   offset entry count    : %3" DW_PR_DUu "\n",
             offset_entry_count);
-        printf("   context size in bytes : %3" DW_PR_DUu "\n",
+        printf("   loclist size in bytes : %3" DW_PR_DUu "\n",
             offset_past_last_locentry - header_offset);
         printf("   Offset in section     : "
                 "0x%"  DW_PR_XZEROS DW_PR_DUx"\n",
