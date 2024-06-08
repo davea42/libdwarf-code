@@ -1837,6 +1837,41 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Unsigned * locdesc_offset_out,
     Dwarf_Error    * error)
 {
+    return dwarf_get_locdesc_entry_e(
+        loclist_head, index,
+        lle_value_out,
+        rawval1,
+        rawval2,
+        debug_addr_unavailable,
+        lowpc_out, /* 'cooked' value */
+        hipc_out, /* 'cooked' value */
+        loclist_expr_op_count_out,
+        0 /* not returning lle_bytecount*/ ,
+        /* Returns pointer to the specific locdesc of the index; */
+        locdesc_entry_out,
+        loclist_source_out, /* 0,1, or 2 */
+        expression_offset_out,
+        locdesc_offset_out,
+        error);
+}
+int
+dwarf_get_locdesc_entry_e(Dwarf_Loc_Head_c loclist_head,
+    Dwarf_Unsigned   index,
+    Dwarf_Small    * lle_value_out,
+    Dwarf_Unsigned * rawval1,
+    Dwarf_Unsigned * rawval2,
+    Dwarf_Bool     * debug_addr_unavailable,
+    Dwarf_Addr     * lowpc_out, /* 'cooked' value */
+    Dwarf_Addr     * hipc_out, /* 'cooked' value */
+    Dwarf_Unsigned * loclist_expr_op_count_out,
+    /* Returns pointer to the specific locdesc of the index; */
+    Dwarf_Unsigned * lle_bytecount,
+    Dwarf_Locdesc_c* locdesc_entry_out,
+    Dwarf_Small    * loclist_source_out, /* 0,1, or 2 */
+    Dwarf_Unsigned * expression_offset_out,
+    Dwarf_Unsigned * locdesc_offset_out,
+    Dwarf_Error    * error)
+{
     Dwarf_Locdesc_c descs_base =  0;
     Dwarf_Locdesc_c desc =  0;
     Dwarf_Unsigned  desc_count = 0;
@@ -1870,6 +1905,9 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     *loclist_source_out = (Dwarf_Small)desc->ld_kind;
     *expression_offset_out = desc->ld_section_offset;
     *locdesc_offset_out = desc->ld_locdesc_offset;
+    if (lle_bytecount) {
+        *lle_bytecount = desc->ld_lle_bytecount; 
+    }
     return DW_DLV_OK;
 }
 

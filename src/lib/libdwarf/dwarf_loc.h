@@ -123,6 +123,8 @@ struct Dwarf_Locdesc_c_s {
     /*  Failed means .debug_addr section needed but missing.
         (possibly tied file needed) */
     Dwarf_Bool       ld_index_failed;
+    /* the length of data in this lle entry */
+    Dwarf_Unsigned   ld_lle_bytecount;
     unsigned long    ld_magic;
 
     /*  Beginning of active range. This is actually an offset
