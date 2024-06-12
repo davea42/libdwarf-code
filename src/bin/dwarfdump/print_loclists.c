@@ -252,7 +252,10 @@ printf("dadebug line %d file %s\n",__LINE__,__FILE__);
 }
 
 /*  Prints the raw content. Exactly as in .debug_loclists 
-    Similar to .debug_rnglists */
+    Similar to .debug_rnglists 
+    Here we print, but do not stop, on seeing
+    DW_LLE_end_of_list. Only the end of list
+    bytes stop the iteration.  */
 static int
 print_entire_loclist(Dwarf_Debug dbg,
     Dwarf_Unsigned contextnumber,
