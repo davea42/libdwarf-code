@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-05-27 v0.9.3
+    @date 2024-06-12 v0.9.3
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1085,6 +1085,13 @@
     We list these with newest first.
 
     <b>Changes 0.9.2 to 0.9.3</b>
+
+    Added dwarf_get_locdesc_entry_e() to allow dwarfdump
+    to report some data from .debug_loclists more
+    completely -- it reports a byte length of each
+    loclist item. This is of little interest to anyone,
+    surely.  dwarf_get_locdesc_entry_d() is still
+    what you should be using.
 
     dwarf_debug_addr_table() now supports reading
     the DWARF4 GNU extension .debug_addr table.
