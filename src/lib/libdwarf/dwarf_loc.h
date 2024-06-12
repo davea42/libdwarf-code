@@ -116,7 +116,7 @@ struct Dwarf_Loc_Expr_Op_s {
     Adds the DW_LLE value (new in DWARF5).
     This struct is opaque. Not visible to callers. */
 struct Dwarf_Locdesc_c_s {
-    Dwarf_Half       ld_kind; /* DW_LKIND */
+    Dwarf_Half       ld_lkind; /* DW_LKIND */
 
     /*  A DW_LLEX or DW_LLE value, real or synthesized */
     Dwarf_Small      ld_lle_value;
@@ -187,14 +187,14 @@ struct Dwarf_Loc_Head_c_s {
     /*  The CU Context of this loclist or locexpr. */
     Dwarf_CU_Context ll_context;
     /* DW_LKIND*    */
-    Dwarf_Half       ll_kind;
+    Dwarf_Half       ll_lkind; /* DW_LKIND */
     Dwarf_Debug      ll_dbg;
     unsigned long    ll_magic;
 
-    /*  If ll_kind == DW_LKIND_loclists the following
+    /*  If ll_lkind == DW_LKIND_loclists the following
         pointer is non-null and index is the index
         of the localcontext */
-    Dwarf_Unsigned   ll_index;
+    Dwarf_Unsigned         ll_index;
     Dwarf_Loclists_Context ll_localcontext;
 
     /*  rh_last and rh_first used during build-up.

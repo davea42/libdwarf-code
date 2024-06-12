@@ -58,6 +58,11 @@ struct Dwarf_Loclists_Context_s {
     Dwarf_Small     lc_segment_selector_size;
     Dwarf_Half      lc_version; /* 5 */
     Dwarf_Unsigned  lc_offset_entry_count;
+    /*  lc_offset_entry_count values. Each local offset to 
+        a locdesc set. We need this as a way to  know
+        which lle entry offsets  are relevant from a loclistx. 
+        as nothing else reveals these special LLE entries. */
+    Dwarf_Unsigned *lc_offset_value_array;
 
     /* offset in the section of the offset entries */
     Dwarf_Unsigned  lc_offsets_off_in_sect;
