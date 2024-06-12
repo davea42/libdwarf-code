@@ -6594,7 +6594,8 @@ loc_error_check(
 
 /*  See  also print_loclists.c print_offset_entry_table() */
 static void
-print_ll_offsets_table(Dwarf_Debug dbg,Dwarf_Unsigned goff,
+print_ll_offsets_table(Dwarf_Debug dbg,
+    Dwarf_Unsigned goff,
     Dwarf_Unsigned contextnum,
     Dwarf_Unsigned offset_table_offset,
     Dwarf_Unsigned offset_entry_count,
@@ -6610,6 +6611,14 @@ print_ll_offsets_table(Dwarf_Debug dbg,Dwarf_Unsigned goff,
     int            res = 0;
 
     goff = goff + loff;
+#if 0
+printf("dadebug offset_entry_count %lu 0x%lx contextnum %lu 0x%lx line %d %s\n",
+(unsigned long)offset_entry_count,
+(unsigned long)offset_entry_count,
+(unsigned long)contextnum,
+(unsigned long)contextnum,
+__LINE__,__FILE__);
+#endif
     for ( ; e < offset_entry_count; ++e) {
         Dwarf_Unsigned value = 0;
 
@@ -6633,8 +6642,8 @@ print_ll_offsets_table(Dwarf_Debug dbg,Dwarf_Unsigned goff,
                    "ERROR  Offset table value not available %s\n",
                    msg);
            } else {
-               esb_append_printf_s(esbp,
-                   "Offset table value not available%s\n","");
+               esb_append(esbp,
+                   "Offset table value not available%s\n");
            }
         }
         if (col == 0) {
@@ -6751,8 +6760,8 @@ print_loclists_context_head(Dwarf_Debug dbg,
        if (offset_table_entrycount) {
            esb_append_printf_s(esbp,"%s\n","");
            append_local_prefix(esbp);
-           print_ll_offsets_table(dbg,loclists_index,
-               goff,offset_table_offset,
+           print_ll_offsets_table(dbg,goff,
+               loclists_index, offset_table_offset,
                offset_table_entrycount,offset_size,
                esbp, error);
        }
@@ -6886,6 +6895,12 @@ print_location_list(Dwarf_Debug dbg,
             &loclists_debug_addr_base_present,
             &loclists_debug_addr_base,
             &loclists_offset_lle_set,llerr);
+#if 0
+printf("dadebug  loclists_offset_lle_set 0x%lx"
+"  line %d file %s\n",
+(unsigned long)loclists_offset_lle_set,
+__LINE__,__FILE__);
+#endif
         if (lres != DW_DLV_OK) {
             dwarf_dealloc_loc_head_c(loclist_head);
             return lres;
@@ -6937,6 +6952,17 @@ print_location_list(Dwarf_Debug dbg,
                 loclists_offset_lle_set);
             esb_destructor(&section_truename);
             if (glflags.verbose) {
+#if 0
+printf("dadebug loff 0x%lx goff 0x%lx loclists_offset_lle_set 0x%lx"
+" loclists index %lu (0x%lx)"
+"  line %d file %s\n",
+(unsigned long)loff,
+(unsigned long)goff,
+(unsigned long)loclists_offset_lle_set,
+(unsigned long)loclists_index,
+(unsigned long)loclists_index,
+__LINE__,__FILE__);
+#endif
                 print_loclists_context_head(dbg,lkind,
                     lle_count, lle_version, loclists_index,
                     bytes_total_in_lle,
@@ -6959,9 +6985,28 @@ print_location_list(Dwarf_Debug dbg,
     }
     possibly_increase_esb_alloc(details, no_of_elements,100);
 
-    loff = offset_table_offset + offset_table_entrycount*offset_size;
-    goff = overall_offset_of_this_context+loff;
-
+    if (lkind == DW_LKIND_loclists) {
+        loff = loclists_offset_lle_set;
+        goff = overall_offset_of_this_context+loff;
+    }
+#if 0
+else {
+        loff = offset_table_offset + loclists_offset_lle_set;
+        goff = overall_offset_of_this_context+loff;
+    }
+#endif
+#if 0
+printf("dadebug offset_table_offset 0x%lx "
+"overalloff 0x%lx line %d %s\n",
+(unsigned long)loff,(unsigned long)goff,__LINE__,__FILE__);
+printf("dadebug offset_table_offset 0x%lx "
+" offset_lle_set 0x%lx "
+" offset_of_this_context 0x%lx"
+" %d %s\n",
+(unsigned long)offset_table_offset,
+(unsigned long)loclists_offset_lle_set,
+(unsigned long)overall_offset_of_this_context,__LINE__,__FILE__);
+#endif
     for (llent = 0; llent < no_of_elements; ++llent) {
         Dwarf_Unsigned locdesc_offset = 0;
         Dwarf_Locdesc_c locentry = 0; /* 2015 */
@@ -7048,6 +7093,15 @@ print_location_list(Dwarf_Debug dbg,
                     esb_append_printf_i(details,
                         " with %ld entries follows>",
                         no_of_elements);
+#if 0
+printf("dadebug loff 0x%lx goff 0x%lx loclists_offset_lle_set 0x%lx"
+"  line %d file %s\n",
+(unsigned long)loff,
+(unsigned long)goff,
+(unsigned long)loclists_offset_lle_set,
+__LINE__,__FILE__);
+#endif
+                    goff = loclists_offset_lle_set;
                     esb_append_printf_u(details, "\n   [0x%"
                         DW_PR_XZEROS
                         DW_PR_DUx "]",goff);
@@ -7117,6 +7171,10 @@ print_location_list(Dwarf_Debug dbg,
                     &bError);
             } else {
                 /* loclist_source == DW_LKIND_loclists */
+#if 0
+printf("dadebug call print_debug_loclists_linecodes,llent %lu "
+"line %d %s\n",(unsigned long)llent,__LINE__,__FILE__); 
+#endif
                 print_debug_loclists_linecodes(checking,
                     tagname,
                     attrname,
@@ -7822,7 +7880,7 @@ expand_rnglist_entries(
                     DW_PR_XZEROS DW_PR_DUx ,secoffset);
             }
             if (no_debug_addr_available) {
-                esb_append(esbp,"no .debug_addr available");
+                esb_append(esbp," no .debug_addr available");
             }
         }
         if (!no_debug_addr_available) {
