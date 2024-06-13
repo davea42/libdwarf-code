@@ -340,6 +340,14 @@ read_single_lle_entry(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+static void
+free_loclists_context(Dwarf_Loclists_Context cx)
+{
+    free(cx->lc_offset_value_array);
+    cx->lc_offset_value_array = 0;
+    free(cx);
+}
+
 /*  Reads the header. Determines the
     various offsets, including offset
     of the next header. Does no memory
@@ -467,11 +475,23 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
     for (tabentrynum = 0 ; tabentrynum < offset_entry_count;
         data += SIZEOFT32,++tabentrynum ) {
         Dwarf_Unsigned entry = 0;
+        int res = 0;
 
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,
+            &entry,data,SIZEOFT32,end_data,error);
+        if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
+                free_loclists_context(buildhere);
+                buildhere = 0;
+            }
+            return res;
+        }
+#if 0
         READ_UNALIGNED_CK(dbg,entry,Dwarf_Unsigned,data,
           SIZEOFT32,error,end_data);
+#endif
         buildhere->lc_offset_value_array[tabentrynum] = entry;
-        lists_len += offset_size;
+        lists_len += SIZEOFT32;
     }
 
     buildhere->lc_offsets_off_in_sect = offset+localoff;
@@ -483,14 +503,6 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
         buildhere->lc_header_offset +buildhere->lc_length;
     *next_offset =  buildhere->lc_past_last_loclist_offset;
     return DW_DLV_OK;
-}
-
-static void
-free_loclists_context(Dwarf_Loclists_Context cx)
-{
-    free(cx->lc_offset_value_array);
-    cx->lc_offset_value_array = 0;
-    free(cx);
 }
 
 /*  We return a pointer to an array of contexts
@@ -538,6 +550,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
             newcontext,&nextoffset,error);
         if (res == DW_DLV_ERROR) {
             free_loclists_context(newcontext);
+            newcontext = 0;
             free_loclists_chain(dbg,head_chain);
             return DW_DLV_ERROR;
         }
@@ -550,6 +563,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
                 " chain entry");
             free_loclists_chain(dbg,head_chain);
             free_loclists_context(newcontext);
+            newcontext = 0;
             return DW_DLV_ERROR;
         }
         curr_chain->ch_item = newcontext;
@@ -621,6 +635,11 @@ dwarf_load_loclists(Dwarf_Debug dbg,
             return res;
         }
     }
+    /*  cxt is set to a pointer to a context, which is
+        actually an array of pointers to such contexts, 'count'
+        of them. Each context has the loclists offset table
+        (if it has at least on entry in the table)
+        pointed in each cxt. */
     res = internal_load_loclists_contexts(dbg,&cxt,&count,error);
     if (res == DW_DLV_ERROR) {
         return res;
@@ -1432,6 +1451,7 @@ _dwarf_free_loclists_limited_head_content(Dwarf_Loc_Head_c head)
             next = cur->ld_next;
             cur->ld_next = 0;
             cur->ld_magic = 0;
+/* FIXME? */
             free(cur);
         }
         head->ll_first = 0;
