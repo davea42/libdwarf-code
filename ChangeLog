@@ -1,3 +1,86 @@
+2024-06-13:  David Anderson
+    commit 32d832900ebe2e61ec07e82625a561415be05424
+
+    Ensured local alloc freed in oad_xu_loclists_into_cucontext
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Now adds a loclists DWARF5 offset table directly
+    into lc_offset_value_array so need not be read
+    again.
+    In case of error assure that local allocations
+    are free-d.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-12:  David Anderson
+    commit 2f4f932b6f420c9783a05e9d964c0a3eb9b288ae
+
+    Added improved sanity checks reading loclists.
+    Now buildss the lc_offset_value_array
+    on initial scan (for later use).
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-12:  David Anderson
+    commit 4380c51d20f62ab1627eccd18723bdd4dfb0a372
+
+    Implemented spelling change ld_kind  to ld_lkind
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+2024-06-12:  David Anderson
+    commit 50c1941419f5b638512b3998e8207182cff4f98d
+
+    In dwarf_formref() we correct the reading
+    of DW_FORM_loclistx and DW_FORM_rnglistx
+    to read a uleb. Been wrong since 2022 at least..
+    Another spot reading these had it right all along.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2024-06-12:  David Anderson
+    commit 1522f914695132dccccd368fd2970396b1435a98
+
+    Correct a comment to name loclists instead of rnglists.
+            modified:   src/bin/dwarfdump/print_loclists.c
+
+2024-06-12:  David Anderson
+    commit 76dd670473e3da501a8f9cfb723a054ad631ae2b
+
+    Some #if 0 debug code here will be removed.
+    adds an argument print_ll_offsets_table()
+    for more detailed printing of loclists.
+    For .debug_loclists we improve the format and information
+    with new detail.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-06-12:  David Anderson
+    commit c81229cb76d865b60aff9c8b5719a282b31de946
+
+    Doumented a new Change entry,
+    dwarf_get_locdesc_entry_e() for the convenience of
+    reporting (from dwarfdump).
+    dwarf_get_locdesc_entry_d() continues to
+    be fine to use,
+    you likely don't need to see the extra field reported
+    by dwarf_get_locdesc_entry_e().
+
+            modified:   doc/libdwarf.dox
+
+2024-06-12:  David Anderson
+    commit a8310ce5648774a8253674ddfe631df2884a4772
+
+    Renamed ll_kind to ll_lkind as it names a DW_LKIND value
+    Renamed ld_kind to ld_lkind as it names a DW_LKIND value
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Added lc_offset_value_array so the values need not
+    be reread from the section (when the values needed
+    for DW_FORM_loclistx.
+            modified:   src/lib/libdwarf/dwarf_loclists.h
+
+2024-06-08:  David Anderson
+    commit 121996d449b57b2979a9f1048d50df0163890454
+
+    Up to date with loclists rnglists correction.
+            modified:   ChangeLog
+
 2024-06-08:  David Anderson
     commit bedc0b778696812bf996574eec50987c7ae0b1e5
 
