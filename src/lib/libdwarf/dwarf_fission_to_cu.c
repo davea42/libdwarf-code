@@ -289,6 +289,8 @@ static const char *keylist[2] = {
     Then, _dwarf_make_CU_Context() calls
     _dwarf_merge_all_base_attrs_of_cu_die() if there
     is a tied (executable) object known.
+    (not all base attrs are merged from tied. Certainly not
+    .debug_rnglists or .debug_loclists.
 
     Called by dwarf_die_deliv.c
 */
