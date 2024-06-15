@@ -1912,7 +1912,7 @@ dwarf_get_locdesc_entry_e(Dwarf_Loc_Head_c loclist_head,
     *expression_offset_out = desc->ld_section_offset;
     *locdesc_offset_out = desc->ld_locdesc_offset;
     if (lle_bytecount) {
-        *lle_bytecount = desc->ld_lle_bytecount; 
+        *lle_bytecount = desc->ld_lle_bytecount;
     }
     return DW_DLV_OK;
 }
