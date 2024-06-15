@@ -179,6 +179,7 @@ free_rnglists_chain(Dwarf_Debug dbg, Dwarf_Chain head)
     for ( ;cur; cur = next) {
         next = cur->ch_next;
         if (cur->ch_item) {
+            /* ch_item is Dwarf_Rnglists_Context */
             free(cur->ch_item);
             cur->ch_item = 0;
             dwarf_dealloc(dbg,cur,DW_DLA_CHAIN);
