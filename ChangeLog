@@ -1,3 +1,79 @@
+2024-06-15:  David Anderson
+    commit 70b6ecbb1453b1461a6d06422db1ad6217fb55fd
+
+    Fix indents and eliminate trailing whitespace.
+    Reemove #if 0 ... #endif debugging code.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2024-06-15:  David Anderson
+    commit acf34ff59715665caf986daf8415b7b9d2f5a1e5
+
+    Corrected the gitfixid as there was
+    a use-after-free in new-today code, now fixed.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-06-15:  David Anderson
+    commit 217d622d8e60760779f7e2483a92ea1170dc2707
+
+    Fixing a nasty double free that was caused a few
+    minutes ago.
+            modified:   ../../lib/libdwarf/dwarf_loclists.c
+
+2024-06-15:  David Anderson
+    commit f141c30cbdb13f5c905b7dece927ee43e57e33e8
+
+    New oss fuzz 69639 and 69641 are fixed.
+    Here identfied as DW202406-001 and DW202406-002
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-06-15:  David Anderson
+    commit b3d86e3e2d33d2ba1ec7e0064531010553ef056a
+
+    Remove debug printf (was #if 0 ... #endif)
+    Fixed DW202406-001  ossfuzz 69639
+    and
+    DW202406-002 ossfuzz 69641
+    The bug in reading DWARF5 .debug_loclists was
+    in the code for a couple weeks.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-15:  David Anderson
+    commit 86fe1d9cf6cb3d688c92d1004e7a8d76abeeeb48
+
+    Added a comment to clarify what the chain free
+    is accessing so a change requiring a different
+    free() is easy to find in the code.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-06-15:  David Anderson
+    commit 42bd2b1b4db2dbc6ed866d310ab9b1d1d77eef41
+
+    Remove trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+2024-06-14:  David Anderson
+    commit b6534aab238baf7eb852f88ea3398f8fe6ab5c70
+
+    Adding two lines of commentary.
+            modified:   dwarf_fission_to_cu.c
+
+2024-06-13:  David Anderson
+    commit e5fe01a0899f36652668f3d7fbacc3be417cfc16
+
+    Updated, now we have rnglists and loclists handled
+    correctly.  There is some #if 0 debug code to remove
+    but all is working.
+            modified:   ChangeLog
+
 2024-06-13:  David Anderson
     commit 32d832900ebe2e61ec07e82625a561415be05424
 
