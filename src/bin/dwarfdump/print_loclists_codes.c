@@ -166,10 +166,6 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         break;
     case  DW_LLE_offset_pair:
-#if 0
-printf("dadebug line %d file %s\n",__LINE__,__FILE__);
-#endif
-
         /*  debug_addr_unavailable does apply becase
             that might cause base address to be invalid. */
         if (debug_addr_unavailable) {

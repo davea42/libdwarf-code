@@ -99,10 +99,10 @@ print_offset_entry_table(Dwarf_Debug dbg,
         if (e == 0) {
             printf("   Location Offset Table :\n");
             printf("   Location Offset Table at 0x%" DW_PR_XZEROS
-               DW_PR_DUx  "\n",offset_of_offset_array);
-            printf("   (Added 0x%" 
-               DW_PR_DUx  " to value for actual offsets)\n",
-               offset_of_offset_array);
+                DW_PR_DUx  "\n",offset_of_offset_array);
+            printf("   (Added 0x%"
+                DW_PR_DUx  " to value for actual offsets)\n",
+                offset_of_offset_array);
             printf("   [goff][loff][index]\n");
         }
         hasnewline = FALSE;
@@ -113,14 +113,15 @@ print_offset_entry_table(Dwarf_Debug dbg,
         }
         if (col == 0) {
             printf("   [0x%" DW_PR_XZEROS DW_PR_DUx "]",
-                  goff);
+                goff);
             printf("[0x%" DW_PR_XZEROS DW_PR_DUx "]",
-                  loff);
+                loff);
             printf("[%2" DW_PR_DUu "]",e);
 
         }
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx, value);
-        printf("(0x%" DW_PR_XZEROS DW_PR_DUx ")", value+offset_of_offset_array);
+        printf("(0x%" DW_PR_XZEROS DW_PR_DUx ")",
+            value+offset_of_offset_array);
         loff += offset_size;
         goff += offset_size;
         col++;
@@ -251,8 +252,8 @@ printf("dadebug line %d file %s\n",__LINE__,__FILE__);
     return res;
 }
 
-/*  Prints the raw content. Exactly as in .debug_loclists 
-    Similar to .debug_rnglists 
+/*  Prints the raw content. Exactly as in .debug_loclists
+    Similar to .debug_rnglists
     Here we print, but do not stop, on seeing
     DW_LLE_end_of_list. Only the end of list
     bytes stop the iteration.  */
@@ -387,17 +388,17 @@ print_raw_all_loclists(Dwarf_Debug dbg,
         printf("   loclist size in bytes : %3" DW_PR_DUu "\n",
             offset_past_last_locentry - header_offset);
         printf("   Offset in section     : "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx"\n",
-                header_offset);
+            "0x%"  DW_PR_XZEROS DW_PR_DUx"\n",
+            header_offset);
         printf("   Offset  of offsets    : "
-                "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
-                offset_of_offset_array);
+            "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
+            offset_of_offset_array);
         printf("   Offsetof first loc    : "
-                "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
-                offset_of_first_locentry);
+            "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
+            offset_of_first_locentry);
         printf("   Offset past locations : "
-                "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
-                offset_past_last_locentry);
+            "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
+            offset_past_last_locentry);
         if (offset_entry_count) {
             res = print_offset_entry_table(dbg,i,
                 offset_entry_count,
