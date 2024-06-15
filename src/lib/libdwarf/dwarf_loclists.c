@@ -92,6 +92,7 @@ free_loclists_context(Dwarf_Loclists_Context cx)
     if (cx) {
         free(cx->lc_offset_value_array);
         cx->lc_offset_value_array = 0;
+        cx->lc_magic = 0;
         free(cx);
     }
 }
@@ -667,9 +668,6 @@ _dwarf_dealloc_loclists_context(Dwarf_Debug dbg)
     for ( ; i < dbg->de_loclists_context_count; ++i) {
         Dwarf_Loclists_Context con = loccon[i];
         free_loclists_context(con);
-        con->lc_offsets_array = 0;
-        con->lc_offset_entry_count = 0;
-        con->lc_magic = 0;
         loccon[i] = 0;
     }
     free(dbg->de_loclists_context);
