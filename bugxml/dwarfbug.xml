@@ -21,7 +21,7 @@
 <datefixed>2024-06-15</datefixed>
 <references> regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
 </references>
-<gitfixid>b3d86e3e2d33d2ba1ec7e0064531010553ef056a</gitfixid>
+<gitfixid>32d832900ebe2e61ec07e82625a561415be05424</gitfixid>
 <tarrelease></tarrelease>
 </dwbug>
 <dwbug>
@@ -45,7 +45,7 @@
 <datefixed>2024-06-15</datefixed>
 <references> regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
 </references>
-<gitfixid>b3d86e3e2d33d2ba1ec7e0064531010553ef056a</gitfixid>
+<gitfixid>32d832900ebe2e61ec07e82625a561415be05424</gitfixid>
 <tarrelease></tarrelease>
 </dwbug>
 <dwbug>

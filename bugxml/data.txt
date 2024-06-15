@@ -14,7 +14,7 @@ description: During startup (reading
   See also DW202406-001.
 datefixed: 2024-06-15
 references: regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
-gitfixid: b3d86e3e2d33d2ba1ec7e0064531010553ef056a
+gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
 tarrelease: 
 endrec: DW202406-002
 
@@ -34,7 +34,7 @@ description: During startup (reading
   See also DW202406-002.
 datefixed: 2024-06-15
 references: regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
-gitfixid: b3d86e3e2d33d2ba1ec7e0064531010553ef056a
+gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
 tarrelease: 
 endrec: DW202406-001
 
