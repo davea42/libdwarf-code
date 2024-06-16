@@ -48,8 +48,8 @@ Vulnerabilities <a href="./dwarfbug.html">listed newest-first</a>.
 Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
-</p>as of April 2024</p>
-<p> Record count: 175 </p>
+</p>as of June 2024</p>
+<p> Record count: 177 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -5855,6 +5855,68 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>tarrelease: libdwarf-0.9.2.tar.xz
 </p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202406-001">176) DW202406-001</h3>
+<p>id: DW202406-001
+</p>
+<p>cve:</p>
+<p>fuzzer: ossfuzz id: 69639
+</p>
+<p>datereported: 2024-06-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Memory Leak reading .debug_loclists
+</p>
+<p>product: libdwarf
+</p>
+<p>description: During startup (reading
+  initial fields from .debug_loclists)
+  libdwarf was allocating
+  an array of integers but in the normal
+  case was failing to free the array.
+  This bug in DWARF5 handling
+  has been in the code for a week or so.
+  See also DW202406-002.
+</p>
+<p>datefixed: 2024-06-15
+</p>
+<p>references: regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
+</p>
+<p>gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202406-002">177) DW202406-002</h3>
+<p>id: DW202406-002
+</p>
+<p>cve:</p>
+<p>fuzzer: ossfuzz id: 69641
+</p>
+<p>datereported: 2024-06-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Memory Leak reading .debug_loclists
+</p>
+<p>product: libdwarf
+</p>
+<p>description: During startup (reading
+  initial fields from .debug_loclists)
+  libdwarf was allocating
+  an array of integers but in the normal
+  case was failing to free the array.
+  This bug in DWARF5 handling
+  has been in the code for a week or so.
+  See also DW202406-001.
+</p>
+<p>datefixed: 2024-06-15
+</p>
+<p>references: regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
+</p>
+<p>gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
+</p>
+<p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
 </body>

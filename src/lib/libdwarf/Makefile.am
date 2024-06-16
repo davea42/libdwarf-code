@@ -66,6 +66,7 @@ dwarf_line.h \
 dwarf_line_table_reader_common.h \
 dwarf_loc.c \
 dwarf_loc.h \
+dwarf_loclists.h \
 dwarf_locationop_read.c \
 dwarf_loclists.c \
 dwarf_macho_loader.h \
@@ -155,7 +156,7 @@ ChangeLog2020 \
 CODINGSTYLE \
 dw-linetableheader.txt \
 CMakeLists.txt \
-libdwarf.pc.cmake \
+libdwarf.pc.in \
 cmake/libdwarfConfig.cmake.in \
 meson.build \
 NEWS \

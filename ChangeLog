@@ -1,3 +1,595 @@
+2024-06-15:  David Anderson
+    commit 70b6ecbb1453b1461a6d06422db1ad6217fb55fd
+
+    Fix indents and eliminate trailing whitespace.
+    Reemove #if 0 ... #endif debugging code.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2024-06-15:  David Anderson
+    commit acf34ff59715665caf986daf8415b7b9d2f5a1e5
+
+    Corrected the gitfixid as there was
+    a use-after-free in new-today code, now fixed.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-06-15:  David Anderson
+    commit 217d622d8e60760779f7e2483a92ea1170dc2707
+
+    Fixing a nasty double free that was caused a few
+    minutes ago.
+            modified:   ../../lib/libdwarf/dwarf_loclists.c
+
+2024-06-15:  David Anderson
+    commit f141c30cbdb13f5c905b7dece927ee43e57e33e8
+
+    New oss fuzz 69639 and 69641 are fixed.
+    Here identfied as DW202406-001 and DW202406-002
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-06-15:  David Anderson
+    commit b3d86e3e2d33d2ba1ec7e0064531010553ef056a
+
+    Remove debug printf (was #if 0 ... #endif)
+    Fixed DW202406-001  ossfuzz 69639
+    and
+    DW202406-002 ossfuzz 69641
+    The bug in reading DWARF5 .debug_loclists was
+    in the code for a couple weeks.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-15:  David Anderson
+    commit 86fe1d9cf6cb3d688c92d1004e7a8d76abeeeb48
+
+    Added a comment to clarify what the chain free
+    is accessing so a change requiring a different
+    free() is easy to find in the code.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-06-15:  David Anderson
+    commit 42bd2b1b4db2dbc6ed866d310ab9b1d1d77eef41
+
+    Remove trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+2024-06-14:  David Anderson
+    commit b6534aab238baf7eb852f88ea3398f8fe6ab5c70
+
+    Adding two lines of commentary.
+            modified:   dwarf_fission_to_cu.c
+
+2024-06-13:  David Anderson
+    commit e5fe01a0899f36652668f3d7fbacc3be417cfc16
+
+    Updated, now we have rnglists and loclists handled
+    correctly.  There is some #if 0 debug code to remove
+    but all is working.
+            modified:   ChangeLog
+
+2024-06-13:  David Anderson
+    commit 32d832900ebe2e61ec07e82625a561415be05424
+
+    Ensured local alloc freed in oad_xu_loclists_into_cucontext
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Now adds a loclists DWARF5 offset table directly
+    into lc_offset_value_array so need not be read
+    again.
+    In case of error assure that local allocations
+    are free-d.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-12:  David Anderson
+    commit 2f4f932b6f420c9783a05e9d964c0a3eb9b288ae
+
+    Added improved sanity checks reading loclists.
+    Now buildss the lc_offset_value_array
+    on initial scan (for later use).
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-12:  David Anderson
+    commit 4380c51d20f62ab1627eccd18723bdd4dfb0a372
+
+    Implemented spelling change ld_kind  to ld_lkind
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+2024-06-12:  David Anderson
+    commit 50c1941419f5b638512b3998e8207182cff4f98d
+
+    In dwarf_formref() we correct the reading
+    of DW_FORM_loclistx and DW_FORM_rnglistx
+    to read a uleb. Been wrong since 2022 at least..
+    Another spot reading these had it right all along.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2024-06-12:  David Anderson
+    commit 1522f914695132dccccd368fd2970396b1435a98
+
+    Correct a comment to name loclists instead of rnglists.
+            modified:   src/bin/dwarfdump/print_loclists.c
+
+2024-06-12:  David Anderson
+    commit 76dd670473e3da501a8f9cfb723a054ad631ae2b
+
+    Some #if 0 debug code here will be removed.
+    adds an argument print_ll_offsets_table()
+    for more detailed printing of loclists.
+    For .debug_loclists we improve the format and information
+    with new detail.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-06-12:  David Anderson
+    commit c81229cb76d865b60aff9c8b5719a282b31de946
+
+    Doumented a new Change entry,
+    dwarf_get_locdesc_entry_e() for the convenience of
+    reporting (from dwarfdump).
+    dwarf_get_locdesc_entry_d() continues to
+    be fine to use,
+    you likely don't need to see the extra field reported
+    by dwarf_get_locdesc_entry_e().
+
+            modified:   doc/libdwarf.dox
+
+2024-06-12:  David Anderson
+    commit a8310ce5648774a8253674ddfe631df2884a4772
+
+    Renamed ll_kind to ll_lkind as it names a DW_LKIND value
+    Renamed ld_kind to ld_lkind as it names a DW_LKIND value
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Added lc_offset_value_array so the values need not
+    be reread from the section (when the values needed
+    for DW_FORM_loclistx.
+            modified:   src/lib/libdwarf/dwarf_loclists.h
+
+2024-06-08:  David Anderson
+    commit 121996d449b57b2979a9f1048d50df0163890454
+
+    Up to date with loclists rnglists correction.
+            modified:   ChangeLog
+
+2024-06-08:  David Anderson
+    commit bedc0b778696812bf996574eec50987c7ae0b1e5
+
+    Revises the dwarfdump reporting of debug_loclists to clarify
+    the dwarf 5 debug_loclists structure content.
+    The --print-raw-loclists option is more useful now.
+
+    Revises the dwarfdump reporting of debug_rnglists to clarify
+    the dwarf 5 debug_rnglists structure content.
+    The --print-raw-rnglists option is more useful now.
+
+    These changes also make it possible (depending
+    on the size of .debug_rnglists/loclists!) to
+    verify DW_FORM_rnglistx DW_FORM_loclistx are valid.
+
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2024-06-08:  David Anderson
+    commit e26f4c260d8af1714fe85013dc1a47c3fbcee680
+
+    dwarf_get_locdesc_entry_e() added to API, it returns
+    one more field (the byte count of a loclist entry) than
+    dwarf_get_locdesc_entry_d() for the benefit of dwarfdump
+    reporting. Not of general interest.
+
+    Corrects .debug_loclists handling.
+
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loc.h
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-06-05:  David Anderson
+    commit 83b516940cd2ac5e8437ad6fcdea9c2c225a47b4
+
+    In certain error cases the revised rnglists code
+    was failing to dwarf_dealloc_error() where
+    necessary.  This problem is just a couple days old,
+    was introduced in the rnglists changes..
+    Found by -fsanitize
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-06-05:  David Anderson
+    commit cafee35c785f549a716f67ff6bdf942b704ee189
+
+    Added required include of new header dwarf_loclists.h
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+2024-06-05:  David Anderson
+    commit a556f7af38bfd171bc266ef588af0971e97f0047
+
+    renoved the declaration of a function used in rnglists
+    that is no longer visible outside dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2024-06-05:  David Anderson
+    commit c725987b4b58f31689e352b91611fa7d9c592bba
+
+    Removed Dwarf_Loclists_Context_s, it is now
+    in dwarf_loclists.h
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+2024-06-05:  David Anderson
+    commit 1c41cf803d3b6c6bf5ae844c3598b5f1fd3ee169
+
+    Correcting a typo, restoring project style.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-06-05:  David Anderson
+    commit 8df1e989f3bf55668af09d25dd21347f01fba6d2
+
+    Updated the output format of --print-raw-loclists
+    to be more useful and to essentially match the rnglists
+    version.
+            modified:   src/bin/dwarfdump/print_loclists.c
+
+2024-06-05:  David Anderson
+    commit f16e5b82fa5cb9feb442fdef633579e6f02e2e58
+
+    Separated out part of loclists data structs to
+    be a better match with dwarf_rnglists.h
+    And added the new file so configure and cmake
+    know about it. Meson takes care of this itself.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            new file:   src/lib/libdwarf/dwarf_loclists.h
+
+2024-06-04:  David Anderson
+    commit b70abb30dc9fdd196be4e159078548eef9cb9050
+
+    Corrected calculations related to rnglists array of offsets
+    (were calling entries address size when they are offset size).
+    Corrected handling of the 'implicit DW_AT_ranges_base'
+    that can be emitted if there is just a single table
+    of rnglist RLE sequences.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-06-04:  David Anderson
+    commit d03f71b2b38430d0c07e1254cf32b8d6fe27aa84
+
+    Added dumper functions for certain structures
+    related to rnglists. They are #if 0
+    except during debugging.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2024-06-04:  David Anderson
+    commit 4896e61b4581b03bed5e949be3700099e615da8c
+
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2024-06-04:  David Anderson
+    commit 85c920eb718ff73b7615fa50e14582a4a99b3d7f
+
+    Removed some lines related to merging skeleton and split,
+    they were wrong.  debug_rnglists and debug_rnglists.dwo
+     *_base fields must not be merged.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-06-04:  David Anderson
+    commit 9f3cfd466a150d67228db8deea56eab2a0b9570e
+
+    Reworded comments for clarity.
+            modified:   src/lib/libdwarf/dwarf_rnglists.h
+
+2024-06-04:  David Anderson
+    commit feafa70fae4c140a407f406c1ad101556b421be6
+
+    Reordered cc_rnglists_base;
+    ane
+    cc_rnglists_base_contr_size;
+    fields to make it easier to comprehend.
+    Added one new internal function related to rnglists
+    which function will surely get removed very soon.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2024-06-04:  David Anderson
+    commit 4d6077c3d4096f8f8d2ead4c4d9df3bbc6557195
+
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.h
+
+2024-06-04:  David Anderson
+    commit 40889a3841ad94e7eb61e96681031c0eb3dcfd83
+
+    Removed one line of a pair of blank lines.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2024-06-04:  David Anderson
+    commit 168be5fba32b76ca99293544cf217d98ae970319
+
+    A small improvement in formatting: shorter line.
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2024-06-04:  David Anderson
+    commit 20ed45faf857d5d28520eb327a4df29c0d70852c
+
+    Improved the format of the output from --print-raw-rnglists,
+    making it easier to read and easier to verify
+    as sensible.
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2024-06-03:  David Anderson
+    commit 0f64042ea4763737787f390cbdfc0a85c1580f0a
+
+    Normal update, vulnerabilities report now dated June.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-05-28:  David Anderson
+    commit 113726e89a785b3adc682d9ff2b5f95345fb299a
+
+    With a Split Full object and its skeleton object
+    the loop intended to find the relevant skeleton CU
+    by a signature (Dwarf_Sig8)
+    was stopping its CU loop too soon due to a bug created
+    when the code was written for DWARF 5.
+    So the target CU was never located.
+    The loop is now correct.
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2024-05-27:  David Anderson
+    commit e7eaa054885d17131dc568036bbcf602d9bab4a6
+
+    Remove trailing whitespace
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2024-05-27:  David Anderson
+    commit e1280075db965a10a07952e692153fc0d7716f64
+
+    Now up to date from git log
+            modified:   ChangeLog
+
+2024-05-27:  David Anderson
+    commit 654fbed827a8e70cfe07adafa9380839bfdb8ef7
+
+    To avoid a warning about ' PROJECT VERSION not set ' in
+    building with meson,
+    add the following lines (each in its proper place)
+    +config_h.set_quoted('PROJECT_VERSION', meson.project_version())
+
+    +pkgconf.set('PROJECT_VERSION', meson.project_version())
+
+            modified:   meson.build
+
+2024-05-27:  David Anderson
+    commit d2b133c3eeb1dd32efd525999ba979b9d677e9ba
+
+    New code line got warning from MSVC. Fixed.
+    -        address_size = dbg->de_debug_addr_address_size;
+    +        address_size = (Dwarf_Small)dbg->de_debug_addr_address_size;
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2024-05-27:  David Anderson
+    commit 0e06bf6f333393ee871f91822482d21eb1e00569
+
+    So make dist works again.
+
+    -libdwarf.pc.cmake \
+    +libdwarf.pc.in \
+            modified:   src/lib/libdwarf/Makefile.am
+
+    -libdwarfp.pc.cmake \
+    +libdwarfp.pc.in \
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2024-05-27:  David Anderson
+    commit 7513fdec7589339e147bde4dcce60078e62e7826
+
+    Changed  cmake/config.h.cmake to
+    cmake/config.h.in as that name was
+    recently changed so cmake shared library builds
+    worked properly.
+            modified:   Makefile.am
+
+2024-05-27:  David Anderson
+    commit 0bdecb161756e8ec58fdb8eb39f680095acfa426
+
+    Refined the doxygen comment on dwarf_debug_addr_table().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-05-27:  David Anderson
+    commit 31431a6d0aa400773f6b5efe96a331fde1d8490e
+
+    Updated words on the .debug_addr table
+    when in DWARF4 in the GNU extension format.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-05-27:  David Anderson
+    commit 1f54d6bc42f97226bbfd9232f4ae9cad16329a7b
+
+    Refining the -h output about --print-debug-addr
+    when reporting on DWARF4.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2024-05-27:  David Anderson
+    commit 731832c08f22a80a706431b0df0014c3c42a08b2
+
+    Commentary added on printing .debug_addr where
+    it is the DWARF4 GNU extension of .debug_addr.
+            modified:   doc/libdwarf.dox
+
+2024-05-27:  David Anderson
+    commit 6d7ca552fe91bb67c0d6cc4a785f0397fb7a0072
+
+    Now, for DWARF4 GNU .debug_addr extension we
+    create a table so we can print the raw
+    section sensibly from dwarfdump.
+            modified:   dwarf_debugaddr.c
+            modified:   dwarf_debugaddr.h
+
+2024-05-27:  David Anderson
+    commit 4e2916e4b9920c4c37859e077aeefd843735c986
+
+    Initialize the three new fields in Dwarf_Debug_s
+    used for DWARF5 GNU extension .debug_addr printing.
+            modified:   dwarf_die_deliv.c
+
+2024-05-27:  David Anderson
+    commit b979381e7ec7a34dd89f2e2b3f8ebaea4cda9ea3
+
+    Added
+        Dwarf_Half de_debug_addr_version;
+        Dwarf_Half de_debug_addr_offset_size;
+        Dwarf_Half de_debug_addr_address_size;
+    to Dwarf_Debug_s so we can print DWARF4
+    GNU .debug_addr extension data with no API change.
+            modified:   dwarf_opaque.h
+
+2024-05-27:  David Anderson
+    commit ac5c78fc5d76c5027857d104bf7c49c961b4b067
+
+    Added doxygen comment on dwarf_debug_addr_table()
+    related to the DWARF4 GNU extension version of .debug_addr
+            modified:   libdwarf.h
+
+2024-05-21:  David Anderson
+    commit a54dbb55b436978efc87f854560d2d2253d79e42
+
+    Up to date with latest Changes
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2024-05-21:  David Anderson
+    commit 3194780e9d304cd6f42ea4aa72828e27c861ec85
+
+    In Recent Changes:
+    noting the cmake soname etc correction
+    so shared-libraries generated have the
+    correct semantic version name.
+            modified:   doc/libdwarf.dox
+
+2024-05-21:  David Anderson
+    commit c6fe59c5cad197e650170fa87e7ef04a1a3e7135
+    Merge: af6b8f2c 3c18ecc5
+
+    Merge branch 'flagarde-soname'
+    Merging fix for cmake shared install not having correct version
+    or soname.
+
+2024-05-21:  David Anderson
+    commit 3c18ecc5c08036cee019ee6ae32efb4f09927cbc
+
+    Two instances: config.h.cmake -> config.h.in
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+
+2024-05-21:  flagarde
+    commit d4ecbb934cc057c77fa796d03b896e5d5f0dab97
+
+    Add config.h.in
+
+2024-05-21:  flagarde
+    commit 8a63be630bd7f4e529fff13efb3a303c12cd9456
+
+    Add soversion
+
+2024-05-10:  David Anderson
+    commit af6b8f2c380d06c2a6bc592f56592f733047ccab
+
+    Renaming  DW_DLE_PE_SECTION_SIZE_ERROR
+    to  DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL
+    so any failure of the three such tests are
+    clearly reported.  Should never happen.
+
+    DW_DLE_PE_SECTION_SIZE_ERROR remains valid and applies
+    as a hard object file error found in a
+    specific test (not a heuristic).
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-05-10:  David Anderson
+    commit ee53f0b6c99fc8cdaa3ae77af0196fb20e16177a
+
+    Now with latest changes from git log
+            modified:   ChangeLog
+
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2024-05-10:  David Anderson
+    commit 91a1ad4db2b63eeea1a8d7af120a420c751dacd2
+
+    Documenting heuristic change in
+    reading PE object files.
+            modified:   doc/libdwarf.dox
+
+2024-05-10:  David Anderson
+    commit 039569ed7903f132ad891a49a231378c6ea44077
+
+    A heuristic sanity check on section VirtualSize
+    was too concervative at s00MB, a PE object file had a section
+    over 200MB in size.
+    Increased the heuristic limit to 1000MB.
+            modified:   dwarf_peread.c
+
+2024-05-02:  David Anderson
+    commit 42367fc3195c0dd2cab059e15a87ed33f5f96e49
+
+    Regenerated with May as the current month.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-05-02:  David Anderson
+    commit e4aeec03c68e356270c2d1f36cb4ea66a72376ec
+
+    Regenerated so has latest producer defines.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2024-05-02:  David Anderson
+    commit 8010af428ed7961738badddd9378fd78d25658d9
+
+    Just heard of some producer-values:
+    define DW_AT_APPLE_origin                      0x3ff0
+
+    define DW_LANG_Move                    0x0041 /* DWARF6 */
+    define DW_LANG_Hylo                    0x0042 /* DWARF6 */
+            modified:   src/lib/libdwarf/dwarf.h
+
+2024-04-28:  David Anderson
+    commit 35223db561852306ed1e7aec9bcfc045fad147d3
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2024-04-28:  David Anderson
+    commit b454fb67f267deae3e45f2685d845f0fd133e5b5
+
+    Tiny changes to (perhaps) avoid a couple warnings
+    from an msvc compiler.
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2024-04-28:  Julia DeMille
+    commit a4465045c373ba8f7c7b4c0a4cf863ecf4999549
+
+    Disable default werror=true in Meson manifest (#239)
+
+    Under MSVC, `/WX` (the equivalent to `-Werror`) will cause the build to crash and burn. This makes it not default to making the build crash and burn.
+
+2024-04-19:  David Anderson
+    commit 4436b83de65fdc9df9e011decf2f643fb345b892
+
+    up to date with git log
+            modified:   ChangeLog
+
 2024-04-19:  David Anderson
     commit 713a4060556e76adf21b47ff705df686767f2ff4
 

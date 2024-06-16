@@ -89,7 +89,7 @@ cmake \
 CMakeLists.txt \
 CODINGSTYLE.md \
 CONTRIBUTING.md \
-cmake/config.h.cmake \
+cmake/config.h.in \
 README.md \
 READMEmacos.md \
 READMEcmake.md \

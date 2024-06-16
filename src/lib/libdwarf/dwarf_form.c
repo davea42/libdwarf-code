@@ -508,7 +508,6 @@ dwarf_formref(Dwarf_Attribute attr,
     case DW_FORM_ref_udata: {
         Dwarf_Byte_Ptr ptr = attr->ar_debug_ptr;
         Dwarf_Unsigned localoffset = 0;
-
         DECODE_LEB128_UWORD_CK(ptr,localoffset,
             dbg,error,section_end);
         offset = localoffset;
@@ -893,10 +892,10 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
         Return the index itself. */
     case DW_FORM_loclistx:
     case DW_FORM_rnglistx: {
-        unsigned length_size = cu_context->cc_length_size;
-        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, length_size,
-            error,section_end);
+        Dwarf_Unsigned val = 0;
+        DECODE_LEB128_UWORD_CK(attr->ar_debug_ptr,
+            val, dbg,error,section_end);
+        offset = val;
         }
         break;
     case DW_FORM_sec_offset:
@@ -1330,7 +1329,7 @@ dwarf_formaddr(Dwarf_Attribute attr,
             the reference form. It is
             address-sized so that the linker can easily update it, but
             it is a reference inside the debug_info section. No longer
-            allowed. */
+            allowed except for Metrowerks C. */
         ) {
         Dwarf_Small *section_end =
             _dwarf_calculate_info_section_end_ptr(cu_context);

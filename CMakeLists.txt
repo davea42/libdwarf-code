@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf VERSION 0.9.1 LANGUAGES C CXX)
+project(libdwarf VERSION 0.9.3 DESCRIPTION "" HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git" LANGUAGES C CXX)
 
 # libdwarf
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
@@ -119,10 +119,8 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 0.9.3)
-set(PACKAGE_VERSION "\"${VERSION}\"")
-set(PACKAGE_NAME "libdwarf" )
-set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
+set(PACKAGE_BUGREPORT "https://github.com/davea42/libdwarf-code/issues")
+set(PACKAGE_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
 string(REGEX REPLACE "[\"]" "" tarname1 "${PACKAGE_STRING}" )
 string(REGEX REPLACE "[^a-zA-Z0-9_]" "-" tarname "${tarname1}" )
 set(PACKAGE_TARNAME "\"${tarname}\"" )
@@ -244,7 +242,7 @@ endif()
 #  unset(DW_LIBDWARF_STATIC)
 #endif()
 
-configure_file(cmake/config.h.cmake config.h)
+configure_file(cmake/config.h.in config.h)
 
 if(BUILD_NON_SHARED)
   set(DW_LIBDWARF_STATIC -DLIBDWARF_STATIC)

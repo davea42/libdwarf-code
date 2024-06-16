@@ -49,6 +49,7 @@
 #include "dwarf_tsearch.h"
 #include "dwarf_tied_decls.h"
 
+#if 0
 void
 _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno)
 {
@@ -62,6 +63,7 @@ _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno)
     }
     printf(" line %d\n",lineno);
 }
+#endif
 
 void *
 _dwarf_tied_make_entry(Dwarf_Sig8 *key, Dwarf_CU_Context val)
@@ -129,6 +131,7 @@ _dwarf_tied_destroy_free_node(void*nodep)
 static int
 _dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Debug tieddbg,
+    struct Dwarf_Tied_Entry_s *targsig,
     Dwarf_Error *error)
 {
     /*  We will not find tied signatures
@@ -207,11 +210,17 @@ _dwarf_loop_reading_debug_info_for_cu(
                     *(struct Dwarf_Tied_Data_s**) retval;
                 if (retent == entry) {
                     /*  we added a record. */
-                    return DW_DLV_OK;
+                    int res = _dwarf_tied_compare_function(
+                        targsig,entry);
+                    if (!res) {
+                        /* Found match,  stop looping */
+                        return DW_DLV_OK;
+                    }
+                    continue;
                 } else {
                     /*  found existing, no add */
                     free(entry);
-                    return DW_DLV_OK;
+                    continue;
                 }
             }
         }
@@ -253,14 +262,14 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
         *context_out = e2->dt_context;
         return DW_DLV_OK;
     }
-
     /*  We now ensure all tieddbg CUs signatures
         are in the td_tied_search,
         The caller is NOT doing
         info section read operations
         on the tieddbg in this (tied)dbg, so it
         cannot goof up their _dwarf_next_cu_header*().  */
-    res  = _dwarf_loop_reading_debug_info_for_cu(tieddbg,error);
+    res  = _dwarf_loop_reading_debug_info_for_cu(tieddbg,&entry,
+        error);
     if (res == DW_DLV_ERROR) {
         return res;
     }

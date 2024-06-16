@@ -1459,9 +1459,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_ARITHMETIC_OVERFLOW             501
 #define DW_DLE_UNIVERSAL_BINARY_ERROR          502
 #define DW_DLE_UNIV_BIN_OFFSET_SIZE_ERROR      503
+#define DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL  504
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        503
+#define DW_DLE_LAST        504
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
@@ -4578,7 +4579,7 @@ DW_API int dwarf_get_loclist_head_kind(
     unsigned int  * dw_lkind,
     Dwarf_Error   * dw_error);
 
-/*! @brief Retrieve the details of a location expression
+/*! @brief Retrieve the details(_d) of a location expression
 
     Cooked value means the addresses from the location
     description after base values applied, so they
@@ -4641,6 +4642,41 @@ DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
     Dwarf_Addr     *  dw_lowpc_cooked,
     Dwarf_Addr     *  dw_hipc_cooked,
     Dwarf_Unsigned *  dw_locexpr_op_count_out,
+    Dwarf_Locdesc_c * dw_locentry_out,
+    Dwarf_Small    *  dw_loclist_source_out,
+    Dwarf_Unsigned *  dw_expression_offset_out,
+    Dwarf_Unsigned *  dw_locdesc_offset_out,
+    Dwarf_Error    *  dw_error);
+
+/*! @brief Retrieve the details(_e) of a location expression
+
+    Cooked value means the addresses from the location
+    description after base values applied, so they
+    are actual addresses.
+    debug_addr_unavailable non-zero means the record from a
+    Split Dwarf skeleton unit could not be accessed from
+    the .dwo section or dwp object so the
+    cooked values could not be calculated.
+
+    This is identical to dwarf_get_locdesc_entry_d except
+    that it adds a pointer argument so the caller can know
+    the size, in bytes, of the loclist DW_LLE operation
+    itself.
+
+    It's used by dwarfdump but it is unlikely to be of interest
+    to most callers..
+*/
+
+DW_API int dwarf_get_locdesc_entry_e(Dwarf_Loc_Head_c dw_loclist_head,
+    Dwarf_Unsigned    dw_index,
+    Dwarf_Small    *  dw_lle_value_out,
+    Dwarf_Unsigned *  dw_rawlowpc,
+    Dwarf_Unsigned *  dw_rawhipc,
+    Dwarf_Bool     *  dw_debug_addr_unavailable,
+    Dwarf_Addr     *  dw_lowpc_cooked,
+    Dwarf_Addr     *  dw_hipc_cooked,
+    Dwarf_Unsigned *  dw_locexpr_op_count_out,
+    Dwarf_Unsigned *  dw_lle_bytecount,
     Dwarf_Locdesc_c * dw_locentry_out,
     Dwarf_Small    *  dw_loclist_source_out,
     Dwarf_Unsigned *  dw_expression_offset_out,
@@ -4921,8 +4957,12 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
     immediate interest.
 
     It is only intended to enable printing of the
-    simple .debug_addr section (by dwarfdump).
-    Not at all clear it is of any other use.
+    simple DWARF5 .debug_addr section (by dwarfdump).
+
+    When emitting DWARF4, gcc may emit a GNU-specified
+    .debug_addr format. If some CU has been opened then
+    this call will work, but the single table
+    will have all the entries for all CUs.
 
     @param dw_dbg
     The Dwarf_Debug of interest.

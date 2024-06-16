@@ -25,7 +25,7 @@ dwarf_pro_reloc_symbolic.h
 dwarf_pro_section.h dwarf_pro_types.h dwarf_pro_util.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files"
-    ${PROJECT_SOURCE_DIR}/cmake/config.h.cmake
+    ${PROJECT_SOURCE_DIR}/cmake/config.h.in
     ${PROJECT_BINARY_DIR}/config.h)
 
 if (BUILD_SHARED)
@@ -43,6 +43,7 @@ else()
 endif()
 set_folder(dwarfp src/lib/libdwarfp)
 target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/lib/libdwarf> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+set_target_properties(dwarfp PROPERTIES VERSION "${PROJECT_VERSION}" SOVERSION "${PROJECT_VERSION_MAJOR}")
 target_compile_options(dwarfp PRIVATE ${DW_COMPILER_FLAGS}
     ${DW_FWALL})
 msvc_posix(dwarfp)
@@ -59,7 +60,7 @@ install(TARGETS dwarfp
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
-configure_file(libdwarfp.pc.cmake libdwarfp.pc @ONLY)
+configure_file(libdwarfp.pc.in libdwarfp.pc @ONLY)
 
 install(TARGETS dwarfp  EXPORT libdwarfpTargets
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"

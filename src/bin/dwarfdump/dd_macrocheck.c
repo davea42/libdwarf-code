@@ -375,7 +375,7 @@ print_macrocheck_statistics(const char *name,void **tsbase,
     Dwarf_Unsigned section_size)
 {
     Dwarf_Unsigned count = 0;
-    Dwarf_Unsigned lowest = -1ll;
+    Dwarf_Unsigned lowest = (Dwarf_Unsigned)-1ll;
     Dwarf_Unsigned highest = 0;
     Dwarf_Unsigned lastend = 0;
     Dwarf_Unsigned laststart = 0;

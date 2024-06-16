@@ -37,6 +37,16 @@ extern "C" {
 
 #define DW_ADDR_TABLE_MAGIC 0xfade
 
+/*  In DWARF5 each portion of .debug_addr has a header.
+
+    In a DWARF4 extension gcc emits .debug_addr
+    but without those headers, just with the
+    array of data entries, so dwarf_debugaddr.c
+    creates a table from data in Dwarf_Debug_S
+    assuming every CU has the
+    same address_size and version as in the initial
+    .debug_info CU. */
+
 struct Dwarf_Debug_Addr_Table_s {
     Dwarf_Unsigned da_magic;
     Dwarf_Debug    da_dbg;

@@ -28,6 +28,7 @@
 #include <config.h>
 
 #include <string.h> /* memset() */
+#include <stdlib.h> /* free() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -44,6 +45,7 @@
 #include "dwarf_string.h"
 #include "dwarf_str_offsets.h"
 #include "dwarf_loc.h"
+#include "dwarf_loclists.h"
 #include "dwarf_rnglists.h"
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
@@ -81,7 +83,6 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
         /*  Something is badly wrong. Ignore it here. */
         return DW_DLV_NO_ENTRY;
     }
-    memset(buildhere,0,sizeof(localcontxt));
     res = _dwarf_internal_read_loclists_header(dbg,
         0,soff_size,
         dbg->de_debug_loclists.dss_data,
@@ -90,18 +91,22 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
         buildhere,
         &nextset,error);
     if (res != DW_DLV_OK) {
+        free(buildhere->lc_offset_value_array);
+        buildhere->lc_offset_value_array = 0;
         return res;
     }
     cu_context->cc_loclists_base_present = TRUE;
     cu_context->cc_loclists_base_contr_size = size;
     cu_context->cc_loclists_base            =
         buildhere->lc_offsets_off_in_sect;
+    free(buildhere->lc_offset_value_array);
+    buildhere->lc_offset_value_array = 0;
     return DW_DLV_OK;
 }
 
 /*
 
-    ASSERT: dbg,cu_context, and fsd are non-NULL
+ ASSERT: dbg,cu_context, and fsd are non-NULL
     as the caller ensured that.
     If .debug_cu_index or
     .debug_tu_index is present it might help us find
@@ -284,6 +289,8 @@ static const char *keylist[2] = {
     Then, _dwarf_make_CU_Context() calls
     _dwarf_merge_all_base_attrs_of_cu_die() if there
     is a tied (executable) object known.
+    (not all base attrs are merged from tied. Certainly not
+    .debug_rnglists or .debug_loclists.
 
     Called by dwarf_die_deliv.c
 */

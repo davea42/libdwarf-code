@@ -686,6 +686,9 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_UNIVERSAL_BINARY_ERROR(502) Error reading Mach-O "
     "uninversal binary head. Corrupt Mach-O object." },
 {"DW_DLE_UNIV_BIN_OFFSET_SIZE_ERROR(503) Offset/size from "
-    "a Mach-O universal binary has an impossible value"}
+    "a Mach-O universal binary has an impossible value"},
+{"DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL(504) Section size fails "
+    "a heuristic sanity check"}
+
 };
 #endif /* DWARF_ERRMSG_LIST_H */

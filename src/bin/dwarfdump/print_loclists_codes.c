@@ -55,6 +55,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
     const char *attrname,
     unsigned int  llent,
     Dwarf_Small   lle_value,
+    Dwarf_Unsigned lle_byte_count,
     Dwarf_Addr    base_address,
     Dwarf_Addr    rawlopc,
     Dwarf_Addr    rawhipc,
@@ -65,6 +66,9 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
     struct esb_s * esbp,
     Dwarf_Bool   * bError)
 {
+    /*  Once most committed FIXME remove this and let
+        lenght print */
+    (void)lle_byte_count;
     if (debug_addr_unavailable) {
         *bError = TRUE;
     }
@@ -267,5 +271,8 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         break;
     }
+#if 0
+    esb_append_printf_u(esbp," length: %u",lle_byte_count);
+#endif
     return DW_DLV_OK;
 }

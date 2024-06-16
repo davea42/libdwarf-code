@@ -307,14 +307,14 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_macro_header_length_present;
 
     /*  DW_SECT_RNGLISTS  */
-    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
-    Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
     /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
         but was unused. See dwarf_die_deliv.c for details. */
     Dwarf_Unsigned cc_ranges_base;
     /*  DW_AT_GNU_ranges_base is a GNU extension, DW4  */
     Dwarf_Bool     cc_ranges_base_present;
     /* .debug_rnglists */
+    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
+    Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
     Dwarf_Bool     cc_rnglists_base_present; /* DW5 */
     Dwarf_Bool     cc_rnglists_header_length_present;
 
@@ -826,6 +826,17 @@ struct Dwarf_Debug_s {
         file is sometimes needed
         and referenced.*/
     struct Dwarf_Tied_Data_s de_tied_data;
+
+    /*  The following two are used to detect a DWARF4
+        .debug_addr (a GNU extension) and attempt
+        to print a raw .debug_addr section.  Simply
+        assuming the first CU seen values for these
+        work for everything in the GNU extenstion
+        .debug_addr section. Only needed if the version
+        here is 4 (DWARF4). */
+    Dwarf_Half de_debug_addr_version;
+    Dwarf_Half de_debug_addr_offset_size;
+    Dwarf_Half de_debug_addr_address_size;
 };
 
 /* New style. takes advantage of dwarfstrings capability.

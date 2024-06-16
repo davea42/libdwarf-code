@@ -1283,18 +1283,6 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         context->        cc_addr_base=
             tiedcontext->cc_addr_base;
     }
-    if (!context->cc_rnglists_base_present) {
-        context->        cc_rnglists_base_present =
-            tiedcontext->cc_rnglists_base_present;
-        context->        cc_rnglists_base=
-            tiedcontext->cc_rnglists_base;
-    }
-    if (!context->cc_loclists_base_present) {
-        context->        cc_loclists_base_present =
-            tiedcontext->cc_loclists_base_present;
-        context->        cc_loclists_base=
-            tiedcontext->cc_loclists_base;
-    }
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
             tiedcontext->cc_str_offsets_tab_present;
@@ -1309,15 +1297,6 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         context->        cc_str_offsets_offset_size=
             tiedcontext->cc_str_offsets_offset_size;
     }
-
-    /* GNU DW4 extension. */
-    if (!context->        cc_ranges_base_present) {
-        context->        cc_ranges_base_present =
-            tiedcontext->cc_ranges_base_present;
-        context->        cc_ranges_base =
-            tiedcontext->cc_ranges_base;
-    }
-
     if (tiedcontext_out) {
         *tiedcontext_out = tiedcontext;
     }

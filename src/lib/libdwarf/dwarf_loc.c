@@ -31,6 +31,7 @@
 #include <config.h>
 
 #include <string.h> /* memset() */
+#include <stdio.h> /* for debugging printf */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -69,7 +70,7 @@ _dwarf_locdesc_c_constructor(Dwarf_Debug dbg, void *locd)
         return DW_DLV_ERROR;
     }
     ldp->ld_lle_value = DW_LLE_VALUE_BOGUS;
-    ldp->ld_kind = DW_LKIND_unknown;
+    ldp->ld_lkind = DW_LKIND_unknown;
     return DW_DLV_OK;
 }
 
@@ -492,7 +493,7 @@ _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  ld_kind was checked before calling this, so we
+/*  ld_lkind was checked before calling this, so we
     know its value is an intended value.  */
 static const char *kindset[] = {
 "DW_LKIND_expression",
@@ -520,7 +521,7 @@ validate_lle_value(Dwarf_Debug dbg,
 {
     dwarfstring m;
 
-    if (locdesc->ld_kind != DW_LKIND_GNU_exp_list) {
+    if (locdesc->ld_lkind != DW_LKIND_GNU_exp_list) {
         switch(locdesc->ld_lle_value) {
         case DW_LLE_end_of_list:
         case DW_LLE_base_addressx:
@@ -539,10 +540,10 @@ validate_lle_value(Dwarf_Debug dbg,
         dwarfstring_append_printf_s(&m,
             "DW_DLE_LOCATION_ERROR: For location kind %s (",
             (char *)get_loc_kind_str(
-                (Dwarf_Small)locdesc->ld_kind));
+                (Dwarf_Small)locdesc->ld_lkind));
         dwarfstring_append_printf_u(&m,"%u) the DW_LLE value is "
             "not properly set",
-            locdesc->ld_kind);
+            locdesc->ld_lkind);
         dwarfstring_append_printf_u(&m," but is %u "
             " which is a libdwarf bug",
             locdesc->ld_lle_value);
@@ -565,10 +566,10 @@ validate_lle_value(Dwarf_Debug dbg,
         dwarfstring_append_printf_s(&m,
             "DW_DLE_LOCATION_ERROR: For location kind %s (",
             (char *)get_loc_kind_str(
-                (Dwarf_Small)locdesc->ld_kind));
+                (Dwarf_Small)locdesc->ld_lkind));
         dwarfstring_append_printf_u(&m,"%u) the DW_LLEX value is "
             "not properly set",
-            locdesc->ld_kind);
+            locdesc->ld_lkind);
         dwarfstring_append_printf_u(&m," but is %u "
             " which is a libdwarf bug",
             locdesc->ld_lle_value);
@@ -621,7 +622,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Small    *section_end = 0;
     const char     *section_name = 0;
     Dwarf_Small    *blockdataptr = 0;
-    unsigned lkind = loc_head->ll_kind;
+    unsigned lkind = loc_head->ll_lkind;
 
     /* ***** BEGIN CODE ***** */
     blockdataptr = loc_block->bl_data;
@@ -716,7 +717,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     }
     /*  Synthesizing the DW_LLE values for the old loclist
         versions. */
-    switch(loc_head->ll_kind) {
+    switch(loc_head->ll_lkind) {
     case DW_LKIND_loclist: {
         if (highpc == 0 && lowpc == 0) {
             locdesc->ld_lle_value =  DW_LLE_end_of_list;
@@ -746,7 +747,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
             "DW_DLE_LOCATION_ERROR: An impossible DW_LKIND"
             " value of %u encountered, likely internal "
             "libdwarf error or data corruption",
-            (unsigned)loc_head->ll_kind);
+            (unsigned)loc_head->ll_lkind);
         _dwarf_error_string(dbg,error,
             DW_DLE_LOCATION_ERROR,
             dwarfstring_string(&m));
@@ -758,7 +759,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     locdesc->ld_cents = (Dwarf_Half)op_count;
     locdesc->ld_s = block_loc;
 
-    locdesc->ld_kind = lkind;
+    locdesc->ld_lkind = lkind;
     locdesc->ld_section_offset = loc_block->bl_section_offset;
     locdesc->ld_locdesc_offset = loc_block->bl_locdesc_offset;
     locdesc->ld_rawlow = lowpc;
@@ -1021,7 +1022,7 @@ dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c ll_header,
             "dwarf_get_loclist_head_kind()");
         return DW_DLV_ERROR;
     }
-    *kind = ll_header->ll_kind;
+    *kind = ll_header->ll_lkind;
     return DW_DLV_OK;
 }
 
@@ -1037,7 +1038,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     int            count_res = DW_DLV_ERROR;
     int            loclist_count = 0;
     Dwarf_Unsigned lli = 0;
-    unsigned       lkind = llhead->ll_kind;
+    unsigned       lkind = llhead->ll_lkind;
     unsigned       address_size = llhead->ll_address_size;
     Dwarf_Unsigned listlen = 0;
     Dwarf_Locdesc_c llbuf = 0;
@@ -1168,7 +1169,7 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         if (blkres != DW_DLV_OK) {
             return blkres;
         }
-        loc_blockc.bl_kind = llhead->ll_kind;
+        loc_blockc.bl_kind = llhead->ll_lkind;
         loc_blockc.bl_section_offset  =
             (char *)loc_blockc.bl_data -
             (char *)dbg->de_debug_info.dss_data;
@@ -1186,7 +1187,7 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         }
         loc_blockc.bl_len = loc_block.bl_len;
         loc_blockc.bl_data = loc_block.bl_data;
-        loc_blockc.bl_kind = llhead->ll_kind;
+        loc_blockc.bl_kind = llhead->ll_lkind;
         loc_blockc.bl_section_offset =
             loc_block.bl_section_offset;
         loc_blockc.bl_locdesc_offset = 0; /* not relevant */
@@ -1657,7 +1658,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         return DW_DLV_ERROR;
     }
     llhead->ll_cuversion = cuversionstamp;
-    llhead->ll_kind = lkind;
+    llhead->ll_lkind = lkind;
     llhead->ll_attrnum = (Dwarf_Half)attrnum;
     llhead->ll_attrform = (Dwarf_Half)form;
     llhead->ll_dbg = dbg;
@@ -1779,7 +1780,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     llhead->ll_locdesc_count = local_listlen;
     llhead->ll_context = 0; /* Not available! */
     llhead->ll_dbg = dbg;
-    llhead->ll_kind = DW_LKIND_expression;
+    llhead->ll_lkind = DW_LKIND_expression;
 
     /*  An empty location description (block length 0)
         means the code generator emitted no variable,
@@ -1823,6 +1824,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
 int
 dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Unsigned   index,
+    /* Dwarf_Unsigned   lle_entry_index,  */
     Dwarf_Small    * lle_value_out,
     Dwarf_Unsigned * rawval1,
     Dwarf_Unsigned * rawval2,
@@ -1831,6 +1833,45 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Addr     * hipc_out, /* 'cooked' value */
     Dwarf_Unsigned * loclist_expr_op_count_out,
     /* Returns pointer to the specific locdesc of the index; */
+    Dwarf_Locdesc_c* locdesc_entry_out,
+    Dwarf_Small    * loclist_source_out, /* 0,1, or 2 */
+    Dwarf_Unsigned * expression_offset_out,
+    Dwarf_Unsigned * locdesc_offset_out,
+    Dwarf_Error    * error)
+{
+    return dwarf_get_locdesc_entry_e(
+        loclist_head, index,
+        /*0   base local index,*/
+        lle_value_out,
+        rawval1,
+        rawval2,
+        debug_addr_unavailable,
+        lowpc_out, /* 'cooked' value */
+        hipc_out, /* 'cooked' value */
+        loclist_expr_op_count_out,
+        0 /* not returning lle_bytecount*/ ,
+        /* Returns pointer to the specific locdesc of the index; */
+        locdesc_entry_out,
+        loclist_source_out, /* 0,1, or 2 */
+        expression_offset_out,
+        locdesc_offset_out,
+        error);
+}
+int
+dwarf_get_locdesc_entry_e(Dwarf_Loc_Head_c loclist_head,
+    /*  The context-local offset of an lle set as reverenced
+        by an offset_entry_table. */
+    Dwarf_Unsigned   index,
+    /*Dwarf_Unsigned   base_local_index, */
+    Dwarf_Small    * lle_value_out,
+    Dwarf_Unsigned * rawval1,
+    Dwarf_Unsigned * rawval2,
+    Dwarf_Bool     * debug_addr_unavailable,
+    Dwarf_Addr     * lowpc_out, /* 'cooked' value */
+    Dwarf_Addr     * hipc_out, /* 'cooked' value */
+    Dwarf_Unsigned * loclist_expr_op_count_out,
+    /* Returns pointer to the specific locdesc of the index; */
+    Dwarf_Unsigned * lle_bytecount,
     Dwarf_Locdesc_c* locdesc_entry_out,
     Dwarf_Small    * loclist_source_out, /* 0,1, or 2 */
     Dwarf_Unsigned * expression_offset_out,
@@ -1867,9 +1908,12 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     *debug_addr_unavailable = desc->ld_index_failed;
     *loclist_expr_op_count_out = desc->ld_cents;
     *locdesc_entry_out = desc;
-    *loclist_source_out = (Dwarf_Small)desc->ld_kind;
+    *loclist_source_out = (Dwarf_Small)desc->ld_lkind;
     *expression_offset_out = desc->ld_section_offset;
     *locdesc_offset_out = desc->ld_locdesc_offset;
+    if (lle_bytecount) {
+        *lle_bytecount = desc->ld_lle_bytecount;
+    }
     return DW_DLV_OK;
 }
 

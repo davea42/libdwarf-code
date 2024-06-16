@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-04-02 v0.9.3
+    @date 2024-06-12 v0.9.3
 
     @section draft Suggestions for improvement are welcome.
 
@@ -453,9 +453,11 @@
     section and provide a length so you can calculate
     the next section offset to call or refer to.
 
-    Usually that works fine.  But if there is some
+    Usually that works fine.  If there is some
     random data somewhere outside of referenced
-    areas the reader function may fail, returning
+    areas or the data format is a gcc extension
+    of an early DWARF version the reader
+    function may fail, returning
     DW_DLV_ERROR.  Such an error is neither a
     compiler bug nor a @e libdwarf bug.
 
@@ -1081,6 +1083,29 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 0.9.2 to 0.9.3</b>
+
+    Added dwarf_get_locdesc_entry_e() to allow dwarfdump
+    to report some data from .debug_loclists more
+    completely -- it reports a byte length of each
+    loclist item. This is of little interest to anyone,
+    surely.  dwarf_get_locdesc_entry_d() is still
+    what you should be using.
+
+    dwarf_debug_addr_table() now supports reading
+    the DWARF4 GNU extension .debug_addr table.
+
+    A heuristic sanity check for PE object files was too conservative
+    in limiting VirtualSize to 200MB.  A library user has
+    an exe with .debug_info size of over 200MB.
+    Increased the limit to be 2000MB and changed the names of the
+    errors for the three heuristic checks to include _HEURISTIC_ so it is
+    easier to know the kind of error/failure it is.
+
+    When doing a shared-library build with cmake we were not emitting
+    the correct .so version names nor setting SONAME with the
+    correct version name. This long-standing mistake is now fixed.
 
     <b>Changes 0.9.1 to 0.9.2</b>
 

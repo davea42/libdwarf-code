@@ -1534,6 +1534,9 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_APPLE_sdk:
         *s_out = "DW_AT_APPLE_sdk";
         return DW_DLV_OK;
+    case DW_AT_APPLE_origin:
+        *s_out = "DW_AT_APPLE_origin";
+        return DW_DLV_OK;
     case DW_AT_hi_user:
         *s_out = "DW_AT_hi_user";
         return DW_DLV_OK;
@@ -2872,6 +2875,12 @@ dwarf_get_LANG_name (unsigned int val,
         return DW_DLV_OK;
     case DW_LANG_Ruby:
         *s_out = "DW_LANG_Ruby";
+        return DW_DLV_OK;
+    case DW_LANG_Move:
+        *s_out = "DW_LANG_Move";
+        return DW_DLV_OK;
+    case DW_LANG_Hylo:
+        *s_out = "DW_LANG_Hylo";
         return DW_DLV_OK;
     case DW_LANG_lo_user:
         *s_out = "DW_LANG_lo_user";

@@ -76,7 +76,7 @@ EXTRA_DIST = \
 COPYING \
 ChangeLog \
 CMakeLists.txt \
-libdwarfp.pc.cmake \
+libdwarfp.pc.in \
 cmake/libdwarfp-config.cmake \
 meson.build \
 NEWS \

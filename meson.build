@@ -1,7 +1,9 @@
 project('libdwarf', ['c','cpp'],
   version: '0.9.3',
-  default_options : ['buildtype=debugoptimized',
-  'warning_level=3', 'werror=true'],
+  default_options : [
+    'buildtype=debugoptimized',
+    'warning_level=3',
+  ],
   meson_version : '>=0.54'
 )
 
@@ -142,6 +144,7 @@ endif
 config_h = configuration_data()
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
+config_h.set_quoted('PROJECT_VERSION', meson.project_version())
 config_h.set_quoted('PACKAGE_BIN_DIR', dir_bin)
 config_h.set_quoted('PACKAGE_LIB_DIR', dir_lib)
 config_h.set_quoted('PACKAGE_DATA_DIR', dir_data)
@@ -220,6 +223,7 @@ pkgconf.set('includedir', '${prefix}/@0@'.format(get_option('includedir')))
 pkgconf.set('pkgincludedir', '${prefix}/@0@'.format(get_option('includedir')) + '/libdwarf')
 pkgconf.set('VMAJ', v_maj)
 pkgconf.set('PACKAGE_VERSION', meson.project_version())
+pkgconf.set('PROJECT_VERSION', meson.project_version())
 if dev_decompression
   pkgconf.set('requirements_libdwarf_pc', 'zlib')
   pkgconf.set('requirements_libdwarf_pc', 'libzstd')

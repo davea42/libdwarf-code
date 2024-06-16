@@ -1,3 +1,44 @@
+id: DW202406-002
+fuzzer: ossfuzz id: 69641
+datereported: 2024-06-14
+reportedby: David Korczynski
+vulnerability: Memory Leak reading .debug_loclists
+product: libdwarf
+description: During startup (reading
+  initial fields from .debug_loclists)
+  libdwarf was allocating
+  an array of integers but in the normal
+  case was failing to free the array.
+  This bug in DWARF5 handling
+  has been in the code for a week or so.
+  See also DW202406-001.
+datefixed: 2024-06-15
+references: regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
+gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
+tarrelease: 
+endrec: DW202406-002
+
+id: DW202406-001
+fuzzer: ossfuzz id: 69639
+datereported: 2024-06-14
+reportedby: David Korczynski
+vulnerability: Memory Leak reading .debug_loclists
+product: libdwarf
+description: During startup (reading
+  initial fields from .debug_loclists)
+  libdwarf was allocating
+  an array of integers but in the normal
+  case was failing to free the array.
+  This bug in DWARF5 handling
+  has been in the code for a week or so.
+  See also DW202406-002.
+datefixed: 2024-06-15
+references: regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
+gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
+tarrelease: 
+endrec: DW202406-001
+
+
 id: DW202403-001
 fuzzer: ossfuzz id: 67490
 datereported: 2024-03-18
