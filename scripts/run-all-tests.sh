@@ -170,24 +170,19 @@ runfullddtest() {
   echo "Run full dd test: run regressiontests in $ddtestdir"
   cd $ddtestdir
   chkres $? "H FAIL: cd $ddtestdir failed , giving up."
-  # Ensure no leftovers, ok if it fails
-  make distclean
-  sha=~/SHALIAS.sh
-  if [ -f $sha ]
-  then
-    # so we get any needed local alias settings.
-    cp $sha SHALIAS.sh
-  fi
-  echo " Now configure regressiontests $ddtestdir/configure $1 $nonstdprintf"
-  $rtestsrc/configure $1 $nonstdprintf
-  chkres $? "I FAIL: configure in $ddtestdir failed , giving up."
-  make
-  chkres $? "J FAIL make: tests failed in $ddtestdir. giving up."
+
+  $rtestsrc/INITIALSETUP.sh $rtestsrc  
+  chkres $? "J FAIL  INITIALSETUP failed $ddtestdir. giving up."
+
+  $rtestsrc/RUNALL.sh
+  chkres $? "J FAIL  RUNALL failed $ddtestdir."
+
   # Just show the fails, if any.
   grep FAIL <$ddtestdir/ALLdd
   # Now actually check result against the 'PASS' result.
   grep "FAIL     count: 0" $ddtestdir/ALLdd
   chkres $? "Q FAIL: something failed in $ddtestdir."
+
   tail -40 $ddtestdir/ALLdd
   if [ $failcount -eq 0 ]
   then
