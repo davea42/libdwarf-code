@@ -11,7 +11,7 @@ echo "  printf formats."
 
 echo 'Starting run-all-tests.sh' \
    `date "+%Y-%m-%d %H:%M:%S"`
-stsecs=`date '+%s'
+stsecs=`date '+%s'`
 
 # Removes and recreates /tmp/dwtestalldd directory
 # for the regression tests.
