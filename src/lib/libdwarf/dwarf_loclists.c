@@ -1241,7 +1241,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     Dwarf_Half       theform = llhead->ll_attrform;
     Dwarf_Bool       loclists_base_present =
         llhead->ll_at_loclists_base_present;
-    Dwarf_Bool       loclists_base=
+    Dwarf_Unsigned   loclists_base =
         llhead->ll_at_loclists_base;
     Dwarf_Unsigned   attr_val = 0;
 
