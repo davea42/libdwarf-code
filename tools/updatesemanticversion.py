@@ -65,12 +65,23 @@ def updatelhstring(lcount, l, sver, maj, min, mic):
 
 
 # set(VERSION 0.2.0)
-begincm = "set(VERSION "
+begincm = "project(libdwarf VERSION "
 
+
+# As of 10.0.0 looks like (but all one line)
+#project(libdwarf VERSION 0.9.3 DESCRIPTION ""
+#  HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
+#  LANGUAGES C CXX)
 
 def updatecmstring(cmcount, l, sver, maj, min, mic):
     if l.startswith(begincm):
-        l2 = "".join([begincm, sver, ")\n"])
+        pa = begincm
+        wds = l.split(begincm)
+        postpl = wds[1]
+        p3 = postpl.split()
+        over = p3[0]
+        partc = ' '.join(p3[1:])
+        l2 = "".join([begincm, sver," ", partc,"\n"])
         return l2, int(cmcount) + 1
     return l, cmcount
 
