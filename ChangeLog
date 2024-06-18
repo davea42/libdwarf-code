@@ -1,3 +1,69 @@
+2024-06-18:  David Anderson
+    commit 13a9a4d7ebfe3b099a753ea9f2cfd84ccb4ce6b8
+
+    This does, or shows how to do, all we do
+    when making a release. Currently set
+    for the release of 0.10.0
+            new file:   tools/makerelease.sh
+
+2024-06-18:  David Anderson
+    commit eedcb528ef0f108b7747018073ca5ba37ef689b1
+
+    Due to the addition of dwarf_get_locdesc_entry_e()
+    we revise the version for the next release to be
+    (corrected: git log says 0.19.0 which is incorrect)
+    0.10.0, though this function is not something
+    library users will find necessary (the
+    function  enables improved dwarfdump reporting
+    of DWARF5 loclists).
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-06-18:  David Anderson
+    commit 84917197301f5a8751f2aacde16c791950f94098
+
+    The text of CMakeLists.txt version has changed, so
+    needed revising how to update version number.
+            modified:   tools/updatesemanticversion.py
+
+2024-06-17:  David Anderson
+    commit a5108555e6b9d2c3a00a10036315c89d29a9e72c
+
+    The mistake was a copy/paste error.
+    MSVC noticed the error.  There are no other
+    type issues noted by MSVC.
+         Dwarf_Bool       loclists_base_present =
+             llhead->ll_at_loclists_base_present;
+    -    Dwarf_Bool       loclists_base=
+    +    Dwarf_Unsigned   loclists_base =
+             llhead->ll_at_loclists_base;
+
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-16:  David Anderson
+    commit 137c06bf9e7f8e112fd2268a9a6a9a367a963dfe
+
+    Restoring functionality to this.
+    The regression tests run with meson now.
+            modified:   scripts/run-all-tests.sh
+
+2024-06-15:  David Anderson
+    commit fb711366c687ba48b5a25cb174dafe7b4df7a564
+
+    Issue #247, github libdwarf-code.
+    Line 14 is missing a required back-tick.
+            modified:   scripts/run-all-tests.sh
+
+2024-06-15:  David Anderson
+    commit 841a502a9990db9c6144491d98fa6815122ec142
+
+    Bringing up to date.
+            modified:   ChangeLog
+
 2024-06-15:  David Anderson
     commit 70b6ecbb1453b1461a6d06422db1ad6217fb55fd
 
