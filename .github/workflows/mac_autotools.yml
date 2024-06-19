@@ -13,6 +13,8 @@ jobs:
     - name: tools
       run:  |
         brew install automake
+    - name: aclocal
+      run: aclocal
     - name: autoreconf
       run: autoreconf --warnings=all  -vif
     - name: config
