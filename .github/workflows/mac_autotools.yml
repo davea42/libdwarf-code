@@ -8,10 +8,8 @@ permissions: read-all
 jobs:
  macos_autotools:
     runs-on: macos-latest
-    runs:
-      using 'node20'
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: tools
       run:  |
         brew install automake
