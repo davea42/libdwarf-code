@@ -9,7 +9,7 @@ jobs:
  macos_autotools:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
     - name: tools
       run:  |
         brew install automake
