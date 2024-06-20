@@ -7,17 +7,18 @@ permissions: read-all
 
 jobs:
   freebsd_autotools:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: FreeBSD-with-autotools
-        uses: cross-platform-actions/action@v0.20.0
+        uses: cross-platform-actions/action@v0.23.0
         with:
           operating_system: freebsd
           sync_files: runner-to-vm
-          version:  '14.1'
+          version:  '14.0'
           run: |
             uname -a
+            whoami
             freebsd-version
             echo $SHELL
             sudo pkg install -y python3 bash automake libtool
