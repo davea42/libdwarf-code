@@ -9,13 +9,13 @@ jobs:
   freebsd_autotools:
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: FreeBSD-with-autotools
         uses: cross-platform-actions/action@v0.20.0
         with:
           operating_system: freebsd
           sync_files: runner-to-vm
-          version:  '13.2'
+          version:  '14.1'
           run: |
             uname -a
             freebsd-version
