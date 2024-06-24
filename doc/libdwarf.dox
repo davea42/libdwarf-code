@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-06-12 v0.10.0
+    @date 2024-06-24 v0.10.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -38,7 +38,7 @@
     writers and for debuggers) related to debugging
     but not mentioned in any DWARF standard.
 
-    The document has long mentioned the "Unix
+    The DWARF Standard has long mentioned the "Unix
     International Programming Languages Special
     Interest Group" (PLSIG), under whose auspices the
     DWARF committee was formed around 1991. "Unix
@@ -1085,6 +1085,8 @@
     We list these with newest first.
 
     <b>Changes 0.9.2 to 0.10.0</b>
+
+    Released 24 June 2024
 
     Added API function
     dwarf_get_locdesc_entry_e() to allow dwarfdump
