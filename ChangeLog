@@ -1,3 +1,124 @@
+2024-06-24:  David Anderson
+    commit 284f9ca49909d08b9e71592b5ad2ddcc7ab9b9ab
+
+    Release date  24 June added
+            modified:   README.md
+
+    With release date.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2024-06-20:  David Anderson
+    commit aa90b4054945c1f1fdd820611b3a3ed9a45f881d
+
+    All the steps updated to match the individual versions.
+            modified:   test.yml
+
+2024-06-20:  David Anderson
+    commit 55056243e5a7b098062fcef20e2284c7605446f0
+
+    Now v4 not master in checkout.
+            modified:   msys2_autotools.yml
+            modified:   msys2_cmake.yml
+            modified:   msys2_meson.yml
+
+2024-06-20:  David Anderson
+    commit af60a31c328ce0b370987d9db45c51be13c1b8a2
+
+    Now using action@v0.23.0
+            modified:   mac_cmake.yml
+            modified:   mac_meson.yml
+
+2024-06-20:  David Anderson
+    commit cd5d7c3e88a6fc853d9067496861317d961641c4
+
+    Now using freebsd 14.0  vm under ubuntu vm
+            modified:   freebsd_meson.yml
+
+2024-06-20:  David Anderson
+    commit 806d7b78f51610c6d0bf16759ff94ed10a78c65c
+
+    Changing what it runs-on and version of freebsd
+            modified:   freebsd_cmake.yml
+
+2024-06-20:  David Anderson
+    commit 4323041e38545789e8b5d456c8893c7e38c9192d
+
+    trying nested freeb under ubuntu
+            modified:   freebsd_autotools.yml
+
+2024-06-20:  David Anderson
+    commit 8a87cfd3e4d832083713395d24c667e04b5ad471
+
+    Now using @v4 and freebsd 14.1
+            modified:   freebsd_autotools.yml
+            modified:   freebsd_cmake.yml
+            modified:   freebsd_meson.yml
+
+2024-06-19:  David Anderson
+    commit c40105af44488a685b9ac7c4ef3e949dc6dea2ed
+
+    Import mac autotools changes here.
+    Now using v4 and adding libtool to brew install
+    for macos autotools.
+            modified:   test.yml
+
+2024-06-19:  David Anderson
+    commit c4d545ad3b6f3b50d863c1e6aa90d06ee050ae7c
+
+    add libtool
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 44ecdc9a6db9181e2f48b4b79d119249eb7dd670
+
+    Adding aclocal suggested by autoreconf step error
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 6295679a4c9f68e01ae4f9ee8d2a0927a69ac840
+
+    Try V4
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit b46cba509b9c1c2f2ee611b8a9d9b5a43235416f
+
+    stackoverflow suggests use v4
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit eaa94a92e37b35f6bfafa9a75df0fa678891f970
+
+    syntax fix
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 36af6b8fdf26a376950ace3d65287d11f8dfa949
+
+    Try v4
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 6a7dda9cd8df097d01f1c2010308a1fa0e8b43c4
+
+    Another try for this action
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit f077d1b9b057621a9bff041ea894d39c04818bb9
+
+    Issue with github action.
+            modified:   mac_autotools.yml
+
+2024-06-18:  David Anderson
+    commit ba6cb0daabdbe67c32feeaed366ad57f9f18c0e8
+
+    Up to date and correcting git log entry
+    mentioning 0.19.0 to the correct 0.10.0
+            modified:   ChangeLog
+
 2024-06-18:  David Anderson
     commit 13a9a4d7ebfe3b099a753ea9f2cfd84ccb4ce6b8
 
