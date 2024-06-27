@@ -1,3 +1,48 @@
+2024-06-27:  David Anderson
+    commit 1e6de1c5704a20165f07fefb60e26676aa91c5cf
+
+    Version changed to 0.10.1 in anticipation of
+    a future release.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-06-27:  David Anderson
+    commit 735137e89261c04500b3262da02fc45d0f21550c
+
+    Cmake was not setting  Version: in the output libdwarf.pc.
+    The corrections to the pc.in files required
+    the tiny change to configure.ac and now
+    all build mechanisms set Version: in libdwarf.pc
+    and libdwarfp.pc installed by 'make install'
+    and its equivalents.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            new file:   doc/CMakeLists.txt
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/libdwarf.pc.in
+            modified:   src/lib/libdwarfp/libdwarfp.pc.in
+
+2024-06-24:  David Anderson
+    commit 289d0d3c69436d897fe4555821a0b9fcfa284503
+
+
+    This is the version 0.10.0 realease final commit.
+
+     Changes to be committed:
+    corrected new release date
+            modified:   README.md
+
+2024-06-24:  David Anderson
+    commit 8ea3c7831a6485585445e3bd545f568ee3fa4e09
+
+    UP to date.
+            modified:   ChangeLog
+
 2024-06-24:  David Anderson
     commit 284f9ca49909d08b9e71592b5ad2ddcc7ab9b9ab
 
