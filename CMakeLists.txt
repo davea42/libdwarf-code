@@ -255,6 +255,7 @@ endif()
 include(GNUInstallDirs)
 
 add_subdirectory(src/lib/libdwarf)
+add_subdirectory(doc)
 
 if ( BUILD_DWARFDUMP )
   add_subdirectory(src/bin/dwarfdump)

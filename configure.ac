@@ -22,6 +22,8 @@ AC_INIT([libdwarf], [v_ver], [libdwarf -at- linuxmail -dot- org])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
+### The following for libdwarf.pc.in
+AC_SUBST([PROJECT_VERSION],[v_ver])
 
 ### not yet, will be used before long.
 ###AM_PATH_PYTHON([3.0])
