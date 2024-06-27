@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf VERSION 0.10.1 DESCRIPTION "" HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git" LANGUAGES C CXX)
+project(libdwarf VERSION 0.10.1 
+    DESCRIPTION "Library to access DWARF debugging information" 
+    HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
+    LANGUAGES C CXX)
 
 # libdwarf
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
