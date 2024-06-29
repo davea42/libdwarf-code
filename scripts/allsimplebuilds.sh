@@ -304,7 +304,7 @@ else
   chkres $? "cmake setup static library fail f"
 fi
 
-for i in $tbase/*
+for i in $tbase/allconfiguresharedinstalled $tbase/allconfigurestaticinstalled $tbase/allmesonsharedinstalled $tbase/allmesonstaticinstalled $tbase/allcmakesharedinstalled $tbase/allscmakestaticinstalled
 do
   cd $i
   find . -type f -print >/tmp/x.$$
