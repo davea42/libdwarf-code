@@ -45,6 +45,7 @@ uninstall-local:
 
 EXTRA_DIST = \
 Doxyfile \
+CMakeLists.txt \
 mips_extensions.mm \
 mips_extensions.pdf \
 checkexamples.c \
