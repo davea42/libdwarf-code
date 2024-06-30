@@ -6762,7 +6762,7 @@ print_loclists_context_head(Dwarf_Debug dbg,
     if (loclists_base_present) {
         append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "DW_AT_loclists_base     : 0x%"
+            "loclists base offset    : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             loclists_base);
     }
@@ -7974,21 +7974,22 @@ handle_rnglists( Dwarf_Attribute attrib,
         if (rnglists_base_present) {
             append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "CU DW_AT_rnglists_base    : 0x%"
+                "rnglists base offset      : 0x%"
+
                 DW_PR_XZEROS DW_PR_DUx,
-            rnglists_base);
+                rnglists_base);
         }
         if (rnglists_base_address_present) {
             append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "CU DW_AT_low_pc (baseaddr): 0x%"
+                "CU DW_AT_low_pc (baseaddr): 0x%"
                 DW_PR_XZEROS DW_PR_DUx,
                 rnglists_base_address);
         }
         if (debug_addr_base_present) {
             append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "CU DW_AT_addr_base        : 0x%"
+                "CU DW_AT_addr_base        : 0x%"
                 DW_PR_XZEROS DW_PR_DUx,
                 debug_addr_base);
         }
