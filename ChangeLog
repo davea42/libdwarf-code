@@ -1,4 +1,34 @@
 2024-06-30:  David Anderson
+    commit 47ef4925a0490aa45148b1b109b29069b7368265
+
+    Correcting the labeling of the base offset.
+    -"DW_AT_loclists_base     : 0x%"
+    +"loclists base offset    : 0x%"
+
+    -"CU DW_AT_rnglists_base    : 0x%"
+    +"rnglists base offset      : 0x%"
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-06-30:  David Anderson
+    commit 72d856ec539db214c518257105346cf61ad478f2
+
+    Added these to the EXTRA_DIST list
+    tools/makerelease.sh   \
+    tools/README   \
+    tools/updatesemanticversion.py \
+
+            modified:   Makefile.am
+
+    Revined the script to be easier to work with.
+            modified:   tools/makerelease.sh
+
+2024-06-30:  David Anderson
+    commit e3f13147ddceec725ce3ca46806f17bf678916ee
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2024-06-30:  David Anderson
     commit 588d757a5048e1c548ab9f9eda7e85744550d64f
 
     Correcting some of the emitted text to use the
