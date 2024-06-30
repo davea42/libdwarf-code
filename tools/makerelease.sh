@@ -17,10 +17,12 @@ then
 fi
 }
 
-rm -rf /tmp/bld
-mkdir /tmp/bld
+bldloc=/tmp/bldrel
+rm -rf $bldloc
+mkdir $bldloc
 chkres $? "mkdir failed"
-cd /tmp/bld
+cd $bldloc
+chkres $? "cd failed"
 ~/dwarf/code/configure
 chkres $? "configure failed"
 make dist
@@ -47,6 +49,8 @@ chkres $? "sha512sum pipe failed"
   # The fold(1) is just to make the web
   # release page easier to work with.
 
+echo "The release is $bldloc/libdwarf-$d.tar.xz"
+date
 echo "Now do by hand:"
 echo "git tag -a v$d  -m Release=$d"
 echo "git tag -a libdwarf-$d  -m Release=$d"
