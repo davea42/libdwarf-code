@@ -1,3 +1,55 @@
+2024-06-30:  David Anderson
+    commit 588d757a5048e1c548ab9f9eda7e85744550d64f
+
+    Correcting some of the emitted text to use the
+    release variable here
+            modified:   tools/makerelease.sh
+
+2024-06-29:  David Anderson
+    commit 1fe1e0db743c827e6bf3ef50c0220a90c4132130
+
+    The ending report of this script was a bit
+    awkward-looking.  Now entries listed
+    in a more readable order.
+            modified:   scripts/allsimplebuilds.sh
+
+2024-06-29:  David Anderson
+    commit deeba56ab11c95307a2e4518a7898a2d45d14966
+
+    Ommitted the new doc/CMakeLists.txt
+    entry in  doc/Makefile.am
+    so building a release from 0.10.0
+    will fail in some builds.
+
+     EXTRA_DIST = \
+     Doxyfile \
+    +CMakeLists.txt \
+     mips_extensions.mm \
+     mips_extensions.pdf \
+
+            modified:   doc/Makefile.am
+
+2024-06-27:  David Anderson
+    commit cf124de35867f5d18041851922cda301508e1716
+
+    Added a Description to the project() command
+    while reformatting the command a little.
+    Without interfering with how the version string
+    appears so tools/updatesemanticversion.py
+    can still update the version when necessary.
+            modified:   CMakeLists.txt
+
+2024-06-27:  David Anderson
+    commit 595c9edf0e78ccc7c3803fe106ccb45299f947a6
+
+    Now up to date, showing the final
+    0.10.0 git id as well as some
+    small changes in  cmake builds so that
+    all three build mechanisms create
+    (on install) a libdwarf.pc with a correct Version:
+    value.  Cmake builds used to leave that field blank.
+            modified:   ChangeLog
+
 2024-06-27:  David Anderson
     commit 1e6de1c5704a20165f07fefb60e26676aa91c5cf
 
