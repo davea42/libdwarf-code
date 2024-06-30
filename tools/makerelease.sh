@@ -4,7 +4,7 @@
 # It uses configure and computes values we put
 # in www.prevanders.net/dwarf.html 
 
-d=0.10.0
+d=0.10.1
 echo "Assuming release is $d"
 sleep 5
 chkres() {
@@ -57,16 +57,16 @@ echo "git push origin v$d"
 echo "Try this  right after making release"
 echo "git checkout main"
 echo "git log | head -20"
-echo "git checkout v0.10.0"
+echo "git checkout v$d"
 echo "git log | head -20"
-echo "git diff main v0.10.0 --name-status"
+echo "git diff main v$d --name-status"
 echo "Ensure the  log snippets match and the diff of"
 echo "the last command produces no output."
 echo "git checkout main"
 echo "git log | head -20"
-echo "git checkout libdwarf-0.10.0"
+echo "git checkout libdwarf-$d"
 echo "git log | head -20"
-echo "git diff main libdwarf-0.10.0 --name-status"
+echo "git diff main libdwarf-$d --name-status"
 echo "and check as just above"
 echo "done makerelease.sh"
 
