@@ -1,3 +1,15 @@
+2024-07-01:  David Anderson
+    commit 69be7811dfc1f369ac6799fed96da4ef62ed75a1
+
+    Now with 0.10.1, no 0.10.0
+            modified:   README.md
+
+2024-06-30:  David Anderson
+    commit b08aee58b37505b7725e645915e468024e198cd7
+
+    Up to date. perhaps ready for 0.10.1 release.
+            modified:   ChangeLog
+
 2024-06-30:  David Anderson
     commit 47ef4925a0490aa45148b1b109b29069b7368265
 
