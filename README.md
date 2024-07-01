@@ -28,7 +28,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
-    Version 0.10.0 Released 24 June      2024.
+    Version 0.10.1 Released 01 July      2024.
     Version 0.9.2 Released  02 April     2024.
     Version 0.9.1 Released  27 January   2024.
     Version 0.9.0 Released  8  December  2023.
