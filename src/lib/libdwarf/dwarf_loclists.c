@@ -360,6 +360,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     allocations here. */
 int
 _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
+    Dwarf_Bool build_offset_array,
     Dwarf_Unsigned contextnum,
     Dwarf_Unsigned sectionlength,
     Dwarf_Small *data,
@@ -379,7 +380,6 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
     Dwarf_Unsigned offset_entry_count = 0;
     Dwarf_Unsigned localoff = 0;
     Dwarf_Unsigned lists_len = 0;
-    Dwarf_Unsigned tabentrynum = 0;
 
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
         data,offset_size,exten_size,
@@ -469,29 +469,34 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
     localoff = data - startdata;
     if (offset_entry_count) {
         buildhere->lc_offsets_array = data;
-        buildhere->lc_offset_value_array = (Dwarf_Unsigned *)
-            calloc(offset_entry_count, sizeof(Dwarf_Unsigned));
-        if (!buildhere->lc_offset_value_array) {
-            _dwarf_error_string(dbg,error, DW_DLE_ALLOC_FAIL,
-                "dbg,DW_DLE_ALLOC_CAIL: "
-                " The debug_loclists offset table "
-                "cannot be allocated.");
-            return DW_DLV_ERROR;
-        }
-        for (tabentrynum = 0 ; tabentrynum < offset_entry_count;
-            data += SIZEOFT32,++tabentrynum ) {
-            Dwarf_Unsigned entry = 0;
-            int res = 0;
+        lists_len += offset_size*offset_entry_count;
+        if (build_offset_array) {
+            Dwarf_Unsigned tabentrynum = 0;
 
-            res = _dwarf_read_unaligned_ck_wrapper(dbg,
-                &entry,data,SIZEOFT32,end_data,error);
-            if (res != DW_DLV_OK) {
-                free(buildhere->lc_offset_value_array);
-                buildhere->lc_offset_value_array = 0;
-                return res;
+            buildhere->lc_offset_value_array = (Dwarf_Unsigned *)
+                calloc(offset_entry_count, sizeof(Dwarf_Unsigned));
+            if (!buildhere->lc_offset_value_array) {
+                _dwarf_error_string(dbg,error, DW_DLE_ALLOC_FAIL,
+                    "dbg,DW_DLE_ALLOC_CAIL: "
+                    " The debug_loclists offset table "
+                    "cannot be allocated.");
+                return DW_DLV_ERROR;
             }
-            buildhere->lc_offset_value_array[tabentrynum] = entry;
-            lists_len += SIZEOFT32;
+            for (tabentrynum = 0 ; tabentrynum < offset_entry_count;
+                data += offset_size,++tabentrynum ) {
+                Dwarf_Unsigned entry = 0;
+                int res = 0;
+    
+                res = _dwarf_read_unaligned_ck_wrapper(dbg,
+                    &entry,data,offset_size,end_data,error);
+                if (res != DW_DLV_OK) {
+                    free(buildhere->lc_offset_value_array);
+                    buildhere->lc_offset_value_array = 0;
+                    return res;
+                }
+                buildhere->lc_offset_value_array[tabentrynum] =
+                    entry;
+            }
         }
     } /* else no offset table */
 
@@ -530,6 +535,10 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *fullarray = 0;
     Dwarf_Unsigned i = 0;
 
+#if 0 /* debug printf*/
+printf("dadebug enter internal_load_loclists_contexts() %d %s\n",
+__LINE__,__FILE__);
+#endif
     for ( ; data < end_data ; data = startdata+nextoffset) {
         Dwarf_Loclists_Context newcontext = 0;
 
@@ -544,7 +553,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         memset(newcontext,0,sizeof(*newcontext));
-        res = _dwarf_internal_read_loclists_header(dbg,
+        res = _dwarf_internal_read_loclists_header(dbg, TRUE,
             chainlength,
             section_size,
             data,end_data,offset,
@@ -618,6 +627,10 @@ dwarf_load_loclists(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *cxt = 0;
     Dwarf_Unsigned count = 0;
 
+#if 0 /* debug printf*/
+printf("dadebug enter dwarf_load_loclists() %d %s\n",
+__LINE__,__FILE__);
+#endif
     CHECK_DBG(dbg,error,"dwarf_load_loclists()");
     if (dbg->de_loclists_context) {
         if (loclists_count) {
@@ -630,6 +643,11 @@ dwarf_load_loclists(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     if (!dbg->de_debug_loclists.dss_data) {
+#if 0 /* debug printf*/
+printf("dadebug call dwarf_load_section() loclists() %d %s\n",
+__LINE__,__FILE__);
+#endif
+
         res = _dwarf_load_section(dbg, &dbg->de_debug_loclists,
             error);
         if (res != DW_DLV_OK) {
@@ -1376,7 +1394,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0 /* candiate??? for public api. No, not usable. */
+#if 0 /* candidate for public api?. No, not usable. */
 int
 dwarf_get_loclists_entry_fields(
     Dwarf_Loc_Head_c head,

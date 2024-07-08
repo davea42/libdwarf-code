@@ -1243,6 +1243,8 @@ dwarf_dietype_offset(Dwarf_Die die,
     return res;
 }
 
+/*  Only a few values are inherited from the tied
+    file. Not rnglists or loclists base offsets. */
 int
 _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
     Dwarf_CU_Context context,

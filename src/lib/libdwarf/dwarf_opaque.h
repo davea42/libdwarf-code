@@ -263,10 +263,13 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_line_base;             /*DW5 */
     Dwarf_Unsigned cc_line_base_contr_size;  /*DW5 */
 
-    /*  From DW_AT_loclists_base or DW_SECT_LOCLISTS */
+    /*  From DW_AT_loclists_base or 
+        computed from DW_SECT_LOCLISTS */
     Dwarf_Unsigned cc_loclists_base;
     Dwarf_Unsigned cc_loclists_base_contr_size;
     Dwarf_Bool     cc_loclists_base_present;
+    /*  via_at means there was a DW_AT_loclists_base */
+    Dwarf_Bool     cc_loclists_base_via_at;
     Dwarf_Bool     cc_loclists_header_length_present;
 
     /* ======= str_offsets table data  =======*/
@@ -316,6 +319,8 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
     Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
     Dwarf_Bool     cc_rnglists_base_present; /* DW5 */
+    /*  via_at means there was a DW_AT_rnglists_base */
+    Dwarf_Bool     cc_rnglists_base_via_at;
     Dwarf_Bool     cc_rnglists_header_length_present;
 
     char *         cc_dwo_name;

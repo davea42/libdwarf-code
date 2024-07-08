@@ -28,7 +28,8 @@ Floor, Boston MA 02110-1301, USA.
 
 /*  Dwarf_Loclists_Context_s contains the data from
     the .debug_loclists
-    section headers (if that section exists).  Dwarf 2,3,4 .debug_loc
+    section headers (if that section exists).
+    Dwarf 2,3,4 .debug_loc
     has no such data.  The array (one of these per header in
     .debug_loclists) is recorded in Dwarf_Debug. These
     are filled in at startup at the same time .debug_info

@@ -1475,6 +1475,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     error);
                 if (udres == DW_DLV_OK) {
                     cucon->cc_loclists_base_present = TRUE;
+                    cucon->cc_loclists_base_via_at = TRUE;
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
                     /* Something is badly wrong. */
@@ -1552,6 +1553,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     error);
                 if (udres == DW_DLV_OK) {
                     cucon->cc_rnglists_base_present = TRUE;
+                    cucon->cc_rnglists_base_via_at = TRUE;
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
                     /* Something is badly wrong. */
@@ -1705,10 +1707,13 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
             assign_correct_unit_type(cu_context);
         }
         if (cu_context->cc_signature_present) {
-            /*  Initially just for DW_SECT_STR_OFFSETS,
-                finds the section offset of the
-                contribution which is not the same
-                as the table offset. */
+            /*  For finding base data from skeleton.
+                For the few fields inherited
+                (per the DWARF5 standard. */
+#if 0
+printf("dadebug call _dwarf_find_all_offsets_via_fission() %d %s\n",
+__LINE__,__FILE__);
+#endif
             res = _dwarf_find_all_offsets_via_fission(dbg,
                 cu_context,error);
             if (res == DW_DLV_ERROR) {

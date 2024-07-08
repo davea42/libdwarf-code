@@ -49,7 +49,7 @@
 #include "dwarf_tsearch.h"
 #include "dwarf_tied_decls.h"
 
-#if 0
+#if 0 /*debug dumpsignature */
 void
 _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno)
 {
