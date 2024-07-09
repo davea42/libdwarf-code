@@ -1,3 +1,101 @@
+2024-07-09:  David Anderson
+    commit e2c8f88ccc962d7a26d8f110687f25f5aebaf902
+
+    Fixed trailing whitespace and indents.
+    Remove debugging #if 0.  Corrected comment about
+    DWARF4 GNU extension split dwarf.
+        modified:   dwarf_die_deliv.c
+        modified:   dwarf_fission_to_cu.c
+
+    Remove debugging #if 0
+    Fixed trailing whitespace and indents.
+        modified:   dwarf_loclists.c
+
+    Added in merge of DWARF4 GNU extension cc_ranges_base
+    from skeleton to dwo/dwp
+        modified:   dwarf_query.c
+
+    Corrected comment about
+    DWARF4 GNU extension split dwarf.
+        modified:   dwarf_ranges.c
+
+    Remove debugging #if 0
+    Fixed trailing whitespace and indents.
+        modified:   dwarf_rnglists.c
+
+2024-07-08:  David Anderson
+    commit 7c67f294febe9af123557b71b933d3656bb38332
+
+    Refine the information on rnglists base with
+    cc_rnglists_base_via_at  (similar to loclists)
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    RNGLISTS now like LOCLISTS
+    and we remove some pointless cpu cycles
+    via the second arg to _dwarf_internal_read_loclists_header
+    _dwarf_internal_read_rnglists_header
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Add arg to _dwarf_internal_read_loclists_header so
+    we can save cpu when appropriate.
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Refining
+    _dwarf_internal_read_loclists_header()
+    and similar to _dwarf_internal_read_rnglists_header()
+    to rnglists with both using less cpu cycles.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+    Refined a comment.
+            modified:   src/lib/libdwarf/dwarf_loclists.h
+
+    Added cc_loclists_base_via_at and
+    cc_rnglists_base_via_at
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Added comment about split dwarf inheritance.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Now freeing the modified Dwarf_Rnglists_Context
+    data and _dwarf_internal_read_rnglists_header() stops
+    using cpu cycles where the result is ignored.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+    Refined comments on struct Dwarf_Rnglists_Context_s.
+            modified:   src/lib/libdwarf/dwarf_rnglists.h
+
+    Refined an 'if 0' to explain what it is for (debugging)..
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2024-07-04:  David Anderson
+    commit e465de713388149bc474426e3a740e42f93b0f58
+
+    Automatic update, generated file.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-07-01:  David Anderson
+    commit 0af9267f2a25317ec5ed24f71924edef51d89cd2
+
+    Minor clarifications.
+            modified:   tools/makerelease.sh
+
+2024-07-01:  David Anderson
+    commit f5c0795fc5de178658ef9fcdc9b2c095f840a182
+
+    Minor changes related to latest release name
+            modified:   doc/libdwarf.dox
+
+    Removed some comments that were
+    a bit annoying and unnecessary.
+            modified:   tools/makerelease.sh
+
+2024-07-01:  David Anderson
+    commit 45ef8e2763f65c31b27cc38bed197b84dc1441d4
+
+    Final for 0.10.1
+            modified:   ChangeLog
+
 2024-07-01:  David Anderson
     commit 69be7811dfc1f369ac6799fed96da4ef62ed75a1
 
