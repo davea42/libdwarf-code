@@ -4,8 +4,7 @@
 # It uses configure and computes values we put
 # in www.prevanders.net/dwarf.html 
 
-d=0.10.1
-echo "Assuming release is $d"
+d=0.10.2echo "Assuming release is $d"
 sleep 5
 chkres() {
 r=$1
