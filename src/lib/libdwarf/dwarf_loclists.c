@@ -486,7 +486,7 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
                 data += offset_size,++tabentrynum ) {
                 Dwarf_Unsigned entry = 0;
                 int res = 0;
-    
+
                 res = _dwarf_read_unaligned_ck_wrapper(dbg,
                     &entry,data,offset_size,end_data,error);
                 if (res != DW_DLV_OK) {
@@ -535,10 +535,6 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *fullarray = 0;
     Dwarf_Unsigned i = 0;
 
-#if 0 /* debug printf*/
-printf("dadebug enter internal_load_loclists_contexts() %d %s\n",
-__LINE__,__FILE__);
-#endif
     for ( ; data < end_data ; data = startdata+nextoffset) {
         Dwarf_Loclists_Context newcontext = 0;
 
@@ -627,10 +623,6 @@ dwarf_load_loclists(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *cxt = 0;
     Dwarf_Unsigned count = 0;
 
-#if 0 /* debug printf*/
-printf("dadebug enter dwarf_load_loclists() %d %s\n",
-__LINE__,__FILE__);
-#endif
     CHECK_DBG(dbg,error,"dwarf_load_loclists()");
     if (dbg->de_loclists_context) {
         if (loclists_count) {
@@ -643,11 +635,6 @@ __LINE__,__FILE__);
         return DW_DLV_NO_ENTRY;
     }
     if (!dbg->de_debug_loclists.dss_data) {
-#if 0 /* debug printf*/
-printf("dadebug call dwarf_load_section() loclists() %d %s\n",
-__LINE__,__FILE__);
-#endif
-
         res = _dwarf_load_section(dbg, &dbg->de_debug_loclists,
             error);
         if (res != DW_DLV_OK) {

@@ -1285,6 +1285,13 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         context->        cc_addr_base=
             tiedcontext->cc_addr_base;
     }
+    if (context->cc_version_stamp == DW_CU_VERSION4 &&
+        !context->cc_ranges_base_present) {
+        context->cc_ranges_base_present =
+            tiedcontext->cc_ranges_base_present;
+        context->cc_ranges_base =
+            tiedcontext->cc_ranges_base;;
+    }
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
             tiedcontext->cc_str_offsets_tab_present;

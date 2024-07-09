@@ -59,7 +59,7 @@
 #define MINIMUM_ADDRESS_SIZE 2
 #define MAXIMUM_ADDRESS_SIZE 8
 
-#if 0
+#if 0 /* dump rnglists context */
 #include "dwarf_rnglists.h" /* for debugging declaration */
 static void
 dumprnglists_context(Dwarf_Rnglists_Context *rnglists,
@@ -1519,12 +1519,18 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 http://llvm.1065342.n5.nabble.com/
                 DebugInfo-DW-AT-GNU-ranges-base-in-
                 non-fission-td64194.html
-                But we accept it anyway. */
-            /*  offset in .debug_rnglists  of the offsets table
+                But we accept it anyway.
+                In dw4 GNU fission extension
+                it is used and matters.
+
+                offset in .debug_rnglists  of the offsets table
                 applicable to this CU.
+                Or for DW4 GNU .debug_ranges split dwarf
+                it refers to .debug_ranges.
                 Note that this base applies when
                 referencing from the dwp, but NOT
                 when referencing from the a.out */
+
                 int udres = 0;
                 Dwarf_Bool is_info = cucon->cc_is_info;
 
@@ -1710,10 +1716,6 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
             /*  For finding base data from skeleton.
                 For the few fields inherited
                 (per the DWARF5 standard. */
-#if 0
-printf("dadebug call _dwarf_find_all_offsets_via_fission() %d %s\n",
-__LINE__,__FILE__);
-#endif
             res = _dwarf_find_all_offsets_via_fission(dbg,
                 cu_context,error);
             if (res == DW_DLV_ERROR) {

@@ -160,6 +160,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
             http://llvm.1065342.n5.nabble.com/DebugInfo\
             -DW-AT-GNU-ranges-base-in-non-fission-\
             td64194.html
+            HOWEVER: in dw4 GNU fission extension
+            it is used and matters.
             */
         /* ranges_base was merged from tied context. */
         ranges_base = cucontext->cc_ranges_base;

@@ -50,7 +50,7 @@
 #include "dwarf_rnglists.h"
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
-    as the caller ensured that. 
+    as the caller ensured that.
     With no DW_AT_loclists_base this computes one. */
 const struct Dwarf_Loclists_Context_s localcontxt_zero;
 static int
@@ -67,12 +67,6 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Loclists_Context buildhere = &localcontxt;
     Dwarf_Unsigned nextset = 0;
     int res = 0;
-
-
-#if 0
-printf("dadebug enter load_xu_loclists_into_cucontext() %d %s\n",
-__LINE__,__FILE__);
-#endif
 
     if (!fsd) {
         _dwarf_error_string(dbg, error, DW_DLE_XU_TYPE_ARG_ERROR,
@@ -231,7 +225,7 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
 }
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
-    as the caller ensured that. 
+    as the caller ensured that.
     With no DW_AT_rnglists_base present this
     computes the value. */
 const struct Dwarf_Rnglists_Context_s builddata_zero;
@@ -251,10 +245,6 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     int res = 0;
 
     builddata = builddata_zero;
-#if 0
-printf("dadebug enter load_xu_rnglists_into_cucontext() %d %s\n",
-__LINE__,__FILE__);
-#endif
     res = _dwarf_load_section(dbg, &dbg->de_debug_rnglists,
         error);
     if (res != DW_DLV_OK) {
@@ -271,7 +261,7 @@ __LINE__,__FILE__);
         return DW_DLV_NO_ENTRY;
     }
     memset(buildhere,0,sizeof(builddata));
-    res = _dwarf_internal_read_rnglists_header(dbg, TRUE,        
+    res = _dwarf_internal_read_rnglists_header(dbg, TRUE,
         0,soff_size,
         dbg->de_debug_rnglists.dss_data,
         dbg->de_debug_rnglists.dss_data+soff_size,
@@ -324,11 +314,6 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     int fdres = 0;
     int res = 0;
 
-#if 0
-printf(
-"dadebug enter _dwarf_find_all_offsets_via_fixxion() %d %s\n",
-__LINE__,__FILE__);
-#endif
     fission_data = fission_data_zero;
     fsd = &fission_data;
     for (si = 0; si < smax ; ++si) {
@@ -363,7 +348,7 @@ __LINE__,__FILE__);
             case DW_SECT_ABBREV:
             case DW_SECT_LINE:
             */
-            
+
             case DW_SECT_LOCLISTS:
                 res = load_xu_loclists_into_cucontext(dbg,
                     cu_context,

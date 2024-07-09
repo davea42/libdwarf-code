@@ -175,7 +175,6 @@ free_rnglists_context(Dwarf_Rnglists_Context cx)
     }
 }
 
-
 /*  Used in case of error reading the
     rnglists headers (not referring to Dwarf_Rnglists_Head
     here), to clean up. */
@@ -508,7 +507,7 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
                 data += offset_size,++tabentrynum ) {
                 Dwarf_Unsigned entry = 0;
                 int res = 0;
-    
+
                 res = _dwarf_read_unaligned_ck_wrapper(dbg,
                     &entry,data,offset_size,end_data,error);
                 if (res != DW_DLV_OK) {
@@ -516,10 +515,10 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
                     buildhere->rc_offset_value_array = 0;
                     return res;
                 }
-                buildhere->rc_offset_value_array[tabentrynum] = 
+                buildhere->rc_offset_value_array[tabentrynum] =
                     entry;
-           }
-        } 
+            }
+        }
     } /* else no offset table */
     if (offset_entry_count >= secsize_dbg ||
         lists_len >= secsize_dbg) {
@@ -689,11 +688,6 @@ int dwarf_load_rnglists(
     Dwarf_Rnglists_Context *cxt = 0;
     Dwarf_Unsigned count = 0;
 
-#if 0 /* printf*/
-printf("dadebug enter dwarf_load_rnglists() %d %s\n",
-__LINE__,__FILE__);
-#endif
-
     CHECK_DBG(dbg,error,"dwarf_load_rnglists");
     if (dbg->de_rnglists_context) {
         if (rnglists_count) {
@@ -706,21 +700,12 @@ __LINE__,__FILE__);
         return DW_DLV_NO_ENTRY;
     }
     if (!dbg->de_debug_rnglists.dss_data) {
-#if 0 /* printf*/
-printf("dadebug call _dwarf_load_section() rnglists %d %s\n",
-__LINE__,__FILE__);
-#endif
-
         res = _dwarf_load_section(dbg, &dbg->de_debug_rnglists,
             error);
         if (res != DW_DLV_OK) {
             return res;
         }
     }
-#if 0 /* printf*/
-printf("dadebug call _dwarf_load_rnglists_contexts() %d %s\n",
-__LINE__,__FILE__);
-#endif
     res = internal_load_rnglists_contexts(dbg,&cxt,&count,error);
     if (res == DW_DLV_ERROR) {
         return res;
