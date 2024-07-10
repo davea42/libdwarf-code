@@ -1,4 +1,19 @@
 2024-07-10:  David Anderson
+    commit 34d2ee2dd7eba9af38dcac600a3663bb23c5f7ed
+
+    Three new oss-fuzz issues. 70266 70263 70256
+            modified:   data.txt
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2024-07-10:  David Anderson
+    commit 1f3b7ed15a773e89b7d2fddc09efac3144bf3d28
+
+    Now with 70246 fixed.
+            modified:   ChangeLog
+
+2024-07-10:  David Anderson
     commit 593e794c43006e3fa3805cd070f128d61b5b7a4a
 
     New bug entries.
