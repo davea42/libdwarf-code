@@ -357,6 +357,7 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     Dwarf_Unsigned localoff = 0;
     Dwarf_Unsigned lists_len = 0;
     Dwarf_Unsigned secsize_dbg = 0;
+    Dwarf_Unsigned sum_size = 0;
 
     secsize_dbg = dbg->de_debug_rnglists.dss_size;
     /*  Sanity checks */
@@ -375,25 +376,15 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    if (sectionlength > secsize_dbg) {
-        dwarfstring m;
-        dwarfstring_constructor(&m);
-        dwarfstring_append(&m,
-            "DW_DLE_RNGLISTS_ERROR: "
-            " section_length argument mismatch vs. .debug_rnglists"
-            " section length including header.");
-        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
-    }
     buildhere->rc_startaddr = data;
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
         data,offset_size,exten_size,
         error,
         sectionlength,end_data);
+    sum_size = arealen+offset_size+exten_size;
     if (arealen > sectionlength ||
-        (arealen+offset_size+exten_size) > sectionlength) {
+        sum_size < arealen ||
+        sum_size > sectionlength) {
         dwarfstring m;
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
@@ -409,7 +400,6 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-
     localoff = offset_size+exten_size;
     buildhere->rc_length = arealen + localoff;
     buildhere->rc_dbg = dbg;
@@ -488,6 +478,19 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     buildhere->rc_offset_entry_count = offset_entry_count;
     data += SIZEOFT32;
     localoff+= SIZEOFT32;
+    if (offset_entry_count > (arealen/offset_size)) {
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            " DW_DLE_RNGLISTS_ERROR: .debug_rnglists"
+            " offset entry size impossibly large "
+            " with size 0x%x",
+            offset_entry_count*offset_size);
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     if (offset_entry_count ){
         buildhere->rc_offsets_array = data;
         lists_len += offset_size*offset_entry_count;
