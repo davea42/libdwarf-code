@@ -617,7 +617,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
             data,end_data,offset,
             newcontext,&nextoffset,error);
         if (res == DW_DLV_ERROR) {
-            free(newcontext);
+            free_rnglists_context(newcontext);
             newcontext =  0;
             free_rnglists_chain(dbg,head_chain);
             return res;
@@ -629,7 +629,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: allocating Rnglists_Context"
                 " chain entry");
-            free(newcontext);
+            free_rnglists_context(newcontext);
             newcontext =  0;
             free_rnglists_chain(dbg,head_chain);
             return DW_DLV_ERROR;
