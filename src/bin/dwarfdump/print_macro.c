@@ -989,8 +989,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 return lres;
             }
             if (do_print_dwarf) {
-                esb_append_printf(&mtext,
-                    "  offset 0x%" DW_PR_XZEROS DW_PR_DUx ,
+                esb_append_printf_u(&mtext,
+                    "  offset 0x%" DW_PR_XZEROS DW_PR_DUx,
                     offset);
             }
             esb_append(&mtext,"\n");
