@@ -1,3 +1,76 @@
+2024-07-10:  David Anderson
+    commit 593e794c43006e3fa3805cd070f128d61b5b7a4a
+
+    New bug entries.
+            modified:   bugxml/data.txt
+
+2024-07-10:  David Anderson
+    commit d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+
+    ossfuzz 70246 DW202407-002 fixed.
+    In reading a .debug_rnglists header a corrupt
+    value in the offset-count field lead to
+    a gigantic malloc.
+    This bug is just a week old.
+    We now check for a sane value.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-07-09:  David Anderson
+    commit e2ab28a547ed8a53f2c96a825247a7cc8f7e40bb
+
+    Removing esb_append_printf()
+    which is the last use of  *sprintf()
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2024-07-09:  David Anderson
+    commit 906a4428a5d92e17948da4249cfccbe8f5ae8005
+
+    ossfuzz 70244 fixed.
+    DW202407-001
+    These were bugs intruduced a couple days ago.
+    The array  in Dwarf_Rnglists_Context_s was
+    not being freed in every situation.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-07-09:  David Anderson
+    commit 4620365ad3308481928f8d545adb79bdd57c9cc4
+
+    Removing esb_append_printf() as it is no
+    longer necessary.
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_esb.h
+    Replacing with esb_append_printf_i()
+            modified:   test/test_esb.c
+
+2024-07-09:  David Anderson
+    commit 179c6997ca67f654b78384fddd8135a6ce970851
+
+    Updated semantic version to 0.10.2
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-09:  David Anderson
+    commit c165590fd07e5f6dec79af5855ccd8f779434154
+
+    Added blank line after d=  semantic version
+    so tools/updatesemanticversion.py
+    works right.
+            modified:   tools/makerelease.sh
+
+    Now updates tools/makerelease.sh too
+            modified:   tools/updatesemanticversion.py
+
+2024-07-09:  David Anderson
+    commit 69f85bbdc2717cd4b4e1345d522f6919ae459a44
+
+    Now with latest changes.
+            modified:   ChangeLog
+
 2024-07-09:  David Anderson
     commit e2c8f88ccc962d7a26d8f110687f25f5aebaf902
 
