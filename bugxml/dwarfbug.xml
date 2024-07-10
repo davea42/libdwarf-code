@@ -1,6 +1,105 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202407-005</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70266</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70266/fuzz_findfuncbypc-6093996460408832
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-004</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70263</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70263/fuzz_die_cu-4960441042796544
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-003</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70256</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70256/fuzz_rng-483822291655065
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-002</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70246</fuzzer>
+<datereported>2024-07-09</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70246/fuzz_macro_dwarf5-5128935898152960
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-001</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70244</fuzzer>
+<datereported>2024-07-09</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Memory leaks reading rnglists
+</vulnerability>
+<description> Libdwarf was failing to free()
+  some allocations in reading .debug_rnglists.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-09</datefixed>
+<references> regressiontests/ossfuzz70244/fuzz_die_cu_attrs_loclist-4958134427254784
+</references>
+<gitfixid>906a4428a5d92e17948da4249cfccbe8f5ae8005</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202406-002</dwid>
 <cve></cve>
 <fuzzer>ossfuzz id: 69641</fuzzer>
@@ -22,7 +121,7 @@
 <references> regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
 </references>
 <gitfixid>32d832900ebe2e61ec07e82625a561415be05424</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.10.1.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202406-001</dwid>
@@ -46,7 +145,7 @@
 <references> regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
 </references>
 <gitfixid>32d832900ebe2e61ec07e82625a561415be05424</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.10.1.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202403-001</dwid>
