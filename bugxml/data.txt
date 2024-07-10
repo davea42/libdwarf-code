@@ -1,3 +1,36 @@
+
+id: DW202407-002
+fuzzer: ossfuzz id: 70246
+datereported: 2024-07-09
+reportedby: David Korczynski
+vulnerability: Huge malloc request could crash caller
+product: libdwarf
+description: Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+datefixed: 2024-07-10
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202407-002
+
+id: DW202407-001
+fuzzer: ossfuzz id: 70244
+datereported: 2024-07-09
+reportedby: David Korczynski
+vulnerability: Memory leaks reading rnglists  
+product: libdwarf
+description: Libdwarf was failing to free() 
+  some allocations in reading .debug_rnglists.
+  This bug has been present for a week or so.
+datefixed: 2024-07-09
+references: regressiontests/fuzz_die_cu_attrs_loclist-4958134427254784
+gitfixid: 906a4428a5d92e17948da4249cfccbe8f5ae8005
+tarrelease:
+endrec: DW202407-001
+
+
 id: DW202406-002
 fuzzer: ossfuzz id: 69641
 datereported: 2024-06-14
@@ -15,7 +48,7 @@ description: During startup (reading
 datefixed: 2024-06-15
 references: regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
 gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
-tarrelease: 
+tarrelease: libdwarf-0.10.1.tar.xz
 endrec: DW202406-002
 
 id: DW202406-001
@@ -35,7 +68,7 @@ description: During startup (reading
 datefixed: 2024-06-15
 references: regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
 gitfixid: 32d832900ebe2e61ec07e82625a561415be05424
-tarrelease: 
+tarrelease: libdwarf-0.10.1.tar.xz
 endrec: DW202406-001
 
 
