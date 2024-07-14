@@ -1,6 +1,86 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202407-009</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70287</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70287/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-008</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70282</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70282/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-007</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70278</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70278/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-006</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70277</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70277/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202407-005</dwid>
 <cve></cve>
 <fuzzer>ossfuzz id: 70266</fuzzer>

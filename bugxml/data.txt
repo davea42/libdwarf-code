@@ -1,4 +1,72 @@
 
+id: DW202407-009
+fuzzer: ossfuzz id: 70287
+datereported: 2024-07-10
+reportedby: David Korczynski
+vulnerability: Huge malloc request could crash caller
+product: libdwarf
+description: Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+datefixed: 2024-07-10
+references: regressiontests/ossfuzz70287/
+gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+tarrelease:
+endrec: DW202407-009
+
+
+
+id: DW202407-008
+fuzzer: ossfuzz id: 70282
+datereported: 2024-07-10
+reportedby: David Korczynski
+vulnerability: Huge malloc request could crash caller
+product: libdwarf
+description: Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+datefixed: 2024-07-10
+references: regressiontests/ossfuzz70282/
+gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+tarrelease:
+endrec: DW202407-008
+
+id: DW202407-007
+fuzzer: ossfuzz id: 70278
+datereported: 2024-07-10
+reportedby: David Korczynski
+vulnerability: Huge malloc request could crash caller
+product: libdwarf
+description: Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+datefixed: 2024-07-10
+references: regressiontests/ossfuzz70278/
+gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+tarrelease:
+endrec: DW202407-007
+
+
+id: DW202407-006
+fuzzer: ossfuzz id: 70277
+datereported: 2024-07-10
+reportedby: David Korczynski
+vulnerability: Huge malloc request could crash caller
+product: libdwarf
+description: Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+datefixed: 2024-07-10
+references: regressiontests/ossfuzz70277/
+gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+tarrelease:
+endrec: DW202407-006
+
+
 id: DW202407-005
 fuzzer: ossfuzz id: 70266
 datereported: 2024-07-10
