@@ -7,6 +7,11 @@ TAGS
 *.exe
 bugxml/__pycache__
 doc/libhtmldoc.tar
+config.h.in
+grepcmake
+grepconfigure
+grepmeson
+
 
 # autotools ignore
 *.lo
