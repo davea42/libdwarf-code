@@ -211,12 +211,22 @@ typedef void*        Dwarf_Ptr;          /* host machine pointer */
 /*! @defgroup enums Enumerators with various purposes
     @{
     @enum Dwarf_Ranges_Entry_Type
-    The dwr_addr1/addr2 data is either an offset (DW_RANGES_ENTRY)
-    or an address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or
-    both are zero (DW_RANGES_END).
-    For DWARF5 each table starts with a header
-    followed by range list entries defined
-    as here.
+    The dwr_addr1/addr2 data is either pair of offsets
+    of a base pc address (DW_RANGES_ENTRY)
+    or a base pc address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or
+    both are zero(end of list, DW_RANGES_END)
+    or both non-zero but identical
+    (means an empty range, DW_RANGES_ENTRY).
+    These are for use with DWARF 2,3,4.
+
+    DW_RANGES_ADDRESS_SELECTION should have been spelled
+    DW_RANGES_BASE_ADDRESS. but it is not worth changing
+    as it is widely used.    
+
+    The DW_RANGES_ENTRY values are raw pc offset data recorded
+    in the section, not addresses.
+    @see examplev
+
     Dwarf_Ranges* apply to DWARF2,3, and 4.
     Not to DWARF5 (the data is different and
     in a new DWARF5 section).
@@ -448,6 +458,13 @@ typedef struct Dwarf_Str_Offsets_Table_s *  Dwarf_Str_Offsets_Table;
     Details of of non-contiguous address ranges
     of DIEs for DWARF2, DWARF3, and DWARF4.
     Sufficient for older dwarf.
+
+    dwr_addr1 and dwr_addr2 in the struct are
+    offsets from a base address in the CU involved.
+    To calculate actual range pc addresses see
+    the example:
+
+    @see examplev
 */
 typedef struct Dwarf_Ranges_s {
     Dwarf_Addr dwr_addr1;
@@ -2533,7 +2550,7 @@ DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     DW_AT_name for example.
     @param dw_returned_bool
     On success is set TRUE if dw_die has
-    dw_attrnum.
+    dw_attrnum and FALSE otherwise.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -4238,6 +4255,8 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     In a tieddbg this
     @param dw_rangesbuf
     A pointer to an array of structs is returned here.
+    The struct contents are the raw values in the
+    section.
     @param dw_rangecount
     The count of structs in the array is returned here.
     @param dw_bytecount
