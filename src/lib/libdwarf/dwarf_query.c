@@ -858,6 +858,7 @@ dwarf_diename(Dwarf_Die die,
     return dwarf_die_text(die,DW_AT_name,ret_name,error);
 }
 
+/*  Never returns DW_DLV_NO_ENTRY */
 int
 dwarf_hasattr(Dwarf_Die die,
     Dwarf_Half  attr,
@@ -879,7 +880,7 @@ dwarf_hasattr(Dwarf_Die die,
         *return_bool = false;
         return DW_DLV_OK;
     }
-    *return_bool = (true);
+    *return_bool = true;
     return DW_DLV_OK;
 }
 
@@ -2079,7 +2080,8 @@ _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
     is_info is always non-zero except if the section
     of the CU is DWARF4 .debug_types.
 */
-int dwarf_cu_header_basics(Dwarf_Die die,
+int 
+dwarf_cu_header_basics(Dwarf_Die die,
     Dwarf_Half *version,
     Dwarf_Bool *is_info,
     Dwarf_Bool *is_dwo,
