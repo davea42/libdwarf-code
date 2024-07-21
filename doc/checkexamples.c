@@ -2530,9 +2530,108 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @defgroup examplev Example getting .debug_ranges data
     @brief Example accessing ranges data.
 
+    If have_base_addr is false there is no die
+    (as in reading the raw .debug_ranges section)
+    or there is some serious data corruption somewhere.
     @code
 */
-void functionusingrange(Dwarf_Ranges *r);
+
+static
+void functionusingrange(Dwarf_Ranges *r,
+    Dwarf_Bool *have_base_addr,
+    Dwarf_Unsigned *baseaddr)
+{
+    Dwarf_Unsigned base = *baseaddr;
+
+    switch(r->dwr_type) { 
+    case DW_RANGES_ENTRY:
+       printf("DW_RANGES_ENTRY: raw addr1 0x%llx"
+           " addr2 0x%llx",
+           r->dwr_addr1,r->dwr_addr2);
+          if (r->dwr_addr1 == r->dwr_addr2) {
+              printf(" (empty range)");
+          }
+          printf("\n");
+       if (*have_base_addr) {
+           printf("DW_RANGES_ENTRY: cooked addr1 0x%llx"
+               " addr2  0x%llx \n" ,
+               r->dwr_addr1+base,r->dwr_addr2+base);
+       }
+       break;
+    case DW_RANGES_ADDRESS_SELECTION:
+       printf("DW_RANGES_ADDRESS_SELECTION: raw addr1 0x%llx\n",
+           r->dwr_addr2);
+       *have_base_addr = TRUE;
+       *baseaddr = r->dwr_addr2;
+       break;
+    case DW_RANGES_END:
+       printf("DW_RANGES_END: 0,0\n");
+       *have_base_addr = FALSE;
+       *baseaddr = 0;
+       break;
+    default:
+       printf("Impossible, incorrect dwr_type is 0x%lx\n",
+           (unsigned long)r->dwr_type);
+    }
+}
+
+/*  returns TRUE if found base (DW_AT_low_pc
+    of CU_die) Never generates error. */
+static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
+    Dwarf_Unsigned *low_pc)
+{
+    Dwarf_Unsigned cudieoff = 0;
+    Dwarf_Error    fberror = 0;
+    Dwarf_Bool     is_info = TRUE;
+    Dwarf_Die      cudie = 0;
+    Dwarf_Addr     lowpc = 0;
+    Dwarf_Bool     haslowpc = FALSE;
+    int            res = 0;
+
+    if (!die) {
+        return FALSE;
+    }
+    is_info = dwarf_get_die_infotypes_flag(die);
+    res = dwarf_CU_dieoffset_given_die(die,&cudieoff,
+        &fberror);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,fberror);
+            fberror = 0;
+        } 
+        return FALSE;
+    }
+    res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&fberror);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,fberror);
+            fberror = 0;
+        } 
+        /* FAIL */
+        return FALSE;
+    }
+    res = dwarf_hasattr(cudie,DW_AT_low_pc,&haslowpc,&fberror);
+    if (res != DW_DLV_OK) {
+        /*  Never returns DW_DLV_NO_ENTRY */
+        dwarf_dealloc_error(dbg,fberror);
+        fberror = 0;
+        return FALSE;
+    }
+    if (!haslowpc) {
+        *low_pc = 0;
+        return TRUE;
+    }
+    res = dwarf_lowpc(cudie,&lowpc,&fberror);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,fberror);
+            fberror = 0;
+        }
+        return FALSE;
+    }
+    *low_pc = (Dwarf_Unsigned)lowpc;
+    return TRUE;
+}
 int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     Dwarf_Die die, Dwarf_Error*error)
 {
@@ -2541,7 +2640,10 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     Dwarf_Ranges  *rangesbuf = 0;
     Dwarf_Unsigned bytecount = 0;
     int            res = 0;
+    Dwarf_Unsigned base_address = 0;
+    Dwarf_Bool have_base_addr = FALSE;
 
+    have_base_addr = find_ranges_base(dbg,die,&base_address);
     res = dwarf_get_ranges_b(dbg,rangesoffset,die,
         &realoffset,
         &rangesbuf,&count,&bytecount,error);
@@ -2553,7 +2655,7 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
         for ( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = rangesbuf+i;
             /* Use cur. */
-            functionusingrange(cur);
+            functionusingrange(cur,&have_base_addr,&base_address);
         }
         dwarf_dealloc_ranges(dbg,rangesbuf,count);
     }
