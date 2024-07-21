@@ -2080,7 +2080,7 @@ _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
     is_info is always non-zero except if the section
     of the CU is DWARF4 .debug_types.
 */
-int 
+int
 dwarf_cu_header_basics(Dwarf_Die die,
     Dwarf_Half *version,
     Dwarf_Bool *is_info,
