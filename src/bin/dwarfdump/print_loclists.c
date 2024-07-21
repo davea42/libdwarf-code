@@ -170,9 +170,6 @@ print_single_lle(Dwarf_Unsigned lineoffset,
     const char *name = "";
     struct esb_s m;
 
-#if 0
-printf("dadebug line %d file %s\n",__LINE__,__FILE__);
-#endif
     esb_constructor(&m);
     res = dwarf_get_LLE_name((unsigned int)code,&name);
     if (res != DW_DLV_OK) {
@@ -206,9 +203,6 @@ printf("dadebug line %d file %s\n",__LINE__,__FILE__);
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         break;
     case DW_LLE_offset_pair:
-#if 0
-printf("dadebug line %d file %s\n",__LINE__,__FILE__);
-#endif
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
