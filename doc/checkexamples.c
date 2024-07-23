@@ -2561,48 +2561,54 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 */
 
 static
-void functionusingrange(Dwarf_Ranges *r,
+void functionusingrange(Dwarf_Signed i,Dwarf_Ranges *r,
     Dwarf_Bool *have_base_addr,
     Dwarf_Unsigned *baseaddr)
 {
     Dwarf_Unsigned base = *baseaddr;
 
-    switch(r->dwr_type) { 
+    printf("[%4ld] ",(signed long)i);
+    switch(r->dwr_type) {
     case DW_RANGES_ENTRY:
-       printf("DW_RANGES_ENTRY: raw addr1 0x%llx"
-           " addr2 0x%llx",
-           r->dwr_addr1,r->dwr_addr2);
-          if (r->dwr_addr1 == r->dwr_addr2) {
-              printf(" (empty range)");
-          }
-          printf("\n");
-       if (*have_base_addr) {
-           printf("DW_RANGES_ENTRY: cooked addr1 0x%llx"
-               " addr2  0x%llx \n" ,
-               r->dwr_addr1+base,r->dwr_addr2+base);
-       }
-       break;
+        printf(
+            "DW_RANGES_ENTRY: raw    addr1 0x%08llx"
+            " addr2 0x%08llx",
+            r->dwr_addr1,r->dwr_addr2);
+        if (r->dwr_addr1 == r->dwr_addr2) {
+            printf(" (empty range)");
+        }
+        printf("\n");
+        if (*have_base_addr) {
+            printf("       "
+            "DW_RANGES_ENTRY: cooked addr1 0x%llx"
+            " addr2  0x%08llx \n" ,
+            r->dwr_addr1+base,r->dwr_addr2+base);
+        }
+        break;
     case DW_RANGES_ADDRESS_SELECTION:
-       printf("DW_RANGES_ADDRESS_SELECTION: raw addr1 0x%llx\n",
-           r->dwr_addr2);
-       *have_base_addr = TRUE;
-       *baseaddr = r->dwr_addr2;
-       break;
+        printf(
+            "Base Address   : 0x%08llx\n",
+            r->dwr_addr2);
+        *have_base_addr = TRUE;
+        *baseaddr = r->dwr_addr2;
+        break;
     case DW_RANGES_END:
-       printf("DW_RANGES_END: 0,0\n");
-       *have_base_addr = FALSE;
-       *baseaddr = 0;
-       break;
+        printf(
+            "DW_RANGES_END  : 0,0\n");
+        *have_base_addr = FALSE;
+        *baseaddr = 0;
+        break;
     default:
-       printf("Impossible, incorrect dwr_type is 0x%lx\n",
-           (unsigned long)r->dwr_type);
+        printf(
+            "ERROR          : incorrect dwr_type is 0x%lx\n",
+            (unsigned long)r->dwr_type);
     }
 }
 
 /*  returns TRUE if found base (DW_AT_low_pc
     of CU_die) Never generates error. */
 static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
-    Dwarf_Unsigned *low_pc)
+    Dwarf_Unsigned *low_pc, Dwarf_Unsigned *rangesoffset)
 {
     Dwarf_Unsigned cudieoff = 0;
     Dwarf_Error    fberror = 0;
@@ -2610,6 +2616,8 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Die      cudie = 0;
     Dwarf_Addr     lowpc = 0;
     Dwarf_Bool     haslowpc = FALSE;
+    Dwarf_Bool     hasatranges = FALSE;
+    Dwarf_Unsigned rangeoffset_local = 0;
     int            res = 0;
 
     if (!die) {
@@ -2622,7 +2630,7 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,fberror);
             fberror = 0;
-        } 
+        }
         return FALSE;
     }
     res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&fberror);
@@ -2630,7 +2638,7 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,fberror);
             fberror = 0;
-        } 
+        }
         /* FAIL */
         return FALSE;
     }
@@ -2641,7 +2649,38 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
         fberror = 0;
         return FALSE;
     }
+    res = dwarf_hasattr(cudie,DW_AT_ranges,&hasatranges,&fberror);
+    if (res != DW_DLV_OK) {
+        /*  Never returns DW_DLV_NO_ENTRY */
+        dwarf_dealloc_error(dbg,fberror);
+        fberror = 0;
+        return FALSE;
+    }
+    if (hasatranges) {
+        Dwarf_Attribute attr = 0;
+        res = dwarf_attr(cudie,DW_AT_ranges,&attr,&fberror);
+        if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
+                dwarf_dealloc_error(dbg,fberror);
+                fberror = 0;
+            }
+        } else {
+            res = dwarf_global_formref(attr, 
+                &rangeoffset_local, &fberror);
+            if (res != DW_DLV_OK) {
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,fberror);
+                    fberror = 0;
+                }
+            }
+            /*  rangeoffset_local set if possible. */
+        }
+        dwarf_dealloc_attribute(attr);
+    }
     if (!haslowpc) {
+        if (rangesoffset) {
+            *rangesoffset = rangeoffset_local;
+        }
         *low_pc = 0;
         return TRUE;
     }
@@ -2651,12 +2690,18 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
             dwarf_dealloc_error(dbg,fberror);
             fberror = 0;
         }
+        /* Something is badly wrong */
         return FALSE;
     }
+
     *low_pc = (Dwarf_Unsigned)lowpc;
+    if (rangesoffset) {
+        *rangesoffset = rangeoffset_local;
+    }
     return TRUE;
 }
-int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
+/* On call the rangesoffset is a default zero. */
+int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset_in,
     Dwarf_Die die, Dwarf_Error*error)
 {
     Dwarf_Signed   count = 0;
@@ -2666,8 +2711,10 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     int            res = 0;
     Dwarf_Unsigned base_address = 0;
     Dwarf_Bool have_base_addr = FALSE;
+    Dwarf_Unsigned rangesoffset = (Dwarf_Unsigned)rangesoffset_in;
 
-    have_base_addr = find_ranges_base(dbg,die,&base_address);
+    have_base_addr = find_ranges_base(dbg,die,&base_address,
+        &rangesoffset);
     res = dwarf_get_ranges_b(dbg,rangesoffset,die,
         &realoffset,
         &rangesbuf,&count,&bytecount,error);
@@ -2682,10 +2729,15 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     }
     {
         Dwarf_Signed i = 0;
+        printf("Range group base address: 0x%08lx"
+            ", offset in .debug_ranges:"
+            " 0x%08lx\n",
+            (unsigned long)base_address,
+            (unsigned long)rangesoffset);
         for ( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = rangesbuf+i;
             /* Use cur. */
-            functionusingrange(cur,&have_base_addr,&base_address);
+            functionusingrange(i,cur,&have_base_addr,&base_address);
         }
         dwarf_dealloc_ranges(dbg,rangesbuf,count);
     }
