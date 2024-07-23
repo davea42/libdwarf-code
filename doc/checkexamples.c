@@ -591,8 +591,16 @@ int example_sibvalid(Dwarf_Debug dbg,
 
 struct myrecords_struct *myrecords;
 void myrecord_data_for_die(struct myrecords_struct *myrecords,
-    Dwarf_Die d);
-int  my_needed_data_exists(struct myrecords_struct *myrecords);
+    Dwarf_Die d)
+{
+    /* do somthing */
+}
+int  my_needed_data_exists(struct myrecords_struct *myrecords)
+{
+    /* do something */
+    return DW_DLV_OK;
+    return DW_DLV_OK;
+}
 
 /*  Loop on DIE tree.  */
 static void
@@ -2025,11 +2033,25 @@ int exampledebugnames(Dwarf_Debug dbg,
 
     @code
 */
-int   has_unchecked_import_in_list(void);
-Dwarf_Unsigned get_next_import_from_list(void);
+int   has_unchecked_import_in_list(void)
+{
+    /* Do something */
+    return DW_DLV_OK;
+}
+Dwarf_Unsigned get_next_import_from_list(void)
+{
+    /* Do something */
+    return 22;
+}
 void  mark_this_offset_as_examined(
-    Dwarf_Unsigned macro_unit_offset);
-void  add_offset_to_list(Dwarf_Unsigned offset);
+    Dwarf_Unsigned macro_unit_offset)
+{
+    /* do something */
+}
+void  add_offset_to_list(Dwarf_Unsigned offset)
+{
+    /* do something */
+}
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
@@ -2184,7 +2206,9 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
     @code
 */
 
-void functionusingsigned(Dwarf_Signed s);
+void functionusingsigned(Dwarf_Signed s) {
+    /* Do something */
+};
 
 int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
     Dwarf_Error*error)
@@ -2648,6 +2672,12 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
         &realoffset,
         &rangesbuf,&count,&bytecount,error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            printf("ERROR dwarf_get_ranges_b %s\n",
+                dwarf_errmsg(*error));
+        } else {
+            printf("NO_ENTRY dwarf_get_ranges_b\n");
+        }
         return res;
     }
     {
