@@ -83,13 +83,31 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
+    int ct = 0;
     printf("%s (0x%lx) ",msg,(unsigned long)start);
     for (; cur < end; cur++) {
         printf("%02x", *cur);
+        ct++;
+        if (ct %4 == 0) {
+            printf(" ");
+        }
     }
     printf("\n");
 }
 #endif /*0*/
+#if 0 /* print_arch_item debugging */
+static void
+print_arch_item(unsigned int i,
+    struct  Dwarf_Universal_Arch_s* arch)
+{
+    printf(" Universal Binary Index %u\n",i);
+    printf("   cpu     0x%x\n",(unsigned)arch->au_cputype);
+    printf("   cpusubt 0x%x\n",(unsigned)arch->au_cpusubtype);
+    printf("   offset  0x%x\n",(unsigned)arch->au_offset);
+    printf("   size    0x%x\n",(unsigned)arch->au_size);
+    printf("   align   0x%x\n",(unsigned)arch->au_align);
+}
+#endif
 
 /* MACH-O and dwarf section names */
 static struct macho_sect_names_s {
@@ -900,6 +918,7 @@ _dwarf_macho_setup(int fd,
     return res;
 }
 
+/*  Initialize the methods needed to read Macho object files. */
 static Dwarf_Obj_Access_Methods_a const macho_methods = {
     macho_get_section_info,
     macho_get_byte_order,
@@ -1148,6 +1167,9 @@ magic_copy(unsigned char *d, unsigned len)
     return v;
 }
 
+/*  fa points to fat arch in object-file format
+    duhd points to space to fill in (in au_rches) data
+    for each macho object in the fat object. */
 static int
 fill_in_uni_arch_32(
     struct fat_arch * fa,
@@ -1299,6 +1321,7 @@ _dwarf_object_detector_universal_head_fd(
     }
     if (locoffsetsize == 32) {
         struct fat_arch * fa = 0;
+
         fa = (struct fat_arch *)calloc(duhd.au_count,
             sizeof(struct fat_arch));
         if (!fa) {
@@ -1383,20 +1406,6 @@ _dwarf_object_detector_universal_head_fd(
     *dw_head = duhdp;
     return DW_DLV_OK;
 }
-
-#if 0 /* print_arch_item debugging */
-static void
-print_arch_item(unsigned int i,
-    struct  Dwarf_Universal_Arch_s* arch)
-{
-    printf(" Universal Binary Index " LONGESTUFMT "\n",i);
-    printf("   cpu     " LONGESTXFMT "\n",arch->au_cputype);
-    printf("   cpusubt " LONGESTXFMT "\n",arch->au_cpusubtype);
-    printf("   offset  " LONGESTXFMT "\n",arch->au_offset);
-    printf("   size    " LONGESTXFMT "\n",arch->au_size);
-    printf("   align   " LONGESTXFMT "\n",arch->au_align);
-}
-#endif
 
 int
 _dwarf_object_detector_universal_instance(
