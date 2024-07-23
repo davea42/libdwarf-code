@@ -1,4 +1,23 @@
 2024-07-23:  David Anderson
+    commit 14a9f14d06ce32f3bc156e60740e1ce3d1be25b2
+
+    The new code about .debug_ranges had
+    small leaks when the library was told
+    not to record or clean-up most memory allocations.
+    Shown by -fsanitize.
+
+    Would not affect most users, but for the few
+    that use the feature this fixes the issue.
+            modified:   doc/checkexamples.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-07-23:  David Anderson
+    commit f34c3affa79ed7741345b58cc027050bf4884abc
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
+2024-07-23:  David Anderson
     commit 68f5082d293e81ec869ff83deb701d9e92268fa3
 
     The 'examplev()' function reading and showing
