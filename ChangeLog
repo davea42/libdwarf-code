@@ -1,3 +1,102 @@
+2024-07-23:  David Anderson
+    commit 68f5082d293e81ec869ff83deb701d9e92268fa3
+
+    The 'examplev()' function reading and showing
+    .debug_ranges is fully worked out and is
+    now tested in regressiontests.
+            modified:   doc/checkexamples.c
+
+2024-07-23:  David Anderson
+    commit 7b4e7a71820a2eca6d679d9bd371b4a93fd2f6c5
+
+    Cleaned up debugging helper functions (which are #if 0
+    so not part of the build).
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-07-22:  David Anderson
+    commit c51750363a5eef5c15ee8b2fc2d20f4372df8f6f
+
+    Fixed a mistake in examplev, .debug_ranges
+            modified:   doc/checkexamples.c
+
+2024-07-21:  David Anderson
+    commit f04ef392df7ec51265d9ea8994e1e80f6a5ee31f
+
+    Removed trailing whitespace from one line.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-07-21:  David Anderson
+    commit 6fdabfb2b11d72d952633faa493ec66db447938d
+
+    Added new argument to print_ranges_list_to_extra()
+    so it can print both raw and cooked values.
+            modified:   src/bin/dwarfdump/dd_esb_using_functions.h
+
+    Now calculates and prints Dwarf_Ranges data
+    with raw and cooked values.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Remove leftover #if 0 debugging blocks of code.
+            modified:   src/bin/dwarfdump/print_loclists.c
+
+    Add extra arg to print_ranges_list_to_extra()
+    appropriately.
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+2024-07-21:  David Anderson
+    commit 9445464f338dc58dac5847d22770e769ad087e29
+
+    Now calulates the cooked value of .debug_ranges
+    and prints both raw and cooked values.
+            modified:   doc/checkexamples.c
+
+    New date, some Dwarf_Ranges doc has been updated
+    in libdwarf.
+            modified:   doc/libdwarf.dox
+
+2024-07-21:  David Anderson
+    commit da5b269cab0058f313d62c89c15d83e0f1dbef4b
+
+    An inconsistency in using true vs TRUE
+    and false vs FALSE is still present but
+    at least one place acknowledges both.
+    This should be corrected touse TRUE/FALSE
+    everywhere.
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+
+2024-07-21:  David Anderson
+    commit ed80e7fd06d43554dcd7bda2f1522b3e24eb57ba
+
+    Minor corrections of formatting.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-07-21:  David Anderson
+    commit 41bab201a0c5e26b56ec2269769ce3f55fac2efa
+
+    Added clarifying comment paragraphs about Dwarf_Ranges
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-16:  David Anderson
+    commit 37dfec2a0d9cacda16d2a27b1a3822ae3f37e635
+
+    make git status less noisy.
+            modified:   .gitignore
+
+2024-07-14:  David Anderson
+    commit b66bf7e1fe2b15943b2bb08ac958880bca6df538
+
+    Final on the rnglists ossfuzz issues so far.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-07-10:  David Anderson
+    commit fff358d23488c6442c65495193758a8ff435c3b6
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2024-07-10:  David Anderson
     commit 34d2ee2dd7eba9af38dcac600a3663bb23c5f7ed
 
