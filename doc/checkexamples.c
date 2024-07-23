@@ -2646,12 +2646,14 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
     if (res != DW_DLV_OK) {
         /*  Never returns DW_DLV_NO_ENTRY */
         dwarf_dealloc_error(dbg,fberror);
+        dwarf_dealloc_die(cudie);
         fberror = 0;
         return FALSE;
     }
     res = dwarf_hasattr(cudie,DW_AT_ranges,&hasatranges,&fberror);
     if (res != DW_DLV_OK) {
         /*  Never returns DW_DLV_NO_ENTRY */
+        dwarf_dealloc_die(cudie);
         dwarf_dealloc_error(dbg,fberror);
         fberror = 0;
         return FALSE;
@@ -2682,6 +2684,7 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
             *rangesoffset = rangeoffset_local;
         }
         *low_pc = 0;
+        dwarf_dealloc_die(cudie);
         return TRUE;
     }
     res = dwarf_lowpc(cudie,&lowpc,&fberror);
@@ -2691,6 +2694,7 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
             fberror = 0;
         }
         /* Something is badly wrong */
+        dwarf_dealloc_die(cudie);
         return FALSE;
     }
 
@@ -2698,6 +2702,7 @@ static int find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
     if (rangesoffset) {
         *rangesoffset = rangeoffset_local;
     }
+    dwarf_dealloc_die(cudie);
     return TRUE;
 }
 /* On call the rangesoffset is a default zero. */

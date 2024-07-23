@@ -3150,11 +3150,13 @@ dd_find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
     if (res != DW_DLV_OK) {
         /*  Never returns DW_DLV_NO_ENTRY */
         dwarf_dealloc_error(dbg,fberror);
+        dwarf_dealloc_die(cudie);
         fberror = 0;
         return FALSE;
     }
     if (!haslowpc) {
         *low_pc = 0;
+        dwarf_dealloc_die(cudie);
         return TRUE;
     }
     res = dwarf_lowpc(cudie,&lowpc,&fberror);
@@ -3164,9 +3166,11 @@ dd_find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
             fberror = 0;
  
         }
+        dwarf_dealloc_die(cudie);
         return FALSE;
     }
     *low_pc = (Dwarf_Unsigned)lowpc;
+    dwarf_dealloc_die(cudie);
     return TRUE;
 }
 
