@@ -1,4 +1,23 @@
 
+id: DW202407-010
+fuzzer: ossfuzz id: 70721
+datereported: 2024-07-27
+reportedby: David Korczynski
+vulnerability: Heap Use After Free
+product: libdwarf
+description: Libdwarf was referencing freed space
+  attempting to free up a compilation-unit DIE
+  in the process of creating a context for a
+  compilation-unit DIE, given a particular
+  corruption of the DWARF data being read.
+  This bug has been present for several years.
+datefixed: 2024-07-27
+references: regressiontests/ossfuzz70721/fuzz_macro_dwarf5-4907954017468416
+gitfixid: 6fa96f95e043bac9b98ca6f7a9a542dae8f46cd
+tarrelease:
+endrec: DW202407-010
+
+
 id: DW202407-009
 fuzzer: ossfuzz id: 70287
 datereported: 2024-07-10
