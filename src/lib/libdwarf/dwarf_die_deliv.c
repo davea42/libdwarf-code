@@ -1747,6 +1747,7 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
 
     Invariant: cc_debug_offset in strictly
         ascending order in the list.
+    Never returns DW_DLV_NO_ENTRY
 */
 static int
 insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
@@ -1866,9 +1867,13 @@ _dwarf_create_a_new_cu_context_record_on_list(
         local_dealloc_cu_context(dbg,cu_context);
         return res;
     }
-    /*  Add the new cu_context to a list of contexts */
+    /*  Add the new cu_context to a list of contexts 
+        Never returns DW_DLV_NO_ENTRY */
     icres = insert_into_cu_context_list(dis,cu_context);
     if (icres == DW_DLV_ERROR) {
+        /*  Correcting ossfuzz70721 DW202407-010  */
+        dwarf_dealloc_die(*cudie_return);
+        *cudie_return = 0;
         local_dealloc_cu_context(dbg,cu_context);
         _dwarf_error_string(dbg,error,DW_DLE_DIE_NO_CU_CONTEXT,
             "DW_DLE_DIE_NO_CU_CONTEXT"
@@ -2025,9 +2030,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             dbg,dis,is_info,section_size,new_offset,
             &cu_context,&local_cudie,error);
         if (res != DW_DLV_OK) {
-            if (local_cudie) {
-                dwarf_dealloc_die(local_cudie);
-            }
             return res;
         }
     }
