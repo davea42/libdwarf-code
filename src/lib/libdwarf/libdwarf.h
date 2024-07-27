@@ -4252,7 +4252,8 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     Pass in the DIE whose DW_AT_ranges brought us to ranges.
     @param dw_return_realoffset
     The actual offset in the section actually read.
-    In a tieddbg this
+    In a tieddbg dwp DWARF4  extension  object
+    the base offset is added to dw_rangesoffset and returned here.
     @param dw_rangesbuf
     A pointer to an array of structs is returned here.
     The struct contents are the raw values in the
@@ -4289,6 +4290,47 @@ DW_API int dwarf_get_ranges_b(Dwarf_Debug dw_dbg,
 DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     Dwarf_Ranges * dw_rangesbuf,
     Dwarf_Signed   dw_rangecount);
+
+/*! @brief Find ranges base address
+
+    The function allows callers to calculate
+    actual address from .debug_ranges data
+    in a simple and efficient way.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_die
+    Pass in any non-null valid Dwarf_Die
+    to find the applicable .debug_ranges
+    base address. The dw_die need not
+    be a CU-DIE.
+    A null dw_die is allowed.
+    @param dw_known_base
+    if dw_die is non-null and there is a known
+    base address for the CU DIE that
+    (a DW_at_low_pc in the CU DIE) 
+    dw_known_base will be set TRUE,
+    Otherwise the value FALSE will be returned through
+    dw_known_base.
+    @param dw_baseaddress
+    if dw_known_base is retured as TRUE then
+    dw_baseaddres will be set with the correct pc value.
+    Otherwise zero will be set through dw_baseaddress.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    Never returns DW_DLV_NO_ENTRY.
+    
+*/
+DW_API int dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
+    Dwarf_Die       dw_die,
+    Dwarf_Bool     *dw_known_base,
+    Dwarf_Unsigned *dw_baseaddress,
+    Dwarf_Bool     *dw_at_ranges_offset_present,
+    Dwarf_Unsigned *dw_at_ranges_offset,
+    Dwarf_Error    *dw_error);
+
 /*! @} */
 
 /*! @defgroup rnglists Rnglists: code addresses in DWARF5
