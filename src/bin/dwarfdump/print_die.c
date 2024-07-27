@@ -3109,71 +3109,6 @@ get_rangelist_type_descr(Dwarf_Ranges *r)
 }
 
 
-/*  returns TRUE if found base (DW_AT_low_pc
-    of CU_die) Never generates error. */
-static int 
-dd_find_ranges_base(Dwarf_Debug dbg,Dwarf_Die die,
-    Dwarf_Unsigned *low_pc)
-{
-    Dwarf_Unsigned cudieoff = 0;
-    Dwarf_Error    fberror = 0;
-    Dwarf_Bool     is_info = TRUE;
-    Dwarf_Die      cudie = 0;
-    Dwarf_Addr     lowpc = 0;
-    Dwarf_Bool     haslowpc = FALSE;
-    int            res = 0;
-
-    if (!die) {
-        return FALSE;
-    }
-
-    is_info = dwarf_get_die_infotypes_flag(die);
-    res = dwarf_CU_dieoffset_given_die(die,&cudieoff,
-        &fberror);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc_error(dbg,fberror);
-            fberror = 0;
-        } 
-        return FALSE;
-    }
-    res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&fberror);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc_error(dbg,fberror);
-            fberror = 0;
-        } 
-        /* FAIL */
-        return FALSE;
-    }
-    res = dwarf_hasattr(cudie,DW_AT_low_pc,&haslowpc,&fberror);
-    if (res != DW_DLV_OK) {
-        /*  Never returns DW_DLV_NO_ENTRY */
-        dwarf_dealloc_error(dbg,fberror);
-        dwarf_dealloc_die(cudie);
-        fberror = 0;
-        return FALSE;
-    }
-    if (!haslowpc) {
-        *low_pc = 0;
-        dwarf_dealloc_die(cudie);
-        return TRUE;
-    }
-    res = dwarf_lowpc(cudie,&lowpc,&fberror);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc_error(dbg,fberror);
-            fberror = 0;
- 
-        }
-        dwarf_dealloc_die(cudie);
-        return FALSE;
-    }
-    *low_pc = (Dwarf_Unsigned)lowpc;
-    dwarf_dealloc_die(cudie);
-    return TRUE;
-}
-
 /*  The string produced here will need to be passed
     through sanitized() before actually printing.
     Always returns DW_DLV_OK.  */
@@ -3188,38 +3123,59 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     struct esb_s *stringbuf)
 {
     const char    *sec_name = 0;
+    int            res = 0;
     Dwarf_Signed   i = 0;
     struct esb_s   truename;
     char           buf[ESB_FIXED_ALLOC_SIZE];
     Dwarf_Unsigned base_address = 0;
     Dwarf_Bool     have_base_addr = FALSE;
+    Dwarf_Error    grberr = 0;
+    Dwarf_Bool     have_ranges_offset = FALSE;
+    Dwarf_Unsigned ranges_offset = 0;
 
+    (void)originaloff;
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     /*  We don't want to set the compress data into
         the secname here. */
     get_true_section_name(dbg,".debug_ranges",
         &truename,FALSE);
     sec_name = esb_get_string(&truename);
-    have_base_addr = dd_find_ranges_base(dbg,die,&base_address);
+    if (die) {
+        res = dwarf_get_ranges_baseaddress(dbg,die,&have_base_addr,
+            &base_address,
+            &have_ranges_offset,
+            &ranges_offset,&grberr);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,grberr);
+            grberr = 0;
+        } else {
+#if 0
+            if (have_ranges_offset) {
+                finaloff = ranges_offset;
+            }
+#endif
+        }
+      
+    }
     if (glflags.dense) {
         /* for dense, ignore cooked values.  */
         esb_append_printf_i(stringbuf,"< ranges: %"
             DW_PR_DSd,rangecount);
         esb_append_printf_s(stringbuf," ranges at %s" ,
             sanitized(sec_name));
-        if (originaloff == finaloff) {
+        if (have_ranges_offset) {
             esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,
                 finaloff);
         } else {
             esb_append_printf_u(stringbuf,
-                " offset with non-zero ranges base %" DW_PR_DUu ,
+                " offset base %" DW_PR_DUu ,
                 finaloff);
         }
         esb_append_printf_u(stringbuf," (0x%"
             DW_PR_XZEROS DW_PR_DUx ") ",
             finaloff);
         if (have_base_addr) {
-            esb_append_printf_u(stringbuf," ( base addr 0x%"
+            esb_append_printf_u(stringbuf," (base addr 0x%"
                 DW_PR_XZEROS DW_PR_DUx ") ",
                 base_address);
         }
@@ -3231,16 +3187,8 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             rangecount);
         esb_append_printf_s(stringbuf," at %s" ,
             sanitized(sec_name));
-        if (originaloff == finaloff) {
-            esb_append_printf_u(stringbuf," offset %"
-                DW_PR_DUu ,
-                finaloff);
-        } else {
-            esb_append_printf_u(stringbuf,
-                " offset with non-zero ranges base %"
-                DW_PR_DUu ,
-                finaloff);
-        }
+        esb_append_printf_u(stringbuf," offset %"
+                DW_PR_DUu , finaloff);
         esb_append_printf_u(stringbuf," (0x%"
             DW_PR_XZEROS DW_PR_DUx ") ",
             finaloff);

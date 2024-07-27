@@ -1440,7 +1440,21 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 entry_pc_attrnum = i;
                 break;
             }
+            case DW_AT_ranges: {
+                Dwarf_Unsigned at_ranges_offset = 0;
+                int res = 0;
 
+                res = dwarf_global_formref(attr,
+                    &at_ranges_offset,error);
+                if (res == DW_DLV_OK) {
+                    cucon->cc_at_ranges_offset = at_ranges_offset;
+                    cucon->cc_at_ranges_offset_present = TRUE;
+                } else {
+                    local_attrlist_dealloc(dbg,atcount,alist);
+                    return res;
+                }
+                break;
+            }
             /*  The offset is of the first offset in
                 .debug_str_offsets that is the string table
                 offset array for this CU. */

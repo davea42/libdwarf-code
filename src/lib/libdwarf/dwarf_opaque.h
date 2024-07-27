@@ -242,6 +242,7 @@ struct Dwarf_CU_Context_s {
     /*  cc_cu_die_offset_present is non-zero if
         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool     cc_cu_die_offset_present;
+    Dwarf_Bool     cc_at_ranges_offset_present;
 
     /*  If present, is base address of CU.  In DWARF2
         nothing says what attribute is the base address.
@@ -257,6 +258,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_low_pc;
     /*  from DW_AT_addr_base in CU DIE, offset to .debug_addr table */
     Dwarf_Unsigned cc_addr_base;  /* Zero in .dwo */
+
 
     /*  DW_SECT_LINE */
     Dwarf_Bool     cc_line_base_present;     /*DW5 */
@@ -309,6 +311,8 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_macro_base_present;
     Dwarf_Bool     cc_macro_header_length_present;
 
+    /*  For quick access to .debug_ranges from a CU DIE. */
+    Dwarf_Unsigned cc_at_ranges_offset;
     /*  DW_SECT_RNGLISTS  */
     /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
         but was unused. See dwarf_die_deliv.c for details. */
