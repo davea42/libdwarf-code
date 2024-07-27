@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of July 2024</p>
-<p> Record count: 186 </p>
+<p> Record count: 187 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6159,6 +6159,35 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references: regressiontests/ossfuzz70287/
 </p>
 <p>gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202407-010">187) DW202407-010</h3>
+<p>id: DW202407-010
+</p>
+<p>cve:</p>
+<p>fuzzer: ossfuzz id: 70721
+</p>
+<p>datereported: 2024-07-27
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Heap Use After Free
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Libdwarf was referencing freed space
+  attempting to free up a compilation-unit DIE
+  in the process of creating a context for a
+  compilation-unit DIE, given a particular
+  corruption of the DWARF data being read.
+  This bug has been present for several years.
+</p>
+<p>datefixed: 2024-07-27
+</p>
+<p>references: regressiontests/ossfuzz70721/fuzz_macro_dwarf5-4907954017468416
+</p>
+<p>gitfixid: 6fa96f95e043bac9b98ca6f7a9a542dae8f46cd
 </p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
