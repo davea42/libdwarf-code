@@ -923,7 +923,10 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     we substitute '$HOME" where the string s
     began with the value of that environment
     variable.  Otherwise, we just fill in
-    the esb with the name as it came in.  */
+    the esb with the name as it came in.  
+
+    ASSERT: s non-null and points to a valid C string.
+*/
 static void
 homeify(char *s, struct esb_s* out)
 {
@@ -972,17 +975,25 @@ homeify(char *s, struct esb_s* out)
         return;
     }
     homelen = strlen(home);
-    if (s[homelen] != '/') {
+    if (strlen(s) <= homelen) {
+        /*  Giving up, s is shorter than $HOME alone. */
+        esb_append(out,s);
+        return;
+    }
+    /*  Checking one-past the hoped-for home prefix */
+    if (homelen && s[homelen] != '/') {
         /* giving up */
         esb_append(out,s);
         return;
     }
     if (strncmp(s,(const char *)home,homelen)) {
-        /* giving up */
+        /*  Giving up, the initial characters do not
+            match $HOME */
         esb_append(out,s);
         return;
     }
     esb_append(out,"$HOME");
+    /*  Append, starting at the / in x */
     esb_append(out,s+homelen);
     return;
 }
