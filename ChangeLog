@@ -1,3 +1,62 @@
+2024-07-27:  David Anderson
+    commit fdcbe2c75fd8ccbb5bda03520713a21a00c08b1b
+
+    Changed release id to 0.11.0 due to new, added, function.
+            modified:   CMakeLists.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2024-07-27:  David Anderson
+    commit f324fd54b584ce7ae5d011572dd84bd15f48d3af
+
+    Identifies git fix id now for ossfuzz 70721
+    DW202407-010
+            modified:   bugxml/data.txt
+
+2024-07-27:  David Anderson
+    commit 46fa96f95e043bac9b98ca6f7a9a542dae8f46cd
+
+    Correcting use-after-free with a specific corrupted
+    DWARF section.
+    ossfuzz 70721 DW202407-010.
+    The bug has been in the source for several years.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2024-07-26:  David Anderson
+    commit 6b40a0ed378826273080a7b11e7274c2b61d018b
+
+    Using the new API function
+            modified:   doc/checkexamples.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+    Implementing the new API function
+    dwarf_get_ranges_baseaddress()
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2024-07-26:  David Anderson
+    commit 6c67c2df1408177dd3b3ceba6c9251b136a06504
+
+    Adding a new API function:
+    dwarf_get_ranges_baseaddress()
+    This simplfies getting correct cooked
+    addresses for entries from .debug_ranges
+    (which is in DWARF2,3,4);
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-23:  David Anderson
+    commit d95ee1f7ddde0bf195109167356157cd1b90746b
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-07-23:  David Anderson
     commit 14a9f14d06ce32f3bc156e60740e1ce3d1be25b2
 
