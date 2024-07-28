@@ -1,3 +1,36 @@
+2024-07-28:  David Anderson
+    commit c704bb966f3e62d9d9e7f018f0478c82ecea84b9
+
+    Adding git fix id  to 70753 and 70763
+            modified:   bugxml/data.txt
+
+2024-07-28:  David Anderson
+    commit 1b79d618bf5aab2bda9be495c531b13e94ae056a
+
+    Initial addition of ossfuzz 70753 and ossfuzz 70763
+            modified:   bugxml/data.txt
+
+
+    Fixing ossfuzz 70753 and ossfuzz 70763
+    by calling an internal version of global_formref_b()
+    so we can avoid infinite recursion.
+    The bug here was introduced  two days ago in
+    git id 6b40a0ed378826273080a7b11e7274c2b61d018b
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2024-07-27:  David Anderson
+    commit 10e7b7f4ca5f612169e049efe7173bde55c3ebec
+
+    Valgrind noticed a situation where in homeify()
+    we could touch a piece of uninitialized memory. Fixed.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2024-07-27:  David Anderson
+    commit 1719fc4b616eb5eb53ae3b18f3aa274856d4202b
+
+    Up to date, with new version 0.11.0
+            modified:   ChangeLog
+
 2024-07-27:  David Anderson
     commit fdcbe2c75fd8ccbb5bda03520713a21a00c08b1b
 
