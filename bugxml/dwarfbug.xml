@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202407-012</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70763</fuzzer>
+<datereported>2024-07-28</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> InfiniteRecursion reading CUs leads to crash
+</vulnerability>
+<description> The code added in git fix id
+  6b40a0ed378826273080a7b11e7274c2b61d018b
+  two days ago involved adding code setting up
+  compilation unit data and in find_cu_die_base_fields()
+  we called dwarf_global_formref() whereas we must
+  call _dwarf_internal_global_formref_b() to avoid
+  an infinite recursion.
+  A crash was only possible when reading corrupt DWARF.
+</description>
+<datefixed>2024-07-28</datefixed>
+<references> regressiontests/ossfuzz70763/fuzz_macro_dwarf5-5161075908083712
+</references>
+<gitfixid>1b79d618bf5aab2bda9be495c531b13e94ae056a</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-011</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70753</fuzzer>
+<datereported>2024-07-28</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> InfiniteRecursion reading CUs leads to crash
+</vulnerability>
+<description> The code added in git fix id
+  6b40a0ed378826273080a7b11e7274c2b61d018b
+  two days ago involved adding code setting up
+  compilation unit data and in find_cu_die_base_fields()
+  we called dwarf_global_formref() whereas we must
+  call _dwarf_internal_global_formref_b() to avoid
+  an infinite recursion.
+  A crash was only possible when reading corrupt DWARF.
+</description>
+<datefixed>2024-07-28</datefixed>
+<references> regressiontests/ossfuzz70753/fuzz_die_cu_offset-6598270743281664
+</references>
+<gitfixid>1b79d618bf5aab2bda9be495c531b13e94ae056a</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202407-010</dwid>
 <cve></cve>
 <fuzzer>ossfuzz id: 70721</fuzzer>
