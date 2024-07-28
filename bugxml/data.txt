@@ -15,7 +15,7 @@ description: The code added in git fix id
   A crash was only possible when reading corrupt DWARF.
 datefixed: 2024-07-28
 references: regressiontests/ossfuzz70763/fuzz_macro_dwarf5-5161075908083712
-gitfixid: 
+gitfixid: 1b79d618bf5aab2bda9be495c531b13e94ae056a
 tarrelease:
 endrec: DW202407-012
 
@@ -35,7 +35,7 @@ description: The code added in git fix id
   A crash was only possible when reading corrupt DWARF.
 datefixed: 2024-07-28
 references: regressiontests/ossfuzz70753/fuzz_die_cu_offset-6598270743281664
-gitfixid: 
+gitfixid: 1b79d618bf5aab2bda9be495c531b13e94ae056a
 tarrelease:
 endrec: DW202407-011
 
