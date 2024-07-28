@@ -1,4 +1,44 @@
 
+id: DW202407-012
+fuzzer: ossfuzz id: 70763
+datereported: 2024-07-28
+reportedby: David Korczynski
+vulnerability: InfiniteRecursion reading CUs leads to crash
+product: libdwarf
+description: The code added in git fix id
+  6b40a0ed378826273080a7b11e7274c2b61d018b
+  two days ago involved adding code setting up
+  compilation unit data and in find_cu_die_base_fields()
+  we called dwarf_global_formref() whereas we must
+  call _dwarf_internal_global_formref_b() to avoid
+  an infinite recursion.
+  A crash was only possible when reading corrupt DWARF.
+datefixed: 2024-07-28
+references: regressiontests/ossfuzz70763/fuzz_macro_dwarf5-5161075908083712
+gitfixid: 
+tarrelease:
+endrec: DW202407-012
+
+id: DW202407-011
+fuzzer: ossfuzz id: 70753
+datereported: 2024-07-28
+reportedby: David Korczynski
+vulnerability: InfiniteRecursion reading CUs leads to crash
+product: libdwarf
+description: The code added in git fix id
+  6b40a0ed378826273080a7b11e7274c2b61d018b
+  two days ago involved adding code setting up
+  compilation unit data and in find_cu_die_base_fields()
+  we called dwarf_global_formref() whereas we must
+  call _dwarf_internal_global_formref_b() to avoid
+  an infinite recursion.
+  A crash was only possible when reading corrupt DWARF.
+datefixed: 2024-07-28
+references: regressiontests/ossfuzz70753/fuzz_die_cu_offset-6598270743281664
+gitfixid: 
+tarrelease:
+endrec: DW202407-011
+
 id: DW202407-010
 fuzzer: ossfuzz id: 70721
 datereported: 2024-07-27

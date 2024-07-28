@@ -1443,9 +1443,17 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             case DW_AT_ranges: {
                 Dwarf_Unsigned at_ranges_offset = 0;
                 int res = 0;
+                Dwarf_Bool is_info = cucon->cc_is_info;
 
+#if 0
                 res = dwarf_global_formref(attr,
                     &at_ranges_offset,error);
+#endif
+                res = _dwarf_internal_global_formref_b(attr,
+                    /* avoid recurse creating context */ 1,
+                    &at_ranges_offset,
+                    &is_info,
+                    error);
                 if (res == DW_DLV_OK) {
                     cucon->cc_at_ranges_offset = at_ranges_offset;
                     cucon->cc_at_ranges_offset_present = TRUE;
