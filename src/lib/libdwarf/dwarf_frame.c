@@ -3369,7 +3369,7 @@ init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
 {
     f->fr_reg_count = count;
     f->fr_reg = (struct Dwarf_Reg_Rule_s *)
-        calloc(sizeof(struct Dwarf_Reg_Rule_s), (size_t)count);
+        calloc((size_t)count, sizeof(struct Dwarf_Reg_Rule_s));
     if (f->fr_reg == 0) {
         if (error) {
             _dwarf_error(dbg, error, DW_DLE_DF_ALLOC_FAIL);
