@@ -100,7 +100,7 @@ print_ranges(Dwarf_Debug dbg)
             char *val = 0;
             printf(" Ranges group %d:\n",group_number);
             esb_empty_string(&esb_string);
-			print_ranges_list_to_extra(dbg,0 /* no DIE */
+            print_ranges_list_to_extra(dbg,0 /* no DIE */
                 ,off,off,
                 rangeset,rangecount,bytecount,
                 &esb_string);

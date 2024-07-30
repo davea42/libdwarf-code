@@ -2973,7 +2973,6 @@ dd_get_integer_and_name(Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,ires,*err);
         if (ires != DW_DLV_OK) {
             int jres = 0;
-           
 
             jres = dwarf_global_formref_b(attrib,&uval,
                 &is_info,err);
@@ -3112,7 +3111,6 @@ get_rangelist_type_descr(Dwarf_Ranges *r)
     return "ERROR: .debug_ranges range type Unknown";
 }
 
-
 /*  The string produced here will need to be passed
     through sanitized() before actually printing.
     Always returns DW_DLV_OK.  */
@@ -3159,7 +3157,6 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             }
 #endif
         }
-      
     }
     if (glflags.dense) {
         /* for dense, ignore cooked values.  */
@@ -3192,7 +3189,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         esb_append_printf_s(stringbuf," at %s" ,
             sanitized(sec_name));
         esb_append_printf_u(stringbuf," offset %"
-                DW_PR_DUu , finaloff);
+            DW_PR_DUu , finaloff);
         esb_append_printf_u(stringbuf," (0x%"
             DW_PR_XZEROS DW_PR_DUx ") ",
             finaloff);
@@ -3223,9 +3220,9 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             esb_append_printf_i(stringbuf,"   [%2" DW_PR_DSd,i);
             esb_append_printf_s(stringbuf,"] %-12s",type);
 
-            switch(r->dwr_type) { 
+            switch(r->dwr_type) {
             case DW_RANGES_ENTRY: {
-                Dwarf_Bool emptyrange = 
+                Dwarf_Bool emptyrange =
                     (r->dwr_type == DW_RANGES_ENTRY
                     && r->dwr_addr1 == r->dwr_addr2);
 
@@ -3257,7 +3254,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
                 esb_append(stringbuf,
                     " 0,0");
                 have_base_addr = FALSE;
-                base_address = 0; 
+                base_address = 0;
                 break;
             default:
                 esb_append_printf_u(stringbuf,
@@ -3265,7 +3262,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
                     "incorrect dwr_type is 0x%x\n",
                     r->dwr_type);
                 break;
-            }    
+            }
             esb_append(stringbuf,"\n");
         }
     }

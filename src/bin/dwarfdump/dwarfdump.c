@@ -37,8 +37,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
-#include <stdio.h>  /* FILE stdout stderr fprintf() printf()
-     */
+#include <stdio.h>  /* FILE stdout stderr fprintf() printf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc()
     getenv() */
 #include <string.h> /* memset() strcmp() stricmp()
@@ -923,7 +922,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     we substitute '$HOME" where the string s
     began with the value of that environment
     variable.  Otherwise, we just fill in
-    the esb with the name as it came in.  
+    the esb with the name as it came in.
 
     ASSERT: s non-null and points to a valid C string.
 */
@@ -2415,7 +2414,7 @@ PRINT_CU_INFO(void)
         goff = glflags.DIE_CU_overall_offset;
     }
     if (!cu_data_is_set()) {
-        
+
         return;
     }
     esb_constructor_fixed(&hbuf,hbufarea,sizeof(hbufarea));
