@@ -539,8 +539,8 @@ _dwarf_macho_load_segment_commands(
     }
     mfp->mo_segment_commands =
         (struct generic_macho_segment_command *)
-        calloc(sizeof(struct generic_macho_segment_command),
-        (size_t)mfp->mo_segment_count);
+        calloc((size_t)mfp->mo_segment_count,
+        sizeof(struct generic_macho_segment_command));
     if (!mfp->mo_segment_commands) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
@@ -585,8 +585,8 @@ _dwarf_macho_load_dwarf_section_details32(
     struct generic_macho_section *secs = 0;
 
     secs = (struct generic_macho_section *)calloc(
-        sizeof(struct generic_macho_section),
-        (size_t)secalloc);
+        (size_t)secalloc,
+        sizeof(struct generic_macho_section));
     if (!secs) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_OK;
@@ -666,8 +666,8 @@ _dwarf_macho_load_dwarf_section_details64(
     struct generic_macho_section *secs = 0;
 
     secs = (struct generic_macho_section *)calloc(
-        sizeof(struct generic_macho_section),
-        (size_t)secalloc);
+        (size_t)secalloc,
+        sizeof(struct generic_macho_section));
     if (!secs) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
