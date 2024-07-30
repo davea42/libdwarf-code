@@ -278,7 +278,7 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        re = calloc(sizeof(struct ranges_entry),1);
+        re = calloc(1, sizeof(struct ranges_entry));
         if (!re) {
             free_allocated_ranges(base);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);

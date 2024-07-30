@@ -217,8 +217,7 @@ _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
     unsigned i = 0;
     memset(dhp,0,sizeof(*dhp));
     dhp->dh_maxcount = size +1;
-    dhp->dh_errors = (char **)calloc(sizeof(char *),
-        dhp->dh_maxcount);
+    dhp->dh_errors = (char **)calloc(dhp->dh_maxcount, sizeof(char *));
     if (!dhp->dh_errors) {
         dhp->dh_maxcount = 0;
         return;
@@ -226,8 +225,7 @@ _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
 
     for (i = 0; i < dhp->dh_maxcount; ++i) {
         char *newstr =
-            (char *)calloc(1,
-            DW_HARMLESS_ERROR_MSG_STRING_SIZE);
+            (char *)calloc(1, DW_HARMLESS_ERROR_MSG_STRING_SIZE);
         dhp->dh_errors[i] = newstr;
 #if 0 /* Commentary about avoiding leak */
         /*  BAD IDEA. just use the NULL pointer,

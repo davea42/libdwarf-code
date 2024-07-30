@@ -190,7 +190,7 @@ dwarf_initialize_search_hash( void **treeptr,
         /* initialized already. */
         return base ;
     }
-    base = calloc(sizeof(struct hs_base),1);
+    base = calloc(1, sizeof(struct hs_base));
     if (!base) {
         /* Out of memory. */
         return NULL ;
@@ -223,7 +223,7 @@ printf("debugging: initial alloc prime to use %lu\n",prime_to_use);
     /*  hashtab_ is an array of hs_entry,
         indexes 0 through tablesize_ -1. */
     base->hashfunc_ = hashfunc;
-    base->hashtab_ = calloc(sizeof(struct ts_entry),base->tablesize_);
+    base->hashtab_ = calloc(base->tablesize_, sizeof(struct ts_entry));
     if (!base->hashtab_) {
         free(base);
         return NULL;
@@ -368,8 +368,7 @@ resize_table(struct hs_base *head,
         return;
     }
     newhead.tablesize_entry_index_ = new_entry_index;
-    newhead.hashtab_ = calloc(sizeof(struct ts_entry),
-        newhead.tablesize_);
+    newhead.hashtab_ = calloc(newhead.tablesize_, sizeof(struct ts_entry));
     if (!newhead.hashtab_) {
         /*  Oops, too large. Leave table size as is, though
             things will get slow as it overfills. */

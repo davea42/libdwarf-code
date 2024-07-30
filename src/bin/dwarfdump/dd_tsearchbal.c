@@ -721,7 +721,7 @@ tdelete_inner(const void *key,
     /*  Allocate extra, head is on the stack we create
         here and the depth might increase.  */
     depth = depth + 4;
-    pkarray = calloc(sizeof(struct pkrecord),depth);
+    pkarray = calloc(depth, sizeof(struct pkrecord));
     if (!pkarray) {
         /* Malloc fails, we could abort... */
         return NULL;
