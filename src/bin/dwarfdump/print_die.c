@@ -827,6 +827,7 @@ get_macinfo_offset(Dwarf_Die cu_die,
     Dwarf_Attribute attrib= 0;
     int vres = 0;
     int ares = 0;
+    Dwarf_Bool is_info = TRUE;
 
     ares = dwarf_attr(cu_die, DW_AT_macro_info, &attrib, macerr);
     if (ares == DW_DLV_ERROR) {
@@ -839,11 +840,11 @@ get_macinfo_offset(Dwarf_Die cu_die,
     if (ares == DW_DLV_NO_ENTRY) {
         return ares;
     }
-    vres = dwarf_global_formref(attrib,offset,macerr);
+    vres = dwarf_global_formref_b(attrib,offset,&is_info,macerr);
     if (vres == DW_DLV_ERROR) {
         dwarf_dealloc_attribute(attrib);
         print_error_and_continue(
-        "ERROR: dwarf_global_formref on DW_AT_macro_info failed",
+        "ERROR: dwarf_global_formref_b on DW_AT_macro_info failed",
             vres, *macerr);
         return vres;
     }
@@ -2958,6 +2959,7 @@ dd_get_integer_and_name(Dwarf_Debug dbg,
     int show_form)
 {
     Dwarf_Unsigned uval = 0;
+    Dwarf_Bool is_info = TRUE;
 
     int vres = dwarf_formudata(attrib, &uval, err);
     /* if it is not formudata, lets check further */
@@ -2971,8 +2973,10 @@ dd_get_integer_and_name(Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,ires,*err);
         if (ires != DW_DLV_OK) {
             int jres = 0;
+           
 
-            jres = dwarf_global_formref(attrib,&uval,err);
+            jres = dwarf_global_formref_b(attrib,&uval,
+                &is_info,err);
             if (jres != DW_DLV_OK) {
                 if (string_out) {
                     glflags.gf_count_major_errors++;
@@ -3749,7 +3753,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
             break;
         }
-        res = dwarf_global_formref(attrib, &ref_goff, err);
+        res = dwarf_global_formref_b(attrib, &ref_goff,
+            &is_info, err);
         if (res == DW_DLV_ERROR) {
             /* errno > 0 , < 1000 */
             int dwerrno = (int)dwarf_errno(*err);
@@ -3760,7 +3765,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             } else {
                 print_error_and_continue(
-                    "dwarf_global_formref fails in "
+                    "dwarf_global_formref_b fails in "
                     "attribute traversal",
                     res, *err);
                 esb_destructor(&valname);
@@ -4018,6 +4023,7 @@ print_range_attribute(Dwarf_Debug dbg,
     int fres = 0;
     Dwarf_Half cu_version = 2;
     Dwarf_Half cu_offset_size = 4;
+    Dwarf_Bool is_info = TRUE;
 
     fres = dwarf_get_version_of_die(die,&cu_version,
         &cu_offset_size);
@@ -4038,12 +4044,13 @@ print_range_attribute(Dwarf_Debug dbg,
             return fres;
         }
     } else {
-        fres = dwarf_global_formref(attr_in, &original_off,
+        fres = dwarf_global_formref_b(attr_in, &original_off,
+            &is_info,
             raerr);
         if (fres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "ERROR: In printing a range attribute "
-                "dwarf_global_formref failed ",fres,*raerr);
+                "dwarf_global_formref_b failed ",fres,*raerr);
             return fres;
         }
     }
@@ -7335,7 +7342,8 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
     }
-    res = dwarf_global_formref(attr, &typedieoffset,&error);
+    res = dwarf_global_formref_b(attr, &typedieoffset,
+        &is_info,&error);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc_attribute(attr);
         helpertree_add_entry(diegoffset, 0,helperbase);
@@ -8369,7 +8377,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         /*  DW_FORM_ref_addr is not accessed thru formref: ** it is an
             address (global section offset) in ** the .debug_info
             section. */
-        bres = dwarf_global_formref(attrib, &off, err);
+        bres = dwarf_global_formref_b(attrib, &off,&is_info,err);
         if (bres == DW_DLV_OK) {
             bracket_hex("<GOFF=",off, ">",esbp);
         } else {
@@ -9219,7 +9227,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_ref_sup4: /* DWARF5 */
     case DW_FORM_ref_sup8: /* DWARF5 */
     case DW_FORM_GNU_ref_alt: {
-        bres = dwarf_global_formref(attrib, &off, err);
+        bres = dwarf_global_formref_b(attrib, &off,&is_info, err);
         if (bres == DW_DLV_OK) {
             bracket_hex("",off,"",esbp);
         } else {
