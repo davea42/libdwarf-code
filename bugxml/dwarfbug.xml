@@ -1,6 +1,255 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202407-012</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70763</fuzzer>
+<datereported>2024-07-28</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> InfiniteRecursion reading CUs leads to crash
+</vulnerability>
+<description> The code added in git fix id
+  6b40a0ed378826273080a7b11e7274c2b61d018b
+  two days ago involved adding code setting up
+  compilation unit data and in find_cu_die_base_fields()
+  we called dwarf_global_formref() whereas we must
+  call _dwarf_internal_global_formref_b() to avoid
+  an infinite recursion.
+  A crash was only possible when reading corrupt DWARF.
+</description>
+<datefixed>2024-07-28</datefixed>
+<references> regressiontests/ossfuzz70763/fuzz_macro_dwarf5-5161075908083712
+</references>
+<gitfixid>1b79d618bf5aab2bda9be495c531b13e94ae056a</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-011</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70753</fuzzer>
+<datereported>2024-07-28</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> InfiniteRecursion reading CUs leads to crash
+</vulnerability>
+<description> The code added in git fix id
+  6b40a0ed378826273080a7b11e7274c2b61d018b
+  two days ago involved adding code setting up
+  compilation unit data and in find_cu_die_base_fields()
+  we called dwarf_global_formref() whereas we must
+  call _dwarf_internal_global_formref_b() to avoid
+  an infinite recursion.
+  A crash was only possible when reading corrupt DWARF.
+</description>
+<datefixed>2024-07-28</datefixed>
+<references> regressiontests/ossfuzz70753/fuzz_die_cu_offset-6598270743281664
+</references>
+<gitfixid>1b79d618bf5aab2bda9be495c531b13e94ae056a</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-010</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70721</fuzzer>
+<datereported>2024-07-27</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Heap Use After Free
+</vulnerability>
+<description> Libdwarf was referencing freed space
+  attempting to free up a compilation-unit DIE
+  in the process of creating a context for a
+  compilation-unit DIE, given a particular
+  corruption of the DWARF data being read.
+  This bug has been present for several years.
+</description>
+<datefixed>2024-07-27</datefixed>
+<references> regressiontests/ossfuzz70721/fuzz_macro_dwarf5-4907954017468416
+</references>
+<gitfixid>6fa96f95e043bac9b98ca6f7a9a542dae8f46cd</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-009</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70287</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70287/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-008</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70282</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70282/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-007</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70278</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70278/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-006</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70277</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70277/
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-005</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70266</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70266/fuzz_findfuncbypc-6093996460408832
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-004</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70263</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70263/fuzz_die_cu-4960441042796544
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-003</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70256</fuzzer>
+<datereported>2024-07-10</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70256/fuzz_rng-483822291655065
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-002</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70246</fuzzer>
+<datereported>2024-07-09</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Huge malloc request could crash caller
+</vulnerability>
+<description> Libdwarf was not checking a field in
+  a .debug_rnglists header for sanity before doing
+  a malloc based on the field value.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-10</datefixed>
+<references> regressiontests/ossfuzz70246/fuzz_macro_dwarf5-5128935898152960
+</references>
+<gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202407-001</dwid>
+<cve></cve>
+<fuzzer>ossfuzz id: 70244</fuzzer>
+<datereported>2024-07-09</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Memory leaks reading rnglists
+</vulnerability>
+<description> Libdwarf was failing to free()
+  some allocations in reading .debug_rnglists.
+  This bug has been present for a week or so.
+</description>
+<datefixed>2024-07-09</datefixed>
+<references> regressiontests/ossfuzz70244/fuzz_die_cu_attrs_loclist-4958134427254784
+</references>
+<gitfixid>906a4428a5d92e17948da4249cfccbe8f5ae8005</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202406-002</dwid>
 <cve></cve>
 <fuzzer>ossfuzz id: 69641</fuzzer>
@@ -22,7 +271,7 @@
 <references> regressiontests/ossfuzz69641/fuzz_die_cu_attrs_loclist-6271271030030336
 </references>
 <gitfixid>32d832900ebe2e61ec07e82625a561415be05424</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.10.1.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202406-001</dwid>
@@ -46,7 +295,7 @@
 <references> regressiontests/ossfuzz69639/fuzz_die_cu_offset-6001910176350208
 </references>
 <gitfixid>32d832900ebe2e61ec07e82625a561415be05424</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.10.1.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202403-001</dwid>

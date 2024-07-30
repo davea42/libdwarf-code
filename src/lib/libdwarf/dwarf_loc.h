@@ -238,6 +238,7 @@ int _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     Dwarf_Block_c *loc_block,Dwarf_Error*error);
 
 int _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
+    Dwarf_Bool temporary,
     Dwarf_Unsigned contextnum,
     Dwarf_Unsigned sectionlength,
     Dwarf_Small *data,

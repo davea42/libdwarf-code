@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf VERSION 0.9.3 DESCRIPTION "" HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git" LANGUAGES C CXX)
+project(libdwarf VERSION 0.11.0 
+    DESCRIPTION "Library to access DWARF debugging information" 
+    HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
+    LANGUAGES C CXX)
 
 # libdwarf
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
@@ -255,6 +258,7 @@ endif()
 include(GNUInstallDirs)
 
 add_subdirectory(src/lib/libdwarf)
+add_subdirectory(doc)
 
 if ( BUILD_DWARFDUMP )
   add_subdirectory(src/bin/dwarfdump)

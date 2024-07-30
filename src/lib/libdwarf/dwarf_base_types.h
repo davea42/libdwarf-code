@@ -33,6 +33,12 @@ Portions Copyright (C) 2008-2023  David Anderson. All Rights Reserved.
 
 #define true                    1
 #define false                   0
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
 
 /* .debug_addr new in DWARF5 */
 #define DW_ADDR_VERSION5   5

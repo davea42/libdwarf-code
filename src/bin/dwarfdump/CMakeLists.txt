@@ -61,7 +61,6 @@ add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfdump src/bin/dwarfdump)
 
-
 target_compile_definitions(dwarfdump PRIVATE
     "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib" ${DW_LIBDWARF_STATIC})
 target_compile_options(dwarfdump PRIVATE ${DW_FWALL})
@@ -73,4 +72,4 @@ install(TARGETS dwarfdump DESTINATION
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install(FILES dwarfdump.conf DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES dwarfdump.conf DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/dwarfdump)

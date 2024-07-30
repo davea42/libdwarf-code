@@ -65,12 +65,23 @@ def updatelhstring(lcount, l, sver, maj, min, mic):
 
 
 # set(VERSION 0.2.0)
-begincm = "set(VERSION "
+begincm = "project(libdwarf VERSION "
 
+
+# As of 10.0.0 looks like (but all one line)
+#project(libdwarf VERSION 0.9.3 DESCRIPTION ""
+#  HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
+#  LANGUAGES C CXX)
 
 def updatecmstring(cmcount, l, sver, maj, min, mic):
     if l.startswith(begincm):
-        l2 = "".join([begincm, sver, ")\n"])
+        pa = begincm
+        wds = l.split(begincm)
+        postpl = wds[1]
+        p3 = postpl.split()
+        over = p3[0]
+        partc = ' '.join(p3[1:])
+        l2 = "".join([begincm, sver," ", partc,"\n"])
         return l2, int(cmcount) + 1
     return l, cmcount
 
@@ -92,6 +103,15 @@ def updatedoxversion(doxcount, l, sver):
         l2 = " ".join([doxd2,wds[1],vnow])
         return l2, int(doxcount + 1)
     return l, doxcount
+
+"d=0.10.2"
+def updatemakerelease(mrcount, l, sver):
+    if l.startswith("d="):
+        wds= l.split("=");
+        l2= ''.join(["d=",sver])
+        return l2, int(mrcount + 1)
+    return l,mrcount;
+
 def updatemmversion(mmcount, l, sver):
     if l.startswith(mm):
         wds = l.split()
@@ -132,6 +152,7 @@ def updatefile(fname, type, sver, maj, min, mic):
     foundmm = 0
     founddox = 0
     foundmmeson = 0
+    foundmr = 0
     print("Processing", fname, " type", type, " newver", sver)
     try:
         fin = open(fname, "r")
@@ -159,8 +180,12 @@ def updatefile(fname, type, sver, maj, min, mic):
                  maj, min, mic)
             outdata += [lx]
             continue
+        elif type == "mr":
+            lx, foundmr = updatemakerelease(foundmr, l, sver)
+            outdata += [lx]
+            continue
         elif type == "dox":
-            lx, foundmm = updatedoxversion(founddox, l, sver)
+            lx, founddox = updatedoxversion(founddox, l, sver)
             outdata += [lx]
             continue
         elif type == "mm":
@@ -169,16 +194,22 @@ def updatefile(fname, type, sver, maj, min, mic):
             continue
         print("Unknown type of file! Give up!", type)
         sys.exit(1)
-    if type == "mm" and not foundmm:
+    if type == "mm" and not foundmm == 1:
         print("Something wrong, did not find", fname, "  version line in mm")
         sys.exit(1)
-    if type == "cm" and not foundcm:
+    if type == "cm" and not foundcm == 1:
         print(
             "Something wrong, did not find", fname, "  version line in CMakeLists.txt"
         )
         sys.exit(1)
     if type == "ac" and not foundac == 3:
         print("Something wrong, did not find configure.ac", "version lines")
+        sys.exit(1)
+    if type == "mr" and not foundmr == 1:
+        print("Something wrong, did not find makerelease.sh", "version lines")
+        sys.exit(1)
+    if type == "dox" and not founddox == 1:
+        print("Something wrong, did not find libdwarf.dox", "version lines")
         sys.exit(1)
     if type == "lh" and not foundlh == 4:
         print("Something wrong, did not find libdwarf.h", "version lines")
@@ -193,7 +224,7 @@ def updatefile(fname, type, sver, maj, min, mic):
     fo.close()
 
 
-expecteddirs = ["bugxml", "cmake", "doc", "m4", "scripts", "src", "test"]
+expecteddirs = ["bugxml", "cmake", "doc", "m4", "scripts", "src", "test","tools"]
 
 
 if __name__ == "__main__":
@@ -222,3 +253,4 @@ if __name__ == "__main__":
     updatefile("doc/libdwarf.dox", "dox", sver, maj, min, mic)
     updatefile("doc/libdwarfp.mm", "mm", sver, maj, min, mic)
     updatefile("meson.build", "mmeson", sver, maj, min, mic)
+    updatefile("tools/makerelease.sh", "mr", sver, maj, min, mic)

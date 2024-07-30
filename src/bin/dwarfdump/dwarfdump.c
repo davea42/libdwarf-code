@@ -38,7 +38,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include <stddef.h> /* NULL size_t */
 #include <stdio.h>  /* FILE stdout stderr fprintf() printf()
-    sprintf() */
+     */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc()
     getenv() */
 #include <string.h> /* memset() strcmp() stricmp()
@@ -923,7 +923,10 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     we substitute '$HOME" where the string s
     began with the value of that environment
     variable.  Otherwise, we just fill in
-    the esb with the name as it came in.  */
+    the esb with the name as it came in.  
+
+    ASSERT: s non-null and points to a valid C string.
+*/
 static void
 homeify(char *s, struct esb_s* out)
 {
@@ -972,17 +975,25 @@ homeify(char *s, struct esb_s* out)
         return;
     }
     homelen = strlen(home);
-    if (s[homelen] != '/') {
+    if (strlen(s) <= homelen) {
+        /*  Giving up, s is shorter than $HOME alone. */
+        esb_append(out,s);
+        return;
+    }
+    /*  Checking one-past the hoped-for home prefix */
+    if (homelen && s[homelen] != '/') {
         /* giving up */
         esb_append(out,s);
         return;
     }
     if (strncmp(s,(const char *)home,homelen)) {
-        /* giving up */
+        /*  Giving up, the initial characters do not
+            match $HOME */
         esb_append(out,s);
         return;
     }
     esb_append(out,"$HOME");
+    /*  Append, starting at the / in x */
     esb_append(out,s+homelen);
     return;
 }
@@ -2382,8 +2393,10 @@ PRINT_CU_INFO(void)
 {
     Dwarf_Unsigned loff = glflags.DIE_offset;
     Dwarf_Unsigned goff = glflags.DIE_section_offset;
-    char lbuf[50];
-    char hbuf[50];
+    char           hbufarea[50];
+    char           lbufarea[50];
+    struct esb_s   hbuf;
+    struct esb_s   lbuf;
 
     if (glflags.current_section_id == DEBUG_LINE ||
         glflags.current_section_id == DEBUG_FRAME ||
@@ -2402,8 +2415,11 @@ PRINT_CU_INFO(void)
         goff = glflags.DIE_CU_overall_offset;
     }
     if (!cu_data_is_set()) {
+        
         return;
     }
+    esb_constructor_fixed(&hbuf,hbufarea,sizeof(hbufarea));
+    esb_constructor_fixed(&lbuf,lbufarea,sizeof(lbufarea));
     printf("\n");
     printf("CU Name = %s\n",sanitized(glflags.CU_name));
     printf("CU Producer = %s\n",sanitized(glflags.CU_producer));
@@ -2412,21 +2428,24 @@ PRINT_CU_INFO(void)
         loff,goff);
     /* We used to print leftover and incorrect values at times. */
     if (glflags.need_CU_high_address) {
-        dd_safe_strcpy(hbuf,sizeof(hbuf),"unknown   ",10);
+        esb_append(&hbuf,"unknown   ");
     } else {
         /* safe, hbuf is large enough. */
-        sprintf(hbuf,
-            "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_high_address);
+        esb_append_printf_u(&hbuf,"0x%"  DW_PR_XZEROS DW_PR_DUx,
+            glflags.CU_high_address);
     }
     if (glflags.need_CU_base_address) {
-        dd_safe_strcpy(lbuf,sizeof(lbuf),"unknown   ",10);
+        esb_append(&lbuf,"unknown   ");
     } else {
         /* safe, lbuf is large enough. */
-        sprintf(lbuf,
-            "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_low_address);
+        esb_append_printf_u(&lbuf,"0x%"  DW_PR_XZEROS DW_PR_DUx,
+            glflags.CU_low_address);
     }
-    printf(", Low PC = %s, High PC = %s", lbuf,hbuf);
+    printf(", Low PC = %s, High PC = %s", esb_get_string(&lbuf),
+        esb_get_string(&hbuf));
     printf("\n");
+    esb_destructor(&hbuf);
+    esb_destructor(&lbuf);
 }
 
 void

@@ -591,8 +591,16 @@ int example_sibvalid(Dwarf_Debug dbg,
 
 struct myrecords_struct *myrecords;
 void myrecord_data_for_die(struct myrecords_struct *myrecords,
-    Dwarf_Die d);
-int  my_needed_data_exists(struct myrecords_struct *myrecords);
+    Dwarf_Die d)
+{
+    /* do somthing */
+}
+int  my_needed_data_exists(struct myrecords_struct *myrecords)
+{
+    /* do something */
+    return DW_DLV_OK;
+    return DW_DLV_OK;
+}
 
 /*  Loop on DIE tree.  */
 static void
@@ -2025,11 +2033,25 @@ int exampledebugnames(Dwarf_Debug dbg,
 
     @code
 */
-int   has_unchecked_import_in_list(void);
-Dwarf_Unsigned get_next_import_from_list(void);
+int   has_unchecked_import_in_list(void)
+{
+    /* Do something */
+    return DW_DLV_OK;
+}
+Dwarf_Unsigned get_next_import_from_list(void)
+{
+    /* Do something */
+    return 22;
+}
 void  mark_this_offset_as_examined(
-    Dwarf_Unsigned macro_unit_offset);
-void  add_offset_to_list(Dwarf_Unsigned offset);
+    Dwarf_Unsigned macro_unit_offset)
+{
+    /* do something */
+}
+void  add_offset_to_list(Dwarf_Unsigned offset)
+{
+    /* do something */
+}
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     int lres = 0;
@@ -2184,7 +2206,9 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
     @code
 */
 
-void functionusingsigned(Dwarf_Signed s);
+void functionusingsigned(Dwarf_Signed s) {
+    /* Do something */
+};
 
 int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
     Dwarf_Error*error)
@@ -2530,10 +2554,59 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @defgroup examplev Example getting .debug_ranges data
     @brief Example accessing ranges data.
 
+    If have_base_addr is false there is no die
+    (as in reading the raw .debug_ranges section)
+    or there is some serious data corruption somewhere.
     @code
 */
-void functionusingrange(Dwarf_Ranges *r);
-int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
+
+static
+void functionusingrange(Dwarf_Signed i,Dwarf_Ranges *r,
+    Dwarf_Bool *have_base_addr,
+    Dwarf_Unsigned *baseaddr)
+{
+    Dwarf_Unsigned base = *baseaddr;
+
+    printf("[%4ld] ",(signed long)i);
+    switch(r->dwr_type) {
+    case DW_RANGES_ENTRY:
+        printf(
+            "DW_RANGES_ENTRY: raw    addr1 0x%08llx"
+            " addr2 0x%08llx",
+            r->dwr_addr1,r->dwr_addr2);
+        if (r->dwr_addr1 == r->dwr_addr2) {
+            printf(" (empty range)");
+        }
+        printf("\n");
+        if (*have_base_addr) {
+            printf("       "
+            "DW_RANGES_ENTRY: cooked addr1 0x%08llx"
+            " addr2  0x%08llx \n" ,
+            r->dwr_addr1+base,r->dwr_addr2+base);
+        }
+        break;
+    case DW_RANGES_ADDRESS_SELECTION:
+        printf(
+            "Base Address   : 0x%08llx\n",
+            r->dwr_addr2);
+        *have_base_addr = TRUE;
+        *baseaddr = r->dwr_addr2;
+        break;
+    case DW_RANGES_END:
+        printf(
+            "DW_RANGES_END  : 0,0\n");
+        *have_base_addr = FALSE;
+        *baseaddr = 0;
+        break;
+    default:
+        printf(
+            "ERROR          : incorrect dwr_type is 0x%lx\n",
+            (unsigned long)r->dwr_type);
+    }
+}
+
+/* On call the rangesoffset is a default zero. */
+int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset_in,
     Dwarf_Die die, Dwarf_Error*error)
 {
     Dwarf_Signed   count = 0;
@@ -2541,19 +2614,52 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,
     Dwarf_Ranges  *rangesbuf = 0;
     Dwarf_Unsigned bytecount = 0;
     int            res = 0;
+    Dwarf_Unsigned base_address = 0;
+    Dwarf_Bool have_base_addr = FALSE;
+    Dwarf_Bool have_rangesoffset = FALSE;
+    Dwarf_Unsigned rangesoffset = (Dwarf_Unsigned)rangesoffset_in;
 
+    (void)have_rangesoffset;
+    if (die) {
+        /*  Find the ranges for a specific DIE */
+        res = dwarf_get_ranges_baseaddress(dbg,die,&have_base_addr,
+        &base_address,&have_rangesoffset,&rangesoffset,error);
+        if (res == DW_DLV_ERROR) {
+            /* Just pretend not an error. */
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+        }
+    } else {
+        /*  To test getting all ranges and no knowledge
+            of the base address (so cooked values
+            cannot be definitely known unless
+            the base is in the .debug_ranges entries
+            themselves */
+        
+    }
     res = dwarf_get_ranges_b(dbg,rangesoffset,die,
         &realoffset,
         &rangesbuf,&count,&bytecount,error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            printf("ERROR dwarf_get_ranges_b %s\n",
+                dwarf_errmsg(*error));
+        } else {
+            printf("NO_ENTRY dwarf_get_ranges_b\n");
+        }
         return res;
     }
     {
         Dwarf_Signed i = 0;
+        printf("Range group base address: 0x%08lx"
+            ", offset in .debug_ranges:"
+            " 0x%08lx\n",
+            (unsigned long)base_address,
+            (unsigned long)rangesoffset);
         for ( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = rangesbuf+i;
             /* Use cur. */
-            functionusingrange(cur);
+            functionusingrange(i,cur,&have_base_addr,&base_address);
         }
         dwarf_dealloc_ranges(dbg,rangesbuf,count);
     }

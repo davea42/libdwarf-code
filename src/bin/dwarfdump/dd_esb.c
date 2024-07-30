@@ -934,67 +934,6 @@ esb_append_printf_i(struct esb_s *data,
     }
 }
 
-/*  Append a formatted string */
-void
-esb_append_printf(struct esb_s *data,const char *in_string, ...)
-{
-    va_list ap;
-    size_t len = 0;
-    size_t len2 = 0;
-    size_t remaining = 0;
-
-    if (!null_device_handle) {
-        if (!esb_open_null_device()) {
-            esb_append(data," Unable to open null printf device on:");
-            esb_append(data,in_string);
-            return;
-        }
-    }
-    va_start(ap,in_string);
-    len = vfprintf(null_device_handle,in_string,ap);
-    va_end(ap);
-
-    if (data->esb_allocated_size == 0) {
-        int ires = init_esb_string(data, alloc_size);
-        if (ires == FALSE) {
-            return;
-        }
-    }
-    remaining = data->esb_allocated_size - data->esb_used_bytes - 1;
-    if (remaining < len) {
-        if (data->esb_rigid) {
-            /* No room, give up. */
-            return;
-        } else {
-            int ires = esb_allocate_more(data, len);
-            if (ires == FALSE) {
-                return;
-            }
-        }
-    }
-    va_start(ap,in_string);
-#ifdef HAVE_VSNPRINTF
-    len2 = vsnprintf(&data->esb_string[data->esb_used_bytes],
-        data->esb_allocated_size,
-        in_string,ap);
-#else
-    len2 = vsprintf(&data->esb_string[data->esb_used_bytes],
-        in_string,ap);
-#endif
-    va_end(ap);
-    data->esb_used_bytes += len2;
-    if (len2 >  len) {
-        /*  We are in big trouble, this should be impossible.
-            We have trashed something in memory. */
-        printf("ERROR dwarfdump esb internal error, "
-            "vsprintf botch "
-            " %lu  < %lu. Some strings will be incorrect. \n",
-            (unsigned long) len2, (unsigned long) len);
-        dd_minimal_count_global_error();
-    }
-    return;
-}
-
 /*  Get a copy of the internal data buffer.
     It is up to the code calling this
     to free() the string using the

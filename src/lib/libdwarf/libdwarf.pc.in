@@ -6,7 +6,7 @@ includedir="${prefix}/include"
 
 Name: libdwarf
 Description: DWARF debug symbols library
-Version: @PACKAGE_VERSION@
+Version: @PROJECT_VERSION@
 Libs: -L${libdir} -ldwarf
 Cflags: -I${includedir}
 

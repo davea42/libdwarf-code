@@ -1,3 +1,725 @@
+2024-07-28:  David Anderson
+    commit c704bb966f3e62d9d9e7f018f0478c82ecea84b9
+
+    Adding git fix id  to 70753 and 70763
+            modified:   bugxml/data.txt
+
+2024-07-28:  David Anderson
+    commit 1b79d618bf5aab2bda9be495c531b13e94ae056a
+
+    Initial addition of ossfuzz 70753 and ossfuzz 70763
+            modified:   bugxml/data.txt
+
+
+    Fixing ossfuzz 70753 and ossfuzz 70763
+    by calling an internal version of global_formref_b()
+    so we can avoid infinite recursion.
+    The bug here was introduced  two days ago in
+    git id 6b40a0ed378826273080a7b11e7274c2b61d018b
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2024-07-27:  David Anderson
+    commit 10e7b7f4ca5f612169e049efe7173bde55c3ebec
+
+    Valgrind noticed a situation where in homeify()
+    we could touch a piece of uninitialized memory. Fixed.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2024-07-27:  David Anderson
+    commit 1719fc4b616eb5eb53ae3b18f3aa274856d4202b
+
+    Up to date, with new version 0.11.0
+            modified:   ChangeLog
+
+2024-07-27:  David Anderson
+    commit fdcbe2c75fd8ccbb5bda03520713a21a00c08b1b
+
+    Changed release id to 0.11.0 due to new, added, function.
+            modified:   CMakeLists.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2024-07-27:  David Anderson
+    commit f324fd54b584ce7ae5d011572dd84bd15f48d3af
+
+    Identifies git fix id now for ossfuzz 70721
+    DW202407-010
+            modified:   bugxml/data.txt
+
+2024-07-27:  David Anderson
+    commit 46fa96f95e043bac9b98ca6f7a9a542dae8f46cd
+
+    Correcting use-after-free with a specific corrupted
+    DWARF section.
+    ossfuzz 70721 DW202407-010.
+    The bug has been in the source for several years.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2024-07-26:  David Anderson
+    commit 6b40a0ed378826273080a7b11e7274c2b61d018b
+
+    Using the new API function
+            modified:   doc/checkexamples.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+    Implementing the new API function
+    dwarf_get_ranges_baseaddress()
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2024-07-26:  David Anderson
+    commit 6c67c2df1408177dd3b3ceba6c9251b136a06504
+
+    Adding a new API function:
+    dwarf_get_ranges_baseaddress()
+    This simplfies getting correct cooked
+    addresses for entries from .debug_ranges
+    (which is in DWARF2,3,4);
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-23:  David Anderson
+    commit d95ee1f7ddde0bf195109167356157cd1b90746b
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2024-07-23:  David Anderson
+    commit 14a9f14d06ce32f3bc156e60740e1ce3d1be25b2
+
+    The new code about .debug_ranges had
+    small leaks when the library was told
+    not to record or clean-up most memory allocations.
+    Shown by -fsanitize.
+
+    Would not affect most users, but for the few
+    that use the feature this fixes the issue.
+            modified:   doc/checkexamples.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-07-23:  David Anderson
+    commit f34c3affa79ed7741345b58cc027050bf4884abc
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
+2024-07-23:  David Anderson
+    commit 68f5082d293e81ec869ff83deb701d9e92268fa3
+
+    The 'examplev()' function reading and showing
+    .debug_ranges is fully worked out and is
+    now tested in regressiontests.
+            modified:   doc/checkexamples.c
+
+2024-07-23:  David Anderson
+    commit 7b4e7a71820a2eca6d679d9bd371b4a93fd2f6c5
+
+    Cleaned up debugging helper functions (which are #if 0
+    so not part of the build).
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-07-22:  David Anderson
+    commit c51750363a5eef5c15ee8b2fc2d20f4372df8f6f
+
+    Fixed a mistake in examplev, .debug_ranges
+            modified:   doc/checkexamples.c
+
+2024-07-21:  David Anderson
+    commit f04ef392df7ec51265d9ea8994e1e80f6a5ee31f
+
+    Removed trailing whitespace from one line.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-07-21:  David Anderson
+    commit 6fdabfb2b11d72d952633faa493ec66db447938d
+
+    Added new argument to print_ranges_list_to_extra()
+    so it can print both raw and cooked values.
+            modified:   src/bin/dwarfdump/dd_esb_using_functions.h
+
+    Now calculates and prints Dwarf_Ranges data
+    with raw and cooked values.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Remove leftover #if 0 debugging blocks of code.
+            modified:   src/bin/dwarfdump/print_loclists.c
+
+    Add extra arg to print_ranges_list_to_extra()
+    appropriately.
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+2024-07-21:  David Anderson
+    commit 9445464f338dc58dac5847d22770e769ad087e29
+
+    Now calulates the cooked value of .debug_ranges
+    and prints both raw and cooked values.
+            modified:   doc/checkexamples.c
+
+    New date, some Dwarf_Ranges doc has been updated
+    in libdwarf.
+            modified:   doc/libdwarf.dox
+
+2024-07-21:  David Anderson
+    commit da5b269cab0058f313d62c89c15d83e0f1dbef4b
+
+    An inconsistency in using true vs TRUE
+    and false vs FALSE is still present but
+    at least one place acknowledges both.
+    This should be corrected touse TRUE/FALSE
+    everywhere.
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+
+2024-07-21:  David Anderson
+    commit ed80e7fd06d43554dcd7bda2f1522b3e24eb57ba
+
+    Minor corrections of formatting.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-07-21:  David Anderson
+    commit 41bab201a0c5e26b56ec2269769ce3f55fac2efa
+
+    Added clarifying comment paragraphs about Dwarf_Ranges
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-16:  David Anderson
+    commit 37dfec2a0d9cacda16d2a27b1a3822ae3f37e635
+
+    make git status less noisy.
+            modified:   .gitignore
+
+2024-07-14:  David Anderson
+    commit b66bf7e1fe2b15943b2bb08ac958880bca6df538
+
+    Final on the rnglists ossfuzz issues so far.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-07-10:  David Anderson
+    commit fff358d23488c6442c65495193758a8ff435c3b6
+
+    Up to date with git log.
+            modified:   ChangeLog
+
+2024-07-10:  David Anderson
+    commit 34d2ee2dd7eba9af38dcac600a3663bb23c5f7ed
+
+    Three new oss-fuzz issues. 70266 70263 70256
+            modified:   data.txt
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2024-07-10:  David Anderson
+    commit 1f3b7ed15a773e89b7d2fddc09efac3144bf3d28
+
+    Now with 70246 fixed.
+            modified:   ChangeLog
+
+2024-07-10:  David Anderson
+    commit 593e794c43006e3fa3805cd070f128d61b5b7a4a
+
+    New bug entries.
+            modified:   bugxml/data.txt
+
+2024-07-10:  David Anderson
+    commit d7c4efdcc7952b38a237a36ccedf364018e0fb1c
+
+    ossfuzz 70246 DW202407-002 fixed.
+    In reading a .debug_rnglists header a corrupt
+    value in the offset-count field lead to
+    a gigantic malloc.
+    This bug is just a week old.
+    We now check for a sane value.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-07-09:  David Anderson
+    commit e2ab28a547ed8a53f2c96a825247a7cc8f7e40bb
+
+    Removing esb_append_printf()
+    which is the last use of  *sprintf()
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2024-07-09:  David Anderson
+    commit 906a4428a5d92e17948da4249cfccbe8f5ae8005
+
+    ossfuzz 70244 fixed.
+    DW202407-001
+    These were bugs intruduced a couple days ago.
+    The array  in Dwarf_Rnglists_Context_s was
+    not being freed in every situation.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-07-09:  David Anderson
+    commit 4620365ad3308481928f8d545adb79bdd57c9cc4
+
+    Removing esb_append_printf() as it is no
+    longer necessary.
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_esb.h
+    Replacing with esb_append_printf_i()
+            modified:   test/test_esb.c
+
+2024-07-09:  David Anderson
+    commit 179c6997ca67f654b78384fddd8135a6ce970851
+
+    Updated semantic version to 0.10.2
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-09:  David Anderson
+    commit c165590fd07e5f6dec79af5855ccd8f779434154
+
+    Added blank line after d=  semantic version
+    so tools/updatesemanticversion.py
+    works right.
+            modified:   tools/makerelease.sh
+
+    Now updates tools/makerelease.sh too
+            modified:   tools/updatesemanticversion.py
+
+2024-07-09:  David Anderson
+    commit 69f85bbdc2717cd4b4e1345d522f6919ae459a44
+
+    Now with latest changes.
+            modified:   ChangeLog
+
+2024-07-09:  David Anderson
+    commit e2c8f88ccc962d7a26d8f110687f25f5aebaf902
+
+    Fixed trailing whitespace and indents.
+    Remove debugging #if 0.  Corrected comment about
+    DWARF4 GNU extension split dwarf.
+        modified:   dwarf_die_deliv.c
+        modified:   dwarf_fission_to_cu.c
+
+    Remove debugging #if 0
+    Fixed trailing whitespace and indents.
+        modified:   dwarf_loclists.c
+
+    Added in merge of DWARF4 GNU extension cc_ranges_base
+    from skeleton to dwo/dwp
+        modified:   dwarf_query.c
+
+    Corrected comment about
+    DWARF4 GNU extension split dwarf.
+        modified:   dwarf_ranges.c
+
+    Remove debugging #if 0
+    Fixed trailing whitespace and indents.
+        modified:   dwarf_rnglists.c
+
+2024-07-08:  David Anderson
+    commit 7c67f294febe9af123557b71b933d3656bb38332
+
+    Refine the information on rnglists base with
+    cc_rnglists_base_via_at  (similar to loclists)
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    RNGLISTS now like LOCLISTS
+    and we remove some pointless cpu cycles
+    via the second arg to _dwarf_internal_read_loclists_header
+    _dwarf_internal_read_rnglists_header
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Add arg to _dwarf_internal_read_loclists_header so
+    we can save cpu when appropriate.
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Refining
+    _dwarf_internal_read_loclists_header()
+    and similar to _dwarf_internal_read_rnglists_header()
+    to rnglists with both using less cpu cycles.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+    Refined a comment.
+            modified:   src/lib/libdwarf/dwarf_loclists.h
+
+    Added cc_loclists_base_via_at and
+    cc_rnglists_base_via_at
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Added comment about split dwarf inheritance.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Now freeing the modified Dwarf_Rnglists_Context
+    data and _dwarf_internal_read_rnglists_header() stops
+    using cpu cycles where the result is ignored.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+    Refined comments on struct Dwarf_Rnglists_Context_s.
+            modified:   src/lib/libdwarf/dwarf_rnglists.h
+
+    Refined an 'if 0' to explain what it is for (debugging)..
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2024-07-04:  David Anderson
+    commit e465de713388149bc474426e3a740e42f93b0f58
+
+    Automatic update, generated file.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-07-01:  David Anderson
+    commit 0af9267f2a25317ec5ed24f71924edef51d89cd2
+
+    Minor clarifications.
+            modified:   tools/makerelease.sh
+
+2024-07-01:  David Anderson
+    commit f5c0795fc5de178658ef9fcdc9b2c095f840a182
+
+    Minor changes related to latest release name
+            modified:   doc/libdwarf.dox
+
+    Removed some comments that were
+    a bit annoying and unnecessary.
+            modified:   tools/makerelease.sh
+
+2024-07-01:  David Anderson
+    commit 45ef8e2763f65c31b27cc38bed197b84dc1441d4
+
+    Final for 0.10.1
+            modified:   ChangeLog
+
+2024-07-01:  David Anderson
+    commit 69be7811dfc1f369ac6799fed96da4ef62ed75a1
+
+    Now with 0.10.1, no 0.10.0
+            modified:   README.md
+
+2024-06-30:  David Anderson
+    commit b08aee58b37505b7725e645915e468024e198cd7
+
+    Up to date. perhaps ready for 0.10.1 release.
+            modified:   ChangeLog
+
+2024-06-30:  David Anderson
+    commit 47ef4925a0490aa45148b1b109b29069b7368265
+
+    Correcting the labeling of the base offset.
+    -"DW_AT_loclists_base     : 0x%"
+    +"loclists base offset    : 0x%"
+
+    -"CU DW_AT_rnglists_base    : 0x%"
+    +"rnglists base offset      : 0x%"
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-06-30:  David Anderson
+    commit 72d856ec539db214c518257105346cf61ad478f2
+
+    Added these to the EXTRA_DIST list
+    tools/makerelease.sh   \
+    tools/README   \
+    tools/updatesemanticversion.py \
+
+            modified:   Makefile.am
+
+    Revined the script to be easier to work with.
+            modified:   tools/makerelease.sh
+
+2024-06-30:  David Anderson
+    commit e3f13147ddceec725ce3ca46806f17bf678916ee
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2024-06-30:  David Anderson
+    commit 588d757a5048e1c548ab9f9eda7e85744550d64f
+
+    Correcting some of the emitted text to use the
+    release variable here
+            modified:   tools/makerelease.sh
+
+2024-06-29:  David Anderson
+    commit 1fe1e0db743c827e6bf3ef50c0220a90c4132130
+
+    The ending report of this script was a bit
+    awkward-looking.  Now entries listed
+    in a more readable order.
+            modified:   scripts/allsimplebuilds.sh
+
+2024-06-29:  David Anderson
+    commit deeba56ab11c95307a2e4518a7898a2d45d14966
+
+    Ommitted the new doc/CMakeLists.txt
+    entry in  doc/Makefile.am
+    so building a release from 0.10.0
+    will fail in some builds.
+
+     EXTRA_DIST = \
+     Doxyfile \
+    +CMakeLists.txt \
+     mips_extensions.mm \
+     mips_extensions.pdf \
+
+            modified:   doc/Makefile.am
+
+2024-06-27:  David Anderson
+    commit cf124de35867f5d18041851922cda301508e1716
+
+    Added a Description to the project() command
+    while reformatting the command a little.
+    Without interfering with how the version string
+    appears so tools/updatesemanticversion.py
+    can still update the version when necessary.
+            modified:   CMakeLists.txt
+
+2024-06-27:  David Anderson
+    commit 595c9edf0e78ccc7c3803fe106ccb45299f947a6
+
+    Now up to date, showing the final
+    0.10.0 git id as well as some
+    small changes in  cmake builds so that
+    all three build mechanisms create
+    (on install) a libdwarf.pc with a correct Version:
+    value.  Cmake builds used to leave that field blank.
+            modified:   ChangeLog
+
+2024-06-27:  David Anderson
+    commit 1e6de1c5704a20165f07fefb60e26676aa91c5cf
+
+    Version changed to 0.10.1 in anticipation of
+    a future release.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-06-27:  David Anderson
+    commit 735137e89261c04500b3262da02fc45d0f21550c
+
+    Cmake was not setting  Version: in the output libdwarf.pc.
+    The corrections to the pc.in files required
+    the tiny change to configure.ac and now
+    all build mechanisms set Version: in libdwarf.pc
+    and libdwarfp.pc installed by 'make install'
+    and its equivalents.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            new file:   doc/CMakeLists.txt
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/libdwarf.pc.in
+            modified:   src/lib/libdwarfp/libdwarfp.pc.in
+
+2024-06-24:  David Anderson
+    commit 289d0d3c69436d897fe4555821a0b9fcfa284503
+
+
+    This is the version 0.10.0 realease final commit.
+
+     Changes to be committed:
+    corrected new release date
+            modified:   README.md
+
+2024-06-24:  David Anderson
+    commit 8ea3c7831a6485585445e3bd545f568ee3fa4e09
+
+    UP to date.
+            modified:   ChangeLog
+
+2024-06-24:  David Anderson
+    commit 284f9ca49909d08b9e71592b5ad2ddcc7ab9b9ab
+
+    Release date  24 June added
+            modified:   README.md
+
+    With release date.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2024-06-20:  David Anderson
+    commit aa90b4054945c1f1fdd820611b3a3ed9a45f881d
+
+    All the steps updated to match the individual versions.
+            modified:   test.yml
+
+2024-06-20:  David Anderson
+    commit 55056243e5a7b098062fcef20e2284c7605446f0
+
+    Now v4 not master in checkout.
+            modified:   msys2_autotools.yml
+            modified:   msys2_cmake.yml
+            modified:   msys2_meson.yml
+
+2024-06-20:  David Anderson
+    commit af60a31c328ce0b370987d9db45c51be13c1b8a2
+
+    Now using action@v0.23.0
+            modified:   mac_cmake.yml
+            modified:   mac_meson.yml
+
+2024-06-20:  David Anderson
+    commit cd5d7c3e88a6fc853d9067496861317d961641c4
+
+    Now using freebsd 14.0  vm under ubuntu vm
+            modified:   freebsd_meson.yml
+
+2024-06-20:  David Anderson
+    commit 806d7b78f51610c6d0bf16759ff94ed10a78c65c
+
+    Changing what it runs-on and version of freebsd
+            modified:   freebsd_cmake.yml
+
+2024-06-20:  David Anderson
+    commit 4323041e38545789e8b5d456c8893c7e38c9192d
+
+    trying nested freeb under ubuntu
+            modified:   freebsd_autotools.yml
+
+2024-06-20:  David Anderson
+    commit 8a87cfd3e4d832083713395d24c667e04b5ad471
+
+    Now using @v4 and freebsd 14.1
+            modified:   freebsd_autotools.yml
+            modified:   freebsd_cmake.yml
+            modified:   freebsd_meson.yml
+
+2024-06-19:  David Anderson
+    commit c40105af44488a685b9ac7c4ef3e949dc6dea2ed
+
+    Import mac autotools changes here.
+    Now using v4 and adding libtool to brew install
+    for macos autotools.
+            modified:   test.yml
+
+2024-06-19:  David Anderson
+    commit c4d545ad3b6f3b50d863c1e6aa90d06ee050ae7c
+
+    add libtool
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 44ecdc9a6db9181e2f48b4b79d119249eb7dd670
+
+    Adding aclocal suggested by autoreconf step error
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 6295679a4c9f68e01ae4f9ee8d2a0927a69ac840
+
+    Try V4
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit b46cba509b9c1c2f2ee611b8a9d9b5a43235416f
+
+    stackoverflow suggests use v4
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit eaa94a92e37b35f6bfafa9a75df0fa678891f970
+
+    syntax fix
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 36af6b8fdf26a376950ace3d65287d11f8dfa949
+
+    Try v4
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit 6a7dda9cd8df097d01f1c2010308a1fa0e8b43c4
+
+    Another try for this action
+            modified:   mac_autotools.yml
+
+2024-06-19:  David Anderson
+    commit f077d1b9b057621a9bff041ea894d39c04818bb9
+
+    Issue with github action.
+            modified:   mac_autotools.yml
+
+2024-06-18:  David Anderson
+    commit ba6cb0daabdbe67c32feeaed366ad57f9f18c0e8
+
+    Up to date and correcting git log entry
+    mentioning 0.19.0 to the correct 0.10.0
+            modified:   ChangeLog
+
+2024-06-18:  David Anderson
+    commit 13a9a4d7ebfe3b099a753ea9f2cfd84ccb4ce6b8
+
+    This does, or shows how to do, all we do
+    when making a release. Currently set
+    for the release of 0.10.0
+            new file:   tools/makerelease.sh
+
+2024-06-18:  David Anderson
+    commit eedcb528ef0f108b7747018073ca5ba37ef689b1
+
+    Due to the addition of dwarf_get_locdesc_entry_e()
+    we revise the version for the next release to be
+    (corrected: git log says 0.19.0 which is incorrect)
+    0.10.0, though this function is not something
+    library users will find necessary (the
+    function  enables improved dwarfdump reporting
+    of DWARF5 loclists).
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-06-18:  David Anderson
+    commit 84917197301f5a8751f2aacde16c791950f94098
+
+    The text of CMakeLists.txt version has changed, so
+    needed revising how to update version number.
+            modified:   tools/updatesemanticversion.py
+
+2024-06-17:  David Anderson
+    commit a5108555e6b9d2c3a00a10036315c89d29a9e72c
+
+    The mistake was a copy/paste error.
+    MSVC noticed the error.  There are no other
+    type issues noted by MSVC.
+         Dwarf_Bool       loclists_base_present =
+             llhead->ll_at_loclists_base_present;
+    -    Dwarf_Bool       loclists_base=
+    +    Dwarf_Unsigned   loclists_base =
+             llhead->ll_at_loclists_base;
+
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2024-06-16:  David Anderson
+    commit 137c06bf9e7f8e112fd2268a9a6a9a367a963dfe
+
+    Restoring functionality to this.
+    The regression tests run with meson now.
+            modified:   scripts/run-all-tests.sh
+
+2024-06-15:  David Anderson
+    commit fb711366c687ba48b5a25cb174dafe7b4df7a564
+
+    Issue #247, github libdwarf-code.
+    Line 14 is missing a required back-tick.
+            modified:   scripts/run-all-tests.sh
+
+2024-06-15:  David Anderson
+    commit 841a502a9990db9c6144491d98fa6815122ec142
+
+    Bringing up to date.
+            modified:   ChangeLog
+
 2024-06-15:  David Anderson
     commit 70b6ecbb1453b1461a6d06422db1ad6217fb55fd
 

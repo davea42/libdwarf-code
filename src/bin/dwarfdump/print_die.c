@@ -3100,19 +3100,21 @@ get_rangelist_type_descr(Dwarf_Ranges *r)
 {
     switch (r->dwr_type) {
     case DW_RANGES_ENTRY:             return "range entry";
-    case DW_RANGES_ADDRESS_SELECTION: return "addr selection";
+    case DW_RANGES_ADDRESS_SELECTION: return "base address";
     case DW_RANGES_END:               return "range end";
     default: break;
     }
     /* Impossible. */
-    return "Unknown";
+    return "ERROR: .debug_ranges range type Unknown";
 }
+
 
 /*  The string produced here will need to be passed
     through sanitized() before actually printing.
     Always returns DW_DLV_OK.  */
 int
 print_ranges_list_to_extra(Dwarf_Debug dbg,
+    Dwarf_Die die /* may be NULL if unknown */,
     Dwarf_Unsigned originaloff,
     Dwarf_Unsigned finaloff,
     Dwarf_Ranges *rangeset,
@@ -3120,34 +3122,64 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned bytecount,
     struct esb_s *stringbuf)
 {
-    const char * sec_name = 0;
-    Dwarf_Signed i = 0;
-    struct esb_s truename;
-    char buf[ESB_FIXED_ALLOC_SIZE];
+    const char    *sec_name = 0;
+    int            res = 0;
+    Dwarf_Signed   i = 0;
+    struct esb_s   truename;
+    char           buf[ESB_FIXED_ALLOC_SIZE];
+    Dwarf_Unsigned base_address = 0;
+    Dwarf_Bool     have_base_addr = FALSE;
+    Dwarf_Error    grberr = 0;
+    Dwarf_Bool     have_ranges_offset = FALSE;
+    Dwarf_Unsigned ranges_offset = 0;
 
+    (void)originaloff;
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     /*  We don't want to set the compress data into
         the secname here. */
     get_true_section_name(dbg,".debug_ranges",
         &truename,FALSE);
     sec_name = esb_get_string(&truename);
+    if (die) {
+        res = dwarf_get_ranges_baseaddress(dbg,die,&have_base_addr,
+            &base_address,
+            &have_ranges_offset,
+            &ranges_offset,&grberr);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,grberr);
+            grberr = 0;
+        } else {
+#if 0
+            if (have_ranges_offset) {
+                finaloff = ranges_offset;
+            }
+#endif
+        }
+      
+    }
     if (glflags.dense) {
+        /* for dense, ignore cooked values.  */
         esb_append_printf_i(stringbuf,"< ranges: %"
             DW_PR_DSd,rangecount);
         esb_append_printf_s(stringbuf," ranges at %s" ,
             sanitized(sec_name));
-        if (originaloff == finaloff) {
+        if (have_ranges_offset) {
             esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,
                 finaloff);
         } else {
             esb_append_printf_u(stringbuf,
-                " offset with non-zero ranges base %" DW_PR_DUu ,
+                " offset base %" DW_PR_DUu ,
                 finaloff);
         }
         esb_append_printf_u(stringbuf," (0x%"
-            DW_PR_XZEROS DW_PR_DUx,
+            DW_PR_XZEROS DW_PR_DUx ") ",
             finaloff);
-        esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu
+        if (have_base_addr) {
+            esb_append_printf_u(stringbuf," (base addr 0x%"
+                DW_PR_XZEROS DW_PR_DUx ") ",
+                base_address);
+        }
+        esb_append_printf_u(stringbuf,"(%" DW_PR_DUu
             " bytes)>",
             bytecount);
     } else {
@@ -3155,20 +3187,17 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             rangecount);
         esb_append_printf_s(stringbuf," at %s" ,
             sanitized(sec_name));
-        if (originaloff == finaloff) {
-            esb_append_printf_u(stringbuf," offset %"
-                DW_PR_DUu ,
-                finaloff);
-        } else {
-            esb_append_printf_u(stringbuf,
-                " offset with non-zero ranges base %"
-                DW_PR_DUu ,
-                finaloff);
-        }
+        esb_append_printf_u(stringbuf," offset %"
+                DW_PR_DUu , finaloff);
         esb_append_printf_u(stringbuf," (0x%"
-            DW_PR_XZEROS DW_PR_DUx,
+            DW_PR_XZEROS DW_PR_DUx ") ",
             finaloff);
-        esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu
+        if (have_base_addr) {
+            esb_append_printf_u(stringbuf," ( base addr 0x%"
+                DW_PR_XZEROS DW_PR_DUx ") ",
+                base_address);
+        }
+        esb_append_printf_u(stringbuf,"(%" DW_PR_DUu
             " bytes)\n",
             bytecount);
     }
@@ -3176,6 +3205,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         Dwarf_Ranges * r = rangeset +i;
         const char *type = get_rangelist_type_descr(r);
         if (glflags.dense) {
+            /* For dense, ignore cooked values */
             esb_append_printf_i(stringbuf,"<[%2" DW_PR_DSd,i);
             esb_append_printf_s(stringbuf,"] %s",type);
             esb_append_printf_u(stringbuf," 0x%"
@@ -3186,19 +3216,52 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             /*  See DWARF5 page 53, line 17
                 the addresses match so nothing is there and
                 the address itself is irrelevant. */
-            Dwarf_Bool emptyrange = (r->dwr_type == DW_RANGES_ENTRY
-                && r->dwr_addr1 == r->dwr_addr2);
-
             esb_append_printf_i(stringbuf,"   [%2" DW_PR_DSd,i);
-            esb_append_printf_s(stringbuf,"] %-14s",type);
-            esb_append_printf_u(stringbuf," 0x%"
-                DW_PR_XZEROS  DW_PR_DUx,
-                r->dwr_addr1);
-            esb_append_printf_u(stringbuf,
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx ,r->dwr_addr2);
-            if (emptyrange) {
-                esb_append(stringbuf," (empty range)");
+            esb_append_printf_s(stringbuf,"] %-12s",type);
+
+            switch(r->dwr_type) { 
+            case DW_RANGES_ENTRY: {
+                Dwarf_Bool emptyrange = 
+                    (r->dwr_type == DW_RANGES_ENTRY
+                    && r->dwr_addr1 == r->dwr_addr2);
+
+                esb_append_printf_u(stringbuf,
+                    " raw: 0x%08x",r->dwr_addr1);
+                esb_append_printf_u(stringbuf,
+                    ",  0x%08x",r->dwr_addr2);
+                if (emptyrange) {
+                    esb_append(stringbuf," (empty range)");
+                }
+                if (have_base_addr) {
+                    esb_append_printf_u(stringbuf,
+                        " cooked: 0x%08x",
+                        r->dwr_addr1+base_address);
+                    esb_append_printf_u(stringbuf,
+                        ",  0x%08x",
+                        r->dwr_addr2+base_address);
+                }
+                break;
             }
+            case DW_RANGES_ADDRESS_SELECTION:
+                esb_append_printf_u(stringbuf,
+                    " 0x%08x",
+                    r->dwr_addr2);
+                have_base_addr = TRUE;
+                base_address = r->dwr_addr2;
+                break;
+            case DW_RANGES_END:
+                esb_append(stringbuf,
+                    " 0,0");
+                have_base_addr = FALSE;
+                base_address = 0; 
+                break;
+            default:
+                esb_append_printf_u(stringbuf,
+                    "ERROR: Impossible entry from .debug_ranges, "
+                    "incorrect dwr_type is 0x%x\n",
+                    r->dwr_type);
+                break;
+            }    
             esb_append(stringbuf,"\n");
         }
     }
@@ -4039,7 +4102,7 @@ print_range_attribute(Dwarf_Debug dbg,
             }
             if (print_else_name_match) {
                 *append_extra_string = 1;
-                print_ranges_list_to_extra(dbg,
+                print_ranges_list_to_extra(dbg,die,
                     original_off,
                     realoffset,
                     rangeset,rangecount,bytecount,
@@ -4050,7 +4113,7 @@ print_range_attribute(Dwarf_Debug dbg,
             if ( glflags.gf_suppress_checking_on_dwp) {
                 /* Ignore checks */
             } else if ( glflags.gf_do_print_dwarf) {
-                printf("\ndwarf_get_ranges_a() "
+                printf("\ndwarf_get_ranges_b() "
                     "cannot find DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ").",
@@ -4069,7 +4132,7 @@ print_range_attribute(Dwarf_Debug dbg,
             if ( glflags.gf_suppress_checking_on_dwp) {
                 /* Ignore checks */
             } else if ( glflags.gf_do_print_dwarf) {
-                printf("\ndwarf_get_ranges_a() "
+                printf("\ndwarf_get_ranges_b() "
                     "finds no DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
                     " (%" DW_PR_DUu ").",
@@ -6762,7 +6825,7 @@ print_loclists_context_head(Dwarf_Debug dbg,
     if (loclists_base_present) {
         append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "DW_AT_loclists_base     : 0x%"
+            "loclists base offset    : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             loclists_base);
     }
@@ -7974,21 +8037,22 @@ handle_rnglists( Dwarf_Attribute attrib,
         if (rnglists_base_present) {
             append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "CU DW_AT_rnglists_base    : 0x%"
+                "rnglists base offset      : 0x%"
+
                 DW_PR_XZEROS DW_PR_DUx,
-            rnglists_base);
+                rnglists_base);
         }
         if (rnglists_base_address_present) {
             append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "CU DW_AT_low_pc (baseaddr): 0x%"
+                "CU DW_AT_low_pc (baseaddr): 0x%"
                 DW_PR_XZEROS DW_PR_DUx,
                 rnglists_base_address);
         }
         if (debug_addr_base_present) {
             append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "CU DW_AT_addr_base        : 0x%"
+                "CU DW_AT_addr_base        : 0x%"
                 DW_PR_XZEROS DW_PR_DUx,
                 debug_addr_base);
         }

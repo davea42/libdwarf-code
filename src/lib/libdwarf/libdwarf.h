@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "0.9.3"
+#define DW_LIBDWARF_VERSION "0.11.0"
 #define DW_LIBDWARF_VERSION_MAJOR 0
-#define DW_LIBDWARF_VERSION_MINOR 9
-#define DW_LIBDWARF_VERSION_MICRO 3
+#define DW_LIBDWARF_VERSION_MINOR 11
+#define DW_LIBDWARF_VERSION_MICRO 0
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -211,12 +211,22 @@ typedef void*        Dwarf_Ptr;          /* host machine pointer */
 /*! @defgroup enums Enumerators with various purposes
     @{
     @enum Dwarf_Ranges_Entry_Type
-    The dwr_addr1/addr2 data is either an offset (DW_RANGES_ENTRY)
-    or an address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or
-    both are zero (DW_RANGES_END).
-    For DWARF5 each table starts with a header
-    followed by range list entries defined
-    as here.
+    The dwr_addr1/addr2 data is either pair of offsets
+    of a base pc address (DW_RANGES_ENTRY)
+    or a base pc address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or
+    both are zero(end of list, DW_RANGES_END)
+    or both non-zero but identical
+    (means an empty range, DW_RANGES_ENTRY).
+    These are for use with DWARF 2,3,4.
+
+    DW_RANGES_ADDRESS_SELECTION should have been spelled
+    DW_RANGES_BASE_ADDRESS. but it is not worth changing
+    as it is widely used.    
+
+    The DW_RANGES_ENTRY values are raw pc offset data recorded
+    in the section, not addresses.
+    @see examplev
+
     Dwarf_Ranges* apply to DWARF2,3, and 4.
     Not to DWARF5 (the data is different and
     in a new DWARF5 section).
@@ -448,6 +458,13 @@ typedef struct Dwarf_Str_Offsets_Table_s *  Dwarf_Str_Offsets_Table;
     Details of of non-contiguous address ranges
     of DIEs for DWARF2, DWARF3, and DWARF4.
     Sufficient for older dwarf.
+
+    dwr_addr1 and dwr_addr2 in the struct are
+    offsets from a base address in the CU involved.
+    To calculate actual range pc addresses see
+    the example:
+
+    @see examplev
 */
 typedef struct Dwarf_Ranges_s {
     Dwarf_Addr dwr_addr1;
@@ -2533,7 +2550,7 @@ DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     DW_AT_name for example.
     @param dw_returned_bool
     On success is set TRUE if dw_die has
-    dw_attrnum.
+    dw_attrnum and FALSE otherwise.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -4235,9 +4252,12 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     Pass in the DIE whose DW_AT_ranges brought us to ranges.
     @param dw_return_realoffset
     The actual offset in the section actually read.
-    In a tieddbg this
+    In a tieddbg dwp DWARF4  extension  object
+    the base offset is added to dw_rangesoffset and returned here.
     @param dw_rangesbuf
     A pointer to an array of structs is returned here.
+    The struct contents are the raw values in the
+    section.
     @param dw_rangecount
     The count of structs in the array is returned here.
     @param dw_bytecount
@@ -4270,6 +4290,47 @@ DW_API int dwarf_get_ranges_b(Dwarf_Debug dw_dbg,
 DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     Dwarf_Ranges * dw_rangesbuf,
     Dwarf_Signed   dw_rangecount);
+
+/*! @brief Find ranges base address
+
+    The function allows callers to calculate
+    actual address from .debug_ranges data
+    in a simple and efficient way.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_die
+    Pass in any non-null valid Dwarf_Die
+    to find the applicable .debug_ranges
+    base address. The dw_die need not
+    be a CU-DIE.
+    A null dw_die is allowed.
+    @param dw_known_base
+    if dw_die is non-null and there is a known
+    base address for the CU DIE that
+    (a DW_at_low_pc in the CU DIE) 
+    dw_known_base will be set TRUE,
+    Otherwise the value FALSE will be returned through
+    dw_known_base.
+    @param dw_baseaddress
+    if dw_known_base is retured as TRUE then
+    dw_baseaddres will be set with the correct pc value.
+    Otherwise zero will be set through dw_baseaddress.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    Never returns DW_DLV_NO_ENTRY.
+    
+*/
+DW_API int dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
+    Dwarf_Die       dw_die,
+    Dwarf_Bool     *dw_known_base,
+    Dwarf_Unsigned *dw_baseaddress,
+    Dwarf_Bool     *dw_at_ranges_offset_present,
+    Dwarf_Unsigned *dw_at_ranges_offset,
+    Dwarf_Error    *dw_error);
+
 /*! @} */
 
 /*! @defgroup rnglists Rnglists: code addresses in DWARF5

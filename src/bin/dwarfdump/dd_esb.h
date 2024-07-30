@@ -120,7 +120,6 @@ void esb_alloc_size(size_t size);
 size_t esb_get_allocated_size(struct esb_s *data);
 
 /* Append a formatted string */
-void esb_append_printf(struct esb_s *data,const char *format, ...);
 void esb_append_printf_s(struct esb_s *data,
     const char *format,const char *s);
 void esb_append_printf_i(struct esb_s *data,

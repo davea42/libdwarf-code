@@ -7,17 +7,18 @@ permissions: read-all
 
 jobs:
   freebsd_meson:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: FreeBSD-with-meson
-        uses: cross-platform-actions/action@v0.20.0
+        uses: cross-platform-actions/action@v0.23.0
         with:
           operating_system: freebsd
           sync_files: runner-to-vm
-          version:  '13.2'
+          version:  '14.0'
           run: |
             uname -a
+            whoami
             freebsd-version
             echo $SHELL
             sudo pkg install -y python3 bash meson ninja pkgconf

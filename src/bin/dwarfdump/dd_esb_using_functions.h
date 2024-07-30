@@ -34,6 +34,7 @@ extern "C" {
 
 /* Always returns DW_DLV_OK */
 int print_ranges_list_to_extra(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Unsigned originaloff,
     Dwarf_Unsigned finaloff,
     Dwarf_Ranges *rangeset,

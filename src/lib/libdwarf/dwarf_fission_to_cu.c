@@ -29,6 +29,7 @@
 
 #include <string.h> /* memset() */
 #include <stdlib.h> /* free() */
+#include <stdio.h> /*  debugging printf */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -49,7 +50,8 @@
 #include "dwarf_rnglists.h"
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
-    as the caller ensured that. */
+    as the caller ensured that.
+    With no DW_AT_loclists_base this computes one. */
 const struct Dwarf_Loclists_Context_s localcontxt_zero;
 static int
 load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
@@ -83,7 +85,7 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
         /*  Something is badly wrong. Ignore it here. */
         return DW_DLV_NO_ENTRY;
     }
-    res = _dwarf_internal_read_loclists_header(dbg,
+    res = _dwarf_internal_read_loclists_header(dbg, FALSE,
         0,soff_size,
         dbg->de_debug_loclists.dss_data,
         dbg->de_debug_loclists.dss_data +soff_size,
@@ -223,7 +225,9 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
 }
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
-    as the caller ensured that. */
+    as the caller ensured that.
+    With no DW_AT_rnglists_base present this
+    computes the value. */
 const struct Dwarf_Rnglists_Context_s builddata_zero;
 static int
 load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
@@ -257,7 +261,7 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     memset(buildhere,0,sizeof(builddata));
-    res = _dwarf_internal_read_rnglists_header(dbg,
+    res = _dwarf_internal_read_rnglists_header(dbg, TRUE,
         0,soff_size,
         dbg->de_debug_rnglists.dss_data,
         dbg->de_debug_rnglists.dss_data+soff_size,
@@ -290,7 +294,10 @@ static const char *keylist[2] = {
     _dwarf_merge_all_base_attrs_of_cu_die() if there
     is a tied (executable) object known.
     (not all base attrs are merged from tied. Certainly not
-    .debug_rnglists or .debug_loclists.
+    .debug_rnglists or .debug_loclists, but here we
+    load correct table information
+    for the CU being read as a replacement
+    if a CU has no base attr for rnglists and/or loclists)
 
     Called by dwarf_die_deliv.c
 */
@@ -341,8 +348,14 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
             case DW_SECT_ABBREV:
             case DW_SECT_LINE:
             */
+
             case DW_SECT_LOCLISTS:
                 res = load_xu_loclists_into_cucontext(dbg,
+                    cu_context,
+                    fsd,sec_index,error);
+                break;
+            case DW_SECT_RNGLISTS:
+                res = load_xu_rnglists_into_cucontext(dbg,
                     cu_context,
                     fsd,sec_index,error);
                 break;
@@ -353,11 +366,6 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
                 break;
             case DW_SECT_MACRO:
                 res = load_xu_debug_macro_into_cucontext(dbg,
-                    cu_context,
-                    fsd,sec_index,error);
-                break;
-            case DW_SECT_RNGLISTS:
-                res = load_xu_rnglists_into_cucontext(dbg,
                     cu_context,
                     fsd,sec_index,error);
                 break;

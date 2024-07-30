@@ -858,6 +858,7 @@ dwarf_diename(Dwarf_Die die,
     return dwarf_die_text(die,DW_AT_name,ret_name,error);
 }
 
+/*  Never returns DW_DLV_NO_ENTRY */
 int
 dwarf_hasattr(Dwarf_Die die,
     Dwarf_Half  attr,
@@ -879,7 +880,7 @@ dwarf_hasattr(Dwarf_Die die,
         *return_bool = false;
         return DW_DLV_OK;
     }
-    *return_bool = (true);
+    *return_bool = true;
     return DW_DLV_OK;
 }
 
@@ -1243,6 +1244,8 @@ dwarf_dietype_offset(Dwarf_Die die,
     return res;
 }
 
+/*  Only a few values are inherited from the tied
+    file. Not rnglists or loclists base offsets. */
 int
 _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
@@ -1282,6 +1285,13 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
             tiedcontext->cc_addr_base_present;
         context->        cc_addr_base=
             tiedcontext->cc_addr_base;
+    }
+    if (context->cc_version_stamp == DW_CU_VERSION4 &&
+        !context->cc_ranges_base_present) {
+        context->cc_ranges_base_present =
+            tiedcontext->cc_ranges_base_present;
+        context->cc_ranges_base =
+            tiedcontext->cc_ranges_base;;
     }
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
@@ -2070,7 +2080,8 @@ _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
     is_info is always non-zero except if the section
     of the CU is DWARF4 .debug_types.
 */
-int dwarf_cu_header_basics(Dwarf_Die die,
+int
+dwarf_cu_header_basics(Dwarf_Die die,
     Dwarf_Half *version,
     Dwarf_Bool *is_info,
     Dwarf_Bool *is_dwo,

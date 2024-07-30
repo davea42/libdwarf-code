@@ -239,14 +239,14 @@ int main(void)
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
         esb_append(&d5,"aaa ");
-        esb_append_printf(&d5,s,1);
+        esb_append_printf_i(&d5,s,1);
         esb_append(&d5,"zzz");
         validate_esb(17,&d5,18,19,"aaa insert me 1zzz",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufl,sizeof(bufl));
         esb_append(&d5,"aaa ");
-        esb_append_printf(&d5,s,1);
+        esb_append_printf_i(&d5,s,1);
         esb_append(&d5,"zzz");
         validate_esb(18,&d5,18,60,"aaa insert me 1zzz",__LINE__);
         esb_destructor(&d5);

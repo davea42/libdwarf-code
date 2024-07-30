@@ -106,4 +106,7 @@ scripts/ChangeLog2018 \
 scripts/ChangeLog2019 \
 scripts/ChangeLog2020 \
 scripts/CLEANUP \
+tools/makerelease.sh	\
+tools/README	\
+tools/updatesemanticversion.py \
 .travis.yml
