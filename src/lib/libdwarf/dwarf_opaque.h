@@ -259,13 +259,12 @@ struct Dwarf_CU_Context_s {
     /*  from DW_AT_addr_base in CU DIE, offset to .debug_addr table */
     Dwarf_Unsigned cc_addr_base;  /* Zero in .dwo */
 
-
     /*  DW_SECT_LINE */
     Dwarf_Bool     cc_line_base_present;     /*DW5 */
     Dwarf_Unsigned cc_line_base;             /*DW5 */
     Dwarf_Unsigned cc_line_base_contr_size;  /*DW5 */
 
-    /*  From DW_AT_loclists_base or 
+    /*  From DW_AT_loclists_base or
         computed from DW_SECT_LOCLISTS */
     Dwarf_Unsigned cc_loclists_base;
     Dwarf_Unsigned cc_loclists_base_contr_size;

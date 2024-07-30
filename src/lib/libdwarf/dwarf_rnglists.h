@@ -71,12 +71,11 @@ struct Dwarf_Rnglists_Context_s {
         index values in the array are offsets into area starting
         with rc_first_rnglist_offset */
     Dwarf_Unsigned  rc_offset_entry_count;
-    /*  rc_offset_entry_count values. Each local offset to 
+    /*  rc_offset_entry_count values. Each local offset to
         a locdesc set. We need this as a way to  know
-        which lle entry offsets  are relevant from a loclistx. 
+        which lle entry offsets  are relevant from a loclistx.
         as nothing else reveals these special LLE entries. */
     Dwarf_Unsigned *rc_offset_value_array;
-
 
     /* offset in the section of the offset entries */
     Dwarf_Unsigned  rc_offsets_off_in_sect;

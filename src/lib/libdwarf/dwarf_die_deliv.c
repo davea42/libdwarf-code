@@ -1875,7 +1875,7 @@ _dwarf_create_a_new_cu_context_record_on_list(
         local_dealloc_cu_context(dbg,cu_context);
         return res;
     }
-    /*  Add the new cu_context to a list of contexts 
+    /*  Add the new cu_context to a list of contexts
         Never returns DW_DLV_NO_ENTRY */
     icres = insert_into_cu_context_list(dis,cu_context);
     if (icres == DW_DLV_ERROR) {

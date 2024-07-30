@@ -254,7 +254,7 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
             here we just assume present. */
     }
 #endif
-    rangeptr += rangesoffset; 
+    rangeptr += rangesoffset;
     beginrangeptr = rangeptr;
 
     for (;;) {
@@ -384,11 +384,11 @@ _dwarf_determine_die_range_offset(Dwarf_Debug dw_dbg,
 
     res = dwarf_hasattr(dw_die,DW_AT_ranges, &hasatranges,dw_error);
     if (res != DW_DLV_OK) {
-         return res;
+        return res;
     }
     if (!hasatranges) {
-         /* Give up, this die not directly relevant. */
-         return res;
+        /* Give up, this die not directly relevant. */
+        return res;
     }
     res = dwarf_attr(dw_die,DW_AT_ranges,&attr,dw_error);
     if (res != DW_DLV_OK) {
@@ -398,7 +398,7 @@ _dwarf_determine_die_range_offset(Dwarf_Debug dw_dbg,
         }
         return res;
     } else {
-        res = dwarf_global_formref(attr, 
+        res = dwarf_global_formref(attr,
             &rangeoffset_local, dw_error);
         if (res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
@@ -437,11 +437,10 @@ _dwarf_determine_die_range_offset(Dwarf_Debug dw_dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Must not ever return DW_DLV_NO_ENTRY.
     Uses cu_context sometimes, so the base address
     is from the CU_DIE of the CU that
-    dw_die is a child of. 
+    dw_die is a child of.
     We attempt to cover what compilers actually do
     in the GNU dwarf4 extensions, but rules are not
     fully documented and it is difficult to be
@@ -468,20 +467,20 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
 
     CHECK_DBG(dw_dbg,dw_error,"dwarf_get_ranges_baseaddress()");
     if (!dw_die) {
-         if (dw_known_base) {
-             *dw_known_base = FALSE;
-             *dw_at_ranges_offset_present = FALSE;
-         }
-         if (dw_baseaddress) {
-             *dw_baseaddress = 0;
-             *dw_at_ranges_offset = 0;
-         }
-         return DW_DLV_OK;
+        if (dw_known_base) {
+            *dw_known_base = FALSE;
+            *dw_at_ranges_offset_present = FALSE;
+        }
+        if (dw_baseaddress) {
+            *dw_baseaddress = 0;
+            *dw_at_ranges_offset = 0;
+        }
+        return DW_DLV_OK;
     }
     /*  If the DIE passed in has a DW_AT_ranges attribute
         we will use that DIE ranges offset.
         Otherwise we use the DW_AT_ranges from the
-        CU DIE (if any) 
+        CU DIE (if any)
         If the DIE passed in has a DW_AT_low_pc
         attribute we will use that as the ranges
         base address, otherwise we use the
@@ -510,7 +509,7 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
         local_ranges_offset_present = have_die_ranges_offset;
         local_ranges_offset = die_ranges_offset;
     } else {
-        local_ranges_offset_present = 
+        local_ranges_offset_present =
             context->cc_at_ranges_offset_present;
         local_ranges_offset =
             context->cc_at_ranges_offset;
@@ -533,11 +532,10 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     if (dw_baseaddress) {
         /*  Unless cc_low_pc_present is TRUE
             cc_low_pc is always zero, and it
-            could be zero regardless. */ 
-    
+            could be zero regardless. */
+
         *dw_baseaddress = local_base_addr;
         *dw_known_base = local_base_addr_present;
     }
     return DW_DLV_OK;
 }
-

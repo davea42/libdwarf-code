@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2000, 2004 Silicon Graphics, Inc.  All Rights Rese    rved.
 Portions Copyright (C) 2015-2023 David Anderson. All Rights Rese    rved.
-  
+
 This program is free software; you can redistribute it
 and/or modify it under the terms of version 2.1 of the
 GNU Lesser General Public License as published by the Free
@@ -59,9 +59,9 @@ struct Dwarf_Loclists_Context_s {
     Dwarf_Small     lc_segment_selector_size;
     Dwarf_Half      lc_version; /* 5 */
     Dwarf_Unsigned  lc_offset_entry_count;
-    /*  lc_offset_entry_count values. Each local offset to 
+    /*  lc_offset_entry_count values. Each local offset to
         a locdesc set. We need this as a way to  know
-        which lle entry offsets  are relevant from a loclistx. 
+        which lle entry offsets  are relevant from a loclistx.
         as nothing else reveals these special LLE entries. */
     Dwarf_Unsigned *lc_offset_value_array;
 

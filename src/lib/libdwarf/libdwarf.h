@@ -221,7 +221,7 @@ typedef void*        Dwarf_Ptr;          /* host machine pointer */
 
     DW_RANGES_ADDRESS_SELECTION should have been spelled
     DW_RANGES_BASE_ADDRESS. but it is not worth changing
-    as it is widely used.    
+    as it is widely used.
 
     The DW_RANGES_ENTRY values are raw pc offset data recorded
     in the section, not addresses.
@@ -4308,7 +4308,7 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     @param dw_known_base
     if dw_die is non-null and there is a known
     base address for the CU DIE that
-    (a DW_at_low_pc in the CU DIE) 
+    (a DW_at_low_pc in the CU DIE)
     dw_known_base will be set TRUE,
     Otherwise the value FALSE will be returned through
     dw_known_base.
@@ -4328,7 +4328,7 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     @return
     Returns DW_DLV_OK or DW_DLV_ERROR.
     Never returns DW_DLV_NO_ENTRY.
-    
+
 */
 DW_API int dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     Dwarf_Die       dw_die,
