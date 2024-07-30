@@ -4314,12 +4314,19 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     dw_known_base.
     @param dw_baseaddress
     if dw_known_base is retured as TRUE then
-    dw_baseaddres will be set with the correct pc value.
+    dw_baseaddress will be set with the correct pc value.
     Otherwise zero will be set through dw_baseaddress.
+    @param dw_at_ranges_offset_present
+    Set to 1 (TRUE) if the dw_die has the attribute
+    DW_AT_ranges, otherwise set to zero (FALSE).
+    @param dw_at_ranges_offset
+    Set to the value of dw_die DW_AT_ranges attribute
+    of dw_die if and only iff
+    dw_at_ranges_offset_present was set to 1.
     @param dw_error
     The usual error detail return pointer.
     @return
-    Returns DW_DLV_OK etc.
+    Returns DW_DLV_OK or DW_DLV_ERROR.
     Never returns DW_DLV_NO_ENTRY.
     
 */

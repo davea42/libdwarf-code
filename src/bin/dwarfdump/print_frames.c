@@ -246,7 +246,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,
     Dwarf_Error err = 0;
     Dwarf_Bool is_info = dwarf_get_die_infotypes_flag(die);
 
-    res = dwarf_global_formref(attr,&off,&err);
+    res = dwarf_global_formref_b(attr,&off,&is_info,&err);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc(dbg,err,DW_DLA_ERROR);
         return DW_DLV_NO_ENTRY;
