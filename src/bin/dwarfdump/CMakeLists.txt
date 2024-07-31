@@ -9,6 +9,7 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
     dd_attr_form.c
     dd_canonical_append.c
     print_debugfission.c print_die.c
+    dd_trace_abstract_origin_etc.c
     print_debug_addr.c
     print_debug_gnu.c
     print_debug_names.c  print_debug_sup.c

@@ -80,16 +80,6 @@ struct OpBranchHead_s {
 /*  Defaults to all 0, never changes */
 static const LoHiPc  lohipc_zero;
 
-/*  Traverse a DIE and attributes to
-    check self references */
-static int traverse_one_die(Dwarf_Debug dbg,
-    Dwarf_Attribute attrib,
-    Dwarf_Die die,
-    Dwarf_Off dieprint_cu_goffset,
-    Dwarf_Bool Dwarf_Bool,
-    char **srcfiles,
-    Dwarf_Signed srcfiles_cnt, int die_indent_level,
-    Dwarf_Error*err);
 static int traverse_attribute(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
@@ -610,8 +600,8 @@ dump_die_offsets(Dwarf_Debug dbg, Dwarf_Die die,
 #endif
 
 /*  These for sure are not to debug_info or debug_types. */
-static Dwarf_Bool
-form_refers_local_info(Dwarf_Half form)
+Dwarf_Bool
+dd_form_refers_local_info(Dwarf_Half form)
 {
     switch(form) {
     case DW_FORM_GNU_ref_alt:
@@ -3270,8 +3260,8 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-static void
-do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
+void
+dd_do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
     Dwarf_Off cu_die_goff,
     const char *atname, const char *valname)
 {
@@ -3478,8 +3468,8 @@ append_useful_die_name(Dwarf_Debug dbg,
     Does not currently attempt to use any signature
     resolution fast-access DWARF sections.
 */
-static int
-print_sig8_target(Dwarf_Debug dbg,
+int
+dd_print_sig8_target(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     int die_indent_level,
     char **srcfiles,
@@ -3716,7 +3706,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&valname);
             return res;
         }
-        if (!form_refers_local_info(theform)) {
+        if (!dd_form_refers_local_info(theform)) {
             break;
         }
         esb_constructor_fixed(&specificationstr,buf,sizeof(buf));
@@ -3740,7 +3730,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
         /* Get the global offset for reference */
         if (theform == DW_FORM_ref_sig8) {
-            res = print_sig8_target(dbg,attrib,
+            res = dd_print_sig8_target(dbg,attrib,
                 die_indent_level,
                 srcfiles,srcfcnt,
                 &valname,err);
@@ -3811,7 +3801,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_destructor(&valname);
                     return res;
                 }
-                do_dump_visited_info(die_indent_level,
+                dd_do_dump_visited_info(die_indent_level,
                     die_loff,die_goff,
                     dieprint_cu_goffset,
                     atname,esb_get_string(&valname));
@@ -3832,7 +3822,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_destructor(&valname);
                 return res;
             }
-            res = traverse_one_die(dbg,attrib,ref_die,
+            res = dd_traverse_one_die(dbg,attrib,ref_die,
                 target_die_cu_goff,
                 is_info,
                 srcfiles,srcfcnt,die_indent_level,
@@ -3861,8 +3851,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     references so srcfiles and cnt
     have possibly inappropriate values. FIXME.
 */
-static int
-traverse_one_die(Dwarf_Debug dbg,
+int
+dd_traverse_one_die(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
@@ -3902,7 +3892,7 @@ traverse_one_die(Dwarf_Debug dbg,
             return res;
         }
         tagname = get_TAG_name(tag,pd_dwarf_names_print_on_error);
-        do_dump_visited_info(die_indent_level,offset,
+        dd_do_dump_visited_info(die_indent_level,offset,
             overall_offset, dieprint_cu_goffset,
             tagname,"");
     }
@@ -4551,7 +4541,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     int             append_extra_string = 0;
     Dwarf_Bool         found_search_attr = FALSE;
     Dwarf_Bool         bTextFound = FALSE;
+#if 0
     Dwarf_Bool      is_info = FALSE;
+#endif
     Dwarf_Addr      max_address = 0;
     struct esb_s    valname;
     struct esb_s    esb_extra;
@@ -4569,7 +4561,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
     esb_constructor_fixed(&esb_extra,xtrabuf,sizeof(xtrabuf));
     esb_constructor_fixed(&valname,valbuf,sizeof(valbuf));
+#if 0
     is_info = dwarf_get_die_infotypes_flag(die);
+#endif
     atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
     res = get_address_size_and_max(dbg,&address_size_base,
         &max_address,err);
@@ -5385,7 +5379,18 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_specification:
     case DW_AT_abstract_origin:
     case DW_AT_type:
-        {
+        {  
+            tres = dd_trace_abstract_origin_etc(dbg,tag,die,
+                dieprint_cu_goffset, 
+                theform,
+                attr,
+                attrib, srcfiles,
+                srcfiles_cnt,&valname,&esb_extra,
+                die_indent_level,pd_dwarf_names_print_on_error,err);
+            if (tres != DW_DLV_OK) {
+                return tres;
+            }
+#if 0        
         char typebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s lesb;
 
@@ -5412,7 +5417,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             return tres;
         }
         if (theform == DW_FORM_ref_sig8) {
-            res = print_sig8_target(dbg,attrib,
+            res = dd_print_sig8_target(dbg,attrib,
                 die_indent_level,
                 srcfiles, srcfiles_cnt, &lesb,err);
             if (res == DW_DLV_ERROR) {
@@ -5509,7 +5514,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             if (!suppress_check &&
                 glflags.gf_check_self_references &&
-                form_refers_local_info(theform) ) {
+                dd_form_refers_local_info(theform) ) {
                 Dwarf_Die ref_die = 0;
                 int  ifres = 0;
 
@@ -5531,7 +5536,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         fresb = dwarf_die_CU_offset(die,
                             &die_loff, err);
                         if (fresb == DW_DLV_OK) {
-                            do_dump_visited_info(die_indent_level,
+                            dd_do_dump_visited_info(die_indent_level,
                                 die_loff,die_goff,
                                 dieprint_cu_goffset,
                                 atname,esb_get_string(&valname));
@@ -5567,7 +5572,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         return frres;
                     }
 
-                    ifres = traverse_one_die(dbg,attrib,ref_die,
+                    ifres = dd_traverse_one_die(dbg,attrib,ref_die,
                         ref_die_cu_goff,
                         is_info,srcfiles,srcfiles_cnt,
                         die_indent_level, err);
@@ -5707,6 +5712,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_destructor(&pn);
             }
         }
+#endif /*  0 */
         }
         break;
     default:
@@ -8601,7 +8607,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
         if (glflags.gf_check_type_offset) {
             if (attr == DW_AT_type &&
-                form_refers_local_info(theform)) {
+                dd_form_refers_local_info(theform)) {
                 dres = dwarf_offdie_b(dbg, goff,
                     is_info,
                     &die_for_check, err);

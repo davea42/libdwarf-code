@@ -340,6 +340,47 @@ int print_hipc_lopc_attribute(Dwarf_Debug dbg,
     LoHiPc  *lohipc,
     struct esb_s *valname,
     Dwarf_Error *err);
+int dd_trace_abstract_origin_etc(
+    Dwarf_Debug dbg,
+    Dwarf_Half  tag,
+    Dwarf_Die   die,
+    Dwarf_Off   dieprint_cu_offset,
+    Dwarf_Half  theform,
+    Dwarf_Half  attrnum,
+    Dwarf_Attribute attrib,
+    char ** srcfiles,
+    Dwarf_Signed srcfiles_cnt,
+    struct esb_s *valname,
+    struct esb_s *esb_extra,
+    int die_indent_level,
+    int pd_dwarf_names_print_on_error,
+    Dwarf_Error *err);
+int
+dd_traverse_one_die(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
+    Dwarf_Die die,
+    Dwarf_Off dieprint_cu_goffset,
+    Dwarf_Bool is_info,
+    char **srcfiles, Dwarf_Signed cnt,
+    int die_indent_level,
+    Dwarf_Error *err);
+void
+dd_do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
+    Dwarf_Off cu_die_goff,
+    const char *atname, const char *valname);
+int
+dd_print_sig8_target(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
+    int die_indent_level,
+    char **srcfiles,
+    Dwarf_Signed srcfiles_cnt,
+    struct esb_s * valname,
+    Dwarf_Error *err);
+
+Dwarf_Bool dd_form_refers_local_info(Dwarf_Half form);
+
+
+
 
 #ifdef __cplusplus
 }

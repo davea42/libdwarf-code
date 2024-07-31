@@ -62,6 +62,7 @@ print_abbrevs.c \
 print_aranges.c \
 print_debugfission.c \
 print_die.c \
+dd_trace_abstract_origin_etc.c \
 print_debug_addr.c \
 print_debug_gnu.c \
 print_debug_gnu.h \
