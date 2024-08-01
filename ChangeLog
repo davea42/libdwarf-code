@@ -1,3 +1,142 @@
+2024-08-01:  David Anderson
+    commit 2ff13502e25275fdec0318747980a2997b44ef1e
+
+    A mistaken printf %lx in examplev
+    resulted in the printed output looking
+    strange and wrong.  Now uses %llx so
+    it prints correctly even on a 32bit
+    system.
+            modified:   doc/checkexamples.c
+
+2024-08-01:  David Anderson
+    commit aa6512dc9f13ed4a6ff745fa633b3e5263e38798
+
+    New month so the month reported changes.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-08-01:  David Anderson
+    commit da97110fa0ebdc9377c2a2e213d4da09303cb6b1
+
+    In one place in code added yesterday an explicit dealloc
+    of a Dwarf_Error was omitted. Found by the usual
+    export NLIZE=y
+    export SUPPRESSDEALLOCTREE=y
+    regressiontest.
+            modified:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+
+2024-08-01:  David Anderson
+    commit a8a619644df73191bf82e25780d480a5610ddf34
+
+    Now we add the target type to DW_AT_type references
+    so we have to update these baselines to match
+    the change in dwarfdump output.
+     modified:   test/test-mach-o-32.base
+     modified:   test/testobjLE32PE.base
+     modified:   test/testuriLE64ELf.base
+
+2024-07-31:  David Anderson
+    commit b72853b5468bc46e00f89fe84457eb3d1e4ddaac
+
+    The code refactoed to print attributes:
+    DW_AT_specification:
+    DW_AT_abstract_origin:
+    DW_AT_type:
+    is now in place and this commit
+    deletes the lines extracted to the new source file.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-07-31:  David Anderson
+    commit 3e5d521cd327af8642ff97eb70a0bf375171a3d6
+
+    Factored 300 lines out of print_die.c and
+    added support to print the name (DW_AT_name)
+    of the referred-to attribute (if the referred-to
+    has a DW_AT_name field).
+            new file:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+
+    Added the new souce file
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/meson.build
+
+    A few functions now are visible throughtout
+    dwarfdump. Needed due to the refactoring.
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-07-30:  David Anderson
+    commit 5aad8984359ea8d5007e3b279747415b101b626d
+
+    Fixing to match project codingstyle.
+    Remove trailing whitespace.
+    Fix indents.
+    Other minor violations.
+            modified:   dwarfdump.c
+            modified:   print_die.c
+            modified:   print_ranges.c
+
+2024-07-30:  David Anderson
+    commit 1f4dae5e7cfb410efbf567de872a3f4aed53573b
+
+    Removing trailing whitespace.
+    Fixing indents to follow project codingstyle.
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_loclists.h
+            modified:   dwarf_opaque.h
+            modified:   dwarf_ranges.c
+            modified:   dwarf_rnglists.h
+            modified:   libdwarf.h
+
+2024-07-30:  David Anderson
+    commit 1bf563fb648f741a7cbd936f3b989bb9fd9b6b7d
+    Merge: e85227a2 b58af607
+
+    Merge branch 'abstract'
+    Using the proper dwarf_global_formref_b(),
+    the original dwarf_global_formref() cannot handle
+    all of DWARF4
+
+2024-07-30:  David Anderson
+    commit b58af60787c748cfc3b1d0b1c197c6ca48d8e773
+
+    Change the original dwarf_global_formref()
+    to use the current dwarf_global_formref_b()
+    so things reflect the realities of DWARF4.
+            modified:   print_die.c
+            modified:   print_frames.c
+
+2024-07-31:  vtorri
+    commit e85227a2dc39f304e41ed2894c7101f44305adfb
+
+    build: fix arguments order in calloc calls (#258)
+
+2024-07-30:  David Anderson
+    commit 94432777d4719241e877c411f178dc30bccf375e
+
+    Updated date
+            modified:   doc/libdwarf.dox
+
+2024-07-30:  David Anderson
+    commit 5865f274adf91ef1ac7464084dd01cd9e0209c03
+
+    Improvements to doc of dwarf_get_ranges_baseaddress
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-07-28:  David Anderson
+    commit b17c69f4c4e2ae48c38f65db2c8bd9a05382eb04
+
+    Updated the bugs fixed today.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-07-28:  David Anderson
+    commit 301d1d08f1a48d2d16cd390046b29c91c7e909c6
+
+    Up to date.
+            modified:   ChangeLog
+
 2024-07-28:  David Anderson
     commit c704bb966f3e62d9d9e7f018f0478c82ecea84b9
 
