@@ -453,6 +453,8 @@ dd_trace_abstract_origin_etc(
             if (smres == DW_DLV_ERROR) {
                 esb_append(valname,
                     " ERROR reading target offset: "); 
+                dwarf_dealloc_error(dbg,*err);
+                *err = 0;
             }
         } else {
             int tares = 0;
@@ -470,7 +472,7 @@ dd_trace_abstract_origin_etc(
                     *err = 0;
                 } else {
 #if 0
-                    Be quiet here. Useless change?
+                    Be quiet here. Useless message, one thinks.
                     esb_append(valname," No target name available. "); 
 #endif
                 }
