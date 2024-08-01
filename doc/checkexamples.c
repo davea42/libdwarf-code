@@ -1534,7 +1534,7 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
         return sres;
     }
     line = linebuf;
-    for (i = 0; i < count; ++line) {
+    for (i = 0; i < count; ++line,++i) {
         /* use line */
     }
     dwarf_srclines_dealloc_b(context);
@@ -2651,11 +2651,11 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset_in,
     }
     {
         Dwarf_Signed i = 0;
-        printf("Range group base address: 0x%08lx"
+        printf("Range group base address: 0x%08llx"
             ", offset in .debug_ranges:"
-            " 0x%08lx\n",
-            (unsigned long)base_address,
-            (unsigned long)rangesoffset);
+            " 0x%08llx\n",
+            (unsigned long long)base_address,
+            (unsigned long long)rangesoffset);
         for ( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = rangesbuf+i;
             /* Use cur. */
