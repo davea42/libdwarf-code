@@ -4562,6 +4562,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
     Dwarf_Half address_size_base = 0;
     Dwarf_Half address_size_again = 0;
+    Dwarf_Bool attribute_handled_by_switch = TRUE;
+    Dwarf_Bool is_class_reference = FALSE;
 
     esb_constructor_fixed(&esb_extra,xtrabuf,sizeof(xtrabuf));
     esb_constructor_fixed(&valname,valbuf,sizeof(valbuf));
@@ -5366,8 +5368,18 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         }
         break;
+    default:
+        attribute_handled_by_switch = FALSE;
+        break;
+    } /* end switch statment on attribute code */
+    if (!attribute_handled_by_switch) {
+        if (fc == DW_FORM_CLASS_REFERENCE) {
+            is_class_reference = TRUE;
+        }
+    }
 
-    /*  When dealing with SNC linkonce symbols,
+    /*  Note on checking for special symbols:
+        When dealing with SNC linkonce symbols,
         the low_pc and high_pc
         are associated with a specific symbol;
         SNC always generate a name with
@@ -5377,65 +5389,48 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         in that case we have to
         traverse this attribute in order to get the
         name for the linkonce */
-    case DW_AT_abstract_origin:
-    case DW_AT_base_types:
-    case DW_AT_friend:
-    case DW_AT_namelist_item:
-    case DW_AT_priority:
-    case DW_AT_specification:
-    case DW_AT_type:
-    case DW_AT_extension:
-    case DW_AT_small:
-    case DW_AT_object_pointer:
-    case DW_AT_signature:
-    case DW_AT_call_parameter:
-        {  
-            tres = dd_trace_abstract_origin_etc(dbg,tag,die,
-                dieprint_cu_goffset, 
-                theform,
-                attr,
-                attrib, srcfiles,
-                srcfiles_cnt,&valname,&esb_extra,
-                die_indent_level,pd_dwarf_names_print_on_error,err);
-            if (tres != DW_DLV_OK) {
-                return tres;
-            }
+    if (is_class_reference)  {
+        tres = dd_trace_abstract_origin_etc(dbg,tag,die,
+            dieprint_cu_goffset, 
+            theform,
+            attr,
+            attrib, srcfiles,
+            srcfiles_cnt,&valname,&esb_extra,
+            die_indent_level,pd_dwarf_names_print_on_error,err);
+        if (tres != DW_DLV_OK) {
+            return tres;
         }
-        break;
-    default:
-        {
-            char ebuf[ESB_FIXED_ALLOC_SIZE];
-            struct esb_s lesb;
-            int dres = 0;
+    } else if (!attribute_handled_by_switch) {
+        char ebuf[ESB_FIXED_ALLOC_SIZE];
+        struct esb_s lesb;
+        int dres = 0;
 
-            esb_constructor_fixed(&lesb,ebuf,sizeof(ebuf));
-            dres = get_attr_value(dbg, tag,die,
-                dieprint_cu_goffset,attrib,
-                srcfiles, srcfiles_cnt, &lesb,
-                glflags.show_form_used,glflags.verbose,err);
-            if (dres == DW_DLV_ERROR) {
-                struct esb_s m;
-                const char *n =
-                    get_AT_name(attr,
-                    pd_dwarf_names_print_on_error);
-                esb_constructor(&m);
-                esb_append(&m,
-                    "Cannot get get value for a ");
-                esb_append(&m,n);
-                print_error_and_continue(
-                    esb_get_string(&m),
-                    dres,*err);
-                esb_destructor(&m);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return dres;
-            }
-            esb_empty_string(&valname);
-            esb_append(&valname, esb_get_string(&lesb));
-            esb_destructor(&lesb);
+        esb_constructor_fixed(&lesb,ebuf,sizeof(ebuf));
+        dres = get_attr_value(dbg, tag,die,
+            dieprint_cu_goffset,attrib,
+            srcfiles, srcfiles_cnt, &lesb,
+            glflags.show_form_used,glflags.verbose,err);
+        if (dres == DW_DLV_ERROR) {
+            struct esb_s m;
+            const char *n =
+                get_AT_name(attr,
+                pd_dwarf_names_print_on_error);
+            esb_constructor(&m);
+            esb_append(&m,
+                "Cannot get get value for a ");
+            esb_append(&m,n);
+            print_error_and_continue(
+                esb_get_string(&m),
+                dres,*err);
+            esb_destructor(&m);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return dres;
         }
-        break;
-    } /* end switch statment on attribute code */
+        esb_empty_string(&valname);
+        esb_append(&valname, esb_get_string(&lesb));
+        esb_destructor(&lesb);
+    } 
     res = 0; /* value above no longer relevant */
 
     if (!print_else_name_match) {
