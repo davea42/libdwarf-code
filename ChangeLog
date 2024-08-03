@@ -1,4 +1,28 @@
 2024-08-03:  David Anderson
+    commit 526b8792a274c28a83929dc66c34375b50265415
+
+    Now checks and reports on all DIE references, meaning
+    the DWARF reference class.
+    Try  dwarfdump -ka <someobj>
+    or even just
+         dwarfdump -i <someobj>
+    Before it only checked a subset of references.
+
+            modified:   print_die.c
+
+2024-08-03:  David Anderson
+    commit 5ef4ae65ccfec51490f46f9cf6c023544fa7cd60
+
+    More references are followed and checked for error/recursion.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-08-03:  David Anderson
+    commit c768b93dfc4f19faa2ef6a33ab4c3b9881bfe4f5
+
+    Up to date with recent changes.
+            modified:   ChangeLog
+
+2024-08-03:  David Anderson
     commit ec7a5aaf1a9fbcd2780f7d2c7e95cbf5cc8af2ba
 
     Latest.
