@@ -26,7 +26,9 @@ cc -c -Wall -O0 -Wpointer-arith  \
 #include <string.h> /* for memcmp() */
 #include "dwarf.h"
 #include "libdwarf.h"
-
+/*  PRX is to match with the Dwarf_Unsigned datatype, an
+    unsigned long long */
+#define PRX  "0x%08llx"
 #define TRUE  1
 #define FALSE 0
 
@@ -590,15 +592,19 @@ int example_sibvalid(Dwarf_Debug dbg,
 */
 
 struct myrecords_struct *myrecords;
-void myrecord_data_for_die(struct myrecords_struct *myrecords,
+void myrecord_data_for_die(struct myrecords_struct *myrecords_data,
     Dwarf_Die d)
 {
     /* do somthing */
+    /*  avoid compiler warnings */
+    (void)myrecords_data;
+    (void)d;
 }
-int  my_needed_data_exists(struct myrecords_struct *myrecords)
+int  my_needed_data_exists(struct myrecords_struct *myrecords_data)
 {
     /* do something */
-    return DW_DLV_OK;
+    /*  avoid compiler warnings */
+    (void)myrecords_data;
     return DW_DLV_OK;
 }
 
@@ -2047,10 +2053,14 @@ void  mark_this_offset_as_examined(
     Dwarf_Unsigned macro_unit_offset)
 {
     /* do something */
+    /*  avoid compiler warnings. */
+    (void)macro_unit_offset;
 }
 void  add_offset_to_list(Dwarf_Unsigned offset)
 {
     /* do something */
+    /*  avoid compiler warnings. */
+    (void)offset;;
 }
 int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 {
@@ -2208,7 +2218,9 @@ int  examplep5(Dwarf_Die cu_die,Dwarf_Error *error)
 
 void functionusingsigned(Dwarf_Signed s) {
     /* Do something */
-};
+    /* Avoid compiler warnings. */
+    (void)s;
+}
 
 int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
     Dwarf_Error*error)
@@ -2571,8 +2583,8 @@ void functionusingrange(Dwarf_Signed i,Dwarf_Ranges *r,
     switch(r->dwr_type) {
     case DW_RANGES_ENTRY:
         printf(
-            "DW_RANGES_ENTRY: raw    addr1 0x%08llx"
-            " addr2 0x%08llx",
+            "DW_RANGES_ENTRY: raw    addr1 " PRX
+            " addr2 " PRX,
             r->dwr_addr1,r->dwr_addr2);
         if (r->dwr_addr1 == r->dwr_addr2) {
             printf(" (empty range)");
@@ -2581,13 +2593,13 @@ void functionusingrange(Dwarf_Signed i,Dwarf_Ranges *r,
         if (*have_base_addr) {
             printf("       "
             "DW_RANGES_ENTRY: cooked addr1 0x%08llx"
-            " addr2  0x%08llx \n" ,
+            " addr2  " PRX "\n" ,
             r->dwr_addr1+base,r->dwr_addr2+base);
         }
         break;
     case DW_RANGES_ADDRESS_SELECTION:
         printf(
-            "Base Address   : 0x%08llx\n",
+            "Base Address   : " PRX "\n",
             r->dwr_addr2);
         *have_base_addr = TRUE;
         *baseaddr = r->dwr_addr2;
@@ -2635,7 +2647,7 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset_in,
             cannot be definitely known unless
             the base is in the .debug_ranges entries
             themselves */
-        
+
     }
     res = dwarf_get_ranges_b(dbg,rangesoffset,die,
         &realoffset,
@@ -2651,11 +2663,10 @@ int examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset_in,
     }
     {
         Dwarf_Signed i = 0;
-        printf("Range group base address: 0x%08llx"
+        printf("Range group base address: " PRX
             ", offset in .debug_ranges:"
             " 0x%08llx\n",
-            (unsigned long long)base_address,
-            (unsigned long long)rangesoffset);
+            base_address, rangesoffset);
         for ( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = rangesbuf+i;
             /* Use cur. */
