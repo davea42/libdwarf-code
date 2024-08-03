@@ -1,3 +1,23 @@
+2024-08-03:  David Anderson
+    commit ec7a5aaf1a9fbcd2780f7d2c7e95cbf5cc8af2ba
+
+    Latest.
+            modified:   libdwarf.pdf
+
+2024-08-03:  David Anderson
+    commit 57d39467f624905e6448ef047165cff7643eadc9
+
+    Now uses a macro for 0x%08llx clarifying printf on Dwarf_Unsigned.
+    Also removes an accidental trailing space in printed output.
+    Also removes trailing whitespace from the code.
+            modified:   checkexamples.c
+
+2024-08-01:  David Anderson
+    commit d7c15b0938b0bfdbbdf2f904c37d789bc46ce50b
+
+    Now up to date.
+            modified:   ChangeLog
+
 2024-08-01:  David Anderson
     commit 2ff13502e25275fdec0318747980a2997b44ef1e
 
