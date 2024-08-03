@@ -3689,7 +3689,14 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
     switch (attr) {
     case DW_AT_specification:
+    case DW_AT_containing_type:
     case DW_AT_abstract_origin:
+    case DW_AT_object_pointer:
+    case DW_AT_small:
+    case DW_AT_extension:
+    case DW_AT_priority:
+    case DW_AT_namelist_item:
+    case DW_AT_friend:
     case DW_AT_type: {
         int res = 0;
         Dwarf_Off die_goff = 0;
@@ -5370,9 +5377,18 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         in that case we have to
         traverse this attribute in order to get the
         name for the linkonce */
-    case DW_AT_specification:
     case DW_AT_abstract_origin:
+    case DW_AT_base_types:
+    case DW_AT_friend:
+    case DW_AT_namelist_item:
+    case DW_AT_priority:
+    case DW_AT_specification:
     case DW_AT_type:
+    case DW_AT_extension:
+    case DW_AT_small:
+    case DW_AT_object_pointer:
+    case DW_AT_signature:
+    case DW_AT_call_parameter:
         {  
             tres = dd_trace_abstract_origin_etc(dbg,tag,die,
                 dieprint_cu_goffset, 
@@ -8049,7 +8065,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         Dwarf_Half attr = 0;
         /*  DW_FORM_ref_addr is not accessed thru formref: ** it is an
             address (global section offset) in ** the .debug_info
-            section. */
+            section.  
+            DWARF2 incorrectly specifed the value here
+            as being the size of an address, which never made any
+            sense: it has always been an offset of a DIE somewhere in .debug_info .
+            The definition was changed in DWARF3 to specify the value is an offset
+            in .debug_info, not an address.  */
         bres = dwarf_global_formref_b(attrib, &off,&is_info,err);
         if (bres == DW_DLV_OK) {
             bracket_hex("<GOFF=",off, ">",esbp);
@@ -8900,6 +8921,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_ref_sup4: /* DWARF5 */
     case DW_FORM_ref_sup8: /* DWARF5 */
     case DW_FORM_GNU_ref_alt: {
+        /*  These refer to a supplemental or alternate object file,
+            and we don't have those available to check. */
         bres = dwarf_global_formref_b(attrib, &off,&is_info, err);
         if (bres == DW_DLV_OK) {
             bracket_hex("",off,"",esbp);
