@@ -98,7 +98,7 @@ LOCAL_SYMBOLS:
                       DW_AT_decl_file             0x00000003
                       DW_AT_decl_line             0x00000029
                       DW_AT_decl_column           0x00000009
-                      DW_AT_sibling               <0x000000f7>
+                      DW_AT_sibling               <0x000000f7> Refers to: Bucket_Data
 < 2><0x000000ac>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  bFlag
                         DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
@@ -279,7 +279,7 @@ LOCAL_SYMBOLS:
                       DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
                       DW_AT_decl_line             0x00000025
                       DW_AT_decl_column           0x00000006
-                      DW_AT_sibling               <0x0000021e>
+                      DW_AT_sibling               <0x0000021e> Refers to: section_high_offsets_s
 < 2><0x00000205>      DW_TAG_enumerator <abbrev 13>
                         DW_AT_name                  singledw5
                         DW_AT_const_value           0
@@ -298,7 +298,7 @@ LOCAL_SYMBOLS:
                       DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
                       DW_AT_decl_line             0x00000052
                       DW_AT_decl_column           0x00000008
-                      DW_AT_sibling               <0x0000032f>
+                      DW_AT_sibling               <0x0000032f> Refers to: glflags_s
 < 2><0x0000022a>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  debug_info_size
                         DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h

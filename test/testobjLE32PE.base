@@ -118,7 +118,7 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x000000bc> Refers to: _iobuf
 < 1><0x00000155>    DW_TAG_array_type <abbrev 7>
                       DW_AT_type                  <0x00000149> Refers to: FILE
-                      DW_AT_sibling               <0x00000160>
+                      DW_AT_sibling               <0x00000160> Refers to: _iob
 < 2><0x0000015e>      DW_TAG_subrange_type <abbrev 8>
 < 1><0x00000160>    DW_TAG_variable <abbrev 9>
                       DW_AT_name                  _iob
@@ -132,7 +132,7 @@ LOCAL_SYMBOLS:
                       DW_AT_byte_size             8
                       DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                       DW_AT_decl_line             0x00000004
-                      DW_AT_sibling               <0x00000193>
+                      DW_AT_sibling               <0x00000193> Refers to: main
 < 2><0x0000017e>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  a
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c

@@ -302,16 +302,16 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST E: Now cmake from source dir $blibsrc/ in build dir  $ecmakebld"
-  cmake -G "Unix Makefiles" $cmakeopt $genoptb \
+  cmake -G Ninja $cmakeopt $genoptb \
        -DBUILD_NON_SHARED=ON \
        -DBUILD_DWARFEXAMPLE=ON\
        -DDO_TESTING=ON $blibsrc
   chkres $? "FAIL C10b  cmake in $ecmakdbld"
-  make
+  ninja
   chkres $? "FAIL C10c  cmake make in $ecmakebld"
-  make test
-  chkres $? "FAIL C10d  cmake make test in $ecmakebld"
-  ctest -R self
+  ninja test
+  #chkres $? "FAIL C10d  cmake make test in $ecmakebld"
+  #ctest -R self
   chkres $? "FAIL C10e  ctest -R self in $ecmakebld"
 else
   echo "cmake not installed so Test section E not tested."

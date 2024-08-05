@@ -116,6 +116,9 @@ builddwarfdump() {
   if [ $failcount -eq 0 ]
   then
       echo "PASS Build dwarfdump"
+  else
+      echo "FAIL  FAIL Build dwarfdump give up"
+      exit 1
   fi
 }
 
@@ -125,10 +128,14 @@ rundistcheck()
   cd $here
   chkres $? "Q FAIL: scripts/buildandreleasetest.sh FAIL"
   sh scripts/buildandreleasetest.sh $1 $nonstdprintf
-  chkres $? "R FAIL: scripts/buildandreleasetest.sh FAIL"
+  r=$?
+  chkres $r "R FAIL: scripts/buildandreleasetest.sh FAIL"
   if [ $failcount -eq 0 ]
   then
-      echo "PASS run-all-tests.sh rundistcheck"
+    echo "PASS run-all-tests.sh rundistcheck"
+  else
+    echo "Exit rundistcheck"
+    exit 1
   fi
 }
 
@@ -161,6 +168,9 @@ buildreadelfobj() {
   if [ $failcount -eq 0 ]
   then
       echo "PASS run-all-tests.sh buildreadelfobj"
+  else
+    echo "Exit buildreadelfobj"
+    exit 1
   fi
 }
 
@@ -192,6 +202,11 @@ runfullddtest() {
       echo "PASS full run-all-tests.sh regressiontests"
   else
       echo "FAIL count $failcount full run-all-tests.sh regressiontests"
+      if [ $r -ne 0 ]
+      then
+        echo "Stopping after RUNALL.sh"
+        exit 1
+      fi
   fi
 }
 
@@ -201,21 +216,41 @@ if [ -d $ddsrc ]
 then
   builddwarfdump $argval $nonstdprintf
   rundistcheck  $argval $nonstdprintf
-  chkres $? "FAIL rundistcheck"
+  r=$?
+  chkres $r "FAIL rundistcheck"
+  if [ $r -ne 0 ]
+  then
+    echo "Stopping after distcheck"
+    exit 1
+  fi
+  
 else
   echo "dwarfdump make check etc not run"
 fi
 if [ -d $rosrc ]
 then
   buildreadelfobj
-  chkres $? "FAIL buildreadelfobj"
+  r=$?
+  chkres $r "FAIL buildreadelfobj"
+  if [ $r -ne 0 ]
+  then
+    echo "Stopping after buildreadelfobj"
+    exit 1
+  fi
+  
 else
   echo "readelfobj make check etc not run"
 fi
 if [ -d $rtestsrc ]
 then
   runfullddtest $argval $nonstdprintf
-  chkres $? "FAIL runddtest"
+  r=$?
+  chkres $r "FAIL runddtest"
+  if [ $r -ne 0 ]
+  then
+    echo "Stopping after buildreadelfobj"
+    exit 1
+  fi
 else
   echo "dwarfdump regressiontests not run"
 fi
