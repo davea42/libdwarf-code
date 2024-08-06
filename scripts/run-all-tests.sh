@@ -181,8 +181,11 @@ runfullddtest() {
   cd $ddtestdir
   chkres $? "H FAIL: cd $ddtestdir failed , giving up."
 
+  # so big diff files just do cmp
+  export SUPPRESSBIGDIFFS=y
   $rtestsrc/INITIALSETUP.sh $rtestsrc  
   chkres $? "J FAIL  INITIALSETUP failed $ddtestdir. giving up."
+  unset SUPPRESSBIGDIFFS
 
   $rtestsrc/RUNALL.sh
   chkres $? "J FAIL  RUNALL failed $ddtestdir."
