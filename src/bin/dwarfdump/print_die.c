@@ -5391,7 +5391,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         name for the linkonce */
     if (is_class_reference)  {
         tres = dd_trace_abstract_origin_etc(dbg,tag,die,
-            dieprint_cu_goffset, 
+            dieprint_cu_goffset,
             theform,
             attr,
             attrib, srcfiles,
@@ -5430,7 +5430,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&lesb));
         esb_destructor(&lesb);
-    } 
+    }
     res = 0; /* value above no longer relevant */
 
     if (!print_else_name_match) {
@@ -8060,7 +8060,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         Dwarf_Half attr = 0;
         /*  DW_FORM_ref_addr is not accessed thru formref: ** it is an
             address (global section offset) in ** the .debug_info
-            section.  
+            section.
             DWARF2 incorrectly specifed the value here
             as being the size of an address, which never made any
             sense: it has always been an offset of a DIE somewhere in .debug_info .

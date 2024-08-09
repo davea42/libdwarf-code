@@ -69,8 +69,6 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
 
-
-
 int
 dd_trace_abstract_origin_etc(
     Dwarf_Debug dbg,
@@ -107,11 +105,11 @@ dd_trace_abstract_origin_etc(
     int            tres = 0;
 
     esb_constructor_fixed(&lesb,typebuf,
-            sizeof(typebuf));
+        sizeof(typebuf));
     tres = get_attr_value(dbg, tag, die,
-            dieprint_cu_goffset,attrib, srcfiles,
-            srcfiles_count, &lesb,
-            glflags.show_form_used,glflags.verbose,err);
+        dieprint_cu_goffset,attrib, srcfiles,
+        srcfiles_count, &lesb,
+        glflags.show_form_used,glflags.verbose,err);
     if (tres == DW_DLV_ERROR) {
         struct esb_s m;
         const char *n =
@@ -436,9 +434,9 @@ dd_trace_abstract_origin_etc(
             }
             if (found == DW_DLV_OK) {
                 dd_safe_strcpy(glflags.PU_name,
-                        sizeof(glflags.PU_name),
-                        esb_get_string(&pn),
-                        esb_string_len(&pn));
+                    sizeof(glflags.PU_name),
+                    esb_get_string(&pn),
+                    esb_string_len(&pn));
             }
             esb_destructor(&pn);
         }
@@ -452,7 +450,7 @@ dd_trace_abstract_origin_etc(
         if (smres != DW_DLV_OK) {
             if (smres == DW_DLV_ERROR) {
                 esb_append(valname,
-                    " ERROR reading target offset: "); 
+                    " ERROR reading target offset: ");
                 dwarf_dealloc_error(dbg,*err);
                 *err = 0;
             }
@@ -465,7 +463,7 @@ dd_trace_abstract_origin_etc(
                 char *name = 0;
                 tares = dwarf_diename(target_die,&name,err);
                 if (tares == DW_DLV_OK) {
-                    esb_append(valname," Refers to: "); 
+                    esb_append(valname," Refers to: ");
                     esb_append(valname,name);
                 } else if (tares == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*err);
@@ -473,14 +471,14 @@ dd_trace_abstract_origin_etc(
                 } else {
 #if 0
                     Be quiet here. Useless message, one thinks.
-                    esb_append(valname," No target name available. "); 
+                    esb_append(valname," No target name available. ");
 #endif
                 }
             } else {
                 if (tares == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*err);
                     *err = 0;
-                    esb_append(valname," Reference fails"); 
+                    esb_append(valname," Reference fails");
                 }
             }
             if (target_die) {
