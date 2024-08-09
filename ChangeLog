@@ -1,3 +1,39 @@
+2024-08-09:  David Anderson
+    commit 24285c53118e24a620e1004e2025e2c613932b4b
+
+    Removing trailing whitespace and fixing a couple
+    indent mistakes.
+            modified:   dd_trace_abstract_origin_etc.c
+            modified:   print_die.c
+
+2024-08-06:  David Anderson
+    commit e16794254d24364862bfbf54deeaf9de9326dc99
+
+    For the 20000 or so regressiontests do larger diff using
+    cmp as on many systems multiple differences affecting
+    many tests will be painfully slow.  Affects
+    tests generating text over 30MB (some individual
+    tests generate 3GB to 5GB of text)..
+            modified:   scripts/run-all-tests.sh
+
+2024-08-05:  David Anderson
+    commit b6140a57f20ce4b3680f10468aeeb0615d5ef296
+
+    Adjusted cmake build to use Ninja instead of Unix Makefiles
+            modified:   scripts/buildandreleasetest.sh
+    Now stops early on fail.
+            modified:   scripts/run-all-tests.sh
+    New baselines due to output of Refers to:
+    by dwarfdump.
+            modified:   test/testobjLE32PE.base
+            modified:   test/testuriLE64ELf.base
+
+2024-08-03:  David Anderson
+    commit 52650573c771588ece2d027a623951f2a53f34c9
+
+    Now with improvements in checking by dwarfdump.
+            modified:   ChangeLog
+
 2024-08-03:  David Anderson
     commit 526b8792a274c28a83929dc66c34375b50265415
 
