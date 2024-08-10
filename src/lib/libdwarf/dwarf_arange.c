@@ -629,7 +629,7 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
         }
     }
     cres = _dwarf_length_of_cu_header(dbg, offset,
-        true, &headerlen,error);
+        TRUE, &headerlen,error);
     if (cres != DW_DLV_OK) {
         return cres;
     }
@@ -671,11 +671,11 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
 
 /*
     This function takes a Dwarf_Arange, and returns
-    true if it is not NULL.  It also stores the start
+    TRUE if it is not NULL.  It also stores the start
     address of the range in *start, the length of the
     range in *length, and the offset of the first die
     in the compilation-unit in *cu_die_offset.  It
-    returns false on error.
+    returns FALSE on error.
     If cu_die_offset returned ensures .debug_info loaded so
     the cu_die_offset is meaningful.
 
@@ -723,7 +723,7 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
             }
         }
         cres = _dwarf_length_of_cu_header(dbg, offset,
-            true, &headerlen,error);
+            TRUE, &headerlen,error);
         if (cres != DW_DLV_OK) {
             return cres;
         }

@@ -48,7 +48,7 @@
     output arch, not the host (unless the two essentially match).  */
 #define MIN_INST_LENGTH 4
 #endif
-#define DEFAULT_IS_STMT false
+#define DEFAULT_IS_STMT FALSE
 /*  line base and range are temporarily defines.
     They need to be calculated later. */
 #define LINE_BASE   -1

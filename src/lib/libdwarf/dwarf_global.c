@@ -1514,7 +1514,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             return DW_DLV_ERROR;
         }
 #endif /* 0 */
-        cres = _dwarf_length_of_cu_header(dbg, cuhdr_off,true,
+        cres = _dwarf_length_of_cu_header(dbg, cuhdr_off,TRUE,
             &headerlen,error);
         if (cres != DW_DLV_OK) {
             return cres;

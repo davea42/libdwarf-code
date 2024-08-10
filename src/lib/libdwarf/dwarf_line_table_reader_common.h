@@ -382,7 +382,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         unsigned tab_count =
             sizeof(dwarf_standard_opcode_operand_count);
 
-        int operand_ck_fail = true;
+        int operand_ck_fail = TRUE;
         if (line_context->lc_std_op_count > tab_count) {
             _dwarf_print_header_issue(dbg,
                 "Too many standard operands in linetable header: ",
@@ -450,7 +450,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                             0,0,0, err_count_out);
                     }
                 }
-                operand_ck_fail = false;
+                operand_ck_fail = FALSE;
             }
         }
         if (operand_ck_fail) {
@@ -1363,7 +1363,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Small *section_start,
     Dwarf_Line_Context line_context,
     Dwarf_Half address_size,
-    Dwarf_Bool doaddrs, /* Only true if SGI IRIX rqs calling. */
+    Dwarf_Bool doaddrs, /* Only TRUE if SGI IRIX rqs calling. */
     Dwarf_Bool dolines,
     Dwarf_Bool is_single_table,
     Dwarf_Bool is_actuals_table,
@@ -1409,7 +1409,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Line *block_line = 0;
 
     /*  Mark a line record as being DW_LNS_set_address */
-    Dwarf_Bool is_addr_set = false;
+    Dwarf_Bool is_addr_set = FALSE;
 
     (void)orig_line_ptr;
     (void)err_count_out;
@@ -1585,7 +1585,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 /* Mark a line record as being DW_LNS_set_address */
                 curr_line->li_l_data.li_is_addr_set =
                     is_addr_set;
-                is_addr_set = false;
+                is_addr_set = FALSE;
                 curr_line->li_address = regs.lr_address;
                 curr_line->li_l_data.li_file =
                     (Dwarf_Signed) regs.lr_file;
@@ -1632,9 +1632,9 @@ read_line_table_program(Dwarf_Debug dbg,
                 curr_line = 0;
             }
 
-            regs.lr_basic_block = false;
-            regs.lr_prologue_end = false;
-            regs.lr_epilogue_begin = false;
+            regs.lr_basic_block = FALSE;
+            regs.lr_prologue_end = FALSE;
+            regs.lr_epilogue_begin = FALSE;
             regs.lr_discriminator = 0;
 #ifdef PRINTING_DETAILS
 #endif /* PRINTING_DETAILS */
@@ -1665,7 +1665,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     /* Mark a line record as DW_LNS_set_address */
                     curr_line->li_l_data.li_is_addr_set =
                         is_addr_set;
-                    is_addr_set = false;
+                    is_addr_set = FALSE;
 
                     curr_line->li_address = regs.lr_address;
                     curr_line->li_l_data.li_file =
@@ -1712,9 +1712,9 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line = 0;
                 }
 
-                regs.lr_basic_block = false;
-                regs.lr_prologue_end = false;
-                regs.lr_epilogue_begin = false;
+                regs.lr_basic_block = FALSE;
+                regs.lr_prologue_end = FALSE;
+                regs.lr_epilogue_begin = FALSE;
                 regs.lr_discriminator = 0;
                 }
                 break;
@@ -1903,7 +1903,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 break;
             case DW_LNS_set_basic_block:{
-                regs.lr_basic_block = true;
+                regs.lr_basic_block = TRUE;
 #ifdef PRINTING_DETAILS
                 _dwarf_printf(dbg,
                     "DW_LNS_set_basic_block\n");
@@ -2018,12 +2018,12 @@ read_line_table_program(Dwarf_Debug dbg,
 
                 /* New in DWARF3 */
             case DW_LNS_set_prologue_end:{
-                regs.lr_prologue_end = true;
+                regs.lr_prologue_end = TRUE;
                 }
                 break;
                 /* New in DWARF3 */
             case DW_LNS_set_epilogue_begin:{
-                regs.lr_epilogue_begin = true;
+                regs.lr_epilogue_begin = TRUE;
 #ifdef PRINTING_DETAILS
                 _dwarf_printf(dbg,
                     "DW_LNS_set_prologue_end set true.\n");
@@ -2395,7 +2395,7 @@ read_line_table_program(Dwarf_Debug dbg,
             switch (ext_opcode) {
 
             case DW_LNE_end_sequence:{
-                regs.lr_end_sequence = true;
+                regs.lr_end_sequence = TRUE;
                 if (dolines) {
                     curr_line = (Dwarf_Line)
                         _dwarf_get_alloc(dbg, DW_DLA_LINE, 1);
@@ -2481,7 +2481,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
 
                 /* Mark a line record as being DW_LNS_set_address */
-                is_addr_set = true;
+                is_addr_set = TRUE;
 #ifdef PRINTING_DETAILS
                 {
                 dwarfstring sadd;
@@ -2508,7 +2508,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         DW_LNS_set_address */
                     curr_line->li_l_data.li_is_addr_set
                         = is_addr_set;
-                    is_addr_set = false;
+                    is_addr_set = FALSE;
                     curr_line->li_address = regs.lr_address;
 #ifdef __sgi /* SGI IRIX ONLY */
                     /*  ptrdiff_t is generated but not named */

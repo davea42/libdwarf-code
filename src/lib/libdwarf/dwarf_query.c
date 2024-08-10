@@ -877,10 +877,10 @@ dwarf_hasattr(Dwarf_Die die,
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
-        *return_bool = false;
-        return DW_DLV_OK;
+        *return_bool = FALSE;
+    } else {
+        *return_bool = TRUE;
     }
-    *return_bool = true;
     return DW_DLV_OK;
 }
 

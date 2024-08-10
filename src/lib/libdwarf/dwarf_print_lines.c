@@ -915,14 +915,14 @@ print_actuals_and_locals(Dwarf_Debug dbg,
     dwarfstring_reset(&m8);
 
     {
-        Dwarf_Bool doaddrs = false;
-        Dwarf_Bool dolines = true;
+        Dwarf_Bool doaddrs = FALSE;
+        Dwarf_Bool dolines = TRUE;
 
         if (!line_ptr_actuals) {
             /* Normal single level line table. */
 
-            Dwarf_Bool is_single_table = true;
-            Dwarf_Bool is_actuals_table = false;
+            Dwarf_Bool is_single_table = TRUE;
+            Dwarf_Bool is_actuals_table = FALSE;
             print_line_header(dbg, is_single_table, is_actuals_table);
             res = read_line_table_program(dbg,
                 line_ptr, line_ptr_end, orig_line_ptr,
@@ -939,8 +939,8 @@ print_actuals_and_locals(Dwarf_Debug dbg,
                 return res;
             }
         } else {
-            Dwarf_Bool is_single_table = false;
-            Dwarf_Bool is_actuals_table = false;
+            Dwarf_Bool is_single_table = FALSE;
+            Dwarf_Bool is_actuals_table = FALSE;
             if (line_context->lc_version_number !=
                 EXPERIMENTAL_LINE_TABLES_VERSION) {
                 dwarf_srclines_dealloc_b(line_context);
@@ -964,7 +964,7 @@ print_actuals_and_locals(Dwarf_Debug dbg,
                 return res;
             }
             if (line_context->lc_actuals_table_offset > 0) {
-                is_actuals_table = true;
+                is_actuals_table = TRUE;
                 /* Read Actuals */
 
                 print_line_header(dbg, is_single_table,

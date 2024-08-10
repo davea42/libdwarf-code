@@ -31,8 +31,6 @@ Portions Copyright (C) 2008-2023  David Anderson. All Rights Reserved.
 #ifndef DWARF_BASE_TYPES_H
 #define DWARF_BASE_TYPES_H
 
-#define true                    1
-#define false                   0
 #ifndef TRUE
 #define TRUE 1
 #endif

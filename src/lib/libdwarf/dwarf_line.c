@@ -60,11 +60,11 @@ static struct Dwarf_Line_Registers_s
     /* Dwarf_Unsigned lr_file */ 1,
     /* Dwarf_Unsigned lr_line */  1,
     /* Dwarf_Unsigned lr_column */  0,
-    /* Dwarf_Bool lr_is_stmt */  false,
-    /* Dwarf_Bool lr_basic_block */  false,
-    /* Dwarf_Bool lr_end_sequence */  false,
-    /* Dwarf_Bool lr_prologue_end */  false,
-    /* Dwarf_Bool lr_epilogue_begin */  false,
+    /* Dwarf_Bool lr_is_stmt */  FALSE,
+    /* Dwarf_Bool lr_basic_block */  FALSE,
+    /* Dwarf_Bool lr_end_sequence */  FALSE,
+    /* Dwarf_Bool lr_prologue_end */  FALSE,
+    /* Dwarf_Bool lr_epilogue_begin */  FALSE,
     /* Dwarf_Small lr_isa */  0,
     /* Dwarf_Unsigned lr_op_index  */  0,
     /* Dwarf_Unsigned lr_discriminator */  0,
@@ -607,7 +607,7 @@ dwarf_srcfiles(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-    line_context->lc_new_style_access = false;
+    line_context->lc_new_style_access = FALSE;
     /*  We are in dwarf_srcfiles() */
     {
         Dwarf_Small *line_ptr_out = 0;
@@ -939,8 +939,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         /* ASSERT: lc_table_count == 1 or lc_table_count == 0 */
         int err_count_out = 0;
         /* Normal style (single level) line table. */
-        Dwarf_Bool is_actuals_table = false;
-        Dwarf_Bool local_is_single_table = true;
+        Dwarf_Bool is_actuals_table = FALSE;
+        Dwarf_Bool local_is_single_table = TRUE;
         res = read_line_table_program(dbg,
             line_ptr, line_ptr_end, orig_line_ptr,
             section_start,
@@ -980,11 +980,11 @@ _dwarf_internal_srclines(Dwarf_Die die,
             *linecount_actuals = 0;
         }
     } else {
-        Dwarf_Bool is_actuals_table = false;
-        Dwarf_Bool local2_is_single_table = false;
+        Dwarf_Bool is_actuals_table = FALSE;
+        Dwarf_Bool local2_is_single_table = FALSE;
         int err_count_out = 0;
 
-        line_context->lc_is_single_table  = false;
+        line_context->lc_is_single_table  = FALSE;
         /*  Two-level line table.
             First read the logicals table. */
         res = read_line_table_program(dbg,
@@ -1021,7 +1021,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         }
         if (is_new_interface) {
             /* ASSERT: linebuf_actuals == NULL  */
-            is_actuals_table = true;
+            is_actuals_table = TRUE;
             /* The call requested an actuals table
                 and one is present. So now read that one. */
             res = read_line_table_program(dbg,
@@ -1193,7 +1193,7 @@ dwarf_srclines_b(Dwarf_Die die,
     Dwarf_Line *linebuf = 0;
     Dwarf_Line *linebuf_actuals = 0;
     Dwarf_Signed linecount = 0;
-    Dwarf_Bool is_new_interface = true;
+    Dwarf_Bool is_new_interface = TRUE;
     int res = 0;
     Dwarf_Unsigned tcount = 0;
 
@@ -1206,11 +1206,11 @@ dwarf_srclines_b(Dwarf_Die die,
         &linecount,
         &linebuf_actuals,
         &linecount_actuals,
-        /* addrlist= */ false,
-        /* linelist= */ true,
+        /* addrlist= */ FALSE,
+        /* linelist= */ TRUE,
         error);
     if (res == DW_DLV_OK) {
-        (*line_context)->lc_new_style_access = true;
+        (*line_context)->lc_new_style_access = TRUE;
     }
     if (linecount_actuals) {
         tcount++;

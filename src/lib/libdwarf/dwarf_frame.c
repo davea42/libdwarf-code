@@ -233,8 +233,8 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
 
     If successful, returns DW_DLV_OK
         And sets returned_count thru the pointer
-        if make_instr is true.
-        If make_instr is false returned_count
+        if make_instr is TRUE.
+        If make_instr is FALSE returned_count
         should NOT be used by the caller (returned_count
         is set to 0 thru the pointer by this routine...)
     If unsuccessful, returns DW_DLV_ERROR
@@ -243,16 +243,16 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     It does not do a whole lot of input validation being a private
     function.  Please make sure inputs are valid.
 
-    (1) If make_instr is true, it makes a list of pointers to
+    (1) If make_instr is TRUE, it makes a list of pointers to
     Dwarf_Frame_Op structures containing the frame instructions
     executed.  A pointer to this list is returned in ret_frame_instr.
-    Make_instr is true only when a list of frame instructions is to be
+    Make_instr is TRUE only when a list of frame instructions is to be
     returned.  In this case since we are not interested
     in the contents
     of the table, the input Cie can be NULL.  This is the only case
     where the input Cie can be NULL.
 
-    (2) If search_pc is true, frame instructions are executed till
+    (2) If search_pc is TRUE, frame instructions are executed till
     either a location is reached that is greater than the
     search_pc_val
     provided, or all instructions are executed.  At this point the
@@ -263,14 +263,14 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     defined by a Cie.  In this case, the Dwarf_Cie pointer cie, is
     NULL.  For an FDE, however, cie points to the associated Cie.
 
-    (4) If search_pc is true and (has_more_rows and subsequent_pc
+    (4) If search_pc is TRUE and (has_more_rows and subsequent_pc
         are non-null) then:
-            has_more_rows is set true if there are instruction
+            has_more_rows is set TRUE if there are instruction
             bytes following the detection of search_over.
             If all the instruction bytes have been seen
-            then *has_more_rows is set false.
+            then *has_more_rows is set FALSE.
 
-            If *has_more_rows is true then *subsequent_pc
+            If *has_more_rows is TRUE then *subsequent_pc
             is set to the pc value that is the following
             row in the table.
 
@@ -395,9 +395,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     struct Dwarf_Reg_Rule_s cfa_reg;
 
     /*  This is used to end executing frame instructions.  */
-    /*  Becomes true when search_pc is true and current_loc */
+    /*  Becomes TRUE when search_pc is TRUE and current_loc */
     /*  is greater than search_pc_val.  */
-    Dwarf_Bool search_over = false;
+    Dwarf_Bool search_over = FALSE;
 
     Dwarf_Addr possible_subsequent_pc = 0;
 
@@ -411,7 +411,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Frame stack_table = NULL;
     Dwarf_Frame top_stack = NULL;
 
-    /*  These are used only when make_instr is true. Curr_instr is a
+    /*  These are used only when make_instr is TRUE. Curr_instr is a
         pointer to the current frame instruction executed.
         Curr_instr_ptr, head_instr_list, and curr_instr_list are
         used to form a chain of Dwarf_Frame_Op structs.
@@ -441,7 +441,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         using an alignment factor is encountered when this
         flag is set, an error is returned because the Cie
         did not have a valid augmentation. */
-    Dwarf_Bool need_augmentation = false;
+    Dwarf_Bool need_augmentation = FALSE;
     Dwarf_Unsigned instr_area_length = 0;
 
     Dwarf_Unsigned i = 0;
@@ -1792,14 +1792,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         so we are not done with rows. */
     if ((instr_ptr == final_instr_ptr) && !search_over) {
         if (has_more_rows) {
-            *has_more_rows = false;
+            *has_more_rows = FALSE;
         }
         if (subsequent_pc) {
             *subsequent_pc = 0;
         }
     } else {
         if (has_more_rows) {
-            *has_more_rows = true;
+            *has_more_rows = TRUE;
         }
         if (subsequent_pc) {
             *subsequent_pc = possible_subsequent_pc;
@@ -1968,7 +1968,7 @@ dwarf_get_cie_index(
     definition of the cie_id in an fde
         is the distance back from the address of the
         value to the cie.
-    Or 0 if this is a true cie.
+    Or 0 if this is a TRUE cie.
     Non standard dwarf, designed this way to be
     convenient at run time for an allocated
     (mapped into memory as part of the running image) section.
@@ -2409,8 +2409,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             dbg->de_frame_rule_initial_value);
         _dwarf_init_reg_rules_ru(&cie->ci_initial_table->fr_cfa_rule,
             0,1,dbg->de_frame_rule_initial_value);
-        res = _dwarf_exec_frame_instr( /* make_instr= */ false,
-            /* search_pc */ false,
+        res = _dwarf_exec_frame_instr( /* make_instr= */ FALSE,
+            /* search_pc */ FALSE,
             /* search_pc_val */ 0,
             /* location */ 0,
             instrstart,
@@ -2435,8 +2435,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
             return DW_DLV_ERROR;
         }
-        res = _dwarf_exec_frame_instr( /* make_instr= */ false,
-            /* search_pc */ true,
+        res = _dwarf_exec_frame_instr( /* make_instr= */ FALSE,
+            /* search_pc */ TRUE,
             /* search_pc_val */ pc_requested,
             fde->fd_initial_location,
             fde->fd_fde_instr_start,
@@ -2671,7 +2671,7 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
         fde->fd_fde_pc_requested != pc_requested) {
         if (fde->fd_have_fde_tab) {
             _dwarf_free_fde_table(fde_table);
-            fde->fd_have_fde_tab = false;
+            fde->fd_have_fde_tab = FALSE;
         }
         table_real_data_size = dbg->de_frame_reg_rules_entry_count;
         res = _dwarf_initialize_fde_table(dbg, fde_table,
@@ -2681,7 +2681,7 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
         }
         if (table_column >= table_real_data_size) {
             _dwarf_free_fde_table(fde_table);
-            fde->fd_have_fde_tab = false;
+            fde->fd_have_fde_tab = FALSE;
             _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
             return DW_DLV_ERROR;
         }
@@ -2695,7 +2695,7 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
             error);
         if (res != DW_DLV_OK) {
             _dwarf_free_fde_table(fde_table);
-            fde->fd_have_fde_tab = false;
+            fde->fd_have_fde_tab = FALSE;
             return res;
         }
     }
@@ -2717,7 +2717,7 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
         so we insist on it being present, we don't test it. */
     *value_type = fde_table->fr_reg[table_column].ru_value_type;
     *offset_relevant = (fde_table->fr_reg[table_column].ru_is_offset);
-    fde->fd_have_fde_tab = true;
+    fde->fd_have_fde_tab = TRUE;
     fde->fd_fde_pc_requested = pc_requested;
     return DW_DLV_OK;
 
@@ -2977,8 +2977,8 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
         return DW_DLV_ERROR;
     }
-    res = _dwarf_exec_frame_instr( /* make_instr= */ true,
-        /* search_pc */ false,
+    res = _dwarf_exec_frame_instr( /* make_instr= */ TRUE,
+        /* search_pc */ FALSE,
         /* search_pc_val */ 0,
         /* location */ 0,
         instr_start,
@@ -3440,7 +3440,7 @@ _dwarf_fde_destructor(void *f)
     }
     if (fde->fd_have_fde_tab) {
         _dwarf_free_fde_table(&fde->fd_fde_table);
-        fde->fd_have_fde_tab = false;
+        fde->fd_have_fde_tab = FALSE;
     }
 }
 void
