@@ -166,7 +166,7 @@ test1(Dwarf_Debug dbg)
         end,DW_DLE_CORRUPT_GNU_DEBUGID_STRING,
         &error);
     check_svalid(DW_DLV_OK,res,
-        0,dwarf_errno(error),
+        0,(int)dwarf_errno(error),
         __LINE__,__FILE__);
 
     end = testbuffer +10;
@@ -175,7 +175,7 @@ test1(Dwarf_Debug dbg)
         end,DW_DLE_STRING_NOT_TERMINATED,
         &error);
     check_svalid(DW_DLV_ERROR, res,
-        DW_DLE_STRING_NOT_TERMINATED, dwarf_errno(error),
+        DW_DLE_STRING_NOT_TERMINATED, (int)dwarf_errno(error),
         __LINE__,__FILE__);
 
     end = testbuffer +10;
@@ -184,7 +184,7 @@ test1(Dwarf_Debug dbg)
         end,DW_DLE_CORRUPT_GNU_DEBUGID_STRING,
         &error);
     check_svalid(DW_DLV_ERROR,res,
-        DW_DLE_CORRUPT_GNU_DEBUGID_STRING,  dwarf_errno(error),
+        DW_DLE_CORRUPT_GNU_DEBUGID_STRING, (int)dwarf_errno(error),
         __LINE__,__FILE__);
 
 }

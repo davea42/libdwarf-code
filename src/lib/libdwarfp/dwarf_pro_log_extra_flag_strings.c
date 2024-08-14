@@ -184,14 +184,14 @@ update_named_field(Dwarf_P_Debug dbg,
         dbg->de_line_inits.pi_line_range = (int)v;
     } else if (!strcmp(name,"linetable_version")) {
         dbg->de_line_inits.pi_linetable_version = (unsigned)v;
-        dbg->de_output_version = (unsigned)v;
+        dbg->de_output_version = (unsigned char)v;
     } else if (!strcmp(name,"segment_selector_size")) {
         dbg->de_line_inits.pi_segment_selector_size = (unsigned)v;
     } else if (!strcmp(name,"segment_size")) {
         dbg->de_line_inits.pi_segment_size = (unsigned)v;
     } else if (!strcmp(name,"address_size")) {
         dbg->de_line_inits.pi_address_size = (unsigned)v;
-        dbg->de_pointer_size = (unsigned)v;
+        dbg->de_pointer_size = (unsigned char)v;
     } else {
 #ifdef TESTING
         printf("ERROR  due to unknown string \"%s\", line %d %s\n",
@@ -237,13 +237,13 @@ update_named_value(Dwarf_P_Debug dbg, dwarfstring*cms,
         return DW_DLV_ERROR;
     }
     slen = cp - str;
-    dwarfstring_append_length(&cmsname,str,slen);
+    dwarfstring_append_length(&cmsname,str,(size_t)slen);
     cp++;
     value_start = cp;
     for ( ; *cp && *cp != ' '; cp++) { }
-    slen = cp - value_start;
+    slen = (unsigned int)(cp - value_start);
     if (slen) {
-        dwarfstring_append_length(&cmsvalue,value_start,slen);
+        dwarfstring_append_length(&cmsvalue,value_start,(size_t)slen);
     } else {
         dwarfstring_destructor(&cmsname);
         dwarfstring_destructor(&cmsvalue);
@@ -299,7 +299,7 @@ _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
         dwarfstring_reset(&cms);
         find_next_comma(nextcharloc,&nextcomma);
         {
-            unsigned len = nextcomma - nextcharloc;
+            unsigned len = (unsigned)(nextcomma - nextcharloc);
             if (len > 0) {
                 dwarfstring_append_length(&cms,(char *)nextcharloc,
                     len);

@@ -1054,13 +1054,13 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     if (lkind == DW_LKIND_GNU_exp_list) {
         count_res = _dwarf_get_loclist_lle_count_dwo(dbg,
             loclist_offset,
-            address_size,
-            lkind,
+            (Dwarf_Half)address_size,
+            (Dwarf_Half)lkind,
             &loclist_count,
             error);
     } else {
         count_res = _dwarf_get_loclist_lle_count(dbg,
-            loclist_offset, address_size,
+            loclist_offset, (Dwarf_Half)address_size,
             &loclist_count,
             error);
     }

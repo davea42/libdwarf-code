@@ -825,7 +825,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         return DW_DLV_NO_ENTRY;
     }
 
-    address_size = _dwarf_get_address_size(dbg, die);
+    address_size = (Dwarf_Half)_dwarf_get_address_size(dbg, die);
     resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr,
         error);
     if (resattr != DW_DLV_OK) {
@@ -895,7 +895,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-    line_context->lc_new_style_access = is_new_interface;
+    line_context->lc_new_style_access = 
+        (unsigned char)is_new_interface;
     line_context->lc_compilation_directory = comp_dir;
     /*  We are in dwarf_internal_srclines() */
     {

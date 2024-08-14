@@ -229,8 +229,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         err, section_length,section_end);
     line_ptr_end = line_ptr + total_length;
     line_context->lc_line_ptr_end = line_ptr_end;
-    line_context->lc_length_field_length = local_length_size +
-        local_extension_size;
+    line_context->lc_length_field_length = 
+        (Dwarf_Half)(local_length_size + local_extension_size);
     line_context->lc_section_offset = starting_line_ptr -
         dbg->de_debug_line.dss_data;
     /*  ASSERT: line_context->lc_length_field_length == line_ptr

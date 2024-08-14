@@ -454,14 +454,14 @@ main(int argc, char **argv)
         }
     }
     len = strlen(path);
-    local_safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
+    local_safe_strcpy(pathbuf,path,sizeof(pathbuf),(unsigned)len);
     local_safe_strcpy(pathbuf+len,(char *)libpath,
-        sizeof(pathbuf) -len -1,
+        (unsigned)(sizeof(pathbuf) -len -1),
         (unsigned)strlen(libpath));
 
     local_safe_strcpy(pathbuferrm,path,sizeof(pathbuferrm),len);
     local_safe_strcpy(pathbuferrm+len,(char *)srchdr,
-        sizeof(pathbuferrm) -len -1,
+        (unsigned)(sizeof(pathbuferrm) -len -1),
         (unsigned)strlen(srchdr));
     path = pathbuf;
     errpath = pathbuferrm;

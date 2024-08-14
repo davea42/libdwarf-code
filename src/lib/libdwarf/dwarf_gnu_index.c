@@ -465,7 +465,7 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
             see dwarf_util.h  */
         gib->ib_index = i;
         gib->ib_head  = head;
-        gib->ib_offset_size         = offsetsize;
+        gib->ib_offset_size = (Dwarf_Half)offsetsize;
         gib->ib_block_length        = length;
         gib->ib_block_length_offset = dataoffset;
         dataoffset += offsetsize + extensize;
@@ -780,7 +780,7 @@ dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head head,
         /* DW_GNUIKIND_ */
         unsigned v = be->ge_flag_byte & 0x70;
         v = v>>4;
-        *typeofentry = v;
+        *typeofentry = (unsigned char)v;
     }
     return DW_DLV_OK;
 }

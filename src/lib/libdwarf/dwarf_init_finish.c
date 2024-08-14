@@ -107,7 +107,7 @@ int
 dwarf_set_reloc_application(int apply)
 {
     int oldval = _dwarf_apply_relocs;
-    _dwarf_apply_relocs = apply;
+    _dwarf_apply_relocs = (Dwarf_Small)apply;
     return oldval;
 }
 
@@ -116,7 +116,7 @@ dwarf_set_stringcheck(int newval)
 {
     int oldval = _dwarf_assume_string_in_bounds;
 
-    _dwarf_assume_string_in_bounds = newval;
+    _dwarf_assume_string_in_bounds = (Dwarf_Small)newval;
     return oldval;
 }
 
@@ -178,7 +178,7 @@ add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     secdata->dss_reloc_addr = doas->as_addr;
     secdata->dss_reloc_symtab = doas->as_link;
     secdata->dss_reloc_link = doas->as_link;
-    secdata->dss_is_rela = is_rela;
+    secdata->dss_is_rela = (char)is_rela;
 }
 
 #if 0 /* dump_bytes */

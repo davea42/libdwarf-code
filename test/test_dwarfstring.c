@@ -185,12 +185,15 @@ test1(void)
     d = dwarfstring_string(&g);
     check_string("expected bigstring ",bigstr,d,__LINE__);
     biglen = dwarfstring_strlen(&g);
-    check_value("expected 120  ",strlen(bigstr),biglen,__LINE__);
+    check_value("expected 120  ",(unsigned long)strlen(bigstr),
+        (unsigned long)biglen,__LINE__);
 
     dwarfstring_append_length(&g,"xxyyzz",3);
 
     biglen = dwarfstring_strlen(&g);
-    check_value("expected 123  ",strlen(bigstr)+3,biglen,__LINE__);
+    check_value("expected 123  ",
+        (unsigned long)strlen(bigstr)+3,
+        (unsigned long)biglen,__LINE__);
     dwarfstring_destructor(&g);
     return 0;
 }
@@ -233,7 +236,9 @@ test2(void)
     d = dwarfstring_string(&g);
     check_string("expected bigstring ",bigstr,d,__LINE__);
     biglen = dwarfstring_strlen(&g);
-    check_value("expected 120  ",strlen(bigstr),biglen,__LINE__);
+    check_value("expected 120  ",
+        (unsigned long)strlen(bigstr),
+        (unsigned long)biglen,__LINE__);
     dwarfstring_destructor(&g);
     return 0;
 }
@@ -300,8 +305,8 @@ test4(void)
     d = dwarfstring_string(&g);
     check_string("expected a01234xyz ",(char *)targetmystr,
         d,__LINE__);
-    check_value("expected 9",9,dwarfstring_strlen(&g),__LINE__);
-
+    check_value("expected 9",(unsigned long)9,
+        (unsigned long)dwarfstring_strlen(&g),__LINE__);
     if (d == fixedarea) {
         printf(" FAIL  not reallocated but should  be! line %d ",
             __LINE__);

@@ -310,7 +310,7 @@ translate_to_uri(const char * filename, struct esb_s *out)
         char v[2];
         int c = 0xff & (unsigned char)*cp;
         if (dwarfdump_ctype_table[c]) {
-            v[0] = c;
+            v[0] = (char)c;
             v[1] = 0;
             esb_append(out,v);
         } else {

@@ -137,7 +137,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
         address_size = (Dwarf_Small)dbg->de_debug_addr_address_size;
         offset_size = dbg->de_debug_addr_offset_size;
         tab.da_address_size = address_size;
-        tab.da_length_size = offset_size;
+        tab.da_length_size = (Dwarf_Small)offset_size;
         tab.da_length = section_size;
         tab.da_version = dbg->de_debug_addr_version;
         end_data = section_start + section_size;
