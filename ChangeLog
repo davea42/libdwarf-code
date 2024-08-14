@@ -1,3 +1,55 @@
+2024-08-14:  David Anderson
+    commit 1cf037cb0f990dc904bb6d1e9e2e46d4194c985d
+
+    Each file has 1 to 3 trivial casts added and all
+    involve things whose known range ensures
+    the change is ok (boolean, address-size, and other known things)..
+
+    Changes fix new-ish warnings from MSVC.
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+            modified:   test/test_dwarfstring.c
+            modified:   test/test_errmsglist.c
+            modified:   test/test_linkedtopath.c
+
+2024-08-10:  David Anderson
+    commit 3c8422df4d775a4d5ed4d7422c35688aeb05ca77
+
+    Changed all instances of macro use s follows:
+    true->TRUE
+    false->FALSE
+    and removed the macro defines of true(1) and false(0).
+    It was really strange to have two different names
+    for each idea.
+    The majority of uses were spelled TRUE/FALSE already.
+    The inconsistent usage was present at least as far back
+    as 2016.
+
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarfp/dwarf_pro_line.h
+
+2024-08-09:  David Anderson
+    commit 9f65ccc57a7597c65e881693d8d129c6ab0b68e3
+
+    Latest tiny changes. No logic change.
+            modified:   ChangeLog
+
 2024-08-09:  David Anderson
     commit 24285c53118e24a620e1004e2025e2c613932b4b
 
