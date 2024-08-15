@@ -22,8 +22,8 @@ stsecs=`date '+%s'`
 
 shared=y
 configureopt="--enable-shared --disable-static"
-cmakeopt="-DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO"
-mesonopt="--default-library shared"
+cmakeopt="-DBUILD_SHARED=NO -DBUILD_NON_SHARED=YES"
+mesonopt="--default-library static"
 
 # accomodate differences in cmake install file count:
 # 16 is for 32bit build
@@ -38,7 +38,7 @@ wd=`pwd`
 # including any possibly not used.
 savebart=n
 enablewall=n
-staticbuild=n
+staticbuild=y
 while [ $# -ne 0 ]
 do
   case $1 in
