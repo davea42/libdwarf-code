@@ -1,3 +1,21 @@
+2024-08-15:  David Anderson
+    commit e65fc8c50072f07fefd1017650c97e7282125e1d
+
+    cmake and meson builds here defaulted to shared,
+    which was not working on MacOS, possibly due to
+    issues with copying libraries around (without
+    the proper details for MacOS).
+    So now we just default all build mechanisms
+    to be static library builds.
+    Works on Linux and MacOS without other changes.
+            modified:   scripts/buildandreleasetest.sh
+
+2024-08-14:  David Anderson
+    commit b2a9ab26cadb7f52bab3e91f645d5659ce823f4a
+
+    Latest from git log
+            modified:   ChangeLog
+
 2024-08-14:  David Anderson
     commit 1cf037cb0f990dc904bb6d1e9e2e46d4194c985d
 
