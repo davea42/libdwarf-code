@@ -29,7 +29,7 @@
 #include <config.h>
 /*  We've tried stick to C90, but a newish clang on
     MacOS deprecates sprintf. So we use snprintf as
-    of 2024 v0.11.1 */.
+    of 2024 v0.11.1 */
 #include <stdio.h> /* FILE decl for dd_esb.h,snprintf  */
 
 #include "dwarf.h"
