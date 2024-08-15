@@ -27,7 +27,10 @@
 /* SGI has moved from the Crittenden Lane address.  */
 
 #include <config.h>
-#include <stdio.h> /* FILE decl for dd_esb.h */
+/*  We've tried stick to C90, but a newish clang on
+    MacOS deprecates sprintf. So we use snprintf as
+    of 2024 v0.11.1 */.
+#include <stdio.h> /* FILE decl for dd_esb.h,snprintf  */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -87,7 +90,8 @@ int get_true_section_name(Dwarf_Debug dbg,
                     DW_PR_DUu, compressed_length);
                 esb_append_printf_u(name_out," Uncomp=%"
                     DW_PR_DUu, uncompressed_length);
-                sprintf(floatbuf," compression=%.1f",comprfactor);
+                snprintf(floatbuf,sizeof(floatbuf),
+                    " compression=%.1f",comprfactor);
                 esb_append(name_out, floatbuf);
             }
         }

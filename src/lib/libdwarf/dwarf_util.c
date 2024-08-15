@@ -125,7 +125,8 @@ static void dump_hash_table(char *msg,
         tab->tb_highest_used_entry);
 
     for (i = 0; i < tab->tb_table_entry_count; ++i) {
-        sprintf(buf,"Tab entry %lu:",i);
+        sprintf(buf,sizeof(buf),
+            "Tab entry %lu:",i); /* Only for debug */
         dump_ab_list("    ",buf,i,tab->tb_entries[i],__LINE__);
     }
     printf("   ---end hash tab---\n");

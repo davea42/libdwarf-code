@@ -1,5 +1,5 @@
 project('libdwarf', ['c','cpp'],
-  version: '0.11.0',
+  version: '0.11.1',
   default_options : [
     'buildtype=debugoptimized',
     'warning_level=3',
@@ -278,4 +278,5 @@ summary({'prefix': dir_prefix,
 
 summary({'compilation': 'ninja',
          'installation': 'ninja install',
+         'Cflags': dev_cflags,
         }, section: 'Compilation')
