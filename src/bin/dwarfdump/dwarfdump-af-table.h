@@ -1,5 +1,5 @@
 /* Generated table, do not edit. */
-/* Generated for source version 0.9.3 */
+/* Generated for source version 0.11.1 */
 
 #ifndef DWARFDUMP_AF_TABLE_H
 #define DWARFDUMP_AF_TABLE_H
@@ -188,6 +188,8 @@ struct af_table_s {
 {0x2131,10,2},/*DW_AT_GNU_dwo_id DW_FORM_CLASS_REFERENCE Ext*/
 {0x2131, 3,2},/*DW_AT_GNU_dwo_id DW_FORM_CLASS_CONSTANT Ext*/
 {0x2130,11,2},/*DW_AT_GNU_dwo_name DW_FORM_CLASS_STRING Ext*/
+{0x2138, 3,2},/*DW_AT_GNU_entry_view DW_FORM_CLASS_CONSTANT Ext*/
+{0x2137,10,2},/*DW_AT_GNU_locviews DW_FORM_CLASS_REFERENCE Ext*/
 {0x2119,13,2},/*DW_AT_GNU_macros DW_FORM_CLASS_MAXCROPTR Ext*/
 {0x2303, 3,2},/*DW_AT_GNU_numerator DW_FORM_CLASS_CONSTANT Ext*/
 {0x210f, 3,2},/*DW_AT_GNU_odr_signature DW_FORM_CLASS_CONSTANT Ext*/

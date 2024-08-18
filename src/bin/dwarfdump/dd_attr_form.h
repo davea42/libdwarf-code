@@ -33,10 +33,15 @@ extern "C" {
 #define AF_STD   1
 #define AF_EXTEN 2
 
+/*  For a tag->tag tree key1s a tag number, key 2 is a tag number 
+    and key3  is zero.
+    For a tag->attr tree key1 is a tag number, key 2 is attrnum,
+    and key3 is zero. */
+
 struct Three_Key_Entry_s {
-    Dwarf_Half  key1; /* usually AT number */
-    Dwarf_Half  key2; /* usually  FORM_CLASS number */
-    Dwarf_Half  key3; /* usually actual DW_FORM number,
+    Dwarf_Half  key1; /* AT number for attr_form case */
+    Dwarf_Half  key2; /* FORM_CLASS number for attr_form case */
+    Dwarf_Half  key3; /* DW_FORM number for attr_form case.
         but for a record from the preset table, this is zero
         as there the actual FORM is unknown. */
     Dwarf_Small std_or_exten; /* 1: std 2: extension */

@@ -1,10 +1,10 @@
 /* Generated code, do not edit. */
-/* Generated for source version 0.9.3 */
+/* Generated for source version 0.11.1 */
 
 /* BEGIN FILE */
 
 /* Common extensions */
-#define ATTR_TREE_EXT_ROW_COUNT 19
+#define ATTR_TREE_EXT_ROW_COUNT 20
 
 #define ATTR_TREE_EXT_COLUMN_COUNT 15
 
@@ -48,7 +48,7 @@ static unsigned int tag_attr_combination_ext_table
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x34 - DW_TAG_variable                      */
     { 0x00000034,0x00002007,0x00002108,0x00002109,0x0000210a,
-        0x0000210b,0x00000000,0x00000000,0x00000000,0x00000000,
+        0x0000210b,0x00002137,0x00000000,0x00000000,0x00000000,
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x4106 - DW_TAG_GNU_template_template_parameter*/
     { 0x00004106,0x00000039,0x0000003a,0x0000003b,0x00000003,
@@ -57,6 +57,10 @@ static unsigned int tag_attr_combination_ext_table
 /* 0x4107 - DW_TAG_GNU_template_parameter_pack   */
     { 0x00004107,0x00000039,0x0000003a,0x0000003b,0x00000003,
         0x00000001,0x00000000,0x00000000,0x00000000,0x00000000,
+        0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
+/* 0x05 - DW_TAG_formal_parameter              */
+    { 0x00000005,0x00002137,0x00000000,0x00000000,0x00000000,
+        0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x4108 - DW_TAG_GNU_formal_parameter_pack     */
     { 0x00004108,0x00000039,0x0000003a,0x0000003b,0x00000003,
@@ -79,7 +83,7 @@ static unsigned int tag_attr_combination_ext_table
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x1d - DW_TAG_inlined_subroutine            */
-    { 0x0000001d,0x00002136,0x00000000,0x00000000,0x00000000,
+    { 0x0000001d,0x00002136,0x00002138,0x00002137,0x00000000,
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x0b - DW_TAG_lexical_block                 */
