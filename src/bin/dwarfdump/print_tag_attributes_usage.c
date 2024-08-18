@@ -52,9 +52,14 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_tag_common.h"
 #include "dd_attr_form.h"
 
+/*  Always 1, never changed 
+    Used in ellipname(res,val_in,v,"TAG",printonerr);
+    See dd_naming.c .
+*/
 static int pd_dwarf_names_print_on_error = 1;
 
 #ifdef HAVE_USAGE_TAG_ATTR
+#if 0
 /*  Record TAGs usage */
 static unsigned int tag_usage[DW_TAG_last] = {0};
 
@@ -65,6 +70,10 @@ record_tag_usage(int tag)
         ++tag_usage[tag];
     }
 }
+#endif
+void
+dadebug
+
 #endif /* HAVE_USAGE_TAG_ATTR */
 
 #include "dwarfdump-ta-table.h"

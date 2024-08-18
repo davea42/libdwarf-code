@@ -211,6 +211,11 @@ build_attr_form_base_tree(int*errnum)
     (for example) to tsearch calls. */
 void * threekey_attr_form_base;
 
+/*  For checking and counting tag->tag uses. */
+void * threekey_tag_tree_base;;
+/*  For checking and counting tag->attr uses. */
+void * threekey_tag_attr_base;
+
 void
 destroy_attr_form_trees(void)
 {
