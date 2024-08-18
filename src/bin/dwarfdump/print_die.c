@@ -154,6 +154,10 @@ static void formx_data16(Dwarf_Form_Data16 * u, struct esb_s *esbp,
 
 static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
 
+/*  pd_dwarf_names_print_on_error is always 1. 
+    Used in ellipname(res,val_in,v,"TAG",printonerr);
+    See dd_naming.c
+ */
 static int        pd_dwarf_names_print_on_error = 1;
 static int        die_stack_indent_level = 0;
 static Dwarf_Bool local_symbols_already_begun = FALSE;
