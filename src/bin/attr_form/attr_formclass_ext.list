@@ -134,6 +134,7 @@ DW_FORM_CLASS_STRING
 
 0xffffffff
 DW_AT_GNU_entry_view
+DW_FORM_CLASS_CONSTANT
 
 /*  The next few are documented on
     https://gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
@@ -158,6 +159,7 @@ DW_AT_GNU_shared_locks_required
 
 0xffffffff
 DW_AT_GNU_locviews
+DW_FORM_CLASS_REFERENCE
 
 0xffffffff
 DW_AT_GNU_macros
