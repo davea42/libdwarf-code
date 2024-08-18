@@ -79,9 +79,9 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /*  1 more than the highest number in the DW_TAG defines,
     this is for standard TAGs. Number of rows. */
-#define STD_TAG_TABLE_ROWS  75
+#define STD_TAG_TABLE_ROWS  66
 /* Enough entries to have a bit for each standard legal tag. */
-#define STD_TAG_TABLE_COLUMNS 3
+#define STD_TAG_TABLE_COLUMNS 39
 
 /* TAG tree common extension maximums. */
 #define EXT_TAG_TABLE_ROWS  9
@@ -93,18 +93,20 @@ No blank lines or commentary allowed, no symbols, just numbers.
     (not compiled into dwarfdump)
     so if a bit too large there is no
     side effect on anything.  */
-#define TAG_TABLE_ROW_MAXIMUM     80
-#define TAG_TABLE_COLUMN_MAXIMUM  8
+#define TAG_TABLE_ROW_MAXIMUM     70
+#define TAG_TABLE_COLUMN_MAXIMUM  100
 
 /*  Number of attributes columns per tag. The array is bit fields,
     BITS_PER_WORD fields per word. Dense and quick to inspect */
+#if 0 /* Not needed now */
 #define COUNT_ATTRIBUTE_STD 7
+#endif
 
 #define STD_ATTR_TABLE_ROWS 76
-#define STD_ATTR_TABLE_COLUMNS  5
+#define STD_ATTR_TABLE_COLUMNS  60
 /* tag/attr tree common extension maximums. */
-#define EXT_ATTR_TABLE_ROWS 20
-#define EXT_ATTR_TABLE_COLS 15
+#define EXT_ATTR_TABLE_ROWS 100
+#define EXT_ATTR_TABLE_COLS 40
 
 /*  The following 2 used in tag_attr.c only.
     They must be large enough but they are only used
@@ -112,8 +114,8 @@ No blank lines or commentary allowed, no symbols, just numbers.
     (not compiled into dwarfdump)
     so if a bit too large there is no
     side effect on anything.  */
-#define ATTR_TABLE_ROW_MAXIMUM 80
-#define ATTR_TABLE_COLUMN_MAXIMUM  16
+#define ATTR_TABLE_ROW_MAXIMUM 100
+#define ATTR_TABLE_COLUMN_MAXIMUM  100
 
 /* Bits per 'int' to mark legal attrs. */
 #define BITS_PER_WORD 32

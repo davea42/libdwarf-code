@@ -84,6 +84,7 @@ ellipname(int   res,
             " value 0x%x>",val_in);
         /* Capture any name error in DWARF constants */
 #ifndef TRIVIAL_NAMING
+        /* printonerr is always TRUE. */
         if (printonerr && glflags.gf_check_dwarf_constants &&
             checking_this_compiler()) {
             if (glflags.gf_check_verbose_mode) {
@@ -97,6 +98,7 @@ ellipname(int   res,
         }
 #else
         /* This is for the tree-generation, not dwarfdump itself. */
+        /* printonerr is always TRUE. */
         if (printonerr) {
             printf("ERROR %s of %d (0x%x) is unknown to dwarfdump. "
                 "Continuing. \n",ty,val_in,val_in );

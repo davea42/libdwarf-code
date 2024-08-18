@@ -36,18 +36,19 @@ extern "C" {
 /*  For a tag->tag tree key1s a tag number, key 2 is a tag number 
     and key3  is zero.
     For a tag->attr tree key1 is a tag number, key 2 is attrnum,
-    and key3 is zero. */
+    and key3 is zero.
+    for attr-> form tree key1 is DW_AT_ number, key2 is
+    FORM_CLASS, key3 is a DW_FORM number. */
 
 struct Three_Key_Entry_s {
-    Dwarf_Half  key1; /* AT number for attr_form case */
-    Dwarf_Half  key2; /* FORM_CLASS number for attr_form case */
-    Dwarf_Half  key3; /* DW_FORM number for attr_form case.
-        but for a record from the preset table, this is zero
-        as there the actual FORM is unknown. */
+    Dwarf_Half  key1;
+    Dwarf_Half  key2;
+    Dwarf_Half  key3;
     Dwarf_Small std_or_exten; /* 1: std 2: extension */
     Dwarf_Small from_tables; /* 1 if found in preset table
         else 0 meaning found only in the DWARF. */
-    Dwarf_Unsigned count; /* The number actually encountered */
+    Dwarf_Unsigned count; /* The number actually encountered 
+        in print_die.c */
 };
 typedef struct Three_Key_Entry_s Three_Key_Entry;
 
@@ -63,8 +64,14 @@ int make_3key(Dwarf_Half k1,
 Dwarf_Unsigned three_key_entry_count(void *base);
 void free_func_3key_entry(void *keystructptr);
 int  std_compare_3key_entry(const void *l, const void *r);
-int  build_attr_form_base_tree(int*errnum);
-void destroy_attr_form_trees(void);
+
+/*   First Calls the next three */
+int  dd_build_tag_attr_form_base_trees(int*errnum);
+int  dd_build_attr_form_base_tree(int*errnum);
+int  dd_build_tag_attr_base_tree(int*errnum);
+int  dd_build_tag_tag_base_tree(int*errnum);
+
+void dd_destroy_tag_attr_form_trees(void);
 void record_attr_form_use(Dwarf_Debug dbg,
     Dwarf_Half tag, Dwarf_Half attr,
     Dwarf_Half fclass, Dwarf_Half form,
@@ -74,7 +81,24 @@ void record_attr_form_use(Dwarf_Debug dbg,
 /*  The standard main tree for attr_form data.
     Starting out as simple global variables. */
 extern void * threekey_attr_form_base; /* for attr-form combos */
-void print_attr_form_usage(int poe);
+void print_attr_form_usage(void);
+
+void record_tag_tag_use(Dwarf_Debug dbg,
+    Dwarf_Half tagp, Dwarf_Half tagc);
+void record_tag_attr_use(Dwarf_Debug dbg,
+    Dwarf_Half tag, Dwarf_Half attrnum);
+
+/*  The standard main trees for tag and attr use
+    Starting out as simple global variables. */
+extern void * threekey_tag_tag_base; /* tag-tree recording */
+extern void * threekey_tag_attr_base; /* for tag_attr recording */
+/* The following two print all from the above four trees.*/
+void print_tag_tree_usage(void);
+void print_tag_attr_usage(void);
+
+
+
+
 
 #ifdef __cplusplus
 }

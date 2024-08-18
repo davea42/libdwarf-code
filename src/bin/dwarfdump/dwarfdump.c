@@ -1165,10 +1165,10 @@ process_one_file(
     }
     if (glflags.gf_check_tag_attr ||
         glflags.gf_print_usage_tag_attr) {
-        dres = build_attr_form_base_tree(&localerrno);
+        dres = dd_build_tag_attr_form_base_trees(&localerrno);
         if (dres != DW_DLV_OK) {
             simple_err_return_msg_either_action(dres,
-                "ERROR: Failed to initialize attribute/form"
+                "ERROR: Failed to initialize tag/attribute/form"
                 " tables properly");
         }
     }
@@ -1671,7 +1671,7 @@ process_one_file(
         dbg = 0;
     }
     printf("\n");
-    destroy_attr_form_trees();
+    destroy_tag_attr_form_trees();
     destruct_abbrev_array();
     esb_close_null_device();
     release_range_array_info();

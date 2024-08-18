@@ -55,6 +55,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 /*  Always 1, never changed 
     Used in ellipname(res,val_in,v,"TAG",printonerr);
     See dd_naming.c .
+    So we now always print error data if something is wrong.
 */
 static int pd_dwarf_names_print_on_error = 1;
 
@@ -71,13 +72,8 @@ record_tag_usage(int tag)
     }
 }
 #endif
-void
-dadebug
 
 #endif /* HAVE_USAGE_TAG_ATTR */
-
-#include "dwarfdump-ta-table.h"
-#include "dwarfdump-ta-ext-table.h"
 
 int
 legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
@@ -128,9 +124,6 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
     }
     return FALSE;
 }
-
-#include "dwarfdump-tt-table.h"
-#include "dwarfdump-tt-ext-table.h"
 
 /*  Look only at valid table entries
     The check here must match the building-logic in
@@ -320,7 +313,7 @@ print_tag_attributes_usage(void)
     if (glflags.gf_check_tag_attr ||
         glflags.gf_check_attr_encoding ||
         glflags.gf_print_usage_tag_attr) {
-        print_attr_form_usage(pd_dwarf_names_print_on_error);
+        print_attr_form_usage();
     }
 #endif /* HAVE_USAGE_TAG_ATTR */
     return DW_DLV_OK;
