@@ -79,7 +79,7 @@ allowed attribute numbers.
 
 */
 
-unsigned int tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM]
+Dwarf_Half tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM]
     [ATTR_TABLE_COLUMN_MAXIMUM];
 
 static const char *usage[] = {
@@ -376,7 +376,7 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %d\n\n",
             table_columns);
         fprintf(fileOut,
-            "static unsigned int tag_attr_combination_table\n");
+            "static Dwarf_Half tag_attr_combination_table\n");
         fprintf(fileOut,
             "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
     }
@@ -387,7 +387,7 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
             table_columns);
         fprintf(fileOut,
-            "static unsigned int tag_attr_combination_ext_table\n");
+            "static Dwarf_Half tag_attr_combination_ext_table\n");
         fprintf(fileOut,
             "    [ATTR_TREE_EXT_ROW_COUNT]"
             "[ATTR_TREE_EXT_COLUMN_COUNT]"

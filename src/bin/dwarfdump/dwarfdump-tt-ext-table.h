@@ -8,7 +8,7 @@
 #define TAG_TREE_EXT_ROW_COUNT 9
 
 /* Common extensions */
-static unsigned int tag_tree_combination_ext_table
+static Dwarf_Half tag_tree_combination_ext_table
     [TAG_TREE_EXT_ROW_COUNT][TAG_TREE_EXT_COLUMN_COUNT] = {
 /* 0x13 - DW_TAG_structure_type                */
     { 0x00000013,0x00000034,0x00004106,0x00004107,0x00004108,},

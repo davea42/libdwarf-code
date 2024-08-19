@@ -8,7 +8,7 @@
 
 #define ATTR_TREE_EXT_COLUMN_COUNT 40
 
-static unsigned int tag_attr_combination_ext_table
+static Dwarf_Half tag_attr_combination_ext_table
     [ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {
 /* 0x13 - DW_TAG_structure_type                */
     { 0x00000013,0x0000001d,0x00002007,0x00000000,0x00000000,

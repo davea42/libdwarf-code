@@ -7,7 +7,7 @@
 
 #define ATTR_TREE_COLUMN_COUNT 60
 
-static unsigned int tag_attr_combination_table
+static Dwarf_Half tag_attr_combination_table
 [ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {
 /* 0x23 - DW_TAG_access_declaration            */
     { 0x00000023,0x00000039,0x0000003a,0x0000003b,0x00000032,

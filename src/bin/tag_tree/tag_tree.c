@@ -49,7 +49,7 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}
-unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
+Dwarf_Half tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
     [TAG_TABLE_COLUMN_MAXIMUM];
 
 const char * program_name;
@@ -337,7 +337,7 @@ printf("dadebug open %s\n",output_name);
         fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",
             table_rows);
         fprintf(fileOut,
-            "static unsigned int tag_tree_combination_table\n");
+            "static Dwarf_Half tag_tree_combination_table\n");
         fprintf(fileOut,
             "    [TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {\n");
     } else {
@@ -349,7 +349,7 @@ printf("dadebug open %s\n",output_name);
             table_rows);
         fprintf(fileOut,"/* Common extensions */\n");
         fprintf(fileOut,
-            "static unsigned int tag_tree_combination_ext_table\n");
+            "static Dwarf_Half tag_tree_combination_ext_table\n");
         fprintf(fileOut,
             "    [TAG_TREE_EXT_ROW_COUNT]"
             "[TAG_TREE_EXT_COLUMN_COUNT]"
