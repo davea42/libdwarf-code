@@ -682,7 +682,6 @@ finish_cu_context_via_cudie_inner(
     int resdwo = 0;
 
 #ifdef  TEST_MER
-
 printf("dadebug finish_cu_context_via_cudie_inner is dwo? %u\n",
 cu_context->cc_is_dwo);
 #endif /* TEST_MER */
@@ -830,7 +829,6 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Small *    dataptr = 0;
     int              res = 0;
 #ifdef  TEST_MER
-
 printf("dadebug entry _dwarf_make_CU_Context \n");
 #endif /* TEST_MER */
     if (is_info) {
@@ -879,7 +877,6 @@ printf("dadebug entry _dwarf_make_CU_Context \n");
         cu_context->cc_is_dwo = TRUE;
     }
 #ifdef  TEST_MER
-
 printf("dadebug make_CU_context on %s now: is_dwo %u\n",
 secname, cu_context->cc_is_dwo);
 #endif /* TEST_MER */
@@ -1200,7 +1197,6 @@ _dwarf_setup_base_address(Dwarf_Debug dbg,
     int lres = 0;
     Dwarf_Half form = 0;
 #ifdef  TEST_MER
-
 printf("dadebug entry _dwarf_setup_base_address\n");
 #endif /* TEST_MER */
     /*  If the form is indexed, we better have
@@ -1247,10 +1243,16 @@ printf("dadebug entry _dwarf_setup_base_address\n");
         cucon->cc_base_address = cucon->cc_low_pc;
 
 #ifdef  TEST_MER
-printf("dadebug setting low_pc TRUE 0x%lx dwo? %u %d %s\n",
+{
+Dwarf_Debug d = cucon->cc_dbg;
+printf("dadebug setting low_pc TRUE 0x%lx dwo? %u"
+" main 0x%lx tied 0x%lx %d %s\n",
 (unsigned long)cucon->cc_low_pc,
 cucon->cc_is_dwo,
+(unsigned long)d->de_main_dbg,
+(unsigned long)d->de_tied_dbg,
 __LINE__, __FILE__);
+}
 #endif /* TEST_MER */
     } else {
         /* Something is badly wrong. */
@@ -2128,12 +2130,22 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     }
     {
         Dwarf_Debug tieddbg = 0;
-        int tres = 0;
+        int tres = DW_DLV_OK;
         tieddbg = dbg->de_tied_dbg;
+#ifdef TEST_MER
+printf("dadebug dwarf_die_deliv.c call merge_all_base_attrs "
+" tieddbg 0x%lx  dbg->de_main_dbg 0x%lx line %d\n",
+(unsigned long)tieddbg,
+(unsigned long)dbg->de_tied_dbg,
+__LINE__);
+#endif
         if (tieddbg != dbg->de_main_dbg) {
+            /*  We are in the main, merge tied
+                into main cu_context */
             tres = _dwarf_merge_all_base_attrs_of_cu_die(
                 cu_context,
-                tieddbg, 0,
+                tieddbg, 
+                0 /* we do not want the context returned */,
                 error);
         }
         if (tres == DW_DLV_ERROR && error) {

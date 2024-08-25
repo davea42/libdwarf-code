@@ -230,7 +230,10 @@ _dwarf_loop_reading_debug_info_for_cu(
     return DW_DLV_OK;
 }
 
-/* If out of memory just return DW_DLV_NO_ENTRY.
+/*  If out of memory just return DW_DLV_NO_ENTRY.
+    This ensures all the tied CU contexts have been
+    created though the caller has most likely
+    never tried to read CUs in the tied-file.
 */
 int
 _dwarf_search_for_signature(Dwarf_Debug tieddbg,
@@ -245,7 +248,6 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     int res = 0;
 
 #ifdef  TEST_MER
-
 printf("dadebug enter _dwarf_search_for_signature line %d %s\n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */
@@ -254,7 +256,6 @@ __LINE__,__FILE__);
             _dwarf_tied_data_hashfunc,0);
         if (!tied->td_tied_search) {
 #ifdef  TEST_MER
-
 printf("dadebug _dwarf_search_for_signature line %d %s\n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */
@@ -271,7 +272,6 @@ __LINE__,__FILE__);
             *(struct Dwarf_Tied_Entry_s **)entry2;
         *context_out = e2->dt_context;
 #ifdef  TEST_MER
-
 printf("dadebug _dwarf_search_for_signature return tied context line %d %s\n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */
@@ -287,7 +287,6 @@ __LINE__,__FILE__);
         error);
     if (res == DW_DLV_ERROR) {
 #ifdef  TEST_MER
-
 printf("dadebug _dwarf_search_for_signature line %d %s\n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */
@@ -301,7 +300,6 @@ __LINE__,__FILE__);
             *(struct Dwarf_Tied_Entry_s **)entry2;
         *context_out = e2->dt_context;
 #ifdef  TEST_MER
-
 printf("dadebug _dwarf_search_for_signature line %d %s\n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */

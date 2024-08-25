@@ -1854,6 +1854,10 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
 
             array_of_offsets[n] = val;
             continue;
+        } else if (form == DW_FORM_flag_present) {
+            array_of_offsets[n] = 1;
+            /* No change to poolptr or pooloffset */
+            continue;
         } else {
             Dwarf_Unsigned val = 0;
             res =isformrefval(dbg,form,poolptr,

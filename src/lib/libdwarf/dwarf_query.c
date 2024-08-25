@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Cropyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2022 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
   Portions Copyright 2020 Google All rights reserved.
@@ -1234,7 +1234,12 @@ dwarf_dietype_offset(Dwarf_Die die,
 }
 
 /*  Only a few values are inherited from the tied
-    file. Not rnglists or loclists base offsets. */
+    file. Not rnglists or loclists base offsets.
+    merging into main context (dwp) from tieddbg (Skeleton).
+    and returning a pointer to the tiedcontext created here.
+    (such contexts are freed by dwarf_finish on the tied
+    object file).
+*/
 int
 _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
     Dwarf_Debug tieddbg,
@@ -1248,9 +1253,15 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
 printf("dadebug enter _dwarf_merge_all_base_attrs_of_cu_die\n");
 #endif 
     if (!tieddbg) {
+#ifdef  TEST_MER
+printf("dadebug NO tieddbg _dwarf_merge_all_base_attrs_of_cu_die\n");
+#endif 
         return DW_DLV_NO_ENTRY;
     }
     if (!context->cc_signature_present) {
+#ifdef  TEST_MER
+printf("dadebug NO  _dwarf_merge_all_base_attrs_of_cu_die\n");
+#endif 
         return DW_DLV_NO_ENTRY;
     }
     res = _dwarf_search_for_signature(tieddbg,
@@ -1258,29 +1269,35 @@ printf("dadebug enter _dwarf_merge_all_base_attrs_of_cu_die\n");
         &tiedcontext,
         error);
     if ( res == DW_DLV_ERROR) {
-        /* Associate the error with dbg, not tieddbg */
+#ifdef  TEST_MER
+printf("dadebug ERROR _dwarf_merge_all_base_attrs_of_cu_die\n");
+#endif 
         return res;
     }
     if ( res == DW_DLV_NO_ENTRY) {
+#ifdef  TEST_MER
+printf("dadebug NO_ENTRY _dwarf_merge_all_base_attrs_of_cu_die\n");
+#endif 
         return res;
     }
-    if (!context->cc_low_pc_present) {
-        /*  A dwo will not have this, merge from tied
+#ifdef  TEST_MER
+printf("dadebug merge from tied %d\n",tiedcontext->cc_low_pc_present);
+#endif 
+    if (tiedcontext->cc_low_pc_present) {
+        /*  A dwo/dwp will not have this, merge from tied
             Needed for rnglists/loclists
         */
         context->cc_low_pc_present =
             tiedcontext->cc_low_pc_present;
         context->        cc_low_pc =
             tiedcontext->cc_low_pc;
-        /* The following are addresses too.
-        context->cc_cu_addr_base_present =
-            tiedcontext->cc_cu_addr_base_present;
-        context->        cc_cu_addr_base =
-            tiedcontext->cc_cu_addr_base;
-*/
 
+        context->cc_base_address_present =
+            tiedcontext->cc_base_address_present;
+        context->        cc_base_address =
+            tiedcontext->cc_base_address;
+        
 #ifdef  TEST_MER
-
 printf("dadebug merge_all_base_attrs sets lowpc_pres %u "
 "low_pc 0x%lx %d %s\n",
 (unsigned)context->cc_low_pc_present,
@@ -1295,7 +1312,6 @@ __LINE__,__FILE__);
         context->        cc_addr_base_offset=
             tiedcontext->cc_addr_base_offset;
 #if  TEST_MER
-
 printf("dadebug merge_all_base_attrs addr_base_pres %u "
 "addr_base offset 0x%lx %d %s\n",
 (unsigned)context->cc_addr_base_offset_present,
@@ -1312,7 +1328,6 @@ __LINE__,__FILE__);
             tiedcontext->cc_ranges_base;;
     } 
 #ifdef  TEST_MER
-
 printf("dadebug ranges base present %u base %lx %d %s \n",
 (unsigned)context->cc_ranges_base_present,
 (unsigned long)context->cc_ranges_base,

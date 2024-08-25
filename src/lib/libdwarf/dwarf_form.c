@@ -1404,7 +1404,8 @@ _dwarf_allow_formudata(unsigned form)
     case DW_FORM_data2:
     case DW_FORM_data4:
     case DW_FORM_data8:
-    case DW_FORM_udata:
+    case DW_FORM_flag:
+    case DW_FORM_flag_present:
     case DW_FORM_loclistx:
     case DW_FORM_rnglistx:
         return TRUE;
@@ -1441,6 +1442,18 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
 
     switch (form) {
     case DW_FORM_data1:
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            data, sizeof(Dwarf_Small),
+            error,section_end);
+        *return_uval = ret_value;
+        *bytes_read = 1;
+        return DW_DLV_OK;
+    case DW_FORM_flag_present:
+        *return_uval = 1;
+        *bytes_read = 0;
+        return DW_DLV_OK;
+    case DW_FORM_flag:
+        /* equivalent to dwarf_formflag() */
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             data, sizeof(Dwarf_Small),
             error,section_end);
