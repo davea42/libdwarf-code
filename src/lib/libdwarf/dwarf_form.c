@@ -1070,6 +1070,7 @@ _dwarf_get_addr_index_itself(int theform,
         to a local .debug_addr or a tied file .debug_addr
         so lets be cautious. */
 #if 0 /* Attempted check for index uncertain, unwise. Ignore. */
+    /* See de_tied_dbg before using this */
     if (!dbg->de_tied_data.td_tied_object &&
         index > dbg->de_filesize) {
         _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
@@ -2082,7 +2083,8 @@ dwarf_formstring(Dwarf_Attribute attr,
         if (res == DW_DLV_ERROR) {
             if (dwarf_errno(alterr) ==
                 DW_DLE_NO_TIED_FILE_AVAILABLE) {
-                dwarf_dealloc(dbg,alterr,DW_DLA_ERROR);
+               
+                dwarf_dealloc_error(dbg,alterr);
                 if ( attr->ar_attribute_form ==
                     DW_FORM_GNU_strp_alt) {
                     *return_str =
@@ -2168,8 +2170,8 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     Dwarf_Error localerror = 0;
 
     /* Attach errors to dbg, not tieddbg. */
-    tieddbg = dbg->de_tied_data.td_tied_object;
-    if (!tieddbg) {
+    tieddbg = dbg->de_tied_dbg;
+    if (tieddbg == dbg->de_main_dbg) {
         _dwarf_error(dbg, error, DW_DLE_NO_TIED_FILE_AVAILABLE);
         return  DW_DLV_ERROR;
     }
@@ -2178,7 +2180,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         &localerror);
     if (res == DW_DLV_ERROR) {
         Dwarf_Unsigned lerrno = dwarf_errno(localerror);
-        dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
+        dwarf_dealloc_error(tieddbg,localerror);
         _dwarf_error(dbg,error,lerrno);
         return res;
     }
@@ -2205,7 +2207,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         &localerror);
     if (res == DW_DLV_ERROR) {
         Dwarf_Unsigned lerrno = dwarf_errno(localerror);
-        dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
+        dwarf_dealloc_error(tieddbg,localerror);
         _dwarf_error(dbg,error,lerrno);
         return res;
     }

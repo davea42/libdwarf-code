@@ -148,8 +148,8 @@ struct Dwarf_Rnglists_Head_s {
 
     /*  DW_AT_addr_base, so we can use .debug_addr
         if such is needed. */
-    Dwarf_Bool      rh_cu_addr_base_present;
-    Dwarf_Unsigned  rh_cu_addr_base;
+    Dwarf_Bool      rh_cu_addr_base_offset_present;
+    Dwarf_Unsigned  rh_cu_addr_base_offset;
     Dwarf_Small    * rh_rlepointer;
     Dwarf_Unsigned   rh_rlearea_offset;
     Dwarf_Small    * rh_end_data_area;

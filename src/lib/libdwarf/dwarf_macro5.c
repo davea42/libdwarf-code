@@ -653,7 +653,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
                     *macro_string =
                         (char *)"<Error: DW_FORM_str_sup-got-error>";
                 }
-                dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
+                dwarf_dealloc_error(dbg,lerr);
             } else {
                 *macro_string = "<DW_FORM_str_sup-no-entry>";
             }

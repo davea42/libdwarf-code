@@ -208,14 +208,15 @@ struct Dwarf_Loc_Head_c_s {
     Dwarf_Bool       ll_at_loclists_base_present;
     Dwarf_Unsigned   ll_at_loclists_base;
 
-    /* DW_AT_low_pc of CU or zero if none. */
+    /*  DW_AT_low_pc originally, , perhaps interited
+        into dwp from skeleton. */
     Dwarf_Bool       ll_cu_base_address_present;
     Dwarf_Unsigned   ll_cu_base_address;
 
     /*  DW_AT_addr_base, so we can use .debug_addr
         if such is needed. */
-    Dwarf_Bool       ll_cu_addr_base_present;
-    Dwarf_Unsigned   ll_cu_addr_base;
+    Dwarf_Bool       ll_cu_addr_base_offset_present;
+    Dwarf_Unsigned   ll_cu_addr_base_offset;
 
     Dwarf_Small    * ll_llepointer;
     Dwarf_Unsigned   ll_llearea_offset;

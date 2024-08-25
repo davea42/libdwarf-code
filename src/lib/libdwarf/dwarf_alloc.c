@@ -749,6 +749,8 @@ string_is_in_debug_section(Dwarf_Debug dbg,void * space)
         It is too late to change the documentation. */
 
     void *result = 0;
+
+    /* The alloc tree can be in main or tied or both. */
     result = dwarf_tfind((void *)space,
         &dbg->de_alloc_tree,simple_compare_function);
     if (!result) {
@@ -884,6 +886,9 @@ dwarf_dealloc(Dwarf_Debug dbg,
         return;
 #endif /* DEBUG_ALLOC*/
     }
+    if (dbg && alloc_type == DW_DLA_ERROR) {
+        dbg = dbg->de_errors_dbg;
+    } 
     if (dbg && dbg->de_alloc_tree) {
         /*  If it's a string in debug_info etc doing
             (char *)space - DW_RESERVE is totally bogus. */

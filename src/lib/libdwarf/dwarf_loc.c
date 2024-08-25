@@ -1670,11 +1670,13 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     llhead->ll_at_loclists_base_present =
         cucontext->cc_loclists_base_present;
     llhead->ll_at_loclists_base =  cucontext->cc_loclists_base;
-    llhead->ll_cu_base_address_present = cucontext->cc_low_pc_present;
-    llhead->ll_cu_base_address = cucontext->cc_low_pc;
-    llhead->ll_cu_addr_base = cucontext->cc_addr_base;
-    llhead->ll_cu_addr_base_present =
-        cucontext->cc_addr_base_present;
+    llhead->ll_cu_base_address_present = 
+        cucontext->cc_base_address_present;
+    llhead->ll_cu_base_address = cucontext->cc_base_address;
+
+    llhead->ll_cu_addr_base_offset = cucontext->cc_addr_base_offset;
+    llhead->ll_cu_addr_base_offset_present =
+        cucontext->cc_addr_base_offset_present;
 
     if (lkind == DW_LKIND_loclist ||
         lkind == DW_LKIND_GNU_exp_list) {

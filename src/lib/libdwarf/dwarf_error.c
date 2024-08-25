@@ -110,6 +110,9 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
 {
     _dwarf_error_string(dbg,error,errval,0);
 }
+
+/*  Errors are all added to the de_main_dbg, never to
+    de_tied_dbg. */
 void
 _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval,char *msg)
@@ -123,8 +126,13 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
         /*  If dbg is NULL, use the alternate error struct. However,
             this will overwrite the earlier error. */
         if (dbg) {
+            /*  ERRORs are always associated with
+                de_main_dbg so they can be returned
+                up the tree of calls on the stack
+                safely.  */
             errptr =
-                (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
+                (Dwarf_Error) _dwarf_get_alloc(dbg->de_errors_dbg,
+                    DW_DLA_ERROR, 1);
             if (!errptr) {
                 errptr = &_dwarf_failsafe_error;
                 errptr->er_static_alloc = DE_STATIC;
@@ -182,13 +190,14 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     }
 
     if (dbg  && dbg->de_errhand != NULL) {
-        errptr = (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
+        errptr = (Dwarf_Error) _dwarf_get_alloc(dbg->de_errors_dbg,
+            DW_DLA_ERROR, 1);
         if (errptr == NULL) {
             errptr = &_dwarf_failsafe_error;
             errptr->er_static_alloc = DE_STATIC;
         }
         errptr->er_errval = errval;
-        dbg->de_errhand(errptr, dbg->de_errarg);
+        dbg->de_errhand(errptr, dbg->de_errors_dbg->de_errarg);
         return;
     }
     fflush(stderr);

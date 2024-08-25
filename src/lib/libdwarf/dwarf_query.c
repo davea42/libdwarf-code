@@ -967,7 +967,7 @@ dwarf_attr(Dwarf_Die die,
     Error returned here is on dbg, not tieddbg.
     This looks for DW_AT_addr_base and if present
     adds it in appropriately.
-    You should use _dwarf_look_in_local_and_tied_by_index()
+    Use _dwarf_look_in_local_and_tied_by_index()
     instead of this, in general.
     */
 static int
@@ -986,12 +986,12 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr  sectionend = 0;
     Dwarf_Unsigned  sectionsize  = 0;
 
-    address_base = context->cc_addr_base;
+    address_base = context->cc_addr_base_offset;
     res = _dwarf_load_section(dbg, &dbg->de_debug_addr,error);
     if (res != DW_DLV_OK) {
         /*  Ignore the inner error, report something meaningful */
         if (res == DW_DLV_ERROR && error) {
-            dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
+            dwarf_dealloc_error(dbg,*error);
             *error = 0;
         }
         _dwarf_error(dbg,error,
@@ -1046,6 +1046,10 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  Looks for an address (Dwarf_Addr) value vi an
+    index into debug_addr.  If it fails with
+    DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION we 
+    find a context in tieddbg and look there. */ 
 int
 _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Debug dbg,
@@ -1062,12 +1066,12 @@ _dwarf_look_in_local_and_tied_by_index(
         if (res2 == DW_DLV_ERROR &&
             error && dwarf_errno(*error) ==
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
-            && dbg->de_tied_data.td_tied_object) {
+            && dbg->de_tied_dbg != dbg->de_main_dbg) {
             int res3 = 0;
 
             /*  We do not want to leak error structs... */
             /* *error safe */
-            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+            dwarf_dealloc_error(dbg,*error);
             *error = 0; /* *error safe */
             /*  Any error is returned on dbg,
                 not tieddbg. */
@@ -1104,9 +1108,11 @@ dwarf_debug_addr_index_to_addr(Dwarf_Die die,
         error);
     return res;
 }
-/* ASSERT:
+/*  ASSERT:
     attr_form == DW_FORM_GNU_addr_index ||
         attr_form == DW_FORM_addrx
+    We are looking for data in .debug_addr,
+    which could be in base file or in tied-file..
 */
 int
 _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
@@ -1127,23 +1133,6 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     if (res2 != DW_DLV_OK) {
         return res2;
     }
-#if 0 /* An error check that is probably incorect. */
-    Dwarf_Unsigned addrtabsize = 0;
-    addrtabsize = dbg->de_debug_addr.dss_size;
-    If there is  no .debug_addr the error here should
-    not be reported as will report that
-    via _dwarf_look_in_local_and_tied_by_index
-    if (!dbg->de_tied_data.td_tied_object &&
-        (index_to_addr > dbg->de_filesize ||
-        index_to_addr > addrtabsize ||
-        (index_to_addr*context->cc_address_size) > addrtabsize)) {
-        _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
-            "DW_DLE_ATTR_FORM_OFFSET_BAD "
-            "Looking for an index from an addr FORM "
-            "we find an impossibly large value. Corrupt DWARF");
-        return DW_DLV_ERROR;
-    }
-#endif
     /* error is returned on dbg, not tieddbg. */
     res2 = _dwarf_look_in_local_and_tied_by_index(
         dbg,context,index_to_addr,return_addr,error);
@@ -1247,8 +1236,7 @@ dwarf_dietype_offset(Dwarf_Die die,
 /*  Only a few values are inherited from the tied
     file. Not rnglists or loclists base offsets. */
 int
-_dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
+_dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
     Dwarf_Debug tieddbg,
     Dwarf_CU_Context *tiedcontext_out,
     Dwarf_Error *error)
@@ -1256,6 +1244,9 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
     Dwarf_CU_Context tiedcontext = 0;
     int res = 0;
 
+#ifdef  TEST_MER
+printf("dadebug enter _dwarf_merge_all_base_attrs_of_cu_die\n");
+#endif 
     if (!tieddbg) {
         return DW_DLV_NO_ENTRY;
     }
@@ -1268,31 +1259,65 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         error);
     if ( res == DW_DLV_ERROR) {
         /* Associate the error with dbg, not tieddbg */
-        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     }
     if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
     if (!context->cc_low_pc_present) {
+        /*  A dwo will not have this, merge from tied
+            Needed for rnglists/loclists
+        */
         context->cc_low_pc_present =
             tiedcontext->cc_low_pc_present;
-        context->        cc_low_pc=
+        context->        cc_low_pc =
             tiedcontext->cc_low_pc;
+        /* The following are addresses too.
+        context->cc_cu_addr_base_present =
+            tiedcontext->cc_cu_addr_base_present;
+        context->        cc_cu_addr_base =
+            tiedcontext->cc_cu_addr_base;
+*/
+
+#ifdef  TEST_MER
+
+printf("dadebug merge_all_base_attrs sets lowpc_pres %u "
+"low_pc 0x%lx %d %s\n",
+(unsigned)context->cc_low_pc_present,
+(unsigned long)context->cc_low_pc,
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     }
-    if (!context->cc_addr_base_present) {
-        context->        cc_addr_base_present =
-            tiedcontext->cc_addr_base_present;
-        context->        cc_addr_base=
-            tiedcontext->cc_addr_base;
+    if (!context->cc_addr_base_offset_present) {
+        /*  This is a base-offset, not an address. */
+        context->        cc_addr_base_offset_present =
+            tiedcontext->cc_addr_base_offset_present;
+        context->        cc_addr_base_offset=
+            tiedcontext->cc_addr_base_offset;
+#if  TEST_MER
+
+printf("dadebug merge_all_base_attrs addr_base_pres %u "
+"addr_base offset 0x%lx %d %s\n",
+(unsigned)context->cc_addr_base_offset_present,
+(unsigned long)context->cc_addr_base_offset,
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     }
-    if (context->cc_version_stamp == DW_CU_VERSION4 &&
+    if ((context->cc_version_stamp == DW_CU_VERSION4 ||
+        context->cc_version_stamp == DW_CU_VERSION5) &&
         !context->cc_ranges_base_present) {
         context->cc_ranges_base_present =
             tiedcontext->cc_ranges_base_present;
         context->cc_ranges_base =
             tiedcontext->cc_ranges_base;;
-    }
+    } 
+#ifdef  TEST_MER
+
+printf("dadebug ranges base present %u base %lx %d %s \n",
+(unsigned)context->cc_ranges_base_present,
+(unsigned long)context->cc_ranges_base,
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
             tiedcontext->cc_str_offsets_tab_present;
@@ -1458,7 +1483,7 @@ dwarf_highpc_b(Dwarf_Die die,
 
 */
 int
-_dwarf_get_addr_from_tied(Dwarf_Debug dbg,
+_dwarf_get_addr_from_tied(Dwarf_Debug main_dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned index,
     Dwarf_Addr *addr_out,
@@ -1471,15 +1496,15 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     Dwarf_Unsigned addrtabsize = 0;
 
     if (!context->cc_signature_present) {
-        _dwarf_error(dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
+        _dwarf_error(main_dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
         return  DW_DLV_ERROR;
     }
-    tieddbg = dbg->de_tied_data.td_tied_object;
-    if (!tieddbg) {
-        _dwarf_error(dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
+    tieddbg = main_dbg->de_tied_dbg;
+    if (tieddbg == main_dbg) {
+        _dwarf_error(main_dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
         return  DW_DLV_ERROR;
     }
-    if (!context->cc_addr_base_present) {
+    if (!context->cc_addr_base_offset_present) {
         /*  Does not exist. */
         return DW_DLV_NO_ENTRY;
     }
@@ -1488,8 +1513,6 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         &tiedcontext,
         error);
     if (res == DW_DLV_ERROR) {
-        /* Associate the error with dbg, not tieddbg */
-        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     }
     if ( res == DW_DLV_NO_ENTRY) {
@@ -1500,7 +1523,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     if ( (index > tieddbg->de_filesize ||
         index > addrtabsize ||
         (index*tiedcontext->cc_address_size) > addrtabsize)) {
-        _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
+        _dwarf_error_string(main_dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
             "DW_DLE_ATTR_FORM_OFFSET_BAD "
             "Looking for an index from an addr FORM "
             "we find an impossibly large index value for the tied "
@@ -1513,8 +1536,6 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         &local_addr,
         error);
     if ( res == DW_DLV_ERROR) {
-        /* Associate the error with dbg, not tidedbg */
-        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     }
     if ( res == DW_DLV_NO_ENTRY) {

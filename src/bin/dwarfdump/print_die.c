@@ -4156,6 +4156,9 @@ print_range_attribute(Dwarf_Debug dbg,
         int res = 0;
         Dwarf_Unsigned rleoffset = 0;
 
+#ifdef  TEST_MER
+printf("dadebug dd call handle_rnglists\n");
+#endif /* TEST_MER */
         res = handle_rnglists( attr_in,
             theform,
             original_off,
@@ -7632,7 +7635,10 @@ handle_rnglists( Dwarf_Attribute attrib,
     Dwarf_Unsigned count_rnglists_entries = 0;
     Dwarf_Rnglists_Head rnglhead = 0;
     int res = 0;
+#ifdef  TEST_MER
 
+printf("dadebug dd call dwarf_rnglists_get_rle_head\n");
+#endif /* TEST_MER */
     res = dwarf_rnglists_get_rle_head(attrib,
         theform,
         attrval, /* index val or offset depending on form */
@@ -7643,6 +7649,15 @@ handle_rnglists( Dwarf_Attribute attrib,
     if (res != DW_DLV_OK) {
         return res;
     }
+#ifdef  TEST_MER
+
+printf("dadebug rnglists count %lu\n",(unsigned long)count_rnglists_entries);
+    *output_rle_set_offset = global_offset_of_rle_set;
+printf("dadebug rnglists count %lu global off of rnglists 0x%lx \n",
+(unsigned long)count_rnglists_entries,
+(unsigned long)global_offset_of_rle_set);
+#endif /* TEST_MER */
+
     *output_rle_set_offset = global_offset_of_rle_set;
     /*  Here we put newline at start of each line
         of output, different from the usual practice */

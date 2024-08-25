@@ -244,10 +244,20 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     struct Dwarf_Tied_Data_s * tied = &tieddbg->de_tied_data;
     int res = 0;
 
+#ifdef  TEST_MER
+
+printf("dadebug enter _dwarf_search_for_signature line %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     if (!tied->td_tied_search) {
         dwarf_initialize_search_hash(&tied->td_tied_search,
             _dwarf_tied_data_hashfunc,0);
         if (!tied->td_tied_search) {
+#ifdef  TEST_MER
+
+printf("dadebug _dwarf_search_for_signature line %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
             return DW_DLV_NO_ENTRY;
         }
     }
@@ -260,6 +270,11 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
         struct Dwarf_Tied_Entry_s *e2 =
             *(struct Dwarf_Tied_Entry_s **)entry2;
         *context_out = e2->dt_context;
+#ifdef  TEST_MER
+
+printf("dadebug _dwarf_search_for_signature return tied context line %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
         return DW_DLV_OK;
     }
     /*  We now ensure all tieddbg CUs signatures
@@ -271,6 +286,11 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     res  = _dwarf_loop_reading_debug_info_for_cu(tieddbg,&entry,
         error);
     if (res == DW_DLV_ERROR) {
+#ifdef  TEST_MER
+
+printf("dadebug _dwarf_search_for_signature line %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
         return res;
     }
     entry2 = dwarf_tfind(&entry,
@@ -280,6 +300,11 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
         struct Dwarf_Tied_Entry_s *e2 =
             *(struct Dwarf_Tied_Entry_s **)entry2;
         *context_out = e2->dt_context;
+#ifdef  TEST_MER
+
+printf("dadebug _dwarf_search_for_signature line %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;

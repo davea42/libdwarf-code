@@ -189,14 +189,13 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     }
     if (res == DW_DLV_NO_ENTRY) {
         /* data is in a.out, not dwp */
-        localdbg = dbg->de_tied_data.td_tied_object;
-        if (!localdbg) {
+        localdbg = dbg->de_tied_dbg;
+        if (localdbg == dbg) {
             return DW_DLV_NO_ENTRY;
         }
         res = _dwarf_load_section(localdbg,
             &localdbg->de_debug_ranges, &localerror);
         if (res == DW_DLV_ERROR) {
-            _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {

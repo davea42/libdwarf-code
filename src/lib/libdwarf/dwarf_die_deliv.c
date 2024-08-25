@@ -681,6 +681,11 @@ finish_cu_context_via_cudie_inner(
     Dwarf_Die cudie = 0;
     int resdwo = 0;
 
+#ifdef  TEST_MER
+
+printf("dadebug finish_cu_context_via_cudie_inner is dwo? %u\n",
+cu_context->cc_is_dwo);
+#endif /* TEST_MER */
     /*  Must call the internal siblingof so
         we do not depend on the dbg...de_cu_context
         used by and for dwarf_cu_header_* calls.
@@ -824,6 +829,10 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Unsigned   version = 0;
     Dwarf_Small *    dataptr = 0;
     int              res = 0;
+#ifdef  TEST_MER
+
+printf("dadebug entry _dwarf_make_CU_Context \n");
+#endif /* TEST_MER */
     if (is_info) {
         secname = dbg->de_debug_info.dss_name;
         dis     = &dbg->de_info_reading;
@@ -869,6 +878,11 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     if (section_name_ends_with_dwo(secname)) {
         cu_context->cc_is_dwo = TRUE;
     }
+#ifdef  TEST_MER
+
+printf("dadebug make_CU_context on %s now: is_dwo %u\n",
+secname, cu_context->cc_is_dwo);
+#endif /* TEST_MER */
     res = read_info_area_length_and_check(dbg,
         cu_context,
         offset,
@@ -1185,7 +1199,10 @@ _dwarf_setup_base_address(Dwarf_Debug dbg,
 {
     int lres = 0;
     Dwarf_Half form = 0;
+#ifdef  TEST_MER
 
+printf("dadebug entry _dwarf_setup_base_address\n");
+#endif /* TEST_MER */
     /*  If the form is indexed, we better have
         seen DW_AT_addr_base.! */
     lres = dwarf_whatform(attr,&form,error);
@@ -1226,6 +1243,15 @@ _dwarf_setup_base_address(Dwarf_Debug dbg,
             if it was DW_AT_entry_pc with no DW_AT_low_pc
             Allowing DW_AT_entry_pc */
         cucon->cc_low_pc_present = TRUE;
+        cucon->cc_base_address_present = TRUE;
+        cucon->cc_base_address = cucon->cc_low_pc;
+
+#ifdef  TEST_MER
+printf("dadebug setting low_pc TRUE 0x%lx dwo? %u %d %s\n",
+(unsigned long)cucon->cc_low_pc,
+cucon->cc_is_dwo,
+__LINE__, __FILE__);
+#endif /* TEST_MER */
     } else {
         /* Something is badly wrong. */
         return lres;
@@ -1519,14 +1545,14 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
 
                 udres = _dwarf_internal_global_formref_b(attr,
                     /* avoid recurse creating context */ 1,
-                    &cucon->cc_addr_base,
+                    &cucon->cc_addr_base_offset,
                     &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
                     if (is_info == cucon->cc_is_info) {
                         /*  Only accept if same .debug section,
                             which is relevant for DWARF4 */
-                        cucon->cc_addr_base_present = TRUE;
+                        cucon->cc_addr_base_offset_present = TRUE;
                     }
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
@@ -1738,6 +1764,10 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
             /*  For finding base data from skeleton.
                 For the few fields inherited
                 (per the DWARF5 standard. */
+#ifdef  TEST_MER
+printf("dadebug call _dwarf_find_all_offsets_via_fission is dwo? %u\n",
+cu_context->cc_is_dwo);
+#endif /* TEST_MER */
             res = _dwarf_find_all_offsets_via_fission(dbg,
                 cu_context,error);
             if (res == DW_DLV_ERROR) {
@@ -1772,6 +1802,10 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
     /*  Add the context into the section context list.
         This is the one and only place where it is
         saved for re-use and eventual dealloc. */
+#ifdef  TEST_MER
+printf("dadebug insert_into_cu_context_list is_dwo %u\n",
+icu_context->cc_is_dwo);
+#endif /* TEST_MER */
     if (!dis->de_cu_context_list) {
         /*  First cu encountered. */
         dis->de_cu_context_list = icu_context;
@@ -1858,6 +1892,9 @@ _dwarf_create_a_new_cu_context_record_on_list(
         _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
+#ifdef  TEST_MER
+printf("dadebug call _dwarf_make_CU_Context\n");
+#endif /* TEST_MER */
     res = _dwarf_make_CU_Context(dbg, new_cu_offset,is_info,
         &cu_context,error);
     if (res != DW_DLV_OK) {
@@ -1877,6 +1914,9 @@ _dwarf_create_a_new_cu_context_record_on_list(
     }
     /*  Add the new cu_context to a list of contexts
         Never returns DW_DLV_NO_ENTRY */
+#ifdef  TEST_MER
+printf("dadebug call insert_into_cu_context_list\n");
+#endif /* TEST_MER */
     icres = insert_into_cu_context_list(dis,cu_context);
     if (icres == DW_DLV_ERROR) {
         /*  Correcting ossfuzz70721 DW202407-010  */
@@ -2089,10 +2129,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     {
         Dwarf_Debug tieddbg = 0;
         int tres = 0;
-        tieddbg = dbg->de_tied_data.td_tied_object;
-        if (tieddbg) {
+        tieddbg = dbg->de_tied_dbg;
+        if (tieddbg != dbg->de_main_dbg) {
             tres = _dwarf_merge_all_base_attrs_of_cu_die(
-                dbg, cu_context,
+                cu_context,
                 tieddbg, 0,
                 error);
         }

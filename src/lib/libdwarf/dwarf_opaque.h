@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2023 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2024 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -228,8 +228,17 @@ struct Dwarf_CU_Context_s {
 
     Dwarf_Bool cc_signature_present; /* Meaning type signature
         in TU header or, for CU header, signature in CU DIE. */
+
+    /*  cc_low_pc[_present] is applied as base address of
+        of rnglists and loclists when reading an rle_head,
+        compied into cc_cu_base_address. Comes from 
+        CU_DIE, not rnglists or loclists */
     Dwarf_Bool cc_low_pc_present;
-    Dwarf_Bool cc_addr_base_present;   /* Not TRUE in .dwo */
+
+    /*  From CU_DIE. Copied from cc_low_pc_present.
+        Used as default base address for rnglists, loclists. 
+        in a DWARF5 dwo, inherited from skeleton (tieddbg). */
+    Dwarf_Bool cc_base_address_present;
 
     Dwarf_Bool cc_cu_die_has_children;
     Dwarf_Bool cc_dwo_name_present;
@@ -243,6 +252,9 @@ struct Dwarf_CU_Context_s {
         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool     cc_cu_die_offset_present;
     Dwarf_Bool     cc_at_ranges_offset_present;
+    /*  About: DW_AT_addr_base in CU DIE, 
+        offset to .debug_addr table */
+    Dwarf_Bool     cc_addr_base_offset_present;
 
     /*  If present, is base address of CU.  In DWARF2
         nothing says what attribute is the base address.
@@ -256,8 +268,13 @@ struct Dwarf_CU_Context_s {
         In DWARF3, DWARF4 DW_AT_low_pc is specifically
         mentioned as the base address.  */
     Dwarf_Unsigned cc_low_pc;
+
     /*  from DW_AT_addr_base in CU DIE, offset to .debug_addr table */
-    Dwarf_Unsigned cc_addr_base;  /* Zero in .dwo */
+    Dwarf_Unsigned cc_addr_base_offset;  /* Zero in .dwo */
+
+    /*  From cc_low_pc, used as initial base_address
+        in processing loclists and rnglists  */
+    Dwarf_Unsigned  cc_base_address; 
 
     /*  DW_SECT_LINE */
     Dwarf_Bool     cc_line_base_present;     /*DW5 */
@@ -542,19 +559,13 @@ struct Dwarf_Tied_Data_s {
         Pointer to the tied_to Dwarf_Debug*/
     Dwarf_Debug td_tied_object;
 
-    /*  TRUE if this tied object is tied to.
-        It's extra work to look for a DW_AT_dwo_id.
-        Set when tied dbg (on the base) was created.
-        This helps us do it only when it may be productive. */
-    Dwarf_Bool td_is_tied_object;
-
     /*  Used for Type Unit signatures.
         Type Units are in .debug_types in DW4
         but in .debug_info in DW5.
         Some .debug_info point to them symbolically
         via DW_AT_signature attributes.
         If non-zero is a dwarf_tsearch 'tree'.
-        Only non-zero if td_is_tied_object is set and
+        Only non-zero if 
         we had a reason to build the search tree..
         Type Units have a Dwarf_Sig8 signature
         in the header, and such is recorded here.
@@ -598,6 +609,32 @@ struct Dwarf_Debug_s {
         We get a pointer, callers control the lifetime of the
         structure and contents. */
     struct Dwarf_Obj_Access_Interface_a_s *de_obj_file;
+    /*  On any open Dwarf_Debug all three are set, and
+        if there is just one dbg open (ie, no tied-file)
+        de_dbg, de_main_dbg, and de_timed_dbg are
+        equal pointers. All DW_DLA_error are applied
+        to the main-file de_dbg (which is also de_main_dbg.
+        vi de_errors_dbg
+        to get errors reported fully and correctly.
+
+        After a tied-file is added:
+        In main-file (DW_UT_split_compile etc):
+            de_dbg, de_main_dbg  are equal pointers to each other.
+            de_tied_dbg is set to equal the tied-file de_dbg.
+            All dwarf_Error instances are attached to de_main_dbg.
+            In addition, de_tied_data.td_tied_object is set
+            to the value of tht tied-file de_dbg.
+            de_errors_dbg refers to main-file de_dbg.
+        In tied-file (DW_UT_skelton(s):
+            de_dbg, de_main_dbg, and de_tied_dbg are
+            equal pointers to each other. No Dwarf_Error
+            are ever attached to this de_dbg, even when
+            reading from tied-file.. 
+            de_errors_dbg refers to main-file de_dbg */
+    struct Dwarf_Debug_s * de_dbg; 
+    struct Dwarf_Debug_s * de_main_dbg; 
+    struct Dwarf_Debug_s * de_tied_dbg; 
+    struct Dwarf_Debug_s * de_errors_dbg; 
 
     Dwarf_Handler de_errhand;
     Dwarf_Ptr de_errarg;
@@ -958,8 +995,7 @@ int _dwarf_search_for_signature(Dwarf_Debug dbg,
     Dwarf_CU_Context *context_out,
     Dwarf_Error *error);
 
-int _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
+int _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
     Dwarf_Debug tieddbg,
     Dwarf_CU_Context *tiedcontext_out,
     Dwarf_Error *error);

@@ -797,8 +797,9 @@ int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c head,
     *loclists_base_address_present = head->ll_cu_base_address_present;
     *loclists_base_address= head->ll_cu_base_address;
 
-    *loclists_debug_addr_base_present = head->ll_cu_addr_base_present;
-    *loclists_debug_addr_base  = head->ll_cu_addr_base;
+    *loclists_debug_addr_base_present = 
+        head->ll_cu_addr_base_offset_present;
+    *loclists_debug_addr_base  = head->ll_cu_addr_base_offset;
     *loclists_offset_lle_set = head->ll_llearea_offset;
     return DW_DLV_OK;
 }
@@ -1369,6 +1370,9 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
         lle_global_offset = attr_val;
     }
     llhead->ll_end_data_area = enddata;
+    llhead->ll_cu_base_address_present = 
+        ctx->cc_base_address_present;
+    llhead->ll_cu_base_address = ctx->cc_base_address;
 
     llhead->ll_llearea_offset = lle_global_offset;
     llhead->ll_llepointer = lle_global_offset +

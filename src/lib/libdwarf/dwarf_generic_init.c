@@ -513,31 +513,70 @@ dwarf_finish(Dwarf_Debug dbg)
     tieddbg should be the executable or .o
     that has the .debug_addr section that
     the base dbg refers to. See Split Objects in DWARF5.
+    Or in DWARF5  maybe .debug_rnglists or .debug_loclists.
 
-    Allows setting to NULL (NULL is the default
-    of  de_tied_data.td_tied_object).
+    Allows calling with NULL though we really just set 
+    main_dbg->ge_tied_dbg to de_main_dbg, thus cutting
+    links between main and any previous tied-file setup.
     New September 2015.
 */
 int
-dwarf_set_tied_dbg(Dwarf_Debug dbg,
+dwarf_set_tied_dbg(Dwarf_Debug main_dbg,
     Dwarf_Debug tieddbg,
     Dwarf_Error*error)
 {
-    CHECK_DBG(dbg,error,"dwarf_set_tied_dbg()");
-
-    dbg->de_tied_data.td_tied_object = tieddbg;
+    CHECK_DBG(main_dbg,error,"dwarf_set_tied_dbg()");
+    if (tieddbg == main_dbg) {
+        _dwarf_error_string(main_dbg,error,
+            DW_DLE_NO_TIED_FILE_AVAILABLE,
+            "DW_DLE_NO_TIED_FILE_AVAILABLE: bad argument to "
+            "dwarf_set_tied_dbg(), tied and main must not be the "
+            "same pointer!");
+        return DW_DLV_ERROR;
+    }
+    main_dbg->de_tied_data.td_tied_object = tieddbg;
     if (tieddbg) {
-        tieddbg->de_tied_data.td_is_tied_object = TRUE;
+        /*  de_tied_dbg and de_main_dbg are already set
+            == de_dbg, leave as-is. */
+        CHECK_DBG(tieddbg,error,"dwarf_set_tied_dbg() dw_tieddbg"
+            "is invalid");
+        main_dbg->de_tied_dbg = tieddbg;
+        return DW_DLV_OK;
+    } else { 
+        Dwarf_Debug td = main_dbg->de_tied_dbg;
+        main_dbg->de_tied_dbg = main_dbg->de_main_dbg;
+        if (td != main_dbg) {
+            CHECK_DBG(td,error,
+                "dwarf_set_tied_dbg() dw_tieddbg"   
+                " removing tied-dbg with null tieddbg");
+        }
+        /*  We know the old tied_dbg is sensible, replace it
+            with the main_dbg as main_dbg->de_tied_dbg
+            is now unusable by main_dbg. */
+        /*  main->de_errors_dbg already set so all
+            errors are on the main_dbg.*/
     }
     return DW_DLV_OK;
 }
 
-/*  New September 2015. */
+/*  New September 2015. 
+    As of Aug 2023 this correctly returns tied_dbg
+    whether main or tied passed in. Before this
+    it would return the dbg passed in. 
+    If there is no tied-dbg this returns main dbg. */
 int
-dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
-    Dwarf_Error*error)
+dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
+    Dwarf_Debug *dw_tieddbg_out,
+    Dwarf_Error *dw_error)
 {
-    CHECK_DBG(dbg,error,"dwarf_get_tied_dbg()");
-    *tieddbg_out = dbg->de_tied_data.td_tied_object;
+    CHECK_DBG(dw_dbg,dw_error,"dwarf_get_tied_dbg()");
+    *dw_tieddbg_out = 0;
+    if (dw_dbg->de_main_dbg == dw_dbg->de_tied_dbg) {
+        return DW_DLV_OK;
+    }
+    if (dw_dbg == dw_dbg->de_main_dbg) {
+        *dw_tieddbg_out = dw_dbg->de_tied_dbg;
+        return DW_DLV_OK;
+    }
     return DW_DLV_OK;
 }

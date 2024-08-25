@@ -130,13 +130,17 @@ dump_rc(const char *msg,
 #endif
 
 /*  The DWARF5 standard does not make it clear that
-    there should be a rnglists_base even in a dwp object.
+    there should be a rnglists_base(offset) even in a dwp object.
+    DW5 says it can be in the tied-file(non-dwo), so not needed
+    in the dwp object.
     Table F.1 implies such is not needed.
     gcc seems to leave it off in the dwp.
     ibase is an offset in the array of offsets in a rnglist,
     which only makes sense for DW_FORM_rnglistx and
-    in that case there is no base.
-    We are dealing with DW_FORM_rnglistx */
+    in that case there is no base offset
+    (the rnglists/loclists base_address has to be in
+    the non-dwo object as it is an address).
+    We are dealing with DW_FORM_rnglistx here. */
 static int
 _dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
     Dwarf_Unsigned indexval,
@@ -875,8 +879,9 @@ int dwarf_get_rnglist_head_basics(
     *rnglists_base_address_present = head->rh_cu_base_address_present;
     *rnglists_base_address= head->rh_cu_base_address;
 
-    *rnglists_debug_addr_base_present = head->rh_cu_addr_base_present;
-    *rnglists_debug_addr_base  = head->rh_cu_addr_base;
+    *rnglists_debug_addr_base_present =
+        head->rh_cu_addr_base_offset_present;
+    *rnglists_debug_addr_base  = head->rh_cu_addr_base_offset;
     return DW_DLV_OK;
 }
 
@@ -1212,7 +1217,10 @@ build_array_of_rle(Dwarf_Debug dbg,
     Dwarf_Bool foundbaseaddr        = FALSE;
     int done = FALSE;
     Dwarf_Bool no_debug_addr_available = FALSE;
-
+#ifdef  TEST_MER
+printf("dadebug build_array of rle is_dwo? %u\n",
+rhd->rh_context->cc_is_dwo);
+#endif /* TEST_MER */
     if (rhd->rh_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
             and it is a base address. */
@@ -1375,6 +1383,12 @@ build_array_of_rle(Dwarf_Debug dbg,
         }
         }
     }
+#ifdef  TEST_MER
+printf("dadebug array of rld .debug_loclists count %lu dwo? %u %d %s\n",
+(unsigned long)rhd->rh_count,
+rhd->rh_context->cc_is_dwo,
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     if (rhd->rh_count > 0) {
         Dwarf_Rnglists_Entry* array = 0;
         Dwarf_Rnglists_Entry cur = 0;
@@ -1405,6 +1419,10 @@ build_array_of_rle(Dwarf_Debug dbg,
 
 /*  Build a head with all the relevent Entries
     attached.
+    If the context is not found in the main object,
+    use the context signature (which must be present)
+    and look in the tied-file for a match and
+    get the content there.
 */
 int
 dwarf_rnglists_get_rle_head(
@@ -1438,7 +1456,14 @@ dwarf_rnglists_get_rle_head(
     Dwarf_Unsigned offset_in_rnglists = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Bool is_rnglistx = FALSE;
+#ifdef  TEST_MER
+    Dwarf_Unsigned context_count = 0;
+#endif /* TEST_MER */
 
+#ifdef  TEST_MER
+printf("dadebug entry dwarf_rnglists_get_rle_head %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     if (!attr) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL "
@@ -1454,6 +1479,13 @@ dwarf_rnglists_get_rle_head(
         "dwarf_rnglists_get_rle_head() via attribute");
 
     array = dbg->de_rnglists_context;
+#ifdef  TEST_MER
+    context_count = dbg->de_rnglists_context_count;
+printf("dadebug rnglists_context_count %lu context 0x%lx %d %s \n",
+(unsigned long)context_count,
+(unsigned long)array,
+__LINE__,__FILE__);
+#endif /* TEST_MER */
 
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
@@ -1462,6 +1494,13 @@ dwarf_rnglists_get_rle_head(
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */
     offset_in_rnglists = attr_val;
+#ifdef  TEST_MER
+printf("dadebug is_rnglistx %u base present %u is_dwo %u %d %s \n",
+(unsigned)is_rnglistx,
+(unsigned)ctx->cc_rnglists_base_present,
+(unsigned)ctx->cc_is_dwo,
+__LINE__,__FILE__);
+#endif /* TEST_MER */
     if (is_rnglistx) {
         if (ctx->cc_rnglists_base_present) {
             offset_in_rnglists = ctx->cc_rnglists_base;
@@ -1494,6 +1533,14 @@ dwarf_rnglists_get_rle_head(
                     return DW_DLV_ERROR;
             }
             ctx->cc_rnglists_base_present = TRUE;
+#ifdef  TEST_MER
+printf("dadebug is_rnglistx %u base present %u is_dwo %u %d %s \n",
+(unsigned)is_rnglistx,
+(unsigned)ctx->cc_rnglists_base_present,
+(unsigned)ctx->cc_is_dwo,
+__LINE__,__FILE__);
+fflush(stdout);
+#endif /* TEST_MER */
             ctx->cc_rnglists_base         = ibase;
             offset_in_rnglists = ibase;
         }
@@ -1504,6 +1551,9 @@ dwarf_rnglists_get_rle_head(
         offset_in_rnglists,
         &rnglists_contextnum,error);
     if (res != DW_DLV_OK) {
+#ifdef  TEST_MER
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+#endif /* TEST_MER */
         return res;
     }
     rctx = array[rnglists_contextnum];
@@ -1511,6 +1561,15 @@ dwarf_rnglists_get_rle_head(
     entrycount = rctx->rc_offset_entry_count;
     offsetsize = rctx->rc_offset_size;
     enddata = rctx->rc_endaddr;
+#ifdef  TEST_MER
+printf("dadebug rcontext 0x%lx attrval 0x%lx base 0x%lx count 0x%lx offset %lu\n",
+(unsigned long)rnglists_contextnum,
+(unsigned long)attr_val,
+(unsigned long)table_base,
+(unsigned long)entrycount,
+(unsigned long)offsetsize);
+fflush(stdout);
+#endif /* TEST_MER */
 
     if (is_rnglistx && attr_val >= entrycount) {
         dwarfstring m;
@@ -1526,6 +1585,9 @@ dwarf_rnglists_get_rle_head(
             DW_DLE_RNGLISTS_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
+#ifdef  TEST_MER
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+#endif /* TEST_MER */
         return DW_DLV_ERROR;
     }
     shead.rh_context = ctx;
@@ -1543,14 +1605,16 @@ dwarf_rnglists_get_rle_head(
         ctx->cc_rnglists_base_present;
     shead.rh_at_rnglists_base =  ctx->cc_rnglists_base;
 
-    /*  DW_AT_low_pc, if present.  From CU */
-    shead.rh_cu_base_address_present = ctx->cc_low_pc_present;
-    shead.rh_cu_base_address = ctx->cc_low_pc;
+    /*  DW_AT_low_pc originally if present.  From CU,
+        possibly inherited into dwo from skeleton. */
+    shead.rh_cu_base_address_present = ctx->cc_base_address_present;
+    shead.rh_cu_base_address = ctx->cc_base_address;;
 
     /*  base address DW_AT_addr_base of our part of
         .debug_addr, from CU */
-    shead.rh_cu_addr_base = ctx->cc_addr_base;
-    shead.rh_cu_addr_base_present = ctx->cc_addr_base_present;
+    shead.rh_cu_addr_base_offset = ctx->cc_addr_base_offset;
+    shead.rh_cu_addr_base_offset_present = 
+        ctx->cc_addr_base_offset_present;
     if (is_rnglistx) {
         Dwarf_Unsigned table_entryval = 0;
 
@@ -1576,6 +1640,9 @@ dwarf_rnglists_get_rle_head(
             "Allocating a Dwarf_Rnglists_Head struct fails"
             " in libdwarf function "
             "dwarf_rnglists_index_get_rle_head()");
+#ifdef  TEST_MER
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+#endif /* TEST_MER */
         return DW_DLV_ERROR;
     }
     shead.rh_dbg = dbg;
@@ -1583,6 +1650,9 @@ dwarf_rnglists_get_rle_head(
     res = build_array_of_rle(dbg,lhead,error);
     if (res != DW_DLV_OK) {
         dwarf_dealloc(dbg,lhead,DW_DLA_RNGLISTS_HEAD);
+#ifdef  TEST_MER
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+#endif /* TEST_MER */
         return res;
     }
     if (global_offset_of_rle_set) {
@@ -1593,6 +1663,9 @@ dwarf_rnglists_get_rle_head(
     if (entries_count_out) {
         *entries_count_out = lhead->rh_count;
     }
+#ifdef  TEST_MER
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+#endif /* TEST_MER */
     return DW_DLV_OK;
 }
 
