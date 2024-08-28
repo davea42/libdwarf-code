@@ -71,6 +71,7 @@
 
 */
 
+#define TEST_MER 1
 
 struct Dwarf_Rnglists_Context_s;
 typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;

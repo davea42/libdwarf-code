@@ -1100,15 +1100,28 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
     } else {
-        /*  We have a DW_AT_rnglists_base (cc_rangelists_base),
+        /*  We have a DW_AT_rnglists_base (cc_rnglists_base),
             let's use it. */
         Dwarf_Unsigned lookfor = 0;;
 
         lookfor = ctx->cc_rnglists_base;
+#ifdef TEST_MER
+printf("dadebug dwarf_rnglists.c count %lu look for rnglists base 0x%lx line %d\n",
+(unsigned long)count,
+(unsigned long)lookfor,
+__LINE__);
+#endif
         for ( i = 0 ; i < count; ++i) {
             dwarfstring m;
 
             Dwarf_Rnglists_Context rcx = array[i];
+#ifdef TEST_MER
+printf("dadebug check %u off == 0x%lx line %u\n",
+(unsigned)i,
+(unsigned long)rcx->rc_offsets_off_in_sect ,
+__LINE__);
+#endif
+
             if (rcx->rc_offsets_off_in_sect == lookfor){
                 *index = i;
                 return DW_DLV_OK;
@@ -1131,6 +1144,7 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
+
         {
             dwarfstring m;
 
@@ -1452,10 +1466,13 @@ dwarf_rnglists_get_rle_head(
     Dwarf_Unsigned rle_global_offset = 0;
     Dwarf_Rnglists_Head lhead = 0;
     Dwarf_CU_Context ctx = 0;
+    Dwarf_CU_Context tiedctx = 0;
     struct Dwarf_Rnglists_Head_s shead;
     Dwarf_Unsigned offset_in_rnglists = 0;
     Dwarf_Debug dbg = 0;
+    Dwarf_Debug localdbg = 0;
     Dwarf_Bool is_rnglistx = FALSE;
+
 #ifdef  TEST_MER
     Dwarf_Unsigned context_count = 0;
 #endif /* TEST_MER */
@@ -1464,6 +1481,8 @@ dwarf_rnglists_get_rle_head(
 printf("dadebug entry dwarf_rnglists_get_rle_head %d %s\n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */
+    memset(&shead,0,sizeof(shead));
+
     if (!attr) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL "
@@ -1472,11 +1491,66 @@ __LINE__,__FILE__);
             "dwarf_rnglists_get_rle_head()");
         return DW_DLV_ERROR;
     }
-    memset(&shead,0,sizeof(shead));
     ctx = attr->ar_cu_context;
-    dbg = ctx->cc_dbg;
+    localdbg = dbg =  ctx->cc_dbg;
     CHECK_DBG(dbg,error,
         "dwarf_rnglists_get_rle_head() via attribute");
+
+    res = _dwarf_load_section(localdbg, 
+        &localdbg->de_debug_rnglists,
+        error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /* data is in a.out, not dwp */
+        localdbg = dbg->de_tied_dbg;
+        if (localdbg == dbg) {
+            return DW_DLV_NO_ENTRY;
+        }
+        res = _dwarf_load_section(localdbg,
+            &localdbg->de_debug_rnglists, error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            return res;
+        }
+        dbg = localdbg;
+    }
+    if (!dbg->de_debug_rnglists.dss_size) {
+        return DW_DLV_NO_ENTRY;
+    }
+    /* dbg refers to tied file */
+    res = _dwarf_search_for_signature(dbg, ctx->cc_signature,
+        &tiedctx,error);
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if(dbg != tiedctx->cc_dbg) {
+        /* something very wrong */
+        _dwarf_error_string(dbg, error,DW_DLE_RNGLISTS_ERROR,
+            "DW_DLE_RNGLISTS_ERROR: internal corruption "
+            "reading tied-file");
+        return DW_DLV_ERROR;
+    }
+    if (theform == DW_FORM_rnglistx) {
+        is_rnglistx = TRUE;
+    }
+
+
+
+#ifdef  TEST_MER
+printf("dadebug dwarf_rnglists.c rle_head dbg 0x%lx "
+"main 0x%lx tied 0x%lx %d \n",
+(unsigned long)dbg,
+(unsigned long)dbg->de_main_dbg,
+(unsigned long)dbg->de_tied_dbg,
+__LINE__);
+#endif /* TEST_MER */
 
     array = dbg->de_rnglists_context;
 #ifdef  TEST_MER
@@ -1487,9 +1561,6 @@ printf("dadebug rnglists_context_count %lu context 0x%lx %d %s \n",
 __LINE__,__FILE__);
 #endif /* TEST_MER */
 
-    if (theform == DW_FORM_rnglistx) {
-        is_rnglistx = TRUE;
-    }
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */

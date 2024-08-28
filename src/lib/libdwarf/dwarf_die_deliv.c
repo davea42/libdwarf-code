@@ -1343,7 +1343,13 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
     Dwarf_Signed low_pc_attrnum = -1;
     Dwarf_Signed entry_pc_attrnum = -1;
     Dwarf_Signed at_addr_base_attrnum = -1;
-
+#ifdef TEST_MER
+printf("dadebug entry find_cu_die_base_fields dbg 0x%lx "
+"tied_dbg  0x%lx line %d\n",
+(unsigned long)dbg,
+(unsigned long)dbg->de_tied_dbg,
+__LINE__);
+#endif
     cu_context = cudie->di_cu_context;
     version_stamp = cu_context->cc_version_stamp;
 
@@ -1590,6 +1596,9 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
+#ifdef TEST_MER
+printf("dadebug AT_GNU_rnglists_base_present!\n");
+#endif
                     cucon->cc_ranges_base_present = TRUE;
                 } else {
                     local_attrlist_dealloc(dbg,atcount,alist);
@@ -1608,6 +1617,9 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     &is_info,
                     error);
                 if (udres == DW_DLV_OK) {
+#ifdef TEST_MER
+printf("dadebug AT_rnglists_base_present!\n");
+#endif
                     cucon->cc_rnglists_base_present = TRUE;
                     cucon->cc_rnglists_base_via_at = TRUE;
                 } else {
@@ -1805,7 +1817,8 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
         This is the one and only place where it is
         saved for re-use and eventual dealloc. */
 #ifdef  TEST_MER
-printf("dadebug insert_into_cu_context_list is_dwo %u\n",
+printf("dadebug insert_into_cu_context_list 0x%lx is_dwo %u\n",
+(unsigned long)icu_context,
 icu_context->cc_is_dwo);
 #endif /* TEST_MER */
     if (!dis->de_cu_context_list) {
@@ -2134,9 +2147,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         tieddbg = dbg->de_tied_dbg;
 #ifdef TEST_MER
 printf("dadebug dwarf_die_deliv.c call merge_all_base_attrs "
-" tieddbg 0x%lx  dbg->de_main_dbg 0x%lx line %d\n",
+" tieddbg 0x%lx  dbg->de_main_dbg 0x%lx main cu_context 0x%lu line %d\n",
 (unsigned long)tieddbg,
 (unsigned long)dbg->de_tied_dbg,
+(unsigned long)cu_context,
 __LINE__);
 #endif
         if (tieddbg != dbg->de_main_dbg) {
