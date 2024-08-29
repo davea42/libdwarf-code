@@ -1,3 +1,229 @@
+2024-08-29:  David Anderson
+    commit 164771d2ed375c2d162ac28f968e4437bebc80f9
+
+With this we complete some fixes:
+github issue #259 now reads .debug_rnglists data from
+    its tied-file.
+github issue #260 We now report DW_FORM_flag and DW_FORM_flag_present
+    when used in .debug_names (DWARF5) and everywhere else.
+
+We altered the (internal) struct Dwarf_Debug_s 
+with better naming for loclists rnglists fields merged
+from a skeleton to the dwp/dwo.
+
+We revised DW_DLV_ERROR reports to always use 
+the main-object, not the tied-object (if any)
+to report errors. Simpler and saver now we
+read more from the tied-object. Made possible
+by 3 new fields in dwarf_opaque.h (a libdwarf-private
+header).
+
+    Removed trailing whitespace.
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+        modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+
+2024-08-29:  David Anderson
+    commit c7054db271ee668aef5ef4eb9fd47fc139ecb36b
+
+    Removed all debug printf
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+2024-08-29:  David Anderson
+    commit 3e364da8aea38a9e8eb22747d3abb7744f121c50
+
+    Now we print skeleton .debug_rnglists (DW5)
+    and .debug_ranges (DW4 extension)
+    properly, we think.
+    Many #ifdef TEST_MER code blocks must now be
+    deleted.
+    DO NOT USE THIS COMMIT
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_tied.c
+            modified:   test/test_dwarf_tied.c
+
+2024-08-28:  David Anderson
+    commit c3e72e2da521c6679309056fe4639e4dfcc2d897
+
+    Fixes for rnglists with tied-file .debug_rnglists
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_opaque.h
+            modified:   dwarf_query.c
+            modified:   dwarf_rnglists.c
+    DO NOT USE THIS COMMIT
+
+2024-08-25:  David Anderson
+    commit faa0ac96241387a662d0aad7a8b68b9a7d2cad37
+
+    Now seems to get skeleton data correctly from a tied-file.
+    Now reads DW_AT_accessibility and DW_FORM_flag
+    sensibly.
+    Still with lots of printf (but all #ifdef out).
+    DO NOT USE THIS COMMIT.
+            modified:   ../../lib/libdwarf/dwarf_debugnames.c
+            modified:   ../../lib/libdwarf/dwarf_die_deliv.c
+            modified:   ../../lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   ../../lib/libdwarf/dwarf_form.c
+            modified:   ../../lib/libdwarf/dwarf_opaque.h
+            modified:   ../../lib/libdwarf/dwarf_query.c
+            modified:   ../../lib/libdwarf/dwarf_tied.c
+
+2024-08-25:  David Anderson
+    commit c2310f8e499725ece9c5fb0af9191315aa8e2ceb
+
+    DO NOT USE THIS COMMIT. it is a work in progress.
+    Contains debug related to DWARF5 rnglists.
+            modified:   src/bin/dwarfdump/print_die.c
+    Now all DW_DLV_ERROR allocations appear on
+    the 'main file' errors allocations, never on the tied-file
+    allocations. Simplifies dealing with reading from the tied-file.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+    Lots of temporary debug printf (with ifdefs).
+    Small but important changes dealing with tied-file.
+    Includes eliminating de_tied_data.td_tied_object.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    Ensures all ERROR instances are on the main-file
+    error list, even when reading from tied-file.
+    Changes reflecting the new field de_tied_dbg
+            modified:   src/lib/libdwarf/dwarf_error.c
+
+    Changes reflecting the new field de_tied_dbg
+    Some debug printf (with #ifdef).
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Now all error deletes use dwarf_dealloc_error().
+    Changes reflecting the new field de_tied_dbg
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    Big change in dwarf_set_tied_dbg() for correctness
+    involving the new fields related to de_tied_dbg.
+    And dwarf_get_tied_dbg().
+    No change in API.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+    Big changes in dwarf_object_init_b related to
+    de_tied_dbg and de_errors_dbg etc. No API change.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+    renamed ll_cu_addr_base_present to
+    ll_cu_addr_base_offset_present and a couple
+    other fields to reflect the
+    meaning of the field. Clarifying relationship
+    to the DWARF5 specification.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loc.h
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+    Now all error deletes use dwarf_dealloc_error().
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+    Renamed cc_addr_base_present
+    cc_base_address_present for clarity.
+    Added
+    struct Dwarf_Debug_s * de_main_dbg;
+    struct Dwarf_Debug_s * de_tied_dbg;
+    struct Dwarf_Debug_s * de_errors_dbg;
+    for simplicity and clarity in handling
+    main-file and tied-file requirements.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Renaming
+    cc_addr_base;
+     to cc_addr_base_offset
+    for clarity on the meaning of the field.
+    Now all error deletes use dwarf_dealloc_error().
+    Removed de_tied_data.td_tied_object reference
+    and use de_tied_dbg != de_main_dbg
+    in its place.
+    Removed completely an ill-advised #if 0 code block.
+    Left debug printf in place (within #ifdef)
+    Added cc_addr_base_offset[_present]
+    to the fields merged from tied-file to main-file.
+            modified:   src/lib/libdwarf/dwarf_query.c
+    Now using dbg->de_tied_dbg where needed.
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+    Using renamed-to rh_cu_addr_base_offset[_present]
+    where needed.
+    Left debug printf in place (within #ifdef)
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+    renamed two fields to rh_cu_addr_base_offset[_present].
+            modified:   src/lib/libdwarf/dwarf_rnglists.h
+
+    Left debug printf in place (within #ifdef)
+            modified:   src/lib/libdwarf/dwarf_tied.c
+
+    Deleted -_dwarf_error_mv_s_to_t() as it is no longer
+    needed due to use of de_errors_dbg instead of plain dbg.
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+    Fully document dwarf_get_tied_dbg() for the first time.
+    No change in API.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-08-15:  David Anderson
+    commit 2511d3eea2aff3a570333c3f2cbe0c8520abf91a
+
+    Removed an accidental dot (.) character that broke the build.
+            modified:   src/bin/dwarfdump/dd_true_section_name.c
+
+2024-08-15:  David Anderson
+    commit 61d283637eab47b762db58b9d408803d223b3c0c
+
+    Updated version to 0.11.1 before doing new work.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2024-08-15:  David Anderson
+    commit b3af76c32326cca960ff723e0f0948c689cf174d
+
+    Show cflags.
+            modified:   meson.build
+    sprintf->snprintf
+            modified:   src/bin/dwarfdump/dd_true_section_name.c
+    sprintf->snprintf (only compiled for debugging).
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2024-08-15:  David Anderson
+    commit 285d9d34f3e9f56cc1c487d0055f6dc54a9c54a1
+
+    Now with date today
+            modified:   doc/libdwarf.pdf
+
+2024-08-15:  David Anderson
+    commit 9bba69fa73f925cc793e5a7456798e46d5a60d8a
+
+    Updated document date to today.
+            modified:   doc/libdwarf.dox
+
+2024-08-15:  David Anderson
+    commit 5c2899c95634ac60f7afe65a2ef5b37d1a08f73e
+
+    Noted change to scripts/buildandreleasetest.sh
+            modified:   ChangeLog
+
 2024-08-15:  David Anderson
     commit e65fc8c50072f07fefd1017650c97e7282125e1d
 
