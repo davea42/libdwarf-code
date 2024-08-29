@@ -1106,22 +1106,9 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
         Dwarf_Unsigned lookfor = 0;;
 
         lookfor = ctx->cc_rnglists_base;
-#ifdef TEST_MER
-printf("dadebug dwarf_rnglists.c count %lu look for rnglists base 0x%lx line %d\n",
-(unsigned long)count,
-(unsigned long)lookfor,
-__LINE__);
-#endif
         for ( i = 0 ; i < count; ++i) {
             dwarfstring m;
-
             Dwarf_Rnglists_Context rcx = array[i];
-#ifdef TEST_MER
-printf("dadebug check %u off == 0x%lx line %u\n",
-(unsigned)i,
-(unsigned long)rcx->rc_offsets_off_in_sect ,
-__LINE__);
-#endif
 
             if (rcx->rc_offsets_off_in_sect == lookfor){
                 *index = i;
@@ -1232,10 +1219,7 @@ build_array_of_rle(Dwarf_Debug dbg,
     Dwarf_Bool foundbaseaddr        = FALSE;
     int done = FALSE;
     Dwarf_Bool no_debug_addr_available = FALSE;
-#ifdef  TEST_MER
-printf("dadebug build_array of rle is_dwo? %u\n",
-rhd->rh_context->cc_is_dwo);
-#endif /* TEST_MER */
+
     if (rhd->rh_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
             and it is a base address. */
@@ -1398,12 +1382,6 @@ rhd->rh_context->cc_is_dwo);
         }
         }
     }
-#ifdef  TEST_MER
-printf("dadebug array of rld .debug_loclists count %lu dwo? %u %d %s\n",
-(unsigned long)rhd->rh_count,
-rhd->rh_context->cc_is_dwo,
-__LINE__,__FILE__);
-#endif /* TEST_MER */
     if (rhd->rh_count > 0) {
         Dwarf_Rnglists_Entry* array = 0;
         Dwarf_Rnglists_Entry cur = 0;
@@ -1464,39 +1442,14 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     Dwarf_Unsigned rle_global_offset = 0;
     unsigned       offsetsize = 0;
 
-#ifdef  TEST_MER
-    Dwarf_Unsigned context_count = 0;
-printf("dadebug dwarf_rnglists.c rle_head dbg 0x%lx "
-"main 0x%lx tied 0x%lx %d \n",
-(unsigned long)dbg,
-(unsigned long)dbg->de_main_dbg,
-(unsigned long)dbg->de_tied_dbg,
-__LINE__);
-#endif /* TEST_MER */
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
     }
-
     array = dbg->de_rnglists_context;
-#ifdef  TEST_MER
-    context_count = dbg->de_rnglists_context_count;
-printf("dadebug rnglists_context_count %lu context 0x%lx %d %s \n",
-(unsigned long)context_count,
-(unsigned long)array,
-__LINE__,__FILE__);
-#endif /* TEST_MER */
-
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */
     offset_in_rnglists = attr_val;
-#ifdef  TEST_MER
-printf("dadebug is_rnglistx %u base present %u is_dwo %u %d %s \n",
-(unsigned)is_rnglistx,
-(unsigned)ctx->cc_rnglists_base_present,
-(unsigned)ctx->cc_is_dwo,
-__LINE__,__FILE__);
-#endif /* TEST_MER */
     if (is_rnglistx) {
         if (ctx->cc_rnglists_base_present) {
             offset_in_rnglists = ctx->cc_rnglists_base;
@@ -1529,14 +1482,6 @@ __LINE__,__FILE__);
                     return DW_DLV_ERROR;
             }
             ctx->cc_rnglists_base_present = TRUE;
-#ifdef  TEST_MER
-printf("dadebug is_rnglistx %u base present %u is_dwo %u %d %s \n",
-(unsigned)is_rnglistx,
-(unsigned)ctx->cc_rnglists_base_present,
-(unsigned)ctx->cc_is_dwo,
-__LINE__,__FILE__);
-fflush(stdout);
-#endif /* TEST_MER */
             ctx->cc_rnglists_base         = ibase;
             offset_in_rnglists = ibase;
         }
@@ -1547,9 +1492,6 @@ fflush(stdout);
         offset_in_rnglists,
         &rnglists_contextnum,error);
     if (res != DW_DLV_OK) {
-#ifdef  TEST_MER
-printf("dadebug return %d %s\n",__LINE__,__FILE__);
-#endif /* TEST_MER */
         return res;
     }
     rctx = array[rnglists_contextnum];
@@ -1557,16 +1499,6 @@ printf("dadebug return %d %s\n",__LINE__,__FILE__);
     entrycount = rctx->rc_offset_entry_count;
     offsetsize = rctx->rc_offset_size;
     enddata = rctx->rc_endaddr;
-#ifdef  TEST_MER
-printf("dadebug rcontext 0x%lx attrval 0x%lx base 0x%lx count 0x%lx offset %lu\n",
-(unsigned long)rnglists_contextnum,
-(unsigned long)attr_val,
-(unsigned long)table_base,
-(unsigned long)entrycount,
-(unsigned long)offsetsize);
-fflush(stdout);
-#endif /* TEST_MER */
-
     if (is_rnglistx && attr_val >= entrycount) {
         dwarfstring m;
 
@@ -1581,9 +1513,6 @@ fflush(stdout);
             DW_DLE_RNGLISTS_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-#ifdef  TEST_MER
-printf("dadebug return %d %s\n",__LINE__,__FILE__);
-#endif /* TEST_MER */
         return DW_DLV_ERROR;
     }
     memset(&shead,0,sizeof(shead));
@@ -1637,9 +1566,6 @@ printf("dadebug return %d %s\n",__LINE__,__FILE__);
             "Allocating a Dwarf_Rnglists_Head struct fails"
             " in libdwarf function "
             "dwarf_rnglists_index_get_rle_head()");
-#ifdef  TEST_MER
-printf("dadebug return %d %s\n",__LINE__,__FILE__);
-#endif /* TEST_MER */
         return DW_DLV_ERROR;
     }
     shead.rh_dbg = dbg;
@@ -1647,9 +1573,6 @@ printf("dadebug return %d %s\n",__LINE__,__FILE__);
     res = build_array_of_rle(dbg,lhead,error);
     if (res != DW_DLV_OK) {
         dwarf_dealloc(dbg,lhead,DW_DLA_RNGLISTS_HEAD);
-#ifdef  TEST_MER
-printf("dadebug return %d %s\n",__LINE__,__FILE__);
-#endif /* TEST_MER */
         return res;
     }
     if (global_offset_of_rle_set) {
@@ -1660,9 +1583,6 @@ printf("dadebug return %d %s\n",__LINE__,__FILE__);
     if (entries_count_out) {
         *entries_count_out = lhead->rh_count;
     }
-#ifdef  TEST_MER
-printf("dadebug return %d %s\n",__LINE__,__FILE__);
-#endif /* TEST_MER */
     return DW_DLV_OK;
 }
 
@@ -1697,10 +1617,6 @@ dwarf_rnglists_get_rle_head(
     Dwarf_Debug dbg = 0;
     Dwarf_Debug localdbg = 0;
 
-#ifdef  TEST_MER
-printf("dadebug entry dwarf_rnglists_get_rle_head %d %s\n",
-__LINE__,__FILE__);
-#endif /* TEST_MER */
     if (!attr) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL "
@@ -1746,13 +1662,6 @@ __LINE__,__FILE__);
         /*  we have data in a.out (tied-file),
             we expect, not dwp (main_file)  */
         localdbg = dbg->de_tied_dbg;
-#ifdef  TEST_MER
-printf("dadebug dwarf_rnglists.c set localdbg 0x%lx "
-"from tied 0x%lx %d \n",
-(unsigned long)dbg,
-(unsigned long)dbg->de_tied_dbg,
-__LINE__);
-#endif /* TEST_MER */
 
         if (localdbg == dbg) {
             return DW_DLV_NO_ENTRY;
@@ -1765,12 +1674,6 @@ __LINE__);
         if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
-#ifdef  TEST_MER
-printf("dadebug dwarf_rnglists.c  using  tied dbg now"
-"from tied 0x%lx %d \n",
-(unsigned long)dbg->de_tied_dbg,
-__LINE__);
-#endif /* TEST_MER */
         dbg = localdbg;
     }
 
@@ -1790,9 +1693,6 @@ __LINE__);
             "reading tied-file");
         return DW_DLV_ERROR;
     }
-#ifdef  TEST_MER
-printf("dadebug dwarf_rnglists.c now  fill in rle using tied");
-#endif /* TEST_MER */
     res = _dwarf_fill_in_rle_head(dbg, theform,
         /*  attr_val is either an offset
             (theform == DW_FORM_sec_offset)

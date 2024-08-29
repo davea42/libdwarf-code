@@ -1249,21 +1249,10 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
     Dwarf_CU_Context tiedcontext = 0;
     int res = 0;
 
-#ifdef  TEST_MER
-printf("dadebug enter _dwarf_merge_all_base_attrs_of_cu_die\n");
-printf("dadebug merging cc_ranges_base main context %u line %d \n",
-context->cc_ranges_base_present,__LINE__);
-#endif /* TEST_MER */
     if (!tieddbg) {
-#ifdef  TEST_MER
-printf("dadebug NO tieddbg _dwarf_merge_all_base_attrs_of_cu_die\n");
-#endif 
         return DW_DLV_NO_ENTRY;
     }
     if (!context->cc_signature_present) {
-#ifdef  TEST_MER
-printf("dadebug NO  _dwarf_merge_all_base_attrs_of_cu_die\n");
-#endif 
         return DW_DLV_NO_ENTRY;
     }
     res = _dwarf_search_for_signature(tieddbg,
@@ -1271,22 +1260,11 @@ printf("dadebug NO  _dwarf_merge_all_base_attrs_of_cu_die\n");
         &tiedcontext,
         error);
     if ( res == DW_DLV_ERROR) {
-#ifdef  TEST_MER
-printf("dadebug ERROR _dwarf_merge_all_base_attrs_of_cu_die\n");
-#endif 
         return res;
     }
     if ( res == DW_DLV_NO_ENTRY) {
-#ifdef  TEST_MER
-printf("dadebug NO_ENTRY _dwarf_merge_all_base_attrs_of_cu_die\n");
-#endif 
         return res;
     }
-#ifdef  TEST_MER
-printf("dadebug merge low_pc from context 0x%lx tied %d\n",
-(unsigned long)tiedcontext,
-tiedcontext->cc_low_pc_present);
-#endif 
     if (tiedcontext->cc_low_pc_present) {
         /*  A dwo/dwp will not have this, merge from tied
             Needed for rnglists/loclists
@@ -1300,14 +1278,6 @@ tiedcontext->cc_low_pc_present);
             tiedcontext->cc_base_address_present;
         context->        cc_base_address =
             tiedcontext->cc_base_address;
-        
-#ifdef  TEST_MER
-printf("dadebug merge_all_base_attrs sets lowpc_pres %u "
-"low_pc 0x%lx %d %s\n",
-(unsigned)context->cc_low_pc_present,
-(unsigned long)context->cc_low_pc,
-__LINE__,__FILE__);
-#endif /* TEST_MER */
     }
     if (tiedcontext->cc_addr_base_offset_present) {
         /*  This is a base-offset, not an address. */
@@ -1315,20 +1285,7 @@ __LINE__,__FILE__);
             tiedcontext->cc_addr_base_offset_present;
         context->        cc_addr_base_offset=
             tiedcontext->cc_addr_base_offset;
-#if  TEST_MER
-printf("dadebug merge_all_base_attrs addr_base_pres %u "
-"addr_base offset 0x%lx %d %s\n",
-(unsigned)context->cc_addr_base_offset_present,
-(unsigned long)context->cc_addr_base_offset,
-__LINE__,__FILE__);
-#endif /* TEST_MER */
     }
-#ifdef  TEST_MER
-printf("dadebug merge cc_ranges_base tied_context base? %u rbase 0x%lx  main context %u line %d \n",
-tiedcontext->cc_ranges_base_present,
-(unsigned long)tiedcontext->cc_rnglists_base,
-context->cc_ranges_base_present,__LINE__);
-#endif /* TEST_MER */
     if ((context->cc_version_stamp == DW_CU_VERSION4 ||
         context->cc_version_stamp == DW_CU_VERSION5) &&
         !context->cc_rnglists_base_present) {
@@ -1337,12 +1294,6 @@ context->cc_ranges_base_present,__LINE__);
         context->cc_rnglists_base =
             tiedcontext->cc_rnglists_base;
     } 
-#ifdef  TEST_MER
-printf("dadebug rnglists base present %u base %lx %d %s \n",
-(unsigned)context->cc_rnglists_base_present,
-(unsigned long)context->cc_rnglists_base,
-__LINE__,__FILE__);
-#endif /* TEST_MER */
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
             tiedcontext->cc_str_offsets_tab_present;
