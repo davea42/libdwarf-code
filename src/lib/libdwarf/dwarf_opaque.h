@@ -71,7 +71,7 @@
 
 */
 
-#define TEST_MER 1
+#define HAS_TIED_FILE(dbg) (dbg->de_main_dbg != dbg->de_tied_dbg)
 
 struct Dwarf_Rnglists_Context_s;
 typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;
@@ -1034,6 +1034,7 @@ int _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
+    Dwarf_CU_Context startcontext /* null except reading tied */,
     Dwarf_Die * cu_die_out,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,

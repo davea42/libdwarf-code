@@ -741,7 +741,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
     return res;
 }
 
-/* If context_level is 0, normal call
+/*  If context_level is 0, normal call
     But if non-zero will avoid creating CU Context. */
 int
 dwarf_global_formref_b(Dwarf_Attribute attr,
@@ -750,13 +750,16 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
     Dwarf_Error * error)
 {
     int res = 0;
+    int context_level = 0;
     res = _dwarf_internal_global_formref_b( attr,
-        0,
+        context_level,
         ret_offset,
         offset_is_info,
         error);
     return res;
 }
+/*  If context_level is 0, normal call
+    But if non-zero will avoid creating CU Context. */
 int
 _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
     int context_level,

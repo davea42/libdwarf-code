@@ -82,6 +82,7 @@ int
 _dwarf_next_cu_header_internal(
     Dwarf_Debug dbg,
     Dwarf_Bool is_info,
+    Dwarf_CU_Context startcontext /* null except reading tied */,
     Dwarf_Die  *cu_die_output,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
@@ -98,6 +99,7 @@ _dwarf_next_cu_header_internal(
 {
     (void)dbg;
     (void)is_info;
+    (void)startcontext;;
     (void)cu_die_output;
     (void)cu_header_length;
     (void)version_stamp;

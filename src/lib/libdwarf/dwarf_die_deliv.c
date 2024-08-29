@@ -1111,9 +1111,11 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
 {
     Dwarf_Bool has_signature = FALSE;
     int res = 0;
+    Dwarf_CU_Context startcontext = 0;
 
     res = _dwarf_next_cu_header_internal(dbg,
         is_info,
+        startcontext,
         NULL,
         cu_header_length,
         version_stamp,
@@ -1147,9 +1149,11 @@ dwarf_next_cu_header_e(Dwarf_Debug dbg,
 {
     Dwarf_Bool has_signature = FALSE;
     int res = 0;
+    Dwarf_CU_Context  startcontext = 0;
 
     res = _dwarf_next_cu_header_internal(dbg,
         is_info,
+        startcontext,
         cu_die_out,
         cu_header_length,
         version_stamp,
@@ -2008,6 +2012,7 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
+    Dwarf_CU_Context startcontext,
     Dwarf_Die *cu_die_out,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
@@ -2038,6 +2043,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Small *dataptr = 0;
     struct Dwarf_Section_s *secdp = 0;
     int res = 0;
+    (void)startcontext; /* dadebug FIXME */
 
     /* ***** BEGIN CODE ***** */
 
@@ -2063,9 +2069,15 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         /*  We are leaving new_offset zero. We are at the
             start of a section. */
         new_offset = 0;
+#ifdef  TEST_MER
+printf("dadebug cuhdr new offset zero\n");
+#endif
     } else {
         new_offset = _dwarf_calculate_next_cu_context_offset(
             dis->de_cu_context);
+#ifdef  TEST_MER
+printf("dadebug cuhdr new offset 0x%lx\n",(unsigned long)new_offset);
+#endif
     }
 
     /*  Check that there is room in .debug_info beyond

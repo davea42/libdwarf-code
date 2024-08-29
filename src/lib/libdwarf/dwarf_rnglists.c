@@ -56,6 +56,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SIZEOFT32 4
 #define SIZEOFT64 8
 
+
 #if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
@@ -1431,16 +1432,9 @@ __LINE__,__FILE__);
     return DW_DLV_OK;
 }
 
-/*  Build a head with all the relevent Entries
-    attached.
-    If the context is not found in the main object,
-    use the context signature (which must be present)
-    and look in the tied-file for a match and
-    get the content there.
-*/
-int
-dwarf_rnglists_get_rle_head(
-    Dwarf_Attribute attr,
+
+static int
+_dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     Dwarf_Half     theform,
     /*  attr_val is either an offset
         (theform == DW_FORM_sec_offset)
@@ -1449,101 +1443,29 @@ dwarf_rnglists_get_rle_head(
         at that index is the local offset of
         a specific rangelist entry set.  */
     Dwarf_Unsigned attr_val,
+    Dwarf_CU_Context ctx,
     Dwarf_Rnglists_Head *head_out,
     Dwarf_Unsigned      *entries_count_out,
     Dwarf_Unsigned      *global_offset_of_rle_set,
     Dwarf_Error         *error)
 {
-    int res = 0;
-    Dwarf_Unsigned rnglists_contextnum = 0;
-    Dwarf_Small *table_base = 0;
-    Dwarf_Small *table_entry = 0;
-    Dwarf_Small *enddata = 0;
-    Dwarf_Rnglists_Context *array = 0;
-    Dwarf_Rnglists_Context rctx = 0;
+    Dwarf_Bool     is_rnglistx = FALSE;
     Dwarf_Unsigned entrycount = 0;
-    unsigned offsetsize = 0;
-    Dwarf_Unsigned rle_global_offset = 0;
-    Dwarf_Rnglists_Head lhead = 0;
-    Dwarf_CU_Context ctx = 0;
-    Dwarf_CU_Context tiedctx = 0;
-    struct Dwarf_Rnglists_Head_s shead;
     Dwarf_Unsigned offset_in_rnglists = 0;
-    Dwarf_Debug dbg = 0;
-    Dwarf_Debug localdbg = 0;
-    Dwarf_Bool is_rnglistx = FALSE;
+    Dwarf_Rnglists_Context      *array = 0;
+    Dwarf_Rnglists_Context       rctx = 0;
+    struct Dwarf_Rnglists_Head_s shead;
+    Dwarf_Rnglists_Head          lhead = 0;
+    Dwarf_Unsigned rnglists_contextnum = 0;
+    int            res = 0;
+    Dwarf_Small   *table_base = 0;
+    Dwarf_Small   *table_entry = 0;
+    Dwarf_Small   *enddata = 0;
+    Dwarf_Unsigned rle_global_offset = 0;
+    unsigned       offsetsize = 0;
 
 #ifdef  TEST_MER
     Dwarf_Unsigned context_count = 0;
-#endif /* TEST_MER */
-
-#ifdef  TEST_MER
-printf("dadebug entry dwarf_rnglists_get_rle_head %d %s\n",
-__LINE__,__FILE__);
-#endif /* TEST_MER */
-    memset(&shead,0,sizeof(shead));
-
-    if (!attr) {
-        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL "
-            "NULL attribute "
-            "argument passed to "
-            "dwarf_rnglists_get_rle_head()");
-        return DW_DLV_ERROR;
-    }
-    ctx = attr->ar_cu_context;
-    localdbg = dbg =  ctx->cc_dbg;
-    CHECK_DBG(dbg,error,
-        "dwarf_rnglists_get_rle_head() via attribute");
-
-    res = _dwarf_load_section(localdbg, 
-        &localdbg->de_debug_rnglists,
-        error);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    if (res == DW_DLV_NO_ENTRY) {
-        /* data is in a.out, not dwp */
-        localdbg = dbg->de_tied_dbg;
-        if (localdbg == dbg) {
-            return DW_DLV_NO_ENTRY;
-        }
-        res = _dwarf_load_section(localdbg,
-            &localdbg->de_debug_rnglists, error);
-        if (res == DW_DLV_ERROR) {
-            return res;
-        }
-        if (res == DW_DLV_NO_ENTRY) {
-            return res;
-        }
-        dbg = localdbg;
-    }
-    if (!dbg->de_debug_rnglists.dss_size) {
-        return DW_DLV_NO_ENTRY;
-    }
-    /* dbg refers to tied file */
-    res = _dwarf_search_for_signature(dbg, ctx->cc_signature,
-        &tiedctx,error);
-    if (res == DW_DLV_NO_ENTRY) {
-        return res;
-    }
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    if(dbg != tiedctx->cc_dbg) {
-        /* something very wrong */
-        _dwarf_error_string(dbg, error,DW_DLE_RNGLISTS_ERROR,
-            "DW_DLE_RNGLISTS_ERROR: internal corruption "
-            "reading tied-file");
-        return DW_DLV_ERROR;
-    }
-    if (theform == DW_FORM_rnglistx) {
-        is_rnglistx = TRUE;
-    }
-
-
-
-#ifdef  TEST_MER
 printf("dadebug dwarf_rnglists.c rle_head dbg 0x%lx "
 "main 0x%lx tied 0x%lx %d \n",
 (unsigned long)dbg,
@@ -1551,6 +1473,9 @@ printf("dadebug dwarf_rnglists.c rle_head dbg 0x%lx "
 (unsigned long)dbg->de_tied_dbg,
 __LINE__);
 #endif /* TEST_MER */
+    if (theform == DW_FORM_rnglistx) {
+        is_rnglistx = TRUE;
+    }
 
     array = dbg->de_rnglists_context;
 #ifdef  TEST_MER
@@ -1661,6 +1586,7 @@ printf("dadebug return %d %s\n",__LINE__,__FILE__);
 #endif /* TEST_MER */
         return DW_DLV_ERROR;
     }
+    memset(&shead,0,sizeof(shead));
     shead.rh_context = ctx;
     shead.rh_magic = RNGLISTS_MAGIC;
     shead.rh_localcontext = rctx;
@@ -1738,6 +1664,149 @@ printf("dadebug return %d %s\n",__LINE__,__FILE__);
 printf("dadebug return %d %s\n",__LINE__,__FILE__);
 #endif /* TEST_MER */
     return DW_DLV_OK;
+}
+
+
+/*  Build a head with all the relevent Entries
+    attached.
+    If the context is not found in the main object,
+    and there is a tied-file
+    use the context signature (should be present)
+    and look in the tied-file for a match and
+    get the content there.
+*/
+int
+dwarf_rnglists_get_rle_head(
+    Dwarf_Attribute attr,
+    Dwarf_Half     theform,
+    /*  attr_val is either an offset
+        (theform == DW_FORM_sec_offset)
+        to a specific rangelist entry set  or
+        or a rnglistx index DW_FORM_rnglistx
+        at that index is the local offset of
+        a specific rangelist entry set.  */
+    Dwarf_Unsigned attr_val,
+    Dwarf_Rnglists_Head *head_out,
+    Dwarf_Unsigned      *entries_count_out,
+    Dwarf_Unsigned      *global_offset_of_rle_set,
+    Dwarf_Error         *error)
+{
+    int res = 0;
+    Dwarf_CU_Context ctx = 0;
+    Dwarf_CU_Context tiedctx = 0;
+    Dwarf_Debug dbg = 0;
+    Dwarf_Debug localdbg = 0;
+
+#ifdef  TEST_MER
+printf("dadebug entry dwarf_rnglists_get_rle_head %d %s\n",
+__LINE__,__FILE__);
+#endif /* TEST_MER */
+    if (!attr) {
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "NULL attribute "
+            "argument passed to "
+            "dwarf_rnglists_get_rle_head()");
+        return DW_DLV_ERROR;
+    }
+    ctx = attr->ar_cu_context;
+    localdbg =  ctx->cc_dbg;
+    dbg = localdbg;
+    CHECK_DBG(dbg,error,
+        "dwarf_rnglists_get_rle_head() via attribute");
+
+    res = _dwarf_load_section(localdbg, 
+        &localdbg->de_debug_rnglists,
+        error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if (res == DW_DLV_OK && dbg->de_debug_rnglists.dss_size) {
+        res = _dwarf_fill_in_rle_head(dbg, theform,
+            /*  attr_val is either an offset
+                (theform == DW_FORM_sec_offset)
+                to a specific rangelist entry set  or
+                or a rnglistx index DW_FORM_rnglistx
+                at that index is the local offset of
+                a specific rangelist entry set.  */
+            attr_val,
+            ctx,
+            head_out,
+            entries_count_out,
+            global_offset_of_rle_set,
+            error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+    }
+    if (res == DW_DLV_OK) {
+        return res;
+    }
+    if (res == DW_DLV_NO_ENTRY && HAS_TIED_FILE(dbg)) {
+        /*  we have data in a.out (tied-file),
+            we expect, not dwp (main_file)  */
+        localdbg = dbg->de_tied_dbg;
+#ifdef  TEST_MER
+printf("dadebug dwarf_rnglists.c set localdbg 0x%lx "
+"from tied 0x%lx %d \n",
+(unsigned long)dbg,
+(unsigned long)dbg->de_tied_dbg,
+__LINE__);
+#endif /* TEST_MER */
+
+        if (localdbg == dbg) {
+            return DW_DLV_NO_ENTRY;
+        }
+        res = _dwarf_load_section(localdbg,
+            &localdbg->de_debug_rnglists, error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            return res;
+        }
+#ifdef  TEST_MER
+printf("dadebug dwarf_rnglists.c  using  tied dbg now"
+"from tied 0x%lx %d \n",
+(unsigned long)dbg->de_tied_dbg,
+__LINE__);
+#endif /* TEST_MER */
+        dbg = localdbg;
+    }
+
+    /* dbg refers to tied file */
+    res = _dwarf_search_for_signature(dbg, ctx->cc_signature,
+        &tiedctx,error);
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if(dbg != tiedctx->cc_dbg) {
+        /* something very wrong */
+        _dwarf_error_string(dbg, error,DW_DLE_RNGLISTS_ERROR,
+            "DW_DLE_RNGLISTS_ERROR: internal corruption "
+            "reading tied-file");
+        return DW_DLV_ERROR;
+    }
+#ifdef  TEST_MER
+printf("dadebug dwarf_rnglists.c now  fill in rle using tied");
+#endif /* TEST_MER */
+    res = _dwarf_fill_in_rle_head(dbg, theform,
+        /*  attr_val is either an offset
+            (theform == DW_FORM_sec_offset)
+            to a specific rangelist entry set  or
+            or a rnglistx index DW_FORM_rnglistx
+            at that index is the local offset of
+            a specific rangelist entry set.  */
+        attr_val,
+        tiedctx,
+        head_out,
+        entries_count_out,
+        global_offset_of_rle_set,
+        error);
+    return res;
 }
 
 /*  As of 18 Aug 2020

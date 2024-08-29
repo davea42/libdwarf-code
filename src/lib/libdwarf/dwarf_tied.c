@@ -143,6 +143,11 @@ _dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Unsigned next_cu_offset = 0;
 
     startingcontext = tieddbg->de_info_reading.de_cu_context;
+#ifdef TEST_MER
+printf("dadebug start loop context 0x%lx  %d\n",
+(unsigned long)startingcontext,
+__LINE__);
+#endif
 
     if (startingcontext) {
         next_cu_offset =
@@ -167,8 +172,16 @@ _dwarf_loop_reading_debug_info_for_cu(
         Dwarf_Unsigned typeoffset = 0;
 
         memset(&signature,0,sizeof(signature));
+#ifdef TEST_MER
+printf("dadebug now in loop call _dwarf_next_cu_header_internal() lind %d\n",
+__LINE__);
+printf("dadebug in loop context 0x%lx  %d\n",
+(unsigned long) startingcontext,
+__LINE__);
+#endif
         sres = _dwarf_next_cu_header_internal(tieddbg,
             is_info,
+            startingcontext,
             /* no CU die wanted*/ NULL,
             &cu_header_length, &version_stamp,
             &abbrev_offset, &address_size,
@@ -177,6 +190,14 @@ _dwarf_loop_reading_debug_info_for_cu(
             &typeoffset,
             &next_cu_offset,
             &cu_type, error);
+#ifdef TEST_MER
+printf("dadebug ret from _dwarf_next_cu_header_internal() next_cu_offset 0x%lx line %d\n",
+(unsigned long)next_cu_offset,
+__LINE__);
+#endif
+        if (sres == DW_DLV_ERROR) {
+            return sres;
+        }
         if (sres == DW_DLV_NO_ENTRY) {
             break;
         }
