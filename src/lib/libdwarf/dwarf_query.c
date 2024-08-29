@@ -1048,8 +1048,8 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
 
 /*  Looks for an address (Dwarf_Addr) value vi an
     index into debug_addr.  If it fails with
-    DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION we 
-    find a context in tieddbg and look there. */ 
+    DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION we
+    find a context in tieddbg and look there. */
 int
 _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Debug dbg,
@@ -1293,7 +1293,7 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
             tiedcontext->cc_rnglists_base_present;
         context->cc_rnglists_base =
             tiedcontext->cc_rnglists_base;
-    } 
+    }
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
             tiedcontext->cc_str_offsets_tab_present;

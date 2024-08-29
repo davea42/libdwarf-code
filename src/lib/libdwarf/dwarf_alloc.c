@@ -888,7 +888,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
     if (dbg && alloc_type == DW_DLA_ERROR) {
         dbg = dbg->de_errors_dbg;
-    } 
+    }
     if (dbg && dbg->de_alloc_tree) {
         /*  If it's a string in debug_info etc doing
             (char *)space - DW_RESERVE is totally bogus. */

@@ -895,7 +895,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-    line_context->lc_new_style_access = 
+    line_context->lc_new_style_access =
         (unsigned char)is_new_interface;
     line_context->lc_compilation_directory = comp_dir;
     /*  We are in dwarf_internal_srclines() */

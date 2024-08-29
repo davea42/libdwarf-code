@@ -515,7 +515,7 @@ dwarf_finish(Dwarf_Debug dbg)
     the base dbg refers to. See Split Objects in DWARF5.
     Or in DWARF5  maybe .debug_rnglists or .debug_loclists.
 
-    Allows calling with NULL though we really just set 
+    Allows calling with NULL though we really just set
     main_dbg->ge_tied_dbg to de_main_dbg, thus cutting
     links between main and any previous tied-file setup.
     New September 2015.
@@ -542,12 +542,12 @@ dwarf_set_tied_dbg(Dwarf_Debug main_dbg,
             "is invalid");
         main_dbg->de_tied_dbg = tieddbg;
         return DW_DLV_OK;
-    } else { 
+    } else {
         Dwarf_Debug td = main_dbg->de_tied_dbg;
         main_dbg->de_tied_dbg = main_dbg->de_main_dbg;
         if (td != main_dbg) {
             CHECK_DBG(td,error,
-                "dwarf_set_tied_dbg() dw_tieddbg"   
+                "dwarf_set_tied_dbg() dw_tieddbg"
                 " removing tied-dbg with null tieddbg");
         }
         /*  We know the old tied_dbg is sensible, replace it
@@ -559,10 +559,10 @@ dwarf_set_tied_dbg(Dwarf_Debug main_dbg,
     return DW_DLV_OK;
 }
 
-/*  New September 2015. 
+/*  New September 2015.
     As of Aug 2023 this correctly returns tied_dbg
     whether main or tied passed in. Before this
-    it would return the dbg passed in. 
+    it would return the dbg passed in.
     If there is no tied-dbg this returns main dbg. */
 int
 dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,

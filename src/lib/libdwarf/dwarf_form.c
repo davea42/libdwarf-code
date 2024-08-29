@@ -2099,7 +2099,7 @@ dwarf_formstring(Dwarf_Attribute attr,
         if (res == DW_DLV_ERROR) {
             if (dwarf_errno(alterr) ==
                 DW_DLE_NO_TIED_FILE_AVAILABLE) {
-               
+
                 dwarf_dealloc_error(dbg,alterr);
                 if ( attr->ar_attribute_form ==
                     DW_FORM_GNU_strp_alt) {

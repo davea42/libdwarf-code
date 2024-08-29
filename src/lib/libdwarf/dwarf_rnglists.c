@@ -56,7 +56,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SIZEOFT32 4
 #define SIZEOFT64 8
 
-
 #if 0 /* dump_bytes */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
@@ -1410,7 +1409,6 @@ build_array_of_rle(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 static int
 _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     Dwarf_Half     theform,
@@ -1539,7 +1537,7 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     /*  base address DW_AT_addr_base of our part of
         .debug_addr, from CU */
     shead.rh_cu_addr_base_offset = ctx->cc_addr_base_offset;
-    shead.rh_cu_addr_base_offset_present = 
+    shead.rh_cu_addr_base_offset_present =
         ctx->cc_addr_base_offset_present;
     if (is_rnglistx) {
         Dwarf_Unsigned table_entryval = 0;
@@ -1586,7 +1584,6 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Build a head with all the relevent Entries
     attached.
     If the context is not found in the main object,
@@ -1631,7 +1628,7 @@ dwarf_rnglists_get_rle_head(
     CHECK_DBG(dbg,error,
         "dwarf_rnglists_get_rle_head() via attribute");
 
-    res = _dwarf_load_section(localdbg, 
+    res = _dwarf_load_section(localdbg,
         &localdbg->de_debug_rnglists,
         error);
     if (res == DW_DLV_ERROR) {

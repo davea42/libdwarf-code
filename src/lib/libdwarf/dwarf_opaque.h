@@ -233,12 +233,12 @@ struct Dwarf_CU_Context_s {
 
     /*  cc_low_pc[_present] is applied as base address of
         of rnglists and loclists when reading an rle_head,
-        compied into cc_cu_base_address. Comes from 
+        compied into cc_cu_base_address. Comes from
         CU_DIE, not rnglists or loclists */
     Dwarf_Bool cc_low_pc_present;
 
     /*  From CU_DIE. Copied from cc_low_pc_present.
-        Used as default base address for rnglists, loclists. 
+        Used as default base address for rnglists, loclists.
         in a DWARF5 dwo, inherited from skeleton (tieddbg). */
     Dwarf_Bool cc_base_address_present;
 
@@ -254,7 +254,7 @@ struct Dwarf_CU_Context_s {
         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool     cc_cu_die_offset_present;
     Dwarf_Bool     cc_at_ranges_offset_present;
-    /*  About: DW_AT_addr_base in CU DIE, 
+    /*  About: DW_AT_addr_base in CU DIE,
         offset to .debug_addr table */
     Dwarf_Bool     cc_addr_base_offset_present;
 
@@ -276,7 +276,7 @@ struct Dwarf_CU_Context_s {
 
     /*  From cc_low_pc, used as initial base_address
         in processing loclists and rnglists  */
-    Dwarf_Unsigned  cc_base_address; 
+    Dwarf_Unsigned  cc_base_address;
 
     /*  DW_SECT_LINE */
     Dwarf_Bool     cc_line_base_present;     /*DW5 */
@@ -567,7 +567,7 @@ struct Dwarf_Tied_Data_s {
         Some .debug_info point to them symbolically
         via DW_AT_signature attributes.
         If non-zero is a dwarf_tsearch 'tree'.
-        Only non-zero if 
+        Only non-zero if
         we had a reason to build the search tree..
         Type Units have a Dwarf_Sig8 signature
         in the header, and such is recorded here.
@@ -631,12 +631,12 @@ struct Dwarf_Debug_s {
             de_dbg, de_main_dbg, and de_tied_dbg are
             equal pointers to each other. No Dwarf_Error
             are ever attached to this de_dbg, even when
-            reading from tied-file.. 
+            reading from tied-file..
             de_errors_dbg refers to main-file de_dbg */
-    struct Dwarf_Debug_s * de_dbg; 
-    struct Dwarf_Debug_s * de_main_dbg; 
-    struct Dwarf_Debug_s * de_tied_dbg; 
-    struct Dwarf_Debug_s * de_errors_dbg; 
+    struct Dwarf_Debug_s * de_dbg;
+    struct Dwarf_Debug_s * de_main_dbg;
+    struct Dwarf_Debug_s * de_tied_dbg;
+    struct Dwarf_Debug_s * de_errors_dbg;
 
     Dwarf_Handler de_errhand;
     Dwarf_Ptr de_errarg;

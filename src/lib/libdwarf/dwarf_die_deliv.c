@@ -2101,7 +2101,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                 into main cu_context */
             tres = _dwarf_merge_all_base_attrs_of_cu_die(
                 cu_context,
-                tieddbg, 
+                tieddbg,
                 0 /* we do not want the context returned */,
                 error);
         }

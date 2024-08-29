@@ -87,7 +87,7 @@ add_debug_section_info(Dwarf_Debug dbg,
         secdata->dss_name = name; /* Actual name from object file. */
         secdata->dss_standard_name = standard_section_name;
         secdata->dss_number = obj_sec_num;
-        secdata->dss_zdebug_requires_decompress = 
+        secdata->dss_zdebug_requires_decompress =
             (Dwarf_Small)havezdebug;
         /* We don't yet know about SHF_COMPRESSED */
         debug_section->ds_duperr = duperr;
