@@ -1694,8 +1694,27 @@ isformrefval(Dwarf_Debug dbg,Dwarf_Half form,
     Dwarf_Unsigned *bytesread,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned localval =0;
+    Dwarf_Unsigned localval = 0;
 
+    if(poolptr >= endpool) {
+        dwarfstring m;
+        const char * formname = 0;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_NAMES_OFF_END: "
+            "Reading data of form 0x%02x ",form);
+        dwarf_get_FORM_name((unsigned int)form,&formname);
+        dwarfstring_append_printf_s(&m,
+            "%s from entrypool would read " 
+            "off the end of the pool",
+            (char *)formname);
+        _dwarf_error_string(dbg,error,
+            DW_DLE_DEBUG_NAMES_OFF_END,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     switch(form) {
     case DW_FORM_ref1:
         *val = *poolptr;
@@ -1771,6 +1790,7 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
         /* make error or harmless error? */
         return DW_DLV_NO_ENTRY;
     }
+
     if (index_of_abbrev >= dn->dn_abbrev_instance_count) {
         /* make error or harmless error? */
         return DW_DLV_NO_ENTRY;
@@ -1867,7 +1887,7 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
             }
             if (res == DW_DLV_OK) {
                 poolptr += bytesread;
-                if (poolptr > endpool) {
+                if (poolptr >= endpool) {
                     _dwarf_error_string(dbg,error,
                         DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET,
                         "DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET:"
@@ -1875,7 +1895,6 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
                         " of the entrypool");
                     return DW_DLV_ERROR;
                 }
-                poolptr += bytesread;
                 pooloffset += bytesread;
                 array_of_offsets[n] = val;
                 continue;

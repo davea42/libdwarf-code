@@ -448,7 +448,9 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
     printf("\n");
     printindent(indent);
     printf("Debug Names abbreviation table entries per Name: length %"
-        DW_PR_DUu " bytes.\n", abbrev_table_length);
+        DW_PR_DUu " (0x%04" DW_PR_DUx ") bytes.\n", 
+        abbrev_table_length,
+        abbrev_table_length);
     printindent(indent);
     printf("[NameIndex] abbrev_offset abbrev_code"
         "   count idxattr\n");
@@ -651,9 +653,11 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
     printf(
         "Nameindex %6" DW_PR_DUu
         " abbrevcode %4" DW_PR_DUu
+        " (0x%04" DW_PR_DUx ")"
         " abbrevindex %4" DW_PR_DUu
         "\n",
         name_index,
+        abbrev_code,
         abbrev_code,
         index_of_abbrev);
     printindent(indent);
@@ -726,19 +730,27 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
             break;
         case DW_IDX_type_unit: {
             /*  type units do not special-case a single CU */
-            printf(" typeunitindex= %" DW_PR_DUu ,offsets_array[i]);
+            printf(" typeunitindex= %" DW_PR_DUu 
+                " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
+                offsets_array[i],
+                offsets_array[i]);
             has_tu_table_index = TRUE;
             tu_table_index = offsets_array[i];
             }
             break;
         case DW_IDX_die_offset: {
-            printf(" DIElocaloff= 0x%" DW_PR_XZEROS DW_PR_DUu ,
+            printf(" DIElocaloff= %" DW_PR_DUu
+                " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
+                offsets_array[i],
                 offsets_array[i]);
             local_die_offset = offsets_array[i];
             }
             break;
         case DW_IDX_parent:
-            printf(" indexofparent= %" DW_PR_DUu ,offsets_array[i]);
+            printf(" indexofparent= %" DW_PR_DUu 
+                " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
+                offsets_array[i],
+                offsets_array[i]);
             break;
         case DW_IDX_type_hash: {
             struct esb_s m;
@@ -879,6 +891,8 @@ print_names_table(unsigned int indent,
             offset_in_entrypool);
         printf(" abbrevcode=%4" DW_PR_DUu,
             abbrev_code);
+        printf(" (0x%04" DW_PR_DUx ")",
+            abbrev_code);
         printf(" attrcount= %4" DW_PR_DUu,
             attr_count);
         printf(" arraysz= %4" DW_PR_DUu "\n",
@@ -947,7 +961,7 @@ print_dname_record(Dwarf_Debug dbg,
     abblist_ab_table_len = abbrev_table_size;
     printf("\n");
     printf("Name table offset       : 0x%"
-        DW_PR_XZEROS DW_PR_DUx "\n",
+        DW_PR_XZEROS DW_PR_DUx " (offset of header length field)\n",
         offset);
     printf("Next name table offset  : 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
@@ -955,23 +969,29 @@ print_dname_record(Dwarf_Debug dbg,
     printf("Section size            : 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
         section_size);
-    printf("Table version           : %u\n",
+    printf("Table version           : %4u\n",
         table_version);
-    printf("Comp unit count         : %" DW_PR_DUu "\n",
+    printf("Comp unit count         : %4" DW_PR_DUu "\n",
         comp_unit_count);
-    printf("Type unit count         : %" DW_PR_DUu "\n",
+    printf("Type unit count         : %4" DW_PR_DUu "\n",
         local_type_unit_count);
-    printf("Foreign Type unit count : %" DW_PR_DUu "\n",
+    printf("Foreign Type unit count : %4" DW_PR_DUu "\n",
         foreign_type_unit_count);
-    printf("Bucket count            : %" DW_PR_DUu "\n",
+    printf("Bucket count            : %4" DW_PR_DUu "\n",
         bucket_count);
-    printf("Name count              : %" DW_PR_DUu "\n",
+    printf("Name count              : %4" DW_PR_DUu "\n",
         name_count);
-    printf("Abbrev table length     : %" DW_PR_DUu "\n",
+    printf("Abbrev table length     : %4" DW_PR_DUu 
+        " (0x%04" DW_PR_DUx ")\n",
+        abbrev_table_size,
         abbrev_table_size);
-    printf("Entry pool size         : %" DW_PR_DUu "\n",
+    printf("Entry pool size         : %4" DW_PR_DUu 
+        " (0x%04" DW_PR_DUx ")\n",
+        entry_pool_size,
         entry_pool_size);
-    printf("Augmentation string size: %" DW_PR_DUu "\n",
+    printf("Augmentation string size: %4" DW_PR_DUu 
+        " (0x%04" DW_PR_DUx ")\n",
+        augmentation_string_size,
         augmentation_string_size);
     if (augmentation_string_size > 0) {
         printf("Augmentation string     : %s\n",
