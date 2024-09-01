@@ -1,3 +1,40 @@
+2024-09-01:  David Anderson
+    commit 65f52d2e095636571d01e8311cd8610ac1c7260a
+
+    Now dated Sept (changes each month)
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-09-01:  David Anderson
+    commit 84bd9a6f42caacf323d31e403de1f7693df7fd26
+
+    Revising the formatting of the report on the .debug_names
+    section for clarity.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2024-08-31:  David Anderson
+    commit d8b55ace8276e2e5eac071adf3dca2edce127dfe
+
+    Adjust debug_name final tables for better look
+    and acurate values.
+            modified:   print_debug_names.c
+
+2024-08-30:  David Anderson
+    commit 1038e7c77c0179d181c7a42dea11ee7b96eac1c5
+
+    Fixed error in reading .debug_names
+    (with DW_FORM_ref4 in .debugnames the 4 byte length
+    was counted twice).
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2024-08-29:  David Anderson
+    commit a2ac6d2b32394812f2397513415587d798f5ce6c
+
+    Updated from gitlog and more.
+            modified:   ChangeLog
+
 2024-08-29:  David Anderson
     commit 164771d2ed375c2d162ac28f968e4437bebc80f9
 
