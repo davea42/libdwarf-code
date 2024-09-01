@@ -401,9 +401,8 @@ print_abblist_use(unsigned int indent)
         printf("[%3" DW_PR_DUu "] ",i);
         printf(" %4" DW_PR_DUu ,cur->ac_code);
         printf(" (0x%04" DW_PR_DUx ")" ,cur->ac_code);
-        printf(" 0x%02x",cur->ac_tag);
         dwarf_get_TAG_name((unsigned int)cur->ac_tag,&tagname);
-        printf(" %-18s",tagname);
+        printf(" %-25s",tagname);
 
         printf(" 0x%04" DW_PR_DUx ,cur->ac_codeoffset);
         printf(" %2" DW_PR_DUu ,cur->ac_codelength);
