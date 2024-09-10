@@ -1,3 +1,87 @@
+2024-09-10:  David Anderson
+    commit b608cead3f2eee17e962ca970ae5c35805bc3ebd
+    Merge: 96bd4edd 721d3d82
+
+    Merge branch 'threekey'
+    Replaced much of the code generating tag/attr statistics
+    from the dwarfdump -ku option.
+    All these changes are in dwarfdump, none in libdwarf.
+
+    The old  approach of generating statistics 
+    left out things about non-standard
+    TAGs and ATtributes as it would have been extra work
+    at the time. Now, using dwarf_tsearch and building
+    searchable and sortable data, additional targeted
+    reports become easy to add and update.
+    No doubt more will be added.
+
+2024-09-10:  David Anderson
+    commit 721d3d824976a80ce2c7128e2a123a11d5217ed0
+
+    Removed debug printf
+            modified:   dd_attr_form.c
+            modified:   print_tag_attributes_usage.c
+
+2024-09-10:  David Anderson
+    commit e175de85d37df08c5b7791a1b5b2636228b7ad44
+
+    Now with more statistics from -ku
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+    Corrected an accidental omission.
+            modified:   src/bin/tag_attr/tag_attr.list
+
+2024-09-10:  David Anderson
+    commit f2c1cb8269bdc225ef720d16a73fd15ee63998a7
+
+    DO NOT USE THIS COMMIT
+    Now with the beginnings working (of
+    the new records of usages)
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_attr_form.h
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+    Fixed an old bug in this file: DW_TAG_subprogram listed
+    as a row twice.
+            modified:   src/bin/tag_tree/tag_tree.list
+
+2024-09-10:  David Anderson
+    commit 01266626c48005afb15467da74f6bb0d0488982a
+
+    DO NOT USE THIS COMMIT.
+    Contains debug printf and is a step toward the new
+    tag-tree tag-attr reporting.
+    Works but does little but build trees (so far).
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_attr_form.h
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/dd_tag_common.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2024-09-10:  David Anderson
+    commit 839979975aed0a8ccd3319fb489dab64bde10813
+
+    Regenerated
+            modified:   dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   dwarfdump/dwarfdump-ta-table.h
+            modified:   dwarfdump/dwarfdump-tt-table.h
+
+    There were some duplicate entries, tne latest dwarfdump code
+    noticed the errors and quit in 'make rebuild'
+            modified:   tag_attr/tag_attr.list
+            modified:   tag_attr/tag_attr_ext.list
+            modified:   tag_tree/tag_tree.list
+
+2024-09-01:  David Anderson
+    commit 96bd4edd09167a1b4b8776c35c85049a0bfe0150
+
+    OUp to date with git log
+            modified:   ChangeLog
+
 2024-09-01:  David Anderson
     commit 65f52d2e095636571d01e8311cd8610ac1c7260a
 
