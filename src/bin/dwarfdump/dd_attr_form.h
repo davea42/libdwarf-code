@@ -30,8 +30,16 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define AF_STD   1
-#define AF_EXTEN 2
+#define AF_UNKNOWN   0
+#define AF_STD       1
+#define AF_EXTEN     2
+
+/*  See also: glflags.gf_check_tag_tree
+    all while respecting */
+    
+#define TK_OK           0
+#define TK_SHOW_MESSAGE 1
+#define TK_ERROR        2
 
 /*  For a tag->tag tree key1s a tag number, key 2 is a tag number 
     and key3  is zero.
@@ -41,12 +49,13 @@ extern "C" {
     FORM_CLASS, key3 is a DW_FORM number. */
 
 struct Three_Key_Entry_s {
-    Dwarf_Half  key1;
-    Dwarf_Half  key2;
-    Dwarf_Half  key3;
-    Dwarf_Small std_or_exten; /* 1: std 2: extension */
-    Dwarf_Small from_tables; /* 1 if found in preset table
-        else 0 meaning found only in the DWARF. */
+    Dwarf_Half      key1;
+    Dwarf_Half      key2;
+    Dwarf_Half      key3;
+
+    /* Not from tables:0. std table:1. extension table:2. */
+    Dwarf_Small    from_tables; 
+    Dwarf_Small    reserved;
     Dwarf_Unsigned count; /* The number actually encountered 
         in print_die.c */
 };
@@ -56,8 +65,8 @@ typedef struct Three_Key_Entry_s Three_Key_Entry;
 int make_3key(Dwarf_Half k1,
     Dwarf_Half k2,
     Dwarf_Half k3,
-    Dwarf_Small std_or_exten,
-    Dwarf_Small from_preset,
+    Dwarf_Small from_table,
+    Dwarf_Small reserved,
     Dwarf_Unsigned count,
     Three_Key_Entry ** out);
 
@@ -65,17 +74,18 @@ Dwarf_Unsigned three_key_entry_count(void *base);
 void free_func_3key_entry(void *keystructptr);
 int  std_compare_3key_entry(const void *l, const void *r);
 
-/*   First Calls the next three */
+/*   First Calls the next five */
 int  dd_build_tag_attr_form_base_trees(int*errnum);
 int  dd_build_attr_form_base_tree(int*errnum);
 int  dd_build_tag_attr_base_tree(int*errnum);
 int  dd_build_tag_tag_base_tree(int*errnum);
+int  dd_build_tag_use_base_tree(int*errnum);
 
+void dd_destroy_tag_use_base_tree(void);
 void dd_destroy_tag_attr_form_trees(void);
 void record_attr_form_use(Dwarf_Debug dbg,
     Dwarf_Half tag, Dwarf_Half attr,
     Dwarf_Half fclass, Dwarf_Half form,
-    int pd_dwarf_names_print_on_error,
     int die_stack_indent_level);
 
 /*  The standard main tree for attr_form data.
@@ -92,7 +102,9 @@ void record_tag_attr_use(Dwarf_Debug dbg,
     Starting out as simple global variables. */
 extern void * threekey_tag_tag_base; /* tag-tree recording */
 extern void * threekey_tag_attr_base; /* for tag_attr recording */
-/* The following two print all from the above four trees.*/
+extern void * threekey_tag_use_base; /* for tag count recording */
+/* The following two print all from the above trees.*/
+/* FIXME and printing tag_use_base??? */
 void print_tag_tree_usage(void);
 void print_tag_attr_usage(void);
 

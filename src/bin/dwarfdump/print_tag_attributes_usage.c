@@ -51,160 +51,187 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_helpertree.h"
 #include "dd_tag_common.h"
 #include "dd_attr_form.h"
+#include "dd_tsearchbal.h"
 
-/*  Always 1, never changed 
-    Used in ellipname(res,val_in,v,"TAG",printonerr);
-    See dd_naming.c .
-    So we now always print error data if something is wrong.
-*/
-static int pd_dwarf_names_print_on_error = 1;
-
-#ifdef HAVE_USAGE_TAG_ATTR
-#if 0
-/*  Record TAGs usage */
-static unsigned int tag_usage[DW_TAG_last] = {0};
-
-void
-record_tag_usage(int tag)
+/*  Adds new record with count 1 (set by caller)
+    or adds one to count. 
+    There is no notion of 'legal' for this set of
+    counts. */
+static int
+find_legal_and_update(Three_Key_Entry *ke,
+    void **treeptr,
+    unsigned char *caller_free_ke,
+    unsigned char *table_found)
 {
-    if (tag < DW_TAG_last) {
-        ++tag_usage[tag];
+    void           *ret = 0;
+    Three_Key_Entry *re = 0;
+
+    ke->count = 1;
+    *caller_free_ke = FALSE;
+    ret = dwarf_tsearch(ke,treeptr,std_compare_3key_entry);
+    if (!ret) {
+        /* Something badly wrong. ?? */
+        *caller_free_ke = TRUE;
+        return TK_ERROR;
     }
+    re = *(Three_Key_Entry**)ret;
+    if (re == ke) {
+        /* already gave count 1 */
+        *caller_free_ke = FALSE;
+        if (table_found) {
+            *table_found = re->from_tables;
+        }
+        return TK_OK;
+    }
+    re->count++;
+    *caller_free_ke = TRUE;
+    if (table_found) {
+        *table_found = re->from_tables;
+    }
+    return TK_OK;
 }
-#endif
 
-#endif /* HAVE_USAGE_TAG_ATTR */
+/*  Much of updating tag_tag and tag_tree counts
+    does not apply here. */
+void
+record_tag_usage(Dwarf_Half tag)
+{
+    Three_Key_Entry *tkp = 0;
+    int mres = 0; 
+    unsigned char caller_free_tkp = FALSE;
 
+    mres = make_3key(tag,0,0,0,0,1,&tkp);
+    if (mres == DW_DLV_ERROR) {
+        /* out of memory, pretend ok */
+        return;
+    }
+    find_legal_and_update(tkp,&threekey_tag_use_base,
+        &caller_free_tkp,0);
+    if (caller_free_tkp) {
+        free_func_3key_entry(tkp);
+    }
+    return;
+}
+
+
+/*  Return TRUE to suppress any errors about unknown combos 
+    Return FALSE to cause a message. 
+    Maybe should have a third case for error. */
 int
 legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
 {
-    if (tag <= 0) {
-        return FALSE;
+    Three_Key_Entry *tkp = 0;  
+    int keyres = 0;
+    int mres = 0;
+    unsigned char caller_free_tkp = FALSE;
+    unsigned char table_id = 0;
+    Dwarf_Bool retval = TK_ERROR;
+
+    mres = make_3key(tag,attr,0,0,0,1,&tkp);
+    if (mres == DW_DLV_ERROR) {
+        /* out of memory, pretend ok */
+        return TK_ERROR;
     }
-    if (tag < ATTR_TREE_ROW_COUNT) {
-        int index = attr / BITS_PER_WORD;
-        if (index < ATTR_TREE_COLUMN_COUNT) {
-            unsigned bitflag = ((unsigned)1) <<
-                (attr % BITS_PER_WORD);
-            int known = ((tag_attr_combination_table[tag][index]
-                & bitflag) > 0 ? TRUE : FALSE);
-            if (known) {
-#ifdef HAVE_USAGE_TAG_ATTR
-                /* Record usage of pair (tag,attr) */
-                if ( glflags.gf_print_usage_tag_attr) {
-                    Usage_Tag_Attr *usage_ptr = usage_tag_attr[tag];
-                    while (usage_ptr->attr) {
-                        if (attr == usage_ptr->attr) {
-                            ++usage_ptr->count;
-                            break;
-                        }
-                        ++usage_ptr;
-                    }
-                }
-#endif /* HAVE_USAGE_TAG_ATTR */
-                return TRUE;
-            }
+    keyres = find_legal_and_update(tkp,&threekey_tag_attr_base,
+        &caller_free_tkp,&table_id); 
+    if (keyres == TK_ERROR) {
+        if (caller_free_tkp){
+            free_func_3key_entry(tkp);
+        }
+        return TK_ERROR;
+    }
+    if (glflags.gf_suppress_check_extensions_tables) {
+        if (table_id == AF_STD) {
+            retval = TK_OK;
+        } else {
+            retval = TK_SHOW_MESSAGE;
+        }
+    } else {
+        if (table_id) {
+            retval = TK_OK;
+        } else {
+            retval = TK_SHOW_MESSAGE;
         }
     }
-    /*  DW_AT_MIPS_fde  used to return TRUE as that was
-        convenient for SGI/MIPS users. */
-    if (!glflags.gf_suppress_check_extensions_tables) {
-        int r = 0;
-        for (; r < ATTR_TREE_EXT_ROW_COUNT; ++r ) {
-            int c = 1;
-            if (tag != tag_attr_combination_ext_table[r][0]) {
-                continue;
-            }
-            for (; c < ATTR_TREE_EXT_COLUMN_COUNT ; ++c) {
-                if (tag_attr_combination_ext_table[r][c] == attr) {
-                    return TRUE;
-                }
-            }
-        }
+    if (caller_free_tkp) {    
+        free_func_3key_entry(tkp);
     }
-    return FALSE;
+    return retval;
 }
 
-/*  Look only at valid table entries
-    The check here must match the building-logic in
-    tag_tree.c
-    And must match the tags defined in dwarf.h
-    The tag_tree_combination_table is a table of bit flags.  */
+/*  Return TK_OK or TK_SHOW_MESSAGE or TK_ERROR */ 
 int
 legal_tag_tree_combination(Dwarf_Half tag_parent,
     Dwarf_Half tag_child)
 {
-    if (tag_parent <= 0) {
-        return FALSE;
+    Three_Key_Entry *tkp = 0;
+    int keyres = 0;
+    int mres = 0;
+    unsigned char caller_free_tkp = FALSE;
+    unsigned char table_id = 0;
+    Dwarf_Bool retval = TK_ERROR;
+
+
+    mres = make_3key(tag_parent,tag_child,0,0,0,1,&tkp);
+
+    if (mres == DW_DLV_ERROR) {
+        return TK_ERROR;
     }
-    if (tag_parent < TAG_TREE_ROW_COUNT) {
-        int index = tag_child / BITS_PER_WORD;
-        if (index < TAG_TREE_COLUMN_COUNT) {
-            unsigned bitflag = ((unsigned)1) <<
-                (tag_child % BITS_PER_WORD);
-            int known = ((tag_tree_combination_table[tag_parent]
-                [index] & bitflag) > 0 ? TRUE : FALSE);
-            if (known) {
-#ifdef HAVE_USAGE_TAG_ATTR
-                /* Record usage of pair (tag_parent,tag_child) */
-                if ( glflags.gf_print_usage_tag_attr) {
-                    Usage_Tag_Tree *usage_ptr =
-                        usage_tag_tree[tag_parent];
-                    while (usage_ptr->tag) {
-                        if (tag_child == usage_ptr->tag) {
-                            ++usage_ptr->count;
-                            break;
-                        }
-                        ++usage_ptr;
-                    }
-                }
-#endif /* HAVE_USAGE_TAG_ATTR */
-                return TRUE;
-            }
+    keyres = find_legal_and_update(tkp,&threekey_tag_tag_base,
+        &caller_free_tkp,&table_id);
+    if (keyres == TK_ERROR) {
+        if (caller_free_tkp){
+            free_func_3key_entry(tkp);
+        }
+        return TK_ERROR;
+    }
+    if (glflags.gf_suppress_check_extensions_tables) {
+        if (table_id == AF_STD) {
+            retval = TK_OK;
+        } else {
+            retval = TK_SHOW_MESSAGE;
+        }
+    } else {
+        if (table_id) {
+            retval = TK_OK;
+        } else {
+            retval = TK_SHOW_MESSAGE;
         }
     }
-    if (!glflags.gf_suppress_check_extensions_tables) {
-        int r = 0;
-        for (; r < TAG_TREE_EXT_ROW_COUNT; ++r ) {
-            int c = 1;
-            if (tag_parent != tag_tree_combination_ext_table[r][0]) {
-                continue;
-            }
-            for (; c < TAG_TREE_EXT_COLUMN_COUNT ; ++c) {
-                if (tag_tree_combination_ext_table[r][c] ==
-                    tag_child) {
-                    return TRUE;
-                }
-            }
-        }
+    if (caller_free_tkp) {
+        free_func_3key_entry(tkp);
     }
-    return (FALSE);
+    return retval;
 }
 
 /* Print a detailed tag and attributes usage */
 int
 print_tag_attributes_usage(void)
 {
-#ifdef HAVE_USAGE_TAG_ATTR
     /*  Traverse the tag-tree table to print its usage and
         then use the DW_TAG value as an index into the
         tag_attr table to print its
         associated usage all together. */
-    Dwarf_Bool print_header = TRUE;
-    Rate_Tag_Tree *tag_rate;
-    Rate_Tag_Attr *atr_rate;
-    Usage_Tag_Tree *usage_tag_tree_ptr;
-    Usage_Tag_Attr *usage_tag_attr_ptr;
-    Dwarf_Unsigned total_tags = 0;
-    Dwarf_Unsigned total_atrs = 0;
-    Dwarf_Half total_found_tags = 0;
-    Dwarf_Half total_found_atrs = 0;
-    Dwarf_Half total_legal_tags = 0;
-    Dwarf_Half total_legal_atrs = 0;
-    float rate_1;
-    float rate_2;
-    int tag;
+    Dwarf_Unsigned tag_tag_count = 0;
+    Dwarf_Unsigned tag_attr_count = 0;
+
     printf("\n*** TAGS AND ATTRIBUTES USAGE ***\n");
+    /*  extract all tag_tree  records
+        (also called tag_tag sometimes) to a list, 
+        sort by tag number and child tag number. */
+    /*  Loop the list, printing tag (and name)
+           and within that a line for each child tag and count.
+    */
+    tag_tag_count = three_key_entry_count(threekey_tag_tag_base);
+    printf("Number of tag-parent/tag-child records %" DW_PR_DUu "\n",
+        tag_tag_count);
+    tag_attr_count = three_key_entry_count(threekey_tag_attr_base);
+    printf("Number of tag/attr records             %" DW_PR_DUu "\n",
+        tag_attr_count);
+
+
+
+#if 0
     for (tag = 1; tag < DW_TAG_last; ++tag) {
         /* Print usage of children TAGs */
         if ( glflags.gf_print_usage_tag_attr_full || tag_usage[tag]) {
@@ -315,6 +342,7 @@ print_tag_attributes_usage(void)
         glflags.gf_print_usage_tag_attr) {
         print_attr_form_usage();
     }
-#endif /* HAVE_USAGE_TAG_ATTR */
+#endif
     return DW_DLV_OK;
+
 }

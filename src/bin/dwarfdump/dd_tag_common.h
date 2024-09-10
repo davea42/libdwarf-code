@@ -96,11 +96,8 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define TAG_TABLE_ROW_MAXIMUM     70
 #define TAG_TABLE_COLUMN_MAXIMUM  100
 
-/*  Number of attributes columns per tag. The array is bit fields,
-    BITS_PER_WORD fields per word. Dense and quick to inspect */
-#if 0 /* Not needed now */
+
 #define COUNT_ATTRIBUTE_STD 7
-#endif
 
 #define STD_ATTR_TABLE_ROWS 76
 #define STD_ATTR_TABLE_COLUMNS  60
@@ -117,9 +114,6 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define ATTR_TABLE_ROW_MAXIMUM 100
 #define ATTR_TABLE_COLUMN_MAXIMUM  100
 
-/* Bits per 'int' to mark legal attrs. */
-#define BITS_PER_WORD 32
-
 #define IS_EOF 1
 #define NOT_EOF 0
 
@@ -127,10 +121,5 @@ extern void bad_line_input(char *format,...);
 extern void trim_newline(char *line, int max);
 extern Dwarf_Bool is_blank_line(char *pLine);
 extern int read_value(unsigned int *outval,FILE *f);
-
-/* Define to 1 to support the generation of tag-attr usage */
-#define HAVE_USAGE_TAG_ATTR 1
-/* Define to 1 to support the generation of attr/formclass usage */
-#define HAVE_USAGE_ATTR_FORMCLASS 1
 
 #endif /* tag_common_INCLUDED */

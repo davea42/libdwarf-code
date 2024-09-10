@@ -70,13 +70,15 @@ print_3key_record(int num,Three_Key_Entry *e)
 
 void * threekey_tag_tag_base; /* tag-tree recording */
 void * threekey_tag_attr_base; /* for tag_attr recording */
+void * threekey_attr_form_base; /* for attr/class/form recording */
+void * threekey_tag_use_base; /* for simple tag counting */
 
 int
 make_3key(Dwarf_Half k1,
     Dwarf_Half k2,
     Dwarf_Half k3,
     Dwarf_Small std_or_exten,
-    Dwarf_Small from_preset,
+    Dwarf_Small reserved,
     Dwarf_Unsigned count,
     Three_Key_Entry ** out)
 {
@@ -85,13 +87,13 @@ make_3key(Dwarf_Half k1,
     if (!e) {
         return DW_DLV_ERROR; /* out of memory */
     }
-    e->key1 = k1;
-    e->key2 = k2;
-    e->key3 = k3;
-    e->std_or_exten = std_or_exten;
-    e->from_tables  = from_preset;
+    e->key1         = k1;
+    e->key2         = k2;
+    e->key3         = k3;
+    e->from_tables  = std_or_exten; 
+    e->reserved     = reserved;
     e->count        = count;
-    *out = e;
+    *out            = e;
     return DW_DLV_OK;
 }
 
@@ -169,9 +171,17 @@ dd_insert_table_entry(void *tree,
     }
     re = *(Three_Key_Entry **)ret;
     if (re == e) {
+#if 0
+printf("dadebug added  0x%x 0x%x 0x%x 0x%x line %d\n",
+e->key1,e->key2,e->key3,e->from_tables,__LINE__);
+#endif
         /* Normal. Added. */
         return DW_DLV_OK;
     }
+printf("dadebug duplicate of e 0x%x 0x%x 0x%x  0x%x line %d\n",
+e->key1,e->key2,e->key3,e->from_tables,__LINE__);
+printf("dadebug duplicate was re 0x%x 0x%x 0x%x 0x%x line %d\n",
+re->key1,re->key2,re->key3,re->from_tables,__LINE__);
     /*  A full duplicate in the table. Oops.
         Not a great choice of error code. */
     *errnum = DW_DLE_ATTR_FORM_BAD;
@@ -179,8 +189,8 @@ dd_insert_table_entry(void *tree,
 }
 
 /*  tree argument expected is
-    &threekey_attr_form_base for example */
-/*  Somenthing similar for all the tag_tag tag_attr trees */
+    &threekey_attr_form_base for example 
+    Somenthing similar for all the tag_tag tag_attr trees */
 static int
 insert_new_af_tab_entry(void *tree,
     struct af_table_s * tab,
@@ -191,7 +201,7 @@ insert_new_af_tab_entry(void *tree,
 
     res = make_3key(tab->attr,tab->formclass,0,
         tab->section,
-        1 /* is from preset data */,
+        0 /* reserved */,
         0 /* count is zero during preset   */,
         &e);
     if (res != DW_DLV_OK) {
@@ -215,11 +225,14 @@ dd_build_attr_form_base_tree(int*errnum)
         /*  Do not init again if a tied file */
         return DW_DLV_OK;
     }
+    /*  section here is a misnomer, it means  AF_STD
+        or AF_EXTEN or AF_UNKNOWN  */
     for (tab = &attr_formclass_table[0]; ; tab++) {
         if ((!tab->attr) &&
             (!tab->formclass) &&
             (!tab->section)) {
             /* Done */
+printf("dadebug End of af_table reading line %d\n",__LINE__);
             break;
         }
         res  = insert_new_af_tab_entry(tree,tab,errnum);
@@ -230,6 +243,17 @@ dd_build_attr_form_base_tree(int*errnum)
     return DW_DLV_OK;
 }
 
+/*  For simple counting of tag uses,
+    there is nothing we need to do here. 
+    Adding a record via record_tag_usage()
+    will initialize. */
+int
+dd_build_tag_use_base_tree( int*errnum)
+{
+    (void)errnum;
+    return DW_DLV_OK;
+}
+
 int
 dd_build_tag_attr_base_tree( int*errnum)
 {
@@ -237,10 +261,11 @@ dd_build_tag_attr_base_tree( int*errnum)
     unsigned int k = 0;
     unsigned int t3 = 0;
     int res = 0;
-    unsigned preset_from_table = 1;
+    unsigned reserved = 0;
     unsigned initial_count = 0;
     void * tree = &threekey_tag_attr_base;
      
+printf("dadebug tag_attr start line %d\n",__LINE__);
     for (i=0 ; i < ATTR_TREE_EXT_COLUMN_COUNT; ++i) {
         unsigned t1 = tag_attr_combination_ext_table[i][0]; 
         for (k=1 ; k < ATTR_TREE_EXT_COLUMN_COUNT; ++k) { 
@@ -248,15 +273,17 @@ dd_build_tag_attr_base_tree( int*errnum)
             if (t1 && t2) {
                 Three_Key_Entry *e = 0;
                 res = make_3key(t1,t2,t3,AF_EXTEN,
-                   preset_from_table,initial_count,
+                   reserved,initial_count,
                    &e);
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
+printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
                 res =  dd_insert_table_entry(tree,e,errnum);
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
+printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
             }
@@ -269,15 +296,16 @@ dd_build_tag_attr_base_tree( int*errnum)
             if (t1 && t2) {
                 Three_Key_Entry *e = 0;
                 res = make_3key(t1,t2,t3,AF_STD,
-                   preset_from_table,initial_count,
+                   reserved,initial_count,
                    &e); 
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
+printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
                 res =  dd_insert_table_entry(tree,e,errnum);
                 if (res != DW_DLV_OK) {
-                   *errnum = DW_DLE_ALLOC_FAIL;
+printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
             }
@@ -293,10 +321,11 @@ dd_build_tag_tag_base_tree( int*errnum)
     unsigned int k = 0;
     unsigned int t3 = 0;
     int res = 0;
-    unsigned preset_from_table = 1;
+    unsigned reserved = 0;
     unsigned initial_count = 0;
     void * tree = &threekey_tag_tag_base;
      
+printf("dadebug tag_tag start line %d\n",__LINE__);
     for (i=0 ; i < TAG_TREE_EXT_COLUMN_COUNT; ++i) {
         unsigned t1 = tag_tree_combination_ext_table[i][0]; 
         for (k=1 ; k < TAG_TREE_EXT_COLUMN_COUNT; ++k) { 
@@ -304,7 +333,7 @@ dd_build_tag_tag_base_tree( int*errnum)
             if (t1 && t2) {
                 Three_Key_Entry *e = 0;
                 res = make_3key(t1,t2,t3,AF_EXTEN,
-                   preset_from_table,initial_count,
+                   reserved,initial_count,
                    &e);
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
@@ -325,7 +354,7 @@ dd_build_tag_tag_base_tree( int*errnum)
             if (t1 && t2) {
                 Three_Key_Entry *e = 0;
                 res = make_3key(t1,t2,t3,AF_STD,
-                   preset_from_table,initial_count,
+                   reserved,initial_count,
                    &e); 
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
@@ -348,25 +377,39 @@ dd_build_tag_attr_form_base_trees(int*errnum)
     
     res = dd_build_attr_form_base_tree(errnum);
     if (res != DW_DLV_OK){
+printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     res = dd_build_tag_attr_base_tree(errnum);
     if (res != DW_DLV_OK){
+printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     res = dd_build_tag_tag_base_tree(errnum);
     if (res != DW_DLV_OK){
+printf("dadebug fail line %d\n",__LINE__);
+        return res;
+    }
+    res = dd_build_tag_use_base_tree(errnum);
+    if (res != DW_DLV_OK){
+printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     return DW_DLV_OK; 
 }
 
-/*  The standard main tree for attr_form data.
-    Starting out as a simple global variable.
-    In general, pass &threekey_attr_form_base
-    (for example) to tsearch calls. */
-void * threekey_attr_form_base;
 
+
+void
+dd_destroy_tag_use_base_tree(void)
+{
+    if (!threekey_tag_use_base) {
+        return;
+    }
+    dwarf_tdestroy(threekey_tag_use_base,
+        free_func_3key_entry);
+    threekey_tag_use_base = 0;
+}
 static void
 dd_destroy_attr_form_tree(void)
 {
@@ -404,6 +447,7 @@ dd_destroy_tag_attr_form_trees(void)
     dd_destroy_attr_form_tree();
     dd_destroy_tag_attr_tree();
     dd_destroy_tag_tag_tree();
+    dd_destroy_tag_use_base_tree();
 }
 
 /*  SKIP_AF_CHECK defined means this is in scripts/ddbuild.sh
@@ -416,7 +460,7 @@ legal_attr_formclass_combination(Dwarf_Half attr,
     Three_Key_Entry *e = 0;
     Three_Key_Entry *re = 0;
     void *ret = 0;
-    int res = 0;
+    int   res = 0;
 
     res = make_3key(attr,fc,0,0,0,0,&e);
     if (res!= DW_DLV_OK) {
@@ -435,13 +479,14 @@ legal_attr_formclass_combination(Dwarf_Half attr,
         free(e);
         return TRUE;
     }
-    if (re->std_or_exten == AF_STD) {
+    if (re->from_tables == AF_STD) {
         free(e);
         return TRUE;
     }
     free(e);
     return FALSE;
 }
+
 
 static void
 check_attr_formclass_combination(Dwarf_Debug dbg,
@@ -481,35 +526,30 @@ record_attr_form_use(
     Dwarf_Half attr,
     Dwarf_Half fclass,
     Dwarf_Half form,
-    int pd_dwarf_names_print_on_error,
     int die_stack_indent_level)
 {
+    /*  SKIP_AF_CHECK defined means this is in scripts/ddbuild.sh
+        and checking/recording makes no sense and will not compile. */
+#ifdef SKIP_AF_CHECK
+    (void)dbg;
+    (void)tag;
+    (void)attr;
+    (void)fclass;
+    (void)form;
+    (void)die_stack_indent_level;;
+    return;
+#else
     Three_Key_Entry *e =  0;
     Three_Key_Entry *re =  0;
     void *ret =  0;
-    Dwarf_Small std_or_exten = 0;
     int res = 0;
 
-    (void)dbg;
-    (void)tag;
-    (void)pd_dwarf_names_print_on_error;
-    (void)die_stack_indent_level;
-
-    if (attr >= DW_AT_lo_user) {
-        std_or_exten = AF_EXTEN;
-    } else if (form > DW_FORM_addrx4) {
-        /*  There is no lo_user code for FORMs,
-            they really are limited. */
-        std_or_exten = AF_EXTEN;
-    } else {
-        std_or_exten = AF_STD;
-    }
-#ifndef SKIP_AF_CHECK
+/*  SKIP_AF_CHECK defined means this is in scripts/ddbuild.sh
+    and this checking makes no sense and will not compile. */
     check_attr_formclass_combination(dbg,
-        tag,attr,fclass,pd_dwarf_names_print_on_error,
+        tag,attr,fclass,1,
         die_stack_indent_level);
-#endif /* SKIP_AF_CHECK */
-    res = make_3key(attr,fclass,form,std_or_exten,0,1,&e);
+    res = make_3key(attr,fclass,form,0,0,1,&e);
     if (res!= DW_DLV_OK) {
         /*  Could print something */
         return;
@@ -532,6 +572,7 @@ record_attr_form_use(
     /* Clean out the local malloc */
     free_func_3key_entry(e);
     return;
+#endif /* SKIP_AF_CHECK */
 }
 
 static Dwarf_Unsigned recordcount = 0;

@@ -401,7 +401,15 @@ main(int argc, char *argv[])
         command line options */
     {
         Dwarf_Cmdline_Options wcmd;
-        /* The struct has just one field!. */
+        /*  The struct has just one field!. 
+            If glflags.gf_check_verbose_mode is non-zero
+            this tells libdwarf to emit a detailed 
+            message (which flows to the caller via 
+            _dwarf_printf()) about the header problem.
+            Defaults to zero for print options,
+            Set to 1 for check options like -ka
+            dwarfdump "-ks  --check-silent" sets it zero. */
+           
         wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }
@@ -1671,7 +1679,7 @@ process_one_file(
         dbg = 0;
     }
     printf("\n");
-    destroy_tag_attr_form_trees();
+    dd_destroy_tag_attr_form_trees();
     destruct_abbrev_array();
     esb_close_null_device();
     release_range_array_info();
@@ -1776,7 +1784,7 @@ print_error(Dwarf_Debug dbg,
     }
     global_destructors();
     flag_data_post_cleanup();
-    destroy_attr_form_trees();
+    dd_destroy_tag_attr_form_trees();
     exit(EXIT_FAILURE);
 }
 /* ARGSUSED */

@@ -1677,15 +1677,16 @@ dd_check_tag_tree(Dwarf_Debug dbg,
 
             /* Check for specific compiler */
             if (checking_this_compiler()) {
+                unsigned char ttresult = 0;
                 /* Process specific TAGs. */
                 tag_specific_globals_setup(dbg,tag_child,
                     die_stack_indent_level);
-                if (legal_tag_tree_combination(
-                    tag_parent, tag_child)) {
-                    /* OK */
-                } else {
-                    /*  Report errors only if tag-tree
-                        check is on */
+                ttresult = legal_tag_tree_combination(
+                    tag_parent, tag_child);
+                switch(ttresult) {
+                case TK_OK:
+                    break;
+                case TK_SHOW_MESSAGE:
                     if (glflags.gf_check_tag_tree) {
                         DWARF_CHECK_ERROR3(tag_tree_result,
                         get_TAG_name(tag_parent,
@@ -1695,6 +1696,23 @@ dd_check_tag_tree(Dwarf_Debug dbg,
                             "tag-tree relation is "
                             "not standard.");
                     }
+                    break;
+                case TK_ERROR: /* fall thru */
+                default: 
+                    {
+                        static unsigned long errcount = 0;
+                        if (!errcount) {
+                            printf("ERROR: Tag parent 0x%x "
+                            "tag child 0x%x fails for unknown"
+                            " reason, possibly out of memory"
+                            " building large search trees."
+                            " This message will not repeat\n",
+                            tag_parent,tag_child);
+                            glflags.gf_count_major_errors++;
+                        }
+                        ++errcount;
+                    }
+                    break;
                 }
             }
         }
@@ -2634,13 +2652,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         return tres;
     }
     tagname = get_TAG_name(tag,pd_dwarf_names_print_on_error);
-
-#ifdef HAVE_USAGE_TAG_ATTR
     if ( glflags.gf_print_usage_tag_attr) {
         record_tag_usage(tag);
     }
-#endif /* HAVE_USAGE_TAG_ATTR */
-
     tag_specific_globals_setup(dbg,tag,die_indent_level);
     ores = dwarf_dieoffset(die, &overall_offset, err);
     if (ores != DW_DLV_OK) {
@@ -4490,12 +4504,15 @@ check_attr_tag_combination(Dwarf_Debug dbg,
 Dwarf_Half tag,Dwarf_Half attr)
 {
     const char *tagname = "<tag invalid>";
+    int res = 0;
 
     DWARF_CHECK_COUNT(attr_tag_result,1);
-    if (legal_tag_attr_combination(tag, attr)) {
-        /* OK */
-    } else {
-        /* Report errors only if tag-attr check is on */
+    res = legal_tag_attr_combination(tag, attr);
+    switch(res) {
+    case TK_OK:
+        break;
+    case TK_SHOW_MESSAGE:
+    /* Report errors only if tag-attr check is on */
         if (glflags.gf_check_tag_attr) {
             tagname = get_TAG_name(tag,
                 pd_dwarf_names_print_on_error);
@@ -4506,6 +4523,23 @@ Dwarf_Half tag,Dwarf_Half attr)
                 pd_dwarf_names_print_on_error),
                 "check the tag-attr combination");
         }
+        break;
+    case TK_ERROR: /* fall thru */
+    default:
+        {
+            static unsigned long errcount = 0;
+            if (!errcount) {
+                printf("ERROR: Tag 0x%x "
+                    " Attribute 0x%x fails for unknown"
+                    " reason, possibly out of memory"
+                    " building large search trees."
+                    " This message will not repeat\n",
+                    tag,attr);
+                glflags.gf_count_major_errors++;
+            }
+            ++errcount;
+        }
+        break;
     }
 }
 
@@ -4645,7 +4679,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         checking_this_compiler()) {
         check_attr_tag_combination(dbg,tag,attr);
         record_attr_form_use(dbg,tag,attr,(Dwarf_Half)fc,
-            theform, pd_dwarf_names_print_on_error,
+            theform, 
             die_stack_indent_level);
     }
 
