@@ -50,7 +50,6 @@
 
 0xffffffff
 DW_TAG_structure_type
-DW_AT_containing_type
 DW_AT_MIPS_linkage_name
 
 0xffffffff
@@ -76,7 +75,6 @@ DW_AT_GNU_macros
 
 0xffffffff
 DW_TAG_partial_unit
-DW_AT_dwo_id /* DWARF4 GNU */
 
 0xffffffff
 DW_TAG_member
@@ -85,10 +83,6 @@ DW_AT_GNU_pt_guarded_by /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_guarded       /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_MIPS_linkage_name
-
-0xffffffff
-DW_TAG_enumeration_type
-DW_AT_encoding
 
 0xffffffff
 DW_TAG_array_type

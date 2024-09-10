@@ -122,7 +122,6 @@ DW_AT_allocated
 DW_AT_associated
 DW_AT_binary_scale
 DW_AT_bit_offset
-DW_AT_bit_size
 DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */
 DW_AT_data_bit_offset
@@ -295,6 +294,10 @@ DW_AT_sibling
 DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
+
+0xffffffff
+DW_TAG_enumeration_type
+DW_AT_encoding
 
 0xffffffff
 DW_TAG_dwarf_procedure
@@ -550,7 +553,6 @@ DW_AT_accessibility
 DW_AT_alignment
 DW_AT_artificial
 DW_AT_bit_offset /* allowed in DWARF4 */
-DW_AT_bit_size
 DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */
 DW_AT_const_value
@@ -613,7 +615,6 @@ DW_AT_declaration
 DW_AT_description
 DW_AT_export_symbols
 DW_AT_extension
-DW_AT_export_symbols
 DW_AT_name
 DW_AT_sibling
 DW_AT_start_scope
@@ -660,7 +661,6 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_alignment
 DW_AT_address_class
-DW_AT_alignment
 DW_AT_bit_size /* DWARF4 */
 DW_AT_byte_size
 DW_AT_name
@@ -675,7 +675,6 @@ DW_AT_decl_line
 DW_AT_alignment
 DW_AT_abstract_origin
 DW_AT_address_class
-DW_AT_alignment
 DW_AT_allocated
 DW_AT_associated
 DW_AT_containing_type
@@ -695,7 +694,6 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_alignment
 DW_AT_address_class
-DW_AT_alignment
 DW_AT_bit_size /* DWARF4 */
 DW_AT_byte_size
 DW_AT_name
@@ -755,7 +753,6 @@ DW_AT_decl_line
 DW_AT_alignment
 DW_AT_allocated
 DW_AT_associated
-DW_AT_alignment
 DW_AT_count
 DW_AT_name
 DW_AT_sibling
@@ -771,7 +768,6 @@ DW_AT_low_pc
 DW_AT_stmt_list
 DW_AT_ranges
 DW_AT_rnglists_base
-DW_AT_stmt_list
 DW_AT_str_offsets_base
 DW_AT_use_UTF8
 
