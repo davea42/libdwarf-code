@@ -410,7 +410,6 @@ DW_TAG_union_type
 DW_TAG_variable
 DW_TAG_volatile_type
 
-
 0xffffffff
 DW_TAG_packed_type
 

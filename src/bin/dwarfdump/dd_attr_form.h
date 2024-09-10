@@ -108,9 +108,9 @@ extern void * threekey_tag_use_base; /* for tag count recording */
 void print_tag_tree_usage(void);
 void print_tag_attr_usage(void);
 
-
-
-
+void dd_print_tag_tree_results(Dwarf_Unsigned tag_tag_count);
+void dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count);
+void dd_print_tag_use_results(Dwarf_Unsigned tag_count);
 
 #ifdef __cplusplus
 }

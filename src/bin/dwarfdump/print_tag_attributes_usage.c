@@ -83,7 +83,17 @@ find_legal_and_update(Three_Key_Entry *ke,
         }
         return TK_OK;
     }
+#if 0
+printf("dadebug update entry count from %lu 0x%x 0x%x line %d\n",
+(unsigned long)re->count,
+re->key1,re->key2,__LINE__);
+#endif
     re->count++;
+#if 0
+printf("dadebug now count is %lu 0x%x 0x%x line %d\n",
+(unsigned long)re->count,
+re->key1,re->key2,__LINE__);
+#endif
     *caller_free_ke = TRUE;
     if (table_found) {
         *table_found = re->from_tables;
@@ -105,6 +115,9 @@ record_tag_usage(Dwarf_Half tag)
         /* out of memory, pretend ok */
         return;
     }
+#if 0
+printf("dadebug now record_tag_usage on 0x%x\n",tag);
+#endif
     find_legal_and_update(tkp,&threekey_tag_use_base,
         &caller_free_tkp,0);
     if (caller_free_tkp) {
@@ -127,6 +140,10 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
     unsigned char table_id = 0;
     Dwarf_Bool retval = TK_ERROR;
 
+#if 0
+printf("dadebug legal_tag_attr tag 0x%x attr 0x%x\n",
+tag,attr);
+#endif
     mres = make_3key(tag,attr,0,0,0,1,&tkp);
     if (mres == DW_DLV_ERROR) {
         /* out of memory, pretend ok */
@@ -214,6 +231,7 @@ print_tag_attributes_usage(void)
         associated usage all together. */
     Dwarf_Unsigned tag_tag_count = 0;
     Dwarf_Unsigned tag_attr_count = 0;
+    Dwarf_Unsigned tag_count = 0;
 
     printf("\n*** TAGS AND ATTRIBUTES USAGE ***\n");
     /*  extract all tag_tree  records
@@ -223,12 +241,12 @@ print_tag_attributes_usage(void)
            and within that a line for each child tag and count.
     */
     tag_tag_count = three_key_entry_count(threekey_tag_tag_base);
-    printf("Number of tag-parent/tag-child records %" DW_PR_DUu "\n",
-        tag_tag_count);
     tag_attr_count = three_key_entry_count(threekey_tag_attr_base);
-    printf("Number of tag/attr records             %" DW_PR_DUu "\n",
-        tag_attr_count);
+    tag_count = three_key_entry_count(threekey_tag_use_base);
 
+    dd_print_tag_tree_results(tag_tag_count);
+    dd_print_tag_attr_results(tag_attr_count);
+    dd_print_tag_use_results(tag_count);
 
 
 #if 0

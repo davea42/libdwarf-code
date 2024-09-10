@@ -232,7 +232,6 @@ dd_build_attr_form_base_tree(int*errnum)
             (!tab->formclass) &&
             (!tab->section)) {
             /* Done */
-printf("dadebug End of af_table reading line %d\n",__LINE__);
             break;
         }
         res  = insert_new_af_tab_entry(tree,tab,errnum);
@@ -266,46 +265,44 @@ dd_build_tag_attr_base_tree( int*errnum)
     void * tree = &threekey_tag_attr_base;
      
 printf("dadebug tag_attr start line %d\n",__LINE__);
-    for (i=0 ; i < ATTR_TREE_EXT_COLUMN_COUNT; ++i) {
+    for (i=0 ; i < ATTR_TREE_EXT_ROW_COUNT; ++i) {
         unsigned t1 = tag_attr_combination_ext_table[i][0]; 
         for (k=1 ; k < ATTR_TREE_EXT_COLUMN_COUNT; ++k) { 
             unsigned t2 = tag_attr_combination_ext_table[i][k];
             if (t1 && t2) {
+
                 Three_Key_Entry *e = 0;
                 res = make_3key(t1,t2,t3,AF_EXTEN,
                    reserved,initial_count,
                    &e);
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
-printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
                 res =  dd_insert_table_entry(tree,e,errnum);
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
-printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
             }
         }
     }
-    for (i=0 ; i < ATTR_TREE_COLUMN_COUNT; ++i) {
+    for (i=0 ; i < ATTR_TREE_ROW_COUNT; ++i) {
         unsigned t1 = tag_attr_combination_table[i][0];
         for (k=1 ; k < ATTR_TREE_COLUMN_COUNT; ++k) {
             unsigned t2 = tag_attr_combination_table[i][k];
             if (t1 && t2) {
                 Three_Key_Entry *e = 0;
+
                 res = make_3key(t1,t2,t3,AF_STD,
                    reserved,initial_count,
                    &e); 
                 if (res != DW_DLV_OK) {
                    *errnum = DW_DLE_ALLOC_FAIL;
-printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
                 res =  dd_insert_table_entry(tree,e,errnum);
                 if (res != DW_DLV_OK) {
-printf("dadebug fail line %d\n",__LINE__);
                    return res;
                 }
             }
@@ -326,7 +323,7 @@ dd_build_tag_tag_base_tree( int*errnum)
     void * tree = &threekey_tag_tag_base;
      
 printf("dadebug tag_tag start line %d\n",__LINE__);
-    for (i=0 ; i < TAG_TREE_EXT_COLUMN_COUNT; ++i) {
+    for (i=0 ; i < TAG_TREE_EXT_ROW_COUNT; ++i) {
         unsigned t1 = tag_tree_combination_ext_table[i][0]; 
         for (k=1 ; k < TAG_TREE_EXT_COLUMN_COUNT; ++k) { 
             unsigned t2 = tag_tree_combination_ext_table[i][k];
@@ -347,7 +344,7 @@ printf("dadebug tag_tag start line %d\n",__LINE__);
             }
         }
     }
-    for (i=0 ; i < TAG_TREE_COLUMN_COUNT; ++i) {
+    for (i=0 ; i < TAG_TREE_ROW_COUNT; ++i) {
         unsigned t1 = tag_tree_combination_table[i][0];
         for (k=1 ; k < TAG_TREE_COLUMN_COUNT; ++k) {
             unsigned t2 = tag_tree_combination_table[i][k];
@@ -375,24 +372,21 @@ dd_build_tag_attr_form_base_trees(int*errnum)
 {
     int res = 0;
     
+printf("dadebug build tag_attr_form_base_trees\n");
     res = dd_build_attr_form_base_tree(errnum);
     if (res != DW_DLV_OK){
-printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     res = dd_build_tag_attr_base_tree(errnum);
     if (res != DW_DLV_OK){
-printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     res = dd_build_tag_tag_base_tree(errnum);
     if (res != DW_DLV_OK){
-printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     res = dd_build_tag_use_base_tree(errnum);
     if (res != DW_DLV_OK){
-printf("dadebug fail line %d\n",__LINE__);
         return res;
     }
     return DW_DLV_OK; 
@@ -568,7 +562,7 @@ record_attr_form_use(
         return;
     }
     /* Was already entered.*/
-    ++re->count;
+    re->count++;
     /* Clean out the local malloc */
     free_func_3key_entry(e);
     return;
@@ -658,6 +652,27 @@ qsortcountattr(const void * e1in, const void * e2in)
     return 0;
 }
 
+static int
+qsortk1k2(const void * e1in, const void * e2in)
+{
+    Three_Key_Entry *e1 = (Three_Key_Entry *)e1in;
+    Three_Key_Entry *e2 = (Three_Key_Entry *)e2in;
+
+    if (e1->key1 < e2->key1) {
+        return -1;
+    }
+    if (e1->key1 > e2->key1) {
+        return 1;
+    }
+    if (e1->key2 < e2->key2) {
+        return -1;
+    }
+    if (e1->key2 > e2->key2) {
+        return 1;
+    }
+    return 0;
+}
+
 void
 print_attr_form_usage(void)
 {
@@ -673,6 +688,13 @@ print_attr_form_usage(void)
     Dwarf_Bool        startnoted = FALSE;
     const char *      localformat=  NULL;
     Dwarf_Unsigned    localsum = 0;
+    /*  These are file static and must be carefully aligned
+        with our table reading.
+        Dwarf_Unsigned recordcount = 0;
+        Dwarf_Unsigned recordmax = 0;
+        Three_Key_Entry * tkarray = 0;
+    */
+
 
     recordmax = three_key_entry_count(threekey_attr_form_base);
     if (!recordmax) {
@@ -883,3 +905,183 @@ print_attr_form_usage(void)
     free(tk_l);
     tkarray = 0;
 }
+
+/*  extract all tag_tree  records
+    (also called tag_tag sometimes) to an array, 
+    sort by tag number and child tag number. 
+
+    Loop the list, printing tag (and name)
+       and within that a line for each child tag and count.
+*/
+
+static const char * 
+gettablename(unsigned t)
+{
+    switch(t) {
+    case AF_STD:
+        return "Standard  ";
+    case AF_EXTEN:
+        return "Extended  ";
+    case AF_UNKNOWN:
+        return "Unknown   ";
+    default:
+        break;
+    }
+    return     "Impossible";
+}
+
+void
+dd_print_tag_tree_results(Dwarf_Unsigned tag_tag_count)
+{
+    Three_Key_Entry  *tk_l  = 0;
+    Dwarf_Unsigned    i     = 0;
+    Dwarf_Half  curparent = 0;
+    /*  These are file static and must be carefully aligned
+        with our table reading.
+        Dwarf_Unsigned recordcount = 0;
+        Dwarf_Unsigned recordmax = 0;
+        Three_Key_Entry * tkarray = 0;
+    */
+
+    recordmax = tag_tag_count;
+    printf("\nNumber of tag-parent/tag-child records %" DW_PR_DUu "\n",
+        tag_tag_count); 
+    if (!tag_tag_count) {
+        return;
+    }
+    tkarray = 0;
+    tk_l = (Three_Key_Entry *)calloc(tag_tag_count+1,
+        sizeof(Three_Key_Entry));
+    tkarray=tk_l;
+    if (!tk_l) {
+        printf("ERROR: unable to malloc tag-parent/tag-child array "
+            " for a summary report \n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    /* Reset the file-global! */
+    recordcount = 0;
+    dwarf_twalk(threekey_tag_tag_base,extract_3key_entry);
+    if (recordcount != tag_tag_count) {
+        printf("ERROR: unable to fill in tag-paraent/tag-child array "
+            " for a summary report, count %lu != walk %lu \n",
+            (unsigned long)tag_tag_count,
+            (unsigned long)recordcount);
+        glflags.gf_count_major_errors++;
+        free(tk_l);
+        tkarray = 0;
+        return;
+    }
+    qsort(tk_l,recordcount,sizeof(Three_Key_Entry),
+        qsortk1k2);
+
+    for (i = 0; i < recordmax; ++i) {
+        Three_Key_Entry * tke = tk_l+i;
+
+        /* In checking mode verbose is automatically 1 */
+        if (glflags.verbose < 2) {
+            if (!tke->count) {
+                /* Skip this */
+                continue;
+            }
+        }
+        if (tke->key1 != curparent) {
+            printf("[ %4" DW_PR_DUu "] 0x%04x %-38s"
+               " table      count\n",
+               i,tke->key1,get_TAG_name(tke->key1,1));
+            curparent = tke->key1;
+        }
+        printf("        0x%04x %-38s %s  %" DW_PR_DUu "\n",
+            tke->key2, get_TAG_name(tke->key2,1), 
+            gettablename(tke->from_tables),            
+            tke->count);
+    }
+    free(tk_l);
+#if 0
+FIXME
+#endif
+
+}
+void
+dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count)
+{
+
+    Three_Key_Entry  *tk_l  = 0;
+    Dwarf_Unsigned    i     = 0;
+    Dwarf_Half  curparent = 0;
+    /*  These are file static and must be carefully aligned
+        with our table reading.
+        Dwarf_Unsigned recordcount = 0;
+        Dwarf_Unsigned recordmax = 0;
+        Three_Key_Entry * tkarray = 0;
+    */
+
+    recordmax = tag_attr_count;
+    printf("\nNumber of tag/attr records             %" DW_PR_DUu "\n",
+        tag_attr_count);
+    if (!tag_attr_count) {
+        return;
+    }
+    tkarray = 0;
+    tk_l = (Three_Key_Entry *)calloc(tag_attr_count+1,
+        sizeof(Three_Key_Entry));
+    tkarray=tk_l;
+    if (!tk_l) {
+        printf("ERROR: unable to malloc tag/attr array "
+            " for a summary report \n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    /* Reset the file-global! */
+    recordcount = 0;
+    dwarf_twalk(threekey_tag_attr_base,extract_3key_entry);
+    if (recordcount != tag_attr_count) {
+        printf("ERROR: unable to fill in tag/attr array "
+            " for a summary report, count %lu != walk %lu \n",
+            (unsigned long)tag_attr_count,
+            (unsigned long)recordcount);
+        glflags.gf_count_major_errors++;
+        free(tk_l);
+        tkarray = 0;
+        return;
+    }
+    qsort(tk_l,recordcount,sizeof(Three_Key_Entry),
+        qsortk1k2);
+
+    for (i = 0; i < recordmax; ++i) {
+        Three_Key_Entry * tke = tk_l+i;
+
+        /* In checking mode verbose is automatically 1 */
+        if (glflags.verbose < 2) {
+            if (!tke->count) {
+                /* Skip this */
+                continue;
+            }
+        }
+        if (tke->key1 != curparent) {
+            printf("[ %4" DW_PR_DUu "] 0x%04x %-38s"
+               " table      count\n",
+               i,tke->key1,get_TAG_name(tke->key1,1));
+            curparent = tke->key1;
+        }
+        printf("        0x%04x %-38s %s  %" DW_PR_DUu "\n",
+            tke->key2, get_AT_name(tke->key2,1), 
+            gettablename(tke->from_tables),            
+            tke->count);
+    }
+    free(tk_l);
+#if 0
+FIXME
+#endif
+}
+
+void
+dd_print_tag_use_results(Dwarf_Unsigned tag_count)
+{
+    printf("Number of tag use records              %" DW_PR_DUu "\n",
+        tag_count);
+    if (!tag_count) {
+        return;
+    }
+}
+
