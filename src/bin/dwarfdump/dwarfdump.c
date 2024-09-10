@@ -401,7 +401,15 @@ main(int argc, char *argv[])
         command line options */
     {
         Dwarf_Cmdline_Options wcmd;
-        /* The struct has just one field!. */
+        /*  The struct has just one field!. 
+            If glflags.gf_check_verbose_mode is non-zero
+            this tells libdwarf to emit a detailed 
+            message (which flows to the caller via 
+            _dwarf_printf()) about the header problem.
+            Defaults to zero for print options,
+            Set to 1 for check options like -ka
+            dwarfdump "-ks  --check-silent" sets it zero. */
+           
         wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }
@@ -1165,10 +1173,10 @@ process_one_file(
     }
     if (glflags.gf_check_tag_attr ||
         glflags.gf_print_usage_tag_attr) {
-        dres = build_attr_form_base_tree(&localerrno);
+        dres = dd_build_tag_attr_form_base_trees(&localerrno);
         if (dres != DW_DLV_OK) {
             simple_err_return_msg_either_action(dres,
-                "ERROR: Failed to initialize attribute/form"
+                "ERROR: Failed to initialize tag/attribute/form"
                 " tables properly");
         }
     }
@@ -1671,7 +1679,7 @@ process_one_file(
         dbg = 0;
     }
     printf("\n");
-    destroy_attr_form_trees();
+    dd_destroy_tag_attr_form_trees();
     destruct_abbrev_array();
     esb_close_null_device();
     release_range_array_info();
@@ -1776,7 +1784,7 @@ print_error(Dwarf_Debug dbg,
     }
     global_destructors();
     flag_data_post_cleanup();
-    destroy_attr_form_trees();
+    dd_destroy_tag_attr_form_trees();
     exit(EXIT_FAILURE);
 }
 /* ARGSUSED */

@@ -49,16 +49,8 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}
-unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
+Dwarf_Half tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
     [TAG_TABLE_COLUMN_MAXIMUM];
-
-#ifdef HAVE_USAGE_TAG_ATTR
-/* Working array for a specific tag and its valid tags */
-static Dwarf_Half tag_tree_vector[DW_TAG_last] = {0};
-static Dwarf_Half tag_parents[DW_TAG_last] = {0};
-static Dwarf_Half tag_children[DW_TAG_last] = {0};
-static Dwarf_Small tag_tree_legal[DW_TAG_last] = {0};
-#endif /* HAVE_USAGE_TAG_ATTR */
 
 const char * program_name;
 
@@ -231,8 +223,6 @@ main(int argc, char **argv)
     unsigned current_row = 0;
     FILE *fileInp = 0;
     FILE *fileOut = 0;
-    const char *aname = 0;
-    unsigned int index = 0;
 
     print_version_details(argv[0]);
     print_args(argc,argv);
@@ -257,6 +247,7 @@ main(int argc, char **argv)
         print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
+printf("dadebug open %s\n",output_name);
     fileOut = fopen(output_name,"w");
     if (!fileOut) {
         fprintf(stderr,"Invalid output filename,"
@@ -294,86 +285,30 @@ main(int argc, char **argv)
         PACKAGE_VERSION );
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
-#ifdef HAVE_USAGE_TAG_ATTR
-    /*  Generate the data type to record the usage of
-        the pairs tag-tag */
-    if (standard_flag) {
-        fprintf(fileOut,"#ifndef HAVE_USAGE_TAG_ATTR\n");
-        fprintf(fileOut,"#define HAVE_USAGE_TAG_ATTR 1\n");
-        fprintf(fileOut,"#endif /* HAVE_USAGE_TAG_ATTR */\n\n");
-        fprintf(fileOut,"#ifdef HAVE_USAGE_TAG_ATTR\n");
-        fprintf(fileOut,"typedef struct {\n");
-        fprintf(fileOut,"    unsigned int count; /* Tag count */\n");
-        fprintf(fileOut,"    Dwarf_Half tag;     /* Tag value */\n");
-        fprintf(fileOut,"} Usage_Tag_Tree;\n\n");
-    }
-#endif /* HAVE_USAGE_TAG_ATTR */
-
     while (!feof(stdin)) {
         unsigned int tag = 0;
         unsigned nTagLoc = 0;
-        unsigned int cur_tag = 0;
-        unsigned int child_tag;
 
         input_eof = read_value(&tag,fileInp);
         if (IS_EOF == input_eof) {
             /* Reached normal eof */
             break;
         }
-        if (standard_flag) {
-            if (current_row >= table_rows ) {
-                bad_line_input(
-                    "tag value exceeds standard table size");
-            }
-        } else {
-            if (current_row >= table_rows) {
-                bad_line_input("too many extended table rows.");
-            }
-            validate_row_col("Reading tag",current_row,0,
-                table_rows,table_columns);
-            tag_tree_combination_table[current_row][0] = tag;
+        if (current_row >= table_rows ) {
+            bad_line_input(
+                "tag value exceeds standard table size");
         }
+        validate_row_col("Reading tag",current_row,0,
+            table_rows,table_columns);
+        tag_tree_combination_table[current_row][0] = tag;
         input_eof = read_value(&num,fileInp);
         if (IS_EOF == input_eof) {
             bad_line_input("Not terminated correctly..");
         }
         nTagLoc = 1;
-        cur_tag = 1;
-
-#ifdef HAVE_USAGE_TAG_ATTR
-        /* Check if we have duplicated tags */
-        if (standard_flag) {
-            if (tag >= DW_TAG_last) {
-                bad_line_input(
-                    "tag value exceeds standard table size");
-            }
-            if (tag_parents[tag]) {
-                bad_line_input("tag 0x%02x already defined",tag);
-            }
-            tag_parents[tag] = tag;
-
-            /* Clear out the working attribute vector */
-            memset(tag_tree_vector,0,DW_TAG_last *
-                sizeof(Dwarf_Half));
-        }
-#endif /* HAVE_USAGE_TAG_ATTR */
 
         while (num != MAGIC_TOKEN_VALUE) {
-            if (standard_flag) {
-                unsigned idx = num / BITS_PER_WORD;
-                unsigned bit = num % BITS_PER_WORD;
-
-                if (idx >= table_columns) {
-                    fprintf(stderr,"Want column %d, have only %d\n",
-                        idx,table_columns);
-                    bad_line_input(
-                        "too many TAGs: table incomplete.");
-                }
-                validate_row_col("Update columns bit",tag,idx,
-                    table_rows,table_columns);
-                tag_tree_combination_table[tag][idx] |=
-                    (((unsigned)1) << bit);
-            } else {
+            {
                 if (nTagLoc >= table_columns) {
                     printf("Attempting to use column %d, max is %d\n",
                         nTagLoc,table_columns);
@@ -387,110 +322,13 @@ main(int argc, char **argv)
                 nTagLoc++;
             }
 
-#ifdef HAVE_USAGE_TAG_ATTR
-            /* Record the usage only for standard tables */
-            if (standard_flag) {
-                /* Add child tag to current tag */
-                if (cur_tag >= DW_TAG_last) {
-                    bad_line_input(
-                        "too many TAGs: table incomplete.");
-                }
-                /* Check for duplicated entries */
-                if (tag_tree_vector[cur_tag]) {
-                    bad_line_input(
-                        "duplicated tag: table incomplete.");
-                }
-                tag_tree_vector[cur_tag] = num;
-                cur_tag++;
-            }
-#endif /* HAVE_USAGE_TAG_ATTR */
-
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {
                 bad_line_input("Not terminated correctly.");
             }
         }
-
-#ifdef HAVE_USAGE_TAG_ATTR
-        /* Generate the tag-tree vector for current tag */
-        if (standard_flag) {
-            if (tag >= DW_TAG_last) {
-                bad_line_input(
-                    "tag value exceeds standard table size");
-            }
-            if (tag_children[tag]) {
-                bad_line_input("subtag 0x%02x already defined",tag);
-            }
-            tag_children[tag] = tag;
-            /* Generate reference vector */
-            aname = 0;
-            ta_get_TAG_name(tag,&aname);
-            fprintf(fileOut,"/* 0x%02x - %s */\n",tag,aname);
-            fprintf(fileOut,
-                "static Usage_Tag_Tree tag_tree_%02x[%d] = {\n",
-                tag,cur_tag+1);
-            for (index = 1; index < cur_tag; ++index) {
-                child_tag = tag_tree_vector[index];
-                ta_get_TAG_name(child_tag,&aname);
-                fprintf(fileOut,"    {/* 0x%02x */ 0, %s},\n",
-                    child_tag,aname);
-            }
-            fprintf(fileOut,"    {/* %4s */ 0, 0}\n};\n\n"," ");
-            /* Record allowed number of attributes */
-            tag_tree_legal[tag] = cur_tag - 1;
-        }
-#endif /* HAVE_USAGE_TAG_ATTR */
-
         ++current_row; /* for extended table */
     }
-
-#ifdef HAVE_USAGE_TAG_ATTR
-    /* Generate the parent of the individual vectors */
-    if (standard_flag) {
-        unsigned int tag = 0;
-        unsigned int legal = 0;
-
-        fprintf(fileOut,
-            "static Usage_Tag_Tree *usage_tag_tree[0x%02x] = {\n",
-            DW_TAG_last+1);
-        for (index = 0; index < DW_TAG_last; ++index) {
-            tag = tag_children[index];
-            if (tag) {
-                aname = 0;
-                ta_get_TAG_name(tag,&aname);
-                fprintf(fileOut,
-                    "    tag_tree_%02x, /* 0x%02x - %s */\n",
-                    tag,tag,aname);
-            } else {
-                fprintf(fileOut,"    0,\n");
-            }
-        }
-        fprintf(fileOut,"    0\n};\n\n");
-
-        /* Generate table with allowed number of tags */
-        fprintf(fileOut,"typedef struct {\n");
-        fprintf(fileOut,"    Dwarf_Small legal; /* Legal tags */\n");
-        fprintf(fileOut,"    Dwarf_Small found; /* Found tags */\n");
-        fprintf(fileOut,"} Rate_Tag_Tree;\n\n");
-        fprintf(fileOut,
-            "static Rate_Tag_Tree rate_tag_tree[0x%02x] = {\n",
-            DW_TAG_last+1);
-        for (tag = 0; tag < DW_TAG_last; ++tag) {
-            if (tag_children[tag]) {
-                legal = tag_tree_legal[tag];
-                aname = 0;
-                ta_get_TAG_name(tag,&aname);
-                fprintf(fileOut,
-                    "    {%2d, 0 /* 0x%02x - %s */},\n",
-                    legal,tag,aname);
-            } else {
-                fprintf(fileOut,"    {0, 0},\n");
-            }
-        }
-        fprintf(fileOut,"    {0, 0}\n};\n\n");
-        fprintf(fileOut,"#endif /* HAVE_USAGE_TAG_ATTR */\n\n");
-    }
-#endif /* HAVE_USAGE_TAG_ATTR */
 
     check_unused_combo(table_rows, table_columns);
     if (standard_flag) {
@@ -499,7 +337,7 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",
             table_rows);
         fprintf(fileOut,
-            "static unsigned int tag_tree_combination_table\n");
+            "static Dwarf_Half tag_tree_combination_table\n");
         fprintf(fileOut,
             "    [TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {\n");
     } else {
@@ -511,20 +349,17 @@ main(int argc, char **argv)
             table_rows);
         fprintf(fileOut,"/* Common extensions */\n");
         fprintf(fileOut,
-            "static unsigned int tag_tree_combination_ext_table\n");
+            "static Dwarf_Half tag_tree_combination_ext_table\n");
         fprintf(fileOut,
             "    [TAG_TREE_EXT_ROW_COUNT]"
             "[TAG_TREE_EXT_COLUMN_COUNT]"
             " = {\n");
     }
-
+printf("dadebug header printed\n");
     for (u = 0; u < table_rows; u++) {
         unsigned j = 0;
         const char *name = 0;
-        if (standard_flag) {
-            ta_get_TAG_name(u,&name);
-            fprintf(fileOut,"/* 0x%02x - %-37s*/\n",u, name);
-        } else {
+        {
             unsigned k = tag_tree_combination_table[u][0];
             ta_get_TAG_name(k,&name);
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n", k, name);

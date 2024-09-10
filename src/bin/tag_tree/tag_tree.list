@@ -104,7 +104,6 @@ DW_TAG_subrange_type
 DW_TAG_base_type
 DW_TAG_atomic_type
 DW_TAG_const_type
-DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_packed_type
@@ -410,7 +409,6 @@ DW_TAG_typedef
 DW_TAG_union_type
 DW_TAG_variable
 DW_TAG_volatile_type
-
 
 0xffffffff
 DW_TAG_packed_type

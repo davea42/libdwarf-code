@@ -329,10 +329,8 @@ static void arg_check_tag_tag(void);
 static void arg_check_type(void);
 static void arg_check_unique(void);
 
-#ifdef HAVE_USAGE_TAG_ATTR
 static void arg_check_usage(void);
 static void arg_check_usage_extended(void);
-#endif /* HAVE_USAGE_TAG_ATTR */
 static void arg_check_functions(void);
 
 static void arg_file_abi(void);
@@ -426,9 +424,7 @@ static void arg_h_multiple_selection(void);
 static void arg_l_multiple_selection(void);
 static void arg_k_multiple_selection(void);
 static void arg_kx_multiple_selection(void);
-#ifdef HAVE_USAGE_TAG_ATTR
 static void arg_ku_multiple_selection(void);
-#endif /* HAVE_USAGE_TAG_ATTR */
 static void arg_O_multiple_selection(void);
 static void arg_S_multiple_selection(void);
 static void arg_t_multiple_selection(void);
@@ -519,8 +515,11 @@ static const char *usage_long_text[] = {
 "-ka  --check-all            Do all checks",
 "-kM  --check-aranges        Check ranges list (.debug_aranges)",
 "-kD  --check-attr-dup       Check duplicated attributes",
-"-kE  --check-attr-encodings Examine attributes encodings",
+"-kE  --check-attr-encodings Notic3 attribute/class/form encodings",
+"                            and print a report on them",
 "-kn  --check-attr-names     Examine names in attributes",
+"                            and report when names contain dot (.)",
+"                            to find possible naming oddities",
 "-kc  --check-constants      Examine DWARF constants",
 "-kF  --check-files-lines    Examine integrity of files-lines",
 "                            attributes",
@@ -541,20 +540,19 @@ static const char *usage_long_text[] = {
 "-kd  --check-show           Show check results",
 "-ks  --check-silent         Perform checks in silent mode",
 "-ki  --check-summary        Display summary for all compilers",
-"-kr  --check-tag-attr       Examine tag-attr relation",
+"-kr  --check-tag-attr       Examine tag-attr relation, see -kt",
 "-kt  --check-tag-tag        Examine tag-tag relations",
-"                            Unless -C option given certain common",
+"                            Unless -C (--format-extensions)",
+"                            option given certain common",
 "                            tag-attr and tag-tag extensions are",
 "                            assumed to be ok (not reported).",
 "-ky  --check-type           Examine type info",
 "-kG  --check-unique         Print only unique errors",
-#ifdef HAVE_USAGE_TAG_ATTR
 "-ku  --check-usage          Print tag-tree & tag-attr usage",
 "                            (basic format)",
 "-kuf --check-usage-extended Modifies -ku to add summary detail.",
 "     --check-functions      Adds calls of libdwarf functions not ",
 "                            otherwise called (for code coverage).",
-#endif /* HAVE_USAGE_TAG_ATTR */
 " ",
 "-------------------------------------------------------------------",
 "Print Output Qualifiers",
@@ -719,11 +717,9 @@ OPT_CHECK_TAG_ATTR,           /* -kr  --check-tag-attr      */
 OPT_CHECK_TAG_TAG,            /* -kt  --check-tag-tag       */
 OPT_CHECK_TYPE,               /* -ky  --check-type          */
 OPT_CHECK_UNIQUE,             /* -kG  --check-unique        */
-#ifdef HAVE_USAGE_TAG_ATTR
 OPT_CHECK_USAGE,              /* -ku  --check-usage         */
 OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended*/
 OPT_CHECK_FUNCTIONS,          /*  --check-functions*/
-#endif /* HAVE_USAGE_TAG_ATTR */
 
 /* File Specifications    */
 OPT_FILE_ABI,          /* -x abi=<abi>    --file-abi=<abi>     */
@@ -859,11 +855,9 @@ static struct dwoption longopts[] =  {
 {"check-tag-tag",        dwno_argument, 0, OPT_CHECK_TAG_TAG       },
 {"check-type",           dwno_argument, 0, OPT_CHECK_TYPE          },
 {"check-unique",         dwno_argument, 0, OPT_CHECK_UNIQUE        },
-#ifdef HAVE_USAGE_TAG_ATTR
 {"check-usage",          dwno_argument, 0, OPT_CHECK_USAGE         },
 {"check-usage-extended", dwno_argument, 0, OPT_CHECK_USAGE_EXTENDED},
 {"check-functions",      dwno_argument, 0, OPT_CHECK_FUNCTIONS},
-#endif /* HAVE_USAGE_TAG_ATTR */
 
 /* File Specifications. */
 {"file-abi",    dwrequired_argument, 0, OPT_FILE_ABI   },
@@ -1126,7 +1120,7 @@ void arg_format_expr_ops_joined(void)
 {
     glflags.gf_expr_ops_joined = TRUE;
 }
-/*  Option '-C' */
+/*  Option '-C' -format-extensions */
 void arg_format_extensions(void)
 {
     glflags.gf_suppress_check_extensions_tables = TRUE;
@@ -1267,9 +1261,7 @@ void arg_k_multiple_selection(void)
     case 's': arg_check_silent();          break;
     case 'S': arg_check_self_refs();       break;
     case 't': arg_check_tag_tag();         break;
-#ifdef HAVE_USAGE_TAG_ATTR
     case 'u': arg_ku_multiple_selection(); break;
-#endif /* HAVE_USAGE_TAG_ATTR */
     case 'w': arg_check_macros();          break;
     case 'x': arg_kx_multiple_selection(); break;
     case 'y': arg_check_type();            break;
@@ -1454,7 +1446,12 @@ void arg_check_aranges(void)
     glflags.gf_aranges_flag = TRUE;
 }
 
-/*  Option '-kn' */
+/*  Option '-kn' 
+    Force examination of .debug_info and .debug_types
+    and record attribute name (DW_AT_name). Will report any names
+    with dot (.) except in compile-unit DIEs
+    as those have source names like t.c so dot is
+    to be expected.  */
 void arg_check_attr_names(void)
 {
     /* invalid names */
@@ -1464,7 +1461,9 @@ void arg_check_attr_names(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kr' */
+/*  Option '-kr --check-tag-attr' 
+    Force examination of .debug_info and .debug_types
+    and record tag/attr uses. */
 void arg_check_tag_attr(void)
 {
     suppress_print_dwarf();
@@ -1474,7 +1473,9 @@ void arg_check_tag_attr(void)
     glflags.gf_check_harmless = TRUE;
 }
 
-/*  Option '-kR' */
+/*  Option '-kR'
+    Force examination of .debug_info and .debug_types
+    and record tag/attr uses. */
 void arg_check_forward_refs(void)
 {
     /* forward declarations in DW_AT_specification */
@@ -1503,7 +1504,9 @@ void arg_check_self_refs(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kt' */
+/*  Option '-kt'--check-tag-tag 
+    Force examination of .debug_info and .debug_types
+    and record tag and attr uses. */
 void arg_check_tag_tag(void)
 {
     suppress_print_dwarf();
@@ -1513,7 +1516,6 @@ void arg_check_tag_tag(void)
     glflags.gf_types_flag = TRUE;
 }
 
-#ifdef HAVE_USAGE_TAG_ATTR
 /*  Option '-ku[...]' */
 void arg_ku_multiple_selection(void)
 {
@@ -1553,7 +1555,6 @@ void arg_check_usage_extended(void)
     /* -kuf : Full report */
     glflags.gf_print_usage_tag_attr_full = TRUE;
 }
-#endif /* HAVE_USAGE_TAG_ATTR */
 
 /*  Option '-kw' --check-macros */
 void arg_check_macros(void)
@@ -2515,11 +2516,9 @@ set_command_options(int argc, char *argv[])
         case OPT_CHECK_TAG_TAG:        arg_check_tag_tag();  break;
         case OPT_CHECK_TYPE:           arg_check_type();     break;
         case OPT_CHECK_UNIQUE:         arg_check_unique();   break;
-#ifdef HAVE_USAGE_TAG_ATTR
         case OPT_CHECK_USAGE:          arg_check_usage();break;
         case OPT_CHECK_USAGE_EXTENDED: arg_check_usage_extended();
             break;
-#endif /* HAVE_USAGE_TAG_ATTR */
         case OPT_CHECK_FUNCTIONS:      arg_check_functions(); break;
 
         /* File Specifications. */

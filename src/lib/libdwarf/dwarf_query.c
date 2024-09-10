@@ -1811,6 +1811,7 @@ dw_get_special_offset(Dwarf_Half attrnum,
         }
         return DW_FORM_CLASS_LOCLISTPTR;
         }
+    case DW_AT_GNU_locviews:
     case DW_AT_sibling:
     case DW_AT_byte_size :
     case DW_AT_bit_offset :
@@ -1840,6 +1841,8 @@ dw_get_special_offset(Dwarf_Half attrnum,
     case DW_AT_object_pointer:
     case DW_AT_signature:
         return DW_FORM_CLASS_REFERENCE;
+    case DW_AT_GNU_entry_view:
+        return DW_FORM_CLASS_CONSTANT;
     case DW_AT_MIPS_fde: /* SGI/IRIX extension */
         return DW_FORM_CLASS_FRAMEPTR;
     default: break;
