@@ -171,17 +171,9 @@ dd_insert_table_entry(void *tree,
     }
     re = *(Three_Key_Entry **)ret;
     if (re == e) {
-#if 0
-printf("dadebug added  0x%x 0x%x 0x%x 0x%x line %d\n",
-e->key1,e->key2,e->key3,e->from_tables,__LINE__);
-#endif
         /* Normal. Added. */
         return DW_DLV_OK;
     }
-printf("dadebug duplicate of e 0x%x 0x%x 0x%x  0x%x line %d\n",
-e->key1,e->key2,e->key3,e->from_tables,__LINE__);
-printf("dadebug duplicate was re 0x%x 0x%x 0x%x 0x%x line %d\n",
-re->key1,re->key2,re->key3,re->from_tables,__LINE__);
     /*  A full duplicate in the table. Oops.
         Not a great choice of error code. */
     *errnum = DW_DLE_ATTR_FORM_BAD;
@@ -264,9 +256,6 @@ dd_build_tag_attr_base_tree( int*errnum)
     unsigned initial_count = 0;
     void * tree = &threekey_tag_attr_base;
      
-#if 0
-printf("dadebug tag_attr start line %d\n",__LINE__);
-#endif
     for (i=0 ; i < ATTR_TREE_EXT_ROW_COUNT; ++i) {
         unsigned t1 = tag_attr_combination_ext_table[i][0]; 
         for (k=1 ; k < ATTR_TREE_EXT_COLUMN_COUNT; ++k) { 
@@ -324,9 +313,6 @@ dd_build_tag_tag_base_tree( int*errnum)
     unsigned initial_count = 0;
     void * tree = &threekey_tag_tag_base;
      
-#if 0
-printf("dadebug tag_tag start line %d\n",__LINE__);
-#endif
     for (i=0 ; i < TAG_TREE_EXT_ROW_COUNT; ++i) {
         unsigned t1 = tag_tree_combination_ext_table[i][0]; 
         for (k=1 ; k < TAG_TREE_EXT_COLUMN_COUNT; ++k) { 
@@ -376,9 +362,6 @@ dd_build_tag_attr_form_base_trees(int*errnum)
 {
     int res = 0;
     
-#if 0
-printf("dadebug build tag_attr_form_base_trees\n");
-#endif
     res = dd_build_attr_form_base_tree(errnum);
     if (res != DW_DLV_OK){
         return res;
