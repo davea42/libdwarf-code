@@ -264,7 +264,9 @@ dd_build_tag_attr_base_tree( int*errnum)
     unsigned initial_count = 0;
     void * tree = &threekey_tag_attr_base;
      
+#if 0
 printf("dadebug tag_attr start line %d\n",__LINE__);
+#endif
     for (i=0 ; i < ATTR_TREE_EXT_ROW_COUNT; ++i) {
         unsigned t1 = tag_attr_combination_ext_table[i][0]; 
         for (k=1 ; k < ATTR_TREE_EXT_COLUMN_COUNT; ++k) { 
@@ -322,7 +324,9 @@ dd_build_tag_tag_base_tree( int*errnum)
     unsigned initial_count = 0;
     void * tree = &threekey_tag_tag_base;
      
+#if 0
 printf("dadebug tag_tag start line %d\n",__LINE__);
+#endif
     for (i=0 ; i < TAG_TREE_EXT_ROW_COUNT; ++i) {
         unsigned t1 = tag_tree_combination_ext_table[i][0]; 
         for (k=1 ; k < TAG_TREE_EXT_COLUMN_COUNT; ++k) { 
@@ -372,7 +376,9 @@ dd_build_tag_attr_form_base_trees(int*errnum)
 {
     int res = 0;
     
+#if 0
 printf("dadebug build tag_attr_form_base_trees\n");
+#endif
     res = dd_build_attr_form_base_tree(errnum);
     if (res != DW_DLV_OK){
         return res;
@@ -944,7 +950,7 @@ dd_print_tag_tree_results(Dwarf_Unsigned tag_tag_count)
     */
 
     recordmax = tag_tag_count;
-    printf("\nNumber of tag-parent/tag-child records %" DW_PR_DUu "\n",
+    printf("\nNumber of tag-parent/tag-child records %7" DW_PR_DUu "\n",
         tag_tag_count); 
     if (!tag_tag_count) {
         return;
@@ -987,11 +993,11 @@ dd_print_tag_tree_results(Dwarf_Unsigned tag_tag_count)
         }
         if (tke->key1 != curparent) {
             printf("[ %4" DW_PR_DUu "] 0x%04x %-38s"
-               " table      count\n",
+               " table         count\n",
                i,tke->key1,get_TAG_name(tke->key1,1));
             curparent = tke->key1;
         }
-        printf("        0x%04x %-38s %s  %" DW_PR_DUu "\n",
+        printf("        0x%04x %-38s %s  %7" DW_PR_DUu "\n",
             tke->key2, get_TAG_name(tke->key2,1), 
             gettablename(tke->from_tables),            
             tke->count);
@@ -1015,9 +1021,13 @@ dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count)
         Dwarf_Unsigned recordmax = 0;
         Three_Key_Entry * tkarray = 0;
     */
+    Dwarf_Unsigned attrs_unknown = 0; /* meaning not in tables */
+    Dwarf_Unsigned attrs_extended = 0;
+    Dwarf_Unsigned attrs_std = 0;
+    Dwarf_Unsigned count_attr_instances = 0;
 
     recordmax = tag_attr_count;
-    printf("\nNumber of tag/attr records             %" DW_PR_DUu "\n",
+    printf("\nNumber of tag/attr records             %7" DW_PR_DUu "\n",
         tag_attr_count);
     if (!tag_attr_count) {
         return;
@@ -1051,6 +1061,15 @@ dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count)
     for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
 
+        count_attr_instances += tke->count;
+    }
+
+
+
+    for (i = 0; i < recordmax; ++i) {
+        Three_Key_Entry * tke = tk_l+i;
+        double pct = 0.0;
+
         /* In checking mode verbose is automatically 1 */
         if (glflags.verbose < 2) {
             if (!tke->count) {
@@ -1060,15 +1079,40 @@ dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count)
         }
         if (tke->key1 != curparent) {
             printf("[ %4" DW_PR_DUu "] 0x%04x %-38s"
-               " table      count\n",
+               " table      count percent\n",
                i,tke->key1,get_TAG_name(tke->key1,1));
             curparent = tke->key1;
         }
-        printf("        0x%04x %-38s %s  %" DW_PR_DUu "\n",
+        switch(tke->from_tables) {
+        case AF_STD:
+             attrs_std += tke->count;
+             break;
+        case AF_EXTEN:
+             attrs_extended += tke->count;
+             break;
+        case AF_UNKNOWN:
+        default:
+             attrs_unknown += tke->count;
+        break;
+        }
+        if (count_attr_instances) {
+            pct = ((double)tke->count/(double)count_attr_instances)*
+                100.0; 
+        }
+        printf("        0x%04x %-38s %s  %7" DW_PR_DUu 
+            " %4.1f\n",
             tke->key2, get_AT_name(tke->key2,1), 
             gettablename(tke->from_tables),            
-            tke->count);
+            tke->count,pct);
     }
+    printf("Number of attribute instances   : %7" DW_PR_DUu "\n",
+        count_attr_instances);
+    printf("Number of standard table entries: %7" DW_PR_DUu "\n",
+        attrs_std);
+    printf("Number of extended table entries: %7" DW_PR_DUu "\n",
+        attrs_extended);
+    printf("Number of unknown  table entries: %7" DW_PR_DUu "\n",
+        attrs_unknown);
     free(tk_l);
 #if 0
 FIXME
@@ -1078,10 +1122,80 @@ FIXME
 void
 dd_print_tag_use_results(Dwarf_Unsigned tag_count)
 {
-    printf("Number of tag use records              %" DW_PR_DUu "\n",
+    Three_Key_Entry  *tk_l  = 0;
+    Dwarf_Unsigned    i     = 0;
+    Dwarf_Unsigned    sum_of_uses = 0;
+    /*  These are file static and must be carefully aligned
+        with our table reading.
+        Dwarf_Unsigned recordcount = 0;
+        Dwarf_Unsigned recordmax = 0;
+        Three_Key_Entry * tkarray = 0;
+    */
+
+    recordmax = tag_count;
+    printf("\nNumber of TAG records               %7" DW_PR_DUu "\n",
         tag_count);
     if (!tag_count) {
         return;
     }
+    tkarray = 0;
+    tk_l = (Three_Key_Entry *)calloc(tag_count+1,
+        sizeof(Three_Key_Entry));
+    tkarray=tk_l;
+    if (!tk_l) {
+        printf("ERROR: unable to malloc tag array "
+            " for a summary report \n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    /* Reset the file-global! */
+    recordcount = 0;
+    dwarf_twalk(threekey_tag_use_base,extract_3key_entry);
+    if (recordcount != tag_count) {
+        printf("ERROR: unable to fill in tag/attr array "
+            " for a summary report, count %lu != walk %lu \n",
+            (unsigned long)tag_count,
+            (unsigned long)recordcount);
+        glflags.gf_count_major_errors++;
+        free(tk_l);
+        tkarray = 0;
+        return;
+    }
+    qsort(tk_l,recordcount,sizeof(Three_Key_Entry),
+        qsortk1k2);
+
+    for (i = 0; i < recordmax; ++i) {
+        Three_Key_Entry * tke = tk_l+i;
+        sum_of_uses += tke->count;
+    }
+    printf("Number of distinct TAGs in object   %7" DW_PR_DUu "\n",
+        sum_of_uses);
+
+
+    printf("[   ]  TAG                                    "
+        "    use-count percent\n");
+
+    for (i = 0; i < recordmax; ++i) {
+        Three_Key_Entry * tke = tk_l+i;
+        double pct = 0.0;
+   
+       
+        /* In checking mode verbose is automatically 1 */
+        if (glflags.verbose < 2) {
+            if (!tke->count) {
+                /* Skip this */
+                continue;
+            }
+        }
+        if (sum_of_uses) {
+            pct = ((double)tke->count/(double)sum_of_uses)* 100.0;
+        }
+        printf("[ %4" DW_PR_DUu "] 0x%04x %-38s %7"
+               DW_PR_DUu " %3.1f\n",
+               i,tke->key1,get_TAG_name(tke->key1,1),
+               tke->count,pct);
+    }
+    free(tk_l);
+    tkarray  = 0;
 }
 

@@ -807,6 +807,7 @@ DW_AT_associated
 DW_AT_bit_size
 DW_AT_byte_size
 DW_AT_calling_convention
+DW_AT_containing_type
 DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
