@@ -814,7 +814,13 @@ _dwarf_get_value_ptr(Dwarf_Die die,
                     of debug_info or debug_types or a
                     section is unreasonably sized or we are
                     pointing to two different sections? */
-                _dwarf_error(dbg,error,DW_DLE_DIE_ABBREV_BAD);
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_DIE_ABBREV_BAD,
+                    "DW_DLE_DIE_ABBREV_BAD: in calculating the "
+                    "size of a value based on abbreviation data "
+                    "we find there is not enough room in "
+                    "the .debug_info "
+                    "section to contain the attribute value.");
                 return DW_DLV_ERROR;
             }
         }
@@ -839,6 +845,7 @@ dwarf_die_text(Dwarf_Die die,
     res = dwarf_attr(die,attrnum,&attr,&lerr);
     dbg = die->di_cu_context->cc_dbg;
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,lerr);
         return DW_DLV_NO_ENTRY;
     }
     if (res == DW_DLV_NO_ENTRY) {
@@ -1499,7 +1506,8 @@ _dwarf_get_addr_from_tied(Dwarf_Debug main_dbg,
     if ( (index > tieddbg->de_filesize ||
         index > addrtabsize ||
         (index*tiedcontext->cc_address_size) > addrtabsize)) {
-        _dwarf_error_string(main_dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
+        _dwarf_error_string(main_dbg,error,
+            DW_DLE_ATTR_FORM_OFFSET_BAD,
             "DW_DLE_ATTR_FORM_OFFSET_BAD "
             "Looking for an index from an addr FORM "
             "we find an impossibly large index value for the tied "
