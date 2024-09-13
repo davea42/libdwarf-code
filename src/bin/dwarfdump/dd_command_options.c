@@ -515,7 +515,7 @@ static const char *usage_long_text[] = {
 "-ka  --check-all            Do all checks",
 "-kM  --check-aranges        Check ranges list (.debug_aranges)",
 "-kD  --check-attr-dup       Check duplicated attributes",
-"-kE  --check-attr-encodings Notic3 attribute/class/form encodings",
+"-kE  --check-attr-encodings Notice attribute/class/form encodings",
 "                            and print a report on them",
 "-kn  --check-attr-names     Examine names in attributes",
 "                            and report when names contain dot (.)",
@@ -1446,7 +1446,7 @@ void arg_check_aranges(void)
     glflags.gf_aranges_flag = TRUE;
 }
 
-/*  Option '-kn' 
+/*  Option '-kn'
     Force examination of .debug_info and .debug_types
     and record attribute name (DW_AT_name). Will report any names
     with dot (.) except in compile-unit DIEs
@@ -1461,7 +1461,7 @@ void arg_check_attr_names(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kr --check-tag-attr' 
+/*  Option '-kr --check-tag-attr'
     Force examination of .debug_info and .debug_types
     and record tag/attr uses. */
 void arg_check_tag_attr(void)
@@ -1504,7 +1504,7 @@ void arg_check_self_refs(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kt'--check-tag-tag 
+/*  Option '-kt'--check-tag-tag
     Force examination of .debug_info and .debug_types
     and record tag and attr uses. */
 void arg_check_tag_tag(void)
