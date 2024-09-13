@@ -63,7 +63,8 @@ To pass LIBDWARF_STATIC to the preprocessor with Visual Studio:
     In the contextual menu, click on Properties at the very bottom
     In the new window, double click on C/C++
     On the right, click on Preprocessor definitions
-    The is a small down arrow on the right, click on it, then click on Modify
+    The is a small down arrow on the right, click on it,
+    then click on Modify
     Add LIBDWARF_STATIC to the values
     Click on OK to close the windows
 
@@ -90,6 +91,22 @@ Using VS buttons and settings do:
 
 Expect a few warnings because the source uses Posix rather
 than Windows-only calls where applicable.
+A way to eliminate such warnings using VS is to edit
+  CMakeSettings_schema.json
+
+1. Click on Project (top level menu)
+
+2. Click on "CMake Settings for libdwarf"
+
+3. In the settings panel click on "Edit JSON"
+
+4. In the "buildCommandArgs" line
+   <pre>
+   Change 
+     "buildCommandArgs": ""
+   to
+     "buildCommandArgs": "-D_CRT_SECURE_NO_WARNINGS"
+   </pre>
 
 ## Setting up msys2 on Windows
 
