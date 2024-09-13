@@ -177,7 +177,6 @@ init_global_flags(void)
 
     glflags.gf_check_locations      = FALSE;
     glflags.gf_print_usage_tag_attr = FALSE;
-    glflags.gf_print_usage_tag_attr_full = FALSE;
     glflags.gf_check_all_compilers  = TRUE;
     glflags.gf_check_snc_compiler   = FALSE;
     glflags.gf_check_gcc_compiler   = FALSE;

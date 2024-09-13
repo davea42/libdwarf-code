@@ -201,8 +201,7 @@ struct glflags_s {
     Dwarf_Bool gf_check_frames_extended; /* Extensive frames check */
     Dwarf_Bool gf_check_locations;       /* Location list check */
 
-    Dwarf_Bool gf_print_usage_tag_attr;      /* Print basic usage */
-    Dwarf_Bool gf_print_usage_tag_attr_full; /* Print full usage */
+    Dwarf_Bool gf_print_usage_tag_attr;      /* Print usage */
 
     Dwarf_Bool gf_check_all_compilers;
     Dwarf_Bool gf_check_snc_compiler; /* Check SNC compiler */

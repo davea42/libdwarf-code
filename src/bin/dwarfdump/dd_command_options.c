@@ -541,16 +541,18 @@ static const char *usage_long_text[] = {
 "-ks  --check-silent         Perform checks in silent mode",
 "-ki  --check-summary        Display summary for all compilers",
 "-kr  --check-tag-attr       Examine tag-attr relation, see -kt",
+"                            Does not print a summary, see -ku",
 "-kt  --check-tag-tag        Examine tag-tag relations",
 "                            Unless -C (--format-extensions)",
 "                            option given certain common",
 "                            tag-attr and tag-tag extensions are",
 "                            assumed to be ok (not reported).",
+"                            Does not print a summary, see -ku",
 "-ky  --check-type           Examine type info",
 "-kG  --check-unique         Print only unique errors",
-"-ku  --check-usage          Print tag-tree & tag-attr usage",
-"                            (basic format)",
-"-kuf --check-usage-extended Modifies -ku to add summary detail.",
+"-ku  --check-usage          Print tag-tag, tag-attr, and",
+"                            attr-form usage summaries",
+"-kuf --check-usage-extended The same as -ku.",
 "     --check-functions      Adds calls of libdwarf functions not ",
 "                            otherwise called (for code coverage).",
 " ",
@@ -1546,14 +1548,12 @@ void arg_check_usage(void)
 }
 
 /*  Option '-kuf' --check-usage-extended,
-    a modifier to -ku or -kr to add details
-    to the summary report */
+    Now obsolete as all such reports
+    are full reports, but accepted and means
+    the same as -ku.  */
 void arg_check_usage_extended(void)
 {
     arg_check_usage();
-
-    /* -kuf : Full report */
-    glflags.gf_print_usage_tag_attr_full = TRUE;
 }
 
 /*  Option '-kw' --check-macros */

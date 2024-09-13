@@ -1172,7 +1172,8 @@ process_one_file(
             dres,onef_err);
     }
     if (glflags.gf_check_tag_attr ||
-        glflags.gf_print_usage_tag_attr) {
+        glflags.gf_print_usage_tag_attr ||
+        glflags.gf_check_tag_tree) {
         dres = dd_build_tag_attr_form_base_trees(&localerrno);
         if (dres != DW_DLV_OK) {
             simple_err_return_msg_either_action(dres,
