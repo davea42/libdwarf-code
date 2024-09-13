@@ -80,8 +80,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 /*  1 more than the highest number in the DW_TAG defines,
     this is for standard TAGs. Number of rows. */
 #define STD_TAG_TABLE_ROWS  66
-/* Enough entries to have a bit for each standard legal tag. */
-#define STD_TAG_TABLE_COLUMNS 39
+#define STD_TAG_TABLE_COLUMNS 40
 
 /* TAG tree common extension maximums. */
 #define EXT_TAG_TABLE_ROWS  9
