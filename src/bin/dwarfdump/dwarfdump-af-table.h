@@ -180,6 +180,7 @@ struct af_table_s {
 {0x2133,14,2},/*DW_AT_GNU_addr_base DW_FORM_CLASS_ADDRPTR Ext*/
 {0x2117, 5,2},/*DW_AT_GNU_all_call_sites DW_FORM_CLASS_FLAG Ext*/
 {0x2116, 5,2},/*DW_AT_GNU_all_tail_call_sites DW_FORM_CLASS_FLAG Ext*/
+{0x2305, 3,2},/*DW_AT_GNU_bias DW_FORM_CLASS_CONSTANT Ext*/
 {0x2112, 4,2},/*DW_AT_GNU_call_site_data_value DW_FORM_CLASS_EXPRLOC Ext*/
 {0x2113, 4,2},/*DW_AT_GNU_call_site_target DW_FORM_CLASS_EXPRLOC Ext*/
 {0x2111, 4,2},/*DW_AT_GNU_call_site_value DW_FORM_CLASS_EXPRLOC Ext*/

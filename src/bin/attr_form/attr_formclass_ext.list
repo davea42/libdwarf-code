@@ -95,6 +95,7 @@ DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_GNU_bias
+DW_FORM_CLASS_CONSTANT
 
 0xffffffff
 DW_AT_GNU_call_site_data_value

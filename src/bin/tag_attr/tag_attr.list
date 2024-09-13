@@ -114,6 +114,7 @@ DW_AT_type
 
 0xffffffff
 DW_TAG_base_type
+DW_AT_artificial
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
