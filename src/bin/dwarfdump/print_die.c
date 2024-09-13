@@ -5426,7 +5426,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         DW_AT_abstract_origin or DW_AT_specification;
         in that case we have to
         traverse this attribute in order to get the
-        name for the linkonce */
+        name for the linkonce 
+        DW_AT_GNU_locviews are a reference too,
+        and are actually an offset from a base address.*/
     if (is_class_reference)  {
         tres = dd_trace_abstract_origin_etc(dbg,tag,die,
             dieprint_cu_goffset,

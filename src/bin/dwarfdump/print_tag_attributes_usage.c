@@ -54,7 +54,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_tsearchbal.h"
 
 /*  Adds new record with count 1 (set by caller)
-    or adds one to count. 
+    or adds one to count.
     There is no notion of 'legal' for this set of
     counts. */
 static int
@@ -97,7 +97,7 @@ void
 record_tag_usage(Dwarf_Half tag)
 {
     Three_Key_Entry *tkp = 0;
-    int mres = 0; 
+    int mres = 0;
     unsigned char caller_free_tkp = FALSE;
 
     mres = make_3key(tag,0,0,0,0,1,&tkp);
@@ -113,14 +113,13 @@ record_tag_usage(Dwarf_Half tag)
     return;
 }
 
-
-/*  Return TRUE to suppress any errors about unknown combos 
-    Return FALSE to cause a message. 
+/*  Return TRUE to suppress any errors about unknown combos
+    Return FALSE to cause a message.
     Maybe should have a third case for error. */
 int
 legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
 {
-    Three_Key_Entry *tkp = 0;  
+    Three_Key_Entry *tkp = 0;
     int keyres = 0;
     int mres = 0;
     unsigned char caller_free_tkp = FALSE;
@@ -133,7 +132,7 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
         return TK_ERROR;
     }
     keyres = find_legal_and_update(tkp,&threekey_tag_attr_base,
-        &caller_free_tkp,&table_id); 
+        &caller_free_tkp,&table_id);
     if (keyres == TK_ERROR) {
         if (caller_free_tkp){
             free_func_3key_entry(tkp);
@@ -153,13 +152,13 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
             retval = TK_SHOW_MESSAGE;
         }
     }
-    if (caller_free_tkp) {    
+    if (caller_free_tkp) {
         free_func_3key_entry(tkp);
     }
     return retval;
 }
 
-/*  Return TK_OK or TK_SHOW_MESSAGE or TK_ERROR */ 
+/*  Return TK_OK or TK_SHOW_MESSAGE or TK_ERROR */
 int
 legal_tag_tree_combination(Dwarf_Half tag_parent,
     Dwarf_Half tag_child)
@@ -170,7 +169,6 @@ legal_tag_tree_combination(Dwarf_Half tag_parent,
     unsigned char caller_free_tkp = FALSE;
     unsigned char table_id = 0;
     Dwarf_Bool retval = TK_ERROR;
-
 
     mres = make_3key(tag_parent,tag_child,0,0,0,1,&tkp);
 
@@ -218,7 +216,7 @@ print_tag_attributes_usage(void)
 
     printf("\n*** TAGS AND ATTRIBUTES USAGE ***\n");
     /*  extract all tag_tree  records
-        (also called tag_tag sometimes) to a list, 
+        (also called tag_tag sometimes) to a list,
         sort by tag number and child tag number. */
     /*  Loop the list, printing tag (and name)
            and within that a line for each child tag and count.
@@ -229,8 +227,12 @@ print_tag_attributes_usage(void)
 
     dd_print_tag_tree_results(tag_tag_count);
     dd_print_tag_attr_results(tag_attr_count);
+    if (glflags.gf_check_tag_attr ||
+        glflags.gf_check_attr_encoding ||
+        glflags.gf_print_usage_tag_attr) {
+        print_attr_form_usage();
+    }
     dd_print_tag_use_results(tag_count);
-
     return DW_DLV_OK;
 
 }
