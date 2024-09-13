@@ -478,7 +478,11 @@ dd_trace_abstract_origin_etc(
                 if (tares == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*err);
                     *err = 0;
-                    esb_append(valname," Reference fails");
+                    if (attrnum != DW_AT_GNU_locviews) {
+                        /*  Not yet sure I understand the value
+                            yet (of this attribute) . */
+                        esb_append(valname," Reference fails");
+                    }
                 }
             }
             if (target_die) {
