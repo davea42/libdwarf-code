@@ -196,6 +196,15 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         tab.da_dbg = dbg;
+        tablelen = 0;
+        if (arealen <= 4) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_SECTION_SIZE_ERROR,
+                "DW_DLE_SECTION_SIZE_ERROR: "
+                "The end of a .debug_addr header record is missing, "
+                "corrupt DWARF");
+            return DW_DLV_ERROR;
+        }
         tablelen = arealen - 4; /* 4: the rest of the header */
         tab.da_length = tablelen;
         curlocaloffset = offset_size + exten_size;

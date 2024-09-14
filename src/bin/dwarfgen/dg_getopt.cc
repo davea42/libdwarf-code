@@ -193,6 +193,7 @@ int dwgetopt_long(int nargc, char *const nargv[],
     /* We think this is a longopt. */
     {
     int lo_num = 0;
+    int dwlopt_val = 0;
 
     for (;;lo_num++) {
         const struct dwoption *dwlopt = longopts +lo_num;
@@ -257,16 +258,14 @@ int dwgetopt_long(int nargc, char *const nargv[],
             return (BADCH);
         }
         if (resmatch) {
-            *longindex = lo_num;
-            place = EMSG;
-            dwoptind++;
-            return dwlopt->val;
+            dwlopt_val = dwlopt->val;
+            break;
         }
     }
-    /* Can never get here */
+    *longindex = lo_num;
     place = EMSG;
     dwoptind++;
-    return (-1);
+    return dwlopt_val;
     }
 }
 

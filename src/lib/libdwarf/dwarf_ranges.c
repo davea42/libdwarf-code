@@ -129,7 +129,6 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     int res = DW_DLV_ERROR;
     Dwarf_Unsigned ranges_base = 0;
     Dwarf_Debug    localdbg = dbg;
-    Dwarf_Error    localerror = 0;
 
     /* default for dwarf_get_ranges() */
     Dwarf_Half     die_version = 3;
@@ -194,8 +193,10 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
             return DW_DLV_NO_ENTRY;
         }
         res = _dwarf_load_section(localdbg,
-            &localdbg->de_debug_ranges, &localerror);
+            &localdbg->de_debug_ranges, error);
         if (res == DW_DLV_ERROR) {
+            /*  Error will automatically be put on dbg (main
+                dbg), not localdbg (tieddbg) as of late 2024. */
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {

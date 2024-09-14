@@ -276,10 +276,10 @@ scan_block_entries(Dwarf_Debug  dbg,
         Dwarf_Unsigned length = 0;
         unsigned int offsetsize = 0;
         unsigned int extensize = 0;
+        unsigned int sumsize = 0;
 
         if (curptr == endptr) {
-            *count_out = count;
-            return DW_DLV_OK;
+            break;
         }
         /*  Not sure how the coders think about
             the initial value. But the last
@@ -296,10 +296,16 @@ scan_block_entries(Dwarf_Debug  dbg,
         }
 
         ++count;
-        curptr +=  length -offsetsize - extensize;
+        sumsize = offsetsize +extensize;
+        if (length < sumsize) {
+            build_errm_one_num(dbg,for_gnu_pubnames,
+                "Length of fde/cies header sizes 0x%" DW_PR_DUx
+                " is impossibly small",length,error);
+            return DW_DLV_ERROR;
+        }
+        curptr +=  length - sumsize;
         curptr += 4;
     }
-    /* NOTREACHED */
     *count_out = count;
     return DW_DLV_OK;
 }

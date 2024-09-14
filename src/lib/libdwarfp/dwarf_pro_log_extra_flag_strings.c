@@ -312,15 +312,14 @@ _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
             }  else {/* else empty, */
             }
             if (!(nextcomma[1])) {
-                dwarfstring_destructor(&cms);
-                dwarfstring_destructor(&input);
-                return DW_DLV_OK;
+                /* done */
+                break;
             }
             nextcharloc = nextcomma+1;
         }
     }
-    dwarfstring_destructor(&input);
     dwarfstring_destructor(&cms);
+    dwarfstring_destructor(&input);
     return DW_DLV_OK;
 }
 

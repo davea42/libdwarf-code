@@ -487,10 +487,8 @@ print_all_abbrevs_for_cu(Dwarf_Debug dbg,
         }
         total_len += local_len;
         if (local_len == 1) {
-            /* last of a CU data printed */
-            *abbrev_num_out = abbrev_num_ret;
-            *length_out = total_len;
-            return DW_DLV_OK;
+            /* Last of a CU data printed, ending loop */
+            break;
         }
         offset += local_len;
     }

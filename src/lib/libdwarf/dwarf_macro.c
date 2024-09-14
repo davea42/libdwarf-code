@@ -331,7 +331,10 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             break;
 
         case DW_MACINFO_end_file:
-            if (--depth == 0) {
+            if (depth) {
+                --depth;
+            }
+            if (!depth) {
                 /*  done = 1; no, do not stop here,
                     at least one gcc had
                     the wrong depth settings in the

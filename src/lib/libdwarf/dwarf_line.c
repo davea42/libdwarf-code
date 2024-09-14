@@ -844,9 +844,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
     }
     section_start = dbg->de_debug_line.dss_data;
     section_end = section_start  +dbg->de_debug_line.dss_size;
+    line_ptr = dbg->de_debug_line.dss_data + line_offset;
     {
         Dwarf_Unsigned fission_size = 0;
-        uintptr_t line_ptr_as_uint = (uintptr_t)line_ptr;
         int resf = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
         if (resf != DW_DLV_OK) {
@@ -856,15 +856,20 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
         /*  fission_offset may be 0, and adding 0 to a null pointer
             is undefined behavior with some compilers. */
-        line_ptr_as_uint += fission_offset;
-        line_ptr = (Dwarf_Small *)line_ptr_as_uint;
+        if (fission_offset) {
+            line_ptr += fission_offset;
+        }
         if (line_ptr > section_end) {
             dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-            _dwarf_error(dbg, error, DW_DLE_FISSION_ADDITION_ERROR);
+            _dwarf_error_string(dbg, error, DW_DLE_FISSION_ADDITION_ERROR,
+                "DW_DLE_FISSION_ADDITION_ERROR: "
+                "on  retrieving the fission addition value for "
+                "adding that into the line table offset "
+                "results in running off "
+                "the end of the line table. Corrupt DWARF."); 
             return DW_DLV_ERROR;
         }
     }
-
     section_start = dbg->de_debug_line.dss_data;
     section_end = section_start  +dbg->de_debug_line.dss_size;
     orig_line_ptr = section_start + line_offset + fission_offset;

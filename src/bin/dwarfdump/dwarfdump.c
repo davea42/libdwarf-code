@@ -1982,6 +1982,7 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         if (ares != DW_DLV_OK)  {
             *short_name = "<unknown name>";
             *long_name = "<unknown name>";
+            dwarf_dealloc_attribute(name_attr);
             return ares;
         }
         *long_name = esb_get_string(&esb_long_cu_name);
