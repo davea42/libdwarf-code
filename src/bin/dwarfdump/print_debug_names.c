@@ -820,11 +820,12 @@ print_name_values(unsigned int indent,
             break;
         case DW_IDX_parent: {
             Dwarf_Half f = form_array[i];
-            if (f == DW_FORM_flag || f== DW_FORM_flag_present) {
+            if (f == DW_FORM_flag || f == DW_FORM_flag_present) {
                 if (offsets_array[i] ) {
-                    printf(" FORM-flag-says-is-parent=true");
+                    printf(" FORM-flag-present "
+                        "(Parent generated but not indexed)");
                 } else {
-                    printf(" FORM-flag-says-is-parent=false");
+                    printf(" FORM_flag (false)");
                 }
             } else {
                 printf(" pooloffsetofparent=%" DW_PR_DUu 
