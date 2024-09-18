@@ -35,11 +35,6 @@
 */
 #define MAGIC_TOKEN_VALUE 0xffffffff
 
-/*  These next two should match the last DW_TAG+1 and last DW_AT+1 in
-    the standard set from dwarf.h */
-#define DW_TAG_last 0x4c
-#define DW_AT_last 0x8d
-
 /* TAG_TREE.LIST Expected input format
 
 0xffffffff
@@ -76,43 +71,6 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000
-
-/*  1 more than the highest number in the DW_TAG defines,
-    this is for standard TAGs. Number of rows. */
-#define STD_TAG_TABLE_ROWS  66
-#define STD_TAG_TABLE_COLUMNS 40
-
-/* TAG tree common extension maximums. */
-#define EXT_TAG_TABLE_ROWS  9
-#define EXT_TAG_TABLE_COLS  5
-
-/*  The following 2 used in tag_tree.c only.
-    They must be large enough but they are only used
-    declaring array during build
-    (not compiled into dwarfdump)
-    so if a bit too large there is no
-    side effect on anything.  */
-#define TAG_TABLE_ROW_MAXIMUM     70
-#define TAG_TABLE_COLUMN_MAXIMUM  100
-
-
-#define COUNT_ATTRIBUTE_STD 7
-
-#define STD_ATTR_TABLE_ROWS 76
-#define STD_ATTR_TABLE_COLUMNS  60
-/* tag/attr tree common extension maximums. */
-#define EXT_ATTR_TABLE_ROWS 100
-#define EXT_ATTR_TABLE_COLS 40
-
-/*  The following 2 used in tag_attr.c only.
-    They must be large enough but they are only used
-    declaring an array during build
-    (not compiled into dwarfdump)
-    so if a bit too large there is no
-    side effect on anything.  */
-#define ATTR_TABLE_ROW_MAXIMUM 100
-#define ATTR_TABLE_COLUMN_MAXIMUM  100
-
 #define IS_EOF 1
 #define NOT_EOF 0
 
