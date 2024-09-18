@@ -147,52 +147,16 @@ process_args(int argc, char *argv[])
     }
 }
 
-static void *attr_check_dups;
-static void
-check_for_dup_attr(unsigned attr)
-{
-    Three_Key_Entry *e = 0;
-    Three_Key_Entry *re = 0;
-    int kres = 0;
-    void *ret = 0;
-
-    kres = make_3key(attr,0,0,1,1,0,&e);
-    if (kres != DW_DLV_OK) {
-        printf("FAIL malloc in check_for_dup_attr line %d\n",
-            __LINE__);
-        exit(EXIT_FAILURE);
-    }
-#if 0
-    ret = dwarf_tfind(e,&attr_check_dups,
-        std_compare_3key_entry);
-    if (ret) {
-        printf("FAIL as attribute 0x%x is duplicated\n",
-            attr);
-        exit(EXIT_FAILURE);
-    }
-#endif
-    ret = dwarf_tsearch(e,&attr_check_dups,
-        std_compare_3key_entry);
-    if (!ret) {
-        printf("FAIL malloc in check_for_dup_attr line %d\n",
-            __LINE__);
-        exit(EXIT_FAILURE);
-    }
-    re = *(Three_Key_Entry **)ret;
-    if (re != e) {
-        printf("FAIL as attribute 0x%x is duplicated\n",
-            attr);
-        /* If we did not exit we would free e here */
-        exit(EXIT_FAILURE);
-    }
-}
 int
 main(int argc, char **argv)
 {
     unsigned int num = 0;
-    int input_eof = 0;
-    FILE * fileInp = 0;
-    FILE * fileOut = 0;
+    int         input_eof = 0;
+    FILE       *fileInp = 0;
+    FILE       *fileOut = 0;
+    unsigned    table_type = 0;
+    const char *structname = 0;
+    const char *macroname = 0;
 
     print_version_details(argv[0]);
     print_args(argc,argv);
@@ -241,86 +205,75 @@ main(int argc, char **argv)
         bad_line_input("Expected 0xffffffff");
     }
     if (standard_flag) {
-        fprintf(fileOut,"/* Generated table, do not edit. */\n");
-        fprintf(fileOut,"/* Generated for source version %s */\n",
-            PACKAGE_VERSION);
-        fprintf(fileOut,"\n");
-        fprintf(fileOut,"%s\n",
-            "#ifndef DWARFDUMP_AF_TABLE_H");
-        fprintf(fileOut,"%s\n",
-            "#define DWARFDUMP_AF_TABLE_H");
-        fprintf(fileOut,"\n");
-
-        fprintf(fileOut,"%s\n",
-            "#ifdef __cplusplus");
-        fprintf(fileOut,"%s\n", "extern \"C\" {");
-        fprintf(fileOut,"%s\n",
-            "#endif /* __cplusplus */");
-
-        fprintf(fileOut,"struct af_table_s {\n");
-        fprintf(fileOut,"    Dwarf_Half attr;\n");
-        fprintf(fileOut,"    Dwarf_Half formclass;\n");
-        fprintf(fileOut,"    unsigned char section;\n");
-        fprintf(fileOut,"}  attr_formclass_table[] = {\n");
+       table_type = AF_STD;
+       structname = "dd_threekey_af_table_std";
+       macroname = "DWARFDUMP_AF_TABLE_STD_H";
+    } else {
+       table_type = AF_EXTEN;
+       structname = "dd_threekey_af_table_ext";
+       macroname = "DWARFDUMP_AF_TABLE_EXT_H";
     }
+
+    fprintf(fileOut,"/* Generated table, do not edit. */\n");
+    fprintf(fileOut,"/* Generated for source version %s */\n",
+        PACKAGE_VERSION);
+    fprintf(fileOut,"\n");
+    fprintf(fileOut,"%s%s\n",
+        "#ifndef ",macroname);
+    fprintf(fileOut,"%s%s\n",
+        "#define ",macroname);
+    fprintf(fileOut,"\n");
+
+    fprintf(fileOut,"%s\n",
+        "#ifdef __cplusplus");
+    fprintf(fileOut,"%s\n", "extern \"C\" {");
+    fprintf(fileOut,"%s\n",
+        "#endif /* __cplusplus */");
+    fprintf(fileOut,"struct Three_Key_Entry_s %s [] = {\n",
+        structname);
+
     while (!feof(stdin)) {
+        int res = 0;
         unsigned int attr = 0;
+        const char * attrname = 0;
 
         input_eof = read_value(&attr,fileInp);
         if (IS_EOF == input_eof) {
             /* Reached normal eof */
             break;
         }
-        check_for_dup_attr(attr);
+        res = dwarf_get_AT_name(attr,&attrname);
+        if (res != DW_DLV_OK) {
+            printf("Unknown attribute number of 0x%x,"
+                " Giving up\n",attr);
+            exit(EXIT_FAILURE);
+        }
+        fprintf(fileOut,"/* 0x%04x %s */\n",attr,attrname);
         input_eof = read_value(&num,fileInp);
         if (IS_EOF == input_eof) {
-            bad_line_input("Not terminated correctly..");
+                bad_line_input("Not terminated correctly.");
         }
-        while (num != MAGIC_TOKEN_VALUE) {
-            int res = 0;
-            const char *name  = 0;
 
-            fprintf(fileOut,"{0x%02x,%2u,%d},",
-                attr,num,
-                standard_flag? AF_STANDARD:AF_EXTENDED);
-            res = dwarf_get_AT_name(attr,&name);
-            if (res != DW_DLV_OK) {
-                printf("Unknown attribute number of 0x%x,"
-                    " Giving up\n",num);
-                exit(EXIT_FAILURE);
-            }
-            fprintf(fileOut,"/*%s ",name);
-            res = dwarf_get_FORM_CLASS_name(num,&name);
-            if (res != DW_DLV_OK) {
-                printf("Unknown form class number of 0x%x,"
-                    " Giving up\n",num);
-                exit(EXIT_FAILURE);
-            }
-            fprintf(fileOut,"%s ",name);
-            fprintf(fileOut,"%s*/\n",
-                standard_flag?"Std":"Ext");
+        while (num != MAGIC_TOKEN_VALUE) {
+            fprintf(fileOut,"{0x%04x,0x%04x,%u,%d,0,0},\n",
+                (Dwarf_Half)attr,(Dwarf_Half)num,(Dwarf_Half)0,
+                table_type);
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {
                 bad_line_input("Not terminated correctly.");
             }
         }
     }
-    if (extended_flag) {
-        fprintf(fileOut,"{ 0,0,0 }\n");
-        fprintf(fileOut,"}; /* end af_table extended */\n");
-        fprintf(fileOut,"%s\n",
-            "#ifdef __cplusplus");
-        fprintf(fileOut,"%s\n",
-            "extern \"C\" {");
-        fprintf(fileOut,"%s\n",
-            "#endif /* __cplusplus */");
-        fprintf(fileOut,"%s\n",
-            "#endif /* DWARFDUMP_AF_TABLE_H */");
-    } else {
-        fprintf(fileOut,"/* end af_table standard */\n");
-    }
-    dwarf_tdestroy(attr_check_dups,free_func_3key_entry);
-    attr_check_dups = 0;
+    fprintf(fileOut,"{0,0,0,0,0,0}};");
+    fprintf(fileOut,"\n/* END FILE */\n");
+    fprintf(fileOut,"%s\n",
+        "#ifdef __cplusplus");
+    fprintf(fileOut,"%s\n", "}");
+    fprintf(fileOut,"%s\n",
+        "#endif /* __cplusplus */");
+    fprintf(fileOut,"%s%s%s\n",
+        "#endif /* ",
+        macroname," */");
     fclose(fileInp);
     fclose(fileOut);
     return (0);

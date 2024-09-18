@@ -1,17 +1,20 @@
-###Copyright (C) 2021 David Anderson <davea42 at linuxmail dot org>
+###Copyright (C) 2024 David Anderson <davea42 at linuxmail dot org>
 ###This code is public domain and can be freely used or copied.
 
 AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 rebuild: attrform
-	rm -f tempaftab
+	rm -f tempaftstd tempafext
 	cp $(top_srcdir)/src/bin/attr_form/attr_formclass.list af-t1.c
 	$(CC) -E -I$(top_srcdir)/src/lib/libdwarf af-t1.c >tmp-af-build1.tmp
+
 	cp $(top_srcdir)/src/bin/attr_form/attr_formclass_ext.list af-t2.c
 	$(CC) -E -I$(top_srcdir)/src/lib/libdwarf af-t2.c >tmp-af-build2.tmp
-	./attrform -s -i tmp-af-build1.tmp -o tempaftab
-	./attrform -e -i tmp-af-build2.tmp -o tempaftab
-	mv tempaftab $(top_srcdir)/src/bin/dwarfdump/dwarfdump-af-table.h
+
+	./attrform -s -i tmp-af-build1.tmp -o tempafstd
+	./attrform -e -i tmp-af-build2.tmp -o tempafext
+	cp tempafstd $(top_srcdir)/src/bin/dwarfdump/dwarfdump-af-table-std.h
+	cp tempafext $(top_srcdir)/src/bin/dwarfdump/dwarfdump-af-table-ext.h
 	rm -f af-t1.c
 	rm -f af-t2.c
 	rm -f tmp-af-build1.tmp
