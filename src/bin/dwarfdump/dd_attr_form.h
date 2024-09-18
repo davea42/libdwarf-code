@@ -30,9 +30,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define AF_UNKNOWN   0
-#define AF_STD       1
-#define AF_EXTEN     2
+#define AF_UNKNOWN   0 /* also means malloc, so free required */
+#define AF_STD       1 /* also means static alloc, do not free */
+#define AF_EXTEN     2 /* also means static alloc, do not free */
 
 /*  See also: glflags.gf_check_tag_tree
     all while respecting */
