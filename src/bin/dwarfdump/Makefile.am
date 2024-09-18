@@ -1,5 +1,7 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
+
+### As of Sept 2024, dwarfdump-af-table.h is irrelevant, ignored
 MAINTAINERCLEANFILES = Makefile.in
 
 AUTOMAKE_OPTIONS=subdir-objects
@@ -29,7 +31,8 @@ dd_regex.h \
 dd_safe_strcpy.h \
 dd_safe_strcpy.c \
 dwarfdump.c \
-dwarfdump-af-table.h\
+dwarfdump-af-table-ext.h\
+dwarfdump-af-table-std.h\
 dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
