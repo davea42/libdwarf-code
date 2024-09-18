@@ -4,15 +4,14 @@
 AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 rebuild: attrform
-	rm -f tempaftstd tempafext
 	cp $(top_srcdir)/src/bin/attr_form/attr_formclass.list af-t1.c
 	$(CC) -E -I$(top_srcdir)/src/lib/libdwarf af-t1.c >tmp-af-build1.tmp
+	./attrform -s -i tmp-af-build1.tmp -o tempafstd
 
 	cp $(top_srcdir)/src/bin/attr_form/attr_formclass_ext.list af-t2.c
 	$(CC) -E -I$(top_srcdir)/src/lib/libdwarf af-t2.c >tmp-af-build2.tmp
-
-	./attrform -s -i tmp-af-build1.tmp -o tempafstd
 	./attrform -e -i tmp-af-build2.tmp -o tempafext
+
 	cp tempafstd $(top_srcdir)/src/bin/dwarfdump/dwarfdump-af-table-std.h
 	cp tempafext $(top_srcdir)/src/bin/dwarfdump/dwarfdump-af-table-ext.h
 	rm -f af-t1.c
