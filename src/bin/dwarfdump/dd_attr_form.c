@@ -44,7 +44,8 @@
 #include "dd_tsearchbal.h"
 #include "dd_naming.h"
 #include "dd_attr_form.h"
-#include "dwarfdump-af-table.h"
+#include "dwarfdump-af-table-std.h"
+#include "dwarfdump-af-table-ext.h"
 #include "dwarfdump-ta-table.h"
 #include "dwarfdump-ta-ext-table.h"
 #include "dwarfdump-tt-table.h"
@@ -58,11 +59,11 @@
 
 #if 0
 static void
-print_3key_record(int num,Three_Key_Entry *e)
+print_3key_record(const char *msg,int num,Three_Key_Entry *e)
 {
-    printf("3key %d 0x%x 0x%x 0x%x st %d%d ct %lu\n",
-        num,e->key1,e->key2,e->key3,
-        e->std_or_exten,e->from_tables,
+    printf("3key %s %d 0x%x 0x%x 0x%x st %d  ct %lu\n",
+        msg,num,e->key1,e->key2,e->key3,
+        e->from_tables,
         (unsigned long)e->count);
 }
 #endif /* 0 */
@@ -100,6 +101,11 @@ void
 free_func_3key_entry(void *keystructptr)
 {
     Three_Key_Entry *e = keystructptr;
+    if (e->from_tables) {
+        /*  Points into static AF_STD or
+            AF_EXTEN array. do not free */
+        return;
+    }
     free(e);
 }
 
@@ -179,55 +185,32 @@ dd_insert_table_entry(void *tree,
     return DW_DLV_ERROR;
 }
 
-/*  tree argument expected is
-    &threekey_attr_form_base for example
-    Somenthing similar for all the tag_tag tag_attr trees */
-static int
-insert_new_af_tab_entry(void *tree,
-    struct af_table_s * tab,
-    int *errnum)
-{
-    Three_Key_Entry *e = 0;
-    int res = 0;
-
-    res = make_3key(tab->attr,tab->formclass,0,
-        tab->section,
-        0 /* reserved */,
-        0 /* count is zero during preset   */,
-        &e);
-    if (res != DW_DLV_OK) {
-        *errnum = DW_DLE_ALLOC_FAIL;
-        return res;
-    }
-    return dd_insert_table_entry(tree,e,errnum);
-}
-
 /*  This is for dwarfdump to call at runtime.
     Returns DW_DLV_OK on success  */
-/* something similar for the tag_tag tag_attr tables. */
 int
 dd_build_attr_form_base_tree(int*errnum)
 {
-    struct af_table_s * tab = 0;
-    int res;
+    struct Three_Key_Entry_s *key = 0;
+    int res = 0;
+    int t = 0;
+    int i = 0;
     void *tree = &threekey_attr_form_base;
+    struct Three_Key_Entry_s * stdext [3] =
+        {dd_threekey_af_table_std,dd_threekey_af_table_ext,0};
 
-    if (threekey_attr_form_base) {
-        /*  Do not init again if a tied file */
-        return DW_DLV_OK;
-    }
-    /*  section here is a misnomer, it means  AF_STD
-        or AF_EXTEN or AF_UNKNOWN  */
-    for (tab = &attr_formclass_table[0]; ; tab++) {
-        if ((!tab->attr) &&
-            (!tab->formclass) &&
-            (!tab->section)) {
-            /* Done */
-            break;
-        }
-        res  = insert_new_af_tab_entry(tree,tab,errnum);
-        if (res != DW_DLV_OK) {
-            return res;
+    for (key = stdext[t]; key ;  ++t, key = stdext[t]) {
+        for (i = 0; ; ++i,++key) {
+            if (!(key->key1 | key->key1 | key->key3)){
+                break;
+            }
+            res =  dd_insert_table_entry(tree,key,errnum);
+            if (res != DW_DLV_OK) {
+                if(res == DW_DLV_ERROR) {
+                    return res;
+                }
+                *errnum = DW_DLE_ALLOC_FAIL;
+                return res;
+            }
         }
     }
     return DW_DLV_OK;
@@ -247,54 +230,27 @@ dd_build_tag_use_base_tree( int*errnum)
 int
 dd_build_tag_attr_base_tree( int*errnum)
 {
+    unsigned int t = 0;
     unsigned int i = 0;
-    unsigned int k = 0;
-    unsigned int t3 = 0;
-    int res = 0;
-    unsigned reserved = 0;
-    unsigned initial_count = 0;
-    void * tree = &threekey_tag_attr_base;
+    int          res = 0;
+    void        *tree = &threekey_tag_attr_base;
+    struct Three_Key_Entry_s *key = 0;
+    struct Three_Key_Entry_s * stdext [3] =
+        {dd_threekey_ta_std,dd_threekey_ta_ext,0};
 
-    for (i=0 ; i < ATTR_TREE_EXT_ROW_COUNT; ++i) {
-        unsigned t1 = tag_attr_combination_ext_table[i][0];
-        for (k=1 ; k < ATTR_TREE_EXT_COLUMN_COUNT; ++k) {
-            unsigned t2 = tag_attr_combination_ext_table[i][k];
-            if (t1 && t2) {
+    for (key = stdext[t]; key ;  ++t, key = stdext[t]) {
 
-                Three_Key_Entry *e = 0;
-                res = make_3key(t1,t2,t3,AF_EXTEN,
-                    reserved,initial_count,
-                    &e);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
-                    return res;
-                }
-                res =  dd_insert_table_entry(tree,e,errnum);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
-                    return res;
-                }
+        for (i = 0; ; ++i,++key) {
+            if (!(key->key1 | key->key1 | key->key3)){
+                break;
             }
-        }
-    }
-    for (i=0 ; i < ATTR_TREE_ROW_COUNT; ++i) {
-        unsigned t1 = tag_attr_combination_table[i][0];
-        for (k=1 ; k < ATTR_TREE_COLUMN_COUNT; ++k) {
-            unsigned t2 = tag_attr_combination_table[i][k];
-            if (t1 && t2) {
-                Three_Key_Entry *e = 0;
-
-                res = make_3key(t1,t2,t3,AF_STD,
-                    reserved,initial_count,
-                    &e);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
+            res =  dd_insert_table_entry(tree,key,errnum);
+            if (res != DW_DLV_OK) {
+                if(res == DW_DLV_ERROR) {
                     return res;
                 }
-                res =  dd_insert_table_entry(tree,e,errnum);
-                if (res != DW_DLV_OK) {
-                    return res;
-                }
+                *errnum = DW_DLE_ALLOC_FAIL;
+                return res;
             }
         }
     }
@@ -304,53 +260,23 @@ dd_build_tag_attr_base_tree( int*errnum)
 int
 dd_build_tag_tag_base_tree( int*errnum)
 {
+    unsigned int t = 0;
     unsigned int i = 0;
-    unsigned int k = 0;
-    unsigned int t3 = 0;
-    int res = 0;
-    unsigned reserved = 0;
-    unsigned initial_count = 0;
-    void * tree = &threekey_tag_tag_base;
+    int          res = 0;
+    void        *tree = &threekey_tag_tag_base;
+    struct Three_Key_Entry_s *key = 0;
+    struct Three_Key_Entry_s *stdext [3] =
+        {dd_threekey_tt_std,dd_threekey_tt_ext,0};
 
-    for (i=0 ; i < TAG_TREE_EXT_ROW_COUNT; ++i) {
-        unsigned t1 = tag_tree_combination_ext_table[i][0];
-        for (k=1 ; k < TAG_TREE_EXT_COLUMN_COUNT; ++k) {
-            unsigned t2 = tag_tree_combination_ext_table[i][k];
-            if (t1 && t2) {
-                Three_Key_Entry *e = 0;
-                res = make_3key(t1,t2,t3,AF_EXTEN,
-                    reserved,initial_count,
-                    &e);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
-                    return res;
-                }
-                res =  dd_insert_table_entry(tree,e,errnum);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
-                    return res;
-                }
+    for (key= stdext[t]; key ;  t++, key= stdext[t]) {
+        for (i = 0; ; ++i,++key) {
+            if (!(key->key1 | key->key1 | key->key3)){
+                break;
             }
-        }
-    }
-    for (i=0 ; i < TAG_TREE_ROW_COUNT; ++i) {
-        unsigned t1 = tag_tree_combination_table[i][0];
-        for (k=1 ; k < TAG_TREE_COLUMN_COUNT; ++k) {
-            unsigned t2 = tag_tree_combination_table[i][k];
-            if (t1 && t2) {
-                Three_Key_Entry *e = 0;
-                res = make_3key(t1,t2,t3,AF_STD,
-                    reserved,initial_count,
-                    &e);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
-                    return res;
-                }
-                res =  dd_insert_table_entry(tree,e,errnum);
-                if (res != DW_DLV_OK) {
-                    *errnum = DW_DLE_ALLOC_FAIL;
-                    return res;
-                }
+            res =  dd_insert_table_entry(tree,key,errnum);
+            if (res != DW_DLV_OK) {
+                *errnum = DW_DLE_ALLOC_FAIL;
+                return res;
             }
         }
     }

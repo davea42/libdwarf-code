@@ -181,7 +181,7 @@ main(int argc, char **argv)
         print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
-    fileOut = fopen(output_name,"a");
+    fileOut = fopen(output_name,"w");
     if (!fileOut) {
         fprintf(stderr,"Invalid output filename,"
             " could not open: '%s'\n",
