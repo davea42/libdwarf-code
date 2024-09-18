@@ -185,18 +185,18 @@ dd_insert_table_entry(void *tree,
     return DW_DLV_ERROR;
 }
 
-/*  This is for dwarfdump to call at runtime.
-    Returns DW_DLV_OK on success  */
-int
-dd_build_attr_form_base_tree(int*errnum)
+static int
+dd_common_build_base_tree(void *tree_base,
+    Three_Key_Entry *std,
+    Three_Key_Entry *ext,
+    int *errnum)
 {
     struct Three_Key_Entry_s *key = 0;
     int res = 0;
     int t = 0;
     int i = 0;
-    void *tree = &threekey_attr_form_base;
-    struct Three_Key_Entry_s * stdext [3] =
-        {dd_threekey_af_table_std,dd_threekey_af_table_ext,0};
+    void *tree = tree_base;
+    struct Three_Key_Entry_s * stdext [3] = {std,ext,0};
 
     for (key = stdext[t]; key ;  ++t, key = stdext[t]) {
         for (i = 0; ; ++i,++key) {
@@ -216,93 +216,32 @@ dd_build_attr_form_base_tree(int*errnum)
     return DW_DLV_OK;
 }
 
-/*  For simple counting of tag uses,
-    there is nothing we need to do here.
-    Adding a record via record_tag_usage()
-    will initialize. */
-int
-dd_build_tag_use_base_tree( int*errnum)
-{
-    (void)errnum;
-    return DW_DLV_OK;
-}
-
-int
-dd_build_tag_attr_base_tree( int*errnum)
-{
-    unsigned int t = 0;
-    unsigned int i = 0;
-    int          res = 0;
-    void        *tree = &threekey_tag_attr_base;
-    struct Three_Key_Entry_s *key = 0;
-    struct Three_Key_Entry_s * stdext [3] =
-        {dd_threekey_ta_std,dd_threekey_ta_ext,0};
-
-    for (key = stdext[t]; key ;  ++t, key = stdext[t]) {
-
-        for (i = 0; ; ++i,++key) {
-            if (!(key->key1 | key->key1 | key->key3)){
-                break;
-            }
-            res =  dd_insert_table_entry(tree,key,errnum);
-            if (res != DW_DLV_OK) {
-                if(res == DW_DLV_ERROR) {
-                    return res;
-                }
-                *errnum = DW_DLE_ALLOC_FAIL;
-                return res;
-            }
-        }
-    }
-    return DW_DLV_OK;
-}
-
-int
-dd_build_tag_tag_base_tree( int*errnum)
-{
-    unsigned int t = 0;
-    unsigned int i = 0;
-    int          res = 0;
-    void        *tree = &threekey_tag_tag_base;
-    struct Three_Key_Entry_s *key = 0;
-    struct Three_Key_Entry_s *stdext [3] =
-        {dd_threekey_tt_std,dd_threekey_tt_ext,0};
-
-    for (key= stdext[t]; key ;  t++, key= stdext[t]) {
-        for (i = 0; ; ++i,++key) {
-            if (!(key->key1 | key->key1 | key->key3)){
-                break;
-            }
-            res =  dd_insert_table_entry(tree,key,errnum);
-            if (res != DW_DLV_OK) {
-                *errnum = DW_DLE_ALLOC_FAIL;
-                return res;
-            }
-        }
-    }
-    return DW_DLV_OK;
-}
 int
 dd_build_tag_attr_form_base_trees(int*errnum)
 {
     int res = 0;
 
-    res = dd_build_attr_form_base_tree(errnum);
+    res = dd_common_build_base_tree(&threekey_attr_form_base,
+       dd_threekey_af_table_std,dd_threekey_af_table_ext,
+       errnum);
     if (res != DW_DLV_OK){
         return res;
     }
-    res = dd_build_tag_attr_base_tree(errnum);
+    res = dd_common_build_base_tree(&threekey_tag_attr_base,
+       dd_threekey_ta_std,dd_threekey_ta_ext,
+       errnum);
     if (res != DW_DLV_OK){
         return res;
     }
-    res = dd_build_tag_tag_base_tree(errnum);
+    res = dd_common_build_base_tree(&threekey_tag_tag_base,
+        dd_threekey_tt_std,dd_threekey_tt_ext,
+        errnum);
     if (res != DW_DLV_OK){
         return res;
     }
-    res = dd_build_tag_use_base_tree(errnum);
-    if (res != DW_DLV_OK){
-        return res;
-    }
+    /*  No need to initialize the tag_use tree, the
+        initial run-time dwarf_tsearch call will do that.
+        All entries are run-time-only. */
     return DW_DLV_OK;
 }
 
@@ -906,10 +845,6 @@ dd_print_tag_tree_results(Dwarf_Unsigned tag_tag_count)
             tke->count);
     }
     free(tk_l);
-#if 0
-FIXME
-#endif
-
 }
 void
 dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count)

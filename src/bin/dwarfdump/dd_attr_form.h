@@ -76,10 +76,6 @@ int  std_compare_3key_entry(const void *l, const void *r);
 
 /*   First Calls the next five */
 int  dd_build_tag_attr_form_base_trees(int*errnum);
-int  dd_build_attr_form_base_tree(int*errnum);
-int  dd_build_tag_attr_base_tree(int*errnum);
-int  dd_build_tag_tag_base_tree(int*errnum);
-int  dd_build_tag_use_base_tree(int*errnum);
 
 void dd_destroy_tag_use_base_tree(void);
 void dd_destroy_tag_attr_form_trees(void);
