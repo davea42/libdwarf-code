@@ -44,13 +44,12 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_tag_common.h"
+#include "dd_attr_form.h"  /* threekey struct */
 #include "dd_getopt.h"
 #include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
 
 void dd_minimal_count_global_error(void) {}
-Dwarf_Half tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
-    [TAG_TABLE_COLUMN_MAXIMUM];
 
 const char * program_name;
 
@@ -88,6 +87,7 @@ static char *input_name = 0;
 static char *output_name = 0;
 int extended_flag = FALSE;
 int standard_flag = FALSE;
+const char * structname = 0;
 
 static void
 process_args(int argc, char *argv[])
@@ -147,82 +147,14 @@ ta_get_TAG_name(unsigned int tagnum,const char **nameout)
     return;
 }
 
-/*  these are used in assignments. */
-static unsigned maxrowused = 0;
-static unsigned maxcolused = 0;
-
-/*  The argument sizes are declared in tag_common.h, so
-    the max usable is toprow-1 and topcol-1. */
-static void
-check_unused_combo(unsigned toprow,unsigned topcol)
-{
-    if ((toprow-1) !=  maxrowused) {
-        printf("Providing for %u rows but used 0-%u\n",
-            toprow,maxrowused);
-        printf("Giving up\n");
-        exit(EXIT_FAILURE);
-    }
-    if ((topcol-1) != maxcolused) {
-        printf("Providing for %u cols but used 0-%u\n",
-            topcol,maxcolused);
-        printf("Giving up\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-static void
-validate_row_col(const char *position,
-    unsigned crow,
-    unsigned ccol,
-    unsigned maxrow,
-    unsigned maxcol)
-{
-    if (crow >= TAG_TABLE_ROW_MAXIMUM) {
-        printf("error generating row in tag-attr array, %s "
-            "current row: %u  size of static array decl: %u\n",
-            position,crow, TAG_TABLE_ROW_MAXIMUM);
-        exit(EXIT_FAILURE);
-    }
-
-    if (crow >= maxrow) {
-        printf("error generating row in tree tag array, %s "
-            "current row: %u  max allowed: %u\n",
-            position,crow,maxrow-1);
-        exit(EXIT_FAILURE);
-    }
-    if (ccol >= TAG_TABLE_COLUMN_MAXIMUM) {
-        printf("error generating column in tag-attr array, %s "
-            "current col: %u  size of static array decl: %u\n",
-            position,ccol, TAG_TABLE_COLUMN_MAXIMUM);
-        exit(EXIT_FAILURE);
-    }
-
-    if (ccol >= maxcol) {
-        printf("error generating column in tree tag array, %s "
-            "current row: %u  max allowed: %u\n",
-            position,ccol,maxcol-1);
-        exit(EXIT_FAILURE);
-    }
-    if (crow > maxrowused) {
-        maxrowused = crow;
-    }
-    if (ccol > maxcolused) {
-        maxcolused = ccol;
-    }
-    return;
-}
-
 int
 main(int argc, char **argv)
 {
-    unsigned u = 0;
     unsigned int num = 0;
     int input_eof = 0;
-    unsigned table_rows = 0;
-    unsigned table_columns = 0;
-    unsigned current_row = 0;
     FILE *fileInp = 0;
     FILE *fileOut = 0;
+    unsigned int table_type = 0;
 
     print_version_details(argv[0]);
     print_args(argc,argv);
@@ -247,7 +179,6 @@ main(int argc, char **argv)
         print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
-printf("dadebug open %s\n",output_name);
     fileOut = fopen(output_name,"w");
     if (!fileOut) {
         fprintf(stderr,"Invalid output filename,"
@@ -264,12 +195,13 @@ printf("dadebug open %s\n",output_name);
         exit(EXIT_FAILURE);
     }
     if (standard_flag) {
-        table_rows = STD_TAG_TABLE_ROWS;
-        table_columns = STD_TAG_TABLE_COLUMNS;
+       table_type = AF_STD;
+       structname = "dd_threekey_tt_std";
     } else {
-        table_rows = EXT_TAG_TABLE_ROWS;
-        table_columns = EXT_TAG_TABLE_COLS;
+       table_type = AF_EXTEN;
+       structname = "dd_threekey_tt_ext";
     }
+    
 
     input_eof = read_value(&num,fileInp);       /* 0xffffffff */
     if (IS_EOF == input_eof) {
@@ -284,95 +216,37 @@ printf("dadebug open %s\n",output_name);
     fprintf(fileOut,"/* Generated for source version %s */\n",
         PACKAGE_VERSION );
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
+    fprintf(fileOut,"struct Three_Key_Entry_s %s [] = {\n",
+        structname);
 
     while (!feof(stdin)) {
         unsigned int tag = 0;
-        unsigned nTagLoc = 0;
+        const char *name = 0;
 
         input_eof = read_value(&tag,fileInp);
         if (IS_EOF == input_eof) {
             /* Reached normal eof */
             break;
         }
-        if (current_row >= table_rows ) {
-            bad_line_input(
-                "tag value exceeds standard table size");
-        }
-        validate_row_col("Reading tag",current_row,0,
-            table_rows,table_columns);
-        tag_tree_combination_table[current_row][0] = tag;
         input_eof = read_value(&num,fileInp);
         if (IS_EOF == input_eof) {
             bad_line_input("Not terminated correctly..");
         }
-        nTagLoc = 1;
+        ta_get_TAG_name(tag,&name);
+        fprintf(fileOut,"/* 0x%02x - %-37s*/\n", tag, name);
 
         while (num != MAGIC_TOKEN_VALUE) {
-            {
-                if (nTagLoc >= table_columns) {
-                    printf("Attempting to use column %d, max is %d\n",
-                        nTagLoc,table_columns);
-                    bad_line_input(
-                        "too many subTAGs, table incomplete.");
-                }
-                validate_row_col("Update tagloc",current_row,nTagLoc,
-                    table_rows,table_columns);
-                tag_tree_combination_table[current_row][nTagLoc] =
-                    num;
-                nTagLoc++;
-            }
-
+            /* print a 3key */
+            fprintf(fileOut,"{0x%04x,0x%04x,%u,%d,0,0},\n",
+                (Dwarf_Half)tag,(Dwarf_Half)num,(Dwarf_Half)0,
+                table_type);
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {
                 bad_line_input("Not terminated correctly.");
             }
         }
-        ++current_row; /* for extended table */
     }
-
-    check_unused_combo(table_rows, table_columns);
-    if (standard_flag) {
-        fprintf(fileOut,"#define TAG_TREE_COLUMN_COUNT %d\n\n",
-            table_columns);
-        fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",
-            table_rows);
-        fprintf(fileOut,
-            "static Dwarf_Half tag_tree_combination_table\n");
-        fprintf(fileOut,
-            "    [TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {\n");
-    } else {
-        fprintf(fileOut,
-            "#define TAG_TREE_EXT_COLUMN_COUNT %d\n\n",
-            table_columns);
-        fprintf(fileOut,
-            "#define TAG_TREE_EXT_ROW_COUNT %d\n\n",
-            table_rows);
-        fprintf(fileOut,"/* Common extensions */\n");
-        fprintf(fileOut,
-            "static Dwarf_Half tag_tree_combination_ext_table\n");
-        fprintf(fileOut,
-            "    [TAG_TREE_EXT_ROW_COUNT]"
-            "[TAG_TREE_EXT_COLUMN_COUNT]"
-            " = {\n");
-    }
-printf("dadebug header printed\n");
-    for (u = 0; u < table_rows; u++) {
-        unsigned j = 0;
-        const char *name = 0;
-        {
-            unsigned k = tag_tree_combination_table[u][0];
-            ta_get_TAG_name(k,&name);
-            fprintf(fileOut,"/* 0x%02x - %-37s*/\n", k, name);
-        }
-        fprintf(fileOut,"    { ");
-        for (j = 0; j < table_columns; ++j ) {
-            fprintf(fileOut,"0x%08x,",
-                tag_tree_combination_table[u][j]);
-        }
-        fprintf(fileOut,"},\n");
-
-    }
-    fprintf(fileOut,"};\n");
+    fprintf(fileOut,"{0,0,0,0,0,0}};");
     fprintf(fileOut,"\n/* END FILE */\n");
     fclose(fileInp);
     fclose(fileOut);

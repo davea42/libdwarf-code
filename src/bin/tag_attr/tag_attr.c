@@ -41,6 +41,8 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_common.h"
+#include "dd_attr_form.h" /* for struct threkey_s */
+
 #include "dd_esb.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
@@ -78,9 +80,6 @@ the columns (1 - N-1) are
 allowed attribute numbers.
 
 */
-
-Dwarf_Half tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM]
-    [ATTR_TABLE_COLUMN_MAXIMUM];
 
 static const char *usage[] = {
     "Usage: tag_attr_build <options>",
@@ -174,10 +173,10 @@ ta_get_TAG_name(unsigned int tag,const char **nameout)
     return;
 }
 
+#if 0
 static unsigned maxrowused = 0;
 static unsigned maxcolused = 0;
 
-#if 0
 /*  The argument sizes are declared in tag_common.h, so
     the max usable is toprow-1 and topcol-1. */
 static void
@@ -196,7 +195,6 @@ check_unused_combo(unsigned toprow,unsigned topcol)
         exit(EXIT_FAILURE);
     }
 }
-#endif
 
 static void
 validate_row_col(const char *position,
@@ -237,18 +235,24 @@ validate_row_col(const char *position,
     }
     return;
 }
+#endif
 
 int
 main(int argc, char **argv)
 {
-    unsigned u = 0;
     unsigned int num = 0;
     int input_eof = 0;
+#if 0
+    unsigned u = 0;
     unsigned table_rows = 0;
     unsigned table_columns = 0;
     unsigned current_row = 0;
+#endif
     FILE * fileInp = 0;
     FILE * fileOut = 0;
+    unsigned int table_type = 0;
+    const char *name = 0;
+    const char *structname = 0;
 
     print_version_details(argv[0]);
     print_args(argc,argv);
@@ -290,12 +294,21 @@ main(int argc, char **argv)
     }
 
     if (standard_flag) {
+        structname = "dd_threekey_ta_std";
+        table_type = AF_STD;
+    } else {
+        structname = "dd_threekey_ta_ext";
+        table_type = AF_EXTEN;
+    }
+#if 0
+    if (standard_flag) {
         table_rows = STD_ATTR_TABLE_ROWS;
         table_columns = STD_ATTR_TABLE_COLUMNS;
     } else {
         table_rows = EXT_ATTR_TABLE_ROWS;
         table_columns = EXT_ATTR_TABLE_COLS;
     }
+#endif
 
     input_eof = read_value(&num,fileInp);       /* 0xffffffff */
     if (IS_EOF == input_eof) {
@@ -310,16 +323,21 @@ main(int argc, char **argv)
     fprintf(fileOut,"/* Generated for source version %s */\n",
         PACKAGE_VERSION);
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
+    fprintf(fileOut,"struct Three_Key_Entry_s %s [] = {\n",
+        structname);
 
     while (!feof(stdin)) {
         unsigned int tag;
+#if 0
         unsigned int curcol = 0;
+#endif
 
         input_eof = read_value(&tag,fileInp);
         if (IS_EOF == input_eof) {
             /* Reached normal eof */
             break;
         }
+#if 0
         {
             /*  In extended case, the row indexed by 0-N
                 and column zero has the tag number. */
@@ -332,14 +350,19 @@ main(int argc, char **argv)
                 table_rows,table_columns);
             tag_attr_combination_table[current_row][0] = tag;
         }
-
+#endif
         input_eof = read_value(&num,fileInp);
         if (IS_EOF == input_eof) {
             bad_line_input("Not terminated correctly..");
         }
+#if 0
         curcol = 1;
+#endif
+        ta_get_TAG_name(tag,&name);
+        fprintf(fileOut,"/* 0x%02x - %-37s*/\n", tag, name);
 
         while (num != MAGIC_TOKEN_VALUE) {
+#if 0
             struct esb_s msg_buf;
 
             esb_constructor(&msg_buf);
@@ -361,15 +384,27 @@ main(int argc, char **argv)
 
             }
             esb_destructor(&msg_buf);
-
+#endif
+              /* print a 3key */
+            fprintf(fileOut,"{0x%04x,0x%04x,%u,%d,0,0},\n",
+                (Dwarf_Half)tag,(Dwarf_Half)num,(Dwarf_Half)0,
+                table_type);
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {
                 bad_line_input("Not terminated correctly.");
             }
         }
+#if 0
         ++current_row;
+#endif
     }
-
+    fprintf(fileOut,"{0,0,0,0,0,0}};");
+    fprintf(fileOut,"\n/* END FILE */\n");
+    fclose(fileInp);
+    fclose(fileOut);
+    return 0;
+}
+#if 0
     if (standard_flag) {
         fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %d\n\n",
             table_rows);
@@ -410,7 +445,7 @@ main(int argc, char **argv)
         }
         fprintf(fileOut,"},\n");
     }
-    fprintf(fileOut,"};\n");
+    fprintf(fileOut,"{0,0,0,0,0,0}};");
     fprintf(fileOut,"\n/* END FILE */\n");
     fclose(fileInp);
     fclose(fileOut);
@@ -427,3 +462,4 @@ void print_error (Dwarf_Debug dbg,
     (void)res;
     (void)localerr;
 }
+#endif
