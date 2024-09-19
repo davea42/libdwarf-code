@@ -41,7 +41,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "dd_glflags.h"
 #include "dd_globals.h"
 #include "dd_common.h"
-#include "dd_attr_form.h" /* for struct threkey_s */
+#include "dd_attr_form.h" /* for struct threekey_s */
 
 #include "dd_esb.h"
 #include "dd_tag_common.h"
