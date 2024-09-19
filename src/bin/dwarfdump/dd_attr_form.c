@@ -192,14 +192,13 @@ dd_common_build_base_tree(void *tree_base,
     int *errnum)
 {
     struct Three_Key_Entry_s *key = 0;
-    int res = 0;
-    int t = 0;
-    int i = 0;
+    int          res = 0;
+    int          t = 0;
     void *tree = tree_base;
     struct Three_Key_Entry_s * stdext [3] = {std,ext,0};
 
     for (key = stdext[t]; key ;  ++t, key = stdext[t]) {
-        for (i = 0; ; ++i,++key) {
+        for ( ; ; ++key) {
             if (!(key->key1 | key->key1 | key->key3)){
                 break;
             }
