@@ -385,7 +385,7 @@ main(int argc, char **argv)
             }
             esb_destructor(&msg_buf);
 #endif
-              /* print a 3key */
+            /* print a 3key */
             fprintf(fileOut,"{0x%04x,0x%04x,%u,%d,0,0},\n",
                 (Dwarf_Half)tag,(Dwarf_Half)num,(Dwarf_Half)0,
                 table_type);

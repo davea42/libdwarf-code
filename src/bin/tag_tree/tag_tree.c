@@ -195,14 +195,12 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     if (standard_flag) {
-       table_type = AF_STD;
-       structname = "dd_threekey_tt_std";
+        table_type = AF_STD;
+        structname = "dd_threekey_tt_std";
     } else {
-       table_type = AF_EXTEN;
-       structname = "dd_threekey_tt_ext";
+        table_type = AF_EXTEN;
+        structname = "dd_threekey_tt_ext";
     }
-    
-
     input_eof = read_value(&num,fileInp);       /* 0xffffffff */
     if (IS_EOF == input_eof) {
         bad_line_input("Empty input file");

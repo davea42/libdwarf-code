@@ -205,13 +205,13 @@ main(int argc, char **argv)
         bad_line_input("Expected 0xffffffff");
     }
     if (standard_flag) {
-       table_type = AF_STD;
-       structname = "dd_threekey_af_table_std";
-       macroname = "DWARFDUMP_AF_TABLE_STD_H";
+        table_type = AF_STD;
+        structname = "dd_threekey_af_table_std";
+        macroname = "DWARFDUMP_AF_TABLE_STD_H";
     } else {
-       table_type = AF_EXTEN;
-       structname = "dd_threekey_af_table_ext";
-       macroname = "DWARFDUMP_AF_TABLE_EXT_H";
+        table_type = AF_EXTEN;
+        structname = "dd_threekey_af_table_ext";
+        macroname = "DWARFDUMP_AF_TABLE_EXT_H";
     }
 
     fprintf(fileOut,"/* Generated table, do not edit. */\n");
@@ -251,7 +251,7 @@ main(int argc, char **argv)
         fprintf(fileOut,"/* 0x%04x %s */\n",attr,attrname);
         input_eof = read_value(&num,fileInp);
         if (IS_EOF == input_eof) {
-                bad_line_input("Not terminated correctly.");
+            bad_line_input("Not terminated correctly.");
         }
 
         while (num != MAGIC_TOKEN_VALUE) {

@@ -577,7 +577,8 @@ ParseDefinitionsAndWriteOutput(void)
                 MAX_NAME_LEN,second_underscore,
                 strlen(second_underscore));
             group_array[array_count].ad_value = v;
-            group_array[array_count].ad_original_position = array_count;
+            group_array[array_count].ad_original_position =
+                array_count;
             ++array_count;
         }
     }

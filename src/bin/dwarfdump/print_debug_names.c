@@ -442,7 +442,8 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
     res = DW_DLV_OK;
     abblist_count = i;
     if (abblist_count) {
-        abblist = calloc(abblist_count, sizeof(struct Dnames_Abb_Check_s));
+        abblist = calloc(abblist_count,
+            sizeof(struct Dnames_Abb_Check_s));
         if (!abblist) {
             printf("ERROR: Unable to allocate %" DW_PR_DUu
                 "entries of a struct to check "
