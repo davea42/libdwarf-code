@@ -219,8 +219,7 @@ print_tag_attributes_usage(void)
         (also called tag_tag sometimes) to a list,
         sort by tag number and child tag number. */
     /*  Loop the list, printing tag (and name)
-           and within that a line for each child tag and count.
-    */
+        and within that a line for each child tag and count.  */
     tag_tag_count = three_key_entry_count(threekey_tag_tag_base);
     tag_attr_count = three_key_entry_count(threekey_tag_attr_base);
     tag_count = three_key_entry_count(threekey_tag_use_base);

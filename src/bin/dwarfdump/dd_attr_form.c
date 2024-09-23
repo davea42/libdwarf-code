@@ -204,7 +204,7 @@ dd_common_build_base_tree(void *tree_base,
             }
             res =  dd_insert_table_entry(tree,key,errnum);
             if (res != DW_DLV_OK) {
-                if(res == DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR) {
                     return res;
                 }
                 *errnum = DW_DLE_ALLOC_FAIL;
@@ -221,14 +221,14 @@ dd_build_tag_attr_form_base_trees(int*errnum)
     int res = 0;
 
     res = dd_common_build_base_tree(&threekey_attr_form_base,
-       dd_threekey_af_table_std,dd_threekey_af_table_ext,
-       errnum);
+        dd_threekey_af_table_std,dd_threekey_af_table_ext,
+        errnum);
     if (res != DW_DLV_OK){
         return res;
     }
     res = dd_common_build_base_tree(&threekey_tag_attr_base,
-       dd_threekey_ta_std,dd_threekey_ta_ext,
-       errnum);
+        dd_threekey_ta_std,dd_threekey_ta_ext,
+        errnum);
     if (res != DW_DLV_OK){
         return res;
     }
@@ -1032,4 +1032,3 @@ dd_print_tag_use_results(Dwarf_Unsigned tag_count)
     free(tk_l);
     tkarray  = 0;
 }
-

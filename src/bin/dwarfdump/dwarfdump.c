@@ -401,15 +401,15 @@ main(int argc, char *argv[])
         command line options */
     {
         Dwarf_Cmdline_Options wcmd;
-        /*  The struct has just one field!. 
+        /*  The struct has just one field!.
             If glflags.gf_check_verbose_mode is non-zero
-            this tells libdwarf to emit a detailed 
-            message (which flows to the caller via 
+            this tells libdwarf to emit a detailed
+            message (which flows to the caller via
             _dwarf_printf()) about the header problem.
             Defaults to zero for print options,
             Set to 1 for check options like -ka
             dwarfdump "-ks  --check-silent" sets it zero. */
-           
+
         wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }

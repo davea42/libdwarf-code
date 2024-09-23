@@ -154,10 +154,9 @@ static void formx_data16(Dwarf_Form_Data16 * u, struct esb_s *esbp,
 
 static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
 
-/*  pd_dwarf_names_print_on_error is always 1. 
+/*  pd_dwarf_names_print_on_error is always 1.
     Used in ellipname(res,val_in,v,"TAG",printonerr);
-    See dd_naming.c
- */
+    See dd_naming.c */
 static int        pd_dwarf_names_print_on_error = 1;
 static int        die_stack_indent_level = 0;
 static Dwarf_Bool local_symbols_already_begun = FALSE;
@@ -1698,7 +1697,7 @@ dd_check_tag_tree(Dwarf_Debug dbg,
                     }
                     break;
                 case TK_ERROR: /* fall thru */
-                default: 
+                default:
                     {
                         static unsigned long errcount = 0;
                         if (!errcount) {
@@ -4679,7 +4678,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         checking_this_compiler()) {
         check_attr_tag_combination(dbg,tag,attr);
         record_attr_form_use(dbg,tag,attr,(Dwarf_Half)fc,
-            theform, 
+            theform,
             die_stack_indent_level);
     }
 
@@ -5426,7 +5425,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         DW_AT_abstract_origin or DW_AT_specification;
         in that case we have to
         traverse this attribute in order to get the
-        name for the linkonce 
+        name for the linkonce
         DW_AT_GNU_locviews are a reference too,
         and are actually an offset from a base address.*/
     if (is_class_reference)  {
@@ -8102,9 +8101,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             section.
             DWARF2 incorrectly specifed the value here
             as being the size of an address, which never made any
-            sense: it has always been an offset of a DIE somewhere in .debug_info .
-            The definition was changed in DWARF3 to specify the value is an offset
-            in .debug_info, not an address.  */
+            sense: it has always been an offset of a DIE somewhere in
+            .debug_info .
+            The definition was changed in DWARF3 to specify the value
+            is an offset in .debug_info, not an address.  */
         bres = dwarf_global_formref_b(attrib, &off,&is_info,err);
         if (bres == DW_DLV_OK) {
             bracket_hex("<GOFF=",off, ">",esbp);

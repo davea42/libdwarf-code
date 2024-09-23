@@ -381,7 +381,7 @@ print_abblist_use(unsigned int indent)
     }
     /*  Pull back to last */
     --cur;
-    /*  Adjust codelength for table_byte_size, by 1 */  
+    /*  Adjust codelength for table_byte_size, by 1 */
     cur->ac_codelength =
         table_byte_size - cur->ac_codeoffset -1;
     cur = abblist;
@@ -454,7 +454,7 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
     printf("\n");
     printindent(indent);
     printf("Debug Names abbreviation table entries per Name: length %"
-        DW_PR_DUu " (0x%04" DW_PR_DUx ") bytes.\n", 
+        DW_PR_DUu " (0x%04" DW_PR_DUx ") bytes.\n",
         abbrev_table_length,
         abbrev_table_length);
     printindent(indent);
@@ -615,7 +615,7 @@ check_die_pub_offset( Dwarf_Debug dbg,
 }
 
 /*  Uses local error, issues error when appropriate.
-    Has no other side effect. 
+    Has no other side effect.
     Checking DIE offset . Messier than it should be. */
 static void
 _dwarf_check_dn_die_offset(Dwarf_Debug dbg,Dwarf_Dnames_Head dn,
@@ -627,7 +627,7 @@ _dwarf_check_dn_die_offset(Dwarf_Debug dbg,Dwarf_Dnames_Head dn,
     Dwarf_Bool has_tu_table_index,
     Dwarf_Unsigned cu_table_index,
     Dwarf_Unsigned tu_table_index)
-{   
+{
     int            cres = 0;
     Dwarf_Error    chkerror = 0;
     Dwarf_Unsigned cu_hd_offset = 0;
@@ -649,7 +649,7 @@ _dwarf_check_dn_die_offset(Dwarf_Debug dbg,Dwarf_Dnames_Head dn,
             }
         } else {
             if (has_tu_table_index) {
-                if(tu_table_index < local_type_unit_count) {
+                if (tu_table_index < local_type_unit_count) {
                     cres = dwarf_dnames_cu_table(dn,"tu",
                         tu_table_index,&cu_hd_offset,
                         &sig8,&chkerror);
@@ -802,7 +802,7 @@ print_name_values(unsigned int indent,
             break;
         case DW_IDX_type_unit: {
             /*  type units do not special-case a single CU */
-            printf(" typeunitindex= %" DW_PR_DUu 
+            printf(" typeunitindex= %" DW_PR_DUu
                 " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
                 offsets_array[i],
                 offsets_array[i]);
@@ -828,7 +828,7 @@ print_name_values(unsigned int indent,
                     printf(" FORM_flag (false)");
                 }
             } else {
-                printf(" pooloffsetofparent=%" DW_PR_DUu 
+                printf(" pooloffsetofparent=%" DW_PR_DUu
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
                     offsets_array[i],
                     offsets_array[i]);
@@ -853,14 +853,14 @@ print_name_values(unsigned int indent,
         printf("\n");
     }
     _dwarf_check_dn_die_offset(dbg,dn,
-         single_cu_case,
-         local_type_unit_count,
-         single_cu_offset,
-         local_die_offset,
-         has_cu_table_index,
-         has_tu_table_index,
-         cu_table_index,
-         tu_table_index);
+        single_cu_case,
+        local_type_unit_count,
+        single_cu_offset,
+        local_die_offset,
+        has_cu_table_index,
+        has_tu_table_index,
+        cu_table_index,
+        tu_table_index);
     return DW_DLV_OK;
 }
 
@@ -1031,15 +1031,15 @@ print_dname_record(Dwarf_Debug dbg,Dwarf_Dnames_Head dn,
         bucket_count);
     printf("Name count              : %4" DW_PR_DUu "\n",
         name_count);
-    printf("Abbrev table length     : %4" DW_PR_DUu 
+    printf("Abbrev table length     : %4" DW_PR_DUu
         " (0x%04" DW_PR_DUx ")\n",
         abbrev_table_size,
         abbrev_table_size);
-    printf("Entry pool size         : %4" DW_PR_DUu 
+    printf("Entry pool size         : %4" DW_PR_DUu
         " (0x%04" DW_PR_DUx ")\n",
         entry_pool_size,
         entry_pool_size);
-    printf("Augmentation string size: %4" DW_PR_DUu 
+    printf("Augmentation string size: %4" DW_PR_DUu
         " (0x%04" DW_PR_DUx ")\n",
         augmentation_string_size,
         augmentation_string_size);

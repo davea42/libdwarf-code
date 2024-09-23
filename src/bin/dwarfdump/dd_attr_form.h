@@ -36,12 +36,12 @@ extern "C" {
 
 /*  See also: glflags.gf_check_tag_tree
     all while respecting */
-    
+
 #define TK_OK           0
 #define TK_SHOW_MESSAGE 1
 #define TK_ERROR        2
 
-/*  For a tag->tag tree key1s a tag number, key 2 is a tag number 
+/*  For a tag->tag tree key1s a tag number, key 2 is a tag number
     and key3  is zero.
     For a tag->attr tree key1 is a tag number, key 2 is attrnum,
     and key3 is zero.
@@ -54,9 +54,9 @@ struct Three_Key_Entry_s {
     Dwarf_Half      key3;
 
     /* Not from tables:0. std table:1. extension table:2. */
-    Dwarf_Small    from_tables; 
+    Dwarf_Small    from_tables;
     Dwarf_Small    reserved;
-    Dwarf_Unsigned count; /* The number actually encountered 
+    Dwarf_Unsigned count; /* The number actually encountered
         in print_die.c */
 };
 typedef struct Three_Key_Entry_s Three_Key_Entry;
