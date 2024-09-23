@@ -1696,7 +1696,7 @@ isformrefval(Dwarf_Debug dbg,Dwarf_Half form,
 {
     Dwarf_Unsigned localval = 0;
 
-    if(poolptr >= endpool) {
+    if (poolptr >= endpool) {
         dwarfstring m;
         const char * formname = 0;
 
@@ -1706,7 +1706,7 @@ isformrefval(Dwarf_Debug dbg,Dwarf_Half form,
             "Reading data of form 0x%02x ",form);
         dwarf_get_FORM_name((unsigned int)form,&formname);
         dwarfstring_append_printf_s(&m,
-            "%s from entrypool would read " 
+            "%s from entrypool would read "
             "off the end of the pool",
             (char *)formname);
         _dwarf_error_string(dbg,error,

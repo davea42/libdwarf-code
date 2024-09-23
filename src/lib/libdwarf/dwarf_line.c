@@ -861,12 +861,13 @@ _dwarf_internal_srclines(Dwarf_Die die,
         }
         if (line_ptr > section_end) {
             dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-            _dwarf_error_string(dbg, error, DW_DLE_FISSION_ADDITION_ERROR,
+            _dwarf_error_string(dbg, error,
+                DW_DLE_FISSION_ADDITION_ERROR,
                 "DW_DLE_FISSION_ADDITION_ERROR: "
                 "on  retrieving the fission addition value for "
                 "adding that into the line table offset "
                 "results in running off "
-                "the end of the line table. Corrupt DWARF."); 
+                "the end of the line table. Corrupt DWARF.");
             return DW_DLV_ERROR;
         }
     }

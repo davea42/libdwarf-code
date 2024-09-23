@@ -1683,7 +1683,7 @@ dwarf_rnglists_get_rle_head(
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    if(dbg != tiedctx->cc_dbg) {
+    if (dbg != tiedctx->cc_dbg) {
         /* something very wrong */
         _dwarf_error_string(dbg, error,DW_DLE_RNGLISTS_ERROR,
             "DW_DLE_RNGLISTS_ERROR: internal corruption "
