@@ -566,7 +566,8 @@ _dwarf_pe_load_dwarf_section_headers(
             if (sec_outp->VirtualSize >
                 ((Dwarf_Unsigned)2000*
                 (Dwarf_Unsigned)1000*
-                (Dwarf_Unsigned)1000)) {
+                (Dwarf_Unsigned)1000) &&
+                (sec_outp->VirtualSize > pep->pe_filesize)) {
                 /*  Likely unreasonable.
                     the hard limit written this way
                     simply for clarity.
@@ -574,7 +575,8 @@ _dwarf_pe_load_dwarf_section_headers(
                 *errcode = DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL;
                 return DW_DLV_ERROR;
             }
-            if (sec_outp->VirtualSize > limit) {
+            if (sec_outp->VirtualSize > limit &&
+               0 == pep->pe_is_64bit ) {
                 /* Likely totally unreasonable. Bad. */
                 *errcode = DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL;
                 return DW_DLV_ERROR;
