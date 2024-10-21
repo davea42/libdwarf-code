@@ -105,6 +105,25 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
+/*  Avoid adding offest to null s2.
+    This function avoids a compiler warning:
+    error: 'strcmp' reading 1 or more bytes
+    from a region of size 0 
+    Offset is a fixed small positive number. */
+static int
+both_strings_nonempty(const char *s1, const char *s2, int offset)
+{
+    const char *s3 = 0;
+    if (!s1 || !s2) {
+        return FALSE;
+    }
+    s3 = s2 + offset;
+    if (!s1[0] || !s3[0]) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
 /*  Return DW_DLV_OK etc.
     PRECONDITION: secname and targname are non-null
         pointers to strings. */
@@ -167,8 +186,9 @@ set_up_section(Dwarf_Debug dbg,
         So we add -Wnostringop-overread to the build as the error is
         a false positive. We had to drop stringop-overread
         references in compiler options, such turned off
-        valuable warnings. */
-    if (postzprefix &&
+        valuable warnings. Oct 2024
+        refined the test to notice empty string */
+    if (both_strings_nonempty(postzprefix,targname,DPREFIXLEN) &&
         !strcmp(postzprefix,targname+DPREFIXLEN)) {
             /*  zprefix version matches the object section
                 name so the section is compressed and is
