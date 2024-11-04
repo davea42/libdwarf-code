@@ -183,7 +183,9 @@ else()
   message(STATUS "intptr_t value considered NO ")
 endif()
 
+message(STATUS "ENABLE_DECOMPRESSION : " ${ENABLE_DECOMPRESSION})
 if (ENABLE_DECOMPRESSION)
+  #message(STATUS "In ENABLE_DECOMPRESSION setup: TRUE")
   # Zlib and ZSTD need to be found otherwise disable it
   if(NOT TARGET ZLIB::ZLIB)
     find_package(ZLIB)
@@ -226,9 +228,14 @@ if (ENABLE_DECOMPRESSION)
     set(HAVE_ZSTD_H TRUE)
     set(BUILT_WITH_ZLIB_AND_ZSTD TRUE)
   endif()
+  message(STATUS "Found libzstd           : ${zstd_FOUND}")
+  message(STATUS "Found zlib              : ${ZLIB_FOUND}")
+  message(STATUS "Build with zlib and zstd: ${BUILT_WITH_ZLIB_AND_ZSTD}")
+else()
+  message(STATUS "Build with zlib and zstd: NO")
 endif ()
 
-message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
+message(STATUS "CMAKE_SIZEOF_VOID_P ... : ${CMAKE_SIZEOF_VOID_P}")
 
 #  DW_FWALLXX are gnu C++ options.
 if (WALL)
