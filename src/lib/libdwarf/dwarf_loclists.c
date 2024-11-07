@@ -324,7 +324,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             preserve a testing baseline:
             baselines/hongg2024-02-18-m.base
             otherwise we would test against sectionsize first.*/
-        Dwarf_Unsigned sectionsize = dbg->de_debug_loclists.dss_size;
+        Dwarf_Unsigned section_size = dbg->de_debug_loclists.dss_size;
 
         if (data > enddata || data < startdata ) {
             /*  Corrupt data being read. */
@@ -334,7 +334,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
                 "of its allowed space");
             return DW_DLV_ERROR;
         }
-        if (count > sectionsize) {
+        if (count > section_size) {
             /*  Corrupt data being read. */
             _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
                 "DW_DLE_LOCLISTS_ERROR: "
@@ -719,10 +719,14 @@ dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
     READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
         offsetptr,
         offset_len,error,con->lc_endaddr);
-#if 0
-FIXME
-And look  for check on value
-#endif
+    if (targetoffset >=  con->lc_length) {
+        _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+            "DW_DLE_LOCLISTS_ERROR: "
+            "An lle target offset value is "
+            "Too large to be real");
+        return DW_DLV_ERROR;
+    }
+
 
     if (offset_value_out) {
         *offset_value_out = targetoffset;
@@ -1239,10 +1243,6 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Unsigned loclists_contextnum = 0;
     Dwarf_Small *table_base = 0;
-#if 0 
-FIXME
-    Dwarf_Unsigned table_length = 0;
-#endif
     Dwarf_Small *table_entry = 0;
     Dwarf_Small *enddata = 0;
     Dwarf_Loclists_Context *array = 0;
@@ -1259,6 +1259,7 @@ FIXME
     Dwarf_Unsigned   loclists_base =
         llhead->ll_at_loclists_base;
     Dwarf_Unsigned   attr_val = 0;
+    Dwarf_Unsigned   section_size = 0;
 
     if (!attr) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
@@ -1269,6 +1270,7 @@ FIXME
         return DW_DLV_ERROR;
     }
     ctx = attr->ar_cu_context;
+    section_size = dbg->de_debug_loclists.dss_size;
     array = dbg->de_loclists_context;
     if (theform == DW_FORM_loclistx) {
         Dwarf_Bool offset_is_info   = 0;
@@ -1277,6 +1279,13 @@ FIXME
             &attr_val, &offset_is_info, error);
         if (res != DW_DLV_OK) {
             return res;
+        }
+        if (attr_val >= section_size) {
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "A DW_FORM_loclistx value is too large to  "
+                "the space in .debug_loclists");
+            return DW_DLV_ERROR;
         }
     } else {
         if (theform == DW_FORM_sec_offset) {
@@ -1323,9 +1332,23 @@ FIXME
             ctx->cc_loclists_base_present = TRUE;
             ctx->cc_loclists_base         = ibase;
             offset_in_loclists = ibase;
+            if (offset_in_loclists >= section_size) {
+                _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                    "DW_DLE_LOCLISTS_ERROR: "
+                    "A DW_FORM_loclistx global offset is too large to  "
+                    "the space in .debug_loclists");
+                return DW_DLV_ERROR;
+            }
         }
     } else {
         offset_in_loclists = attr_val;
+        if (offset_in_loclists >= section_size) {
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "A .debug_loclists global offset is too large for  "
+                "the space in .debug_loclists");
+            return DW_DLV_ERROR;
+        }
     }
     res = _dwarf_which_loclists_context(dbg,ctx,
         offset_in_loclists,
@@ -1364,37 +1387,43 @@ FIXME
     llhead->ll_address_size  = rctx->lc_address_size;
     llhead->ll_segment_selector_size =
         rctx->lc_segment_selector_size;
-#if 0
-FIX
-#endif
 
     if (is_loclistx) {
         Dwarf_Unsigned table_entryval = 0;
+        Dwarf_Unsigned globaloff = 0;
 
         table_entry = attr_val*offsetsize + table_base;
         /*  No malloc here yet so no leak if the macro returns
             DW_DLV_ERROR */
         READ_UNALIGNED_CK(dbg,table_entryval, Dwarf_Unsigned,
             table_entry,offsetsize,error,enddata);
-#if 0
         if (table_entryval >= rctx->lc_length) {
-FIXME
-And also look in dwarf_rnglists.c for check on value
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "A DW_FORM_loclistx value is too large for "
+                "the space in .debug_loclists");
+            return DW_DLV_ERROR;
         }
-#endif
-        lle_global_offset = rctx->lc_offsets_off_in_sect +
-            table_entryval;
-#if 0
-        if (lle_global_offset >= rctx->lc_length) {
-FIXME
+        globaloff = rctx->lc_offsets_off_in_sect + table_entryval;
+        lle_global_offset = globaloff;
+        if (lle_global_offset >= section_size) {
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "A DW_FORM_loclistx global offset is too large to  "
+                "the space in .debug_loclists");
+            return DW_DLV_ERROR;
         }
-#endif
     } else {
         lle_global_offset = attr_val;
+        if (lle_global_offset >= section_size) {
+            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                "DW_DLE_LOCLISTS_ERROR: "
+                "A loclist global offset is too large for "
+                "the space in .debug_loclists");
+            return DW_DLV_ERROR;
+        }
     }
-#if 0
-FIXME
-#endif
+
     llhead->ll_end_data_area = enddata;
     llhead->ll_cu_base_address_present =
         ctx->cc_base_address_present;
