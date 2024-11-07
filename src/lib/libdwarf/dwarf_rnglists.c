@@ -495,7 +495,7 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    if (offset_entry_count ){
+    if (offset_entry_count){
         buildhere->rc_offsets_array = data;
         lists_len += offset_size*offset_entry_count;
         if (build_offset_array) {
@@ -765,6 +765,8 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Small *offsetptr = 0;
     Dwarf_Unsigned targetoffset = 0;
     Dwarf_Unsigned localoffset = 0;
+    Dwarf_Unsigned globaloffset = 0;
+
 
     CHECK_DBG(dbg,error,"dwarf_get_rnglist_offset_index_value()");
     if (!dbg->de_rnglists_context) {
@@ -790,7 +792,12 @@ dwarf_get_rnglist_offset_index_value(
     }
     offset_len  = con->rc_offset_size;
     localoffset = offsetentry_index*offset_len;
-    offsetptr   = con->rc_offsets_array + localoffset;
+    if (localoffset >= con->rc_length) {
+        _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+            "DW_DLE_RLE_ERROR: a .debug_rnglists section offset "
+            "is greater than this rnglists table length");
+        return DW_DLV_ERROR;
+    }
     if ((con->rc_offsets_off_in_sect +localoffset +
         offset_len) >
         con->rc_past_last_rnglist_offset) {
@@ -808,20 +815,31 @@ dwarf_get_rnglist_offset_index_value(
         return DW_DLV_ERROR;
 
     }
+    offsetptr   = con->rc_offsets_array + localoffset;
     READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
         offsetptr,
         offset_len,error,con->rc_endaddr);
-#if 0
-FIXME
-And also look  check on value
-#endif
+    if (targetoffset >= con->rc_length) {
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            "DW_DLE_RNGLISTS_ERROR: "
+            "The end of an rle entry is past the end "
+            "of its allowed space");
+        return DW_DLV_ERROR;
+    }
+    globaloffset =  targetoffset + con->rc_offsets_off_in_sect;
+    if (globaloffset >= con->rc_length) {
+        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
+            "DW_DLE_RNGLISTS_ERROR: "
+            "The offset of a rnglists entry is past "
+            "its allowed space");
+        return DW_DLV_ERROR;
+    }
 
     if (offset_value_out) {
         *offset_value_out = targetoffset;
     }
     if (global_offset_value_out) {
-        *global_offset_value_out = targetoffset +
-            con->rc_offsets_off_in_sect;
+        *global_offset_value_out = globaloffset;
     }
     return DW_DLV_OK;
 }
@@ -1444,6 +1462,7 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     Dwarf_Small   *enddata = 0;
     Dwarf_Unsigned rle_global_offset = 0;
     unsigned       offsetsize = 0;
+    Dwarf_Unsigned secsize = 0;
 
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
@@ -1453,6 +1472,7 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */
     offset_in_rnglists = attr_val;
+    secsize = dbg->de_debug_rnglists.dss_size;
     if (is_rnglistx) {
         if (ctx->cc_rnglists_base_present) {
             offset_in_rnglists = ctx->cc_rnglists_base;
@@ -1490,6 +1510,12 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
         }
     } else {
         offset_in_rnglists = attr_val;
+    }
+    if (offset_in_rnglists >= secsize) {
+        _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+            "DW_DLE_RLE_ERROR: a .debug_rnglists offset "
+            "is greater than the rnglists section size");
+        return DW_DLV_ERROR;
     }
     res = _dwarf_which_rnglists_context(dbg,ctx,
         offset_in_rnglists,
@@ -1552,12 +1578,21 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
             DW_DLV_ERROR */
         READ_UNALIGNED_CK(dbg,table_entryval, Dwarf_Unsigned,
             table_entry,offsetsize,error,enddata);
+        if (table_entryval >= secsize) {
+            _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+                "DW_DLE_RLE_ERROR: a .debug_rnglists table entry "
+                "value is impossibly large");
+            return DW_DLV_ERROR;
+        }
+        if ((rctx->rc_offsets_off_in_sect +
+            table_entryval) >= secsize) {
+            _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+                "DW_DLE_RLE_ERROR: a .debug_rnglists table entry "
+                "value + section offset  is impossibly large");
+            return DW_DLV_ERROR;
+        }
         rle_global_offset = rctx->rc_offsets_off_in_sect +
             table_entryval;
-#if 0
-FIXME
-And also look  for check on value
-#endif
 
     } else {
         rle_global_offset = attr_val;
