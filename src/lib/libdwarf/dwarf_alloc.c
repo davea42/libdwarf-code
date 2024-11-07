@@ -851,9 +851,6 @@ dwarf_dealloc(Dwarf_Debug dbg,
     unsigned int type = 0;
     char * malloc_addr = 0;
     struct reserve_data_s * r = 0;
-#if 0
-    Dwarf_Bool check_errmsg_list = FALSE;
-#endif
 
     if (!space) {
 #ifdef DEBUG_ALLOC
@@ -974,9 +971,6 @@ dwarf_dealloc(Dwarf_Debug dbg,
         if (ep->er_static_alloc == DE_MALLOC) {
             /*  This is special, we had no arena
                 but have a full special area as normal. */
-#if 0
-            check_errmsg_list = TRUE;
-#endif
 #ifdef DEBUG_ALLOC
             printf("DEALLOC does free, DE_MALLOC line %d %s\n",
                 __LINE__,__FILE__);
