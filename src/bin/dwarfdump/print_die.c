@@ -3150,10 +3150,10 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         &truename,FALSE);
     sec_name = esb_get_string(&truename);
     if (die) {
-        res = dwarf_get_ranges_baseaddress(dbg,die,&have_base_addr,
-            &base_address,
-            &have_ranges_offset,
-            &ranges_offset,&grberr);
+        res = dwarf_get_ranges_baseaddress(dbg,die,
+            &have_base_addr, &base_address,
+            &have_ranges_offset, &ranges_offset,
+            &grberr);
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,grberr);
             grberr = 0;
@@ -3241,12 +3241,13 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
                     esb_append(stringbuf," (empty range)");
                 }
                 if (have_base_addr) {
+                    /* See DWARF4 2.17.3 page 38 and 39 */
                     esb_append_printf_u(stringbuf,
                         " cooked: 0x%08x",
-                        r->dwr_addr1+base_address);
+                        r->dwr_addr1 +base_address);
                     esb_append_printf_u(stringbuf,
                         ",  0x%08x",
-                        r->dwr_addr2+base_address);
+                        r->dwr_addr2 +base_address);
                 }
                 break;
             }
