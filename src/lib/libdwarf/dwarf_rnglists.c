@@ -811,6 +811,11 @@ dwarf_get_rnglist_offset_index_value(
     READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
         offsetptr,
         offset_len,error,con->rc_endaddr);
+#if 0
+FIXME
+And also look  check on value
+#endif
+
     if (offset_value_out) {
         *offset_value_out = targetoffset;
     }
@@ -1549,6 +1554,11 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
             table_entry,offsetsize,error,enddata);
         rle_global_offset = rctx->rc_offsets_off_in_sect +
             table_entryval;
+#if 0
+FIXME
+And also look  for check on value
+#endif
+
     } else {
         rle_global_offset = attr_val;
     }

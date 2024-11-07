@@ -1100,11 +1100,9 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
 {
     Dwarf_Bool has_signature = FALSE;
     int res = 0;
-    Dwarf_CU_Context startcontext = 0;
 
     res = _dwarf_next_cu_header_internal(dbg,
         is_info,
-        startcontext,
         NULL,
         cu_header_length,
         version_stamp,
@@ -1138,11 +1136,9 @@ dwarf_next_cu_header_e(Dwarf_Debug dbg,
 {
     Dwarf_Bool has_signature = FALSE;
     int res = 0;
-    Dwarf_CU_Context  startcontext = 0;
 
     res = _dwarf_next_cu_header_internal(dbg,
         is_info,
-        startcontext,
         cu_die_out,
         cu_header_length,
         version_stamp,
@@ -1295,7 +1291,10 @@ set_producer_type(Dwarf_Die die,
     }
     if (_dwarf_prod_contains("Metrowerks",producer)) {
         cu_context->cc_producer = CC_PROD_METROWERKS;
+    } else if (_dwarf_prod_contains("Apple",producer)) {
+        cu_context->cc_producer = CC_PROD_Apple;
     }
+
 }
 
 /*
@@ -1555,7 +1554,10 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 it refers to .debug_ranges.
                 Note that this base applies when
                 referencing from the dwp, but NOT
-                when referencing from the a.out */
+                when referencing from the a.out
+
+                In DW4 extension split dwarf the .debug_ranges
+                is always in the tied-file (executable). */
 
                 int udres = 0;
                 Dwarf_Bool is_info = cucon->cc_is_info;
@@ -1614,10 +1616,36 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             }
         }
     }
+    /*  Only on Apple do we let entry_pc 
+        be used as base address.  */
+    if (entry_pc_attrnum >= 0 && 
+        cucon->cc_producer == CC_PROD_Apple) {
+        int battr = 0;
+
+        /*  Pretending that DW_AT_entry_pc with no
+            DW_AT_low_pc is a valid base address for
+            location lists.
+            DW_AT_producer 4.2.1 (Based on Apple Inc. build 5658)
+            (LLVM build 2336.1.00) uses DW_AT_entry_pc as the
+            base address (DW_AT_entry_pc first appears in DWARF3).
+            So we allow that as an extension,
+            as a 'low_pc' if there is DW_AT_entry_pc with
+            no DW_AT_low_pc. 19 May 2022. 
+            Also used by gcc with a DWARF4 split-dwarf extension. */
+        Dwarf_Attribute attr = alist[entry_pc_attrnum];
+        battr = _dwarf_setup_base_address(dbg,"DW_AT_entry_pc",
+            attr,at_addr_base_attrnum, cucon,
+            bad_pc_form,error);
+        if (battr != DW_DLV_OK) {
+            local_attrlist_dealloc(dbg,atcount,alist);
+            /* Something is wrong */
+            _dwarf_set_children_flag(cucon,cudie);
+            return battr;
+        }
+    } 
     if (low_pc_attrnum >= 0 ){
         int battr = 0;
 
-        /* Prefer DW_AT_low_pc */
         Dwarf_Attribute attr = alist[low_pc_attrnum];
         battr = _dwarf_setup_base_address(dbg,"DW_AT_low_pc",
             attr,at_addr_base_attrnum, cucon,
@@ -1629,28 +1657,6 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             _dwarf_set_children_flag(cucon,cudie);
             return battr;
         }
-    } else if (entry_pc_attrnum >= 0) {
-        int battr = 0;
-
-        /*  Pretending that DW_AT_entry_pc with no
-            DW_AT_low_pc is a valid base address for
-            location lists.
-            DW_AT_producer 4.2.1 (Based on Apple Inc. build 5658)
-            (LLVM build 2336.1.00) uses DW_AT_entry_pc as the
-            base address (DW_AT_entry_pc first appears in DWARF3).
-            So we allow that as an extension,
-            as a 'low_pc' if there is DW_AT_entry_pc with
-            no DW_AT_low_pc. 19 May 2022. */
-        Dwarf_Attribute attr = alist[entry_pc_attrnum];
-        battr = _dwarf_setup_base_address(dbg,"DW_AT_entry_pc",
-            attr,at_addr_base_attrnum, cucon,
-            bad_pc_form,error);
-        if (battr != DW_DLV_OK) {
-            local_attrlist_dealloc(dbg,atcount,alist);
-            /* Something is wrong */
-            _dwarf_set_children_flag(cucon,cudie);
-            return battr;
-        }
     }
     local_attrlist_dealloc(dbg,atcount,alist);
     alist = 0;
@@ -1659,7 +1665,10 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Called only for DWARF4 */
+/*  Called only for DWARF4 and earlier
+    so there is consistent naming of unit_type
+    even though there was no such field in
+    DWARF2-DWARF4. */
 static void
 assign_correct_unit_type(Dwarf_CU_Context cu_context)
 {
@@ -1956,9 +1965,8 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
 
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
-    Dwarf_Bool is_info,
-    Dwarf_CU_Context startcontext,
-    Dwarf_Die *cu_die_out,
+    Dwarf_Bool   is_info,
+    Dwarf_Die  * cu_die_out,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
     Dwarf_Unsigned * abbrev_offset,
@@ -1988,7 +1996,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Small *dataptr = 0;
     struct Dwarf_Section_s *secdp = 0;
     int res = 0;
-    (void)startcontext; /* dadebug FIXME */
 
     /* ***** BEGIN CODE ***** */
 

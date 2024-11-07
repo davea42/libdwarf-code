@@ -719,6 +719,11 @@ dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
     READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
         offsetptr,
         offset_len,error,con->lc_endaddr);
+#if 0
+FIXME
+And look  for check on value
+#endif
+
     if (offset_value_out) {
         *offset_value_out = targetoffset;
     }
@@ -1234,6 +1239,10 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Unsigned loclists_contextnum = 0;
     Dwarf_Small *table_base = 0;
+#if 0 
+FIXME
+    Dwarf_Unsigned table_length = 0;
+#endif
     Dwarf_Small *table_entry = 0;
     Dwarf_Small *enddata = 0;
     Dwarf_Loclists_Context *array = 0;
@@ -1355,6 +1364,9 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     llhead->ll_address_size  = rctx->lc_address_size;
     llhead->ll_segment_selector_size =
         rctx->lc_segment_selector_size;
+#if 0
+FIX
+#endif
 
     if (is_loclistx) {
         Dwarf_Unsigned table_entryval = 0;
@@ -1364,11 +1376,25 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
             DW_DLV_ERROR */
         READ_UNALIGNED_CK(dbg,table_entryval, Dwarf_Unsigned,
             table_entry,offsetsize,error,enddata);
+#if 0
+        if (table_entryval >= rctx->lc_length) {
+FIXME
+And also look in dwarf_rnglists.c for check on value
+        }
+#endif
         lle_global_offset = rctx->lc_offsets_off_in_sect +
             table_entryval;
+#if 0
+        if (lle_global_offset >= rctx->lc_length) {
+FIXME
+        }
+#endif
     } else {
         lle_global_offset = attr_val;
     }
+#if 0
+FIXME
+#endif
     llhead->ll_end_data_area = enddata;
     llhead->ll_cu_base_address_present =
         ctx->cc_base_address_present;

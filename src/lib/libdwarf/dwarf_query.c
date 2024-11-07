@@ -1147,8 +1147,10 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
 
 }
 
-int
-dwarf_lowpc(Dwarf_Die die,
+static int
+_dwarf_lowpc_internal(Dwarf_Die die,
+    Dwarf_Half attrnum,
+    const char *msg,
     Dwarf_Addr  *return_addr,
     Dwarf_Error *error)
 {
@@ -1169,7 +1171,7 @@ dwarf_lowpc(Dwarf_Die die,
     dbg = context->cc_dbg;
     address_size = context->cc_address_size;
     offset_size = context->cc_length_size;
-    res = _dwarf_get_value_ptr(die, DW_AT_low_pc,
+    res = _dwarf_get_value_ptr(die, attrnum,
         &attr_form,&info_ptr,0,error);
     if (res == DW_DLV_ERROR) {
         return res;
@@ -1178,11 +1180,12 @@ dwarf_lowpc(Dwarf_Die die,
         return res;
     }
     version = context->cc_version_stamp;
-    class = dwarf_get_form_class(version,DW_AT_low_pc,
+    class = dwarf_get_form_class(version,attrnum,
         offset_size,attr_form);
     if (class != DW_FORM_CLASS_ADDRESS) {
-        /* Not the correct form for DW_AT_low_pc */
-        _dwarf_error(dbg, error, DW_DLE_LOWPC_WRONG_CLASS);
+        /* Not a correct FORM for low_pc or entry_pc */
+        _dwarf_error_string(dbg, error, DW_DLE_LOWPC_WRONG_CLASS,
+            (char *)msg);
         return DW_DLV_ERROR;
     }
 
@@ -1204,6 +1207,30 @@ dwarf_lowpc(Dwarf_Die die,
 
     *return_addr = ret_addr;
     return DW_DLV_OK;
+}
+int
+dwarf_lowpc(Dwarf_Die die,
+    Dwarf_Addr  *return_addr,
+    Dwarf_Error *error)
+{
+    int res = 0;
+
+    res = _dwarf_lowpc_internal (die,DW_AT_low_pc,
+        "DW_AT_low_pc data unavailable",
+        return_addr,error);
+    return res;
+}
+int
+_dwarf_entrypc(Dwarf_Die die,
+    Dwarf_Addr  *return_addr,
+    Dwarf_Error *error)
+{
+    int res = 0;
+
+    res = _dwarf_lowpc_internal (die,DW_AT_entry_pc,
+        "DW_AT_entry_pc and DW_AT_low_pc data unavailable",
+        return_addr,error);
+    return res;
 }
 
 /*  If 'die' contains the DW_AT_type attribute, it returns

@@ -139,9 +139,10 @@ _dwarf_loop_reading_debug_info_for_cu(
         it seems. Those signatures point from
         'normal' to 'dwo/dwp'  (DWARF4) */
     int is_info = TRUE;
-    Dwarf_CU_Context startingcontext = 0;
     Dwarf_Unsigned next_cu_offset = 0;
 
+#if 0
+    Dwarf_CU_Context startingcontext = 0;
     startingcontext = tieddbg->de_info_reading.de_cu_context;
     if (startingcontext) {
         next_cu_offset =
@@ -150,6 +151,7 @@ _dwarf_loop_reading_debug_info_for_cu(
             startingcontext->cc_length_size +
             startingcontext->cc_extension_size;
     }
+#endif
 
     for (;;) {
         int sres = DW_DLV_OK;
@@ -168,7 +170,6 @@ _dwarf_loop_reading_debug_info_for_cu(
         memset(&signature,0,sizeof(signature));
         sres = _dwarf_next_cu_header_internal(tieddbg,
             is_info,
-            startingcontext,
             /* no CU die wanted*/ NULL,
             &cu_header_length, &version_stamp,
             &abbrev_offset, &address_size,

@@ -113,6 +113,7 @@ struct Dwarf_Attribute_s {
 };
 
 #define CC_PROD_METROWERKS 1
+#define CC_PROD_Apple      2 /* Apple clang */
 
 /*
     This structure provides the context for a compilation unit.
@@ -1034,7 +1035,6 @@ int _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
-    Dwarf_CU_Context startcontext /* null except reading tied */,
     Dwarf_Die * cu_die_out,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
@@ -1194,9 +1194,17 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
     Dwarf_Bool * offset_is_info,
     Dwarf_Error * error);
 
-int _dwarf_skip_leb128(char * /*leb*/,
-    Dwarf_Unsigned * /*leblen*/,
-    char           * /*endptr*/);
+int _dwarf_skip_leb128(char * leb,
+    Dwarf_Unsigned * leblen,
+    char           * endptr);
+
+/*  Used for DW_AT_ranges to get base address along with
+    dwarf_lowpc() */
+int
+_dwarf_entrypc(Dwarf_Die die,
+    Dwarf_Addr  *return_addr,
+    Dwarf_Error *error);
+
 
 int _dwarf_get_suppress_debuglink_crc(void);
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);
