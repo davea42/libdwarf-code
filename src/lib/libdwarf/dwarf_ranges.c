@@ -159,16 +159,6 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_DIE_NO_CU_CONTEXT);
             return DW_DLV_ERROR;
         }
-#ifdef DEBUG_RANGES
-dwarf_determine_die_range_offset(Dwarf_Debug dw_dbg,
-    Dwarf_Die       dw_die,
-    Dwarf_Bool     *have_die_ranges_offset,
-    Dwarf_Unsigned *die_ranges_offset,
-    Dwarf_Bool     *have_die_base_addr,
-    Dwarf_Unsigned *die_base_addr,
-    Dwarf_Error    *dw_error)
-#endif
-
         cucontext = die->di_cu_context;
         /*  The DW4 ranges base was never used in GNU
             but did get emitted, the note says, but
@@ -410,12 +400,12 @@ dwarf_dealloc_ranges(Dwarf_Debug dbg, Dwarf_Ranges * rangesbuf,
     dwarf_dealloc(dbg,rangesbuf, DW_DLA_RANGES);
 }
 
-/*  Also used to determine DIE base_address,  
-    but that was wrong. 
+/*  Also used to determine DIE base_address,
+    but that was wrong.
     Only a CU_die DW_AT_low_pc can provide
     a CU-wide base address and that is done when a CU is first
     read, and available as cucontext->cc_base_address
-    and cc_base_address_present.  */ 
+    and cc_base_address_present.  */
 static int
 _dwarf_determine_die_range_offset(Dwarf_Debug dw_dbg,
     Dwarf_Die       dw_die,
@@ -446,7 +436,7 @@ _dwarf_determine_die_range_offset(Dwarf_Debug dw_dbg,
             *dw_error = 0;
         }
         return res;
-    } 
+    }
     res = dwarf_global_formref(attr,
         &rangeoffset_local, dw_error);
     if (res != DW_DLV_OK) {
@@ -490,17 +480,12 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     Dwarf_CU_Context context = 0;
     Dwarf_Unsigned local_ranges_offset = 0;
     Dwarf_Bool     local_ranges_offset_present = FALSE;
-#if 0
-    Dwarf_Unsigned local_base_addr= 0;
-    Dwarf_Bool     local_base_addr_present = FALSE;
-#endif
     Dwarf_Bool     have_die_ranges_offset = FALSE;
     Dwarf_Unsigned die_ranges_offset = 0;
     Dwarf_Bool     have_die_base_addr = FALSE;
     Dwarf_Unsigned die_base_addr = 0;
     int            res = 0;
 
-    (void)have_die_ranges_offset; /* FIXME */
     CHECK_DBG(dw_dbg,dw_error,"dwarf_get_ranges_baseaddress()");
     if (!dw_die) {
         if (dw_known_base) {
