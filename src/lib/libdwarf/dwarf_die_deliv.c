@@ -1448,10 +1448,6 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 int res = 0;
                 Dwarf_Bool is_info = cucon->cc_is_info;
 
-#if 0
-                res = dwarf_global_formref(attr,
-                    &at_ranges_offset,error);
-#endif
                 res = _dwarf_internal_global_formref_b(attr,
                     /* avoid recurse creating context */ 1,
                     &at_ranges_offset,
