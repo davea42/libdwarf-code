@@ -112,7 +112,7 @@ struct Dwarf_Rnglists_Entry_s {
     Dwarf_Unsigned rle_raw1;
     Dwarf_Unsigned rle_raw2;
     /*  Cooked means the raw values from the .debug_rnglists
-        section translated to DIE-specific addresses. */
+        section translated to CU-specific addresses. */
     Dwarf_Unsigned rle_cooked1;
     Dwarf_Unsigned rle_cooked2;
     Dwarf_Rnglists_Entry rle_next;
