@@ -141,18 +141,6 @@ _dwarf_loop_reading_debug_info_for_cu(
     int is_info = TRUE;
     Dwarf_Unsigned next_cu_offset = 0;
 
-#if 0
-    Dwarf_CU_Context startingcontext = 0;
-    startingcontext = tieddbg->de_info_reading.de_cu_context;
-    if (startingcontext) {
-        next_cu_offset =
-            startingcontext->cc_debug_offset +
-            startingcontext->cc_length +
-            startingcontext->cc_length_size +
-            startingcontext->cc_extension_size;
-    }
-#endif
-
     for (;;) {
         int sres = DW_DLV_OK;
         Dwarf_Half cu_type = 0;
