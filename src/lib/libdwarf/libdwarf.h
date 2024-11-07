@@ -338,8 +338,8 @@ typedef struct Dwarf_Block_s {
     Provides access to Dwarf_Locdesc_c, a single
     location description
 */
-typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 
+typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 /*! @typedef Dwarf_Loc_Head_c
     provides access to any sort of location description
     for DWARF2,3,4, or 5.
@@ -1477,9 +1477,11 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_UNIVERSAL_BINARY_ERROR          502
 #define DW_DLE_UNIV_BIN_OFFSET_SIZE_ERROR      503
 #define DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL  504
+#define DW_DLE_LLE_ERROR                       505
+#define DW_DLE_RLE_ERROR                       506
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        504
+#define DW_DLE_LAST        506
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
