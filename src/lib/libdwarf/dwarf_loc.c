@@ -1136,7 +1136,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     }
     /*  We need to calculate the cooked values for
         each locldesc entry, that will be done
-        in dwarf_get_loclist_c(). */
+        in dwarf_get_loclist_d(). */
 
     llhead->ll_bytes_total = loclist_offset -
         starting_loclist_offset;
@@ -1267,6 +1267,7 @@ cook_original_loclist_contents(Dwarf_Debug dbg,
             baseaddress =  llc->ld_rawhigh;
             break;
             }
+            /* This is the only way baseaddress is used. */
         case DW_LLE_offset_pair: {
             llc->ld_lopc = llc->ld_rawlow + baseaddress;
             llc->ld_highpc = llc->ld_rawhigh + baseaddress;
