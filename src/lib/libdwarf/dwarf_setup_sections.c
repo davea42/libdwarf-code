@@ -108,7 +108,7 @@ add_debug_section_info(Dwarf_Debug dbg,
 /*  Avoid adding offest to null s2.
     This function avoids a compiler warning:
     error: 'strcmp' reading 1 or more bytes
-    from a region of size 0 
+    from a region of size 0
     Offset is a fixed small positive number. */
 static int
 both_strings_nonempty(const char *s1, const char *s2, int offset)
