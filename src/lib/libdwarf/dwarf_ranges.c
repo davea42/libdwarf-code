@@ -172,27 +172,12 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
         /*  ranges_base was merged from tied context.
             Otherwise it is zero. But not if
             the current die is the skeleton */
-#ifdef DEBUG_RANGES
-printf("dadebug unit type 0x%x context ranges base 0x%lx \n",cucontext->cc_unit_type, (unsigned long)cucontext->cc_ranges_base);
-#endif
         if (cucontext->cc_unit_type != DW_UT_skeleton) {
             ranges_base = cucontext->cc_ranges_base;
         }
-#ifdef DEBUG_RANGES
-/*if(cucontext->cc_ranges_base_present){*/
-printf("dadebug unit_type 0x%x cc_ranges_base 0x%lx context rb 0x%lx line %d\n",
-cucontext->cc_unit_type,
-(unsigned long)ranges_base,
-(unsigned long)cucontext->cc_ranges_base,
-__LINE__);
-/*}*/
-#endif
         rangesoffset += ranges_base;
         address_size = cucontext->cc_address_size;
     } else {
-#ifdef DEBUG_RANGES
-printf("dadebug print by raw offset not cc_ranges_base\n");
-#endif
         /*  Printing by raw offset
             The caller will use the bytecount to
             increment to the next part of .debug_ranges
@@ -210,27 +195,15 @@ printf("dadebug print by raw offset not cc_ranges_base\n");
         localdbg = dbg->de_tied_dbg;
         if (localdbg == dbg) {
             return DW_DLV_NO_ENTRY;
-#ifdef DEBUG_RANGES
-printf("dadebug NO tied\n");
-#endif
         }
-#ifdef DEBUG_RANGES
-printf("dadebug In tied for ranges read now\n");
-#endif
         res = _dwarf_load_section(localdbg,
             &localdbg->de_debug_ranges, error);
         if (res == DW_DLV_ERROR) {
             /*  Error will automatically be put on dbg (main
                 dbg), not localdbg (tieddbg) as of late 2024. */
-#ifdef DEBUG_RANGES
-printf("dadebug no tied ranges now line %d\n",__LINE__);
-#endif
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-#ifdef DEBUG_RANGES
-printf("dadebug no tied ranges now line %d\n",__LINE__);
-#endif
             return res;
         }
     }
@@ -239,9 +212,6 @@ printf("dadebug no tied ranges now line %d\n",__LINE__);
         overflows. */
     if (rangesoffset  >= localdbg->de_debug_ranges.dss_size) {
         /* Documented behavior in libdwarf2.1.mm */
-#ifdef DEBUG_RANGES
-printf("dadebug no tied ranges now line %d\n",__LINE__);
-#endif
         return DW_DLV_NO_ENTRY;
     }
     if (ranges_base >= localdbg->de_debug_ranges.dss_size) {
@@ -504,9 +474,6 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     res = _dwarf_determine_die_range_offset(dw_dbg,
         dw_die,&have_die_ranges_offset,&die_ranges_offset,
         &have_die_base_addr,&die_base_addr,dw_error);
-#ifdef DEBUG_RANGES
-printf("dadebug from _dwarf_determine_die_range_offset have base %d base_address 0x%lx line %d\n",have_die_base_addr,(unsigned long)die_base_addr,__LINE__);
-#endif
     if (res != DW_DLV_OK ) {
         if (res == DW_DLV_ERROR) {
             /*  Suppressing knowledge of any error */
