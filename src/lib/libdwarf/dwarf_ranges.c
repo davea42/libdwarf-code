@@ -282,12 +282,6 @@ printf("dadebug no tied ranges now line %d\n",__LINE__);
     section_end = localdbg->de_debug_ranges.dss_data +
         localdbg->de_debug_ranges.dss_size;
     rangeptr = localdbg->de_debug_ranges.dss_data;
-#ifdef DEBUG_RANGES
-    if (!rangeslocal) {
-        /* printing ranges where range source is dwp,
-            here we just assume present. */
-    }
-#endif
     rangeptr += rangesoffset;
     beginrangeptr = rangeptr;
 
