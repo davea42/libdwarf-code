@@ -614,7 +614,7 @@ struct Dwarf_Debug_s {
     struct Dwarf_Obj_Access_Interface_a_s *de_obj_file;
     /*  On any open Dwarf_Debug all three are set, and
         if there is just one dbg open (ie, no tied-file)
-        de_dbg, de_main_dbg, and de_timed_dbg are
+        de_dbg, de_main_dbg, and de_tied_dbg are
         equal pointers. All DW_DLA_error are applied
         to the main-file de_dbg (which is also de_main_dbg.
         vi de_errors_dbg
@@ -1204,7 +1204,6 @@ int
 _dwarf_entrypc(Dwarf_Die die,
     Dwarf_Addr  *return_addr,
     Dwarf_Error *error);
-
 
 int _dwarf_get_suppress_debuglink_crc(void);
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);
