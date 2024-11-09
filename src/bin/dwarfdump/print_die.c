@@ -6411,6 +6411,8 @@ print_ll_offsets_table(Dwarf_Debug dbg,
                 esb_append_printf_s(esbp,
                     "ERROR  Offset table value not available %s\n",
                     msg);
+                dwarf_dealloc_error(dbg,*error);
+                *error = 0;
             } else {
                 esb_append(esbp,
                     "Offset table value not available%s\n");
