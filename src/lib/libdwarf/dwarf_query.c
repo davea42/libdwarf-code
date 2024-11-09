@@ -1320,13 +1320,20 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
         context->        cc_addr_base_offset=
             tiedcontext->cc_addr_base_offset;
     }
-    if ((context->cc_version_stamp == DW_CU_VERSION4 ||
-        context->cc_version_stamp == DW_CU_VERSION5) &&
-        !context->cc_rnglists_base_present) {
-        context->cc_rnglists_base_present =
-            tiedcontext->cc_rnglists_base_present;
-        context->cc_rnglists_base =
-            tiedcontext->cc_rnglists_base;
+    if (context->cc_version_stamp == DW_CU_VERSION4 ||
+        context->cc_version_stamp == DW_CU_VERSION5)  {
+        if (!context->cc_rnglists_base_present) {
+            context->cc_rnglists_base_present =
+                tiedcontext->cc_rnglists_base_present;
+            context->cc_rnglists_base =
+                tiedcontext->cc_rnglists_base;
+        }
+        if(!context->cc_ranges_base_present) {
+            context->cc_ranges_base_present= 
+                tiedcontext->cc_ranges_base_present;
+            context->cc_ranges_base= 
+                tiedcontext->cc_ranges_base;
+        }
     }
     if (!context->cc_str_offsets_tab_present) {
         context->        cc_str_offsets_tab_present =
