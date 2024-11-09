@@ -2,7 +2,7 @@
 Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
 Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
 Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-Portions Copyright 2007-2021 David Anderson. All rights reserved.
+Portions Copyright 2007-2024 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of version 2 of the GNU General
@@ -162,7 +162,7 @@ static int        die_stack_indent_level = 0;
 static Dwarf_Bool local_symbols_already_begun = FALSE;
 static const Dwarf_Sig8 zerosig;
 
-#if 0
+#if 0 /* debugging only */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
@@ -581,7 +581,7 @@ print_as_info_or_by_cuname(void)
         || glflags.gf_cu_name_flag);
 }
 
-#if 0
+#if 0 /* debugging only */
 /*  Only used for debugging. */
 static void
 dump_die_offsets(Dwarf_Debug dbg, Dwarf_Die die,
@@ -917,7 +917,7 @@ print_macinfo_for_cu(
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* debugging only */
 static void
 dump_offset_list(Dwarf_Off *array,
     Dwarf_Unsigned count,
@@ -1016,21 +1016,12 @@ print_die_and_children(Dwarf_Debug dbg,
     Dwarf_Off     *offset_array = 0;
     Dwarf_Unsigned offset_count = 0;
 
-#if 0
-    dd_setup_die_check_functions(dbg,in_die_in,is_info,
-        &offset_array, &offset_count,err);
-#endif
     /* A CU_die has a single child */
     local_symbols_already_begun = FALSE;
     res  = print_die_and_children_internal(dbg,
         in_die_in, dieprint_cu_goffset, is_info,
         srcfiles,srcfiles_count,
         offset_array,offset_count,err);
-#if 0
-    if (offset_array) {
-        dwarf_dealloc(dbg,offset_array,DW_DLA_LIST);
-    }
-#endif
     return res;
 }
 
@@ -3142,7 +3133,6 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Bool     have_ranges_offset = FALSE;
     Dwarf_Unsigned ranges_offset = 0;
 
-    (void)originaloff;
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     /*  We don't want to set the compress data into
         the secname here. */
@@ -3157,12 +3147,6 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,grberr);
             grberr = 0;
-        } else {
-#if 0
-            if (have_ranges_offset) {
-                finaloff = ranges_offset;
-            }
-#endif
         }
     }
     if (glflags.dense) {
@@ -3172,8 +3156,10 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         esb_append_printf_s(stringbuf," ranges at %s" ,
             sanitized(sec_name));
         if (have_ranges_offset) {
-            esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,
+            esb_append_printf_u(stringbuf," global offset %" DW_PR_DUu ,
                 finaloff);
+            esb_append_printf_u(stringbuf," without base %"   DW_PR_DUu ,
+                originaloff);
         } else {
             esb_append_printf_u(stringbuf,
                 " offset base %" DW_PR_DUu ,
@@ -3195,11 +3181,18 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             rangecount);
         esb_append_printf_s(stringbuf," at %s" ,
             sanitized(sec_name));
-        esb_append_printf_u(stringbuf," offset %"
+        esb_append_printf_u(stringbuf," global offset %"
             DW_PR_DUu , finaloff);
         esb_append_printf_u(stringbuf," (0x%"
             DW_PR_XZEROS DW_PR_DUx ") ",
             finaloff);
+        if (have_ranges_offset) {
+            esb_append_printf_u(stringbuf," without base %"
+                DW_PR_DUu , originaloff);
+            esb_append_printf_u(stringbuf," (0x%"
+                DW_PR_XZEROS DW_PR_DUx ") ",
+                originaloff);
+        }
         if (have_base_addr) {
             esb_append_printf_u(stringbuf," ( base addr 0x%"
                 DW_PR_XZEROS DW_PR_DUx ") ",
@@ -4122,8 +4115,7 @@ print_range_attribute(Dwarf_Debug dbg,
             if (print_else_name_match) {
                 *append_extra_string = 1;
                 print_ranges_list_to_extra(dbg,die,
-                    original_off,
-                    realoffset,
+                    original_off, realoffset,
                     rangeset,rangecount,bytecount,
                     esb_extrap);
             }
@@ -6016,14 +6008,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_fbreg:
             esb_append(string_out," ");
             formx_signed(opd1,string_out);
-#if 0 /* FIX */
-            Turn on later
-            if (opd1) {
-                esb_append_printf_u(string_out,
-                    " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
-                    opd1);
-            }
-#endif
             break;
         case DW_OP_skip:
         case DW_OP_bra: {
@@ -6074,7 +6058,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             }
             esb_append_printf_u(string_out,
                 " %" DW_PR_DUu , opd1);
-#if 0 /* FIX */
+#if 0 /* add later? */
             Turn on later
             if (opd1 > 9) {
                 esb_append_printf_u(string_out,
@@ -6266,7 +6250,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 }
             }
             esb_append(string_out,"\n");
-#if 0
+#if 0 /* add later? */
             append_indent_prefix(string_out,indentprespaces,
                 die_indent_level,indentpostspaces+2);
             esb_append(string_out," Target Die: ");
