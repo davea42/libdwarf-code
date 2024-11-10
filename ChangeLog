@@ -1,3 +1,478 @@
+2024-11-09:  David Anderson
+    commit c44c0d807acfdda5e22f4e38d44cff7afbde820d
+
+    In new code yesterday we omitted dwarf_dealloc_error()
+    when we were intending to ignore it harmlessly.
+            modified:   print_die.c
+
+2024-11-09:  David Anderson
+    commit 1bb1cb5fb93f0ee67e73d395f86e2299a4d08ab6
+
+    Removing debnug-only code
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2024-11-09:  David Anderson
+    commit 8874d929daf966b867ad2118fa27e8ab892147cd
+
+    This completes the fixes for github Issue 265
+    Reports .debug_ranges more fully when DWARF4 split-dwarf
+    extension is in use.
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+2024-11-09:  David Anderson
+    commit b71911394c4d089e5dc43dafd1f1f1eb7f714d41
+    Now for .debug_ranges does a better job
+    in reporting DWARF4 split-dwarf extension ranges actual locations.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-11-09:  David Anderson
+    commit 12bae7a6095cb7b78ea558d2c88d062693ad6c02
+
+    Removing some debug code.
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2024-11-09:  David Anderson
+    commit f62b865a955f02a560a46ffcef02060fd9cf9f94
+
+    Correcting _dwarf_merge_all_base_attrs_of_cu_die() so split dwarf
+    works properly. Was omitting the inheritance of ranges base offset
+    from the merge of skeleton data.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-11-09:  David Anderson
+    commit e71971a92131e83e9935749dbee4e5aff4ca5e80
+
+    Correct a comment spelling error.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2024-11-07:  David Anderson
+    commit 2db518897e30ea942dc0af0afe677de782a9fe06
+
+    Remove obsolete #if 0 code.
+            modified:   dwarf_die_deliv.c
+
+2024-11-07:  David Anderson
+    commit e6148786f5dbf5a2e046de3aec88e1b0fa1fafd2
+
+    Adding checks to complete the
+    fixes for github Issue #266
+            modified:   dwarf_rnglists.c
+
+2024-11-07:  David Anderson
+    commit fd5e13a6b5826d1de0588d41b7cbf33b6e466130
+
+    Removed a whitespace character at end of line
+            modified:   dwarf_setup_sections.c
+
+2024-11-07:  David Anderson
+    commit 4f4b2e7d459bad59475b0e39f8f0f591aeb8f132
+
+    Removing unusable code (was #if 0)
+            modified:   dwarf_tied.c
+
+2024-11-07:  David Anderson
+    commit 54f2e9539521644d0aed8a2d298d6f69e9f811a8
+
+    Cleaning up some unused code.
+            modified:   dwarf_ranges.c
+
+2024-11-07:  David Anderson
+    commit 030ffb4c68af2e25232a2cfa02515f1f8a94ec8a
+
+    A port of fixing a crash reading loclists, as shown in github issue #266
+            modified:   dwarf_loclists.c
+
+2024-11-07:  David Anderson
+    commit 3353fec2ebc893607128a7054860b20b4fce1c9a
+
+    Adding
+    define DW_DLE_LLE_ERROR                       505
+    define DW_DLE_RLE_ERROR                       506
+    for new error checks in dwarf_loclists.c dwarf_ranges,c dwarf_rnglists.c
+    Related to github issue #266
+            modified:   dwarf_errmsg_list.h
+            modified:   libdwarf.h
+
+2024-11-07:  David Anderson
+    commit 2cfd1f75d5accfab505fb18b7e63792354a20270
+
+    Remove  #if 0 code. two useless leftovers.
+            modified:   dwarf_alloc.c
+
+2024-11-07:  David Anderson
+    commit 963e0392dd33c7314325ea37269addc18f19336e
+
+    A set of changes reflecting corrections following
+    a detailed review of  the handling of  and
+    correct interpretation of .debug_rnglists
+    and .debug_loclists data.
+    Some errors (not affecting correctness, thankfully)
+    were present.
+
+    Removing a now-unused argument from
+    _dwarf_next_cu_header_internal()
+    and refinement of the test for entry_pc with
+    if (entry_pc_attrnum >= 0 &&
+           cucon->cc_producer == CC_PROD_Apple)
+    And rearrangement of the DW_AT_low_pc vs
+    DW_AT_entry_pc (Apple only) checks
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    Mainly debug printouts and preparation for
+    a validity check of data read from a DWARF section.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+    Added CC_PROD_Apple for sharpened handling of
+    DW_AT_entry_pc.
+    And new internal function _dwarf_entrypc()
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Refactoring
+    Now dwarf_lowpc() and the new _dwarf_entrypc()
+    use the same implementation code.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Lots of ifdefed-out debug printf (to be removed pretty soon)
+    and crucial correction of _dwarf_determine_die_range_offset()
+    to get 'base address' correct.
+    Leaving a superflous argument in dwarf_get_ranges_baseaddress()
+    as  the function is public.
+    And corrected its code returning CU base address.
+    Added (void)have_die_ranges_offset; /* FIXME */
+    to avoid compiler issues.
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+    Some #if 0 code will be deleted very soon.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+    Ill advised code in _dwarf_loop_reading_debug_info_for_cu()
+    is now #if 0 out. To be deleted very soon.
+            modified:   src/lib/libdwarf/dwarf_tied.c
+    Fixed dummy _dwarf_next_cu_header_internal()
+    to reflect the revised internal function prototype.
+            modified:   test/test_dwarf_tied.c
+
+2024-11-07:  David Anderson
+    commit ca4ee1438d54c31dcccb5dcec1ff13ba930c133f
+
+    corrected a comment
+            modified:   src/lib/libdwarf/dwarf_rnglists.h
+
+2024-11-07:  David Anderson
+    commit ee38cd9b8490d1ca6ca8dcd0e56d7df384360dd4
+
+    Corrected a comment and added a 1-line comment.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+2024-11-07:  David Anderson
+    commit 5a5426e2642d51cd2a647b1ad251f02a54a70d2c
+
+    Reformatted the call arguments
+    calling dwarf_get_ranges_baseaddress()
+    Added a comment.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-11-07:  David Anderson
+    commit 9d3224578dcf9c0560c92f1f7c2136280fb3bdee
+
+    October->November in the heading.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-11-03:  David Anderson
+    commit 62be899578e664f90455f00bffb8e70263d6c8a5
+
+    Report better on what cmake finds about libz zstd
+            modified:   CMakeLists.txt
+
+2024-11-03:  David Anderson
+    commit 754d5627c2d2d6f48a7e444fa5173ef447ae0c07
+
+    copyright
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-10-29:  David Anderson
+    commit 852d30d733099c2c914c0715c0d28a5abb409942
+
+    October
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-10-29:  David Anderson
+    commit 4d8560204d189555d021a4bc659d6065692346bf
+
+    October
+            modified:   bugxml/dwarfbug.html
+
+2024-10-21:  David Anderson
+    commit 1bedfea64dd349d1638cc0b75ddfa4876b0bce9c
+
+    Small static function both_strings_nonempty() avoids compiler warning
+
+2024-09-28:  David Anderson
+    commit c658d71f036e082ecf0bcfff6613ea24560ad429
+
+    Further refinement of heuristic, distinguishing
+    32bit from 64 bit PE objects in the check.
+            modified:   dwarf_peread.c
+
+2024-09-23:  David Anderson
+    commit a095d0db09700bc82411ff776e67a22dbded78e6
+
+    Fix violations of codingstyle:
+    line length, trailing spaces, indent, if(
+    etc.
+            modified:   libdwarf/dwarf_debugnames.c
+            modified:   libdwarf/dwarf_harmless.c
+            modified:   libdwarf/dwarf_line.c
+            modified:   libdwarf/dwarf_loc.c
+            modified:   libdwarf/dwarf_rnglists.c
+            modified:   libdwarf/dwarf_tsearchhash.c
+
+2024-09-23:  David Anderson
+    commit a1ef665e1d2c21fd2555699dea1f442f23fcbfd3
+
+    Another set of violations of codingstandard:
+    trailing whitespace, indent, and line length.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+
+2024-09-23:  David Anderson
+    commit aa21630b4b119dfdeaf6585cd2353238506293cc
+
+    Fix violations of the codingstandard:
+    removing trailing whitespace, fixing indents
+    and the like.
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_attr_form.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2024-09-19:  Keith W. Campbell
+    commit 5108b1862936d67cd8e87af8ca04fcebdebc18c0
+
+    Fix typo in reference to threekey_s (#264)
+
+    Signed-off-by: Keith W. Campbell <keithc@ca.ibm.com>
+
+2024-09-19:  David Anderson
+    commit 251c9fa2fdf4b1f4e34c5636503c7846f3481403
+
+    A compiler noted that i, defined at line 197,
+    was set but not used.  Deleted i from the function.
+            modified:   dwarfdump/dd_attr_form.c
+
+2024-09-18:  David Anderson
+    commit 277a7cf4cb89d893e2e707c556c7e356b89b5b10
+
+    Refactoring common code and removing
+    intermediary calls. 45 less lines of code,
+    no change in behavior.
+            modified:   dd_attr_form.c
+            modified:   dd_attr_form.h
+
+2024-09-18:  David Anderson
+    commit 26b4f3a18dcff1b2fea79525470c0ee0eae8b7aa
+
+    Rearramge the rebuild: target code to
+    clearly separate std from ext with -af-  as is done
+    with -tt- and -ta-   .
+            modified:   ../attr_form/Makefile.am
+
+    Obsolete, now two tables in the same approach as -tt- and -ta-
+            deleted:    dwarfdump-af-table.h
+
+2024-09-18:  David Anderson
+    commit 3f48beb19950621fa245aa8ada98d7cc64ef6eac
+
+    This completes the transition to using struct
+    Three_Key_Entry_s  in data trees used with -k
+    dwarfdump options.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+
+2024-09-18:  David Anderson
+    commit 94ec65ff66f6b3378ea225bdba1ca5afd6ccc13b
+
+    Removed  a bunch of lines with defines that
+    we no longer need or want.
+            modified:   src/bin/dwarfdump/dd_tag_common.h
+
+2024-09-18:  David Anderson
+    commit 361ce4593a31d23e11241f56a7ecf480cebb9981
+
+    Added comment on AF_ macros
+            modified:   src/bin/dwarfdump/dd_attr_form.h
+
+2024-09-18:  David Anderson
+    commit 053a874577bafc0fa78e6ec5b43dfb62360bff48
+
+    Replacing dwarfdump-af-table.h with two header files, the new
+    standard form for Three_Keys data.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+
+2024-09-18:  David Anderson
+    commit b201e11de54d3e6bc9098801e20b4e75b1ba91b1
+
+    regenerates in the new standard format of Three_Keys
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+
+2024-09-18:  David Anderson
+    commit 312d8fd96da82f3fbb9d08c3097f6827a018c233
+
+    Removing small accidents. rebuild working.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+
+2024-09-18:  David Anderson
+    commit 7a9179603e117283e8a1849876b1af4202110054
+
+    Correct content, it seems.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+
+2024-09-18:  David Anderson
+    commit 120f8c4fb9b459e7ad2917a6e44a001f502c6a64
+
+    New standard tables for af table data.
+            new file:   dwarfdump-af-table-ext.h
+            new file:   dwarfdump-af-table-std.h
+
+2024-09-18:  David Anderson
+    commit 4f1096de14d60cf1371e8ddc1ce1eae9daf89288
+
+    Now in the new standard format.
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2024-09-18:  David Anderson
+    commit 058956efeff048c9911ebbd25cf80e4bfc2b3277
+
+    Now producing threekey structs in text for dwarfdump.
+    simpler, faster.
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+
+2024-09-15:  David Anderson
+    commit da942e792942fd9b3cf3ec8ff0d8b7ea2a33fb04
+
+    Altered the .debug_names
+    DW_IDX_parent output nessage to reflect the
+    LLVM extension of DW_FORM_flag_present.
+            modified:   print_debug_names.c
+
+2024-09-14:  David Anderson
+    commit 3c910e6e99bf2896ece6015ef27a76f8f3acf31a
+
+    Using the latest official coverity build coverityscan discovered
+    12 Defects. These defects are mostly not new, but the detection
+    of them is new!
+            modified:   src/bin/dwarfdump/dd_getopt.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfgen/dg_getopt.cc
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+
+2024-09-13:  David Anderson
+    commit 59331dc46ad0063a3032b43c7ea835cddee04cd7
+
+    Removed the flag gf_print_usage_tag_attr_full
+    as no longer relevant (all usage reports are full
+    reports now) and altered the help message
+    and options comments to reflect this.
+
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+
+    Ensure that the tag-* bases are initialized
+    when tag-tree (ie, tag-tag) relations are being
+    checked, this has been incorrect for years
+    in that -kt on its own did not work fully or correctly.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2024-09-13:  David Anderson
+    commit 0dbe0aeac751c43ffecca656fb5affb7e0c27df4
+
+    Correct a comment related to DW_AT_GNU_locviews.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Remove trailing whitespace and re-insert the
+    call to print_attr_form_usage() that was
+    accidentally lost in the changes to -ku output.
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2024-09-13:  David Anderson
+    commit f2a628dcbad82156ba7f0f1ed226b3173cc0a671
+
+    On two errors change the explanatory string to something
+    specific and hopefully clear.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-09-13:  David Anderson
+    commit a47c324b91546342ce086681139ebbf2c408fdd7
+
+    Now with DW_AT_GNU_locviews we do not emit an error message
+    about the inability  to follow the DW_FORM_sec_offset.
+    This requires further work to decide what should be done.
+            modified:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+
+2024-09-13:  David Anderson
+    commit 6b75a825fce1fb32ec63250a6fc2850b7ecd09f0
+
+    Fix indents. Remove trailing whitespace
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+
+    Adjusted table sizes to match what is required by
+    the tag and attr generation build.
+            modified:   src/bin/dwarfdump/dd_tag_common.h
+
+2024-09-13:  David Anderson
+    commit 5e40a44dd5a1cfbb392cab9ecea052a00a599800
+
+    Removed trailing whitespace
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2024-09-13:  David Anderson
+    commit 7aa87acc8ae13d51d7652a209686f763f4a47de4
+
+    Adding known items to the lists for dwarfdump.
+            modified:   src/bin/tag_attr/tag_attr.list
+            modified:   src/bin/tag_tree/tag_tree.list
+            modified:   src/bin/attr_form/attr_formclass_ext.list
+
+    Regenerated the tables used by dwarfdump.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2024-09-13:  David Anderson
+    commit b3241522aada5225ae5a956be99397465723fca9
+
+    Added detailed instructions for MS Visual Studio
+    users on how to eliminate warnings from a build.
+    Works with Win 10 current VS.
+            modified:   READMEwin-msys2.md
+
+2024-09-10:  David Anderson
+    commit c0e0da1c436d9e8ae5c805d49000a7d75c1c2c26
+
+    Up to date.
+            modified:   ChangeLog
+
 2024-09-10:  David Anderson
     commit b608cead3f2eee17e962ca970ae5c35805bc3ebd
     Merge: 96bd4edd 721d3d82
