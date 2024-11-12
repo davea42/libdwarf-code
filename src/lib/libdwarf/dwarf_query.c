@@ -1073,7 +1073,7 @@ _dwarf_look_in_local_and_tied_by_index(
         if (res2 == DW_DLV_ERROR &&
             error && dwarf_errno(*error) ==
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
-            && dbg->de_tied_dbg != dbg->de_main_dbg) {
+            && dbg->de_secondary_dbg != dbg->de_primary_dbg) {
             int res3 = 0;
 
             /*  We do not want to leak error structs... */
@@ -1516,7 +1516,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug main_dbg,
         _dwarf_error(main_dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
         return  DW_DLV_ERROR;
     }
-    tieddbg = main_dbg->de_tied_dbg;
+    tieddbg = main_dbg->de_secondary_dbg;
     if (tieddbg == main_dbg) {
         _dwarf_error(main_dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
         return  DW_DLV_ERROR;

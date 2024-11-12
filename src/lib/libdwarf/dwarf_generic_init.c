@@ -516,7 +516,7 @@ dwarf_finish(Dwarf_Debug dbg)
     Or in DWARF5  maybe .debug_rnglists or .debug_loclists.
 
     Allows calling with NULL though we really just set
-    main_dbg->ge_tied_dbg to de_main_dbg, thus cutting
+    main_dbg->ge_tied_dbg to de_primary_dbg, thus cutting
     links between main and any previous tied-file setup.
     New September 2015.
 */
@@ -536,22 +536,22 @@ dwarf_set_tied_dbg(Dwarf_Debug main_dbg,
     }
     main_dbg->de_tied_data.td_tied_object = tieddbg;
     if (tieddbg) {
-        /*  de_tied_dbg and de_main_dbg are already set
+        /*  de_secondary_dbg and de_primary_dbg are already set
             == de_dbg, leave as-is. */
         CHECK_DBG(tieddbg,error,"dwarf_set_tied_dbg() dw_tieddbg"
             "is invalid");
-        main_dbg->de_tied_dbg = tieddbg;
+        main_dbg->de_secondary_dbg = tieddbg;
         return DW_DLV_OK;
     } else {
-        Dwarf_Debug td = main_dbg->de_tied_dbg;
-        main_dbg->de_tied_dbg = main_dbg->de_main_dbg;
+        Dwarf_Debug td = main_dbg->de_secondary_dbg;
+        main_dbg->de_secondary_dbg = main_dbg->de_primary_dbg;
         if (td != main_dbg) {
             CHECK_DBG(td,error,
                 "dwarf_set_tied_dbg() dw_tieddbg"
                 " removing tied-dbg with null tieddbg");
         }
         /*  We know the old tied_dbg is sensible, replace it
-            with the main_dbg as main_dbg->de_tied_dbg
+            with the main_dbg as main_dbg->de_secondary_dbg
             is now unusable by main_dbg. */
         /*  main->de_errors_dbg already set so all
             errors are on the main_dbg.*/
@@ -571,11 +571,11 @@ dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
 {
     CHECK_DBG(dw_dbg,dw_error,"dwarf_get_tied_dbg()");
     *dw_tieddbg_out = 0;
-    if (dw_dbg->de_main_dbg == dw_dbg->de_tied_dbg) {
+    if (dw_dbg->de_primary_dbg == dw_dbg->de_secondary_dbg) {
         return DW_DLV_OK;
     }
-    if (dw_dbg == dw_dbg->de_main_dbg) {
-        *dw_tieddbg_out = dw_dbg->de_tied_dbg;
+    if (dw_dbg == dw_dbg->de_primary_dbg) {
+        *dw_tieddbg_out = dw_dbg->de_secondary_dbg;
         return DW_DLV_OK;
     }
     return DW_DLV_OK;

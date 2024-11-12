@@ -1048,8 +1048,8 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
     dbg->de_frame_undefined_value_number  = DW_FRAME_UNDEFINED_VAL;
     dbg->de_dbg = dbg;
     /*  See  dwarf_set_tied_dbg()  dwarf_get_tied_dbg() */
-    dbg->de_main_dbg = dbg;
-    dbg->de_tied_dbg = dbg;
+    dbg->de_primary_dbg = dbg;
+    dbg->de_secondary_dbg = dbg;
     dbg->de_errors_dbg = dbg;
 
     dbg->de_obj_file = obj;

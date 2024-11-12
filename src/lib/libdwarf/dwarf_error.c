@@ -111,8 +111,8 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
     _dwarf_error_string(dbg,error,errval,0);
 }
 
-/*  Errors are all added to the de_main_dbg, never to
-    de_tied_dbg. */
+/*  Errors are all added to the de_primary_dbg, never to
+    de_secondary_dbg. */
 void
 _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval,char *msg)
@@ -127,7 +127,7 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
             this will overwrite the earlier error. */
         if (dbg) {
             /*  ERRORs are always associated with
-                de_main_dbg so they can be returned
+                de_primary_dbg so they can be returned
                 up the tree of calls on the stack
                 safely.  */
             errptr =

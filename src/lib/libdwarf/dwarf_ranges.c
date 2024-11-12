@@ -190,9 +190,10 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         return res;
     }
+    /*  FIX. HAS_TIED or ? */
     if (res == DW_DLV_NO_ENTRY) {
         /* data is in a.out, not dwp */
-        localdbg = dbg->de_tied_dbg;
+        localdbg = dbg->de_secondary_dbg;
         if (localdbg == dbg) {
             return DW_DLV_NO_ENTRY;
         }

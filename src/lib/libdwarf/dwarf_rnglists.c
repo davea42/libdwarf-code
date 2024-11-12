@@ -1700,10 +1700,12 @@ dwarf_rnglists_get_rle_head(
     if (res == DW_DLV_OK) {
         return res;
     }
+    /*  FIXME, this may be a bit wrong. Test to make
+        sure this dbg is not already secondary? */
     if (res == DW_DLV_NO_ENTRY && HAS_TIED_FILE(dbg)) {
         /*  we have data in a.out (tied-file),
             we expect, not dwp (main_file)  */
-        localdbg = dbg->de_tied_dbg;
+        localdbg = dbg->de_secondary_dbg;
 
         if (localdbg == dbg) {
             return DW_DLV_NO_ENTRY;

@@ -1073,7 +1073,7 @@ _dwarf_get_addr_index_itself(int theform,
         to a local .debug_addr or a tied file .debug_addr
         so lets be cautious. */
 #if 0 /* Attempted check for index uncertain, unwise. Ignore. */
-    /* See de_tied_dbg before using this */
+    /* See de_secondary_dbg before using this */
     if (!dbg->de_tied_data.td_tied_object &&
         index > dbg->de_filesize) {
         _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_OFFSET_BAD,
@@ -2186,8 +2186,8 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     Dwarf_Error localerror = 0;
 
     /* Attach errors to dbg, not tieddbg. */
-    tieddbg = dbg->de_tied_dbg;
-    if (tieddbg == dbg->de_main_dbg) {
+    tieddbg = dbg->de_secondary_dbg;
+    if (tieddbg == dbg->de_primary_dbg) {
         _dwarf_error(dbg, error, DW_DLE_NO_TIED_FILE_AVAILABLE);
         return  DW_DLV_ERROR;
     }
