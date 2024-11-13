@@ -70,8 +70,20 @@
     .debug_tu_index         -      -      -      5
 
 */
+#define DBG_IS_SECONDARY(p) ((p) && (p)->de_secondary_dbg &&   \
+    ((p)->de_secondary_dbg == (p)))
+#define DBG_IS_PRIMARY(p) ((p) && ((!(p)->de_secondary_dbg) ||  \
+    ((p)->de_secondary_dbg && ((p)->de_secondary_dbg != (p))))) 
+#define DBG_HAS_SECONDARY(p) ((p)->de_secondary_dbg && \
+    ((p)->de_secondary_dbg != (p)))
 
-#define HAS_TIED_FILE(dbg) (dbg->de_primary_dbg != dbg->de_secondary_dbg)
+#define DEBUG_PRIMARY_DBG 1 /* only for debugging */
+#undef  DEBUG_PRIMARY_DBG
+#ifdef DEBUG_PRIMARY_DBG
+void
+_dwarf_print_is_primary(const char *msg,Dwarf_Debug p,int line);
+#endif /* DEBUG_PRIMARY_DBG */
+
 
 struct Dwarf_Rnglists_Context_s;
 typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;
@@ -612,30 +624,11 @@ struct Dwarf_Debug_s {
         We get a pointer, callers control the lifetime of the
         structure and contents. */
     struct Dwarf_Obj_Access_Interface_a_s *de_obj_file;
-    /*  On any open Dwarf_Debug all three are set, and
-        if there is just one dbg open (ie, no tied-file)
-        de_dbg, de_primary_dbg, and de_secondary_dbg are
-        equal pointers. All DW_DLA_error are applied
-        to the main-file de_dbg (which is also de_primary_dbg.
-        vi de_errors_dbg
-        to get errors reported fully and correctly.
 
-        After a tied-file is added:
-        In main-file (DW_UT_split_compile etc):
-            de_dbg, de_primary_dbg  are equal pointers to 
-            de_secondary_dbg is set to equal the tied-file de_dbg.
-            All dwarf_Error instances are attached to de_primary_dbg.
-            In addition, de_tied_data.td_tied_object is set
-            to the value of tht tied-file de_dbg.
-            de_errors_dbg refers to main-file de_dbg.
-        In tied-file (DW_UT_skelton(s):
-            de_dbg,  de_secondary_dbg are equal pointers
-            to the same content.
-i           de_primary_dbg is set to equal the main, primary de_dbg.
-            No Dwarf_Error
-            are ever attached to this de_dbg, even when
-            reading from tied-file..
-            de_errors_dbg refers to main-file de_dbg */
+    /*  See dwarf_generic_init.c comments on the
+        use of the next four fields. And see 
+        DBG_IS_SECONDARY(p) DBG_IS_PRIMARY(p)
+        DBG_HAS_SECONDARY(p) below and  also dwarf_util.c */
     struct Dwarf_Debug_s * de_dbg;
     struct Dwarf_Debug_s * de_primary_dbg;
     struct Dwarf_Debug_s * de_secondary_dbg;

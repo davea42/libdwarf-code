@@ -1073,7 +1073,8 @@ _dwarf_look_in_local_and_tied_by_index(
         if (res2 == DW_DLV_ERROR &&
             error && dwarf_errno(*error) ==
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
-            && dbg->de_secondary_dbg != dbg->de_primary_dbg) {
+            && dbg->de_tied_data.td_tied_object) {
+            /* see also DBG_HAS_SECONDARY macro */ 
             int res3 = 0;
 
             /*  We do not want to leak error structs... */
@@ -1327,6 +1328,9 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
                 tiedcontext->cc_rnglists_base_present;
             context->cc_rnglists_base =
                 tiedcontext->cc_rnglists_base;
+printf("debug set rnglists base from tied context: 0x%lx lie %d\n",
+(unsigned long)context->cc_rnglists_base,
+__LINE__);
         }
         if(!context->cc_ranges_base_present) {
             context->cc_ranges_base_present= 
@@ -1500,7 +1504,7 @@ dwarf_highpc_b(Dwarf_Die die,
 
 */
 int
-_dwarf_get_addr_from_tied(Dwarf_Debug main_dbg,
+_dwarf_get_addr_from_tied(Dwarf_Debug primary_dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned index,
     Dwarf_Addr *addr_out,
@@ -1513,14 +1517,16 @@ _dwarf_get_addr_from_tied(Dwarf_Debug main_dbg,
     Dwarf_Unsigned addrtabsize = 0;
 
     if (!context->cc_signature_present) {
-        _dwarf_error(main_dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
+        _dwarf_error(primary_dbg, error, 
+            DW_DLE_NO_SIGNATURE_TO_LOOKUP);
         return  DW_DLV_ERROR;
     }
-    tieddbg = main_dbg->de_secondary_dbg;
-    if (tieddbg == main_dbg) {
-        _dwarf_error(main_dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
+    if (!DBG_HAS_SECONDARY(primary_dbg)) {
+        _dwarf_error(primary_dbg, error,
+            DW_DLE_NO_TIED_ADDR_AVAILABLE);
         return  DW_DLV_ERROR;
     }
+    tieddbg = primary_dbg->de_secondary_dbg;
     if (!context->cc_addr_base_offset_present) {
         /*  Does not exist. */
         return DW_DLV_NO_ENTRY;
@@ -1540,7 +1546,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug main_dbg,
     if ( (index > tieddbg->de_filesize ||
         index > addrtabsize ||
         (index*tiedcontext->cc_address_size) > addrtabsize)) {
-        _dwarf_error_string(main_dbg,error,
+        _dwarf_error_string(primary_dbg,error,
             DW_DLE_ATTR_FORM_OFFSET_BAD,
             "DW_DLE_ATTR_FORM_OFFSET_BAD "
             "Looking for an index from an addr FORM "

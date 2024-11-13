@@ -272,6 +272,10 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     }
     cu_context->cc_rnglists_base  =
         buildhere->rc_offsets_off_in_sect;
+printf("debug set rnglists base from rc_offsetts_off_in_sectt: "
+"0x%lx lie %d\n",
+(unsigned long)cu_context->cc_rnglists_base,
+__LINE__);
     cu_context->cc_rnglists_base_present = TRUE;
     cu_context->cc_rnglists_base_contr_size = size;
     /* FIXME cc_rnglists_header_length_present? */

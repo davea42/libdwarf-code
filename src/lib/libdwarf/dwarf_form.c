@@ -2186,11 +2186,11 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     Dwarf_Error localerror = 0;
 
     /* Attach errors to dbg, not tieddbg. */
-    tieddbg = dbg->de_secondary_dbg;
-    if (tieddbg == dbg->de_primary_dbg) {
+    if (!DBG_HAS_SECONDARY(dbg)) {
         _dwarf_error(dbg, error, DW_DLE_NO_TIED_FILE_AVAILABLE);
         return  DW_DLV_ERROR;
     }
+    tieddbg = dbg->de_secondary_dbg;
     /* The 'offset' into .debug_str is set. */
     res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,
         &localerror);

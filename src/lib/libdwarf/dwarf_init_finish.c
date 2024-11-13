@@ -1047,9 +1047,10 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
     dbg->de_frame_same_value_number = DW_FRAME_SAME_VAL;
     dbg->de_frame_undefined_value_number  = DW_FRAME_UNDEFINED_VAL;
     dbg->de_dbg = dbg;
-    /*  See  dwarf_set_tied_dbg()  dwarf_get_tied_dbg() */
+    /*  See  dwarf_set_tied_dbg()  dwarf_get_tied_dbg() 
+        and comments in dwarf_opaque.h*/
     dbg->de_primary_dbg = dbg;
-    dbg->de_secondary_dbg = dbg;
+    dbg->de_secondary_dbg = 0;
     dbg->de_errors_dbg = dbg;
 
     dbg->de_obj_file = obj;

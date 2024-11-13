@@ -193,10 +193,10 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     /*  FIX. HAS_TIED or ? */
     if (res == DW_DLV_NO_ENTRY) {
         /* data is in a.out, not dwp */
-        localdbg = dbg->de_secondary_dbg;
-        if (localdbg == dbg) {
+        if (!DBG_HAS_SECONDARY(dbg)) {
             return DW_DLV_NO_ENTRY;
         }
+        localdbg = dbg->de_secondary_dbg;
         res = _dwarf_load_section(localdbg,
             &localdbg->de_debug_ranges, error);
         if (res == DW_DLV_ERROR) {

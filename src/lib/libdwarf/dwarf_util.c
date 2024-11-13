@@ -70,6 +70,27 @@ dwarf_package_version(void)
 {
     return PACKAGE_VERSION;
 }
+#ifdef DEBUG_PRIMARY_DBG
+void
+_dwarf_print_is_primary(const char *msg,Dwarf_Debug p, int line)
+{
+    if (!DBG_HAS_SECONDARY(p)) {
+        printf("%s Only a PRIMARY present, line %d\n",msg,line);
+        return;
+    }
+    if (DBG_IS_SECONDARY(p)) {
+        printf("%s SECONDARY dbg line %d\n",msg,line);
+        return;
+    }
+    if (DBG_IS_PRIMARY(p)) {
+        printf("%s PRIMARY dbg line %d\n",msg,line);
+        return;
+    }
+    printf("%s Error in primary/secondary. Unknown line %d\n",
+        msg,line);
+}
+#endif /* DEBUG_PRIMARY_DBG */
+
 
 #if 0 /* dump_bytes */
 static void

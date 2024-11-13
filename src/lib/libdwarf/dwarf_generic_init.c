@@ -78,6 +78,55 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include "dwarf_error.h"
 #include "dwarf_object_detector.h"
 
+/*  The design of Dwarf_Debug_s data on --file-tied
+data and how it is used.  See also dwarf_opaque.h
+and dwarf_util.c  
+
+The fields involved are
+de_dbg
+de_primary_dbg 
+de_secondary_dbg
+de_errors_dbg
+de_tied_data.td_tied_object
+
+On any init completing it will be considered
+    primary, Call it p1.   
+    p1->de_dbg == p1
+    p1->de_primary_dbg == p1
+    p1->de_secondary_dbg == NULL
+        p1->de_errors_dbg == p1 
+    p1->de_tied_data.td_tied_object = 0
+Init a second object, call it p2 (settings as above).
+    
+Call dwarf_set_tied (p1,p2) (it is ok if p2 == NULL)
+    p1 is as above except that
+        p1->de_secondary_dbg == p2
+        p1->de_tied_data.td_tied_object = p2;
+    If p2 is non-null:
+        p2->de_dbg == p2
+        p2->de_primary_dbg = p1.
+        p2->de_secondary_dbg = p2
+        p2->de_errors_dbg = p1
+All this is only useful if p1 has dwo/dwp sections
+(split-dwarf) and p2 has the relevant TAG_skeleton(s)
+        
+If px->de_secondary_dbg is non-null
+    and px->secondary_dbg == px
+    then px is secondary.
+
+If x->de_secondary_dbg is non-null
+    and px->secondary_dbg != px   
+    then px is primary.
+
+If px->de_secondary_dbg is null
+    then px is a primary. and there
+    is no secondary.
+
+    Call dwarf_set_tied(p1,NULL) and both p1 and
+    p2 are returned to initial conditions
+    as before they were tied together. */
+
+
 static int
 set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
 {
@@ -516,45 +565,46 @@ dwarf_finish(Dwarf_Debug dbg)
     Or in DWARF5  maybe .debug_rnglists or .debug_loclists.
 
     Allows calling with NULL though we really just set
-    main_dbg->ge_tied_dbg to de_primary_dbg, thus cutting
+    primary_dbg->ge_primary to de_primary_dbg, thus cutting
     links between main and any previous tied-file setup.
     New September 2015.
+    Logic revised Nov 2024. See dwarf_opaque.h
 */
 int
-dwarf_set_tied_dbg(Dwarf_Debug main_dbg,
-    Dwarf_Debug tieddbg,
+dwarf_set_tied_dbg(Dwarf_Debug primary_dbg,
+    Dwarf_Debug secondary_dbg,
     Dwarf_Error*error)
 {
-    CHECK_DBG(main_dbg,error,"dwarf_set_tied_dbg()");
-    if (tieddbg == main_dbg) {
-        _dwarf_error_string(main_dbg,error,
+    CHECK_DBG(primary_dbg,error,"dwarf_set_tied_dbg()");
+    if (secondary_dbg == primary_dbg) {
+        _dwarf_error_string(primary_dbg,error,
             DW_DLE_NO_TIED_FILE_AVAILABLE,
             "DW_DLE_NO_TIED_FILE_AVAILABLE: bad argument to "
             "dwarf_set_tied_dbg(), tied and main must not be the "
             "same pointer!");
         return DW_DLV_ERROR;
     }
-    main_dbg->de_tied_data.td_tied_object = tieddbg;
-    if (tieddbg) {
-        /*  de_secondary_dbg and de_primary_dbg are already set
-            == de_dbg, leave as-is. */
-        CHECK_DBG(tieddbg,error,"dwarf_set_tied_dbg() dw_tieddbg"
+    if (secondary_dbg) {
+        if (primary_dbg->de_secondary_dbg ) {
+            _dwarf_error_string(primary_dbg,error,
+                DW_DLE_NO_TIED_FILE_AVAILABLE,
+                "DW_DLE_NO_TIED_FILE_AVAILABLE: bad argument to "
+                "dwarf_set_tied_dbg(), primary_dbg already has"
+                " a secondary_dbg!");
+            return DW_DLV_ERROR;
+        }
+        primary_dbg->de_tied_data.td_tied_object = secondary_dbg;
+        primary_dbg->de_secondary_dbg = secondary_dbg;
+        secondary_dbg->de_secondary_dbg = secondary_dbg;
+        secondary_dbg->de_errors_dbg = primary_dbg;
+        CHECK_DBG(secondary_dbg,error,"dwarf_set_tied_dbg() "
+            "dw_secondary_dbg"
             "is invalid");
-        main_dbg->de_secondary_dbg = tieddbg;
+        primary_dbg->de_secondary_dbg = secondary_dbg;
         return DW_DLV_OK;
     } else {
-        Dwarf_Debug td = main_dbg->de_secondary_dbg;
-        main_dbg->de_secondary_dbg = main_dbg->de_primary_dbg;
-        if (td != main_dbg) {
-            CHECK_DBG(td,error,
-                "dwarf_set_tied_dbg() dw_tieddbg"
-                " removing tied-dbg with null tieddbg");
-        }
-        /*  We know the old tied_dbg is sensible, replace it
-            with the main_dbg as main_dbg->de_secondary_dbg
-            is now unusable by main_dbg. */
-        /*  main->de_errors_dbg already set so all
-            errors are on the main_dbg.*/
+        primary_dbg->de_secondary_dbg = 0;
+        primary_dbg->de_tied_data.td_tied_object = 0;
     }
     return DW_DLV_OK;
 }
@@ -566,17 +616,24 @@ dwarf_set_tied_dbg(Dwarf_Debug main_dbg,
     If there is no tied-dbg this returns main dbg. */
 int
 dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
-    Dwarf_Debug *dw_tieddbg_out,
+    Dwarf_Debug *dw_secondary_dbg_out,
     Dwarf_Error *dw_error)
 {
     CHECK_DBG(dw_dbg,dw_error,"dwarf_get_tied_dbg()");
-    *dw_tieddbg_out = 0;
-    if (dw_dbg->de_primary_dbg == dw_dbg->de_secondary_dbg) {
+    *dw_secondary_dbg_out = 0;
+    if (DBG_IS_PRIMARY(dw_dbg)) {
+        if (!dw_dbg->de_secondary_dbg) {
+            *dw_secondary_dbg_out = dw_dbg;
+            return DW_DLV_OK;
+        }
+        *dw_secondary_dbg_out = dw_dbg->de_secondary_dbg;
         return DW_DLV_OK;
     }
-    if (dw_dbg == dw_dbg->de_primary_dbg) {
-        *dw_tieddbg_out = dw_dbg->de_secondary_dbg;
+    if (DBG_IS_SECONDARY(dw_dbg)) {
+        *dw_secondary_dbg_out = dw_dbg;
         return DW_DLV_OK;
     }
+    /*  Leave returned secondary_dbg_out NULL,
+        this should not happen */
     return DW_DLV_OK;
 }
