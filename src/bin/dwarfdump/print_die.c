@@ -3156,10 +3156,10 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         esb_append_printf_s(stringbuf," ranges at %s" ,
             sanitized(sec_name));
         if (have_ranges_offset) {
-            esb_append_printf_u(stringbuf," global offset %" DW_PR_DUu ,
-                finaloff);
-            esb_append_printf_u(stringbuf," without base %"   DW_PR_DUu ,
-                originaloff);
+            esb_append_printf_u(stringbuf," global offset %"
+                DW_PR_DUu , finaloff);
+            esb_append_printf_u(stringbuf," without base %"
+                DW_PR_DUu , originaloff);
         } else {
             esb_append_printf_u(stringbuf,
                 " offset base %" DW_PR_DUu ,
