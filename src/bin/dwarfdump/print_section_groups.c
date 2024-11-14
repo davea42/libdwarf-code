@@ -234,12 +234,11 @@ print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *error)
             "ERROR: dwarf_sec_group_sizes failed");
         return res;
     }
-    if (group_count == 1 && selected_group ==1 ) {
-        /*  This is the traditional DWARF with no split-dwarf
-            and no COMDAT data.
+    if (group_count == 1 && selected_group == DW_GROUPNUMBER_BASE) {
+        /*  This is the traditional DWARF without
+            dwo sections in a single object.  And no COMDAT data.
             We don't want to print anything as we do not want
-            to see differences from existing output in this case.
-            Simplifies regression testing for now. */
+            to see differences from existing output in this case. */
         return DW_DLV_OK;
     }
     printf("Section Groups data\n");
