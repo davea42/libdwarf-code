@@ -1308,7 +1308,9 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
             tiedcontext->cc_low_pc_present;
         context->        cc_low_pc =
             tiedcontext->cc_low_pc;
+    }
 
+    if (tiedcontext->cc_base_address_present) {
         context->cc_base_address_present =
             tiedcontext->cc_base_address_present;
         context->        cc_base_address =
@@ -1328,9 +1330,6 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
                 tiedcontext->cc_rnglists_base_present;
             context->cc_rnglists_base =
                 tiedcontext->cc_rnglists_base;
-printf("debug set rnglists base from tied context: 0x%lx lie %d\n",
-(unsigned long)context->cc_rnglists_base,
-__LINE__);
         }
         if(!context->cc_ranges_base_present) {
             context->cc_ranges_base_present= 
@@ -1527,10 +1526,6 @@ _dwarf_get_addr_from_tied(Dwarf_Debug primary_dbg,
         return  DW_DLV_ERROR;
     }
     tieddbg = primary_dbg->de_secondary_dbg;
-    if (!context->cc_addr_base_offset_present) {
-        /*  Does not exist. */
-        return DW_DLV_NO_ENTRY;
-    }
     res = _dwarf_search_for_signature(tieddbg,
         context->cc_signature,
         &tiedcontext,

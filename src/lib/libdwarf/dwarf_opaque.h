@@ -74,14 +74,23 @@
     ((p)->de_secondary_dbg == (p)))
 #define DBG_IS_PRIMARY(p) ((p) && ((!(p)->de_secondary_dbg) ||  \
     ((p)->de_secondary_dbg && ((p)->de_secondary_dbg != (p))))) 
-#define DBG_HAS_SECONDARY(p) ((p)->de_secondary_dbg && \
-    ((p)->de_secondary_dbg != (p)))
+#define DBG_HAS_SECONDARY(p) (DBG_IS_PRIMARY(p) && \
+    (DBG_IS_SECONDARY((p)->de_secondary_dbg)))
 
-#define DEBUG_PRIMARY_DBG 1 /* only for debugging */
 #undef  DEBUG_PRIMARY_DBG
+#define DEBUG_PRIMARY_DBG 1 /* only for debugging */
 #ifdef DEBUG_PRIMARY_DBG
 void
-_dwarf_print_is_primary(const char *msg,Dwarf_Debug p,int line);
+_dwarf_print_is_primary(const char *msg,Dwarf_Debug p,int line,
+    const char *filepath);
+void
+_dwarf_dump_prim_sec(const char *msg,Dwarf_Debug p, int line,
+    const char *filepath);
+void
+_dwarf_dump_optional_fields(const char *msg,
+    Dwarf_CU_Context context,
+    int line,
+    const char *filepath);
 #endif /* DEBUG_PRIMARY_DBG */
 
 
@@ -589,7 +598,7 @@ struct Dwarf_Tied_Data_s {
         signatures in split-dwarf (dwo/dwp) sections.
 
         The Key for each record is a Dwarf_Sig8 (8 bytes).
-        The data for each is a pointer to a Dwarf_CU_context
+        The data for each is a pointer to a Dwarf_CU_Context
         record in this dbg (cu_context in
         one of tied dbg's de_cu_context_list). */
     void *td_tied_search;

@@ -2099,7 +2099,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         Dwarf_Debug tieddbg = 0;
         int tres = DW_DLV_OK;
         tieddbg = dbg->de_secondary_dbg;
-        if (DBG_IS_SECONDARY(tieddbg)) {
+        if (DBG_IS_PRIMARY(dbg) && DBG_IS_SECONDARY(tieddbg)) {
             /*  We are in the main, merge tied
                 into main cu_context */
             tres = _dwarf_merge_all_base_attrs_of_cu_die(

@@ -71,24 +71,154 @@ dwarf_package_version(void)
     return PACKAGE_VERSION;
 }
 #ifdef DEBUG_PRIMARY_DBG
-void
-_dwarf_print_is_primary(const char *msg,Dwarf_Debug p, int line)
+/*  These functions are helpers in printing data while
+    debugging problems.  
+    In normal use these are not compiled or used.
+    Created November 2024. */
+
+static const char *
+_dwarf_findbase(const char *full)
 {
-    if (!DBG_HAS_SECONDARY(p)) {
-        printf("%s Only a PRIMARY present, line %d\n",msg,line);
-        return;
-    }
+     const char *cp = full;
+     unsigned slashat = 0;
+     unsigned charnum = 0;
+     
+     if (!cp) {
+         return "null-filepath";
+     }
+     for ( ; *cp; ++cp,++charnum) { 
+         if (*cp == '/') {
+             slashat=charnum;
+         }
+     }
+     return (full+slashat+1);
+}
+void
+_dwarf_print_is_primary(const char *msg,
+    Dwarf_Debug p, 
+    int line,
+    const char *filepath)
+{
+    const char *basen = 0;
+    basen = _dwarf_findbase(filepath);
     if (DBG_IS_SECONDARY(p)) {
-        printf("%s SECONDARY dbg line %d\n",msg,line);
+        printf("%s SECONDARY dbg line %d %s\n",msg,line,
+            basen);
+        fflush(stdout);
         return;
     }
     if (DBG_IS_PRIMARY(p)) {
-        printf("%s PRIMARY dbg line %d\n",msg,line);
+        printf("%s PRIMARY dbg line %d %s\n",msg,line,
+            basen);
+        fflush(stdout);
         return;
     }
-    printf("%s Error in primary/secondary. Unknown line %d\n",
-        msg,line);
+    printf("%s Error in primary/secondary. %s. "
+        "Unknown dbg line %d %s\n",
+        msg,p?"":"null dbg passed in",line,basen);
+    fflush(stdout);
 }
+void
+_dwarf_dump_prim_sec(const char *msg,Dwarf_Debug p, int line,
+    const char *filepath)
+{
+    const char *basen = 0;
+    basen = _dwarf_findbase(filepath);
+    printf("%s Print Primary/Secondary data from line %d %s",
+        msg,line,basen);
+    _dwarf_print_is_primary(msg,p,line,filepath);
+    printf("  dbg.............: 0x%lx\n", 
+        (unsigned long)p);
+    printf("  de_dbg..........: 0x%lx\n",  
+        (unsigned long)p->de_dbg);
+    printf("  de_primary_dbg..: 0x%lx\n", 
+        (unsigned long)p->de_primary_dbg);
+    printf("  de_secondary_dbg: 0x%lx\n", 
+        (unsigned long)p->de_secondary_dbg);
+    printf("  de_errors_dbg ..: 0x%lx\n",
+        (unsigned long)p->de_errors_dbg);
+    printf("  td_tied_object..: 0x%lx\n",
+        (unsigned long)p->de_tied_data.td_tied_object);
+    fflush(stdout);
+}
+void
+_dwarf_dump_optional_fields(const char *msg,
+    Dwarf_CU_Context context,
+    int line,
+    const char *filepath)
+{
+    const char *basen = 0;
+    Dwarf_Debug dbg = 0;
+
+    basen = _dwarf_findbase(filepath);
+    printf("%s Optional Fields line %d %s\n", 
+        msg,line,basen);
+    if (!context) {
+        printf(" ERROR: context not passed in \n");
+        fflush(stdout);
+        return;
+    }
+    dbg = context->cc_dbg;
+    _dwarf_print_is_primary("  For Inheritance and more",
+        dbg,line,filepath);
+    printf("  cc_signature_present.......: %d \n",
+        context->cc_signature_present);
+    _dwarf_dumpsig("   signature", &context->cc_signature,line);
+    printf("  cc_low_pc_present..........: %d 0x%lx\n",
+        context->cc_low_pc_present,
+        (unsigned long)context->cc_low_pc);
+    printf("  cc_base_address_present....: %d 0x%lx\n",
+        context->cc_base_address_present,
+        (unsigned long)context->cc_base_address);
+    printf("  cc_dwo_name_present........: %d %s\n",
+        context->cc_dwo_name_present,
+        context->cc_dwo_name?context->cc_dwo_name:
+        "no-dwo-name-");
+    /* useful? */
+    printf("  cc_at_strx_present.........: %d\n",
+        context->cc_at_strx_present);
+    /* useful? */
+    printf("  cc_cu_die_offset_present...: %d \n",
+        context->cc_cu_die_offset_present);
+    printf("  cc_at_ranges_offset_present: %d 0x%lx\n",
+        context->cc_at_ranges_offset_present,
+        (unsigned long)context->cc_at_ranges_offset);
+    printf("  cc_addr_base_offset_present: %d 0x%lx\n",
+        context->cc_addr_base_offset_present,
+        (unsigned long)context->cc_addr_base_offset);
+    printf("  cc_line_base_present.......: %d 0x%lx\n",
+        context->cc_line_base_present,
+        (unsigned long)context->cc_line_base);
+    printf("  cc_loclists_base_present...: %d 0x%lx\n",
+        context->cc_loclists_base_present,
+        (unsigned long)context->cc_loclists_base);
+    /* useful? */
+    printf("  cc_loclists_header_length_present: %d\n",
+        context->cc_loclists_header_length_present);
+    printf("  cc_str_offsets_array_offset_present: %d 0x%lx\n",
+        context->cc_str_offsets_array_offset_present,
+        (unsigned long)context->cc_str_offsets_array_offset);
+    /* useful? */
+    printf("  cc_str_offsets_tab_present.: %d \n",
+        context->cc_str_offsets_tab_present);
+    printf("  cc_macro_base_present......: %d 0x%lx\n",
+        context->cc_macro_base_present,
+        (unsigned long)context->cc_macro_base_present);
+    /* useful? */
+    printf("  cc_macro_header_length_present: %d\n",
+        context->cc_macro_header_length_present);
+    printf("  cc_ranges_base_present.....: %d 0x%lx\n",
+        context->cc_ranges_base_present,
+        (unsigned long)context->cc_ranges_base);
+    printf("  cc_rnglists_base_present...: %d 0x%lx\n",
+        context->cc_rnglists_base_present,
+        (unsigned long)context->cc_rnglists_base);
+    /* useful? */
+    printf("  cc_rnglists_header_length_present: %d\n",
+        context->cc_rnglists_header_length_present);
+    fflush(stdout);
+}
+
 #endif /* DEBUG_PRIMARY_DBG */
 
 
