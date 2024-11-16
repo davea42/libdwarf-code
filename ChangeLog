@@ -1,3 +1,117 @@
+2024-11-16:  David Anderson
+    commit 577159d68854f11e58821cc8d42c4f9e547f7cc0
+
+
+    github Issue 267 is now fixed.
+
+    Cleaning up debug printf and ensuring
+    that sanity checks in dwarf_rnglists.c
+    are written correctly.
+    undefining 2 libdwarf variables:
+    DEBUG_RNGLIST
+    DEBUG_PRIMARY_DBG
+    (Neither visible or referred to in libdwarf.h or dwarf.h)
+    as they should not be on in normal use.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2024-11-14:  David Anderson
+    commit 7202d80878cb8ff476ab8cf73825a940caadb9ab
+
+    Added a DBG_IS_PRIMARY(dbg) check to know when
+    to merge to primary from secondary.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+    Now depends on DEBUG_PRIMARY_DBG to turn on/off
+    debugging functions
+    _dwarf_print_is_primary
+    _dwarf_dump_prim_sec
+    _dwarf_dump_optional_fields
+    COrrected DBG_HAS_SECONDARY macro.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Corrected the merge fields
+    Removed a bogus test of cc_addr_base_offset_present
+    from _dwarf_merge_all_base_attrs_of_cu_die()
+            modified:   src/lib/libdwarf/dwarf_query.c
+    Implementation of debugging
+    function _dwarf_dumpsig() protected
+    by DEBUG_PRIMARY_DBG.
+            modified:   src/lib/libdwarf/dwarf_tied.c
+    Added new debug functions protected by thes
+    same macro.
+    _dwarf_dump_optional_fields() is particulary
+    useful for debugging split-dwarf merges.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2024-11-14:  David Anderson
+    commit ab86377bced3e22fc0de3335dc6c96ad89057fdb
+
+    Corrected as the test for base group is now
+    groupnumber
+    DW_GROUPNUMBER_BASE
+    instead of a simple 1.
+            modified:   print_section_groups.c
+
+2024-11-14:  David Anderson
+    commit a7e37e351eb38602ff6948723e13df14135ad1b1
+
+    Shortened two too-long lines.
+            modified:   print_die.c
+
+2024-11-13:  David Anderson
+    commit 6c6c905aaeca65721043c664361377b30acb1ba9
+
+    DO NOT USE THIS COMMIT. work continues.
+    Major change in how Dwarf_Debug_s records and names
+    the dbg fields of split-dwarf.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+    Revised naming for split-dwarf to de_primary_dng
+    and de_secondary_dbg, adding HAS_SECONDARY_DGB and
+    other macros so places in the text depending on these
+    names are readily located..
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+    New small general-purpose debug function added related
+    about split-dwarf objects.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2024-11-11:  David Anderson
+    commit 76b253aaff46a8df8a3c121b557c956e2828e170
+
+    Renamed de_main.dbg to de_primary_dbg
+            de_tied_dbg to de_secondary_dbg
+    in dwarf_opaque.h and whereever required
+    as those original name were confusing in comments
+    and...well... everywhere.
+
+            modified:   ../../lib/libdwarf/dwarf_die_deliv.c
+            modified:   ../../lib/libdwarf/dwarf_error.c
+            modified:   ../../lib/libdwarf/dwarf_form.c
+            modified:   ../../lib/libdwarf/dwarf_generic_init.c
+            modified:   ../../lib/libdwarf/dwarf_init_finish.c
+            modified:   ../../lib/libdwarf/dwarf_opaque.h
+            modified:   ../../lib/libdwarf/dwarf_query.c
+            modified:   ../../lib/libdwarf/dwarf_ranges.c
+            modified:   ../../lib/libdwarf/dwarf_rnglists.c
+
+2024-11-10:  David Anderson
+    commit f4f6f782a06ab0618861cf0c4474989376c69c76
+
+    With all recent changes noted, including
+    fix for Issue 265 and Issue 266 on github.
+            modified:   ChangeLog
+
 2024-11-09:  David Anderson
     commit c44c0d807acfdda5e22f4e38d44cff7afbde820d
 
