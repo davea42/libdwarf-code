@@ -77,9 +77,12 @@
 #define DBG_HAS_SECONDARY(p) (DBG_IS_PRIMARY(p) && \
     (DBG_IS_SECONDARY((p)->de_secondary_dbg)))
 
-#undef  DEBUG_PRIMARY_DBG
 #define DEBUG_PRIMARY_DBG 1 /* only for debugging */
+#undef  DEBUG_PRIMARY_DBG
 #ifdef DEBUG_PRIMARY_DBG
+const char *
+_dwarf_basename(const char *full);
+
 void
 _dwarf_print_is_primary(const char *msg,Dwarf_Debug p,int line,
     const char *filepath);

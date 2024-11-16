@@ -145,6 +145,7 @@ dump_rc(const char *msg,
     (the rnglists/loclists base_address has to be in
     the non-dwo object as it is an address).
     We are dealing with DW_FORM_rnglistx here. */
+#if 0
 static int
 _dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
     Dwarf_Unsigned indexval,
@@ -171,6 +172,7 @@ _dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
     *ibase = rctx->rc_offsets_off_in_sect;
     return DW_DLV_OK;
 }
+#endif
 
 static void
 free_rnglists_context(Dwarf_Rnglists_Context cx)
@@ -309,8 +311,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
             preserve a testing baseline:
             baselines/hongg2024-02-18-m.base
             otherwise we would test against sectionsize first.*/
-
-        Dwarf_Unsigned sectionsize = dbg->de_debug_rnglists.dss_size;
+        Dwarf_Unsigned sectionsize = 0;
 
         if (data > enddata || data < startdata ) {
             /*  Corrupt data being read. */
@@ -320,6 +321,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
                 "of its allowed space");
             return DW_DLV_ERROR;
         }
+        sectionsize = dbg->de_debug_rnglists.dss_size;
         if (count > sectionsize) {
             /*  Corrupt data being read. */
             _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
@@ -340,8 +342,9 @@ read_single_rle_entry(Dwarf_Debug dbg,
 
 /*  Reads the header. Determines the
     various offsets, including offset
-    of the next header. Does no memory
-    allocations here. */
+    of the next header. ALlocates
+    an array pointed to by rc_offset_value_array
+    here. */
 int
 _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     Dwarf_Bool build_offset_array,
@@ -368,7 +371,8 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     Dwarf_Unsigned sum_size = 0;
 
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary("dadebug internal rnglists",dbg,__LINE__);
+_dwarf_print_is_primary("dadebug internal rnglists",dbg,__LINE__,
+__FILE__);
 printf("dadebug starting_offset 0x%lx\n",(unsigned long)starting_offset);
 fflush(stdout);
 #endif
@@ -660,7 +664,8 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
     Dwarf_Rnglists_Context *fullarray = 0;
 
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary("dadebug load rnglists_cont",dbg,__LINE__);
+_dwarf_print_is_primary("dadebug load rnglists_cont",dbg,__LINE__,
+__FILE__);
 dump_bytes("dadebug load rngl contexts data",data,8);
 printf("dadebug section_size 0x%lx \n",
 (unsigned long)section_size);
@@ -731,6 +736,9 @@ printf("dadebug nextoffset->offset 0x%lx\n",(unsigned long)nextoffset);
         return DW_DLV_ERROR;
     }
     curr_chain = head_chain;
+#ifdef DEBUG_RNGLIST
+printf("dadebug count of rnglists %lu\n",(unsigned long)chainlength);
+#endif
     for (i = 0; i < chainlength; ++i) {
         Dwarf_Chain prev = 0;
         Dwarf_Rnglists_Context c =
@@ -746,6 +754,9 @@ printf("dadebug nextoffset->offset 0x%lx\n",(unsigned long)nextoffset);
         individually malloc'd Dwarf_Rnglists_Context_s */
     *cxt = fullarray;
     *count = chainlength;
+#ifdef DEBUG_RNGLIST
+_dwarf_print_is_primary("dadebug  context_count set ",dbg,__LINE__,__FILE__);
+#endif
     return DW_DLV_OK;
 }
 
@@ -772,6 +783,13 @@ int dwarf_load_rnglists(
     if (dbg->de_rnglists_context) {
         if (rnglists_count) {
             *rnglists_count = dbg->de_rnglists_context_count;
+#ifdef DEBUG_RNGLIST
+printf("dadebug tet de_rnglists_context_count %lu\n",
+(unsigned long)dbg->de_rnglists_context_count);
+_dwarf_print_is_primary("dadebug context ct returned",dbg,__LINE__,__FILE__);
+#endif
+    }
+    if (rnglists_count) {
         }
         return DW_DLV_OK;
     }
@@ -779,6 +797,11 @@ int dwarf_load_rnglists(
         /* nothing there. */
         return DW_DLV_NO_ENTRY;
     }
+#ifdef DEBUG_RNGLIST
+printf("dadebug size of rnglists loaded 0x%lx line %d %s\n",
+(unsigned long)dbg->de_debug_rnglists.dss_size,
+__LINE__,_dwarf_basename(__FILE__));
+#endif
     if (!dbg->de_debug_rnglists.dss_data) {
         res = _dwarf_load_section(dbg, &dbg->de_debug_rnglists,
             error);
@@ -792,6 +815,11 @@ int dwarf_load_rnglists(
     }
     dbg->de_rnglists_context = cxt;
     dbg->de_rnglists_context_count = count;
+#ifdef DEBUG_RNGLIST
+printf("dadebug set de_rnglists_context_count %lu\n",
+(unsigned long)count);
+_dwarf_print_is_primary("dadebug context ct set, returned",dbg,__LINE__,__FILE__);
+#endif
     if (rnglists_count) {
         *rnglists_count = count;
     }
@@ -821,6 +849,9 @@ _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
     free(dbg->de_rnglists_context);
     dbg->de_rnglists_context = 0;
     dbg->de_rnglists_context_count = 0;
+#ifdef DEBUG_RNGLIST
+_dwarf_print_is_primary("dadebug context ct set zero",dbg,__LINE__,__FILE__);
+#endif
 }
 
 /*  Used by dwarfdump to print raw rnglists data. */
@@ -839,6 +870,7 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Unsigned targetoffset = 0;
     Dwarf_Unsigned localoffset = 0;
     Dwarf_Unsigned globaloffset = 0;
+    Dwarf_Unsigned section_size = 0;
 
 
     CHECK_DBG(dbg,error,"dwarf_get_rnglist_offset_index_value()");
@@ -892,22 +924,15 @@ dwarf_get_rnglist_offset_index_value(
     READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
         offsetptr,
         offset_len,error,con->rc_endaddr);
-    if (targetoffset >= con->rc_length) {
-        _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
-            "DW_DLE_RNGLISTS_ERROR: "
-            "The end of an rle entry is past the end "
-            "of its allowed space");
-        return DW_DLV_ERROR;
-    }
-    globaloffset =  targetoffset + con->rc_offsets_off_in_sect;
-    if (globaloffset >= con->rc_length) {
+    globaloffset =  con->rc_offsets_off_in_sect;
+    section_size = dbg->de_debug_rnglists.dss_size;
+    if (globaloffset >= section_size) {
         _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
             "DW_DLE_RNGLISTS_ERROR: "
             "The offset of a rnglists entry is past "
             "its allowed space");
         return DW_DLV_ERROR;
     }
-
     if (offset_value_out) {
         *offset_value_out = targetoffset;
     }
@@ -1154,13 +1179,29 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
     Dwarf_Unsigned *index,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned count;
-    Dwarf_Rnglists_Context *array;
-    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned          count = 0;
+    Dwarf_Rnglists_Context *array = 0;
+    Dwarf_Unsigned          i = 0;
 
     array = dbg->de_rnglists_context;
     count = dbg->de_rnglists_context_count;
-    /*  Using the slow way, a simple linear search. */
+
+#ifdef DEBUG_RNGLIST
+printf("dadebug rnglists_context_count %lu\n",
+(unsigned long) count);
+#endif
+    if (count == 1) {
+         /*  In this case the offset is not a base offset
+             at all, so ignore it.
+             Meeting DWARF6/gcc/clang requirements */ 
+         *index = 0;
+         return DW_DLV_OK;
+    }
+    /*  Using the slow way, a simple linear search.  
+        Which will surely not work correctly in
+        .debug_rnglists.dwo in general... 
+        The offset had better be a base offset for
+        this to make sense. */
     if (!ctx->cc_rnglists_base_present) {
         /* We look at the location of each rnglist context
             to find one with the offset the DIE gave us. */
@@ -1169,12 +1210,20 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
             Dwarf_Unsigned rcxoff = rcx->rc_header_offset;
             Dwarf_Unsigned rcxend = rcxoff +
                 rcx->rc_length;
-
+#ifdef DEBUG_RNGLIST
+printf("dadebug rnnglists context %u offset 0x%lx rcxoff 0x%lx rcxend 0x%lx \n",
+(unsigned int)i,(unsigned long)rnglist_offset,
+(unsigned long)rcxoff,
+(unsigned long)rcxend);
+#endif
             if (rnglist_offset < rcxoff){
                 continue;
             }
             if (rnglist_offset < rcxend ){
                 *index = i;
+#ifdef DEBUG_RNGLIST
+printf("Dadebug found context %u \n",(unsigned int) i);
+#endif
                 return DW_DLV_OK;
             }
         }
@@ -1206,16 +1255,22 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
             Dwarf_Rnglists_Context rcx = array[i];
 
 #ifdef DEBUG_RNGLIST
-printf("dadebug i %u off_in_sect 0x%lx lookfor 0x%lx\n",
-(int)i,
+printf("dadebug i %u count %u off_in_sect 0x%lx lookfor 0x%lx\n",
+(unsigned )i,(unsigned)count,
 (unsigned long)rcx->rc_offsets_off_in_sect,
 (unsigned long)lookfor);
 #endif
             if (rcx->rc_offsets_off_in_sect == lookfor){
                 *index = i;
+#ifdef DEBUG_RNGLIST
+printf("dadebug FOUND, index %lu \n",(unsigned long)i);
+#endif
                 return DW_DLV_OK;
             }
             if (rcx->rc_offsets_off_in_sect < lookfor){
+#ifdef DEBUG_RNGLIST
+printf("dadebug check continue rc offsets\n");
+#endif
                 continue;
             }
 
@@ -1233,6 +1288,7 @@ printf("dadebug i %u off_in_sect 0x%lx lookfor 0x%lx\n",
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
+        
 
         {
             dwarfstring m;
@@ -1542,11 +1598,11 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     Dwarf_Unsigned rle_global_offset = 0;
     unsigned       offsetsize = 0;
     Dwarf_Unsigned secsize = 0;
+    Dwarf_Debug    localdbg = 0;
 
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
     }
-    array = dbg->de_rnglists_context;
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */
@@ -1559,6 +1615,7 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
 printf("dadebug %u ctx->cc_rnglists_base_present line %d \n",
 ctx->cc_rnglists_base_present, __LINE__);
 #endif
+#if 0
         } else  if (ctx->cc_is_dwo) {
             /*  Generate a base and set as 'present'
                 by looking at the location offset
@@ -1587,13 +1644,10 @@ ctx->cc_rnglists_base_present, __LINE__);
                     dwarfstring_destructor(&m);
                     return DW_DLV_ERROR;
             }
-#ifdef DEBUG_RNGLIST
-printf("dadebug SET   ctx->cc_rnglists_base_present base 0x%lx line %d \n",
-(unsigned long)ibase, __LINE__);
-#endif
             ctx->cc_rnglists_base_present = TRUE;
             ctx->cc_rnglists_base         = ibase;
             offset_in_rnglists = ibase;
+#endif /* 0 */
         }
     } else {
 #ifdef DEBUG_RNGLIST
@@ -1608,17 +1662,34 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
             "is greater than the rnglists section size");
         return DW_DLV_ERROR;
     }
-    res = _dwarf_which_rnglists_context(dbg,ctx,
-        offset_in_rnglists,
-        &rnglists_contextnum,error);
-    if (res != DW_DLV_OK) {
-        return res;
+    localdbg = dbg;
+    if (!ctx->cc_is_dwo || ctx->cc_rnglists_base_present) {
+        /*   This call works for updated DWARF5 not inheriting
+             DW_AT_rnglists_base or generating such. 
+             It returns rangelists_context 0, which
+             works for gcc/clang. */
+        res = _dwarf_which_rnglists_context(localdbg,ctx,
+            offset_in_rnglists,
+            &rnglists_contextnum,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+    } else {
+        /*  For DWO rnglists use gcc/clang approach  missing
+            DW_AT_rnglists_base.  
+            Examples seem to have just 1 rnglists_context.*/
+        rnglists_contextnum = 0;
     }
+    array = localdbg->de_rnglists_context;
     rctx = array[rnglists_contextnum];
     table_base = rctx->rc_offsets_array;
     entrycount = rctx->rc_offset_entry_count;
     offsetsize = rctx->rc_offset_size;
     enddata = rctx->rc_endaddr;
+#ifdef DEBUG_RNGLIST
+printf("dadebug offset entrycount %lu  \n",(unsigned long)entrycount);
+printf("dadebug is_rnglistx %u attr_val %lx  \n",is_rnglistx,(unsigned long)attr_val);
+#endif
     if (is_rnglistx && attr_val >= entrycount) {
         dwarfstring m;
 
@@ -1667,7 +1738,7 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
         table_entry = attr_val*offsetsize + table_base;
         /*  No malloc here yet so no leak if the macro returns
             DW_DLV_ERROR */
-        READ_UNALIGNED_CK(dbg,table_entryval, Dwarf_Unsigned,
+        READ_UNALIGNED_CK(localdbg,table_entryval, Dwarf_Unsigned,
             table_entry,offsetsize,error,enddata);
         if (table_entryval >= secsize) {
             _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
@@ -1682,17 +1753,25 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
                 "value + section offset  is impossibly large");
             return DW_DLV_ERROR;
         }
+#ifdef DEBUG_RNGLIST
+printf("dadebug off_in_sect 0x%lx table_entryval 0x%lx\n",
+(unsigned long)rctx->rc_offsets_off_in_sect,
+(unsigned long)table_entryval);
+#endif
         rle_global_offset = rctx->rc_offsets_off_in_sect +
             table_entryval;
-
     } else {
         rle_global_offset = attr_val;
     }
+#ifdef DEBUG_RNGLIST
+printf("dadebug rle_global_offset 0x%lx\n",
+(unsigned long)rle_global_offset);
+#endif
 
     shead.rh_end_data_area = enddata;
     shead.rh_rlearea_offset = rle_global_offset;
     shead.rh_rlepointer = rle_global_offset +
-        dbg->de_debug_rnglists.dss_data;
+        localdbg->de_debug_rnglists.dss_data;
     lhead = (Dwarf_Rnglists_Head)
         _dwarf_get_alloc(dbg,DW_DLA_RNGLISTS_HEAD,1);
     if (!lhead) {
@@ -1702,11 +1781,14 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
             "dwarf_rnglists_index_get_rle_head()");
         return DW_DLV_ERROR;
     }
-    shead.rh_dbg = dbg;
+    /*  To read correctly from DWARF data we must
+        use the data in the tied (SECONDARY) when
+        applicable. This is a bit delicate. */
+    shead.rh_dbg = localdbg;
     *lhead = shead;
-    res = build_array_of_rle(dbg,lhead,error);
+    res = build_array_of_rle(localdbg,lhead,error);
     if (res != DW_DLV_OK) {
-        dwarf_dealloc(dbg,lhead,DW_DLA_RNGLISTS_HEAD);
+        dwarf_dealloc(localdbg,lhead,DW_DLA_RNGLISTS_HEAD);
         return res;
     }
     if (global_offset_of_rle_set) {
@@ -1746,9 +1828,8 @@ dwarf_rnglists_get_rle_head(
 {
     int res = 0;
     Dwarf_CU_Context ctx = 0;
-    Dwarf_CU_Context tiedctx = 0;
     Dwarf_Debug dbg = 0;
-    Dwarf_Debug localdbg = 0;
+    Dwarf_Bool     is_rnglistx = FALSE;
 
     if (!attr) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
@@ -1759,13 +1840,27 @@ dwarf_rnglists_get_rle_head(
         return DW_DLV_ERROR;
     }
     ctx = attr->ar_cu_context;
-    localdbg =  ctx->cc_dbg;
-    dbg = localdbg;
+    dbg =  ctx->cc_dbg;
+
+    if (theform == DW_FORM_rnglistx) {
+        is_rnglistx = TRUE;
+    }
+    if (dbg->de_debug_rnglists.dss_size > 0) {
+        /* leave dbg on dwo. */
+    } else if (is_rnglistx && DBG_HAS_SECONDARY(dbg)) {
+        dbg = dbg->de_secondary_dbg;
+    }
     CHECK_DBG(dbg,error,
         "dwarf_rnglists_get_rle_head() via attribute");
+#ifdef DEBUG_RNGLIST
+_dwarf_print_is_primary(" Establishing dbg for loclist",
+dbg,__LINE__,__FILE__);
+printf("dadebug get_rle_head attr_val is 0x%lx \n",
+(unsigned long)attr_val);
+#endif
 
-    res = _dwarf_load_section(localdbg,
-        &localdbg->de_debug_rnglists,
+    res = _dwarf_load_section(dbg,
+        &dbg->de_debug_rnglists,
         error);
     if (res == DW_DLV_ERROR) {
         return res;
@@ -1788,62 +1883,6 @@ dwarf_rnglists_get_rle_head(
             return res;
         }
     }
-    if (res == DW_DLV_OK) {
-        return res;
-    }
-    /*  FIXME, this may be a bit wrong. 
-        There might be .debug_rnglists and .debug_rnglists.dwo
-        but in secondary it should ref the dwo rnglists 
-        FIXME how get this right?*/
-    if (res == DW_DLV_NO_ENTRY && 
-        DBG_HAS_SECONDARY(dbg)) {
-        /*  we have data in a.out (tied-file),
-            we expect, not dwp (main_file)  */
-        localdbg = dbg->de_secondary_dbg;
-
-        if (localdbg == dbg) {
-            return DW_DLV_NO_ENTRY;
-        }
-        res = _dwarf_load_section(localdbg,
-            &localdbg->de_debug_rnglists, error);
-        if (res == DW_DLV_ERROR) {
-            return res;
-        }
-        if (res == DW_DLV_NO_ENTRY) {
-            return res;
-        }
-        dbg = localdbg;
-    }
-
-    /* dbg refers to tied file */
-    res = _dwarf_search_for_signature(dbg, ctx->cc_signature,
-        &tiedctx,error);
-    if (res == DW_DLV_NO_ENTRY) {
-        return res;
-    }
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    if (dbg != tiedctx->cc_dbg) {
-        /* something very wrong */
-        _dwarf_error_string(dbg, error,DW_DLE_RNGLISTS_ERROR,
-            "DW_DLE_RNGLISTS_ERROR: internal corruption "
-            "reading tied-file");
-        return DW_DLV_ERROR;
-    }
-    res = _dwarf_fill_in_rle_head(dbg, theform,
-        /*  attr_val is either an offset
-            (theform == DW_FORM_sec_offset)
-            to a specific rangelist entry set  or
-            or a rnglistx index DW_FORM_rnglistx
-            at that index is the local offset of
-            a specific rangelist entry set.  */
-        attr_val,
-        tiedctx,
-        head_out,
-        entries_count_out,
-        global_offset_of_rle_set,
-        error);
     return res;
 }
 

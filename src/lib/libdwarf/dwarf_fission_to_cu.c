@@ -270,9 +270,10 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
+
     cu_context->cc_rnglists_base  =
         buildhere->rc_offsets_off_in_sect;
-printf("debug set rnglists base from rc_offsetts_off_in_sectt: "
+printf("debug SET rnglists base from rc_offsetts_off_in_sectt: "
 "0x%lx lie %d\n",
 (unsigned long)cu_context->cc_rnglists_base,
 __LINE__);

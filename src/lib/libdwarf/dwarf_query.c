@@ -1325,12 +1325,17 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
     }
     if (context->cc_version_stamp == DW_CU_VERSION4 ||
         context->cc_version_stamp == DW_CU_VERSION5)  {
+#if 0   /* we do not inherit cc_rnglists_base_present */
+        /* This interitance has been removed from DWARF6
+           during 2024. */
+         
         if (!context->cc_rnglists_base_present) {
             context->cc_rnglists_base_present =
                 tiedcontext->cc_rnglists_base_present;
             context->cc_rnglists_base =
                 tiedcontext->cc_rnglists_base;
         }
+#endif
         if(!context->cc_ranges_base_present) {
             context->cc_ranges_base_present= 
                 tiedcontext->cc_ranges_base_present;

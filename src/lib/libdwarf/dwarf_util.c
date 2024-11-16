@@ -76,8 +76,8 @@ dwarf_package_version(void)
     In normal use these are not compiled or used.
     Created November 2024. */
 
-static const char *
-_dwarf_findbase(const char *full)
+const char *
+_dwarf_basename(const char *full)
 {
      const char *cp = full;
      unsigned slashat = 0;
@@ -91,7 +91,10 @@ _dwarf_findbase(const char *full)
              slashat=charnum;
          }
      }
-     return (full+slashat+1);
+     if (slashat) {
+         ++slashat; /* skip showing /(slash)  */
+     }
+     return (full+slashat);
 }
 void
 _dwarf_print_is_primary(const char *msg,
@@ -100,22 +103,27 @@ _dwarf_print_is_primary(const char *msg,
     const char *filepath)
 {
     const char *basen = 0;
-    basen = _dwarf_findbase(filepath);
+    basen = _dwarf_basename(filepath);
     if (DBG_IS_SECONDARY(p)) {
-        printf("%s SECONDARY dbg line %d %s\n",msg,line,
+        printf("%s SECONDARY dbg 0x%lx line %d %s\n",msg,
+            (unsigned long)p,
+            line,
             basen);
         fflush(stdout);
         return;
     }
     if (DBG_IS_PRIMARY(p)) {
-        printf("%s PRIMARY dbg line %d %s\n",msg,line,
+        printf("%s PRIMARY dbg 0x%lx line %d %s\n",msg,
+            (unsigned long)p,
+            line,
             basen);
         fflush(stdout);
         return;
     }
     printf("%s Error in primary/secondary. %s. "
-        "Unknown dbg line %d %s\n",
-        msg,p?"":"null dbg passed in",line,basen);
+        "Unknown dbg 0x%lx line %d %s\n",
+        msg,p?"":"null dbg passed in",
+        (unsigned long)p,line,basen);
     fflush(stdout);
 }
 void
@@ -123,7 +131,7 @@ _dwarf_dump_prim_sec(const char *msg,Dwarf_Debug p, int line,
     const char *filepath)
 {
     const char *basen = 0;
-    basen = _dwarf_findbase(filepath);
+    basen = _dwarf_basename(filepath);
     printf("%s Print Primary/Secondary data from line %d %s",
         msg,line,basen);
     _dwarf_print_is_primary(msg,p,line,filepath);
@@ -150,7 +158,7 @@ _dwarf_dump_optional_fields(const char *msg,
     const char *basen = 0;
     Dwarf_Debug dbg = 0;
 
-    basen = _dwarf_findbase(filepath);
+    basen = _dwarf_basename(filepath);
     printf("%s Optional Fields line %d %s\n", 
         msg,line,basen);
     if (!context) {
@@ -1343,7 +1351,7 @@ _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error * error)
         return res;
     }
     /*  debug_info won't be meaningful without
-        .debug_rnglists and .debug_rnglists if there
+        .debug_rnglists and .debug_loclists if there
         is one or both such sections. */
     res = dwarf_load_rnglists(dbg,0,error);
     if (res == DW_DLV_ERROR) {

@@ -79,17 +79,22 @@ print_offset_entry_table(Dwarf_Debug dbg,
     Dwarf_Unsigned goff = 0;
     Dwarf_Unsigned loff = 0;
 
-    loff = offset_of_offset_array;
-    goff = offset_of_header +loff;
+    (void)offset_of_header;
+
+    loff = 0;
+    goff = offset_of_offset_array;
     for ( ; e < offset_entry_count; ++e) {
         Dwarf_Unsigned value = 0;
 
         if (e == 0) {
-            printf("   Location Offset Table at 0x%" DW_PR_XZEROS
+            
+            printf("\n   Location Offset Table at 0x%" DW_PR_XZEROS
                 DW_PR_DUx  "\n",offset_of_offset_array);
+/*
             printf("   (Added 0x%" DW_PR_DUx
                 " to value for actual offsets)",
                 offset_of_offset_array);
+*/
 
             printf("   [goff][loff][index]\n");
         }
@@ -218,7 +223,6 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     Dwarf_Unsigned contextnumber,
     Dwarf_Unsigned offset_of_first_range,
     Dwarf_Unsigned offset_past_last_rangeentry,
-    Dwarf_Unsigned header_offset,
     Dwarf_Error *error)
 {
     /*  These offsets are rnglists section global offsets,
@@ -228,8 +232,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Unsigned ct = 0;
     int title_printed = FALSE;
-
-    Dwarf_Unsigned goff = header_offset +offset_of_first_range;
+    Dwarf_Unsigned goff = offset_of_first_range;
 
     for ( ; curoffset < endoffset; ++ct ) {
         unsigned entrylen = 0;
@@ -276,6 +279,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
+
 
 /* For printing the raw rangelist data from .debug_rnglists */
 int
@@ -372,7 +376,6 @@ print_raw_all_rnglists(Dwarf_Debug dbg,
             res = print_entire_rangeslist(dbg,i,
                 offset_of_first_rangeentry,
                 offset_past_last_rangeentry,
-                header_offset,
                 error);
             if (res != DW_DLV_OK) {
                 return res;
