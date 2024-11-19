@@ -132,6 +132,7 @@ static struct macho_sect_names_s {
     { "__debug_line_str",            ".debug_line_str" },
     { "__debug_ranges",         ".debug_ranges" },
     { "__debug_macro",          ".debug_macro" },
+    { "__debug_names",          ".debug_names" },
     { "__debug_gdb_scri",       ".debug_gdb_scripts" }
 };
 
