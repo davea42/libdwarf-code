@@ -576,7 +576,7 @@ _dwarf_pe_load_dwarf_section_headers(
                 return DW_DLV_ERROR;
             }
             if (sec_outp->VirtualSize > limit &&
-               0 == pep->pe_is_64bit ) {
+                0 == pep->pe_is_64bit ) {
                 /* Likely totally unreasonable. Bad. */
                 *errcode = DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL;
                 return DW_DLV_ERROR;
