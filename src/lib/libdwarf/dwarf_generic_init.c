@@ -80,24 +80,24 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 
 /*  The design of Dwarf_Debug_s data on --file-tied
 data and how it is used.  See also dwarf_opaque.h
-and dwarf_util.c  
+and dwarf_util.c
 
 The fields involved are
 de_dbg
-de_primary_dbg 
+de_primary_dbg
 de_secondary_dbg
 de_errors_dbg
 de_tied_data.td_tied_object
 
 On any init completing it will be considered
-    primary, Call it p1.   
+    primary, Call it p1.
     p1->de_dbg == p1
     p1->de_primary_dbg == p1
     p1->de_secondary_dbg == NULL
-        p1->de_errors_dbg == p1 
+        p1->de_errors_dbg == p1
     p1->de_tied_data.td_tied_object = 0
 Init a second object, call it p2 (settings as above).
-    
+
 Call dwarf_set_tied (p1,p2) (it is ok if p2 == NULL)
     p1 is as above except that
         p1->de_secondary_dbg == p2
@@ -109,13 +109,13 @@ Call dwarf_set_tied (p1,p2) (it is ok if p2 == NULL)
         p2->de_errors_dbg = p1
 All this is only useful if p1 has dwo/dwp sections
 (split-dwarf) and p2 has the relevant TAG_skeleton(s)
-        
+
 If px->de_secondary_dbg is non-null
     and px->secondary_dbg == px
     then px is secondary.
 
 If x->de_secondary_dbg is non-null
-    and px->secondary_dbg != px   
+    and px->secondary_dbg != px
     then px is primary.
 
 If px->de_secondary_dbg is null
@@ -125,7 +125,6 @@ If px->de_secondary_dbg is null
     Call dwarf_set_tied(p1,NULL) and both p1 and
     p2 are returned to initial conditions
     as before they were tied together. */
-
 
 static int
 set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
