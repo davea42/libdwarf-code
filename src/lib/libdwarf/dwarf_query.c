@@ -1074,7 +1074,7 @@ _dwarf_look_in_local_and_tied_by_index(
             error && dwarf_errno(*error) ==
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
             && dbg->de_tied_data.td_tied_object) {
-            /* see also DBG_HAS_SECONDARY macro */ 
+            /* see also DBG_HAS_SECONDARY macro */
             int res3 = 0;
 
             /*  We do not want to leak error structs... */
@@ -1326,9 +1326,9 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
     if (context->cc_version_stamp == DW_CU_VERSION4 ||
         context->cc_version_stamp == DW_CU_VERSION5)  {
 #if 0   /* we do not inherit cc_rnglists_base_present */
-        /* This interitance has been removed from DWARF6
-           during 2024. */
-         
+        /*  This inheritance has been removed from DWARF6
+            during 2024. */
+
         if (!context->cc_rnglists_base_present) {
             context->cc_rnglists_base_present =
                 tiedcontext->cc_rnglists_base_present;
@@ -1336,10 +1336,10 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_CU_Context context,
                 tiedcontext->cc_rnglists_base;
         }
 #endif
-        if(!context->cc_ranges_base_present) {
-            context->cc_ranges_base_present= 
+        if (!context->cc_ranges_base_present) {
+            context->cc_ranges_base_present=
                 tiedcontext->cc_ranges_base_present;
-            context->cc_ranges_base= 
+            context->cc_ranges_base=
                 tiedcontext->cc_ranges_base;
         }
     }
@@ -1521,7 +1521,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug primary_dbg,
     Dwarf_Unsigned addrtabsize = 0;
 
     if (!context->cc_signature_present) {
-        _dwarf_error(primary_dbg, error, 
+        _dwarf_error(primary_dbg, error,
             DW_DLE_NO_SIGNATURE_TO_LOOKUP);
         return  DW_DLV_ERROR;
     }
