@@ -727,7 +727,6 @@ dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-
     if (offset_value_out) {
         *offset_value_out = targetoffset;
     }
@@ -1335,7 +1334,8 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
             if (offset_in_loclists >= section_size) {
                 _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
                     "DW_DLE_LOCLISTS_ERROR: "
-                    "A DW_FORM_loclistx global offset is too large to  "
+                    "A DW_FORM_loclistx global offset "
+                    "is too large for  "
                     "the space in .debug_loclists");
                 return DW_DLV_ERROR;
             }
