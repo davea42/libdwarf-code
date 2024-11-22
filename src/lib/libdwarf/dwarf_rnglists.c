@@ -51,7 +51,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_string.h"
 #include "dwarf_rnglists.h"
 
-#define DEBUG_RNGLIST
+#define DEBUG_RNGLIST 1
 #undef DEBUG_RNGLIST
 
 #define SIZEOFT8 1
@@ -136,16 +136,24 @@ dump_rc(const char *msg,
 /*  The DWARF5 standard does not make it clear that
     there should be a rnglists_base(offset) even in a dwp object.
     DW5 says it can be in the tied-file(non-dwo), so not needed
-    in the dwp object.
+    in the dwp object. And inherited by the dwo from skeleton.
+    But DW5 is not what current compilers do.
+
+    Instead the DW6 approach says the rnglists_base is
+    not intereted.  It appears in skeleton if that is where
+    the rnglists are, or in dwo if that is where the
+    rnglists are.
+
     Table F.1 implies such is not needed.
     gcc seems to leave it off in the dwp.
-    ibase is an offset in the array of offsets in a rnglist,
-    which only makes sense for DW_FORM_rnglistx and
-    in that case there is no base offset
-    (the rnglists/loclists base_address has to be in
-    the non-dwo object as it is an address).
+    Base is an offset in the array of offsets in a rnglist,
+    which only makes sense for DW_FORM_rnglistx
+    The skeleton will need a base_offset if the rnglists
+    for the split-compile expects the rnglists to be with
+    the skeleton CU.
+
     We are dealing with DW_FORM_rnglistx here. */
-#if 0
+#if 1
 static int
 _dwarf_implicit_rnglists_base(Dwarf_Debug dbg,
     Dwarf_Unsigned indexval,
@@ -371,10 +379,11 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     Dwarf_Unsigned sum_size = 0;
 
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary("dadebug internal rnglists",dbg,__LINE__,
-__FILE__);
-printf("dadebug starting_offset 0x%lx\n",(unsigned long)starting_offset);
-fflush(stdout);
+    _dwarf_print_is_primary("dadebug internal rnglists",dbg,__LINE__,
+    __FILE__);
+    printf("dadebug starting_offset 0x%lx\n",
+    (unsigned long)starting_offset);
+    fflush(stdout);
 #endif
     secsize_dbg = dbg->de_debug_rnglists.dss_size;
     /*  Sanity checks */
@@ -395,15 +404,15 @@ fflush(stdout);
     }
     buildhere->rc_startaddr = data;
 #ifdef DEBUG_RNGLIST
-dump_bytes("dadebug bytes of arealen ",(Dwarf_Small *)data,8);
+    dump_bytes("dadebug bytes of arealen ",(Dwarf_Small *)data,8);
 #endif
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
         data,offset_size,exten_size,
         error,
         sectionlength,end_data);
 #ifdef DEBUG_RNGLIST
-printf("dadebug arealen 0x%lx\n",(unsigned long)arealen);
-fflush(stdout);
+    printf("dadebug arealen 0x%lx\n",(unsigned long)arealen);
+    fflush(stdout);
 #endif
     localoff = offset_size+exten_size;
     /* local off is bytes including length field */
@@ -428,8 +437,8 @@ fflush(stdout);
     }
     buildhere->rc_length = sum_size;
 #ifdef DEBUG_RNGLIST
-printf("dadebug rc_length 0x%lx\n",(unsigned long)sum_size);
-fflush(stdout);
+    printf("dadebug rc_length 0x%lx\n",(unsigned long)sum_size);
+    fflush(stdout);
 #endif
     buildhere->rc_dbg = dbg;
     buildhere->rc_index = contextnum;
@@ -572,12 +581,12 @@ fflush(stdout);
     data += lists_byte_len;
     buildhere->rc_offsets_off_in_sect = starting_offset+localoff;
 #ifdef DEBUG_RNGLIST
-printf("dadebug offsets in sect 0x%lx lists byte len 0x%lx "
-"starting_off 0x%lx\n",
-(unsigned long)buildhere->rc_offsets_off_in_sect,
-(unsigned long)lists_byte_len,
-(unsigned long)starting_offset);
-fflush(stdout);
+    printf("dadebug offsets in sect 0x%lx lists byte len 0x%lx "
+    "starting_off 0x%lx\n",
+    (unsigned long)buildhere->rc_offsets_off_in_sect,
+    (unsigned long)lists_byte_len,
+    (unsigned long)starting_offset);
+    fflush(stdout);
 #endif
     localoff += lists_byte_len;
     if (localoff > buildhere->rc_length) {
@@ -619,13 +628,13 @@ fflush(stdout);
     buildhere->rc_past_last_rnglist_offset =
         buildhere->rc_header_offset +buildhere->rc_length;
 #ifdef DEBUG_RNGLIST
-printf("dadebug past_last_rnglist_offset 0x%lx "
-" hdroff 0x%lx rc_length 0x%lx\n",
-(unsigned long)buildhere->rc_past_last_rnglist_offset,
-(unsigned long)buildhere->rc_header_offset,
-(unsigned long)buildhere->rc_length
-);
-fflush(stdout);
+    printf("dadebug past_last_rnglist_offset 0x%lx "
+    " hdroff 0x%lx rc_length 0x%lx\n",
+    (unsigned long)buildhere->rc_past_last_rnglist_offset,
+    (unsigned long)buildhere->rc_header_offset,
+    (unsigned long)buildhere->rc_length
+    );
+    fflush(stdout);
 #endif
 
     if (buildhere->rc_past_last_rnglist_offset > secsize_dbg) {
@@ -664,11 +673,11 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
     Dwarf_Rnglists_Context *fullarray = 0;
 
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary("dadebug load rnglists_cont",dbg,__LINE__,
-__FILE__);
-dump_bytes("dadebug load rngl contexts data",data,8);
-printf("dadebug section_size 0x%lx \n",
-(unsigned long)section_size);
+    _dwarf_print_is_primary("dadebug load rnglists_cont",dbg,__LINE__,
+    __FILE__);
+    dump_bytes("dadebug load rngl contexts data",data,8);
+    printf("dadebug section_size 0x%lx \n",
+    (unsigned long)section_size);
 #endif
 
     for (i = 0 ; data < end_data ; ++i,data = startdata+nextoffset) {
@@ -688,10 +697,10 @@ printf("dadebug section_size 0x%lx \n",
         newcontext->rc_magic = RNGLISTS_MAGIC;
 
 #ifdef DEBUG_RNGLIST
-dump_bytes("dadebug now read rnglists_hdr",data,8);
-printf("dadebug next_offset 0x%lx offset 0x%lx\n",
-(unsigned long) nextoffset,
-(unsigned long) offset);
+        dump_bytes("dadebug now read rnglists_hdr",data,8);
+        printf("dadebug next_offset 0x%lx offset 0x%lx\n",
+        (unsigned long) nextoffset,
+        (unsigned long) offset);
 #endif
         res = _dwarf_internal_read_rnglists_header(dbg, TRUE,
             chainlength,
@@ -722,7 +731,8 @@ printf("dadebug next_offset 0x%lx offset 0x%lx\n",
         plast = &(curr_chain->ch_next);
         offset = nextoffset;
 #ifdef DEBUG_RNGLIST
-printf("dadebug nextoffset->offset 0x%lx\n",(unsigned long)nextoffset);
+        printf("dadebug nextoffset->offset 0x%lx\n",
+        (unsigned long)nextoffset);
 #endif
         newcontext = 0;
     }
@@ -737,7 +747,8 @@ printf("dadebug nextoffset->offset 0x%lx\n",(unsigned long)nextoffset);
     }
     curr_chain = head_chain;
 #ifdef DEBUG_RNGLIST
-printf("dadebug count of rnglists %lu\n",(unsigned long)chainlength);
+    printf("dadebug count of rnglists %lu\n",
+    (unsigned long)chainlength);
 #endif
     for (i = 0; i < chainlength; ++i) {
         Dwarf_Chain prev = 0;
@@ -755,7 +766,8 @@ printf("dadebug count of rnglists %lu\n",(unsigned long)chainlength);
     *cxt = fullarray;
     *count = chainlength;
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary("dadebug  context_count set ",dbg,__LINE__,__FILE__);
+    _dwarf_print_is_primary("dadebug  context_count set ",
+    dbg,__LINE__,__FILE__);
 #endif
     return DW_DLV_OK;
 }
@@ -784,9 +796,10 @@ int dwarf_load_rnglists(
         if (rnglists_count) {
             *rnglists_count = dbg->de_rnglists_context_count;
 #ifdef DEBUG_RNGLIST
-printf("dadebug tet de_rnglists_context_count %lu\n",
-(unsigned long)dbg->de_rnglists_context_count);
-_dwarf_print_is_primary("dadebug context ct returned",dbg,__LINE__,__FILE__);
+            printf("dadebug tet de_rnglists_context_count %lu\n",
+            (unsigned long)dbg->de_rnglists_context_count);
+            _dwarf_print_is_primary("dadebug context ct returned",
+            dbg,__LINE__,__FILE__);
 #endif
     }
     if (rnglists_count) {
@@ -798,9 +811,9 @@ _dwarf_print_is_primary("dadebug context ct returned",dbg,__LINE__,__FILE__);
         return DW_DLV_NO_ENTRY;
     }
 #ifdef DEBUG_RNGLIST
-printf("dadebug size of rnglists loaded 0x%lx line %d %s\n",
-(unsigned long)dbg->de_debug_rnglists.dss_size,
-__LINE__,_dwarf_basename(__FILE__));
+    printf("dadebug size of rnglists loaded 0x%lx line %d %s\n",
+    (unsigned long)dbg->de_debug_rnglists.dss_size,
+    __LINE__,_dwarf_basename(__FILE__));
 #endif
     if (!dbg->de_debug_rnglists.dss_data) {
         res = _dwarf_load_section(dbg, &dbg->de_debug_rnglists,
@@ -816,9 +829,10 @@ __LINE__,_dwarf_basename(__FILE__));
     dbg->de_rnglists_context = cxt;
     dbg->de_rnglists_context_count = count;
 #ifdef DEBUG_RNGLIST
-printf("dadebug set de_rnglists_context_count %lu\n",
-(unsigned long)count);
-_dwarf_print_is_primary("dadebug context ct set, returned",dbg,__LINE__,__FILE__);
+    printf("dadebug set de_rnglists_context_count %lu\n",
+    (unsigned long)count);
+    _dwarf_print_is_primary("dadebug context ct set, returned",
+    dbg,__LINE__,__FILE__);
 #endif
     if (rnglists_count) {
         *rnglists_count = count;
@@ -850,7 +864,8 @@ _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
     dbg->de_rnglists_context = 0;
     dbg->de_rnglists_context_count = 0;
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary("dadebug context ct set zero",dbg,__LINE__,__FILE__);
+    _dwarf_print_is_primary("dadebug context ct set zero",
+    dbg,__LINE__,__FILE__);
 #endif
 }
 
@@ -871,7 +886,6 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Unsigned localoffset = 0;
     Dwarf_Unsigned globaloffset = 0;
     Dwarf_Unsigned section_size = 0;
-
 
     CHECK_DBG(dbg,error,"dwarf_get_rnglist_offset_index_value()");
     if (!dbg->de_rnglists_context) {
@@ -1187,19 +1201,19 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
     count = dbg->de_rnglists_context_count;
 
 #ifdef DEBUG_RNGLIST
-printf("dadebug rnglists_context_count %lu\n",
-(unsigned long) count);
+    printf("dadebug rnglists_context_count %lu\n",
+    (unsigned long) count);
 #endif
     if (count == 1) {
-         /*  In this case the offset is not a base offset
-             at all, so ignore it.
-             Meeting DWARF6/gcc/clang requirements */ 
-         *index = 0;
-         return DW_DLV_OK;
+        /*  In this case the offset is not a base offset
+            at all, so ignore it.
+            Meeting DWARF6/gcc/clang requirements */
+        *index = 0;
+        return DW_DLV_OK;
     }
-    /*  Using the slow way, a simple linear search.  
+    /*  Using the slow way, a simple linear search.
         Which will surely not work correctly in
-        .debug_rnglists.dwo in general... 
+        .debug_rnglists.dwo in general...
         The offset had better be a base offset for
         this to make sense. */
     if (!ctx->cc_rnglists_base_present) {
@@ -1211,10 +1225,11 @@ printf("dadebug rnglists_context_count %lu\n",
             Dwarf_Unsigned rcxend = rcxoff +
                 rcx->rc_length;
 #ifdef DEBUG_RNGLIST
-printf("dadebug rnnglists context %u offset 0x%lx rcxoff 0x%lx rcxend 0x%lx \n",
-(unsigned int)i,(unsigned long)rnglist_offset,
-(unsigned long)rcxoff,
-(unsigned long)rcxend);
+            printf("dadebug rnnglists context %u offset "
+            "0x%lx rcxoff 0x%lx rcxend 0x%lx \n",
+            (unsigned int)i,(unsigned long)rnglist_offset,
+            (unsigned long)rcxoff,
+            (unsigned long)rcxend);
 #endif
             if (rnglist_offset < rcxoff){
                 continue;
@@ -1222,7 +1237,8 @@ printf("dadebug rnnglists context %u offset 0x%lx rcxoff 0x%lx rcxend 0x%lx \n",
             if (rnglist_offset < rcxend ){
                 *index = i;
 #ifdef DEBUG_RNGLIST
-printf("Dadebug found context %u \n",(unsigned int) i);
+                printf("Dadebug found context %u \n",
+                (unsigned int) i);
 #endif
                 return DW_DLV_OK;
             }
@@ -1255,15 +1271,17 @@ printf("Dadebug found context %u \n",(unsigned int) i);
             Dwarf_Rnglists_Context rcx = array[i];
 
 #ifdef DEBUG_RNGLIST
-printf("dadebug i %u count %u off_in_sect 0x%lx lookfor 0x%lx\n",
-(unsigned )i,(unsigned)count,
-(unsigned long)rcx->rc_offsets_off_in_sect,
-(unsigned long)lookfor);
+            printf("dadebug i %u count %u off_in_sect 0x%lx "
+            "lookfor 0x%lx\n",
+            (unsigned )i,(unsigned)count,
+            (unsigned long)rcx->rc_offsets_off_in_sect,
+            (unsigned long)lookfor);
 #endif
             if (rcx->rc_offsets_off_in_sect == lookfor){
                 *index = i;
 #ifdef DEBUG_RNGLIST
-printf("dadebug FOUND, index %lu \n",(unsigned long)i);
+                printf("dadebug FOUND, index %lu \n",
+                (unsigned long)i);
 #endif
                 return DW_DLV_OK;
             }
@@ -1288,7 +1306,6 @@ printf("dadebug check continue rc offsets\n");
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        
 
         {
             dwarfstring m;
@@ -1577,6 +1594,8 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
         at that index is the local offset of
         a specific rangelist entry set.  */
     Dwarf_Unsigned attr_val,
+    /*  ctx is the context from the PRIMARY
+        dbg, not necessarily for *this* dbg */
     Dwarf_CU_Context ctx,
     Dwarf_Rnglists_Head *head_out,
     Dwarf_Unsigned      *entries_count_out,
@@ -1599,24 +1618,58 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     unsigned       offsetsize = 0;
     Dwarf_Unsigned secsize = 0;
     Dwarf_Debug    localdbg = 0;
+    Dwarf_CU_Context originalctx = 0;
 
+    originalctx = ctx;
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
+    } else {
+        offset_in_rnglists = attr_val;
     }
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_rnglists_base gives the offset
         of the array. of offsets (if cc_rnglists_base_present) */
-    offset_in_rnglists = attr_val;
     secsize = dbg->de_debug_rnglists.dss_size;
+    if (dbg != ctx->cc_dbg) {
+        /* is_rnglistx TRUE */
+        /*  Now find the correct secondary context via
+            signature. */
+        Dwarf_CU_Context lctx = 0;
+        if (ctx->cc_signature_present) {
+            /* Looking in current dbg for the correct cu context */
+            res = _dwarf_search_for_signature(dbg,
+                ctx->cc_signature,
+                &lctx,error);
+            if (res != DW_DLV_OK) {
+                if (res == DW_DLV_NO_ENTRY) {
+                } else {
+                    _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+                    "DW_DLE_RLE_ERROR: a .debug_rnglists "
+                    "cu context cannot be found with the "
+                    "correct signature");
+                }
+                return res;
+            } else {
+                ctx = lctx;
+            }
+        } else {
+            /*  No signature. Hopeless, I think. */
+            _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+                "DW_DLE_RLE_ERROR: a .debug_rnglists "
+                "cu context cannot be found as there is "
+                "no signature to use");
+            return DW_DLV_ERROR;
+        }
+    }
     if (is_rnglistx) {
         if (ctx->cc_rnglists_base_present) {
             offset_in_rnglists = ctx->cc_rnglists_base;
 #ifdef DEBUG_RNGLIST
-printf("dadebug %u ctx->cc_rnglists_base_present line %d \n",
-ctx->cc_rnglists_base_present, __LINE__);
+            printf("dadebug %u ctx->cc_rnglists_base_present "
+            "line %d \n",
+            ctx->cc_rnglists_base_present, __LINE__);
 #endif
-#if 0
-        } else  if (ctx->cc_is_dwo) {
+        } else  if (originalctx->cc_is_dwo) {
             /*  Generate a base and set as 'present'
                 by looking at the location offset
                 table that we are supposedly indexing into.
@@ -1625,6 +1678,11 @@ ctx->cc_rnglists_base_present, __LINE__);
                 Will not work with multiple rnglists! */
                 int ires = 0;
                 Dwarf_Unsigned ibase = 0;
+
+#ifdef DEBUG_RNGLIST
+                printf("dadebug base absent use implicit ? line %d\n"
+                , __LINE__);
+#endif
                 ires = _dwarf_implicit_rnglists_base(dbg,
                     attr_val,&ibase);
                 if (ires != DW_DLV_OK) {
@@ -1647,12 +1705,11 @@ ctx->cc_rnglists_base_present, __LINE__);
             ctx->cc_rnglists_base_present = TRUE;
             ctx->cc_rnglists_base         = ibase;
             offset_in_rnglists = ibase;
-#endif /* 0 */
         }
     } else {
 #ifdef DEBUG_RNGLIST
-printf("dadebug not rnglistx base 0x%lx line %d \n",
-(unsigned long)attr_val, __LINE__);
+        printf("dadebug not rnglistx base 0x%lx line %d \n",
+        (unsigned long)attr_val, __LINE__);
 #endif
         offset_in_rnglists = attr_val;
     }
@@ -1664,10 +1721,10 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
     }
     localdbg = dbg;
     if (!ctx->cc_is_dwo || ctx->cc_rnglists_base_present) {
-        /*   This call works for updated DWARF5 not inheriting
-             DW_AT_rnglists_base or generating such. 
-             It returns rangelists_context 0, which
-             works for gcc/clang. */
+        /*  This call works for updated DWARF5 not inheriting
+            DW_AT_rnglists_base or generating such.
+            It returns rangelists_context 0 if no
+            base, which works for gcc/clang. */
         res = _dwarf_which_rnglists_context(localdbg,ctx,
             offset_in_rnglists,
             &rnglists_contextnum,error);
@@ -1676,7 +1733,7 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
         }
     } else {
         /*  For DWO rnglists use gcc/clang approach  missing
-            DW_AT_rnglists_base.  
+            DW_AT_rnglists_base.
             Examples seem to have just 1 rnglists_context.*/
         rnglists_contextnum = 0;
     }
@@ -1687,8 +1744,10 @@ printf("dadebug not rnglistx base 0x%lx line %d \n",
     offsetsize = rctx->rc_offset_size;
     enddata = rctx->rc_endaddr;
 #ifdef DEBUG_RNGLIST
-printf("dadebug offset entrycount %lu  \n",(unsigned long)entrycount);
-printf("dadebug is_rnglistx %u attr_val %lx  \n",is_rnglistx,(unsigned long)attr_val);
+    printf("dadebug offset entrycount %lu  \n",
+    (unsigned long)entrycount);
+    printf("dadebug is_rnglistx %u attr_val %lx  \n",
+    is_rnglistx,(unsigned long)attr_val);
 #endif
     if (is_rnglistx && attr_val >= entrycount) {
         dwarfstring m;
@@ -1754,9 +1813,9 @@ printf("dadebug is_rnglistx %u attr_val %lx  \n",is_rnglistx,(unsigned long)attr
             return DW_DLV_ERROR;
         }
 #ifdef DEBUG_RNGLIST
-printf("dadebug off_in_sect 0x%lx table_entryval 0x%lx\n",
-(unsigned long)rctx->rc_offsets_off_in_sect,
-(unsigned long)table_entryval);
+        printf("dadebug off_in_sect 0x%lx table_entryval 0x%lx\n",
+        (unsigned long)rctx->rc_offsets_off_in_sect,
+        (unsigned long)table_entryval);
 #endif
         rle_global_offset = rctx->rc_offsets_off_in_sect +
             table_entryval;
@@ -1764,8 +1823,8 @@ printf("dadebug off_in_sect 0x%lx table_entryval 0x%lx\n",
         rle_global_offset = attr_val;
     }
 #ifdef DEBUG_RNGLIST
-printf("dadebug rle_global_offset 0x%lx\n",
-(unsigned long)rle_global_offset);
+    printf("dadebug rle_global_offset 0x%lx\n",
+    (unsigned long)rle_global_offset);
 #endif
 
     shead.rh_end_data_area = enddata;
@@ -1845,18 +1904,46 @@ dwarf_rnglists_get_rle_head(
     if (theform == DW_FORM_rnglistx) {
         is_rnglistx = TRUE;
     }
-    if (dbg->de_debug_rnglists.dss_size > 0) {
-        /* leave dbg on dwo. */
-    } else if (is_rnglistx && DBG_HAS_SECONDARY(dbg)) {
-        dbg = dbg->de_secondary_dbg;
-    }
     CHECK_DBG(dbg,error,
         "dwarf_rnglists_get_rle_head() via attribute");
+
+    if (is_rnglistx) {
+        if (ctx->cc_rnglists_base_present ||
+            dbg->de_rnglists_context_count == 1) {
+            /*  leave on primary.
+                WARNING: It is not clear whether
+                looking for a context count of 1
+                is actually correct, but it
+                seems to work. */
+        } else if (DBG_HAS_SECONDARY(dbg)){
+            dbg = dbg->de_secondary_dbg;
+            CHECK_DBG(dbg,error,
+                "dwarf_rnglists_get_rle_head() via attribute(sec)");
+        }
+    } else {
+        /*  attr_val is .debug_rnglists section global offset
+            of a range list*/
+        if (!dbg->de_debug_rnglists.dss_size ||
+            attr_val >= dbg->de_debug_rnglists.dss_size) {
+            if (DBG_HAS_SECONDARY(dbg)) {
+                dbg = dbg->de_secondary_dbg;
+                CHECK_DBG(dbg,error,
+                    "dwarf_rnglists_get_rle_head() "
+                    "via attribute(secb)");
+            } else {
+                /*  There is an error to be
+                    generated later */
+            }
+        }
+    }
+
 #ifdef DEBUG_RNGLIST
-_dwarf_print_is_primary(" Establishing dbg for loclist",
-dbg,__LINE__,__FILE__);
-printf("dadebug get_rle_head attr_val is 0x%lx \n",
-(unsigned long)attr_val);
+    _dwarf_print_is_primary(" Establishing dbg for loclist",
+    dbg,__LINE__,__FILE__);
+    printf("dadebug get_rle_head attr_val is 0x%lx \n",
+    (unsigned long)attr_val);
+    _dwarf_print_is_primary("dadebug ready to find rnglists",
+    dbg,__LINE__,__FILE__);
 #endif
 
     res = _dwarf_load_section(dbg,
@@ -1872,7 +1959,7 @@ printf("dadebug get_rle_head attr_val is 0x%lx \n",
                 to a specific rangelist entry set  or
                 or a rnglistx index DW_FORM_rnglistx
                 at that index is the local offset of
-                a specific rangelist entry set.  */
+                a specific rangelist entry set offset table.  */
             attr_val,
             ctx,
             head_out,
