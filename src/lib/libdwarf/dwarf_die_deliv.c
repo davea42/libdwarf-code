@@ -1294,7 +1294,6 @@ set_producer_type(Dwarf_Die die,
     } else if (_dwarf_prod_contains("Apple",producer)) {
         cu_context->cc_producer = CC_PROD_Apple;
     }
-
 }
 
 /*
@@ -1612,9 +1611,9 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             }
         }
     }
-    /*  Only on Apple do we let entry_pc 
+    /*  Only on Apple do we let entry_pc
         be used as base address.  */
-    if (entry_pc_attrnum >= 0 && 
+    if (entry_pc_attrnum >= 0 &&
         cucon->cc_producer == CC_PROD_Apple) {
         int battr = 0;
 
@@ -1626,7 +1625,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             base address (DW_AT_entry_pc first appears in DWARF3).
             So we allow that as an extension,
             as a 'low_pc' if there is DW_AT_entry_pc with
-            no DW_AT_low_pc. 19 May 2022. 
+            no DW_AT_low_pc. 19 May 2022.
             Also used by gcc with a DWARF4 split-dwarf extension. */
         Dwarf_Attribute attr = alist[entry_pc_attrnum];
         battr = _dwarf_setup_base_address(dbg,"DW_AT_entry_pc",
@@ -1638,7 +1637,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             _dwarf_set_children_flag(cucon,cudie);
             return battr;
         }
-    } 
+    }
     if (low_pc_attrnum >= 0 ){
         int battr = 0;
 
@@ -1746,7 +1745,9 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
         if (cu_context->cc_signature_present) {
             /*  For finding base data from skeleton.
                 For the few fields inherited
-                (per the DWARF5 standard. */
+                (per the DWARF5 standard but for
+                .debug_rnglists is not interited
+                in spite of what DW5 says). */
             res = _dwarf_find_all_offsets_via_fission(dbg,
                 cu_context,error);
             if (res == DW_DLV_ERROR) {
