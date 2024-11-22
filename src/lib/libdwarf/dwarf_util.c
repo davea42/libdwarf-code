@@ -72,33 +72,33 @@ dwarf_package_version(void)
 }
 #ifdef DEBUG_PRIMARY_DBG
 /*  These functions are helpers in printing data while
-    debugging problems.  
+    debugging problems.
     In normal use these are not compiled or used.
     Created November 2024. */
 
 const char *
 _dwarf_basename(const char *full)
 {
-     const char *cp = full;
-     unsigned slashat = 0;
-     unsigned charnum = 0;
-     
-     if (!cp) {
-         return "null-filepath";
-     }
-     for ( ; *cp; ++cp,++charnum) { 
-         if (*cp == '/') {
-             slashat=charnum;
-         }
-     }
-     if (slashat) {
-         ++slashat; /* skip showing /(slash)  */
-     }
-     return (full+slashat);
+    const char *cp = full;
+    unsigned slashat = 0;
+    unsigned charnum = 0;
+
+    if (!cp) {
+        return "null-filepath";
+    }
+    for ( ; *cp; ++cp,++charnum) {
+        if (*cp == '/') {
+            slashat=charnum;
+        }
+    }
+    if (slashat) {
+        ++slashat; /* skip showing /(slash)  */
+    }
+    return (full+slashat);
 }
 void
 _dwarf_print_is_primary(const char *msg,
-    Dwarf_Debug p, 
+    Dwarf_Debug p,
     int line,
     const char *filepath)
 {
@@ -135,13 +135,13 @@ _dwarf_dump_prim_sec(const char *msg,Dwarf_Debug p, int line,
     printf("%s Print Primary/Secondary data from line %d %s",
         msg,line,basen);
     _dwarf_print_is_primary(msg,p,line,filepath);
-    printf("  dbg.............: 0x%lx\n", 
+    printf("  dbg.............: 0x%lx\n",
         (unsigned long)p);
-    printf("  de_dbg..........: 0x%lx\n",  
+    printf("  de_dbg..........: 0x%lx\n",
         (unsigned long)p->de_dbg);
-    printf("  de_primary_dbg..: 0x%lx\n", 
+    printf("  de_primary_dbg..: 0x%lx\n",
         (unsigned long)p->de_primary_dbg);
-    printf("  de_secondary_dbg: 0x%lx\n", 
+    printf("  de_secondary_dbg: 0x%lx\n",
         (unsigned long)p->de_secondary_dbg);
     printf("  de_errors_dbg ..: 0x%lx\n",
         (unsigned long)p->de_errors_dbg);
@@ -159,7 +159,7 @@ _dwarf_dump_optional_fields(const char *msg,
     Dwarf_Debug dbg = 0;
 
     basen = _dwarf_basename(filepath);
-    printf("%s Optional Fields line %d %s\n", 
+    printf("%s Optional Fields line %d %s\n",
         msg,line,basen);
     if (!context) {
         printf(" ERROR: context not passed in \n");
@@ -228,7 +228,6 @@ _dwarf_dump_optional_fields(const char *msg,
 }
 
 #endif /* DEBUG_PRIMARY_DBG */
-
 
 #if 0 /* dump_bytes */
 static void
