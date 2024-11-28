@@ -1634,7 +1634,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     if (form == DW_FORM_loclistx || form == DW_FORM_sec_offset) {
         /* Aimed at DWARF5 and later */
         res = dwarf_global_formref_b(attr,&attr_val,
-                &offset_is_info,error);
+            &offset_is_info,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -1651,7 +1651,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             } else if (DBG_HAS_SECONDARY(dbg)){
                 dbg = dbg->de_secondary_dbg;
                 CHECK_DBG(dbg,error,
-                    "dwarf_loclists_get_lle_head() via attribute(sec)");
+                    "dwarf_loclists_get_lle_head() "
+                    "via attribute(sec)");
             }
         } else {
             /*  attr_val is .debug_loclists[.dwo]

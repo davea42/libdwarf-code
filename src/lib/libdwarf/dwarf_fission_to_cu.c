@@ -49,9 +49,9 @@
 #include "dwarf_loclists.h"
 #include "dwarf_rnglists.h"
 
-/*   RETURNS DW_DLV_OK and sets values
-     through  the return-value pointers.
-     Or returns DW_DLV_NO_ENTRY */
+/*  RETURNS DW_DLV_OK and sets values
+    through  the return-value pointers.
+    Or returns DW_DLV_NO_ENTRY */
 int
 _dwarf_has_SECT_fission(Dwarf_CU_Context ctx,
     unsigned int      SECT_number,
@@ -63,14 +63,12 @@ _dwarf_has_SECT_fission(Dwarf_CU_Context ctx,
 
     fis = &ctx->cc_dwp_offsets;
     if (fis->pcu_type && fis->pcu_size[fisindex]) {
-              *loclistsbase = fis->pcu_offset[fisindex];
-              *hasfissionoffset = TRUE;
+        *loclistsbase = fis->pcu_offset[fisindex];
+        *hasfissionoffset = TRUE;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
 }
-
-
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
     as the caller ensured that.
