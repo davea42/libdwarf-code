@@ -1003,40 +1003,21 @@ _dwarf_which_loclists_context(Dwarf_Debug dbg,
     rcx = array[i];
     rcxoff = rcx->lc_header_offset;
     rcxend = rcxoff + rcx->lc_length;
-    {
-        /* We look at the location of each loclist context
-            to find one with the offset we want */
-        for ( i = 0 ; i < count; ++i) {
-            rcx = array[i];
-            rcxoff = rcx->lc_header_offset;
-            rcxend = rcxoff +
-                rcx->lc_length;
-            rcxend = rcxoff +
-                rcx->lc_length;
-            if (chosen_offset < rcxoff){
-                continue;
-            }
-            if (chosen_offset < rcxend ){
-                *index = i;
-                return DW_DLV_OK;
-            }
+    /* We look at the location of each loclist context
+        to find one with the offset we want */
+    for ( i = 0 ; i < count; ++i) {
+        rcx = array[i];
+        rcxoff = rcx->lc_header_offset;
+        rcxend = rcxoff +
+            rcx->lc_length;
+        rcxend = rcxoff +
+            rcx->lc_length;
+        if (chosen_offset < rcxoff){
+            continue;
         }
-        {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_LOCLISTS_ERROR: loclist ran off end "
-                " finding target offset of"
-                " 0x%" DW_PR_XZEROS DW_PR_DUx ,chosen_offset);
-            dwarfstring_append(&m,
-                " Not found anywhere in .debug_loclists[.dwo] "
-                "data. Corrupted data?");
-            _dwarf_error_string(dbg,error,
-                DW_DLE_LOCLISTS_ERROR,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
+        if (chosen_offset < rcxend ){
+            *index = i;
+            return DW_DLV_OK;
         }
     }
     {
@@ -1044,10 +1025,11 @@ _dwarf_which_loclists_context(Dwarf_Debug dbg,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            "DW_DLE_LOCLISTS_ERROR: loclist base of "
+            "DW_DLE_LOCLISTS_ERROR: loclist ran off end "
+            " finding target offset of"
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,chosen_offset);
         dwarfstring_append(&m,
-            " was not found anywhere in .debug_loclists[.dwo] "
+            " Not found anywhere in .debug_loclists[.dwo] "
             "data. Corrupted data?");
         _dwarf_error_string(dbg,error,
             DW_DLE_LOCLISTS_ERROR,

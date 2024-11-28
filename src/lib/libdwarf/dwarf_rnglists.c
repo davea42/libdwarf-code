@@ -1107,38 +1107,19 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
     rcxoff = rcx->rc_header_offset;
     rcxend = rcxoff + rcx->rc_length;
 
-    {
-        /* We look at the location of each rnglist context
-            to find one with the offset we want */
-        for ( i = 0 ; i < count; ++i) {
-            rcx = array[i];
-            rcxoff = rcx->rc_header_offset;
-            rcxend = rcxoff +
-                rcx->rc_length;
-            if (chosen_offset < rcxoff){
-                continue;
-            }
-            if (chosen_offset < rcxend ){
-                *index = i;
-                return DW_DLV_OK;
-            }
+    /* We look at the location of each rnglist context
+        to find one with the offset we want */
+    for ( i = 0 ; i < count; ++i) {
+        rcx = array[i];
+        rcxoff = rcx->rc_header_offset;
+        rcxend = rcxoff +
+            rcx->rc_length;
+        if (chosen_offset < rcxoff){
+            continue;
         }
-        {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_RNGLISTS_ERROR: rnglist ran off end "
-                " finding target offset of"
-                " 0x%" DW_PR_XZEROS DW_PR_DUx ,chosen_offset);
-            dwarfstring_append(&m,
-                " Not found anywhere in .debug_rnglists[.dwo] "
-                "data. Corrupted data?");
-            _dwarf_error_string(dbg,error,
-                DW_DLE_RNGLISTS_ERROR,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
+        if (chosen_offset < rcxend ){
+            *index = i;
+            return DW_DLV_OK;
         }
     }
     {
@@ -1146,10 +1127,11 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            "DW_DLE_RNGLISTS_ERROR: rnglist base of "
+            "DW_DLE_RNGLISTS_ERROR: rnglist ran off end "
+            " finding target offset of"
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,chosen_offset);
         dwarfstring_append(&m,
-            " was not found anywhere in .debug_rnglists[.dwo] "
+            " Not found anywhere in .debug_rnglists[.dwo] "
             "data. Corrupted data?");
         _dwarf_error_string(dbg,error,
             DW_DLE_RNGLISTS_ERROR,
