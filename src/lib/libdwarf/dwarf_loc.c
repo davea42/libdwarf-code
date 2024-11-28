@@ -48,6 +48,9 @@
 #include "dwarf_loc.h"
 #include "dwarf_string.h"
 
+#define DEBUG_LOCLIST 1
+#undef DEBUG_LOCLIST
+
 static int _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Block_c * return_block,
     Dwarf_Addr * lowpc,
@@ -1588,17 +1591,21 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     Dwarf_Unsigned   * listlen_out,
     Dwarf_Error      * error)
 {
-    Dwarf_Debug dbg = 0;
-    Dwarf_Half form          = 0;
-    Dwarf_Loc_Head_c llhead  = 0;
-    Dwarf_CU_Context cucontext = 0;
-    unsigned address_size    = 0;
-    Dwarf_Half cuversionstamp       = 0;
-    Dwarf_Bool is_cu         = FALSE;
-    Dwarf_Unsigned attrnum   = 0;
-    Dwarf_Bool is_dwo        = 0;
-    int setup_res            = DW_DLV_ERROR;
-    int lkind                = 0;
+    Dwarf_Debug        dbg            = 0;
+    Dwarf_Half         form           = 0;
+    Dwarf_Loc_Head_c   llhead         = 0;
+    unsigned           address_size   = 0;
+    Dwarf_Half         cuversionstamp = 0;
+    Dwarf_Bool         is_cu          = FALSE;
+    Dwarf_Unsigned     attrnum        = 0;
+    Dwarf_Bool         is_dwo         = 0;
+    int                lkind          = 0;
+    Dwarf_CU_Context   ctx            = 0;
+    Dwarf_Bool         is_loclistx    = FALSE;
+    Dwarf_Unsigned     attr_val       = 0;
+    Dwarf_Bool         offset_is_info = TRUE;
+    int                res = 0;
+    int                setup_res = 0;
 
     if (!attr) {
         _dwarf_error_string(dbg, error,DW_DLE_ATTR_NULL,
@@ -1608,18 +1615,73 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             "dwarf_get_loclist_c()");
         return DW_DLV_ERROR;
     }
-    dbg = attr->ar_dbg;
-    CHECK_DBG(dbg,error,"dwarf_get_loclist_c()");
-
-    /* ***** BEGIN CODE ***** */
-    setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
+    setup_res = _dwarf_setup_loc(attr, &dbg,&ctx, &form, error);
     if (setup_res != DW_DLV_OK) {
         return setup_res;
     }
+
+    CHECK_DBG(dbg,error,"dwarf_get_loclist_c()");
+    if (form == DW_FORM_loclistx) {
+        is_loclistx = TRUE;
+    }
     attrnum = attr->ar_attribute;
-    cuversionstamp = cucontext->cc_version_stamp;
-    address_size = cucontext->cc_address_size;
-    is_dwo = cucontext->cc_is_dwo;
+    cuversionstamp = ctx->cc_version_stamp;
+    address_size = ctx->cc_address_size;
+    is_dwo = ctx->cc_is_dwo;
+    lkind = determine_location_lkind(cuversionstamp,
+        form, is_dwo);
+
+    if (form == DW_FORM_loclistx || form == DW_FORM_sec_offset) {
+        /* Aimed at DWARF5 and later */
+        res = dwarf_global_formref_b(attr,&attr_val,
+                &offset_is_info,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+    }
+    if (lkind == DW_LKIND_loclists) {
+        if (is_loclistx) {
+            if (ctx->cc_loclists_base_present ||
+                dbg->de_loclists_context_count == 1) {
+                /*  leave on primary.
+                    WARNING: It is not clear whether
+                    looking for a context count of 1
+                    is actually correct, but it
+                    seems to work. */
+            } else if (DBG_HAS_SECONDARY(dbg)){
+                dbg = dbg->de_secondary_dbg;
+                CHECK_DBG(dbg,error,
+                    "dwarf_loclists_get_lle_head() via attribute(sec)");
+            }
+        } else {
+            /*  attr_val is .debug_loclists[.dwo]
+                section global offset
+                of a location list*/
+            if (!dbg->de_debug_loclists.dss_size ||
+                attr_val >= dbg->de_debug_loclists.dss_size) {
+                if (DBG_HAS_SECONDARY(dbg)) {
+                    dbg = dbg->de_secondary_dbg;
+                    CHECK_DBG(dbg,error,
+                        "dwarf_loclists_get_lle_head() "
+                        "via attribute(secb)");
+                } else {
+                    /*  There is an error to be
+                        generated later */
+                }
+            }
+        }
+        res = _dwarf_load_section(dbg,
+            &dbg->de_debug_loclists,
+            error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+    }
+
+    attrnum = attr->ar_attribute;
+    cuversionstamp = ctx->cc_version_stamp;
+    address_size = ctx->cc_address_size;
+    is_dwo = ctx->cc_is_dwo;
     lkind = determine_location_lkind(cuversionstamp,
         form, is_dwo);
     if (lkind == DW_LKIND_unknown) {
@@ -1664,29 +1726,29 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     llhead->ll_attrform = (Dwarf_Half)form;
     llhead->ll_dbg = dbg;
     llhead->ll_address_size = address_size;
-    llhead->ll_offset_size = cucontext->cc_length_size;
-    llhead->ll_context = cucontext;
+    llhead->ll_offset_size = ctx->cc_length_size;
+    llhead->ll_context = ctx;
     llhead->ll_magic = LOCLISTS_MAGIC;
 
     llhead->ll_at_loclists_base_present =
-        cucontext->cc_loclists_base_present;
-    llhead->ll_at_loclists_base =  cucontext->cc_loclists_base;
+        ctx->cc_loclists_base_present;
+    llhead->ll_at_loclists_base =  ctx->cc_loclists_base;
     llhead->ll_cu_base_address_present =
-        cucontext->cc_base_address_present;
-    llhead->ll_cu_base_address = cucontext->cc_base_address;
+        ctx->cc_base_address_present;
+    llhead->ll_cu_base_address = ctx->cc_base_address;
 
-    llhead->ll_cu_addr_base_offset = cucontext->cc_addr_base_offset;
+    llhead->ll_cu_addr_base_offset = ctx->cc_addr_base_offset;
     llhead->ll_cu_addr_base_offset_present =
-        cucontext->cc_addr_base_offset_present;
+        ctx->cc_addr_base_offset_present;
 
     if (lkind == DW_LKIND_loclist ||
         lkind == DW_LKIND_GNU_exp_list) {
         int ores = 0;
         /* Here we have a loclist to deal with. */
-        ores = context_is_cu_not_tu(cucontext,&is_cu);
+        ores = context_is_cu_not_tu(ctx,&is_cu);
         if (ores != DW_DLV_OK) {
             dwarf_dealloc_loc_head_c(llhead);
-            return setup_res;
+            return ores;
         }
         ores = _dwarf_original_loclist_build(dbg,
             llhead, attr, error);
@@ -1718,7 +1780,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         int leres = 0;
 
         leres = _dwarf_loclists_fill_in_lle_head(dbg,
-            attr,llhead,error);
+            attr,form,attr_val,llhead,error);
         if (leres != DW_DLV_OK) {
             dwarf_dealloc_loc_head_c(llhead);
             return leres;

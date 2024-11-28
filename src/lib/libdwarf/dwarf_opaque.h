@@ -1201,6 +1201,13 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
     Dwarf_Bool * offset_is_info,
     Dwarf_Error * error);
 
+int
+_dwarf_has_SECT_fission(Dwarf_CU_Context ctx,
+    unsigned int      SECT_number, /* example: DW_SECT_RNGLISTS */
+    Dwarf_Bool       *hasfissionoffset,
+    Dwarf_Unsigned   *loclistsbase);
+
+
 int _dwarf_skip_leb128(char * leb,
     Dwarf_Unsigned * leblen,
     char           * endptr);

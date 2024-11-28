@@ -253,6 +253,8 @@ void _dwarf_loclists_head_destructor(void *l);
 
 int _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     Dwarf_Attribute attr,
+    Dwarf_Half theform,
+    Dwarf_Unsigned attr_val,
     Dwarf_Loc_Head_c llhead,
     Dwarf_Error *error);
 

@@ -990,7 +990,7 @@ _dwarf_internal_global_formref_b(Dwarf_Attribute attr,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            "DW_DLE_BAD_REF_FORM: The form code is 0x%x ",
+            "DW_DLE_BAD_REF_FORM: The form code is 0x%x.. ",
             formcode);
         fcres  = dwarf_get_FORM_name (formcode,&name);
         if (fcres != DW_DLV_OK) {
