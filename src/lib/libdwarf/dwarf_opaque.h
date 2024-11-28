@@ -73,7 +73,7 @@
 #define DBG_IS_SECONDARY(p) ((p) && (p)->de_secondary_dbg &&   \
     ((p)->de_secondary_dbg == (p)))
 #define DBG_IS_PRIMARY(p) ((p) && ((!(p)->de_secondary_dbg) ||  \
-    ((p)->de_secondary_dbg && ((p)->de_secondary_dbg != (p))))) 
+    ((p)->de_secondary_dbg && ((p)->de_secondary_dbg != (p)))))
 #define DBG_HAS_SECONDARY(p) (DBG_IS_PRIMARY(p) && \
     (DBG_IS_SECONDARY((p)->de_secondary_dbg)))
 
@@ -95,7 +95,6 @@ _dwarf_dump_optional_fields(const char *msg,
     int line,
     const char *filepath);
 #endif /* DEBUG_PRIMARY_DBG */
-
 
 struct Dwarf_Rnglists_Context_s;
 typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;
@@ -638,7 +637,7 @@ struct Dwarf_Debug_s {
     struct Dwarf_Obj_Access_Interface_a_s *de_obj_file;
 
     /*  See dwarf_generic_init.c comments on the
-        use of the next four fields. And see 
+        use of the next four fields. And see
         DBG_IS_SECONDARY(p) DBG_IS_PRIMARY(p)
         DBG_HAS_SECONDARY(p) below and  also dwarf_util.c */
     struct Dwarf_Debug_s * de_dbg;
@@ -1206,7 +1205,6 @@ _dwarf_has_SECT_fission(Dwarf_CU_Context ctx,
     unsigned int      SECT_number, /* example: DW_SECT_RNGLISTS */
     Dwarf_Bool       *hasfissionoffset,
     Dwarf_Unsigned   *loclistsbase);
-
 
 int _dwarf_skip_leb128(char * leb,
     Dwarf_Unsigned * leblen,
