@@ -1,3 +1,291 @@
+2024-11-29:  David Anderson
+    commit 0f640f587a66277961bda4aabb44d6637a406f5d
+
+    Added release of 1 Dec 2024
+            modified:   README.md
+
+2024-11-28:  David Anderson
+    commit 046aca5f5a5f1fa161752cbc3f87ca0de702bb02
+
+    Fixed an indent.
+            modified:   dwarf_errmsg_list.h
+    Removde trailing whitespace.
+            modified:   dwarf_opaque.h
+
+2024-11-28:  David Anderson
+    commit 3b2303c76806958cd8e8430b8db1dc034da8d55d
+
+    Coverity scan noted two blocks of
+    structurally dead code in two pretty much
+    identical cases.
+    _dwarf_which_loclists_context
+    _dwarf_which_rnglists_context
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+    Renoved the dead code and realigned the lines
+    to avoid useless indentation.
+
+2024-11-28:  David Anderson
+    commit fc51f91e8a28a1f0d2625f8e962f1c2c176daf29
+
+    Fixing too-long lines and indent mistakes and
+    trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+    Also removed #if 0 dead code.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-11-28:  David Anderson
+    commit 716db1eee00862c53e6185c8776cbcf6cf55410c
+
+    New internal function _dwarf_has_SECT_fission
+    to unify access .debug_cu/tu_* sections for .debug_rnglilsts
+    and .debug_loclists.
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+    Added prototype for the function.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Corrected an error report string to ensure it is not identical
+    to another report here.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    Significan correction for DWARF5 loclists
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+    Slight modification of library internal function
+    prototype.
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Significan correction for DWARF5 rnglists
+    Now rnglists and loclists handling is as similar
+    as possible (or close to it).
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-11-22:  David Anderson
+    commit b27b8cbc675db87b4810846c3fdb8e1ffaf3c6e1
+
+    Made the fix for github issue 270
+    about .debug_rnglists in DWARF5.
+            modified:   dwarf_rnglists.c
+
+2024-11-22:  David Anderson
+    commit 46c4ebea1a8a66d8a3baddb9cdf3947c214ad4e5
+
+    Corrected trailing whitespace and indents.
+            modified:   dwarf_query.c
+
+2024-11-22:  David Anderson
+    commit 48f0da072578076b9f25472cca79609efaa9631a
+
+    Corrected indent mistakes.
+            modified:   dwarf_util.c
+
+2024-11-22:  David Anderson
+    commit 324bdd94517465e7d85fdcd1307db2a0e0a7c5ec
+
+    Correcting trailing whitespace.
+            modified:   dwarf_generic_init.c
+
+2024-11-22:  David Anderson
+    commit 78ef7b939eb1bf241e29c918f45a4b4c31ea1469
+
+    Fixing trailing whitespace.
+            modified:   dwarf_init_finish.c
+
+2024-11-22:  David Anderson
+    commit dd1ed5fd203856cf21555484b74a7714506a3519
+
+    Correcting indents, trailing whitespace and a too-long line.
+            modified:   dwarf_die_deliv.c
+
+2024-11-22:  David Anderson
+    commit 3be32bb07bbef37e656d3f485d90d45f529a4521
+
+    Corrected an indent mistake.
+            modified:   dwarf_peread.c
+
+2024-11-22:  David Anderson
+    commit 87d534479414c2a43d96fccf60e3203e3172e269
+
+    Adjusting line length to match CODINGSTYLE
+            modified:   dwarf_loclists.c
+
+2024-11-21:  Jeremy Rifkin
+    commit 9a9d1725889f679ca3f0f67a0caadffd5b90e271
+
+    Add an export set (#268)
+
+2024-11-19:  David Anderson
+    commit e88395d8f86770dc6a5ec66fedec62438634ab1e
+
+    Adding  __debug_names to .debug_names
+    though it is unclear of Apple generates that section.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-11-19:  David Anderson
+    commit a7a83e3ef56e68ef2db8699b0fc25cba8740fa92
+
+    DWARF5 MacOS objects have new sections.
+    Adding the name translations so they are seen.
+    +    { "__debug_addr",           ".debug_addr" },
+    +    { "__debug_rnglists",           ".debug_rnglists" },
+    +    { "__debug_loclists",           ".debug_loclists" },
+    +    { "__debug_str_offs",            ".debug_str_offsets" },
+    +    { "__debug_line_str",            ".debug_line_str" },
+
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-11-16:  David Anderson
+    commit de25355d90730eae2e56ecd7aeaa49de87a81480
+
+    Now with all the rnglists fixes in place.
+            modified:   ChangeLog
+
+2024-11-29:  David Anderson
+    commit 0f640f587a66277961bda4aabb44d6637a406f5d
+
+    Added release of 1 Dec 2024
+            modified:   README.md
+
+2024-11-28:  David Anderson
+    commit 046aca5f5a5f1fa161752cbc3f87ca0de702bb02
+
+    Fixed an indent.
+            modified:   dwarf_errmsg_list.h
+    Removde trailing whitespace.
+            modified:   dwarf_opaque.h
+
+2024-11-28:  David Anderson
+    commit 3b2303c76806958cd8e8430b8db1dc034da8d55d
+
+    Coverity scan noted two blocks of
+    structurally dead code in two pretty much
+    identical cases.
+    _dwarf_which_loclists_context
+    _dwarf_which_rnglists_context
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+    Renoved the dead code and realigned the lines
+    to avoid useless indentation.
+
+2024-11-28:  David Anderson
+    commit fc51f91e8a28a1f0d2625f8e962f1c2c176daf29
+
+    Fixing too-long lines and indent mistakes and
+    trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+    Also removed #if 0 dead code.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-11-28:  David Anderson
+    commit 716db1eee00862c53e6185c8776cbcf6cf55410c
+
+    New internal function _dwarf_has_SECT_fission
+    to unify access .debug_cu/tu_* sections for .debug_rnglilsts
+    and .debug_loclists.
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+    Added prototype for the function.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Corrected an error report string to ensure it is not identical
+    to another report here.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    Significan correction for DWARF5 loclists
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+    Slight modification of library internal function
+    prototype.
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Significan correction for DWARF5 rnglists
+    Now rnglists and loclists handling is as similar
+    as possible (or close to it).
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-11-22:  David Anderson
+    commit b27b8cbc675db87b4810846c3fdb8e1ffaf3c6e1
+
+    Made the fix for github issue 270
+    about .debug_rnglists in DWARF5.
+            modified:   dwarf_rnglists.c
+
+2024-11-22:  David Anderson
+    commit 46c4ebea1a8a66d8a3baddb9cdf3947c214ad4e5
+
+    Corrected trailing whitespace and indents.
+            modified:   dwarf_query.c
+
+2024-11-22:  David Anderson
+    commit 48f0da072578076b9f25472cca79609efaa9631a
+
+    Corrected indent mistakes.
+            modified:   dwarf_util.c
+
+2024-11-22:  David Anderson
+    commit 324bdd94517465e7d85fdcd1307db2a0e0a7c5ec
+
+    Correcting trailing whitespace.
+            modified:   dwarf_generic_init.c
+
+2024-11-22:  David Anderson
+    commit 78ef7b939eb1bf241e29c918f45a4b4c31ea1469
+
+    Fixing trailing whitespace.
+            modified:   dwarf_init_finish.c
+
+2024-11-22:  David Anderson
+    commit dd1ed5fd203856cf21555484b74a7714506a3519
+
+    Correcting indents, trailing whitespace and a too-long line.
+            modified:   dwarf_die_deliv.c
+
+2024-11-22:  David Anderson
+    commit 3be32bb07bbef37e656d3f485d90d45f529a4521
+
+    Corrected an indent mistake.
+            modified:   dwarf_peread.c
+
+2024-11-22:  David Anderson
+    commit 87d534479414c2a43d96fccf60e3203e3172e269
+
+    Adjusting line length to match CODINGSTYLE
+            modified:   dwarf_loclists.c
+
+2024-11-21:  Jeremy Rifkin
+    commit 9a9d1725889f679ca3f0f67a0caadffd5b90e271
+
+    Add an export set (#268)
+
+2024-11-19:  David Anderson
+    commit e88395d8f86770dc6a5ec66fedec62438634ab1e
+
+    Adding  __debug_names to .debug_names
+    though it is unclear of Apple generates that section.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-11-19:  David Anderson
+    commit a7a83e3ef56e68ef2db8699b0fc25cba8740fa92
+
+    DWARF5 MacOS objects have new sections.
+    Adding the name translations so they are seen.
+    +    { "__debug_addr",           ".debug_addr" },
+    +    { "__debug_rnglists",           ".debug_rnglists" },
+    +    { "__debug_loclists",           ".debug_loclists" },
+    +    { "__debug_str_offs",            ".debug_str_offsets" },
+    +    { "__debug_line_str",            ".debug_line_str" },
+
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2024-11-16:  David Anderson
+    commit de25355d90730eae2e56ecd7aeaa49de87a81480
+
+    Now with all the rnglists fixes in place.
+            modified:   ChangeLog
+
 2024-11-16:  David Anderson
     commit 577159d68854f11e58821cc8d42c4f9e547f7cc0
 
