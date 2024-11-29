@@ -1,6 +1,6 @@
 # This is libdwarf README.md
 
-Updated 02 April 2024
+Updated 29 November 2024
 
 ## Goal
 Libdwarf has been focused for years
@@ -28,14 +28,12 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
-    Version 0.10.1 Released 01 July      2024.
-    Version 0.9.2 Released  02 April     2024.
-    Version 0.9.1 Released  27 January   2024.
-    Version 0.9.0 Released  8  December  2023.
-    Version 0.8.0 Released  20 September 2023.
-    Version 0.7.0 Released  20 May       2023.
-    Version 0.6.0 Released  20 February  2023.
-    Version 0.5.0 Released  22 November  2022.
+    Version 0.11.1 Released  1 December  2024.
+    Version 0.11.0 Released 15 August    2024.
+    Version 0.10.1 Released  1 July      2024.
+    Version 0.9.2  Released  2 April     2024.
+    Version 0.9.1  Released 27 January   2024.
+    Version 0.9.0  Released  8 December  2023.
 
 ## NOTE on linking against libdwarf.a
 
@@ -313,6 +311,17 @@ a build and then
     make distcheck
 
 # INCOMPATIBILITIES. Changes to interfaces
+
+### Comparing libdwarf-0.11.0 to libdwarf-0.9.1
+
+Added  dwarf_get_ranges_baseaddress() to the API.
+
+### Comparing libdwarf-0.9.1 to libdwarf-0.9.0
+
+Altered the type of the return value of
+dwarf_die_abbrev_code() and dwarf_get_section_count()
+from int to Dwarf_Unsigned for consistency (should always
+have been this way).
 
 ### Comparing libdwarf-0.9.0 to libdwarf-0.8.0
 
