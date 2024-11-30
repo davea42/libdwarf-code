@@ -87,15 +87,9 @@ print_offset_entry_table(Dwarf_Debug dbg,
         Dwarf_Unsigned value = 0;
 
         if (e == 0) {
-            
+
             printf("\n   Location Offset Table at 0x%" DW_PR_XZEROS
                 DW_PR_DUx  "\n",offset_of_offset_array);
-/*
-            printf("   (Added 0x%" DW_PR_DUx
-                " to value for actual offsets)",
-                offset_of_offset_array);
-*/
-
             printf("   [goff][loff][index]\n");
         }
         hasnewline = FALSE;
@@ -279,7 +273,6 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
 
 /* For printing the raw rangelist data from .debug_rnglists */
 int
