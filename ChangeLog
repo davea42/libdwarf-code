@@ -1,3 +1,67 @@
+2024-12-05:  David Anderson
+    commit 1aeca15e1c8ab3032ed298c46fe57126fb6bb103
+
+    Updating version to 0.11.2 for today's commits.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2024-12-05:  David Anderson
+    commit cb0e3bde2eaa1c3edb3b810e7ecca7f23316ff59
+
+    Regenerated with DW202409-001   oss fuzz 42538203 data.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-12-05:  David Anderson
+    commit 504ff2ae1a85ccc8e71c2dae6e1f40993467b9fa
+
+    Fixing DW202409-001   oss fuzz 42538203
+    This bug has been present since the source file was
+    crated in 2021.
+    There were several fields in the object file
+    being read in the .debug_cu_index
+    and .debug_tu_index sections that
+    were never checked for sanity or correctness.
+    Now they are checked.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2024-12-05:  David Anderson
+    commit a4aeb85754742a8d1c2f4dba31a13fc4c60ee1a9
+
+    Documenting DW202409-001   oss fuzz 42538203
+            modified:   bugxml/data.txt
+    Updating date/version Dec 9, 0.11.2
+            modified:   doc/libdwarf.dox
+    Adding detail to the doxygen for
+    dwarf_get_xu_section_offset().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-02:  David Anderson
+    commit 909af3e46b68335df6c4a901ddd256ffa0d193d2
+
+    One line changes each month. Now December
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-11-30:  David Anderson
+    commit 46f94a7fb291e5eeb9f9ba60c8b75ab00e45cfd6
+
+    Fix trailing white space and indents per
+    CODINGSTYLE.md.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2024-11-29:  David Anderson
+    commit f1a608dabe832c298a062c066d9f4fb7f8012c44
+
+    Up to date now, for release.
+            modified:   ChangeLog
+
 2024-11-29:  David Anderson
     commit 0f640f587a66277961bda4aabb44d6637a406f5d
 
