@@ -1,3 +1,25 @@
+id: DW202409-001
+fuzzer: ossfuzz id: 42538203
+datereported: 2024-09-11
+reportedby: David Korczynski
+vulnerability:  Crash or invalid data reading fuzzed object
+product: libdwarf
+description: Reading from address zero due to a lack of
+  checking data for sanity as read from a fuzzed object.
+  This bug in  dwarf_get_xu_section_offset()
+  has been present since the code was created in 2021.
+  There was no proper check for a usable dw_column_index as
+  well as other fields from the .debug_tu_index and
+  .debug_cu_index sections.
+  Could result in a crash (segv) or possibly just invalid data
+  being returned, depending on the contents and layout of memory.
+  No report of this issue arrived at libdwarf HQ until December 3,
+  2024. 
+datefixed: 2024-12-05
+references: regressiontests/ossfuzz42538203/fuzz_findfuncbypc-5117956621664256
+gitfixid: 
+tarrelease:
+endrec: DW202409-001
 
 id: DW202407-012
 fuzzer: ossfuzz id: 70763

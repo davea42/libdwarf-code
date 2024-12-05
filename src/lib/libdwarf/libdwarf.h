@@ -8214,7 +8214,7 @@ DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header dw_xuhdr,
     On success returns DW_SECT_INFO or other section
     id as appears in dw_column_index.
     @param dw_SECT_name
-    On success returns a pointer to the string for
+    On success returns a pointer to the string
     with the section name.
     @param dw_error
     The usual pointer to return error details.
@@ -8229,6 +8229,10 @@ DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header dw_xuhdr,
 
 /*! @brief Get row data (section data) for a row and column
 
+    The section offset represents a base offset for
+    the section the row data refers to. 
+    DWARF6 Section 7.3.5.3 page 193.
+
     @param dw_xuhdr
     Pass in an open header pointer.
     @param dw_row_index
@@ -8242,7 +8246,10 @@ DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header dw_xuhdr,
     @param dw_sec_size
     On success returns the section size of
     the section whose name dwarf_get_xu_section_names
-    returns.
+    returns. If the returned section size is zero
+    then this column makes no contribution to the dwp
+    object file and the dw_sec_size and dw_sec_offset
+    shoul be ignored.
     @param dw_error
     The usual pointer to return error details.
     @return
