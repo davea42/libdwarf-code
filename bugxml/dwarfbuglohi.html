@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 189 </p>
+<p> Record count: 190 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6251,6 +6251,39 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: 1b79d618bf5aab2bda9be495c531b13e94ae056a
 </p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202409-001">190) DW202409-001</h3>
+<p>id: DW202409-001
+</p>
+<p>cve:</p>
+<p>fuzzer: ossfuzz id: 42538203
+</p>
+<p>datereported: 2024-09-11
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Crash or invalid data reading fuzzed object
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Reading from address zero due to a lack of
+  checking data for sanity as read from a fuzzed object.
+  This bug in  dwarf_get_xu_section_offset()
+  has been present since the code was created in 2021.
+  There was no proper check for a usable dw_column_index as
+  well as other fields from the .debug_tu_index and
+  .debug_cu_index sections.
+  Could result in a crash (segv) or possibly just invalid data
+  being returned, depending on the contents and layout of memory.
+  No report of this issue arrived at libdwarf HQ until December 3,
+  2024.
+</p>
+<p>datefixed: 2024-12-05
+</p>
+<p>references: regressiontests/ossfuzz42538203/fuzz_findfuncbypc-5117956621664256
+</p>
+<p>gitfixid:</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
