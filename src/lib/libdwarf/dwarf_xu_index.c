@@ -67,6 +67,7 @@
 #include <config.h>
 
 #include <string.h>  /* memcmp() memcpy() strcmp() */
+#include <stdio.h>  /*  for printf (debugging) */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -186,7 +187,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     Dwarf_Unsigned num_secs  = 0;
     Dwarf_Unsigned num_CUs  = 0;
     Dwarf_Unsigned num_slots  = 0;
-    Dwarf_Small *data = 0;
+    Dwarf_Small   *data = 0;
     Dwarf_Unsigned tables_end_offset = 0;
     Dwarf_Unsigned hash_tab_offset = 0;
     Dwarf_Unsigned indexes_tab_offset = 0;
@@ -209,7 +210,9 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     } else if (!strcmp(section_type,"tu") ) {
         sect = &dbg->de_debug_tu_index;
     } else {
-        _dwarf_error(dbg, error, DW_DLE_XU_TYPE_ARG_ERROR);
+        _dwarf_error_string(dbg, error, DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR, Passed in section type "
+            "is neither \"tu\" nor \"cu\"");
         return DW_DLV_ERROR;
     }
     if (!sect->dss_size) {
@@ -247,8 +250,23 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
         data,datalen32,
         error,section_end);
     data += datalen32;
+    if (local_version < DW_CU_VERSION2 ||
+        local_version > DW_CU_VERSION5) {
+        /*  A GNU extension allowed debug_fission to
+            apply to DWARF4, and even down to...DWARF2! */
+        dwarfstring m;
 
-    /* reading N */
+        dwarfstring_constructor(&m);
+
+        dwarfstring_append_printf_u(&m,"DW_DLE_XU_NAME_COL_ERROR: "
+            "The CU/TU Index Section version is %u ",local_version);
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+
+    /* reading N, section_count */
     READ_UNALIGNED_CK(dbg,num_secs, Dwarf_Unsigned,
         data,datalen32,
         error,section_end);
@@ -271,12 +289,21 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     data += datalen32;
-    /* reading U */
+    /*  Reading U, unit_count, compilation-units or type-units
+        depending on cu or tu */
     READ_UNALIGNED_CK(dbg,num_CUs, Dwarf_Unsigned,
         data,datalen32,
         error,section_end);
     data += datalen32;
-    /* reading S */
+    if (num_CUs >= sect->dss_size ||
+        (num_CUs/datalen32) >= sect->dss_size) {
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+            "dbg,error,DW_DLE_XU_NAME_COL_ERROR: "
+            "The CU/TU Index Section header unit count "
+            "is too large to be real. Corrupt DWARF\n");
+        return DW_DLV_ERROR;
+    }
+    /* reading S, slot_count, slots in the hash table */
     READ_UNALIGNED_CK(dbg,num_slots, Dwarf_Unsigned,
         data,datalen32,
         error,section_end);
@@ -493,7 +520,6 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     READ_UNALIGNED_CK(dbg,indexval,Dwarf_Unsigned, indexentry,
         SIZEOFT32,
         error,section_end);
-    indexentry += SIZEOFT32;
     if (indexval > xuhdr->gx_units_in_index) {
         _dwarf_error(dbg, error,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
@@ -508,12 +534,111 @@ static const char * dwp_secnames[] = {
 "DW_SECT_TYPES"       /* 2 */ /*".debug_types.dwo"*/,
 "DW_SECT_ABBREV"      /* 3 */ /*".debug_abbrev.dwo"*/,
 "DW_SECT_LINE"        /* 4 */ /*".debug_line.dwo"*/,
-"DW_SECT_LOC"         /* 5 */ /*".debug_loc.dwo"*/,
+"DW_SECT_LOC"         /* 5 */ /*".debug_loclists.dwo"*/,
 "DW_SECT_STR_OFFSETS" /* 6 */ /*".debug_str_offsets.dwo"*/,
 "DW_SECT_MACRO"       /* 7 */ /*".debug_macro.dwo"*/,
 "DW_SECT_RNGLISTS"       /* 8 */ /*".debug_rnglists.dwo"*/,
 "No name > 8",
 };
+
+static int
+_dwarf_find_xu_target_sec_size(Dwarf_Debug dbg,
+    Dwarf_Xu_Index_Header xuhdr,
+    Dwarf_Unsigned  column_index,
+    Dwarf_Unsigned  *target_sec_size,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned sec_num = 0;
+    struct  Dwarf_Section_s *secptr = 0;
+
+    if ( column_index >= xuhdr->gx_column_count_sections) {
+        dwarfstring s;
+
+        dwarfstring_constructor(&s);
+        dwarfstring_append_printf_u(&s,
+            "ERROR: DW_DLE_XU_NAME_COL_ERROR as the "
+            "column index of %u ",column_index);
+        dwarfstring_append_printf_u(&s," is too high. "
+            "There are %u sections.",
+            xuhdr->gx_column_count_sections);
+        _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
+            dwarfstring_string(&s));
+        dwarfstring_destructor(&s);
+        return DW_DLV_ERROR;
+    }
+    sec_num = xuhdr->gx_section_id[column_index];
+    switch(sec_num) {
+    case DW_SECT_INFO:
+        secptr = &dbg->de_debug_info;
+        break;
+    case DW_SECT_TYPES:
+        secptr = &dbg->de_debug_types;
+        break;
+    case DW_SECT_ABBREV:
+        secptr = &dbg->de_debug_abbrev;
+        break;
+    case DW_SECT_LINE:
+        secptr = &dbg->de_debug_line;
+        break;
+    case DW_SECT_LOCLISTS:
+        /* May not be loaded */
+        if (xuhdr->gx_version < DW_CU_VERSION5) {
+            secptr = &dbg->de_debug_loc;
+        } else {
+            secptr = &dbg->de_debug_loclists;
+        }
+        break;
+    case DW_SECT_STR_OFFSETS:
+        /* May not be loaded */
+        secptr = &dbg->de_debug_str_offsets;
+        break;
+    case DW_SECT_MACRO:
+        /* May not be loaded */
+        secptr = &dbg->de_debug_str_offsets;
+        break;
+    case DW_SECT_RNGLISTS:
+        /* May not be loaded */
+        if (xuhdr->gx_version < DW_CU_VERSION5) {
+            secptr = &dbg->de_debug_ranges;
+        } else {
+            secptr = &dbg->de_debug_rnglists;
+        }
+        break;
+    default:
+        {
+            dwarfstring s;
+
+            dwarfstring_constructor(&s);
+            dwarfstring_append_printf_u(&s,
+                "DW_DLE_XU_NAME_COL_ERROR the .debug_cu/tu_index "
+                "section has an unexpected DW_SECT  number "
+                "of %u.",sec_num);
+            _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+                dwarfstring_string(&s));
+            dwarfstring_destructor(&s);
+            return DW_DLV_ERROR;
+        }
+    }
+    if (!secptr->dss_size) {
+        int res = 0;
+
+        /*  Perhaps the section not yet loaded. */
+        res = _dwarf_load_section(dbg,secptr,error);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+            return DW_DLV_NO_ENTRY;
+        } else {
+            if (res == DW_DLV_NO_ENTRY) {
+                /*  Sometimes GNU extension ( DWARF2-4)
+                    is simply missing a section named in fission */
+                return res;
+            }
+        }
+    }
+    *target_sec_size =secptr->dss_size;
+    return DW_DLV_OK;
+}
 
 /*  Row 0 of the Table of Section Offsets,
     columns 0 to N-1,  are the section id's,
@@ -560,35 +685,51 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     return DW_DLV_OK;
 }
 
+static Dwarf_Bool
+_dwarf_valid_col_index(Dwarf_Unsigned i,Dwarf_Unsigned count)
+{
+    if (i > count) {
+        return FALSE;
+    }
+    return TRUE;
+}
 /*  Rows 0 to U-1
     col 0 to L-1
     are section offset and length values from
     the Table of Section Offsets and Table of Section Sizes.
     The formally the table of section offsets is a header
     line of the section offsets we subtract 1 from
-    the incoming irow_index as our tables are
-    now zero origin. */
+    the incoming irow_index as our tables (irow_index and
+    column_index are now zero origin. */
 int
 dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
-    Dwarf_Unsigned  irow_index,
-    Dwarf_Unsigned  column_index,
+    Dwarf_Unsigned  irow_index  /* one-origin */,
+    Dwarf_Unsigned  column_index/* zero-origin */,
     Dwarf_Unsigned *sec_offset,
     Dwarf_Unsigned *sec_size,
     Dwarf_Error    *error)
 {
     /* We use zero origin in the arrays, Users see
         one origin from the hash table. */
-    Dwarf_Debug dbg = 0;
+    Dwarf_Debug    dbg = 0;
     /* get to base of tables first. */
-    Dwarf_Small *offsetrow =  0;
-    Dwarf_Small *sizerow =  0;
-    Dwarf_Small *offsetentry = 0;
-    Dwarf_Small *sizeentry =  0;
+    Dwarf_Small   *offsetrow =  0;
+    Dwarf_Small   *sizerow =  0;
+    Dwarf_Small   *offsetentry = 0;
+    Dwarf_Small   *sizeentry =  0;
     Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned column_count = 0;
-    Dwarf_Small *section_end = 0;
+    Dwarf_Small   *section_end = 0;
     Dwarf_Unsigned row_index = irow_index-1;
+    Dwarf_Unsigned secsize = 0;
+    /*  These 4 are to help in sanity checks.*/
+    Dwarf_Unsigned ofrow = 0;
+    Dwarf_Unsigned ofentry = 0;
+    Dwarf_Unsigned sirow = 0;
+    Dwarf_Unsigned sientry = 0;
+    int            res     = 0;
+    Dwarf_Unsigned target_sec_size;
 
     if (!xuhdr) {
         _dwarf_error_string(0,error,DW_DLE_XU_TYPE_ARG_ERROR,
@@ -596,7 +737,6 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
             "Dwarf_Xu_Index_Header pointer is null");
         return DW_DLV_ERROR;
     }
-/* FIXME */
     dbg = xuhdr->gx_dbg;
     CHECK_DBG(dbg,error,"dwarf_get_xu_section_offset()");
     sizerow =  xuhdr->gx_section_sizes_offset +
@@ -604,7 +744,21 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     offsetrow =  xuhdr->gx_section_offsets_offset +
         xuhdr->gx_section_data;
     column_count = xuhdr->gx_column_count_sections;
-    section_end = xuhdr->gx_section_data + xuhdr->gx_section_length;
+    secsize =  xuhdr->gx_section_length;
+    section_end = xuhdr->gx_section_data +
+        xuhdr->gx_section_length;
+    if (!_dwarf_valid_col_index(column_index,column_count)) {
+        dwarfstring s;
+
+        dwarfstring_constructor(&s);
+        dwarfstring_append_printf_u(&s,"DW_DLE_XU_TYPE_ARG_ERROR: "
+            " dwarf_get_xu_section_offset was passed an invalid"
+            " cu/tu column index of %u",column_index);
+        _dwarf_error_string(dbg,error,DW_DLE_XU_TYPE_ARG_ERROR,
+            dwarfstring_string(&s));
+        dwarfstring_destructor(&s);
+        return DW_DLV_ERROR;
+    }
 
     if (!irow_index) {
         dwarfstring s;
@@ -621,6 +775,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
     }
+    /*  Having subtracted 1, check the zero-origin value */
     if (row_index >= xuhdr->gx_units_in_index) {
         dwarfstring s;
 
@@ -636,7 +791,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         return DW_DLV_ERROR;
     }
 
-    if (column_index >=  xuhdr->gx_column_count_sections) {
+    if (column_index >= column_count) {
         dwarfstring s;
 
         dwarfstring_constructor(&s);
@@ -645,7 +800,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
             "column index of %u ",column_index);
         dwarfstring_append_printf_u(&s," is too high. "
             "Valid column indexes  must be < %u ",
-            xuhdr->gx_column_count_sections);
+            column_count);
         _dwarf_error_string(dbg, error, DW_DLE_XU_NAME_COL_ERROR,
             dwarfstring_string(&s));
         dwarfstring_destructor(&s);
@@ -654,12 +809,39 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     /*  As noted above we have hidden the extra initial
         row from the offsets table so it is just
         0 to U-1. */
-    offsetrow = offsetrow + (row_index*column_count * SIZEOFT32);
-    offsetentry = offsetrow + (column_index *  SIZEOFT32);
+    ofrow = row_index*column_count * SIZEOFT32;
+    ofentry = column_index *  SIZEOFT32;
+    offsetrow = offsetrow + ofrow;
+    offsetentry = offsetrow + ofentry;
+    if (ofrow >= secsize) {
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+            "DW_DLE_XU_NAME_COL_ERROR row offset past end of"
+            " section.");
+        return DW_DLV_ERROR;
+    }
+    if (ofentry >= secsize) {
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+            "DW_DLE_XU_NAME_COL_ERROR entry offset past end of"
+            " section.");
+        return DW_DLV_ERROR;
+    }
 
-    sizerow = sizerow + (row_index*column_count * SIZEOFT32);
-    sizeentry = sizerow + (column_index *  SIZEOFT32);
-
+    sirow =  row_index*column_count * SIZEOFT32;
+    sientry = column_index *  SIZEOFT32;
+    sizerow = sizerow + sirow;
+    sizeentry = sizerow + sientry;
+    if (sirow > secsize) {
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+            "DW_DLE_XU_NAME_COL_ERROR row size past end of"
+            " section.");
+        return DW_DLV_ERROR;
+    }
+    if (sientry > secsize) {
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+            "DW_DLE_XU_NAME_COL_ERROR entry size larger than"
+            " section.");
+        return DW_DLV_ERROR;
+    }
     {
         READ_UNALIGNED_CK(dbg,offset,Dwarf_Unsigned,
             offsetentry,
@@ -670,6 +852,65 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
             sizeentry,
             SIZEOFT32,error,section_end);
         sizeentry += SIZEOFT32;
+    }
+    /*  These are offset-in and size-of a section which
+        is separate from .debug_cu/tu_index sections.
+        _cu_/_tu_ */
+    if (!size) {
+        /*  If zero, this entry makes no contribution
+            to a section in the package file.
+            DWARF5 Sec 7.3.5.3   page 194. */
+        *sec_offset = offset;
+        *sec_size =  size;
+        return DW_DLV_OK;
+    }
+    res = _dwarf_find_xu_target_sec_size(dbg, xuhdr,
+        column_index,
+        &target_sec_size,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  These are not precise tests.  */
+        if (offset > dbg->de_filesize) {
+            _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+                "DW_DLE_XU_NAME_COL_ERROR area offset larger than"
+                " file size.");
+            return DW_DLV_ERROR;
+        }
+        if (size > dbg->de_filesize) {
+            _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+                "DW_DLE_XU_NAME_COL_ERROR area size larger than"
+                " file size.");
+            return DW_DLV_ERROR;
+        }
+    } else {
+        if (offset && (offset >= target_sec_size)) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_XU_NAME_COL_ERROR area offset 0x%x ",offset);
+            dwarfstring_append_printf_u(&m," larger than"
+                " target section size of 0x%x.",target_sec_size);
+            _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        if (size > target_sec_size) {
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_XU_NAME_COL_ERROR area size 0x%x ",size);
+            dwarfstring_append_printf_u(&m," larger than"
+                " target section size of 0x%x.",target_sec_size);
+            _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
     }
     *sec_offset = offset;
     *sec_size =  size;
