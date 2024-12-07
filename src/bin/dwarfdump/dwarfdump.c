@@ -1310,6 +1310,7 @@ process_one_file(
             print_error_and_continue(
                 "printing the gdb index section had a problem "
                 ,res,err);
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
         res = print_debugfission_index(dbg,"cu",&err);
         if (res == DW_DLV_ERROR) {
@@ -1317,6 +1318,7 @@ process_one_file(
                 "printing the debugfission cu section "
                 "had a problem "
                 ,res,err);
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
         res = print_debugfission_index(dbg,"tu",&err);
         if (res == DW_DLV_ERROR) {
@@ -1324,6 +1326,7 @@ process_one_file(
                 "printing the debugfission tu section "
                 "had a problem "
                 ,res,err);
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_pubnames_flag) {
