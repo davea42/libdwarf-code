@@ -398,6 +398,16 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     totaloffset += initial_length;
     dn->dn_offset_size = (Dwarf_Half)offset_size;
     /* Two stage length test so overflow is caught. */
+#if 0
+printf("dadebug remaining_space 0x%lx "
+" area length  0x%lx "
+" a+o+rem  0x%lx "
+"line %d \n",
+(unsigned long)remaining_space,
+(unsigned long)area_length,
+(unsigned long)(area_length +offset_size +local_extension_size),
+__LINE__);
+#endif
     if (area_length > remaining_space ||
         (area_length +offset_size +local_extension_size) >
         remaining_space) {
@@ -809,10 +819,10 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     dn->dn_magic = DWARF_DNAMES_MAGIC;
     dn->dn_section_data = start_section;
     dn->dn_section_size = section_size;
-    dn->dn_section_end = start_section + section_size;
+    dn->dn_section_end = start_section + section_size - starting_offset;
     dn->dn_dbg = dbg;
     dn->dn_section_offset = starting_offset;
-    dn->dn_indextable_data = starting_offset + start_section;;
+    dn->dn_indextable_data = curptr;
     remaining = dn->dn_section_size - starting_offset;
     res = read_a_name_table_header(dn,
         starting_offset,
