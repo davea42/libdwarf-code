@@ -1835,12 +1835,16 @@ product: libdwarf
 description: The overflow encountered when
   reading a corrupted line table header in read_a_name_table_header in
   dwarf_debugnames.c
-  There was insufficient checking for out of bounds
-  values.
-datefixed: 2023-03-20
+  This is id 42521584 in the new oss fuzz numbering.
+  There was insufficient checking for out of bounds values.
+  However, the testing was done incorrectly so the appearance of pass
+  was ...wrong. A crucial line in dwarf_dnames_header() computing
+  section_end was incorrect. 
+  It has been wrong since 2021.
+datefixed: 2024-12-07
 references: regressiontests/ossfuzz56458/fuzz_findfuncbypc-5073632331431936
-gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
-tarrelease: libdwarf-0.7.0.tar.xz
+gitfixid:  9f11f8351c85f7715144943f72cd72f011616fe8
+tarrelease: 
 endrec: DW202303-020
 
 id: DW202303-019
