@@ -40,6 +40,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dwarf_local_malloc.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
@@ -393,6 +394,11 @@ pe_load_section (void *obj, Dwarf_Unsigned section_index,
             in the section were not written to disc.
             Malloc enough for the whole section, read in
             the bytes we have. */
+        /*  A heuristic for corrupt data */
+        if (sp->VirtualSize >= 2*pep->pe_filesize) {
+            *error = DW_DLE_PE_SECTION_SIZE_ERROR;
+            return DW_DLV_ERROR;
+        }
         sp->loaded_data = malloc((size_t)sp->VirtualSize);
         if (!sp->loaded_data) {
             *error = DW_DLE_ALLOC_FAIL;
