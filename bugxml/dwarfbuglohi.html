@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 190 </p>
+<p> Record count: 191 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -3420,17 +3420,20 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>description: The overflow encountered when
   reading a corrupted line table header in read_a_name_table_header in
   dwarf_debugnames.c
-  There was insufficient checking for out of bounds
-  values.
+  This is id 42521584 in the new oss fuzz numbering.
+  There was insufficient checking for out of bounds values.
+  However, the testing was done incorrectly so the appearance of pass
+  was ...wrong. A crucial line in dwarf_dnames_header() computing
+  section_end was incorrect.
+  It has been wrong since 2021.
 </p>
-<p>datefixed: 2023-03-20
+<p>datefixed: 2024-12-07
 </p>
 <p>references: regressiontests/ossfuzz56458/fuzz_findfuncbypc-5073632331431936
 </p>
-<p>gitfixid: 1ff4365bd64a4e4f9ab717b3f62589c2ba6637a5
+<p>gitfixid: 9f11f8351c85f7715144943f72cd72f011616fe8
 </p>
-<p>tarrelease: libdwarf-0.7.0.tar.xz
-</p>
+<p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202303-021">98) DW202303-021</h3>
 <p>id: DW202303-021
@@ -6271,6 +6274,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   checking data for sanity as read from a fuzzed object.
   This bug in  dwarf_get_xu_section_offset()
   has been present since the code was created in 2021.
+  The original ossfuzz id for this was 71412.
   There was no proper check for a usable dw_column_index as
   well as other fields from the .debug_tu_index and
   .debug_cu_index sections.
@@ -6283,6 +6287,30 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>references: regressiontests/ossfuzz42538203/fuzz_findfuncbypc-5117956621664256
 </p>
+<p>gitfixid: 9f11f8351c85f7715144943f72cd72f011616fe8
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-001">191) DW202412-001</h3>
+<p>id: DW202412-001
+</p>
+<p>cve:</p>
+<p>fuzzer: ossfuzz id: 42536144
+</p>
+<p>datereported: 2024-06-11
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  out-of-memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Too large a malloc due to reading a
+  fuzzed object without fully checking sizes for being sensible.
+  Originally was id 69560
+</p>
+<p>datefixed:</p>
+<p>references:</p>
 <p>gitfixid:</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>

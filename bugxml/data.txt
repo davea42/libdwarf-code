@@ -1,3 +1,48 @@
+
+id: DW202412-002
+fuzzer: id: ossfuzz id: 371659894
+datereported: 2024-10-6
+reportedby: David Korczynski
+vulnerability:  Timeout - infinite loop
+product: libdwarf
+description: A corrupted object results
+  in an infinite loop.
+  libdwarf is unable to record error DW_DLE_DIE_BAD (112),
+  libdwarf is unable to record error DW_DLE_ATTR_NULL (111),
+  libdwarf is unable to record error DW_DLE_ATTR_NULL (111),
+  libdwarf is unable to record error DW_DLE_ATTR_NULL (111),
+  libdwarf is unable to record error DW_DLE_STRING_FORM_IMPROPER(327).
+  The test code fuzz/fuzz_die_cu_attrs.c  fails to test library
+  return codes in a loop and runs an unreasonably long time.
+  It's not an infinite loop, but memory is accumulating
+  pretty fast.
+  Resulting in megabytes of useless error messages from libdwarf.
+  I have changed the test source to check for a null 'attr'
+  and stop the loop right away. With a short message. 
+datefixed: 2024-12-12
+references:regressiontests/ossfuzz371659894/fuzz_die_cu_attrs-6661686947282944
+gitfixid:  e69eb5da569ce8d3a76ac1aa2f1ae9d371729dbf
+tarrelease:
+endrec: DW202412-002
+
+id: DW202412-001
+fuzzer: id: ossfuzz id:71721677
+datereported: 2024-10-11
+reportedby: David Korczynski
+vulnerability:  out-of-memory (malloc 1.7GB)
+product: libdwarf
+description: Too large a malloc due to reading a 
+  fuzzed object without fully checking PE section
+  sizes for being sensible. Has been a bug since
+  the PE reading code was originally written.
+datefixed: 2024-12-11
+references:regressiontests/ossfuzz371721677/fuzz_die_cu_e_print-4913953320271872
+gitfixid: e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+tarrelease:
+endrec: DW202412-001
+
+
+
 id: DW202409-001
 fuzzer: ossfuzz id: 42538203
 datereported: 2024-09-11
@@ -8,6 +53,7 @@ description: Reading from address zero due to a lack of
   checking data for sanity as read from a fuzzed object.
   This bug in  dwarf_get_xu_section_offset()
   has been present since the code was created in 2021.
+  The original ossfuzz id for this was 71412.
   There was no proper check for a usable dw_column_index as
   well as other fields from the .debug_tu_index and
   .debug_cu_index sections.
@@ -17,7 +63,7 @@ description: Reading from address zero due to a lack of
   2024. 
 datefixed: 2024-12-05
 references: regressiontests/ossfuzz42538203/fuzz_findfuncbypc-5117956621664256
-gitfixid: 
+gitfixid: 9f11f8351c85f7715144943f72cd72f011616fe8
 tarrelease:
 endrec: DW202409-001
 
