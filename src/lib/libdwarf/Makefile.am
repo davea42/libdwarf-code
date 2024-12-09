@@ -116,6 +116,8 @@ dwarf_util.c \
 dwarf_util.h \
 dwarf_xu_index.c \
 dwarf_xu_index.h \
+dwarf_local_malloc.c \
+dwarf_local_malloc.h \
 libdwarf.h \
 libdwarf_private.h
 

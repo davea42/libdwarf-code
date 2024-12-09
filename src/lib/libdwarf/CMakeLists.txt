@@ -19,6 +19,7 @@ dwarf_leb.c
 dwarf_line.c dwarf_loc.c
 dwarf_loclists.c
 dwarf_locationop_read.c
+dwarf_local_malloc.c
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
 dwarf_memcpy_swap.c
 dwarf_names.c
@@ -51,6 +52,7 @@ dwarf_error.h dwarf_frame.h
 dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h
 dwarf_gnu_index.h
 dwarf_line.h dwarf_loc.h dwarf_loclists.h
+dwarf_local_malloc.h
 dwarf_machoread.h dwarf_macro.h dwarf_macro5.h
 dwarf_object_detector.h dwarf_opaque.h
 dwarf_pe_descr.h dwarf_peread.h
