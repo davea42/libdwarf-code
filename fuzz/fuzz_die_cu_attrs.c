@@ -1,4 +1,4 @@
-/* Copyright 2021 Google LLC
+/* Copyright 2024 Google LLC
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -26,6 +26,32 @@ limitations under the License.
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
+
+/*  As originally written, reading a fuzzed object,
+    this group of statements
+    will loop  'forever', meaning until any running
+    Sanitizer will run out of memory keeping track,
+    or without a Sanitizer involved the application will
+    run out of membore..
+
+    There are memory leaks on every error and from
+    any successful calls.
+
+    That is not a reproducible regression test.
+
+    The problem is that nothing here sets 'attr'
+    or checks for failure.
+    there is no sane stopping condition.
+    If the object being read is trivial this might stop
+    in an acceptable time.
+    But we check for null 'attr' (it is NULL, see below)
+    and stop.
+    It's a a silly testcase as writen, and tests very
+    little of a practical nature.
+    David Anderson December 13, 2024. */
+
+
+
 
 /*
  * Fuzzer function
@@ -152,14 +178,44 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
           res = dwarf_get_TAG_name(tag, &tagname);
 
           res = dwarf_attr(cu_die, DW_AT_name, &attr, errp);
+          if (res != DW_DLV_OK) {
+            printf("Forcing close, "
+              "Null attr due to error means all will fail "
+              "and the list of errors is unreasonably long \n"); 
+            fflush(stdout);
+            dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+            dwarf_finish(dbg);
+            close(fuzz_fd);
+            return 0;
+          }
+#if 1
+            if (!attr) {
+              printf("Forcing close, "
+                "Null attr corrupt object or \n"); 
+              fflush(stdout);
+              dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+              dwarf_finish(dbg);
+              close(fuzz_fd);
+              return 0;
+            }
+#endif
           res = dwarf_attrlist(cu_die, &atlist, &atcount, errp);
           for (i = 0; i < atcount; ++i) {
             Dwarf_Half attrnum = 0;
             const char *attrname = 0;
             res = dwarf_whatform(attr, &formnum, errp);
+#if 0
+            if (!attr) {
+              printf("Forcing close, "
+                "Null attr corrupt object or \n"); 
+              fflush(stdout);
+              dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+              dwarf_finish(dbg);
+              close(fuzz_fd);
+              return 0;
+            }
+#endif
             Dwarf_Bool *dw_returned_bool = 0;
-            /*  This next call is incorrect! libdwarf now returns
-                DW_DLV_ERROR  */
             res = dwarf_hasform(attr, formnum, dw_returned_bool, errp);
             res = dwarf_get_FORM_name(formnum, &formname);
             Dwarf_Block *tempb = 0;
