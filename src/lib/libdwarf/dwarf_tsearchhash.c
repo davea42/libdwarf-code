@@ -70,6 +70,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_STDINT_H */
 
 #include "libdwarf.h"
+#include "dwarf_local_malloc.h"
 #include "libdwarf_private.h"
 #include "dwarf_tsearch.h"
 

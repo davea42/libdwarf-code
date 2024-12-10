@@ -70,6 +70,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dwarf_local_malloc.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_util.h"
@@ -514,6 +515,9 @@ dwarf_init_b(int fd,
 int
 dwarf_finish(Dwarf_Debug dbg)
 {
+#ifdef LIBDWARF_MALLOC
+    _libdwarf_finish();
+#endif
     if (IS_INVALID_DBG(dbg)) {
         _dwarf_free_static_errlist();
         return DW_DLV_OK;

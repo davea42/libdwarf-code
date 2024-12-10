@@ -48,6 +48,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdlib.h> /* free() malloc() strtol() */
 #include <string.h> /* memcpy() strlen() */
+#include <stddef.h> /* size_t */
 
 #include "libdwarf_private.h"
 #include "dwarf_string.h"

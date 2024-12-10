@@ -37,6 +37,7 @@ Floor, Boston MA 02110-1301, USA.
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dwarf_local_malloc.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"

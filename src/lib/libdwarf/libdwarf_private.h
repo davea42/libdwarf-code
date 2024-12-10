@@ -110,4 +110,16 @@ typedef long off_t;
     } while (0)
 #endif /* LITTLE ENDIAN */
 
+#ifdef LIBDWARF_MALLOC
+#define malloc(s)    _libdwarf_malloc(s)
+#define calloc(c,s)  _libdwarf_calloc(c,s)
+#define realloc(p,s) _libdwarf_realloc(p,s)
+#define free(p)      _libdwarf_free(p)
+void * _libdwarf_malloc(size_t size);
+void * _libdwarf_calloc(size_t n, size_t s);
+void * _libdwarf_realloc(void * p, size_t s);
+void   _libdwarf_free(void *p);
+void   _libdwarf_finish(void);
+#endif /* LIBDWARF_MALLOC */
+
 #endif /* LIBDWARF_PRIVATE_H */

@@ -68,6 +68,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "dwarf_local_malloc.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"

@@ -38,6 +38,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+#include "dwarf_local_malloc.h"
 #include "libdwarf_private.h" /* for TRUE FALSE */
 #include "dwarf_secname_ck.h"
 
