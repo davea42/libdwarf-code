@@ -1,3 +1,195 @@
+2024-12-10:  David Anderson
+    commit 7fb14fea73b899cf5ceb04749a9ebdd8a199ca31
+
+    An aid to certain debugging tasks.
+
+    Now include dwarf_local_malloc.h everywhere so
+    when it's useful all the usual (malloc calloc
+    realloc free) are defined to call into
+    dwarf_local_malloc.h and tracked there to
+    help debug failures to use a sensible size malloc (etc).
+    When LIBDWARF_MALLOC  is set by CPPFLAGS  for
+    a special build this is effective and there are
+    printf's emitted from libdwarf.
+
+    No normal build sets that CPPFLAG value and
+    when not set the new functions in dwarf_local_malloc.?
+    are invisible to the libdwarf build.
+
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_crc.c
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_dsc.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_error.c
+            modified:   src/lib/libdwarf/dwarf_fill_in_attr_form.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_groups.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_leb.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_local_malloc.c
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+            modified:   src/lib/libdwarf/dwarf_secname_ck.c
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_stringsection.c
+            modified:   src/lib/libdwarf/dwarf_tied.c
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+2024-12-10:  David Anderson
+    commit b56de352fb19c6bba43aa63318c07f997a5b2878
+
+    Regenerated with latest
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-12-09:  David Anderson
+    commit 2c60930e4a462435a2b9ada2644b33bc4d22bc89
+
+    These do not belong in code, but in regressiontests.
+            deleted:    ossfuzz371659894/README
+            deleted:    ossfuzz371659894/fuzz_die_cu_attrs-6661686947282944
+
+2024-12-09:  David Anderson
+    commit 801816e6d1b14789fd3c9d3d5dce32e0431f7173
+
+    New testcase
+            new file:   ossfuzz371659894/README
+            new file:   ossfuzz371659894/fuzz_die_cu_attrs-6661686947282944
+
+2024-12-09:  David Anderson
+    commit 3d916a603ce8bdc7428793387fdd87fd3b554876
+
+    New bug entries.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-12-09:  David Anderson
+    commit 07478fc8c7c7335b1bad3d233a2f0c8914765052
+
+    These enable libdwarf to track all allocations
+    if a certain CPPFLAGS value passed in to the build
+    at build time.
+    Has no effect otherwise.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+
+2024-12-09:  David Anderson
+    commit 03a47bfc6fb53e69d75616a4bc6e10779cb451a9
+
+    Version now 0.11.2
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2024-12-09:  David Anderson
+    commit e69eb5da569ce8d3a76ac1aa2f1ae9d371729dbf
+
+    The test code fuzz/fuzz_die_cu_attrs.c  fails to test library
+    return codes in a loop and runs an unreasonably long time.
+    It's not an infinite loop, but memory is accumulating
+    pretty fast.
+    Results in megabytes of useless error messages from libdwarf.
+    I have changed the test source to check for a null 'attr'
+    and stop the loop right away. With a short message.
+
+    This is DW2024-002  oss fuzz id 371659894
+
+            modified:   fuzz/fuzz_die_cu_attrs.c
+
+2024-12-09:  David Anderson
+    commit e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+
+    Used for checking/debugging alloc sizes and counts. Normally not applicable.
+            new file:   src/lib/libdwarf/dwarf_local_malloc.c
+            new file:   src/lib/libdwarf/dwarf_local_malloc.h
+
+    This fixes ossfuzz371721677
+    DW202412-001
+    A field in a PE object file with the size to be malloc'd
+    was not checked for sanity. So the fuzzed test case
+    resulted in a 1.7GB malloc.
+    Now we reject as a error.
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2024-12-07:  David Anderson
+    commit e6f5df8f10768c61ebffda1e6df8058c8c06fa0a
+
+    This is the true fix of oss-fuzz 42521589.
+    Originally oss-fuzz gave this id 56458.
+    DW202303-020
+            modified:   bugxml/data.txt
+
+2024-12-07:  David Anderson
+    commit 9f11f8351c85f7715144943f72cd72f011616fe8
+
+    This is the true fix of oss-fuzz 42521589.
+    Originally oss-fuzz give this id 56458.
+    Called  DW202303-020 in the project buglist.
+    In testing we ran the wrong test earlier resulting
+    in a false PASS.
+    This changes one line of code that has been wrong
+    since writtin in 2021.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2024-12-07:  David Anderson
+    commit 3db277edfcd5012570a32ecbbf7f86eb74ae53e9
+
+    On receiving a DW_DLV_ERROR from dwarf_fission* printing calls
+    we omitted a DROP_ERROR_INSTANCE following each
+    print_error_and_continue.
+    Hence error records were leaking.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2024-12-05:  David Anderson
+    commit 0d976e2ec104a5d938450ed61f0ac4659107b0f1
+
+    Now with  DW202409-001   oss fuzz 42538203 fixes.
+            modified:   ChangeLog
+
 2024-12-05:  David Anderson
     commit 1aeca15e1c8ab3032ed298c46fe57126fb6bb103
 
