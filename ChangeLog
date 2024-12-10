@@ -143,14 +143,17 @@
 2024-12-09:  David Anderson
     commit e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
 
-    Used for checking/debugging alloc sizes and counts. Normally not applicable.
+    Used for checking/debugging alloc sizes and counts.
+    Normally not applicable. Requires special build
+    for these to be applicable.
             new file:   src/lib/libdwarf/dwarf_local_malloc.c
             new file:   src/lib/libdwarf/dwarf_local_malloc.h
 
-    This fixes ossfuzz371721677
-    DW202412-001
+    This fixes ossfuzz371721677 DW202412-001
+    and ossfuzz372754161  DW202412-003
     A field in a PE object file with the size to be malloc'd
-    was not checked for sanity. So the fuzzed test case
+    was not checked for sanity before trying
+    to load the section into memory. So the fuzzed test case
     resulted in a 1.7GB malloc.
     Now we reject as a error.
             modified:   src/lib/libdwarf/dwarf_peread.c
@@ -1569,7 +1572,6 @@ header).
 2024-08-05:  David Anderson
     commit b6140a57f20ce4b3680f10468aeeb0615d5ef296
 
-    Adjusted cmake build to use Ninja instead of Unix Makefiles
             modified:   scripts/buildandreleasetest.sh
     Now stops early on fail.
             modified:   scripts/run-all-tests.sh

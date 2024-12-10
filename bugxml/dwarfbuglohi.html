@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 192 </p>
+<p> Record count: 196 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6353,6 +6353,119 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: e69eb5da569ce8d3a76ac1aa2f1ae9d371729dbf
 </p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-003">193) DW202412-003</h3>
+<p>id: DW202412-003
+</p>
+<p>cve:</p>
+<p>fuzzer: id: ossfuzz id: 372754161
+</p>
+<p>datereported: 2024-10-13
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Out of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A corrupted PE object results
+  in allocating a ridiculous amount of memory.
+  From dwarf_load_section in a PE object file.
+  Exactly the same failure as
+  DW202412-001 ossfuzz id:71721677.
+</p>
+<p>datefixed: 2024-12-11
+</p>
+<p>references:regressiontests/ossfuzz372754161/fuzz_globals-6058837938864128
+</p>
+<p>gitfixid: e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-004">194) DW202412-004</h3>
+<p>id: DW202412-004
+</p>
+<p>cve:</p>
+<p>fuzzer: id: ossfuzz id: 379159140
+</p>
+<p>datereported: 2024-11-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Out of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A corrupted PE object results
+  in allocating a ridiculous amount of memory.
+  From dwarf_load_section in a PE object file.
+  Exactly the same failure as
+  DW202412-001 ossfuzz id:71721677.
+</p>
+<p>datefixed: 2024-12-11
+</p>
+<p>references:regressiontests/ossfuzz379159140/fuzz_die_cu_print-5335984847257600
+</p>
+<p>gitfixid: e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-005">195) DW202412-005</h3>
+<p>id: DW202412-005
+</p>
+<p>cve:</p>
+<p>fuzzer: id: ossfuzz id: 380108595
+</p>
+<p>datereported: 2024-11-20
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Out of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A corrupted PE object results
+  in allocating a ridiculous amount of memory.
+  From dwarf_load_section in a PE object file.
+  Exactly the same failure as
+  DW202412-001 ossfuzz id:71721677.
+</p>
+<p>datefixed:</p>
+<p>references:regressiontests/ossfuzz380108595/fuzz_aranges-5572243180027904
+</p>
+<p>gitfixid:</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-006">196) DW202412-006</h3>
+<p>id: DW202412-006
+</p>
+<p>cve:</p>
+<p>fuzzer: honggfuzz id: 383170474
+</p>
+<p>datereported: 2024-11-27
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Heap Buffer Overflow READ 1
+</p>
+<p>product: libdwarf
+</p>
+<p>description: In dwarf_dnames_header()
+  an accidental += resulted in changing
+  a local pointer not meant to be changed.
+  So tests for appropriate pointers worked
+  incorrectly. Changing that += to plain +
+  restored the true intention of the code.
+  Also, a computation of end_section (pointer)
+  was incorrect in one place.
+  The first error was introduced this month (December
+  2024), it was not in the v0.11.1 release.
+</p>
+<p>datefixed:</p>
+<p>references:regressiontests/
+</p>
+<p>gitfixid:</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
