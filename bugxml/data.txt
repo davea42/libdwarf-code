@@ -1,11 +1,74 @@
+
+id: DW202412-006
+fuzzer: honggfuzz id: 383170474
+datereported: 2024-11-27
+reportedby: David Korczynski
+vulnerability: Heap Buffer Overflow READ 1
+product: libdwarf
+description: In dwarf_dnames_header()
+  (libdwarf/dwarf_debugnames.c)
+  an accidental += resulted in changing
+  a local pointer not meant to be changed. 
+  So tests for appropriate pointers worked
+  incorrectly. Changing that += to plain +
+  restored the true intention of the code. 
+  Also, a computation of end_section (pointer)
+  was incorrect in one place.
+  The first error was introduced this month (December
+  2024), it was not in the v0.11.1 release December 1
+  2024.
+datefixed: 2024-12-10  
+references:regressiontests/ossfuzz383170474/fuzz_globals-4515360770228224.fuzz
+gitfixid:  43be4567488c8b531d1ae98fe128f5eda374098e
+tarrelease:
+endrec: DW202412-006
+
+
+
+id: DW202412-005
+fuzzer: id: ossfuzz id: 380108595
+datereported: 2024-11-20
+reportedby: David Korczynski
+vulnerability: Out of Memory
+product: libdwarf
+description: A corrupted PE object results
+  in allocating a ridiculous amount of memory.
+  From dwarf_load_section in a PE object file.
+  Exactly the same failure as
+  DW202412-001 ossfuzz id:71721677.
+datefixed: 2024-12-10  
+references:regressiontests/ossfuzz380108595/fuzz_aranges-5572243180027904
+gitfixid:  43be4567488c8b531d1ae98fe128f5eda374098e
+tarrelease:
+endrec: DW202412-005
+
+id: DW202412-004
+fuzzer: id: ossfuzz id: 379159140
+datereported: 2024-11-14
+reportedby: David Korczynski
+vulnerability: Out of Memory
+product: libdwarf
+description: A corrupted PE object results
+  in allocating a ridiculous amount of memory.
+  From dwarf_load_section in a PE object file.
+  Exactly the same failure as
+  DW202412-001 ossfuzz id:71721677.
+datefixed: 2024-12-11
+references:regressiontests/ossfuzz379159140/fuzz_die_cu_print-5335984847257600 
+gitfixid:   e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+tarrelease:
+endrec: DW202412-004
+
+
+
+
 id: DW202412-003
 fuzzer: id: ossfuzz id: 372754161
-
 datereported: 2024-10-13
 reportedby: David Korczynski
 vulnerability: Out of Memory  
 product: libdwarf
-description: A corrupted object results
+description: A corrupted PE object results
   in allocating a ridiculous amount of memory.
   From dwarf_load_section in a PE object file.
   Exactly the same failure as
