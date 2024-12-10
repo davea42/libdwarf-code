@@ -64,7 +64,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (res != DW_DLV_OK) {
     dwarf_dealloc_error(dbg, error);
   } else {
-    printf("Processing");
+    /*  Adding newline avoids a warning from diff
+        in regressiontesting */
+    printf("Processing\n");
     arange_processing_example(dbg, &error);
   }
 
