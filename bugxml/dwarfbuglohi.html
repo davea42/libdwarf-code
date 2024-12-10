@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 191 </p>
+<p> Record count: 192 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6295,23 +6295,64 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>id: DW202412-001
 </p>
 <p>cve:</p>
-<p>fuzzer: ossfuzz id: 42536144
+<p>fuzzer: id: ossfuzz id:71721677
 </p>
-<p>datereported: 2024-06-11
+<p>datereported: 2024-10-11
 </p>
 <p>reportedby: David Korczynski
 </p>
-<p>vulnerability:  out-of-memory
+<p>vulnerability:  out-of-memory (malloc 1.7GB)
 </p>
 <p>product: libdwarf
 </p>
 <p>description: Too large a malloc due to reading a
-  fuzzed object without fully checking sizes for being sensible.
-  Originally was id 69560
+  fuzzed object without fully checking PE section
+  sizes for being sensible. Has been a bug since
+  the PE reading code was originally written.
 </p>
-<p>datefixed:</p>
-<p>references:</p>
-<p>gitfixid:</p>
+<p>datefixed: 2024-12-11
+</p>
+<p>references:regressiontests/ossfuzz371721677/fuzz_die_cu_e_print-4913953320271872
+</p>
+<p>gitfixid: e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-002">192) DW202412-002</h3>
+<p>id: DW202412-002
+</p>
+<p>cve:</p>
+<p>fuzzer: id: ossfuzz id: 371659894
+</p>
+<p>datereported: 2024-10-6
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability:  Timeout - infinite loop
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A corrupted object results
+  in an infinite loop.
+  libdwarf is unable to record error DW_DLE_DIE_BAD (112),
+  libdwarf is unable to record error DW_DLE_ATTR_NULL (111),
+  libdwarf is unable to record error DW_DLE_ATTR_NULL (111),
+  libdwarf is unable to record error DW_DLE_ATTR_NULL (111),
+  libdwarf is unable to record error DW_DLE_STRING_FORM_IMPROPER(327).
+  The test code fuzz/fuzz_die_cu_attrs.c  fails to test library
+  return codes in a loop and runs an unreasonably long time.
+  It's not an infinite loop, but memory is accumulating
+  pretty fast.
+  Resulting in megabytes of useless error messages from libdwarf.
+  I have changed the test source to check for a null 'attr'
+  and stop the loop right away. With a short message.
+</p>
+<p>datefixed: 2024-12-12
+</p>
+<p>references:regressiontests/ossfuzz371659894/fuzz_die_cu_attrs-6661686947282944
+</p>
+<p>gitfixid: e69eb5da569ce8d3a76ac1aa2f1ae9d371729dbf
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
