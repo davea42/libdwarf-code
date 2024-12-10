@@ -1,3 +1,20 @@
+id: DW202412-003
+fuzzer: id: ossfuzz id: 372754161
+
+datereported: 2024-10-13
+reportedby: David Korczynski
+vulnerability: Out of Memory  
+product: libdwarf
+description: A corrupted object results
+  in allocating a ridiculous amount of memory.
+  From dwarf_load_section in a PE object file.
+  Exactly the same failure as
+  DW202412-001 ossfuzz id:71721677.
+datefixed: 2024-12-11
+references:regressiontests/ossfuzz372754161/fuzz_globals-6058837938864128
+gitfixid:   e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
+tarrelease:
+endrec: DW202412-003
 
 id: DW202412-002
 fuzzer: id: ossfuzz id: 371659894
