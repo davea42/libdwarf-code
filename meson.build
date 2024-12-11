@@ -58,6 +58,7 @@ cpp = meson.get_compiler('cpp')
 
 dev_cflags = []
 dev_cppflags = []
+dev_cppflags_onlylibdwarf = []
 dev_ldflags = []
 
 dev_cflags_try = [
@@ -80,6 +81,7 @@ sanitize_flags_try = [
   '-fsanitize=undefined'
 ]
 
+
 if sys_windows
   if cc.get_id() != 'msvc'
     dev_cflags_try += '-Wno-pedantic-ms-format'
@@ -98,6 +100,11 @@ foreach cf: dev_cflags_try
     endif
   endif
 endforeach
+
+dev_speciallibdwarfmalloc = get_option('libdwarfspecialmalloc') 
+if dev_speciallibdwarfmalloc
+  dev_cppflags_onlylibdwarf += '-DLIBDWARF_MALLOC'
+endif
 
 #if fs.isdir('/usr/local/include')
 #  dev_cflags += '-I/usr/local/include'

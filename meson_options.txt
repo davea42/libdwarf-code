@@ -34,3 +34,11 @@ option('decompression',
   value : true,
   description : 'compile and link with zlib and zstd decompression libraries'
 )
+
+# Never use the following as it produces some printf from libdwarf
+# Unless debugging libdwarf malloc use
+option('libdwarfspecialmalloc',
+  type : 'boolean',
+  value : false,
+  description : 'Compile libdwarf (only) with special malloc code'
+)

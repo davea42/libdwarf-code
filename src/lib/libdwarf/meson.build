@@ -128,7 +128,7 @@ else
 endif
 
 libdwarf_lib = library('dwarf', libdwarf_src,
-  c_args : [ dev_cflags, libdwarf_args, compiler_flags ],
+  c_args : [ dev_cflags,dev_cppflags_onlylibdwarf, libdwarf_args, compiler_flags ],
   dependencies : [ zlib_deps, libzstd_deps ],
   gnu_symbol_visibility: 'hidden',
   include_directories : config_dir,
