@@ -31,6 +31,7 @@
 #include <config.h>
 
 #include <string.h> /* memcpy() memset() */
+#include <stdio.h> /* printf when debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -117,6 +118,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     All op reader code should call this to
     extract operator fields. For any
     DWARF version.
+
 */
 int
 _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
@@ -872,6 +874,26 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     }
     if (loc_ptr > section_end) {
         _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+        return DW_DLV_ERROR;
+    }
+    if (startoffset_in < 0 ||
+        offset <= (Dwarf_Unsigned)startoffset_in) {
+        dwarfstring m;
+
+        dwarfstring_constructor (&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_LOCEXPR_OFF_SECTION_END: "
+            "A  DW_OP (0x%02x) has a value that results in "
+            "decreasing the section offset from ",atom);
+        dwarfstring_append_printf_u(&m," %ld to ",startoffset_in);
+        dwarfstring_append_printf_u(&m," %ld ",startoffset_in);
+        dwarfstring_append_printf_u(&m," (0x%lx) ",
+            (Dwarf_Unsigned)startoffset_in);
+        dwarfstring_append_printf_i(&m," to 0x%lx. Corrupt Dwarf ",
+            offset);
+        _dwarf_error_string(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END,
+            dwarfstring_string(&m));
+        dwarfstring_destructor (&m);
         return DW_DLV_ERROR;
     }
     /* If offset == loc_len this would be normal end-of-expression. */

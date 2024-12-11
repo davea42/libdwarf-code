@@ -650,7 +650,6 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     while (offset <= loc_block->bl_len) {
         Dwarf_Unsigned nextoffset = 0;
         struct Dwarf_Loc_Expr_Op_s temp_loc;
-
         /*  This call is ok even if bl_data NULL and bl_len 0 */
         res = _dwarf_read_loc_expr_op(dbg,loc_block,
             op_count,
@@ -672,6 +671,14 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
             break;
         }
         op_count++;
+        if (op_count > loc_block->bl_len) {
+            _dwarf_free_op_chain(dbg,head_loc);
+            _dwarf_error_string(dbg, error, DW_DLE_LOCATION_ERROR,
+                "DW_DLE_LOCATION_ERROR:  We have counted more"
+                " operators in a location expression than "
+                "there are bytes in the block. Corrupt DWARF");
+            return DW_DLV_ERROR;
+        }
         new_loc = (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg,
             DW_DLA_LOC_CHAIN, 1);
         if (new_loc == NULL) {
