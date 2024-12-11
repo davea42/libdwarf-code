@@ -1,4 +1,23 @@
 
+id: DW202412-007
+fuzzer: oss fuzz id: 42536144
+datereported: 2024-12-05
+reportedby: David Korczynski
+vulnerability: Out Of Memory
+product: libdwarf
+description: A certain corrupted location expression
+  (in  a fuzzed object file)
+  resulted in an effectively infinite loop (by
+  failing to notice a value read was improper) reading
+  expressions and allocating memory.
+  Now we check to ensure we do not loop forever and we return
+  an error. This has been unchecked for many years.
+datefixed: 2024-12-11
+references: regressiontests/ossfuzz42536144/fuzz_die_cu_attrs_loclist-5906068650655744
+gitfixid: a0d983611468e3882c9fee92197d321ae4580c1a
+tarrelease:
+endrec: DW202412-007
+
 id: DW202412-006
 fuzzer: honggfuzz id: 383170474
 datereported: 2024-11-27
