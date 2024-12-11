@@ -8230,7 +8230,7 @@ DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header dw_xuhdr,
 /*! @brief Get row data (section data) for a row and column
 
     The section offset represents a base offset for
-    the section the row data refers to. 
+    the section the row data refers to.
     DWARF6 Section 7.3.5.3 page 193.
 
     @param dw_xuhdr

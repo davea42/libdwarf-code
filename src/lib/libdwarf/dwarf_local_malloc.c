@@ -6,7 +6,7 @@
 
 */
 
-/*  Normally LIBDWARF_MALLOC is not defined. 
+/*  Normally LIBDWARF_MALLOC is not defined.
     Only defined when researching malloc use in libdwarf.
     if defined here must also be defined in libdwarf_private.h */
 
@@ -61,7 +61,7 @@ void * _libdwarf_calloc(size_t n, size_t s)
             (unsigned long)n,
             (unsigned long)s);
         fflush(stdout);
-    } 
+    }
     if (s  > largest_alloc ) {
         largest_alloc = n*s;
         printf("dadebug line %d largest_alloc %lu "
@@ -71,7 +71,7 @@ void * _libdwarf_calloc(size_t n, size_t s)
             (unsigned long)n,
             (unsigned long)s);
         fflush(stdout);
-    } 
+    }
     if ((n * s) > largest_alloc) {
         largest_alloc = s*n;
         printf("dadebug line %d largest_alloc %lu "
@@ -104,15 +104,14 @@ void _libdwarf_free(void *p)
 }
 void _libdwarf_finish(void)
 {
-     printf("dadebug at finish total   alloc %lu\n",total_alloc);
-     printf("dadebug at finish largest alloc %lu\n",largest_alloc);
-     printf("dadebug at finish alloc count   %lu\n",alloc_count);
-     printf("dadebug at finish    free count %lu\n",free_count);
-     fflush(stdout);
-     total_alloc = 0;
-     largest_alloc = 0;
-     alloc_count = 0;
-     free_count = 0;
+    printf("dadebug at finish total   alloc %lu\n",total_alloc);
+    printf("dadebug at finish largest alloc %lu\n",largest_alloc);
+    printf("dadebug at finish alloc count   %lu\n",alloc_count);
+    printf("dadebug at finish    free count %lu\n",free_count);
+    fflush(stdout);
+    total_alloc = 0;
+    largest_alloc = 0;
+    alloc_count = 0;
+    free_count = 0;
 }
 #endif /* LIBDWARF_MALLOC */
-

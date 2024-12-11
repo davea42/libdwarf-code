@@ -386,18 +386,6 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     curptr = curptr_in;
     usedspace = 0;
     totaloffset = starting_offset;
-#if 0
-printf("dadebug curptr 0x%lx "
-" area length  0x%lx "
-" end_section 0x%lx "
-" remaining_space 0x%lx "
-"line %d \n",
-(unsigned long)curptr,
-(unsigned long)area_length,
-(unsigned long)end_section,
-(unsigned long)remaining_space,
-__LINE__);
-#endif
     /* 1 */
     READ_AREA_LENGTH_CK(dbg, area_length, Dwarf_Unsigned,
         curptr, offset_size,
@@ -411,16 +399,6 @@ __LINE__);
     totaloffset += initial_length;
     dn->dn_offset_size = (Dwarf_Half)offset_size;
     /* Two stage length test so overflow is caught. */
-#if 0
-printf("dadebug remaining_space 0x%lx "
-" area length  0x%lx "
-" a+o+rem  0x%lx "
-"line %d \n",
-(unsigned long)remaining_space,
-(unsigned long)area_length,
-(unsigned long)(area_length +offset_size +local_extension_size),
-__LINE__);
-#endif
     if (area_length > remaining_space ||
         (area_length +offset_size +local_extension_size) >
         remaining_space) {
@@ -821,20 +799,6 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     start_section = dbg->de_debug_names.dss_data;
     curptr = start_section + starting_offset;
     end_section = start_section + section_size;
-#if 0
-printf("dadebug "
-" start_section 0x%lx "
-" section_size 0x%lx "
-" curptr 0x%lx  "
-" end_section 0x%lx "
-" line %d\n",
-(unsigned long)start_section,
-(unsigned long)section_size,
-(unsigned long)curptr,
-(unsigned long)end_section,
-__LINE__);
-fflush(stdout);
-#endif
     dn =  (Dwarf_Dnames_Head)_dwarf_get_alloc(dbg,
         DW_DLA_DNAMES_HEAD, 1);
     if (!dn) {
@@ -846,9 +810,6 @@ fflush(stdout);
     dn->dn_magic = DWARF_DNAMES_MAGIC;
     dn->dn_section_data = start_section;
     dn->dn_section_size = section_size;
-#if 0
-    dn->dn_section_end = start_section + section_size - starting_offset;
-#endif
     dn->dn_section_end = end_section;
     dn->dn_dbg = dbg;
     dn->dn_section_offset = starting_offset;
@@ -880,33 +841,11 @@ fflush(stdout);
         return DW_DLV_ERROR;
     }
     remaining -= usedspace;
-#if 0
-printf("dadebug remaining 0x%lx "
-" curptr 0x%lx  "
-" end_section 0x%lx "
-" line %d\n",
-(unsigned long)remaining,
-(unsigned long)curptr,
-(unsigned long)end_section,
-__LINE__);
-fflush(stdout);
-#endif
     if (remaining && remaining < 15) {
         /*  No more content in here, just padding. Check for zero
             in padding. */
         curptr += usedspace;
         for ( ; curptr < end_section; ++curptr) {
-#if 0
-printf("dadebug remaining 0x%lx "
-" curptr 0x%lx  "
-" end_section 0x%lx "
-" line %d\n",
-(unsigned long)remaining,
-(unsigned long)curptr,
-(unsigned long)end_section,
-__LINE__);
-fflush(stdout);
-#endif
             if (*curptr) {
                 /*  One could argue this is a harmless error,
                     but for now assume it is real corruption. */
