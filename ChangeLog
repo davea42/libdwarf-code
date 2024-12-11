@@ -1,3 +1,89 @@
+2024-12-11:  David Anderson
+    commit 2e4ab9a18913a293ff5586c675e2a9acdc0649ab
+
+    Removing #if 0 debug code.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+    Fixing indents.
+            modified:   src/lib/libdwarf/dwarf_local_malloc.c
+    Removing trailing whitespace.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-11:  David Anderson
+    commit 93c91b87799b4787ed1bb8970ebcaa2713ac35dd
+
+    Completing the documentation of DW202412-007  oss fuzz id: 42536144
+            modified:   bugxml/data.txt
+
+2024-12-11:  David Anderson
+    commit a0d983611468e3882c9fee92197d321ae4580c1a
+
+    Fixing  oss fuzz id: 42536144    DW202412-007
+    Out of Memory because a value read from the (fuzzed)
+    object was not checked for sanity.
+    This was a bug for a few years.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+
+2024-12-11:  David Anderson
+    commit 046962a2cc2a6de3f46f5910ceb29d0343ca5892
+
+    Working toward a feature allowing LOCAL_MALLOC
+    to be honored in building libdwarf for
+    regressiontests.
+            modified:   meson.build
+            modified:   meson_options.txt
+            modified:   src/lib/libdwarf/meson.build
+
+2024-12-10:  David Anderson
+    commit 97b8a331331d3d6772834d0cf5faf217b117b108
+
+    Now up to date with git log
+            modified:   ChangeLog
+
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-12-10:  David Anderson
+    commit e1fae45ada13fa407cad99b5176d4720b55ea96f
+
+    Finishing up  recent fix list.
+            modified:   bugxml/data.txt
+
+2024-12-10:  David Anderson
+    commit 43be4567488c8b531d1ae98fe128f5eda374098e
+
+    This fixes honggfuzz id 383170474
+    and assigned DW202412-006 in dwarfbug.html
+    It was a mistake in internal calculations
+    of limits reading DWARF5 .debug_names.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2024-12-10:  David Anderson
+    commit 365189647067c0c4e1f85c05838d50fc8c8f1408
+
+    First use of this testcase today.
+    The testcase emitted one printf string
+    which had no ending newline.
+    That provoked a warning from diff
+    which looked ugly.
+    So I added a terminating newline to the one and only printf
+    in the code.
+            modified:   fuzz/fuzz_aranges.c
+
+2024-12-10:  David Anderson
+    commit 025f5f3497325b72006705990abe53fa95e80944
+
+    Documenting DW202412-003
+            modified:   bugxml/data.txt
+
+2024-12-10:  David Anderson
+    commit 17a288f237fb96e1ccddd1b2d83c0c266db425cf
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2024-12-10:  David Anderson
     commit 7fb14fea73b899cf5ceb04749a9ebdd8a199ca31
 
