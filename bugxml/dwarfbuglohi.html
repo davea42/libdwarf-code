@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 196 </p>
+<p> Record count: 197 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6431,10 +6431,12 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   Exactly the same failure as
   DW202412-001 ossfuzz id:71721677.
 </p>
-<p>datefixed:</p>
+<p>datefixed: 2024-12-10
+</p>
 <p>references:regressiontests/ossfuzz380108595/fuzz_aranges-5572243180027904
 </p>
-<p>gitfixid:</p>
+<p>gitfixid: 43be4567488c8b531d1ae98fe128f5eda374098e
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202412-006">196) DW202412-006</h3>
@@ -6452,6 +6454,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>product: libdwarf
 </p>
 <p>description: In dwarf_dnames_header()
+  (libdwarf/dwarf_debugnames.c)
   an accidental += resulted in changing
   a local pointer not meant to be changed.
   So tests for appropriate pointers worked
@@ -6460,12 +6463,45 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   Also, a computation of end_section (pointer)
   was incorrect in one place.
   The first error was introduced this month (December
-  2024), it was not in the v0.11.1 release.
+  2024), it was not in the v0.11.1 release December 1
+  2024.
 </p>
-<p>datefixed:</p>
-<p>references:regressiontests/
+<p>datefixed: 2024-12-10
 </p>
-<p>gitfixid:</p>
+<p>references:regressiontests/ossfuzz383170474/fuzz_globals-4515360770228224.fuzz
+</p>
+<p>gitfixid: 43be4567488c8b531d1ae98fe128f5eda374098e
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-007">197) DW202412-007</h3>
+<p>id: DW202412-007
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz id: 42536144
+</p>
+<p>datereported: 2024-12-05
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Out Of Memory
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A certain corrupted location expression
+  (in  a fuzzed object file)
+  resulted in an effectively infinite loop (by
+  failing to notice a value read was improper) reading
+  expressions and allocating memory.
+  Now we check to ensure we do not loop forever and we return
+  an error. This has been unchecked for many years.
+</p>
+<p>datefixed: 2024-12-11
+</p>
+<p>references: regressiontests/ossfuzz42536144/fuzz_die_cu_attrs_loclist-5906068650655744
+</p>
+<p>gitfixid: a0d983611468e3882c9fee92197d321ae4580c1a
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
