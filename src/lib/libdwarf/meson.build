@@ -123,8 +123,10 @@ endif
 
 if (lib_type == 'shared')
   compiler_flags = ['-DLIBDWARF_BUILD']
+  compiler_flags_public = []
 else
   compiler_flags = ['-DLIBDWARF_STATIC']
+  compiler_flags_public = ['-DLIBDWARF_STATIC']
 endif
 
 libdwarf_lib = library('dwarf', libdwarf_src,
@@ -140,6 +142,7 @@ libdwarf_lib = library('dwarf', libdwarf_src,
 libdwarf = declare_dependency(
   include_directories : [ include_directories('.')],
   link_with : libdwarf_lib,
+  compile_args : [compiler_flags_public],
   dependencies : [zlib_deps, libzstd_deps]
 )
 

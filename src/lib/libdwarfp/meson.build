@@ -33,8 +33,10 @@ libdwarfp_src = [
 libdwarf_dir = include_directories('../libdwarf')
 if (lib_type == 'shared')
   compiler_flags = ['-DLIBDWARF_BUILD']
+  compiler_flags_public = []
 else
   compiler_flags = ['-DLIBDWARF_STATIC']
+  compiler_flags_public = ['-DLIBDWARF_STATIC']
 endif
 
 
@@ -50,6 +52,7 @@ libdwarfp_lib = library('dwarfp', libdwarfp_src,
 
 libdwarfp = declare_dependency(
   include_directories : [ include_directories('.')],
+  compile_args : [compiler_flags_public],
   link_with : libdwarfp_lib,
 )
 
