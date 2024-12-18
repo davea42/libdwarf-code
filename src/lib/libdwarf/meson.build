@@ -142,7 +142,7 @@ libdwarf_lib = library('dwarf', libdwarf_src,
 libdwarf = declare_dependency(
   include_directories : [ include_directories('.')],
   link_with : libdwarf_lib,
-  compile_args : [compiler_flags_public],
+  compile_args : compiler_flags_public,
   dependencies : [zlib_deps, libzstd_deps]
 )
 
