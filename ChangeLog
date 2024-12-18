@@ -1,3 +1,67 @@
+2024-12-18:  David Anderson
+    commit 733cbcd5f3c77ea52e90c53c1de83d90f74b423e
+
+    meson 1.3.2 was happy with a list of lists on compile_args,
+    but meson 0.61.2 from Ubuntu 20.04 was not (failed with
+    an error).
+    So we convert to simply a list itself. so it works
+    for a range of versions.
+    See the compiler_flags_public definition (not shown)
+    as it is itself a list.
+
+    @@ -142,7 +142,7 @@ libdwarf_lib = library('dwarf', libdwarf_src,
+     libdwarf = declare_dependency(
+       include_directories : [ include_directories('.')],
+       link_with : libdwarf_lib,
+    -  compile_args : [compiler_flags_public],
+    +  compile_args : compiler_flags_public,
+       dependencies : [zlib_deps, libzstd_deps]
+     )
+            modified:   src/lib/libdwarf/meson.build
+
+    @@ -52,7 +52,7 @@ libdwarfp_lib = library('dwarfp', libdwarfp_src,
+
+     libdwarfp = declare_dependency(
+       include_directories : [ include_directories('.')],
+    -  compile_args : [compiler_flags_public],
+    +  compile_args : compiler_flags_public,
+       link_with : libdwarfp_lib,
+     )
+            modified:   src/lib/libdwarfp/meson.build
+
+2024-12-13:  David Anderson
+    commit 3ea552f49f7e38ed3dfaff82cebfef62a8f47586
+    Merge: e6a83e1d f9bf1af0
+
+    Merge branch 'na-trium-144-fix-meson-static'
+    Fixing an issue with meson subproject build.
+
+2024-12-13:  David Anderson
+    commit f9bf1af00a6ce08268786be8a2d777b864f5ff39
+    Merge: e6a83e1d 5c8aee09
+
+    Merge branch 'fix-meson-static' of https://github.com/na-trium-144/libdwarf-code into na-trium-144-fix-meson-static
+    Fixing meson build when subproject
+
+2024-12-13:  David Anderson
+    commit e6a83e1df36bf7cb925794d3f1fc2f473bf73f9e
+
+    Regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-12-13:  na-trium-144
+    commit 5c8aee090e2b5490da75180b3013670e052f869e
+
+    Add LIBDWARF_STATIC macro to static libdwarf dependency on meson
+
+2024-12-11:  David Anderson
+    commit 30c473b2c640faadccb1b687b79292dc08ffb380
+
+    Now up to date
+            modified:   ChangeLog
+
 2024-12-11:  David Anderson
     commit 2e4ab9a18913a293ff5586c675e2a9acdc0649ab
 
