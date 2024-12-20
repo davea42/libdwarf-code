@@ -988,6 +988,10 @@ _dwarf_which_loclists_context(Dwarf_Debug dbg,
         chosen_offset = loclists_base;
     }
     if (!found_base) {
+        /*  This works for CU access, but fails for TU access
+            as for .debug_tu_index there is no whole-type-unit
+            entry in any .debug_tu_index section. 
+            DWARF5 Sec 7.3.5 Page 190. */
         res = _dwarf_has_SECT_fission(ctx,
             DW_SECT_LOCLISTS,
             &loclists_base_present,&loclists_base);

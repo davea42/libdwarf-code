@@ -797,6 +797,9 @@ set_global_section_sizes(Dwarf_Debug dbg)
     such as .init .fini __libc_freeres_fn
     .rodata __libc_subfreeres __libc_atexit too. */
 #define LIKELYNAMESMAX 3
+
+/*  This is useless if the compiler uses unusual section
+    names like "text" */
 static const char *likely_ns[LIKELYNAMESMAX] = {
 /*  .text is first as it is often the only thing.See below. */
 ".init",
