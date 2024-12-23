@@ -80,8 +80,8 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #define SECTION_NAME_LEN 2048
 
 /* Private function */
-static void DumpFullBucketGroup(const char *msg, int line,
-    const char *file,Bucket_Group *pBucketGroup);
+static void DumpFullBucketGroup(const char *msg,
+    Bucket_Group *pBucketGroup);
 static unsigned long bucketgroupnext  = 0;
 static unsigned long bucketnext  = 0;
 
@@ -175,18 +175,17 @@ ResetSentinelBucketGroup(Bucket_Group *pBucketGroup)
 }
 
 void
-PrintBucketGroup(const char *msg, int line,
-    const char *file,
+PrintBucketGroup(const char *msg,
     Bucket_Group *pBucketGroup)
 {
     if (pBucketGroup) {
-        DumpFullBucketGroup(msg,line,file,pBucketGroup);
+        DumpFullBucketGroup(msg,pBucketGroup);
     }
 }
 
 static void
-DumpFullBucketGroup(const char *msg, int line,
-    const char *file,Bucket_Group *pBucketGroup)
+DumpFullBucketGroup(const char *msg,
+    Bucket_Group *pBucketGroup)
 {
     int nBucketNo = 1;
     int nIndex = 0;
@@ -197,17 +196,17 @@ DumpFullBucketGroup(const char *msg, int line,
 
     if (!pBucketGroup) {
         printf("ERROR BucketGroup passed in NULL. Ignored\n");
-        printf("BucketGroup msg: %s  line %d %s\n",msg,line,file);
+        printf("BucketGroup msg: %s\n",msg);
         glflags.gf_count_major_errors++;
         return;
     }
     kindstr = kindstring(pBucketGroup->kind);
     if (!kindstr) {
         printf("ERROR unknown bucket group kind %d\n",pBucketGroup->kind);
-        printf("BucketGroup %s line %d %s\n",msg,line,file);
+        printf("BucketGroup %s\n",msg);
         return;
     }
-    printf("\nBucket Group %s line %d %s\n",msg,line,file);
+    printf("\nBucket Group %s\n",msg);
     printf("\nBucket Group %s index %lu"
         " [lower 0x%" DW_PR_DUx " upper 0x%" DW_PR_DUx "]\n",
         kindstr,

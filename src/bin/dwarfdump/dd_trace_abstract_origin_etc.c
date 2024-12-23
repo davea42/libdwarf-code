@@ -246,8 +246,8 @@ dd_trace_abstract_origin_etc(
             /*  Follow reference chain, looking for
                 self references */
             if (glflags.nTrace[KIND_VISITED_INFO]) {
-                PrintBucketGroup("Added entry",__LINE__,
-                    __FILE__,glflags.pVisitedInfo);
+                PrintBucketGroup("Added entry dd_trace A",
+                    glflags.pVisitedInfo);
             }
             frres = dwarf_offdie_b(dbg,ref_goff,is_info2,
                 &ref_die,err);
@@ -314,8 +314,8 @@ dd_trace_abstract_origin_etc(
             DeleteKeyInBucketGroup(glflags.pVisitedInfo,
                 die_goff);
             if (glflags.nTrace[KIND_VISITED_INFO]) {
-                PrintBucketGroup("Deleted entry",__LINE__,
-                    __FILE__,glflags.pVisitedInfo);
+                PrintBucketGroup("Deleted entry dd_trace A",
+                    glflags.pVisitedInfo);
             }
             if (frres == DW_DLV_ERROR) {
                 esb_destructor(valname);

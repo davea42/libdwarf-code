@@ -1066,15 +1066,6 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
             baseend = lx->end;
             basesize = (baseend - baselow);
         }
-#if 0
-printf("dadebug i %lu baselow 0x%lx size 0x%lx line %d\n",
-(unsigned long)lnindex,
-(unsigned long)baselow,
-(unsigned long)basesize,__LINE__);
-printf("dadebug  low     0x%lx size 0x%lx line %d\n",
-(unsigned long)lx->low,
-(unsigned long)lx->size,__LINE__);
-#endif
     }
     if (ln_is_malloc) {
         free(ln);
@@ -2491,10 +2482,11 @@ build_linkonce_info(Dwarf_Debug dbg)
             error = 0;
         }
     }
-    if ( glflags.nTrace[KIND_LINKONCE_INFO]) { /* see --trace=2 option */
+    if ( glflags.nTrace[KIND_LINKONCE_INFO]) { 
+        /* see --trace=2 option */
         /*  Unlikely this is ever useful...at present. */
-        PrintBucketGroup("SN linkonce setup done",__LINE__,
-            __FILE__,glflags.pLinkonceInfo);
+        PrintBucketGroup("SN linkonce setup done dd A",
+            glflags.pLinkonceInfo);
     }
 }
 
@@ -2684,14 +2676,6 @@ dump_unique_errors_table(void)
 void
 release_unique_errors_table(void)
 {
-#if 0
-    The pointed-to entries are all saved in makename,
-    so let its destructor do the work.
-    unsigned int index;
-    for (index = 0; index < set_unique_errors_entries; ++index) {
-        free(set_unique_errors[index]);
-    }
-#endif
     free(set_unique_errors);
     set_unique_errors = 0;
     set_unique_errors_entries = 0;

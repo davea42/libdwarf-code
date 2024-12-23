@@ -1408,8 +1408,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     }
                 }
                 if (glflags.nTrace[KIND_RANGES_INFO]) {
-                    PrintBucketGroup("print_one_die_info_section",
-                    __LINE__,__FILE__,glflags.pRangesInfo);
+                    PrintBucketGroup(
+                        "print_one_die_info_section PD A",
+                        glflags.pRangesInfo);
                 }
 
                 /* Check the range array if in checl mode */
@@ -3713,13 +3714,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_priority:
     case DW_AT_namelist_item:
     case DW_AT_friend: {
-#if 0
-    /*  No need for this sibling attrs are checked for validity
-        while simply printing dwarf. Not the same as self-referential
-        but perhaps enough. */
-    case DW_AT_sibling:
-    case DW_AT_type:
-#endif
+        /*  No need for DW_AT_types,
+            DW_AT_sibling. The self-referential tests
+            do work properly if included in the switch().  */
         int res = 0;
         Dwarf_Off die_goff = 0;
         Dwarf_Off ref_goff = 0;
@@ -3858,8 +3855,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 err);
             DeleteKeyInBucketGroup(glflags.pVisitedInfo,ref_goff);
             if (glflags.nTrace[KIND_VISITED_INFO]) {
-                PrintBucketGroup("after dd_traverse_one_die",
-                    __LINE__,__FILE__,glflags.pVisitedInfo);
+                PrintBucketGroup("after dd_traverse_one_die PD B",
+                    glflags.pVisitedInfo);
             }
             dwarf_dealloc_die(ref_die);
             if (res == DW_DLV_ERROR) {
@@ -3931,10 +3928,6 @@ dd_traverse_one_die(Dwarf_Debug dbg,
     }
 
     DWARF_CHECK_COUNT(self_references_result,1);
-#if 0
-printf("dadebug CHECKING GOFF= 0x%lx line %d\n",
-(unsigned long)overall_offset,__LINE__);
-#endif
     if (FindKeyInBucketGroup(glflags.pVisitedInfo,
         overall_offset)) {
         char * localvaln = NULL;
@@ -3943,8 +3936,9 @@ printf("dadebug CHECKING GOFF= 0x%lx line %d\n",
         const char *atname = NULL;
 
         if (glflags.nTrace[KIND_VISITED_INFO]) {
-            PrintBucketGroup("after finding offset possible error",
-                __LINE__,__FILE__,glflags.pVisitedInfo);
+            PrintBucketGroup(
+                "after finding offset possible error PD C",
+                glflags.pVisitedInfo);
         }
         esb_constructor(&bucketgroupstr);
         res = get_attr_value(dbg, tag, die,
@@ -3978,8 +3972,9 @@ printf("dadebug CHECKING GOFF= 0x%lx line %d\n",
             overall_offset,
             0,0,0,NULL,FALSE);
         if (glflags.nTrace[KIND_VISITED_INFO]) {
-            PrintBucketGroup("after adding offset to table",
-                __LINE__,__FILE__,glflags.pVisitedInfo);
+            PrintBucketGroup(
+                "after adding offset to table PD D",
+                glflags.pVisitedInfo);
         }
         res = dwarf_attrlist(die, &atlist, &atcnt, err);
         if (res == DW_DLV_ERROR) {
@@ -4022,15 +4017,12 @@ printf("dadebug CHECKING GOFF= 0x%lx line %d\n",
 
         dealloc_local_atlist(dbg,atlist,atcnt);
         /* Delete current DIE */
-#if 0
-printf("dadebug Deleting offset 0x%lx line %d\n",
-(unsigned long)overall_offset,__LINE__);
-#endif
         DeleteKeyInBucketGroup(glflags.pVisitedInfo,
             overall_offset);
         if (glflags.nTrace[KIND_VISITED_INFO]) {
-            PrintBucketGroup("after deleting offset from table",
-                __LINE__,__FILE__,glflags.pVisitedInfo);
+            PrintBucketGroup(
+                "after deleting offset from table PD E",
+                glflags.pVisitedInfo);
         }
     }
     return DW_DLV_OK;
@@ -5510,19 +5502,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
         }
     }
-#if 0  /*  DEBUGGING ONLY */
-    /*  This prints all the actual fields as well as the
-        macro results that use the fields. */
-    printf("DEBUGONLY std print? attr name %u &&  "
-        "%u  && %u || %u.  %u %u %u\n",
-        (unsigned)PRINTING_UNIQUE,
-        (unsigned)PRINTING_DIES,
-        (unsigned)print_else_name_match,
-        (unsigned)bTextFound,
-        (unsigned) glflags.gf_do_print_dwarf,
-        (unsigned) glflags.gf_check_verbose_mode,
-        (unsigned) glflags.gf_record_dwarf_error);
-#endif /* DEBUGGING ONLY */
     /*  Above we created detailed messages in
         the valname and esb_extra strings.
         If we're just printing everything
@@ -6361,8 +6340,8 @@ loc_error_check(
     /*  Check the low_pc and high_pc are within
         a valid range in the .text section */
     if (glflags.nTrace[KIND_RANGES_INFO]) {
-        PrintBucketGroup("Location ranges check",__LINE__,__FILE__,
-        glflags.pRangesInfo);
+        PrintBucketGroup("Location ranges check PD lec",
+            glflags.pRangesInfo);
     }
     if (IsValidInBucketGroup(glflags.pRangesInfo,lopcfinal) &&
         IsValidInBucketGroup(glflags.pRangesInfo,hipcfinal)) {
@@ -6390,22 +6369,6 @@ loc_error_check(
             esb_append_printf_u(&m," baseaddress 0x%08x",base_address);
             DWARF_CHECK_ERROR(locations_result,
                 esb_get_string(&m));
-#if 0
-            if (glflags.verbose /* && PRINTING_UNIQUE */) {
-                printf(
-                    "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
-                    ", Base = 0x%"  DW_PR_XZEROS DW_PR_DUx ", "
-                    "Low = 0x%"  DW_PR_XZEROS DW_PR_DUx
-                    " (rawlow = 0x%"  DW_PR_XZEROS DW_PR_DUx
-                    "), High = 0x%"  DW_PR_XZEROS DW_PR_DUx
-                    " (rawhigh = 0x%"  DW_PR_XZEROS DW_PR_DUx ")\n",
-                    offset,base_address,
-                    lopcfinal,
-                    rawlopc,
-                    hipcfinal,
-                    rawhipc);
-            }
-#endif
             esb_destructor(&m);
         }
     }
