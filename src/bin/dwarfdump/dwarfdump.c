@@ -105,6 +105,19 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 # define O_BINARY 0  /* So it does nothing in Linux/Unix */
 # endif
 #endif /* O_BINARY */
+/*  Basic ELF flags */
+#ifndef ET_DYN
+#define ET_DYN 3
+#endif
+#ifndef ET_EXEC
+#define ET_EXEC 2
+#endif
+#ifndef ET_REL
+#define ET_REL 1
+#endif
+#ifndef SHF_ALLOC
+#define SHF_ALLOC 2
+#endif
 
 #define BYTES_PER_INSTRUCTION 4
 
@@ -853,35 +866,80 @@ likelycmp(const void *l_in, const void *r_in)
     return 0;
 }
 
-/*  This is a bit slow, but happens only once for a dbg.
-    It is not as much help as I expected in avoiding
-    line table content CHECK warnings because, so far,
-    those come from .init csu code and the DWARF has
-    no subprogram information nor any high/low pc
-    information at all.  */
 static int
-calculate_likely_limits_of_code(Dwarf_Debug dbg,
-    Dwarf_Unsigned *lower,
-    Dwarf_Unsigned *size)
+limit_of_code_when_elf(Dwarf_Debug dbg,
+    Dwarf_Unsigned         objtype /* Elf ET_EXEC etc */,
+    struct likely_names_s *ln,
+    Dwarf_Unsigned         count)
 {
-    struct likely_names_s * ln = 0;
-    int ct = 0;
-    Dwarf_Unsigned baselow = 0;
-    Dwarf_Unsigned basesize = 0;
-    Dwarf_Unsigned baseend = 0;
-    int lnindex = 0;
-    int lncount = 0;
+    Dwarf_Unsigned ct = 0;
+    unsigned int  etype = objtype&0xff;
 
-    memset(likely_names,0,sizeof(likely_names));
-    for (ct = 0 ; ct < LIKELYNAMESMAX; ct++) {
-        Dwarf_Unsigned clow = 0;
-        Dwarf_Unsigned csize = 0;
+    
+    if (etype != ET_DYN && etype != ET_EXEC &&
+        etype != ET_REL) {
+printf("bad etype 0x%x \n",etype);
+        /* We do not know what this is. */
+
+        return DW_DLV_OK;
+    }
+    for (ct = 0 ; ct < count; ct++) {
+        Dwarf_Unsigned caddr = 0;
+        Dwarf_Unsigned csize = 0; 
+        Dwarf_Unsigned cflags = 0; 
+        Dwarf_Unsigned coffset = 0; 
+        const char    *cname = 0;
         int res = 0;
         Dwarf_Error err = 0;
-        /* Just looks for .text and .init and  .fini for ranges. */
-        const char *name = likely_ns[ct];
+        struct likely_names_s *lx = 0;
 
-        ln = likely_names + lnindex;
+        lx = ln + ct;
+        res = dwarf_get_section_info_by_index_a(dbg,ct,&cname,
+            &caddr,&csize,&cflags,&coffset,&err);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,err);
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            continue;
+        }
+        if (!(cflags & SHF_ALLOC)) {
+            continue;
+        }
+        lx->name = cname;
+        lx->low = caddr;
+        lx->size = csize;
+        lx->end = csize +caddr;
+        lx->origindex = ct;
+    }
+    return DW_DLV_OK;
+}
+
+
+/*  There is no error arg.  We return DW_DLV_ERROR or
+    DW_DLV_NO_ENTRY or DW_DLV_OK  */
+static int
+limit_of_code_non_elf(Dwarf_Debug dbg,
+    struct likely_names_s *ln,
+    Dwarf_Unsigned lncount,
+    Dwarf_Unsigned *basesize_out,
+    Dwarf_Unsigned *baselow_out)
+{
+    Dwarf_Unsigned basesize = 0;
+    Dwarf_Unsigned baselow = 0;
+    Dwarf_Unsigned ct = 0;
+    Dwarf_Unsigned lnindex = 0;
+
+    for (ct = 0 ; ct < lncount; ct++) {
+        Dwarf_Unsigned clow = 0;
+        Dwarf_Unsigned csize = 0;
+        int            res = 0;
+        Dwarf_Error    err = 0;
+        /* Just looks for .text and .init and  .fini for ranges. */
+        const char    *name = likely_ns[ct];
+        struct likely_names_s *lx = 0;
+
+        lx = ln + ct;
         res = dwarf_get_section_info_by_name_a(dbg,name,
             &clow,&csize,0,0,&err);
         if (res == DW_DLV_ERROR) {
@@ -891,11 +949,11 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         if (res == DW_DLV_NO_ENTRY) {
             continue;
         }
-        ln->name = name;
-        ln->low = clow;
-        ln->size = csize;
-        ln->end = csize +clow;
-        ln->origindex = ct;
+        lx->name = name;
+        lx->low = clow;
+        lx->size = csize;
+        lx->end = csize +clow;
+        lx->origindex = ct;
         if (ct == ORIGLKLYTEXTINDEX) {
             basesize = csize;
             baselow  = clow;
@@ -906,23 +964,125 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     if (lnindex == 1) {
-        *lower = baselow;
-        *size  = basesize;
+        *baselow_out = baselow;
+        *basesize_out  = basesize;
         return DW_DLV_OK;
     }
-    lncount = lnindex;
-    qsort(likely_names,lncount,sizeof(struct likely_names_s),
+    return DW_DLV_OK;
+}
+/*  This is a bit slow, but happens only once for a dbg.
+    It is not as much help as I expected in avoiding
+    line table content CHECK warnings because, so far,
+    those come from .init csu code and the DWARF has
+    no subprogram information nor any high/low pc
+    information at all.  
+
+    Builds a list of addr, endaddr entries,
+    sorts by addr, merges into an overall low, high pair.
+
+*/
+static int
+calculate_likely_limits_of_code(Dwarf_Debug dbg,
+    Dwarf_Unsigned *lower,
+    Dwarf_Unsigned *size)
+{
+    struct likely_names_s *ln = 0;
+    Dwarf_Bool             ln_is_malloc = FALSE;
+    Dwarf_Unsigned         baselow = 0;
+    Dwarf_Unsigned         basesize = 0;
+    Dwarf_Unsigned         baseend = 0;
+    int                   lnindex = 0;
+    int                   lncount = 0;
+    int                   res = 0;
+    Dwarf_Small           dw_ftype = 0;
+    Dwarf_Small           dw_obj_pointersize = 0;
+    Dwarf_Bool            dw_obj_is_big_endian = 0;
+    Dwarf_Unsigned        dw_obj_machine = 0;
+    Dwarf_Unsigned        dw_obj_type = 0; /* ELF ET_EXEC etc*/
+    Dwarf_Unsigned        dw_obj_flags = 0;
+    Dwarf_Small           dw_path_source = 0;
+    Dwarf_Unsigned        dw_ub_offset = 0;
+    Dwarf_Unsigned        dw_ub_count = 0;
+    Dwarf_Unsigned        dw_ub_index = 0;
+    Dwarf_Unsigned        dw_comdat_groupnumber = 0;
+
+    res = dwarf_machine_architecture_a(dbg,
+        &dw_ftype,
+        &dw_obj_pointersize,
+        &dw_obj_is_big_endian,
+        &dw_obj_machine,
+        &dw_obj_type,
+        &dw_obj_flags,
+        &dw_path_source,
+        &dw_ub_offset,
+        &dw_ub_count,
+        &dw_ub_index,
+        &dw_comdat_groupnumber);
+    if (res != DW_DLV_OK) {
+        return DW_DLV_NO_ENTRY;
+    }
+
+    if (dw_ftype != DW_FTYPE_ELF) {
+        lncount = LIKELYNAMESMAX;
+        memset(likely_names,0,sizeof(likely_names));
+        res = limit_of_code_non_elf(dbg,
+            likely_names,
+            lncount,
+            &basesize,&baselow);
+        ln = likely_names;
+    } else {
+        lncount = dwarf_get_section_count(dbg);
+        if (!lncount) {
+            return DW_DLV_NO_ENTRY;
+        }
+        if (lncount > 50) {
+            /*  Very odd. Let's truncate as 
+                it seens sensible to give up finding
+                valid addresses */
+            lncount = 50;
+        }
+        ln = calloc(lncount,sizeof(struct likely_names_s));
+        if (!ln) {
+            return DW_DLV_ERROR;
+        }
+        ln_is_malloc = TRUE;
+        res = limit_of_code_when_elf(dbg,
+            dw_obj_type, ln, lncount);
+        if (res != DW_DLV_OK) {
+            free(ln);
+            ln = 0;
+            return res;
+        }
+    }
+
+    qsort(ln,lncount,sizeof(struct likely_names_s),
         likelycmp);
-    ln = likely_names;
-    baselow =ln->low;
+    baselow = ln->low;
     basesize =ln->size;
     baseend = ln->end;
     for (lnindex = 1; lnindex<lncount; ++lnindex) {
-        ln = likely_names+lnindex;
-        if (ln->end > baseend) {
-            baseend = ln->end;
+        struct likely_names_s*lx = ln+lnindex;
+        if (lx->end > baseend) {
+            baseend = lx->end;
             basesize = (baseend - baselow);
         }
+#if 0
+printf("dadebug i %lu baselow 0x%lx size 0x%lx line %d\n",
+(unsigned long)lnindex,
+(unsigned long)baselow,
+(unsigned long)basesize,__LINE__);
+printf("dadebug  low     0x%lx size 0x%lx line %d\n",
+(unsigned long)lx->low,
+(unsigned long)lx->size,__LINE__);
+#endif
+    }
+    if (ln_is_malloc) {
+        free(ln);
+    }
+    if (!baselow) {
+        /* Initial 'page' is certainly not a valid
+           address from dwarf. But ET_REL maybe. */
+        baselow = 512;
     }
     *lower = baselow;
     *size  = basesize;
@@ -2331,9 +2491,10 @@ build_linkonce_info(Dwarf_Debug dbg)
             error = 0;
         }
     }
-    if (dump_linkonce_info) {
+    if ( glflags.nTrace[KIND_LINKONCE_INFO]) { /* see --trace=2 option */
         /*  Unlikely this is ever useful...at present. */
-        PrintBucketGroup(glflags.pLinkonceInfo);
+        PrintBucketGroup("SN linkonce setup done",__LINE__,
+            __FILE__,glflags.pLinkonceInfo);
     }
 }
 

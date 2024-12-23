@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-12-05 v0.11.2
+    @date 2024-12-23 v0.11.2
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1084,6 +1084,15 @@
 
     We list these with newest first.
 
+    <b>Changes 0.11.1 to 0.11.2</b>
+
+    Added new API function dwarf_machine_architecture_a() which
+    has an additional argument added to let dwarfdump
+    create an better .text (etc) address-range
+    for the object file being read
+    for improved checking (fewer incorrect
+    error reports) in dwarfdump -k  output.
+    
     <b>Changes 0.10.1 to 0.11.0</b>
 
     Added function dwarf_get_ranges_baseaddress()
