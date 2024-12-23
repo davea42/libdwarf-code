@@ -1407,9 +1407,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         return pres;
                     }
                 }
-                /* Dump Ranges Information */
-                if (dump_ranges_info) {
-                    PrintBucketGroup(glflags.pRangesInfo);
+                if (glflags.nTrace[KIND_RANGES_INFO]) {
+                    PrintBucketGroup("print_one_die_info_section",
+                    __LINE__,__FILE__,glflags.pRangesInfo);
                 }
 
                 /* Check the range array if in checl mode */
@@ -2659,7 +2659,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         return ores;
     }
 
-    if (dump_visited_info &&  glflags.gf_check_self_references) {
+    if (glflags.nTrace[KIND_VISITED_INFO] &&  glflags.gf_check_self_references) {
         printf("<%2d><0x%" DW_PR_XZEROS DW_PR_DUx
             " GOFF=0x%" DW_PR_XZEROS DW_PR_DUx "> ",
             die_indent_level, (Dwarf_Unsigned)offset,
@@ -3652,7 +3652,12 @@ show_attr_form_error(unsigned attr,
 /*  Traverse an attribute and following any reference
     in order to detect self references to DIES (loop).
     We do not use print_else_name_match here. Just looking
-    for self references to report on. */
+    for self references to report on. 
+
+    This does not work properly, given self-reference
+    is normal in the complete graph that is DWARF DIEs.
+
+*/
 static int
 traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
@@ -3707,8 +3712,14 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_extension:
     case DW_AT_priority:
     case DW_AT_namelist_item:
-    case DW_AT_friend:
-    case DW_AT_type: {
+    case DW_AT_friend: {
+#if 0
+    /*  No need for this sibling attrs are checked for validity
+        while simply printing dwarf. Not the same as self-referential
+        but perhaps enough. */
+    case DW_AT_sibling:
+    case DW_AT_type:
+#endif
         int res = 0;
         Dwarf_Off die_goff = 0;
         Dwarf_Off ref_goff = 0;
@@ -3811,7 +3822,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         if (res == DW_DLV_OK) {
             Dwarf_Off target_die_cu_goff = 0;
 
-            if (dump_visited_info) {
+            if (glflags.nTrace[KIND_VISITED_INFO]) {
                 Dwarf_Off die_loff = 0;
 
                 res = dwarf_die_CU_offset(die, &die_loff, err);
@@ -3846,6 +3857,10 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 srcfiles,srcfcnt,die_indent_level,
                 err);
             DeleteKeyInBucketGroup(glflags.pVisitedInfo,ref_goff);
+            if (glflags.nTrace[KIND_VISITED_INFO]) {
+                PrintBucketGroup("after dd_traverse_one_die",
+                    __LINE__,__FILE__,glflags.pVisitedInfo);
+            }
             dwarf_dealloc_die(ref_die);
             if (res == DW_DLV_ERROR) {
                 esb_destructor(&valname);
@@ -3899,7 +3914,7 @@ dd_traverse_one_die(Dwarf_Debug dbg,
         return res;
     }
 
-    if (dump_visited_info) {
+    if (glflags.nTrace[KIND_VISITED_INFO]) {
         Dwarf_Off offset = 0;
         const char * tagname = 0;
         res = dwarf_die_CU_offset(die, &offset, err);
@@ -3916,6 +3931,10 @@ dd_traverse_one_die(Dwarf_Debug dbg,
     }
 
     DWARF_CHECK_COUNT(self_references_result,1);
+#if 0
+printf("dadebug CHECKING GOFF= 0x%lx line %d\n",
+(unsigned long)overall_offset,__LINE__);
+#endif
     if (FindKeyInBucketGroup(glflags.pVisitedInfo,
         overall_offset)) {
         char * localvaln = NULL;
@@ -3923,6 +3942,10 @@ dd_traverse_one_die(Dwarf_Debug dbg,
         struct esb_s bucketgroupstr;
         const char *atname = NULL;
 
+        if (glflags.nTrace[KIND_VISITED_INFO]) {
+            PrintBucketGroup("after finding offset possible error",
+                __LINE__,__FILE__,glflags.pVisitedInfo);
+        }
         esb_constructor(&bucketgroupstr);
         res = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,
@@ -3933,7 +3956,6 @@ dd_traverse_one_die(Dwarf_Debug dbg,
             return res;
         }
         localvaln = esb_get_string(&bucketgroupstr);
-
         res = dwarf_whatattr(attrib, &attr, err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(
@@ -3955,7 +3977,10 @@ dd_traverse_one_die(Dwarf_Debug dbg,
         AddEntryIntoBucketGroup(glflags.pVisitedInfo,
             overall_offset,
             0,0,0,NULL,FALSE);
-
+        if (glflags.nTrace[KIND_VISITED_INFO]) {
+            PrintBucketGroup("after adding offset to table",
+                __LINE__,__FILE__,glflags.pVisitedInfo);
+        }
         res = dwarf_attrlist(die, &atlist, &atcnt, err);
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(
@@ -3997,8 +4022,16 @@ dd_traverse_one_die(Dwarf_Debug dbg,
 
         dealloc_local_atlist(dbg,atlist,atcnt);
         /* Delete current DIE */
+#if 0
+printf("dadebug Deleting offset 0x%lx line %d\n",
+(unsigned long)overall_offset,__LINE__);
+#endif
         DeleteKeyInBucketGroup(glflags.pVisitedInfo,
             overall_offset);
+        if (glflags.nTrace[KIND_VISITED_INFO]) {
+            PrintBucketGroup("after deleting offset from table",
+                __LINE__,__FILE__,glflags.pVisitedInfo);
+        }
     }
     return DW_DLV_OK;
 }
@@ -5420,7 +5453,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         traverse this attribute in order to get the
         name for the linkonce
         DW_AT_GNU_locviews are a reference too,
-        and are actually an offset from a base address.*/
+        and are actually an offset from a base address. */
     if (is_class_reference)  {
         tres = dd_trace_abstract_origin_etc(dbg,tag,die,
             dieprint_cu_goffset,
@@ -6318,9 +6351,7 @@ loc_error_check(
     const char *     tagname,
     const char *     attrname,
     Dwarf_Addr lopcfinal,
-    Dwarf_Addr rawlopc,
     Dwarf_Addr hipcfinal,
-    Dwarf_Addr rawhipc,
     Dwarf_Unsigned offset,
     Dwarf_Addr base_address,
     Dwarf_Bool *bError)
@@ -6329,6 +6360,10 @@ loc_error_check(
 
     /*  Check the low_pc and high_pc are within
         a valid range in the .text section */
+    if (glflags.nTrace[KIND_RANGES_INFO]) {
+        PrintBucketGroup("Location ranges check",__LINE__,__FILE__,
+        glflags.pRangesInfo);
+    }
     if (IsValidInBucketGroup(glflags.pRangesInfo,lopcfinal) &&
         IsValidInBucketGroup(glflags.pRangesInfo,hipcfinal)) {
         /* Valid values; do nothing */
@@ -6349,9 +6384,14 @@ loc_error_check(
                 "valid .text range: TAG %s",tagname);
             esb_append_printf_s(&m," with attribute %s.",
                 attrname);
+            esb_append_printf_u(&m," final lowpc 0x%08x ",lopcfinal);
+            esb_append_printf_u(&m," final hipc 0x%08x",hipcfinal);
+            esb_append_printf_u(&m," locoffset 0x%08x",offset);
+            esb_append_printf_u(&m," baseaddress 0x%08x",base_address);
             DWARF_CHECK_ERROR(locations_result,
                 esb_get_string(&m));
-            if ( glflags.gf_check_verbose_mode && PRINTING_UNIQUE) {
+#if 0
+            if (glflags.verbose /* && PRINTING_UNIQUE */) {
                 printf(
                     "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
                     ", Base = 0x%"  DW_PR_XZEROS DW_PR_DUx ", "
@@ -6365,6 +6405,7 @@ loc_error_check(
                     hipcfinal,
                     rawhipc);
             }
+#endif
             esb_destructor(&m);
         }
     }
