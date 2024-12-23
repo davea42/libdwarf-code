@@ -243,9 +243,12 @@ dd_trace_abstract_origin_etc(
             AddEntryIntoBucketGroup(glflags.pVisitedInfo,
                 die_goff,0,0,0,
                 NULL,FALSE);
-
             /*  Follow reference chain, looking for
                 self references */
+            if (glflags.nTrace[KIND_VISITED_INFO]) {
+                PrintBucketGroup("Added entry",__LINE__,
+                    __FILE__,glflags.pVisitedInfo);
+            }
             frres = dwarf_offdie_b(dbg,ref_goff,is_info2,
                 &ref_die,err);
             if (frres == DW_DLV_OK) {
@@ -253,7 +256,7 @@ dd_trace_abstract_origin_etc(
                 Dwarf_Off die_loff = 0; /* CU-relative. */
                 int fresb = 0;
 
-                if (dump_visited_info) {
+                if (glflags.nTrace[KIND_VISITED_INFO]) {
                     const char *atname = get_AT_name(attrnum,
                         pd_dwarf_names_print_on_error);
                     fresb = dwarf_die_CU_offset(die,
@@ -310,6 +313,10 @@ dd_trace_abstract_origin_etc(
             }
             DeleteKeyInBucketGroup(glflags.pVisitedInfo,
                 die_goff);
+            if (glflags.nTrace[KIND_VISITED_INFO]) {
+                PrintBucketGroup("Deleted entry",__LINE__,
+                    __FILE__,glflags.pVisitedInfo);
+            }
             if (frres == DW_DLV_ERROR) {
                 esb_destructor(valname);
                 esb_destructor(esb_extra);
