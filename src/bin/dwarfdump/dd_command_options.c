@@ -687,6 +687,9 @@ static const char *usage_long_text[] = {
 "                    dwarf_finish(). Used to test that",
 "                    dwarfdump does dealloc everywhere",
 "                    it should for minimum memory use.",
+"     --trace=0      Shows --trace values (1,2,3) that",
+"                    turn on detailed tracking of dwarfdump",
+"                    internal tables (for debugging dwarfdump).",
 "",
 };
 
@@ -1035,7 +1038,7 @@ void arg_trace(void)
         glflags.nTrace[nTraceLevel] = 1;
     }
     /* Display dwarfdump debug options. */
-    if (dump_options) {
+    if ( glflags.nTrace[KIND_OPTIONS]) {
         /*  --trace=0 to dwarfdump gets us here. */
         print_usage_message(usage_debug_text);
         makename_destructor();

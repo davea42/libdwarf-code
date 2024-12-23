@@ -322,9 +322,7 @@ void loc_error_check(
     const char *tagname,
     const char *attrname,
     Dwarf_Addr lopcfinal,
-    Dwarf_Addr rawlopc,
     Dwarf_Addr hipcfinal,
-    Dwarf_Addr rawhipc,
     Dwarf_Unsigned offset,
     Dwarf_Addr base_address,
     Dwarf_Bool *bError);
