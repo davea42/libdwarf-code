@@ -2205,11 +2205,12 @@ dwarf_get_universalbinary_count(
 
 /*  Never returns DW_DLV_ERROR */
 int
-dwarf_machine_architecture(Dwarf_Debug dbg,
+dwarf_machine_architecture_a(Dwarf_Debug dbg,
     Dwarf_Small    *dw_ftype,
     Dwarf_Small    *dw_obj_pointersize,
     Dwarf_Bool     *dw_obj_is_big_endian,
     Dwarf_Unsigned *dw_obj_machine,
+    Dwarf_Unsigned *dw_obj_type,
     Dwarf_Unsigned *dw_obj_flags,
     Dwarf_Small    *dw_path_source,
     Dwarf_Unsigned *dw_ub_offset,
@@ -2232,6 +2233,9 @@ dwarf_machine_architecture(Dwarf_Debug dbg,
     if (dw_obj_machine) {
         *dw_obj_machine = dbg->de_obj_machine;
     }
+    if (dw_obj_type) {
+        *dw_obj_type = dbg->de_obj_type;
+    }
     if (dw_obj_flags) {
         *dw_obj_flags = dbg->de_obj_flags;
     }
@@ -2251,4 +2255,26 @@ dwarf_machine_architecture(Dwarf_Debug dbg,
         *dw_comdat_groupnumber = dbg->de_groupnumber;
     }
     return DW_DLV_OK;
+}
+int
+dwarf_machine_architecture(Dwarf_Debug dbg,
+    Dwarf_Small    *dw_ftype,
+    Dwarf_Small    *dw_obj_pointersize,
+    Dwarf_Bool     *dw_obj_is_big_endian,
+    Dwarf_Unsigned *dw_obj_machine,
+    Dwarf_Unsigned *dw_obj_flags,
+    Dwarf_Small    *dw_path_source,
+    Dwarf_Unsigned *dw_ub_offset,
+    Dwarf_Unsigned *dw_ub_count,
+    Dwarf_Unsigned *dw_ub_index,
+    Dwarf_Unsigned *dw_comdat_groupnumber)
+{
+    return dwarf_machine_architecture_a(dbg,
+        dw_ftype,dw_obj_pointersize,
+        dw_obj_is_big_endian,
+        dw_obj_machine,
+        0 /* Ignoring Elf e_type */ ,
+        dw_obj_flags, dw_path_source,
+        dw_ub_offset, dw_ub_count,
+        dw_ub_index,  dw_comdat_groupnumber);
 }

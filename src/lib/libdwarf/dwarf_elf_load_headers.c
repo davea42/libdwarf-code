@@ -227,6 +227,7 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     }
 
     ep->f_machine = (unsigned int)ehdr->ge_machine;
+    ep->f_ftype = (unsigned int)ehdr->ge_type;
     ep->f_ehdr = ehdr;
     ep->f_loc_ehdr.g_name = "Elf File Header";
     ep->f_loc_ehdr.g_offset = 0;
@@ -295,6 +296,7 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
             return DW_DLV_ERROR;
     }
     ep->f_machine = (unsigned int)ehdr->ge_machine;
+    ep->f_ftype = (unsigned int)ehdr->ge_type;
     ep->f_ehdr = ehdr;
     ep->f_loc_ehdr.g_name = "Elf File Header";
     ep->f_loc_ehdr.g_offset = 0;
