@@ -100,8 +100,7 @@ print_original_loclist_linecodes(Dwarf_Bool    checking,
                 ">", hipc);
             if (checking && !debug_addr_unavailable) {
                 loc_error_check(tagname,attrname,
-                    lopc, rawlopc,
-                    hipc,rawhipc, locdesc_offset,
+                    lopc, hipc, locdesc_offset,
                     base_address,
                     bError);
             }
@@ -118,8 +117,7 @@ print_original_loclist_linecodes(Dwarf_Bool    checking,
             ">",hipc);
         if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
-                lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset, base_address,
+                lopc, hipc, locdesc_offset, base_address,
                 bError);
         }
         break;

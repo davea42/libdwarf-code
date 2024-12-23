@@ -123,8 +123,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
             ">",hipc);
         if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
-                lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset, base_address,
+                lopc, hipc, locdesc_offset, base_address,
                 bError);
         }
         break;
@@ -160,8 +159,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
-                lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset, base_address,
+                lopc, hipc, locdesc_offset, base_address,
                 bError);
         }
         break;
@@ -199,8 +197,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
-                lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset, base_address,
+                lopc, hipc, locdesc_offset, base_address,
                 bError);
         }
         break;
@@ -215,8 +212,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
             ">",hipc);
         if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
-                lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset, base_address,
+                lopc, hipc, locdesc_offset, base_address,
                 bError);
         }
         break;
@@ -252,8 +248,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
-                lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset, base_address,
+                lopc, hipc, locdesc_offset, base_address,
                 bError);
         }
         break;

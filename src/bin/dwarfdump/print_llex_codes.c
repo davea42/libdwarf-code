@@ -126,9 +126,7 @@ print_llex_linecodes(
         if (checking && !debug_addr_unavailable) {
             loc_error_check(
                 tagname,attrname,
-                lopc,
-                rawlopc,
-                hipc, rawhipc, locdesc_offset,
+                lopc, hipc, locdesc_offset,
                 base_address,
                 bError);
         }
@@ -163,9 +161,7 @@ print_llex_linecodes(
         if (checking && !debug_addr_unavailable) {
             loc_error_check(
                 tagname,attrname,
-                lopc,
-                rawlopc,
-                hipc, rawhipc, locdesc_offset,
+                lopc, hipc,  locdesc_offset,
                 base_address,
                 bError);
         }
@@ -203,9 +199,7 @@ print_llex_linecodes(
             loc_error_check(
                 tagname,attrname,
                 lopc,
-                rawlopc,
-                hipc, rawhipc, locdesc_offset,
-                base_address,
+                hipc, locdesc_offset, base_address,
                 bError);
         }
         break;
