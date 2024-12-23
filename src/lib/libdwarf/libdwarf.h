@@ -9242,6 +9242,12 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     pointed to will be set to a value that
     the specific ABI uses for the machine-architecture
     the object file says it is for.
+    @param dw_obj_type
+    Pass in a pointer. On success the value
+    pointed to will be set to a value that
+    the specific ABI uses for the machine-architecture
+    the object file says it is for
+    (for ELF is elf header e_type).
     @param dw_obj_flags
     Pass in a pointer. On success the value
     pointed to will be set to a value that
@@ -9282,6 +9288,26 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     is null or stale. Otherwise returns DW_DLV_OK
     and non-null return-value pointers will have
     meaningful data.
+
+*/
+DW_API int dwarf_machine_architecture_a(Dwarf_Debug dw_dbg,
+    Dwarf_Small    *dw_ftype,
+    Dwarf_Small    *dw_obj_pointersize,
+    Dwarf_Bool     *dw_obj_is_big_endian,
+    Dwarf_Unsigned *dw_obj_machine, /*Elf e_machine */
+    Dwarf_Unsigned *dw_obj_type, /* Elf e_type */
+    Dwarf_Unsigned *dw_obj_flags,
+    Dwarf_Small    *dw_path_source,
+    Dwarf_Unsigned *dw_ub_offset,
+    Dwarf_Unsigned *dw_ub_count,
+    Dwarf_Unsigned *dw_ub_index,
+    Dwarf_Unsigned *dw_comdat_groupnumber);
+
+/*! @brief Get basic object information original version
+
+    Identical to dwarf_machine_architecture_a()  except that
+    this older version does not have the the dw_obj_type
+    argument so it cannot return the Elf e_type value..
 
 */
 DW_API int dwarf_machine_architecture(Dwarf_Debug dw_dbg,
