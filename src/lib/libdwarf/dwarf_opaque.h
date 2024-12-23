@@ -698,6 +698,12 @@ struct Dwarf_Debug_s {
         Inspect de_ftype using the value of
         de_obj_machine or the following de_obj_* fields. */
     Dwarf_Unsigned de_obj_machine;
+
+    /*  For Elf is the obj header e_type field.
+        Not yet specified: value for MachO or PE objects,
+        so expect zero */
+    Dwarf_Unsigned de_obj_type;
+
     /*  For DW_FTYPE_APPLEUNIVERSAL this is the
         offset of an executable object in the multi-executable
         file.  For all other de_ftype values this has
