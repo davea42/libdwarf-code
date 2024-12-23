@@ -88,6 +88,7 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     struct Dwarf_Loclists_Context_s localcontxt;
     Dwarf_Loclists_Context buildhere = &localcontxt;
     Dwarf_Unsigned nextset = 0;
+    Dwarf_Unsigned loclists_count = 0;
     int res = 0;
 
     if (!fsd) {
@@ -95,6 +96,13 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
             "DW_DLE_XU_TYPE_ARG_ERROR: a required argument to"
             "load_xu_loclists_into_cucontext() is NULL");
         return DW_DLV_ERROR;
+    }
+    if (! dbg->de_debug_loclists.dss_data) {
+        /*  Sets dbg->de_loclists_count if success */
+        res = dwarf_load_loclists(dbg,&loclists_count,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     }
     localcontxt = localcontxt_zero;
     size = fsd->pcu_size[fsd_index];
