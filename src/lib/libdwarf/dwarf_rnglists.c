@@ -1069,8 +1069,6 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
 
     Dwarf_Unsigned          i = 0;
     Dwarf_Unsigned          rnglists_base = 0;
-    Dwarf_Bool              rnglists_base_present = FALSE;
-    int                     res = 0;
     Dwarf_Bool              found_base = FALSE;
     Dwarf_Unsigned          chosen_offset = 0;
 
@@ -1085,16 +1083,21 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     if (ctx->cc_rnglists_base_present) {
+#if 0
         rnglists_base_present = ctx->cc_rnglists_base_present;
+#endif
         rnglists_base = ctx->cc_rnglists_base;
         found_base = TRUE;
         chosen_offset = rnglists_base;
     }
+#if 0
+    Dwarf_Bool              rnglists_base_present = FALSE;
     if (!found_base) {
-         /*  This works for CU access, but fails for TU access
-             as for .debug_tu_index there is no whole-type-unit
-             entry in any .debug_tu_index section. 
-             DWARF5 Sec 7.3.5 Page 190. */
+        int                     res = 0;
+        /*  This works for CU access, but fails for TU access
+            as for .debug_tu_index there is no whole-type-unit
+            entry in any .debug_tu_index section. 
+            DWARF5 Sec 7.3.5 Page 190. */
         res = _dwarf_has_SECT_fission(ctx,
             DW_SECT_RNGLISTS,
             &rnglists_base_present,&rnglists_base);
@@ -1103,6 +1106,7 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
             chosen_offset = rnglists_base;
         }
     }
+#endif
     if (!found_base) {
         rnglists_base = rnglist_offset;
         chosen_offset = rnglist_offset;
