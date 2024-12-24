@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 197 </p>
+<p> Record count: 198 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6501,6 +6501,40 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references: regressiontests/ossfuzz42536144/fuzz_die_cu_attrs_loclist-5906068650655744
 </p>
 <p>gitfixid: a0d983611468e3882c9fee92197d321ae4580c1a
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-008">198) DW202412-008</h3>
+<p>id: DW202412-008
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz id: 42536144
+</p>
+<p>datereported: 2024-12-21
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Null-dereference READ
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A very badly damaged object
+  with .debug_cu[ or tu]_index results in
+  attempting to eccess .debug_cu_index
+  in memory -- which has not been loaded due to
+  damage.  So we assumed it was loaded
+  and used a null pointer value to read the index
+  contents resulting in a crash.
+  Now we  load the section and immediately
+  fail due to the corruption and we generate an error.
+  This has been a bug since the code was written
+  in 2021.
+</p>
+<p>datefixed: 2024-12-23
+</p>
+<p>references: regressiontests/ossfuzz385466100/fuzz_die_cu_offset-6604029974609920
+</p>
+<p>gitfixid: 4e6e7cafa6bef0629e5ea2bbf63a4e2f84c5a938
 </p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>

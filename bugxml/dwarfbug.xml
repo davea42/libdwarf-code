@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202412-008</dwid>
+<cve></cve>
+<fuzzer>oss fuzz id: 42536144</fuzzer>
+<datereported>2024-12-21</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Null-dereference READ
+</vulnerability>
+<description> A very badly damaged object
+  with .debug_cu[ or tu]_index results in
+  attempting to eccess .debug_cu_index
+  in memory -- which has not been loaded due to
+  damage.  So we assumed it was loaded
+  and used a null pointer value to read the index
+  contents resulting in a crash.
+  Now we  load the section and immediately
+  fail due to the corruption and we generate an error.
+  This has been a bug since the code was written
+  in 2021.
+</description>
+<datefixed>2024-12-23</datefixed>
+<references> regressiontests/ossfuzz385466100/fuzz_die_cu_offset-6604029974609920
+</references>
+<gitfixid>4e6e7cafa6bef0629e5ea2bbf63a4e2f84c5a938</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202412-007</dwid>
 <cve></cve>
 <fuzzer>oss fuzz id: 42536144</fuzzer>
