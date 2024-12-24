@@ -77,7 +77,7 @@ freeall_groups_tables(void)
 
 #define TRUE 1
 #define FALSE 0
-#if 0
+#if 0 /* No longer needed, not used now */
 static struct  glfsetting_s {
     const char *secname;
     Dwarf_Bool *flag;
@@ -130,31 +130,7 @@ static struct  glfsetting_s {
     FIXME: It would be good if, for a wholly missing
     section related to a flag, that the flag got turned
     off.  */
-#if 0
-static void
-turn_off_subsidiary_flags(void)
-{
-    Dwarf_Unsigned i = 0;
 
-    for ( ; i < group_map_entry_count; ++i) {
-        if (group_nums[i] == 1) {
-            unsigned k = 0;
-            const char* oursec = sec_names[i];
-
-            for ( ; glftab[k].secname; ++k ) {
-                if (!strcmp(oursec,glftab[k].secname)) {
-                    if (!glftab[k].origset) {
-                        glftab[k].origset = TRUE;
-                        glftab[k].origflag = *(glftab[k].flag);
-                    }
-                    *(glftab[k].flag) = FALSE;
-                }
-            }
-        }
-    }
-}
-
-#endif
 /*  Restoring original condition in the glftab array
     and in the global flags it points to.
     So that when processing an archive one can restore
@@ -165,21 +141,8 @@ turn_off_subsidiary_flags(void)
 void
 groups_restore_subsidiary_flags(void)
 {
-#if 0
-    unsigned k = 0;
-#endif
-
     /*  Duplicative but harmless free. */
     freeall_groups_tables();
-#if 0
-    for ( ; glftab[k].secname; ++k ) {
-        if (glftab[k].origset) {
-            *(glftab[k].flag) = glftab[k].origflag;
-            glftab[k].origset = FALSE;
-            glftab[k].origflag = FALSE;
-        }
-    }
-#endif
 }
 
 /*  NEW May 2017.
@@ -210,9 +173,6 @@ update_section_flags_per_groups(void)
         freeall_groups_tables();
         return;
     }
-#if 0
-    turn_off_subsidiary_flags();
-#endif
     freeall_groups_tables();
 }
 

@@ -40,7 +40,7 @@ void * _libdwarf_malloc(size_t s)
             __LINE__,
             largest_alloc);
         fflush(stdout);
-#if 0
+#if 0 /* For specific malloc issue detection. Ignore. */
         if (s > 1000000000) {
             abort();
         }

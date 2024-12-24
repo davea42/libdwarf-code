@@ -49,7 +49,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 
-#if 0
+#if 0 /* debugging */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {

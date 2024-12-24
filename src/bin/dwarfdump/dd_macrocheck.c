@@ -415,16 +415,6 @@ print_macrocheck_statistics(const char *name,void **tsbase,
         qsort_compare);
     for (i = 0; i < count ; ++i) {
         struct Macrocheck_Map_Entry_s *r = mac_as_array[i];
-#if 0
-        printf("debugging: i %u off 0x%x len 0x%x printed? %u "
-            " ref prim: %u  sec: %u\n",
-            (unsigned)i,
-            (unsigned)r->mp_key,
-            (unsigned)r->mp_len,
-            (unsigned)r->mp_printed,
-            (unsigned)r->mp_refcount_primary,
-            (unsigned)r->mp_refcount_secondary);
-#endif
         if (r->mp_key < lowest) {
             lowest = r->mp_key;
         }
@@ -464,12 +454,6 @@ print_macrocheck_statistics(const char *name,void **tsbase,
         lowest, highest);
     for (i = 1; i < count ; ++i) {
         struct Macrocheck_Map_Entry_s *r = mac_as_array[i];
-#if 0
-        printf("debugging i %u off 0x%x len 0x%x\n",
-            (unsigned)i,
-            (unsigned)r->mp_key,
-            (unsigned)r->mp_len);
-#endif
         if (r->mp_key > lastend) {
             internalgap += (r->mp_key - lastend);
         } else if (r->mp_key < lastend) {

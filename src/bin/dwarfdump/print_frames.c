@@ -1833,51 +1833,6 @@ lastop_pointless(int op)
     return FALSE;
 }
 
-#if 0
-/*  iregion_start, iregion_end are the overall
-    block of fde/cie instructions.
-    idata, idata end are the area next to be read
-    and they must lie within the iregion* range.
-    The end address is one past the last byte.
-
-    We are decoding here, libdwarf has
-    not decoded these bytes, so it is up to us to
-    check for corrupt data in the frame section.
-*/
-static int
-check_finstr_addrs(unsigned char *iregionstart,
-    unsigned char *idata,
-    unsigned char *idata_end,
-    unsigned char *iregionend,
-    const char *msg)
-{
-    if ( idata > idata_end) {
-        /* zero length allowed.  But maybe overflow happened. */
-        glflags.gf_count_major_errors++;
-        printf("ERROR: frame instruction internal error reading %s\n",
-            msg);
-        return DW_DLV_ERROR;
-    }
-    if (idata < iregionstart) {
-        glflags.gf_count_major_errors++;
-        printf("\nERROR: frame instruction overflow(?) reading"
-            "  %s\n", msg);
-        return DW_DLV_ERROR;
-    }
-    if (idata_end > iregionend) {
-        Dwarf_Unsigned bytes_in = 0;
-        bytes_in = idata - iregionstart;
-        glflags.gf_count_major_errors++;
-        printf("\nERROR: frame instruction reads off end"
-            " %" DW_PR_DUu
-            " bytes into instructions for %s\n",
-            bytes_in,msg);
-        return DW_DLV_ERROR;
-    }
-    return DW_DLV_OK;
-}
-#endif
-
 static char exprstr_buf[1000];
 static int
 print_expression( Dwarf_Debug dbg,
@@ -2127,11 +2082,6 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         default:
             printf("UNKNOWN FIELD 0x%x\n",fields[0]);
         }
-#if 0
-        glflags.gf_count_major_errors++;
-        printf("\nERROR: Unexpected frame instruction string"
-            " \"%s\" not understood.\n",fields);
-#endif
     }
     if (lastop_pointless(lastop)) {
         printf(

@@ -1051,7 +1051,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 esb_destructor(&mtext);
                 return lres;
             }
-#if 0
+#if 0 /* Possibly future use .debug_sup */
             add_macro_import_sup();
                 /* The supplementary object file is not available,
                 So we cannot check the import references
@@ -1388,19 +1388,6 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         /*  macro_unit_offset for macro_unit_length bytes
             is a real macro unit. */
     }
-#if 0
-    if (check_lines && checking_this_compiler()) {
-        DWARF_CHECK_COUNT(lines_result,1);
-        dwarf_check_lineheader(cu_die,&line_errs);
-        if (line_errs > 0) {
-            /* does glflags.check_error++; */
-            /* sets glflags.gf_record_dwarf_error = TRUE; */
-            DWARF_CHECK_ERROR_PRINT_CU();
-            DWARF_ERROR_COUNT(lines_result,line_errs);
-            DWARF_CHECK_COUNT(lines_result,(line_errs-1));
-        }
-    }
-#endif
     if (do_print_dwarf) {
         mark_macro_offset_printed(&macro_check_tree,offset);
     }

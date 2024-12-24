@@ -183,11 +183,6 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             printf(" %s data.  %" DW_PR_DSd " %s\n",
                 line_title,globcount,
                 globcount==1?"entry":"entries");
-#if 0
-            printf("  DIE        DIE      CU DIE       CU DIE\n");
-            printf("  in sect    in CU    in sect      in sect\n");
-#endif
-
             printf("  CUhdr      DIE        CU DIE     DIE\n");
             printf("  in sect    in CU      in sect    in sect\n");
         }
@@ -203,7 +198,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             dwarf_get_TAG_name(dietag,&tagname);
             printf(" %-18s",tagname);
         }
-#if 0
+#if 0 /* debugging only */
         printf("%s die-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx
             ", cu-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx ","
             " die-in-cu 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -216,29 +211,6 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             global_cu_offset);
 #endif
     }
-
-#if 0
-    if (cu_local_die_offset != global_cuh_offset) {
-        struct esb_s details;
-
-        dwarf_dealloc(dbg, die, DW_DLA_DIE);
-        esb_constructor(&details);
-        esb_append(&details,"\nERROR: ");
-        esb_append(&details,line_title);
-        esb_append(&details,"has improper die offset:");
-        esb_append_printf_u(&details," global cu offset 0x%x ",
-            global_cuh_offset);
-        esb_append_printf_u(&details," does not match die_off 0x%x ",
-            global_die_off);
-        esb_append_printf_u(&details," minus die_CU_off  0x%x ",
-            die_CU_off);
-        esb_append(&details,"\n.");
-        simple_err_return_msg_either_action(DW_DLV_ERROR,
-            esb_get_string(&details));
-        return DW_DLV_NO_ENTRY;
-    }
-#endif
-
     /* Print 'name' at the end for better layout */
     printf(" '%s'\n",name);
     dwarf_dealloc(dbg, die, DW_DLA_DIE);

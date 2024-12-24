@@ -124,7 +124,7 @@ update_cu_base_addresses(Dwarf_Debug dbg,
     }
 }
 
-#if 0
+#if 0 /* debugging only */
 static void
 dumplohipc(LoHiPc *hilopc,char *msg, int line)
 {

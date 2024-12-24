@@ -980,14 +980,11 @@ _dwarf_which_loclists_context(Dwarf_Debug dbg,
     }
 
     if (ctx->cc_loclists_base_present) {
-#if 0
-        loclists_base_present = ctx->cc_loclists_base_present;
-#endif
         loclists_base = ctx->cc_loclists_base;
         found_base = TRUE;
         chosen_offset = loclists_base;
     }
-#if 0 
+#if 0  /* Do not do this, ignore fission section */
     if (!found_base) {
         Dwarf_Bool              loclists_base_present = FALSE;
         int                     res = 0;

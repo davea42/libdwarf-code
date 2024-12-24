@@ -69,7 +69,7 @@ reset_abblist(void)
     abblist_nexttouse = 0;
 }
 
-#if 0
+#if 0 /*debugging only */
 static void
 dump_table(const char *msg,unsigned long count,
     Dwarf_Half *idx, Dwarf_Half *form)
@@ -896,14 +896,6 @@ print_names_table(unsigned int indent,
     printindent(indent);
     printf("Names Table, entry count %" DW_PR_DUu "\n",name_count);
     printindent(indent);
-#if 0
-    printf("[] ");
-    if (bucket_count) {
-
-        printf("    Bucket Hash");
-    } else {
-    }
-#endif
     printf("(Any DW_IDX_die_offset not in .debug_info"
         " will be reported as an error.)\n");
     for ( ; i <= name_count;++i) {

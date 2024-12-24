@@ -57,7 +57,7 @@
     See also print_tag_attributes_usage.c as that is
     where tag-tag and tag-attr tree is printed. */
 
-#if 0
+#if 0 /* debugging only */
 static void
 print_3key_record(const char *msg,int num,Three_Key_Entry *e)
 {
@@ -950,9 +950,6 @@ dd_print_tag_attr_results(Dwarf_Unsigned tag_attr_count)
     printf("Number of unknown  table entries: %7" DW_PR_DUu "\n",
         attrs_unknown);
     free(tk_l);
-#if 0
-FIXME
-#endif
 }
 
 void

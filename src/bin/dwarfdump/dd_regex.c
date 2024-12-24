@@ -230,27 +230,6 @@ resetbittab(void)
     sta = NOP;
 }
 
-#if 0
-/* Some may not be alone,
-. \ [ ] * + ^ $
-but some can be.
-*/
-static int
-dangermetachar(CHAR c)
-{
-    switch(c) {
-    case '?':
-    case '\\':
-    case '[':
-    case '+':
-    case '^':
-    case '$': return 1;
-    default:
-        return 0;
-    }
-}
-#endif
-
 int
 dd_re_comp(const char *pat)
 {

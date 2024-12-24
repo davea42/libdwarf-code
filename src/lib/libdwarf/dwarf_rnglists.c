@@ -1083,14 +1083,11 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     if (ctx->cc_rnglists_base_present) {
-#if 0
-        rnglists_base_present = ctx->cc_rnglists_base_present;
-#endif
         rnglists_base = ctx->cc_rnglists_base;
         found_base = TRUE;
         chosen_offset = rnglists_base;
     }
-#if 0
+#if 0 /* Do not do this, ignore fission data */
     Dwarf_Bool              rnglists_base_present = FALSE;
     if (!found_base) {
         int                     res = 0;

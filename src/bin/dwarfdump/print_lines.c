@@ -349,11 +349,6 @@ process_line_table(Dwarf_Debug dbg,
             DWARF_CHECK_COUNT(decl_file_result,1);
             if (found_line_error) {
                 /* DWARF_CHECK already issued. */
-#if 0
-                DWARF_CHECK_ERROR2(decl_file_result,where,
-                    dwarf_errmsg(lt_err);
-#endif
-
             } else if (glflags.gf_do_check_dwarf) {
                 /*  Check the address lies with a
                     valid [lowPC:highPC]
