@@ -1,4 +1,26 @@
 
+id: DW202412-009
+fuzzer: oss fuzz  (no id)
+datereported: 2024-12-15
+reportedby: David Korczynski
+vulnerability: Runs too long, to many error msgs.
+product: libdwarf
+description: A very badly damaged MachO object
+  runs a long time emitting error messages.
+  Essentially the count of segments and the
+  size of the block of segment data are both
+  larger than is usable in MacOS (either one larger
+  means corrupt).
+  It's not an infinite process, but it is improperly long
+  with too many messages.
+datefixed: 2024-12-24
+references: regressiontests/DW202412-009/fuzz_init_path-5854698061496320
+gitfixid: 
+tarrelease:
+endrec: DW202412-009
+
+
+
 id: DW202412-008
 fuzzer: oss fuzz id: 42536144
 datereported: 2024-12-21

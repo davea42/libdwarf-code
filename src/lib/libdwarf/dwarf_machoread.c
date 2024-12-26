@@ -110,6 +110,10 @@ print_arch_item(unsigned int i,
 }
 #endif
 
+/*  There are reports that this limit of the number of bytes of
+    Macho object commands is a hard limit kernel in iOS.  */
+#define MAX_COMMANDS_SIZE  16464
+
 /* MACH-O and dwarf section names */
 static struct macho_sect_names_s {
     char const *ms_moname;
@@ -347,8 +351,9 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     mfp->mo_header.reserved = 0;
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
     if (mfp->mo_command_count >= mfp->mo_filesize ||
-        mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
-        mfp->mo_command_count >= mfp->mo_header.sizeofcmds) {
+        mfp->mo_command_count >=  MAX_COMMANDS_SIZE ||
+        mfp->mo_header.sizeofcmds >  MAX_COMMANDS_SIZE ||
+        mfp->mo_header.sizeofcmds >= mfp->mo_filesize) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -389,8 +394,8 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     ASNAR(mfp->mo_copy_word,mfp->mo_header.reserved,mh64.reserved);
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
     if (mfp->mo_command_count >= mfp->mo_filesize ||
-        mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
-        mfp->mo_command_count >= mfp->mo_header.sizeofcmds) {
+        mfp->mo_command_count >=  MAX_COMMANDS_SIZE ||
+        mfp->mo_header.sizeofcmds >= MAX_COMMANDS_SIZE) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -555,9 +560,17 @@ _dwarf_macho_load_segment_commands(
 
     mmp = mfp->mo_commands;
     msp = mfp->mo_segment_commands;
+
+    /*  This is a heuristic sanity check for a badly damaged object.  
+        We have no information  better limits.
+        See dwarfbug DW202412-009. */
+    if ( mfp->mo_header.sizeofcmds > MAX_COMMANDS_SIZE) {
+         *errcode = DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL;
+         return DW_DLV_ERROR;
+    }
     for (i = 0 ; i < mfp->mo_command_count; ++i,++mmp) {
         unsigned cmd = (unsigned)mmp->cmd;
-        int res = 0;
+        int res = DW_DLV_OK;
 
         if (cmd == LC_SEGMENT) {
             res = load_segment_command_content32(mfp,mmp,msp,

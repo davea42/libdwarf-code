@@ -690,6 +690,7 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL(504) Section size fails "
     "a heuristic sanity check"},
 {"DW_DLE_LLE_ERROR(505) Generic .debug_loclists read error"},
-{"DW_DLE_RLE_ERROR(506) Generic .debug_rnglists read error"}
+{"DW_DLE_RLE_ERROR(506) Generic .debug_rnglists read error"},
+{"DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL(507) MachO object seems corrupt"}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

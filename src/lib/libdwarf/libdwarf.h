@@ -1479,9 +1479,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_PE_SECTION_SIZE_HEURISTIC_FAIL  504
 #define DW_DLE_LLE_ERROR                       505
 #define DW_DLE_RLE_ERROR                       506
+#define DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL 507
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        506
+#define DW_DLE_LAST        507
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
