@@ -1016,7 +1016,7 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
                 &context->cc_dwp_offsets,
                 DW_SECT_ABBREV,&size);
             /*  ASSERT: size != 0 */
-            end_abbrev_ptr = abbrev_ptr + size;
+            /*  Do nothing with size. */
         }
     }
 
