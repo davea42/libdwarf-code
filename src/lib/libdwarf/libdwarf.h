@@ -9628,6 +9628,29 @@ DW_API void dwarf_record_cmdline_options(
 */
 DW_API int dwarf_set_de_alloc_flag(int dw_v);
 
+
+/*!  @brief Eliminate libdwarf checking attribute duplication
+
+    Independent of any Dwarf_Debug, this is sets a
+    global flag in libdwarf and is applicable
+    to all whenever the setting is changed.
+    Defaults to zero so by default libdwarf does check
+    every set of abbreviations. 
+
+    Do not call this with non-zero dw_v unless you
+    really want the library to avoid this basic
+    DWARF-correctness check.
+
+    @param dw_v   
+    If non-zero passed in libdwarf will avoid the checks
+    will not return errors for the abbreviation list with
+    duplications. 
+    @return
+    Returns the previous version of the flag.
+*/ 
+DW_API int dwarf_set_no_attr_dup_check(int dw_v);
+
+
 /*! @brief Set the address size on a Dwarf_Debug
 
     DWARF information CUs and other

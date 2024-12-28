@@ -173,6 +173,7 @@ If one or more
 .BR \--file-name=<path>\ (\-x\ name=<path>)
 is given the last of these is
 used and all other such files are ignored.
+.SH ERROR CHECKING
 .PP
 Some checking (
 .BR \-k )
@@ -185,6 +186,18 @@ These are difficult to properly report in dwarfdump and
 any error strings may not appear close to the time the
 error was encountered.
 .PP
+If one or more abbreviation attributes are duplicated 
+in an abbreviation list for some Debugging Information
+Entry (a direct violation of the DWARF
+standard) you will find that adding the option
+.BR \--no-dup-attr-check
+to the options will enable you to see the
+broken set of attributes.
+Or instead of printing all the data use the option
+.BR \-kD
+to find out what duplicated attributes exist in
+the object file.
+.PP
 If zlib compression was used on the DWARF sections
 in the object file being read the
 real section names such as .zdebug_info etc will be reported by
@@ -195,6 +208,7 @@ the offset applies to the
 uncompressed section (in memory), 
 not the .zdebug_ compressed section
 in \f2objectfilename\fP. 
+
 .SH URI-STYLE INPUT STRINGS
 .PP
 The <objectfilename> and all the options taking

@@ -1092,6 +1092,14 @@
     for the object file being read
     for improved checking (fewer incorrect
     error reports) in dwarfdump -k  output.
+
+    Added new API function dwarf_set_no_attr_dup_check()
+    so simple abbreviation corruption checks can be suppressed.
+    In rare instances one might need to view object files
+    with duplicated attributes.
+    Defaults to false (0) meaning the checks are done in
+    libdwarf by default. Pass one (1) to
+    suppress these libdwarf checks.
     
     <b>Changes 0.10.1 to 0.11.0</b>
 
