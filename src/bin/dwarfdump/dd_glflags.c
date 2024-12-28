@@ -143,7 +143,12 @@ init_global_flags(void)
 
     glflags.gf_generic_1200_regs = FALSE;
     glflags.gf_suppress_check_extensions_tables = FALSE;
+
+    /* Tells dwarfdump not to look for duplicated attrs. */
     glflags.gf_check_duplicated_attributes = FALSE;
+
+    /* Tells libdwarf to look for duplicated attrs. */
+    glflags.gf_no_check_duplicated_attributes = FALSE;
     glflags.gf_no_sanitize_strings = FALSE;
 
     /* lots of checks make no sense on a dwp debugfission object. */
@@ -374,6 +379,9 @@ set_checks_off(void)
     glflags.gf_check_forward_decl = FALSE;
     glflags.gf_check_self_references = FALSE;
     glflags.gf_check_attr_encoding = FALSE;
+    /* applies to libdwarf */
+    glflags.gf_no_check_duplicated_attributes = FALSE;
+    /* applies to dwarfdump */
     glflags.gf_check_duplicated_attributes = FALSE;
     glflags.gf_check_debug_names = FALSE;
 }

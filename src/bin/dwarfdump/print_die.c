@@ -2257,6 +2257,7 @@ check_duplicated_attributes(Dwarf_Debug dbg,
         Dwarf_Half   attr_next = 0;
         Dwarf_Signed j = 0;
 
+        /* DWARFDUMP does the checking */
         DWARF_CHECK_COUNT(duplicated_attributes_result,1);
         for (j = i + 1; j < atcnt; ++j) {
             int ares = 0;
@@ -8210,6 +8211,18 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         Dwarf_Half attr = 0;
         Dwarf_Off goff = 0; /* Global offset */
 
+        refres = dwarf_whatattr(attrib, &attr, err);
+        if (refres != DW_DLV_OK) {
+            struct esb_s lstr;
+            esb_constructor(&lstr);
+            esb_append(&lstr,get_AT_name(attr,FALSE));
+            esb_append(&lstr,
+                " is an attribute with no number? Impossible");
+            print_error_and_continue(
+                esb_get_string(&lstr),refres,*err);
+            esb_destructor(&lstr);
+            return refres;
+        }
         /* CU-relative offset returned. */
         refres = dwarf_formref(attrib, &off,
             &is_info, err);
@@ -8228,19 +8241,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             print_error_and_continue(
                 esb_get_string(&msg),refres,*err);
             esb_destructor(&msg);
-            return refres;
-        }
-
-        refres = dwarf_whatattr(attrib, &attr, err);
-        if (refres != DW_DLV_OK) {
-            struct esb_s lstr;
-            esb_constructor(&lstr);
-            esb_append(&lstr,get_AT_name(attr,FALSE));
-            esb_append(&lstr,
-                " is an attribute with no number? Impossible");
-            print_error_and_continue(
-                esb_get_string(&lstr),refres,*err);
-            esb_destructor(&lstr);
             return refres;
         }
 

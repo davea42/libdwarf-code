@@ -176,6 +176,14 @@ struct glflags_s {
     Dwarf_Bool gf_check_attr_encoding;   /* Attributes encoding */
     Dwarf_Bool gf_generic_1200_regs;
     Dwarf_Bool gf_suppress_check_extensions_tables;
+
+
+    /* The following tells libdwarf not to check for duplicated
+        attributes if TRUE. */
+    Dwarf_Bool gf_no_check_duplicated_attributes;
+
+    /* The following tells dwarfdump to check for duplicated
+        attributes if TRUE. */
     Dwarf_Bool gf_check_duplicated_attributes;
     Dwarf_Bool gf_check_functions;
 
@@ -222,6 +230,8 @@ struct glflags_s {
 
     Dwarf_Bool gf_check_debug_names;
     Dwarf_Bool gf_no_sanitize_strings;
+    Dwarf_Bool gf_suppress_dup_attr_form;
+   
 
     /* Display parent/children when in wide format? */
     Dwarf_Bool gf_display_parent_tree;

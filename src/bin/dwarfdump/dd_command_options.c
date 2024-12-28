@@ -515,6 +515,7 @@ static const char *usage_long_text[] = {
 "-ka  --check-all            Do all checks",
 "-kM  --check-aranges        Check ranges list (.debug_aranges)",
 "-kD  --check-attr-dup       Check duplicated attributes",
+"                            in dwarfdump itself",
 "-kE  --check-attr-encodings Notice attribute/class/form encodings",
 "                            and print a report on them",
 "-kn  --check-attr-names     Examine names in attributes",
@@ -687,6 +688,12 @@ static const char *usage_long_text[] = {
 "                    dwarf_finish(). Used to test that",
 "                    dwarfdump does dealloc everywhere",
 "                    it should for minimum memory use.",
+"     --no-dup-attr-check Turns off libdwarf checking for",
+"                    duplicated compiler-emitted attributes",
+"                    in reading abbreviation data so duplicates",
+"                    will not cause a DW_DLV_ERROR return from",
+"                    libdwarf.  dwarfdump --check-attr-dup will ",
+"                    check for them in dwarfdump.",
 "     --trace=0      Shows --trace values (1,2,3) that",
 "                    turn on detailed tracking of dwarfdump",
 "                    internal tables (for debugging dwarfdump).",
@@ -826,6 +833,8 @@ OPT_SHOW_ARGS,                /*   --show-args               */
 
 /* Trace                                                     */
 OPT_TRACE,                    /* -# --trace=<num>            */
+
+OPT_NO_DUP_ATTR_CHECK,        /*  --no-dup-attr-check  */
 
 OPT_ALLOC_TREE_OFF,           /* --suppress-de-alloc-tree */
 
@@ -979,6 +988,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"version",       dwno_argument, 0, OPT_VERSION      },
 {"show-dwarfdump-conf",dwno_argument, 0, OPT_SHOW_DWARFDUMP_CONF },
 {"show-args",     dwno_argument, 0, OPT_SHOW_ARGS },
+{"no-dup-attr-check", dwno_argument, 0, OPT_NO_DUP_ATTR_CHECK },
 
 /* Trace. */
 {"trace", dwrequired_argument, 0, OPT_TRACE},
@@ -1308,7 +1318,12 @@ void arg_check_all(void)
     glflags.gf_check_self_references = TRUE;
     glflags.gf_check_attr_encoding = TRUE;
     glflags.gf_print_usage_tag_attr = TRUE;
+
+    /*  Not letting libdwarf check */
+    glflags.gf_no_check_duplicated_attributes = TRUE;
+    /*  Let dwarfdump check */
     glflags.gf_check_duplicated_attributes = TRUE;
+
     glflags.gf_check_functions = TRUE;
 }
 
@@ -1346,8 +1361,11 @@ void arg_check_show(void)
 /*  Option '-kD' --check-attr-dup */
 void arg_check_attr_dup(void)
 {
-    /* Check duplicated attributes */
+    /* Check duplicated attributes in dwarfdump */
     suppress_print_dwarf();
+    /* avoid checking attr dups in libdwarf itself */
+    glflags.gf_no_check_duplicated_attributes = TRUE;
+    /* Let dwarfdump find the dups */
     glflags.gf_check_duplicated_attributes = TRUE;
     glflags.gf_info_flag = TRUE;
     glflags.gf_types_flag = TRUE;
@@ -2336,6 +2354,14 @@ static void arg_format_suppress_sanitize(void)
     glflags.gf_no_sanitize_strings = TRUE;
 }
 
+/*  Option '--no-dup-attr-check' 
+    Results in telling libdwarf not to check for
+    duplicate attributes in abbreviations.*/
+static void arg_no_dup_attr_check(void)
+{
+     glflags.gf_no_check_duplicated_attributes = TRUE;
+}
+
 /*  Option '-x tied=' */
 static void arg_file_tied(void)
 {
@@ -2643,6 +2669,13 @@ set_command_options(int argc, char *argv[])
             arg_show_args();break;
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
+        case OPT_NO_DUP_ATTR_CHECK: 
+            /*  Suppress checking for duplicate attrbutes
+                in abbreviations entries, 
+                It is rare compilers emit duplicates, but
+                if one did, use this option to let dwarfdump show
+                things as they are rather than generating an error.*/
+            arg_no_dup_attr_check(); break;
 
         case OPT_ALLOC_TREE_OFF:
             /*  Suppress nearly all libdwarf de_alloc_tree
@@ -2676,6 +2709,7 @@ static const char *simplestdargs[] ={
 "--verbose",
 "--show-dwarfdump-conf",
 "--show-args",
+"--no-dup-form-check",
 "--verbose-more",
 "--suppress-de-alloc-tree",
 "--suppress-debuglink-crc",

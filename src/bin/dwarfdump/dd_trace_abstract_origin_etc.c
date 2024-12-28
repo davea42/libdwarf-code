@@ -483,13 +483,23 @@ dd_trace_abstract_origin_etc(
                 }
             } else {
                 if (tares == DW_DLV_ERROR) {
+                    /*  Details of locviews are unclear to me. */
+                    if (attrnum != DW_AT_GNU_locviews) {
+                        esb_append(valname,
+                           " Reference fails: ");
+                        if (dwarf_errno(*err) == 
+                            /*  This means we might never see
+                                the error otherwise, just
+                                incomplete report. */
+                            DW_DLE_ABBREV_ATTR_DUPLICATION) {
+                            esb_append(valname,
+                                "  \n ERROR: in ref target: ");
+                            esb_append(valname,dwarf_errmsg(*err));
+                            ++glflags.gf_count_major_errors;
+                        }
+                    }
                     dwarf_dealloc_error(dbg,*err);
                     *err = 0;
-                    if (attrnum != DW_AT_GNU_locviews) {
-                        /*  Not yet sure I understand the value
-                            yet (of this attribute) . */
-                        esb_append(valname," Reference fails");
-                    }
                 }
             }
             if (target_die) {

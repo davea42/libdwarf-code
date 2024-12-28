@@ -185,8 +185,11 @@ print_specific_checks_results(Compiler *pCompiler)
             attr_encoding_result);
     }
 
-    /* Duplicated attributes */
-    if (glflags.gf_check_duplicated_attributes) {
+    /*  Duplicated attributes  This is set means libdwarf did no
+        check of duplicated attributes so dwarfdump must do it.
+        Instead of a reversal it is showing which does the checks.
+        See dwarfdump.c dwarf_set_no_attr_dup_check() call. */
+    if (glflags.gf_no_check_duplicated_attributes) {
         PRINT_CHECK_RESULT("duplicated_attributes",
             pCompiler, duplicated_attributes_result);
     }

@@ -1169,16 +1169,22 @@ process_one_file(
     size_t       temp_path_buf_len,
     struct dwconf_s *l_config_file_data)
 {
-    Dwarf_Debug dbg = 0;
-    Dwarf_Debug dbgtied = 0;
-    int dres = 0;
+    Dwarf_Debug   dbg = 0;
+    Dwarf_Debug   dbgtied = 0;
+    int           dres = 0;
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
-    Dwarf_Half elf_address_size = 0;      /* Target pointer size */
-    Dwarf_Error onef_err = 0;
-    const char *title = 0;
+    Dwarf_Half    elf_address_size = 0;      /* Target pointer size */
+    Dwarf_Error   onef_err = 0;
+    const char   *title = 0;
     unsigned char path_source = 0;
-    int localerrno = 0;
+    int           localerrno = 0;
 
+    if (glflags.gf_no_check_duplicated_attributes) {
+        /*  This means libdwarf won't check for duplicated
+            attributes but it means dwarfdump *will* check
+            if this is a -k* run of dwarfdump. */
+        dwarf_set_no_attr_dup_check(TRUE);
+    }
     /*  If using a tied file group number should be
         2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
