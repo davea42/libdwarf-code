@@ -29,6 +29,8 @@
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
+#include <string.h> /* memset() strdup() strlen() */
+#include <stdio.h> /* printf for debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -48,6 +50,38 @@
 #include "dwarf_util.h"
 #include "dwarf_string.h"
 
+/* Eliminate libdwarf checking attribute form duplication
+    Independent of any Dwarf_Debug and applicable
+    to all whenever the setting is changed.
+    Defaults to zero 
+
+    Normally libdwarf checks for simple duplication of attribute-form
+    combinations in abbreviations within a single
+    abbrev_code and reading abbreviations will return
+    DW_DLV_ERROR if any duplications found.
+
+    Normally abbreviations are checked on calling dwarf_init_b() etc
+    so errors are usually reported before anything much is done.
+
+    @param dw_v
+    If non-zero passed in libdwarf will avoid the checks
+    will not return errors for the abbreviations with such.
+    If zero passed in libdwarf will  resume checking for
+    duplicated abbeviations when initially reading them.
+    @return
+    Returns the previous version of the flag.
+*/
+static int _dwarf_no_duplicate_attr_check = FALSE;
+
+int 
+dwarf_set_no_attr_dup_check(int dw_v)
+{
+    int x = _dwarf_no_duplicate_attr_check;
+    _dwarf_no_duplicate_attr_check = dw_v;
+    return x;
+}
+
+
 /*  For abbrevs we first count the entries.
     Actually recording the attr/form/implicit const
     values happens later. */
@@ -62,9 +96,23 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned abbrev_count = 0;
     Dwarf_Unsigned abbrev_implicit_const_count = 0;
-    Dwarf_Unsigned attr_name = 0;
+    Dwarf_Unsigned attr_number = 0;
     Dwarf_Unsigned attr_form = 0;
 
+    #define MAX_AT_CK 30
+    /*  This checks only attributes within
+        the first MAX_AT_CK versions of an 
+        extension DW_AT_* value. A simple array
+        for low overhead knowing only pathological
+        objects would have so many extension
+        attributes. */
+    Dwarf_Half ary[MAX_AT_CK];
+    int  ary_used = 0;
+    /*  This checks all standard attribute numbers. */
+    char arysmall[256];
+    
+    memset(arysmall,0, sizeof(arysmall));
+    memset(ary,0,MAX_AT_CK * sizeof(Dwarf_Half));
     /*  The abbreviations table ends with an entry with a single
         byte of zero for the abbreviation code.
         Padding bytes following that zero are allowed, but
@@ -76,46 +124,94 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         list. */
 
     do {
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_name,
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_number,
             dbg,error,abbrev_section_end);
-        if (attr_name > DW_AT_hi_user) {
+        if (attr_number > DW_AT_hi_user) {
+            /*  attr_number  is higher than allowed.
+                So might even be > 0xffff.  */  
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
         }
+        /*  ASSERT: attr_number fits in Dwarf_Half */
         DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
             dbg,error,abbrev_section_end);
         /* If we have attr, form as 0,0, fall through to end */
-        if (!_dwarf_valid_form_we_know(attr_form,attr_name)) {
+        if (!_dwarf_valid_form_we_know(attr_form,attr_number)) {
             dwarfstring m;
 
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
-                "DW_DLE_UNKNOWN_FORM: Abbrev form 0x%"
-                DW_PR_DUx,
+                "DW_DLE_UNKNOWN_FORM: Abbrev form 0x%x",
                 attr_form);
-            if (attr_name) {
+            if (attr_number) {
                 dwarfstring_append_printf_u(&m,
-                    " DW_DLE_UNKNOWN_FORM: Abbrev form 0x%"
-                    DW_PR_DUx,
+                    " DW_DLE_UNKNOWN_FORM: Abbrev form 0x%x",
                     attr_form);
                 dwarfstring_append_printf_u(&m,
-                    " with attribute 0x%" DW_PR_DUx,
-                    attr_name);
+                    " with attribute 0x%x",
+                    attr_number);
             } else {
                 dwarfstring_append_printf_u(&m,
                     " DW_DLE_UNKNOWN_FORM(really unknown attr)"
-                    ": Abbrev form 0x%"
-                    DW_PR_DUx,
+                    ": Abbrev form 0x%x",
                     attr_form);
                 dwarfstring_append_printf_u(&m,
-                    " with attribute 0x%" DW_PR_DUx,
-                    attr_name);
+                    " with attribute 0x%x",
+                    attr_number);
             }
             dwarfstring_append(&m," so abbreviations unusable. ");
             _dwarf_error_string(dbg, error, DW_DLE_UNKNOWN_FORM,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
+        }
+        if (!_dwarf_no_duplicate_attr_check) {
+            int iserror = FALSE;
+            if (attr_number <= 0xff) {
+                iserror = arysmall[attr_number];
+                arysmall[attr_number] = 1;
+            } else {
+                int i = 0;
+                /*  Assuming ary_used will be < 6 in
+                    the vast majority of cases.
+                    So this should not be slow. */
+                for (i = 0; i < ary_used; ++i) {
+                    if (ary[i] == attr_number) {
+                        iserror = TRUE;
+                    }
+                }
+                if (ary_used < (MAX_AT_CK -1)) {  
+                    ary[ary_used] = attr_number;
+                    ++ary_used;
+                }  else { 
+                    /*  Else ignore, Really unusual count
+                        of non-standard attributes. Hope for the best. */
+#if 0  /* Ignore unless investigating duplicate DW_AT entries. */
+                    printf("dadebug too small ary %d %s\n",
+                        __LINE__,__FILE__);
+#endif
+                }
+            }
+            if (iserror) {
+                const char *atname = 0;
+                dwarfstring m; 
+   
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_ABBREV_ATTR_DUPLICATION: Abbreviation attribute 0x%x"
+                    " is duplicated",
+                    attr_number);
+                dwarf_get_AT_name(attr_number,&atname);
+                dwarfstring_append_printf_s(&m,
+                    " (%s)", (char *)atname);
+                _dwarf_error_string(dbg, error, DW_DLE_ABBREV_ATTR_DUPLICATION,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                /* Just in case the client is not checking state... */
+                *abbrev_count_out = abbrev_count;
+                *abbrev_implicit_const_count_out = abbrev_implicit_const_count;
+                return DW_DLV_ERROR;
+            }
         }
         if (attr_form ==  DW_FORM_implicit_const) {
             /*  The value is here, not in a DIE.  We do
@@ -126,7 +222,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         }
         abbrev_count++;
     } while ((abbrev_ptr < abbrev_section_end) &&
-        (attr_name != 0 || attr_form != 0));
+        (attr_number != 0 || attr_form != 0));
     /* We counted one too high,we included the 0,0 */
     *abbrev_count_out = abbrev_count-1;
     *abbrev_implicit_const_count_out = abbrev_implicit_const_count;
