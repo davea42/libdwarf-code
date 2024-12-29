@@ -1,4 +1,44 @@
 
+id: DW202412-011
+fuzzer: oss fuzz  (no id)
+datereported: 2024-12-13
+reportedby: David Korczynski
+vulnerability: Fails to stop inconsistent time. DoS.
+product: libdwarf
+description: A 20K list of attributes to one DIE in
+  a fuzzed object file (the vast majority duplicates)
+  resulted in a caller continuing to operate (with
+  many messages) for a long and inconsistent time.
+  Now, by default, libdwarf checks for duplicated
+  Attributes and returns DW_DLV_ERROR as soon as
+  one is noticed.
+  This has been a vulnerability since libdwarf was
+  written in the early 1990s.
+datefixed:  2024-12-28 
+references: regressiontests/DW202412-011/fuzz_die_cu_attrs-5424995441901568
+gitfixid: 2161332885c50074f15c0e1a7339c330cbf88c62
+tarrelease:
+endrec: DW202412-011
+
+id: DW202412-010
+fuzzer: oss fuzz 385742125
+datereported: 2024-12-21
+reportedby: David Korczynski
+vulnerability: NULL-dereference READ
+product: libdwarf
+description: A mistake made in 2021 resulted in adding
+  to an end-section pointer (in .debug_abbrev),
+  and it was an error to do that.
+  The mistake is in code rarely executed.
+  The fuzzed test object caused the bogus add
+  and -fsanitize noticed.
+datefixed: 2024-12-23 
+references: regressiontests/ossfuzz385742125/fuzz_die_cu_print-5500979604160512
+gitfixid: 375d102768ee1ff953f97a93345318db3f63ea3c
+tarrelease:
+endrec: DW202412-010
+
+
 id: DW202412-009
 fuzzer: oss fuzz  (no id)
 datereported: 2024-12-15
