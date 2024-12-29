@@ -1,3 +1,273 @@
+2024-12-28:  David Anderson
+    commit 344621bd20d4529cfb10b09dce81f6c1ebe326d3
+
+    Related to DW202412-011, a fuzzed object with
+    bogus attributes listed in an abbreviation list.
+    ossfuzz has not assigned an ossfuzz id for this.
+
+    New dwarfdump option so dwarfdump can request that
+    libdwarf not notice duplicated attributes in an abbreviation
+    list.
+
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Added a comment about duplicated_attributes
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+
+    Added flag glflags.gf_check_duplicated_attributes
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+
+    The reference target finder  now reports in useful detail
+    when dd_trace_abstract_origin_etc() finds an error
+    reading abbreviations.
+    Ensures that  DW_DLE_ABBREV_ATTR_DUPLICATION gets
+    reported if it happens in a reference.
+            modified:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+
+    Now looks at glflags.gf_no_check_duplicated_attributes
+    and calls dwarf_set_no_attr_dup_check(TRUE) when
+    appropriate.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    In preparing a error message about duplicate attribute
+    we get the attribut name (DW_AT_linkage_name, for example)
+    so the error message printed is nore meaningful.
+    Mainly just moving one block of code up, before the other.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-12-28:  David Anderson
+    commit 2161332885c50074f15c0e1a7339c330cbf88c62
+
+    Added code to _dwarf_count_abbrev_entries() to note
+    duplicat attribute entries for an abbrev code.
+    And added new code to check for duplicated attributes
+    and issue an error.
+    But not if dwarf_set_no_attr_dup_check()
+    was called and turned off the checkint.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+
+2024-12-28:  David Anderson
+    commit 4edca6bcd2100fa869583211211d2e9f39e890fa
+
+            modified:   doc/dwarfdump.1
+    Added Changes for a new API function relevant to
+    --no-dup-attr-check in dwarfdump.
+    And dwarf_set_no_attr_dup_check() for libdwarf.
+            modified:   doc/libdwarf.dox
+    Noting and Documenting the new API function.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-26:  David Anderson
+    commit 375d102768ee1ff953f97a93345318db3f63ea3c
+
+    Fix for ossfuzz 385742125  DW202412-010.
+    A mistake made in 2021 resulted in adding
+    to an end-section pointer (in .debug_abbrev),
+    and it was an error to do that.
+    The heavily fuzzed test object exposed the bug
+    so -fsanitize noticed.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2024-12-25:  David Anderson
+    commit 9cf5066516e5e46785bad045d97012e3c1c61b84
+
+    Now with a check of MachO segment size
+    to avoid impossibly large list of errors.
+    DW202412-009
+    Has been an issue in dwarf_machoread.c
+    since the code was written in 2021.
+            modified:   bugxml/data.txt
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-23:  David Anderson
+    commit 82852dc87a186685afba1b21c9cca66b8c89fad1
+
+    Regenerated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2024-12-23:  David Anderson
+    commit 41e73a0b0b6b093c32bec031396fa1391c276aaf
+
+    Removing unwanted #if 0 code
+    and ensuring all to be kept for future
+    debugging is described on the #if 0 line.
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dd_utf8.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_section_groups.c
+            modified:   src/lib/libdwarf/dwarf_local_malloc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-12-23:  David Anderson
+    commit 4172ddf000c88435658059ac3cbde792ce03ca14
+
+    Documenting DW202412-008 oss fuzz 385466100
+            modified:   bugxml/data.txt
+
+2024-12-23:  David Anderson
+    commit 4e6e7cafa6bef0629e5ea2bbf63a4e2f84c5a938
+
+    Crash reading badly damaged object file (fuzzed).
+    Fixing ossfuzz issue 385466100  DW202412-008.
+    The bug was present since the code in
+    static function load_xu_loclists_into_cucontext()
+    was written around 2021.
+    The code simply assumed a section was loaded when
+    such was not guaranteed in a
+    carefully damaged object file.
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+2024-12-23:  David Anderson
+    commit 7cfe7d5864097dfcab90b046f3cca7000774419c
+
+    Removed unneeded if 0
+
+    Alterd PrintBucketGroup() to not have file
+    or line, that made regression testing a mess
+    if any trivial change made in source..
+    Instead have unique string in aech call.
+            modified:   dd_checkutil.c
+            modified:   dd_checkutil.h
+            modified:   dd_trace_abstract_origin_etc.c
+            modified:   dwarfdump.c
+            modified:   print_die.c
+
+2024-12-23:  David Anderson
+    commit 7ad7b0a5408e7efb4ce74b69f63d508cbb792c0f
+
+    Now documents the one addition to the API:
+    dwarf_machine_architecture_a
+            modified:   doc/libdwarf.dox
+
+    Major revision of the code generating a list of
+    valid address (in the object data) from Elf
+    header and section data. Such data used in
+    dwarfdump -k (checking) options.
+
+    Needed as there is now a rather wider range of
+    appearance of Elf section data (yet still valid Elf).
+
+    Leaving PE, Macho object reading unchanged at this time.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2024-12-23:  David Anderson
+    commit 690bdca45573caf9c15ebd774a2bd01090374273
+
+    Now arranges that the ELF header e_type gets
+    reported back to the data visible to libdwarf
+    and thence to dwarfdump. Improved
+    error reporting by enabling access to what the object
+    file says are the addresses in the object.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2024-12-23:  David Anderson
+    commit 2df75f9a2908d0d4572fa4d305171aba001e5bbf
+
+    Now using gflags.nTrace for debut output selection
+    and the more useful interface to PrintBuchetGroup()
+    (relates to debugging output, not part of normal
+    reporting).
+            modified:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+
+2024-12-23:  David Anderson
+    commit f4bbadbfaf3ab0e21e21a2152dce83eacd64ead4
+
+    Reflecting the altered interface to loc_error_check()
+    for better error reporting by dwarfdump.
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+
+2024-12-23:  David Anderson
+    commit 9285a01b8b5d81e023f93aad6c8d3082cebab8ac
+
+    Now use glflags.nTrace for printing BucketGroup
+    Removed DW_AT_sibling DW_AT_type from traverse_attribute()
+    switch as the traversal checking logic cannot handle those
+    semsibly (lots of bogus checking errors result, all with -k).
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-12-23:  David Anderson
+    commit b2b1bab0915f8a4c9c531d86f66b654b343c411d
+
+    We no longer try to access .debug_cu_index to try
+    to get a base address as that is not intended
+    to be relevant for a base address.
+
+    It does no good at all.
+    Left it there surrounded by #if 0 #endif
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-12-23:  David Anderson
+    commit 34536748f3b7faf13f0a9142503547697c651ee7
+
+    Added new field de_obj_type in Dwarf_Debug_s to record
+    the ELF e_type field from an ELF header.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2024-12-23:  David Anderson
+    commit b131ffa1f7fb9aa5535d17e259c7776cd1a0f7f3
+
+    Added a new API function dwarf_machine_architecture_a()
+    with an additional argument to return ELF e_type field.
+    Useful to improve dwarfdump checking of target address fields.
+    The old way was no longer working well as compilers have
+    changed and some do not even generate a '.text' section but name
+    it 'text' instead.  So an initialization algorythm in dwarfdump
+    had to change.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-23:  David Anderson
+    commit b7249b90f609b28ee3b2b46cff40e77629bbb929
+
+    Removing a n odd macro which made understanding
+    some checking code more difficult.
+    And improved the -h output for --trace
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+    Changed an internal interface argument list for checking-data
+    reports. .
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+2024-12-23:  David Anderson
+    commit 6097112ad36d2556dd48c194e7d8ebf2d6b14f66
+
+    Adding to the output of DWARF CHECK reported data
+    for precision.
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_checkutil.h
+
+2024-12-20:  David Anderson
+    commit dbbcb39dabf751108acdcec59e7767f9c4e69d85
+
+    Expanding some comments.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2024-12-18:  David Anderson
+    commit 61a7465f865451270757ef74cc96b0781045485f
+
+    Now up to date.
+            modified:   ChangeLog
+
 2024-12-18:  David Anderson
     commit 733cbcd5f3c77ea52e90c53c1de83d90f74b423e
 
