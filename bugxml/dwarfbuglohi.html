@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of December 2024</p>
-<p> Record count: 198 </p>
+<p> Record count: 201 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6535,6 +6535,97 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>references: regressiontests/ossfuzz385466100/fuzz_die_cu_offset-6604029974609920
 </p>
 <p>gitfixid: 4e6e7cafa6bef0629e5ea2bbf63a4e2f84c5a938
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-009">199) DW202412-009</h3>
+<p>id: DW202412-009
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz  (no id)
+</p>
+<p>datereported: 2024-12-15
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Runs too long, to many error msgs.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A very badly damaged MachO object
+  runs a long time emitting error messages.
+  Essentially the count of segments and the
+  size of the block of segment data are both
+  larger than is usable in MacOS (either one larger
+  means corrupt).
+  It's not an infinite process, but it is improperly long
+  with too many messages.
+</p>
+<p>datefixed: 2024-12-24
+</p>
+<p>references: regressiontests/DW202412-009/fuzz_init_path-5854698061496320
+</p>
+<p>gitfixid:</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-010">200) DW202412-010</h3>
+<p>id: DW202412-010
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 385742125
+</p>
+<p>datereported: 2024-12-21
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: NULL-dereference READ
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A mistake made in 2021 resulted in adding
+  to an end-section pointer (in .debug_abbrev),
+  and it was an error to do that.
+  The mistake is in code rarely executed.
+  The fuzzed test object caused the bogus add
+  and -fsanitize noticed.
+</p>
+<p>datefixed: 2024-12-23
+</p>
+<p>references: regressiontests/ossfuzz385742125/fuzz_die_cu_print-5500979604160512
+</p>
+<p>gitfixid: 375d102768ee1ff953f97a93345318db3f63ea3c
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202412-011">201) DW202412-011</h3>
+<p>id: DW202412-011
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz  (no id)
+</p>
+<p>datereported: 2024-12-13
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Fails to stop inconsistent time. DoS.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A 20K list of attributes to one DIE in
+  a fuzzed object file (the vast majority duplicates)
+  resulted in a caller continuing to operate (with
+  many messages) for a long and inconsistent time.
+  Now, by default, libdwarf checks for duplicated
+  Attributes and returns DW_DLV_ERROR as soon as
+  one is noticed.
+  This has been a vulnerability since libdwarf was
+  written in the early 1990s.
+</p>
+<p>datefixed: 2024-12-28
+</p>
+<p>references: regressiontests/DW202412-011/fuzz_die_cu_attrs-5424995441901568
+</p>
+<p>gitfixid: 2161332885c50074f15c0e1a7339c330cbf88c62
 </p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>

@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202412-011</dwid>
+<cve></cve>
+<fuzzer>oss fuzz  (no id)</fuzzer>
+<datereported>2024-12-13</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Fails to stop inconsistent time. DoS.
+</vulnerability>
+<description> A 20K list of attributes to one DIE in
+  a fuzzed object file (the vast majority duplicates)
+  resulted in a caller continuing to operate (with
+  many messages) for a long and inconsistent time.
+  Now, by default, libdwarf checks for duplicated
+  Attributes and returns DW_DLV_ERROR as soon as
+  one is noticed.
+  This has been a vulnerability since libdwarf was
+  written in the early 1990s.
+</description>
+<datefixed>2024-12-28</datefixed>
+<references> regressiontests/DW202412-011/fuzz_die_cu_attrs-5424995441901568
+</references>
+<gitfixid>2161332885c50074f15c0e1a7339c330cbf88c62</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202412-010</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 385742125</fuzzer>
+<datereported>2024-12-21</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> NULL-dereference READ
+</vulnerability>
+<description> A mistake made in 2021 resulted in adding
+  to an end-section pointer (in .debug_abbrev),
+  and it was an error to do that.
+  The mistake is in code rarely executed.
+  The fuzzed test object caused the bogus add
+  and -fsanitize noticed.
+</description>
+<datefixed>2024-12-23</datefixed>
+<references> regressiontests/ossfuzz385742125/fuzz_die_cu_print-5500979604160512
+</references>
+<gitfixid>375d102768ee1ff953f97a93345318db3f63ea3c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202412-009</dwid>
+<cve></cve>
+<fuzzer>oss fuzz  (no id)</fuzzer>
+<datereported>2024-12-15</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Runs too long, to many error msgs.
+</vulnerability>
+<description> A very badly damaged MachO object
+  runs a long time emitting error messages.
+  Essentially the count of segments and the
+  size of the block of segment data are both
+  larger than is usable in MacOS (either one larger
+  means corrupt).
+  It's not an infinite process, but it is improperly long
+  with too many messages.
+</description>
+<datefixed>2024-12-24</datefixed>
+<references> regressiontests/DW202412-009/fuzz_init_path-5854698061496320
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202412-008</dwid>
 <cve></cve>
 <fuzzer>oss fuzz id: 42536144</fuzzer>
