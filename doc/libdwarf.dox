@@ -1093,13 +1093,25 @@
     for improved checking (fewer incorrect
     error reports) in dwarfdump -k  output.
 
-    Added new API function dwarf_set_no_attr_dup_check()
-    so simple abbreviation corruption checks can be suppressed.
-    In rare instances one might need to view object files
-    with duplicated attributes.
-    Defaults to false (0) meaning the checks are done in
-    libdwarf by default. Pass one (1) to
-    suppress these libdwarf checks.
+    Up through December 2024 libdwarf could be
+    made to be very very slow (Denial of Service)
+    with calls with thousands of duplicate attributes
+    in an abbreviation list
+    of a specially constructed Compilation Unit.
+
+    Beginning 2025 by default that cannot happen as
+    the library quickly notices and returns DW_DLV_ERROR
+    with error details noted.
+    Callers should check the return value and act
+    appropriately, as always, when calling the library.
+
+    In case one has (and cannot fix) object files with
+    duplicated attributes one can call a new API function:
+    dwarf_library_allow_dup_attr().
+    The library defaults to false (0) meaning the checks are done in
+    libdwarf by default. Pass non-zero value
+    to allow duplicate attributes in a Debugging Information
+    Entry through to callers.
     
     <b>Changes 0.10.1 to 0.11.0</b>
 

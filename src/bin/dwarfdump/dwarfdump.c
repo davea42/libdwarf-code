@@ -1181,9 +1181,11 @@ process_one_file(
 
     if (glflags.gf_no_check_duplicated_attributes) {
         /*  This means libdwarf won't check for duplicated
-            attributes but it means dwarfdump *will* check
-            if this is a -k* run of dwarfdump. */
-        dwarf_set_no_attr_dup_check(TRUE);
+            attributes. Generally unwise as this allows
+            a kind of Denial Of Service with a tailored
+            compilation unit: makes some calls
+            with a tailored CU very very very slow. */
+        dwarf_library_allow_dup_attr(TRUE);
     }
     /*  If using a tied file group number should be
         2 DW_GROUPNUMBER_DWO

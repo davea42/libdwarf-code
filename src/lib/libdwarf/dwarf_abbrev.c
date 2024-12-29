@@ -71,13 +71,13 @@
     @return
     Returns the previous version of the flag.
 */
-static int _dwarf_no_duplicate_attr_check = FALSE;
+static int _dwarf_allow_dup_attr = FALSE;
 
 int 
-dwarf_set_no_attr_dup_check(int dw_v)
+dwarf_library_allow_dup_attr(int dw_v)
 {
-    int x = _dwarf_no_duplicate_attr_check;
-    _dwarf_no_duplicate_attr_check = dw_v;
+    int x = _dwarf_allow_dup_attr;
+    _dwarf_allow_dup_attr = dw_v;
     return x;
 }
 
@@ -165,7 +165,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        if (!_dwarf_no_duplicate_attr_check) {
+        if (!_dwarf_allow_dup_attr) {
             int iserror = FALSE;
             if (attr_number <= 0xff) {
                 iserror = arysmall[attr_number];

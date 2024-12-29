@@ -9215,6 +9215,9 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     have ABI-defined values which have nothing to do
     with DWARF.
 
+    This version added December 2024 with an
+    additional argument: dw_obj_type.
+
     dwarf_ub_offset, dw_ub_count, dw_ub_index only
     apply to DW_FTYPE_APPLEUNIVERSAL.
 
@@ -9637,9 +9640,18 @@ DW_API int dwarf_set_de_alloc_flag(int dw_v);
     Defaults to zero so by default libdwarf does check
     every set of abbreviations. 
 
+    DWARF5 Sec 2.2 Attribute Types
+    Each attribute value is characterized by an attribute
+    name. No more than one attribute with a given name
+    may appear in any debugging information entry.
+    Essentially the same wording is in Sec 2.2 of
+    DWARF2, DWARF3 and DWARF4.
+
     Do not call this with non-zero dw_v unless you
     really want the library to avoid this basic
     DWARF-correctness check.
+
+    Added December 2024 for 0.11.2
 
     @param dw_v   
     If non-zero passed in libdwarf will avoid the checks
@@ -9648,7 +9660,7 @@ DW_API int dwarf_set_de_alloc_flag(int dw_v);
     @return
     Returns the previous version of the flag.
 */ 
-DW_API int dwarf_set_no_attr_dup_check(int dw_v);
+DW_API int dwarf_library_allow_dup_attr(int dw_v);
 
 
 /*! @brief Set the address size on a Dwarf_Debug
