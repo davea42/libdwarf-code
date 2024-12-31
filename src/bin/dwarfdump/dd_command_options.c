@@ -2354,12 +2354,12 @@ static void arg_format_suppress_sanitize(void)
     glflags.gf_no_sanitize_strings = TRUE;
 }
 
-/*  Option '--no-dup-attr-check' 
+/*  Option '--no-dup-attr-check'
     Results in telling libdwarf not to check for
     duplicate attributes in abbreviations.*/
 static void arg_no_dup_attr_check(void)
 {
-     glflags.gf_no_check_duplicated_attributes = TRUE;
+    glflags.gf_no_check_duplicated_attributes = TRUE;
 }
 
 /*  Option '-x tied=' */
@@ -2669,9 +2669,9 @@ set_command_options(int argc, char *argv[])
             arg_show_args();break;
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
-        case OPT_NO_DUP_ATTR_CHECK: 
+        case OPT_NO_DUP_ATTR_CHECK:
             /*  Suppress checking for duplicate attrbutes
-                in abbreviations entries, 
+                in abbreviations entries,
                 It is rare compilers emit duplicates, but
                 if one did, use this option to let dwarfdump show
                 things as they are rather than generating an error.*/

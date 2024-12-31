@@ -2661,7 +2661,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         return ores;
     }
 
-    if (glflags.nTrace[KIND_VISITED_INFO] &&  glflags.gf_check_self_references) {
+    if (glflags.nTrace[KIND_VISITED_INFO] &&
+        glflags.gf_check_self_references) {
         printf("<%2d><0x%" DW_PR_XZEROS DW_PR_DUx
             " GOFF=0x%" DW_PR_XZEROS DW_PR_DUx "> ",
             die_indent_level, (Dwarf_Unsigned)offset,
@@ -3654,7 +3655,7 @@ show_attr_form_error(unsigned attr,
 /*  Traverse an attribute and following any reference
     in order to detect self references to DIES (loop).
     We do not use print_else_name_match here. Just looking
-    for self references to report on. 
+    for self references to report on.
 
     This does not work properly, given self-reference
     is normal in the complete graph that is DWARF DIEs.
@@ -6367,7 +6368,8 @@ loc_error_check(
             esb_append_printf_u(&m," final lowpc 0x%08x ",lopcfinal);
             esb_append_printf_u(&m," final hipc 0x%08x",hipcfinal);
             esb_append_printf_u(&m," locoffset 0x%08x",offset);
-            esb_append_printf_u(&m," baseaddress 0x%08x",base_address);
+            esb_append_printf_u(&m," baseaddress 0x%08x",
+                base_address);
             DWARF_CHECK_ERROR(locations_result,
                 esb_get_string(&m));
             esb_destructor(&m);

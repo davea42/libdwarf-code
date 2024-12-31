@@ -202,7 +202,8 @@ DumpFullBucketGroup(const char *msg,
     }
     kindstr = kindstring(pBucketGroup->kind);
     if (!kindstr) {
-        printf("ERROR unknown bucket group kind %d\n",pBucketGroup->kind);
+        printf("ERROR unknown bucket group kind %d\n",
+            pBucketGroup->kind);
         printf("BucketGroup %s\n",msg);
         return;
     }
@@ -545,7 +546,8 @@ ResetLimitsBucketSet(Bucket_Group *pBucketGroup)
 
 /*  Limits are set only for ranges, so only in pRangesInfo.
     But is used for ranges and location lists.
-    The default is set from object data (virt addr, size in object file) but that does not work
+    The default is set from object data
+    (virt addr, size in object file) but that does not work
     sensibly in PE object files. */
 void
 SetLimitsBucketGroup(Bucket_Group *pBucketGroup,

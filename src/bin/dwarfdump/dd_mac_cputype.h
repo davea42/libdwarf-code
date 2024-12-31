@@ -31,9 +31,9 @@
 #ifndef DD_MAC_CPUTYPE_H
 #define DD_MAC_CPUTYPE_H
 
-#define CPU_ARCH_MASK           0xff000000 /* mask for architecture bits */
-#define CPU_ARCH_ABI64          0x01000000 /* 64 bit ABI */
-#define CPU_ARCH_ABI64_32       0x02000000 /* ABI for 64-bit hardware with 32-bit types; LP32 */
+#define CPU_ARCH_MASK     0xff000000 /* mask for architecture bits */
+#define CPU_ARCH_ABI64     0x01000000 /* 64 bit ABI */
+#define CPU_ARCH_ABI64_32  0x02000000 /* ABI: 64-bit hardware LP32 */
 
 #define CPU_TYPE_VAX            ( 1)
 #define CPU_TYPE_MC680x0        ( 6)

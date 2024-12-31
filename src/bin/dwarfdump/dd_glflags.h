@@ -177,7 +177,6 @@ struct glflags_s {
     Dwarf_Bool gf_generic_1200_regs;
     Dwarf_Bool gf_suppress_check_extensions_tables;
 
-
     /* The following tells libdwarf not to check for duplicated
         attributes if TRUE. */
     Dwarf_Bool gf_no_check_duplicated_attributes;
@@ -231,7 +230,6 @@ struct glflags_s {
     Dwarf_Bool gf_check_debug_names;
     Dwarf_Bool gf_no_sanitize_strings;
     Dwarf_Bool gf_suppress_dup_attr_form;
-   
 
     /* Display parent/children when in wide format? */
     Dwarf_Bool gf_display_parent_tree;
@@ -410,7 +408,7 @@ void set_checks_off(void);
 void reset_overall_CU_error_data(void);
 Dwarf_Bool cu_data_is_set(void);
 
-/*  Shortcuts for additional trace options. 
+/*  Shortcuts for additional trace options.
     Indexes into glflags.nTrace[] */
 #define KIND_OPTIONS        0   /* Dump options and stop. */
 #define KIND_RANGES_INFO    1   /* Dump RangesInfo Table. */

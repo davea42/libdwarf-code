@@ -86,7 +86,7 @@ dd_utf8_decode(Dwarf_Unsigned* state, Dwarf_Unsigned* codep,
         *codep = (byte & 0x3fu) | (*codep << 6) ;
     }
     /* Documenting: from the original version
-       *codep = (*state != UTF8_ACCEPT) ?
+        *codep = (*state != UTF8_ACCEPT) ?
         (byte & 0x3fu) | (*codep << 6) :
         (0xff >> type) & (byte); */
     /* ASSERT: values cannot exceed 400 */

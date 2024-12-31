@@ -486,8 +486,8 @@ dd_trace_abstract_origin_etc(
                     /*  Details of locviews are unclear to me. */
                     if (attrnum != DW_AT_GNU_locviews) {
                         esb_append(valname,
-                           " Reference fails: ");
-                        if (dwarf_errno(*err) == 
+                            " Reference fails: ");
+                        if (dwarf_errno(*err) ==
                             /*  This means we might never see
                                 the error otherwise, just
                                 incomplete report. */

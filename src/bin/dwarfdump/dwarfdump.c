@@ -875,19 +875,16 @@ limit_of_code_when_elf(Dwarf_Debug dbg,
     Dwarf_Unsigned ct = 0;
     unsigned int  etype = objtype&0xff;
 
-    
     if (etype != ET_DYN && etype != ET_EXEC &&
         etype != ET_REL) {
-printf("bad etype 0x%x \n",etype);
         /* We do not know what this is. */
-
         return DW_DLV_OK;
     }
     for (ct = 0 ; ct < count; ct++) {
         Dwarf_Unsigned caddr = 0;
-        Dwarf_Unsigned csize = 0; 
-        Dwarf_Unsigned cflags = 0; 
-        Dwarf_Unsigned coffset = 0; 
+        Dwarf_Unsigned csize = 0;
+        Dwarf_Unsigned cflags = 0;
+        Dwarf_Unsigned coffset = 0;
         const char    *cname = 0;
         int res = 0;
         Dwarf_Error err = 0;
@@ -914,7 +911,6 @@ printf("bad etype 0x%x \n",etype);
     }
     return DW_DLV_OK;
 }
-
 
 /*  There is no error arg.  We return DW_DLV_ERROR or
     DW_DLV_NO_ENTRY or DW_DLV_OK  */
@@ -975,7 +971,7 @@ limit_of_code_non_elf(Dwarf_Debug dbg,
     line table content CHECK warnings because, so far,
     those come from .init csu code and the DWARF has
     no subprogram information nor any high/low pc
-    information at all.  
+    information at all.
 
     Builds a list of addr, endaddr entries,
     sorts by addr, merges into an overall low, high pair.
@@ -1036,7 +1032,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
             return DW_DLV_NO_ENTRY;
         }
         if (lncount > 50) {
-            /*  Very odd. Let's truncate as 
+            /*  Very odd. Let's truncate as
                 it seens sensible to give up finding
                 valid addresses */
             lncount = 50;
@@ -1071,8 +1067,8 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         free(ln);
     }
     if (!baselow) {
-        /* Initial 'page' is certainly not a valid
-           address from dwarf. But ET_REL maybe. */
+        /*  Initial 'page' is certainly not a valid
+            address from dwarf. But ET_REL maybe. */
         baselow = 512;
     }
     *lower = baselow;
@@ -2490,7 +2486,7 @@ build_linkonce_info(Dwarf_Debug dbg)
             error = 0;
         }
     }
-    if ( glflags.nTrace[KIND_LINKONCE_INFO]) { 
+    if ( glflags.nTrace[KIND_LINKONCE_INFO]) {
         /* see --trace=2 option */
         /*  Unlikely this is ever useful...at present. */
         PrintBucketGroup("SN linkonce setup done dd A",
