@@ -1,3 +1,97 @@
+2024-12-31:  David Anderson
+    commit 7070a9115aa9ea8d83df5aba6c00c1c8e958d4a0
+
+    Removing trailing whitespace.
+    Eliminating too-long lines.
+    Fixing indents.
+    All per project CODINGSTYLE.md
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dd_mac_cputype.h
+            modified:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+            modified:   src/bin/dwarfdump/dd_utf8.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2024-12-31:  David Anderson
+    commit c57a2c652b25e5b03652b0e27c26a8c7c0334c30
+
+    Removing trailing whitespace.
+    Eliminating too-long lines.
+    Fixing indents.
+    All per project CODINGSTYLE.md
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_local_malloc.h
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-31:  David Anderson
+    commit 719797fd417a339d168340682aa94368aa13c3aa
+
+    Added a fail-safe check on abbreviation count
+    for a single DIE.
+    Because a single DIE cannot sensibly have
+    more attributes in an
+    abbreviation than the number of standard DWARF
+    attributes plus with all known-extensions.
+    This new check applies whether the library
+    is generating an arror on duplicates or not.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+
+2024-12-29:  David Anderson
+    commit 06b7a017c6c6e66deb0ce255b753cd96d9235128
+
+    Adding   --no-dup-attr-check to the man page, with
+    explantion of its use.
+            modified:   doc/dwarfdump.1
+
+    Documenting new API function  dwarf_library_allow_dup_attr()
+    which lets multiples of any attribute to be accepted
+    as if nothing is wrong.
+    This enables previous libdwarf/dwarfdump behavior
+    if object files you open have broken DWARF.
+            modified:   doc/libdwarf.dox
+
+    Using the updated name dwarf_library_allow_dup_attr()
+            modified:   src/bin/dwarfdump/dwarfdump.c
+    Defining dwarf_library_allow_dup_attr() and
+    using  changed static (file-internal) names
+    relevant to the  duplicated attribute issue.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+
+    Declares new API function  dwarf_library_allow_dup_attr()
+    which lets multiples of any attribute to be accepted
+    as if nothing is wrong.
+    This enables previous libdwarf/dwarfdump behavior
+    if object files you open have broken DWARF.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2024-12-29:  David Anderson
+    commit 44a38c0fcaefd3a1811bbca49b81a9b911917b77
+
+    Regenerated.
+            modified:   dwarfbug.html
+            modified:   dwarfbug.xml
+            modified:   dwarfbuglohi.html
+
+2024-12-29:  David Anderson
+    commit 7028c4a50377160e25ee161c45111bb6cf230c9b
+
+    Writing up oss fuzz issues
+    DW202412-010
+    DW202412-011
+            modified:   data.txt
+
+2024-12-28:  David Anderson
+    commit 738f0e169ce0ae00d72c41a78f66b68c9d05b545
+
+    Now up to date
+            modified:   ChangeLog
+
 2024-12-28:  David Anderson
     commit 344621bd20d4529cfb10b09dce81f6c1ebe326d3
 
@@ -7,7 +101,7 @@
 
     New dwarfdump option so dwarfdump can request that
     libdwarf not notice duplicated attributes in an abbreviation
-    list.
+    list. (--no-dup-attr-check). 
 
             modified:   src/bin/dwarfdump/dd_command_options.c
 
