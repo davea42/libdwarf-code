@@ -561,12 +561,12 @@ _dwarf_macho_load_segment_commands(
     mmp = mfp->mo_commands;
     msp = mfp->mo_segment_commands;
 
-    /*  This is a heuristic sanity check for a badly damaged object.  
+    /*  This is a heuristic sanity check for a badly damaged object.
         We have no information  better limits.
         See dwarfbug DW202412-009. */
     if ( mfp->mo_header.sizeofcmds > MAX_COMMANDS_SIZE) {
-         *errcode = DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL;
-         return DW_DLV_ERROR;
+        *errcode = DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL;
+        return DW_DLV_ERROR;
     }
     for (i = 0 ; i < mfp->mo_command_count; ++i,++mmp) {
         unsigned cmd = (unsigned)mmp->cmd;

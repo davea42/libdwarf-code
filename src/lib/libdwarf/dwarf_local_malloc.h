@@ -6,6 +6,5 @@
 
 */
 
-/*  Normally LIBDWARF_MALLOC is not defined. 
+/*  Normally LIBDWARF_MALLOC is not defined.
     Only defined when researching malloc use in libdwarf. */
-

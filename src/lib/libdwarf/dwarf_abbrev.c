@@ -53,7 +53,7 @@
 /* Eliminate libdwarf checking attribute form duplication
     Independent of any Dwarf_Debug and applicable
     to all whenever the setting is changed.
-    Defaults to zero 
+    Defaults to zero
 
     Normally libdwarf checks for simple duplication of attribute-form
     combinations in abbreviations within a single
@@ -73,7 +73,7 @@
 */
 static int _dwarf_allow_dup_attr = FALSE;
 
-int 
+int
 dwarf_library_allow_dup_attr(int dw_v)
 {
     int x = _dwarf_allow_dup_attr;
@@ -114,7 +114,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     Dwarf_Unsigned attr_form = 0;
 
     /*  This checks only attributes within
-        the first MAX_AT_CK versions of an 
+        the first MAX_AT_CK versions of an
         extension DW_AT_* value. A simple array
         for low overhead knowing only pathological
         objects would have so many extension
@@ -123,7 +123,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     int  ary_used = 0;
     /*  This checks all standard attribute numbers. */
     char arysmall[256];
-    
+
     memset(arysmall,0, sizeof(arysmall));
     memset(ary,0,MAX_AT_CK * sizeof(Dwarf_Half));
     /*  The abbreviations table ends with an entry with a single
@@ -141,7 +141,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
             dbg,error,abbrev_section_end);
         if (attr_number > DW_AT_hi_user) {
             /*  attr_number  is higher than allowed.
-                So might even be > 0xffff.  */  
+                So might even be > 0xffff.  */
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
         }
@@ -193,22 +193,20 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
                         iserror = TRUE;
                     }
                 }
-                if (ary_used < (MAX_AT_CK -1)) {  
+                if (ary_used < (MAX_AT_CK -1)) {
                     ary[ary_used] = attr_number;
                     ++ary_used;
-                }  else { 
+                }  else {
                     /*  Else ignore, Really unusual count
-                        of non-standard attributes. Hope for the best. */
-#if 0  /* Ignore unless investigating duplicate DW_AT entries. */
-                    printf("dadebug too small ary %d %s\n",
-                        __LINE__,__FILE__);
-#endif
+                        of non-standard attributes.
+                        Hope for the best. See also
+                        FINAL ABBREV COUNT CHECK below. */
                 }
             }
             if (iserror) {
                 const char *atname = 0;
-                dwarfstring m; 
-   
+                dwarfstring m;
+
                 dwarfstring_constructor(&m);
                 dwarfstring_append_printf_u(&m,
                     "DW_DLE_ABBREV_ATTR_DUPLICATION: "
@@ -237,24 +235,25 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
                 dbg,error,abbrev_section_end);
         }
         abbrev_count++;
+        /* FINAL ABBREV COUNT CHECK */
         if (abbrev_count > NONSENSE_AT_COUNT) {
-                dwarfstring m; 
-   
-                dwarfstring_constructor(&m);
-                dwarfstring_append_printf_u(&m,
-                    "DW_DLE_ABBREV_ATTR_DUPLICATION: Abbreviation"
-                    " count of %u is so high it is nonsensical" 
-                    " and possibly a Denial of Service attack",
-                    abbrev_count);
-                _dwarf_error_string(dbg, error, 
-                    DW_DLE_ABBREV_ATTR_DUPLICATION, 
-                    dwarfstring_string(&m));
-                dwarfstring_destructor(&m);
-                /* Just in case the client is not checking state... */
-                *abbrev_count_out = abbrev_count-1;
-                *abbrev_implicit_const_count_out =
-                    abbrev_implicit_const_count;
-                return DW_DLV_ERROR;
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_ABBREV_ATTR_DUPLICATION: Abbreviation"
+                " count of %u is so high it is nonsensical"
+                " and possibly a Denial of Service attack",
+                abbrev_count);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_ABBREV_ATTR_DUPLICATION,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            /* Just in case the client is not checking state... */
+            *abbrev_count_out = abbrev_count-1;
+            *abbrev_implicit_const_count_out =
+                abbrev_implicit_const_count;
+            return DW_DLV_ERROR;
         }
     } while ((abbrev_ptr < abbrev_section_end) &&
         (attr_number != 0 || attr_form != 0));

@@ -1093,7 +1093,7 @@ _dwarf_which_rnglists_context(Dwarf_Debug dbg,
         int                     res = 0;
         /*  This works for CU access, but fails for TU access
             as for .debug_tu_index there is no whole-type-unit
-            entry in any .debug_tu_index section. 
+            entry in any .debug_tu_index section.
             DWARF5 Sec 7.3.5 Page 190. */
         res = _dwarf_has_SECT_fission(ctx,
             DW_SECT_RNGLISTS,
@@ -1505,7 +1505,7 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
         if (res == DW_DLV_OK) {
             /* FALL THROUGH */
         } else if (res == DW_DLV_NO_ENTRY) {
-            /*  This default is a gcc extension 
+            /*  This default is a gcc extension
                 See dwarfstd.org Issue 240618.2
             */
             rnglists_contextnum = 0;
