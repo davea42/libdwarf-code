@@ -81,6 +81,20 @@ dwarf_library_allow_dup_attr(int dw_v)
     return x;
 }
 
+#define MAX_AT_CK 30
+
+/*  There are about 330 DW_AT_names including
+    the standard names and the extensions.
+    These include all the extensions known to us.
+    If there are NONSENSE_AT_COUNT abbreviations
+    the abbreviations are damaged or nonsense.
+    Recall that duplicates are improper DWARF per
+    Section 2.2 (DWARF2 and later).
+    A certain fuzzed object in the regressiontests-code
+    project  has 20000+ Attributes designated on a single
+    Compilation Unit. */
+#undef NONSENSE_AT_COUNT
+#define NONSENSE_AT_COUNT 340
 
 /*  For abbrevs we first count the entries.
     Actually recording the attr/form/implicit const
@@ -99,7 +113,6 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     Dwarf_Unsigned attr_number = 0;
     Dwarf_Unsigned attr_form = 0;
 
-    #define MAX_AT_CK 30
     /*  This checks only attributes within
         the first MAX_AT_CK versions of an 
         extension DW_AT_* value. A simple array
@@ -198,18 +211,21 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
    
                 dwarfstring_constructor(&m);
                 dwarfstring_append_printf_u(&m,
-                    "DW_DLE_ABBREV_ATTR_DUPLICATION: Abbreviation attribute 0x%x"
+                    "DW_DLE_ABBREV_ATTR_DUPLICATION: "
+                    "Abbreviation attribute 0x%x"
                     " is duplicated",
                     attr_number);
                 dwarf_get_AT_name(attr_number,&atname);
                 dwarfstring_append_printf_s(&m,
                     " (%s)", (char *)atname);
-                _dwarf_error_string(dbg, error, DW_DLE_ABBREV_ATTR_DUPLICATION,
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_ABBREV_ATTR_DUPLICATION,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);
                 /* Just in case the client is not checking state... */
                 *abbrev_count_out = abbrev_count;
-                *abbrev_implicit_const_count_out = abbrev_implicit_const_count;
+                *abbrev_implicit_const_count_out =
+                    abbrev_implicit_const_count;
                 return DW_DLV_ERROR;
             }
         }
@@ -221,6 +237,25 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
                 dbg,error,abbrev_section_end);
         }
         abbrev_count++;
+        if (abbrev_count > NONSENSE_AT_COUNT) {
+                dwarfstring m; 
+   
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_ABBREV_ATTR_DUPLICATION: Abbreviation"
+                    " count of %u is so high it is nonsensical" 
+                    " and possibly a Denial of Service attack",
+                    abbrev_count);
+                _dwarf_error_string(dbg, error, 
+                    DW_DLE_ABBREV_ATTR_DUPLICATION, 
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                /* Just in case the client is not checking state... */
+                *abbrev_count_out = abbrev_count-1;
+                *abbrev_implicit_const_count_out =
+                    abbrev_implicit_const_count;
+                return DW_DLV_ERROR;
+        }
     } while ((abbrev_ptr < abbrev_section_end) &&
         (attr_number != 0 || attr_form != 0));
     /* We counted one too high,we included the 0,0 */
