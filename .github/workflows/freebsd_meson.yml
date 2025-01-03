@@ -3,7 +3,9 @@ name: freebsd_meson
 on:
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
+
 
 jobs:
   freebsd_meson:

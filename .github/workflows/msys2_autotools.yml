@@ -4,7 +4,8 @@ name: msys2autotool
 on: 
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
  msys2_autotools:

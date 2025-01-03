@@ -3,7 +3,8 @@ name: ci_mac_meson
 on:
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   macos_meson:
