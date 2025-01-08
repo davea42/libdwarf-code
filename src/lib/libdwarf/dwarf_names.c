@@ -944,6 +944,12 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_loclists_base:
         *s_out = "DW_AT_loclists_base";
         return DW_DLV_OK;
+    case DW_AT_language_name:
+        *s_out = "DW_AT_language_name";
+        return DW_DLV_OK;
+    case DW_AT_language_version:
+        *s_out = "DW_AT_language_version";
+        return DW_DLV_OK;
     case DW_AT_ghs_namespace_alias:
         *s_out = "DW_AT_ghs_namespace_alias";
         return DW_DLV_OK;

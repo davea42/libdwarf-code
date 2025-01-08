@@ -448,6 +448,15 @@ extern "C" {
 #define DW_AT_deleted                           0x8a /* DWARF5 */
 #define DW_AT_defaulted                         0x8b /* DWARF5 */
 #define DW_AT_loclists_base                     0x8c /* DWARF5 */
+/*  As of 6 January 2025 the DWARF committee promises
+    not to change the name or the assigned number of
+    the following two attributes. So
+    compilers are free to use these now with DWARF 5 
+    or earlier. The applicable FORMs of are
+    of form class constant (See DWARF5 Section 7.5.5 Classes
+    and Forms). */
+#define DW_AT_language_name                     0x90 /* DWARF6 */
+#define DW_AT_language_version                  0x91 /* DWARF6 */
 
 /* GreenHills, ghs.com GHS C */
 #define DW_AT_ghs_namespace_alias   0x806
