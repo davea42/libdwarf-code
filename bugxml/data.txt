@@ -13,7 +13,7 @@ description: A corrupt (fuzzed) .debug_macro resulted in
   was added in 2021.
 datefixed:  2025-01-07
 references: regressiontests/ossfuzz394644267/fuzz_macro_dwarf5-5504709091983360 fuzz_macro_dwarf5-5504709091983360
-gitfixid: 
+gitfixid: 156156a80affdc63b851fbf7fdc01e4d41849eb0
 tarrelease:
 endrec:  DW202502-001
 
