@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202502-001</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 394644267</fuzzer>
+<datereported>2025-02-05</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Heap buffer overflow in dwarf_macro5.c
+</vulnerability>
+<description> A corrupt (fuzzed) .debug_macro resulted in
+  a failed attempt to catch an error as a small
+  add overflowed bypassing the error-check.
+  The error check is now corrected and completed.
+  This has been a vulnerability since dwarf5 macro support
+  was added in 2021.
+</description>
+<datefixed>2025-01-07</datefixed>
+<references> regressiontests/ossfuzz394644267/fuzz_macro_dwarf5-5504709091983360 fuzz_macro_dwarf5-5504709091983360
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202412-011</dwid>
 <cve></cve>
 <fuzzer>oss fuzz  (no id)</fuzzer>

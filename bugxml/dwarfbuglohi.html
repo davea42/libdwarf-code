@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of February 2025</p>
-<p> Record count: 201 </p>
+<p> Record count: 202 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -6627,6 +6627,34 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: 2161332885c50074f15c0e1a7339c330cbf88c62
 </p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202502-001">202) DW202502-001</h3>
+<p>id: DW202502-001
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 394644267
+</p>
+<p>datereported: 2025-02-05
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Heap buffer overflow in dwarf_macro5.c
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A corrupt (fuzzed) .debug_macro resulted in
+  a failed attempt to catch an error as a small
+  add overflowed bypassing the error-check.
+  The error check is now corrected and completed.
+  This has been a vulnerability since dwarf5 macro support
+  was added in 2021.
+</p>
+<p>datefixed: 2025-01-07
+</p>
+<p>references: regressiontests/ossfuzz394644267/fuzz_macro_dwarf5-5504709091983360 fuzz_macro_dwarf5-5504709091983360
+</p>
+<p>gitfixid:</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
