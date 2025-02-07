@@ -1053,11 +1053,17 @@ _dwarf_get_debug(Dwarf_Unsigned filesize)
     /* Set up for a dwarf_tsearch hash table */
     dbg->de_magic = DBG_IS_VALID;
 
+    /*  See also dwarf_tsearchhash.c the prime number
+        table 'primes[]'. */
+#define INIT_HASH_INIT_LIMIT 2000000
     if (global_de_alloc_tree_on) {
         /*  The type of the dwarf_initialize_search_hash
             initial-size argument */
         unsigned long size_est = (unsigned long)(filesize/30);
 
+        if (size_est > INIT_HASH_INIT_LIMIT) {
+            size_est = INIT_HASH_INIT_LIMIT;
+        }
 #ifdef TESTINGHASHTAB
         printf("debugging: src filesize %lu hashtab init %lu\n",
             (unsigned long)filesize,size_est);
