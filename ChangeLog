@@ -1,3 +1,104 @@
+2025-02-07:  David Anderson
+    commit 0574a76172557214881161b175491d58840271de
+
+    Updated with
+    id: DW202502-001
+    fuzzer: oss fuzz 394644267
+    datereported: 2025-02-05
+
+            modified:   bugxml/data.txt
+    regenerated
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-02-07:  David Anderson
+    commit 156156a80affdc63b851fbf7fdc01e4d41849eb0
+
+    Fix for
+    id: DW202502-001
+    fuzzer: oss fuzz 394644267
+    datereported: 2025-02-05
+    Heap buffer overflow in dwarf_macro5.c
+    Has been a bug since dwarf_macro5 was first written in 2021
+    or so.
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+
+2025-02-07:  David Anderson
+    commit 0b5b12d25eda70aecc15d6023bc59f8ee8707ccc
+
+    New month, changing the current month field.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-02-07:  David Anderson
+    commit 304e3b74896c4010fdddcb3ba9fd1f60a4f8c765
+
+    For large sections (like .debug_info) avoid preloading the
+    hash table recording allocation with a gigantic
+    allocation.  If necessary it will later increase
+    the allocation automatically.
+            modified:   dwarf_alloc.c
+
+2025-01-08:  David Anderson
+    commit ed74b438dcbbf74759a15324c93d924191823ea7
+
+    As of 6 January 2025 the DWARF committee
+    voted to make W_AT_language_name
+    and DW_AT_language_version from DWARF6
+    immutable values now.  So compilers wishing
+    to add either or both to DWARF5
+    compiler output are officially allowed to use
+    these now.
+            modified:   dwarf.h
+    Regenerated.
+            modified:   dwarf_names.c
+
+2025-01-03:  David Anderson
+    commit 85df8598586f0020cabc61d301679cea718e9071
+
+    All now use permissions: contents: read
+            modified:   freebsd_autotools.yml
+            modified:   freebsd_cmake.yml
+            modified:   freebsd_meson.yml
+            modified:   mac_autotools.yml
+            modified:   mac_cmake.yml
+            modified:   mac_meson.yml
+            modified:   msys2_autotools.yml
+            modified:   msys2_cmake.yml
+
+2025-01-03:  David Anderson
+    commit dd06108cc6beea4ae1be2eaf1953328ffab313d7
+
+    Removed a no-longer needed python2 pip install
+            modified:   test.yml
+
+2025-01-03:  David Anderson
+    commit 8de7d149d6e10f06dc03f50741350aa1d75adaa6
+
+    Fails install mingw-w64-x86_64-python3-pip
+    so removed that.
+            modified:   msys2_meson.yml
+
+2025-01-03:  David Anderson
+    commit 22250afb0ade2fef537629fb428ab305707cf3dc
+
+    New month so month updated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-01-03:  David Anderson
+    commit 6f0c07087ad13cc11ef3f5ee21ac94c1060a03cd
+
+    Testing reformat of permissions:
+            modified:   test.yml
+
+2024-12-31:  David Anderson
+    commit d9ba7f41c4efd9bdb7330ceaeaa3d1faea5202a4
+
+    Now up to date with git.
+            modified:   ChangeLog
+
 2024-12-31:  David Anderson
     commit 7070a9115aa9ea8d83df5aba6c00c1c8e958d4a0
 
