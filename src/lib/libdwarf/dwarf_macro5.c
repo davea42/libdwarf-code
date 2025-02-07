@@ -1322,8 +1322,10 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
 
     section_base = dbg->de_debug_macro.dss_data;
     section_size = dbg->de_debug_macro.dss_size;
+    /* guarding against overflow */
     /*  The '3'  ensures the header initial bytes present too. */
-    if ((3+macro_offset) >= section_size) {
+    if ((macro_offset >= section_size) || 
+        ((3+macro_offset) >= section_size) ) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
         return DW_DLV_ERROR;
@@ -1331,7 +1333,6 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_header = macro_offset + section_base;
     macro_data = macro_header;
     section_end = section_base +section_size;
-
     macro_context = (Dwarf_Macro_Context)
         _dwarf_get_alloc(dbg,DW_DLA_MACRO_CONTEXT,1);
     if (!macro_context) {
