@@ -1,4 +1,18 @@
 2025-02-07:  David Anderson
+    commit 036e4e8e06b113e540fdec1d819151daf3fff7cb
+
+    Added gitfixid for dwarf_macro5.c fix.
+    DW202502-001
+            modified:   bugxml/data.txt
+
+2025-02-07:  David Anderson
+    commit e5433ac103761f5f8d135f688bccce1b38cf956d
+
+    Up to date with gitlog and
+    the dwarf_macro5.c fix.
+            modified:   ChangeLog
+
+2025-02-07:  David Anderson
     commit 0574a76172557214881161b175491d58840271de
 
     Updated with
