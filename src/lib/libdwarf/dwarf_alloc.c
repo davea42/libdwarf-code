@@ -1077,15 +1077,40 @@ _dwarf_get_debug(Dwarf_Unsigned filesize)
 /*  In the 'rela' relocation case  or in case
     of compressed sections we might have malloc'd
     space (to ensure it is read-write or to decompress it
-    respectively, or both). In that case, free the space.  */
-static void
-malloc_section_free(struct Dwarf_Section_s * sec)
+    respectively, or both). In that case, free the space.  
+    Only one of was_malloc and was_mmap can possibly
+    be non-zero.
+    */
+void
+_dwarf_malloc_section_free(struct Dwarf_Section_s * sec)
 {
     if (sec->dss_data_was_malloc) {
         free(sec->dss_data);
+    } 
+#ifdef HAVE_FULL_MMAP
+    else {
+        if (secdata->dss_data_was_mmap) {
+#ifdef DEBUG_ALLOC
+            res = munmap(secdata->dss_map_realarea,
+                    secdata->dss_computed_map_len);
+            if (res) {
+                printf("FAILED to munmap!\n");
+                fflush(stdout);
+            }
+#else
+            munmap(secdata->dss_map_realarea,
+                    secdata->dss_computed_map_len);
+#endif /* DEBUG_ALLOC */
+            secdata->dss_map_realarea = 0;
+            secdata->dss_computed_map_len = 0;
+            secdata->dss_computed_map_offset = 0;
+        }
     }
-    sec->dss_data = 0;
-    sec->dss_data_was_malloc = 0;
+#endif /* HAVE_FULL_MMAP */
+    secdata->dss_data = 0;
+    sec->dss_data_was_mmap = FALSE;
+    sec->dss_data_was_malloc = FALSE;
+    secdata->dss_map_realarea = 0;
 }
 
 static void

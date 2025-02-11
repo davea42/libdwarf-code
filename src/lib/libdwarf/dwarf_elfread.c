@@ -227,7 +227,9 @@ elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
             *error = DW_DLE_ELF_SECTION_ERROR;
             return DW_DLV_ERROR;
         }
-
+#ifdef HAVE_FULL_MMAP
+FIXME
+#endif /* HAVE_FULL_MMAP */
         sp->gh_content = malloc((size_t)sp->gh_size);
         if (!sp->gh_content) {
             *error = DW_DLE_ALLOC_FAIL;

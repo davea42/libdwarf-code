@@ -417,7 +417,14 @@ struct Dwarf_Section_s {
         Purpose: to handle DW_EH_PE_pcrel encoding. Leaving
         it zero is fine for non-elf.  */
     Dwarf_Addr     dss_addr;
+
+    Dwarf_Unsigned dss_computed_mmap_offset;
+    Dwarf_Unsigned dss_computed_mmap_len;
+    Dwarf_Small *  dss_mmap_realarea;
+    /*  Only one of the following two will be set */
     Dwarf_Small    dss_data_was_malloc;
+    Dwarf_Small    dss_data_was_mmap;
+
     /*  is_in_use set during initial object reading to
         detect duplicates. Ignored after setup done. */
     Dwarf_Small    dss_is_in_use;
@@ -1173,6 +1180,8 @@ int  _dwarf_readr(int fd, char *buf, Dwarf_Unsigned size,
 int  _dwarf_seekr(int fd, Dwarf_Unsigned loc, int seektype,
     Dwarf_Unsigned *out_loc);
 int  _dwarf_openr(const char *name);
+
+void _dwarf_malloc_section_free(struct Dwarf_Section_s * sec);
 
 int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_Attribute attr,
