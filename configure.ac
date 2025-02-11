@@ -203,6 +203,32 @@ AC_ARG_VAR([DWARF_LIBS], [extra linker flags when linking dwarfdump])
 AC_CHECK_HEADERS([unistd.h sys/types.h malloc.h])
 ### for uintptr_t and open and open argument defines
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h fcntl.h])
+###relevant for mmap
+have_mmap = "no"
+AC_COMPILE_IFELSE(
+  [ AC_LANG_PROGRAM(
+    [[
+    #include <unistd.h>
+    #include <string.h>
+    #include <stdlib.h>
+    #include <sys/mman.h>
+    ]],
+    [[
+        long pagesize = sysconf(_SC_PAGESIZE);
+        int fd = 4;
+        mmap(0, 100,PROT_READ|PROT_WRITE,MAP_PRIVATE,
+            fd,100);
+        munmap((void *)100,100);
+    ]]
+    )
+  ],
+  [ have_mmap="yes"
+    AC_DEFINE(
+      [HAVE_FULL_MMAP], [1],
+      [Set to 1 as mmap/munmap is usable])
+  ],
+  [ have_mmap = "no"]
+)
 
 AS_IF(
     [test "x${enable_decompression}" = "xyes"],
@@ -481,6 +507,7 @@ echo "  static library.......: ${enable_static}"
 echo
 echo "  zlib support.........: ${have_zlib}"
 echo "  zstd support.........: ${have_zstd}"
+echo "  mmap supported.......: ${have_mmap}"
 echo "  sanitize support.....: ${enable_sanitize}"
 echo "  documentation........: ${enable_doc}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
