@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(libdwarf VERSION 0.11.2 
     DESCRIPTION "Library to access DWARF debugging information" 
