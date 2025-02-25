@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libdwarf VERSION 0.11.2 
+project(libdwarf VERSION 0.12.0 
     DESCRIPTION "Library to access DWARF debugging information" 
     HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
     LANGUAGES C CXX)
@@ -134,6 +134,7 @@ if (${isBigEndian})
 endif()
 
 check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H)
+check_include_file( "sys/mman.h"      HAVE_SYS_MMAN_H)
 check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H )
 check_include_file( "stdint.h"        HAVE_STDINT_H   )
 check_include_file( "unistd.h"        HAVE_UNISTD_H   )
@@ -158,6 +159,26 @@ if(HAVE_STDINT_H)
       return (int)i;
   }" HAVE_INTPTR_T)
 endif()
+
+if(HAVE_SYS_MMAN_H)
+  check_c_source_compiles("
+  #include <unistd.h>
+  #include <string.h>
+  #include <stdlib.h>
+  #include <sys/mman.h>
+  int main()
+  {
+      long pagesize = sysconf(_SC_PAGESIZE);
+      int fd = 4;
+      mmap(0, 100,PROT_READ|PROT_WRITE,MAP_PRIVATE,
+         fd,100);
+      munmap((void *)100,100);
+      return 0;
+  }" HAVE_FULL_MMAP)
+ 
+
+endif()
+
 if (HAVE_UINTPTR_T)
   message(STATUS "HAVE_UINTPTR_T 1: uintptr_t defined in stdint.h... YES")
 else()
