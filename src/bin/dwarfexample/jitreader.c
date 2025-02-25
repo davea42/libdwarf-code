@@ -219,8 +219,10 @@ const Dwarf_Obj_Access_Methods_a methods = {
     gfilesize,
     gseccount,
     gloadsec,
-    0 /* no relocating anything */
+    0 /* no relocating anything */,
+    0 /* no file with DWARF here, so mmap impossible */
     };
+
 struct Dwarf_Obj_Access_Interface_a_s dw_interface =
 { &base_internals,&methods };
 
