@@ -138,7 +138,8 @@ set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
 }
 
 /* New in September 2023. */
-int dwarf_init_path_a(const char *path,
+int 
+dwarf_init_path_a(const char *path,
     char            * true_path_out_buffer,
     unsigned          true_path_bufferlen,
     unsigned          groupnumber,
@@ -280,6 +281,8 @@ dwarf_init_path_dl_a(const char *path,
     Dwarf_Debug dbg = 0;
     char *file_path = 0;
     unsigned char  lpath_source = DW_PATHSOURCE_basic;
+    enum Dwarf_Sec_Alloc_Pref preferred_load_type = 
+        Dwarf_Alloc_Malloc;
 
     if (!ret_dbg) {
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,
@@ -298,6 +301,12 @@ dwarf_init_path_dl_a(const char *path,
             " cannot work. Error.");
         return DW_DLV_ERROR;
     }
+
+    /*  Determine the type of section allocations:
+        mmap or malloc.  Sets global alloc type as side effect. 
+        DW_LOAD_PREF_MALLOC or DW_LOAD_PREF_MMAP*/
+    preferred_load_type = _dwarf_determine_section_allocation_type();
+
     /* a special dsym call so we only check once. */
     if (true_path_out_buffer) {
         res = dwarf_object_detector_path_dSYM(path,
@@ -364,6 +373,7 @@ dwarf_init_path_dl_a(const char *path,
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
             DW_DLV_ERROR);
     }
+
     switch(ftype) {
     case DW_FTYPE_ELF: {
         res = _dwarf_elf_nlsetup(fd,
@@ -377,6 +387,7 @@ dwarf_init_path_dl_a(const char *path,
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
         dbg->de_ftype =  (Dwarf_Small)ftype;
+        dbg->de_preferred_load_type = preferred_load_type;
         *ret_dbg = dbg;
         return res;
     }
@@ -394,6 +405,7 @@ dwarf_init_path_dl_a(const char *path,
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
         dbg->de_ftype =  (Dwarf_Small)ftype;
+        dbg->de_preferred_load_type = preferred_load_type;
         *ret_dbg = dbg;
         return res;
     }
@@ -409,6 +421,7 @@ dwarf_init_path_dl_a(const char *path,
         final_common_settings(dbg,file_path,fd,
             lpath_source,path_source,error);
         dbg->de_ftype =  (Dwarf_Small)ftype;
+        dbg->de_preferred_load_type = preferred_load_type;
         *ret_dbg = dbg;
         return res;
     }
@@ -448,6 +461,7 @@ dwarf_init_b(int fd,
     /*  Non-null *ret_dbg will cause problems dealing with
         DW_DLV_ERROR */
     *ret_dbg = 0;
+
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {

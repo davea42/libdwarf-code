@@ -90,10 +90,17 @@ add_debug_section_info(Dwarf_Debug dbg,
         secdata->dss_number = obj_sec_num;
         secdata->dss_zdebug_requires_decompress =
             (Dwarf_Small)havezdebug;
+        secdata->dss_computed_mmap_offset = 0;
+        secdata->dss_computed_mmap_len = 0;
+        secdata->dss_mmap_realarea = 0;
+        secdata->dss_was_malloc = 0;
+        /*  Just gets current global pref */
+        secdata->dss_load_preference = dwarf_set_load_preference(0);
         /* We don't yet know about SHF_COMPRESSED */
         debug_section->ds_duperr = duperr;
         debug_section->ds_emptyerr = emptyerr;
         debug_section->ds_have_dwarf = have_dwarf;
+        debug_section->ds_have_zdebug = havezdebug;
         debug_section->ds_have_zdebug = havezdebug;
         ++dbg->de_debug_sections_total_entries;
         return DW_DLV_OK;

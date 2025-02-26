@@ -949,6 +949,8 @@ static Dwarf_Obj_Access_Methods_a const macho_methods = {
     macho_load_section,
     /*  We do not do macho relocations.
         dsym files do not require it. */
+    NULL,
+    /*Not handling mmap yet. */
     NULL
 };
 

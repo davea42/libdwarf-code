@@ -421,9 +421,12 @@ struct Dwarf_Section_s {
     Dwarf_Unsigned dss_computed_mmap_offset;
     Dwarf_Unsigned dss_computed_mmap_len;
     Dwarf_Small *  dss_mmap_realarea;
-    /*  Only one of the following two will be set */
-    Dwarf_Small    dss_data_was_malloc;
-    Dwarf_Small    dss_data_was_mmap;
+    /*  Value is Dwarf_Alloc_Malloc=1 or Dwarf_Alloc_Mmap=2 */
+    enum Dwarf_Sec_Alloc_Pref  dss_load_preference;
+    /*  No matter the malloc/mmap load preference,
+        malloc may be forced
+        if a compressed section. */
+    Dwarf_Small    dss_was_malloc;
 
     /*  is_in_use set during initial object reading to
         detect duplicates. Ignored after setup done. */
@@ -457,7 +460,7 @@ struct Dwarf_Section_s {
         Set dss_was_malloc  TRUE */
     Dwarf_Small    dss_zdebug_requires_decompress;
     Dwarf_Small    dss_did_decompress;
-    Dwarf_Small dss_shf_compressed;  /* section flag SHF_COMPRESS */
+    Dwarf_Small    dss_shf_compressed; /* section SHF_COMPRESS */
 
     /* Section compression starts with ZLIB chars*/
     Dwarf_Small dss_ZLIB_compressed;
@@ -667,11 +670,12 @@ struct Dwarf_Debug_s {
     char de_in_tdestroy; /* for de_alloc_tree  DW202309-001 */
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
     Dwarf_Small de_path_source;
+    Dwarf_Small de_preferred_load_type; /* DW_LOAD_PREF_MALLOC etc*/
     /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
     const char *de_path;
-
+    
     const char ** de_gnu_global_paths;
     unsigned      de_gnu_global_path_count;
 
@@ -1181,7 +1185,11 @@ int  _dwarf_seekr(int fd, Dwarf_Unsigned loc, int seektype,
     Dwarf_Unsigned *out_loc);
 int  _dwarf_openr(const char *name);
 
+/*   This does free or munmap as appropriate. */
 void _dwarf_malloc_section_free(struct Dwarf_Section_s * sec);
+
+enum Dwarf_Sec_Alloc_Pref
+    _dwarf_determine_section_allocation_type(void);
 
 int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_Attribute attr,

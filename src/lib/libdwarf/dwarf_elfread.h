@@ -111,9 +111,15 @@ struct generic_shdr {
     Dwarf_Unsigned gh_entsize;
 
     /*  Zero unless content read in. Malloc space
-        of size gh_size,  in bytes. For dwarf
-        and strings mainly. free() this if not null*/
+        of size gh_size,  in bytes. 
+        or if load type Dwarf_Alloc_Mmap
+        gh_content is a pointer to the user data.
+        free() or
+        unmap this  this if not null*/
     char *       gh_content;
+    enum Dwarf_Sec_Alloc_Pref gh_load_type;
+    char *       gh_mmap_realarea;
+    Dwarf_Unsigned gh_computed_mmaplen;
 
     /*  If a .rel or .rela section this will point
         to generic relocation records if such
@@ -192,10 +198,11 @@ typedef struct elf_filedata_s {
     Dwarf_Small    f_pointersize;
     int            f_ftype;
     int            f_path_source;
+    Dwarf_Debug    f_dbg;
 
     Dwarf_Unsigned f_max_secdata_offset;
     Dwarf_Unsigned f_max_progdata_offset;
-
+    
     void (*f_copy_word) (void *, const void *, unsigned long);
 
     struct location      f_loc_ehdr;

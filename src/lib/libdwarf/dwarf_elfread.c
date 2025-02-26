@@ -63,6 +63,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* free() malloc() */
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* sysconf */
+#endif /* HAVE_UNISTD_H */
+#ifdef HAVE_FULL_MMAP
+#include <sys/mman.h> /* mmap */
+#endif /* HAVE_FULL_MMAP */
 #include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
 
@@ -190,9 +196,11 @@ static int elf_get_nolibelf_section_info(void *obj,
     return DW_DLV_NO_ENTRY;
 }
 
+
+/*  This interface does not support mmap. It is malloc only */
 static int
 elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
-    Dwarf_Small **return_data, int *error)
+    Dwarf_Small **return_data, int *errorc)
 {
     /*  Linux kernel read size limit 0x7ffff000,
         Without any good reason, limit our reads
@@ -224,15 +232,13 @@ elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
             sp->gh_offset > elf->f_filesize ||
             (sp->gh_size + sp->gh_offset) >
                 elf->f_filesize) {
-            *error = DW_DLE_ELF_SECTION_ERROR;
+            *errorc = DW_DLE_ELF_SECTION_ERROR;
             return DW_DLV_ERROR;
         }
-#ifdef HAVE_FULL_MMAP
-FIXME
-#endif /* HAVE_FULL_MMAP */
+        sp->gh_load_type = Dwarf_Alloc_Malloc;
         sp->gh_content = malloc((size_t)sp->gh_size);
         if (!sp->gh_content) {
-            *error = DW_DLE_ALLOC_FAIL;
+            *errorc = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
         /*  Linux has a 2GB limit on read size.
@@ -248,7 +254,7 @@ FIXME
             res = RRMOA(elf->f_fd,
                 (void *)read_target, read_offset,
                 read_size,
-                elf->f_filesize, error);
+                elf->f_filesize, errorc);
             if (res != DW_DLV_OK) {
                 free(sp->gh_content);
                 sp->gh_content = 0;
@@ -264,6 +270,100 @@ FIXME
     return DW_DLV_NO_ENTRY;
 }
 
+#ifdef HAVE_FULL_MMAP
+/*   Calls elf_load_nolibelf_section() if 
+     malloc  is preferred. */
+static int
+elf_load_nolibelf_section_a (void* obj,
+    Dwarf_Unsigned    dw_section_index,
+    enum Dwarf_Sec_Alloc_Pref *dw_alloc_type,
+    Dwarf_Small   **return_data_ptr,
+    Dwarf_Unsigned *return_data_len,
+    Dwarf_Small   **return_mmap_base_ptr,
+    Dwarf_Unsigned *return_mmap_offset,
+    Dwarf_Unsigned *return_mmap_len,
+    int            *errc)
+{
+    int res  = 0;
+    enum Dwarf_Sec_Alloc_Pref alloc_type_in = *dw_alloc_type;
+    switch (alloc_type_in) {
+    case Dwarf_Alloc_Malloc:
+        /* Does NOT alter *return_data_len */
+        res = elf_load_nolibelf_section(obj,dw_section_index,
+            return_data_ptr,errc);
+        *return_mmap_base_ptr = 0;
+        *return_mmap_offset = 0;
+        *return_mmap_len = 0;
+        *dw_alloc_type = Dwarf_Alloc_Malloc;
+        /* *return_data_len =  not set */
+        return res;
+    case Dwarf_Alloc_Mmap: {
+        Dwarf_Unsigned secoffset = 0;
+        Dwarf_Unsigned seclen = 0;
+        Dwarf_Small   *realarea = (void*)-1;
+        Dwarf_Unsigned computed_mmaplen = 0;
+        long           pagesize = sysconf(_SC_PAGESIZE);
+        unsigned long  pagesizebits = 0;
+        Dwarf_Unsigned pageoff = 0;
+        dwarf_elf_object_access_internals_t *elf = 
+            (dwarf_elf_object_access_internals_t*)(obj);
+        void *         mmptr = 0;
+
+        if (0 < dw_section_index &&
+            dw_section_index < elf->f_loc_shdr.g_count) {
+            struct generic_shdr *sp =
+                elf->f_shdr + dw_section_index;
+            if (sp->gh_content) {
+                *return_data_ptr = (Dwarf_Small *)sp->gh_content;
+                return DW_DLV_OK;
+            }
+            if (!sp->gh_size) {
+                return DW_DLV_NO_ENTRY;
+            }
+            /*  Guarding against bad values and
+                against overflow */
+            if (sp->gh_size > elf->f_filesize ||
+                sp->gh_offset > elf->f_filesize ||
+                (sp->gh_size + sp->gh_offset) >
+                    elf->f_filesize) {
+                *errc = DW_DLE_ELF_SECTION_ERROR;
+                return DW_DLV_ERROR;
+            }
+            secoffset = sp->gh_offset;
+            seclen = sp->gh_size;
+            pagesizebits = pagesize -1;
+            pageoff = secoffset & ~pagesizebits;
+            computed_mmaplen = (seclen + (secoffset - pageoff) +
+                pagesizebits) & ~pagesizebits;
+            mmptr = mmap(0, (size_t)computed_mmaplen,
+                PROT_READ|PROT_WRITE, MAP_PRIVATE,
+                elf->f_fd,(off_t)pageoff);
+            if (mmptr == (void *)-1) {
+                *errc = DW_DLE_ELF_SECTION_ERROR;
+                return DW_DLV_ERROR;
+            }
+            sp->gh_load_type = Dwarf_Alloc_Mmap;
+            realarea = (Dwarf_Small*)mmptr;
+            sp->gh_mmap_realarea = (char*)realarea;
+            sp->gh_computed_mmaplen = computed_mmaplen;
+            sp->gh_content   = (char *)realarea + (secoffset&pagesizebits);
+            *return_data_ptr = (Dwarf_Small *)sp->gh_content;
+            *dw_alloc_type =  sp->gh_load_type;
+            *return_data_len = seclen;
+            *return_mmap_base_ptr = realarea;
+            *return_mmap_offset = pageoff;
+            *return_mmap_len = computed_mmaplen;
+            return DW_DLV_OK;
+    }
+    default:
+        break;
+    } /* end mmap case */
+    } /* end switch */
+    *errc = DW_DLE_ELF_SECTION_ERROR;
+    return DW_DLV_ERROR;
+}
+#endif /* HAVE_FULL_MMAP */
+
 #define MATCH_REL_SEC(i_,s_,r_)  \
 if ((i_) == (s_).dss_index) { \
     *(r_) = &(s_);            \
@@ -272,7 +372,7 @@ if ((i_) == (s_).dss_index) { \
 
 static int
 find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Unsigned section_index,
-    struct Dwarf_Section_s **relocatablesec, int *error)
+    struct Dwarf_Section_s **relocatablesec, int *errorc)
 {
     MATCH_REL_SEC(section_index,dbg->de_debug_info,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_abbrev,relocatablesec);
@@ -322,7 +422,7 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Unsigned section_index,
     /* dbg-> de_debug_str,syms); */
     /* de_elf_symtab,syms); */
     /* de_elf_strtab,syms); */
-    *error = DW_DLE_RELOC_SECTION_MISMATCH;
+    *errorc = DW_DLE_RELOC_SECTION_MISMATCH;
     return DW_DLV_ERROR;
 }
 
@@ -334,7 +434,7 @@ update_entry(Dwarf_Debug dbg,
     struct generic_rela *rela,
     Dwarf_Small *target_section,
     Dwarf_Unsigned target_section_size,
-    int *error)
+    int *errorc)
 {
     unsigned int type = 0;
     unsigned int sym_idx = 0;
@@ -350,14 +450,14 @@ update_entry(Dwarf_Debug dbg,
     type = (unsigned int)rela->gr_type;
     sym_idx = (unsigned int)rela->gr_sym;
     if (sym_idx >= obj->f_loc_symtab.g_count) {
-        *error = DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD;
+        *errorc = DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD;
         return DW_DLV_ERROR;
     }
     symp = obj->f_symtab + sym_idx;
     if (offset >= target_section_size) {
         /*  If offset really big, any add will overflow.
             So lets stop early if offset is corrupt. */
-        *error = DW_DLE_RELOC_INVALID;
+        *errorc = DW_DLE_RELOC_INVALID;
         return DW_DLV_ERROR;
     }
     /* Determine relocation size */
@@ -372,16 +472,16 @@ update_entry(Dwarf_Debug dbg,
             any relocation records of type R_<machine>_NONE.  */
         return DW_DLV_OK;
     } else {
-        *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
+        *errorc = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
         return DW_DLV_ERROR;
     }
     if ( (offset + reloc_size) < offset) {
         /* Another check for overflow. */
-        *error = DW_DLE_RELOC_INVALID;
+        *errorc = DW_DLE_RELOC_INVALID;
         return DW_DLV_ERROR;
     }
     if ( (offset + reloc_size) > target_section_size) {
-        *error = DW_DLE_RELOC_INVALID;
+        *errorc = DW_DLE_RELOC_INVALID;
         return DW_DLV_ERROR;
     }
     /*  Assuming we do not need to do a READ_UNALIGNED here
@@ -422,7 +522,7 @@ apply_rela_entries(
     dwarf_elf_object_access_internals_t*obj,
     /* relocatablesec is the .debug_info(etc)  in Dwarf_Debug */
     struct Dwarf_Section_s * relocatablesec,
-    int *error)
+    int *errorc)
 {
     int return_res = DW_DLV_OK;
     struct generic_shdr * rels_shp = 0;
@@ -430,7 +530,7 @@ apply_rela_entries(
     Dwarf_Unsigned i = 0;
 
     if (r_section_index >= obj->f_loc_shdr.g_count) {
-        *error = DW_DLE_SECTION_INDEX_BAD;
+        *errorc = DW_DLE_SECTION_INDEX_BAD;
         return DW_DLV_ERROR;
     }
     rels_shp = obj->f_shdr + r_section_index;
@@ -445,7 +545,7 @@ apply_rela_entries(
     }
     if (!rels_shp->gh_rels) {
         /*  something wrong. */
-        *error = DW_DLE_RELOCS_ERROR;
+        *errorc = DW_DLE_RELOCS_ERROR;
         return DW_DLV_ERROR;
     }
     for (i = 0; i < relcount; i++) {
@@ -453,7 +553,7 @@ apply_rela_entries(
             rels_shp->gh_rels+i,
             relocatablesec->dss_data,
             relocatablesec->dss_size,
-            error);
+            errorc);
         if (res != DW_DLV_OK) {
             /* We try to keep going, not stop. */
             return_res = res;
@@ -474,7 +574,7 @@ static int
 elf_relocations_nolibelf(void* obj_in,
     Dwarf_Unsigned section_index,
     Dwarf_Debug dbg,
-    int* error)
+    int* errorc)
 {
     int res = DW_DLV_ERROR;
     dwarf_elf_object_access_internals_t*obj = 0;
@@ -491,7 +591,7 @@ elf_relocations_nolibelf(void* obj_in,
         to a de_debug_info or other  section record in
         Dwarf_Debug. */
     res = find_section_to_relocate(dbg, section_index,
-        &relocatablesec, error);
+        &relocatablesec, errorc);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -508,18 +608,18 @@ elf_relocations_nolibelf(void* obj_in,
     section_with_reloc_records = relocatablesec->dss_reloc_index;
     if (!section_with_reloc_records) {
         /* Something is wrong. */
-        *error = DW_DLE_RELOC_SECTION_MISSING_INDEX;
+        *errorc = DW_DLE_RELOC_SECTION_MISSING_INDEX;
         return DW_DLV_ERROR;
     }
     /* The relocations, if they exist, have been loaded. */
     /* The symtab was already loaded. */
     if (!obj->f_symtab || !obj->f_symtab_sect_strings) {
-        *error = DW_DLE_DEBUG_SYMTAB_ERR;
+        *errorc = DW_DLE_DEBUG_SYMTAB_ERR;
         return DW_DLV_ERROR;
     }
     if (obj->f_symtab_sect_index != relocatablesec->dss_reloc_link) {
         /* Something is wrong. */
-        *error = DW_DLE_RELOC_MISMATCH_RELOC_INDEX;
+        *errorc = DW_DLE_RELOC_MISMATCH_RELOC_INDEX;
         return DW_DLV_ERROR;
     }
     /* We have all the data we need in memory. */
@@ -527,7 +627,7 @@ elf_relocations_nolibelf(void* obj_in,
         target, relocablesec */
     res = apply_rela_entries(dbg,
         section_with_reloc_records,
-        obj, relocatablesec,error);
+        obj, relocatablesec,errorc);
     return res;
 }
 
@@ -545,10 +645,24 @@ _dwarf_destruct_elf_nlaccess(
     shp = ep->f_shdr;
     shcount = ep->f_loc_shdr.g_count;
     for (i = 0; i < shcount; ++i,++shp) {
+        enum Dwarf_Sec_Alloc_Pref alloc = shp->gh_load_type;
         free(shp->gh_rels);
         shp->gh_rels = 0;
-        free(shp->gh_content);
+        switch(alloc) {
+        case Dwarf_Alloc_Malloc:
+            free(shp->gh_content);
+            break;
+        case Dwarf_Alloc_Mmap: {
+            munmap(shp->gh_mmap_realarea,
+                (size_t)shp->gh_computed_mmaplen);
+            /* If returned non-zero unmap failed */ 
+        } break;
+        default: break;
+           /*  something disastrously wrong. No free/mmap */   
+        }
         shp->gh_content = 0;
+        shp->gh_mmap_realarea = (char *)-1;
+        shp->gh_computed_mmaplen = 0;
         free(shp->gh_sht_group_array);
         shp->gh_sht_group_array = 0;
         shp->gh_sht_group_array_count = 0;
@@ -629,7 +743,12 @@ static Dwarf_Obj_Access_Methods_a const elf_nlmethods = {
     elf_get_nolibelf_file_size,
     elf_get_nolibelf_section_count,
     elf_load_nolibelf_section,
-    elf_relocations_nolibelf
+    elf_relocations_nolibelf,
+#ifdef HAVE_FULL_MMAP
+    elf_load_nolibelf_section_a,
+#else
+    0 /* Not allowing mmap */
+#endif
 };
 
 /*  On any error this frees internals argument. */

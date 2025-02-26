@@ -875,7 +875,8 @@ static Dwarf_Obj_Access_Methods_a pe_methods = {
     pe_get_file_size,
     pe_get_section_count,
     pe_load_section,
-    0 /* ignore pe relocations. */
+    0 /* ignore pe relocations. */,
+    0 /* Not allowing use of mmap */
 };
 
 /* On any error this frees internals. */
