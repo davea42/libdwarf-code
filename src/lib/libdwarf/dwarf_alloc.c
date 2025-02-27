@@ -779,7 +779,7 @@ enum Dwarf_Sec_Alloc_Pref {
     Dwarf_Alloc_Mmap=2};
 #endif
 
-static enum Dwarf_Sec_Alloc_Pref _dwarf_global_load_preference = 
+static enum Dwarf_Sec_Alloc_Pref _dwarf_global_load_preference =
     Dwarf_Alloc_Malloc;
 
 /*  If zero passed in this just returns the current
@@ -788,7 +788,7 @@ enum Dwarf_Sec_Alloc_Pref
 dwarf_set_load_preference(
     enum Dwarf_Sec_Alloc_Pref dw_load_preference)
 {
-    enum Dwarf_Sec_Alloc_Pref prev_load_pref = 
+    enum Dwarf_Sec_Alloc_Pref prev_load_pref =
         _dwarf_global_load_preference;
 #ifdef HAVE_FULL_MMAP
     /*  Only set the preference if MMAP is available. */
@@ -820,7 +820,7 @@ dwarf_get_mmap_count(Dwarf_Debug dbg,
     for ( ; i < total_entries; ++i) {
         struct Dwarf_Section_s *sec =
             dbg->de_debug_sections[i].ds_secdata;
-        
+
         if (!sec->dss_size) {
             continue;
         }
@@ -837,7 +837,7 @@ dwarf_get_mmap_count(Dwarf_Debug dbg,
     if (dw_malloc_count) {
         *dw_malloc_count = mal_count;
     }
-    if(dw_total_alloc) {
+    if (dw_total_alloc) {
         *dw_total_alloc = totalspace;
     }
     return DW_DLV_OK;
@@ -854,7 +854,7 @@ _dwarf_determine_section_allocation_type(void)
         if (!strcmp(whichalloc,"mmap")) {
             dwarf_set_load_preference(Dwarf_Alloc_Mmap);
             return Dwarf_Alloc_Mmap;
-        } 
+        }
         if (!strcmp(whichalloc,"malloc")) {
             dwarf_set_load_preference(Dwarf_Alloc_Malloc);
             return Dwarf_Alloc_Malloc;
@@ -863,7 +863,6 @@ _dwarf_determine_section_allocation_type(void)
     return _dwarf_global_load_preference;
 #endif /* HAVE_FULL_MMAP */
 }
-
 
 /*  These wrappers for dwarf_dealloc enable type-checking
     at call points. */
@@ -1177,28 +1176,31 @@ _dwarf_get_debug(Dwarf_Unsigned filesize)
 /*  In the 'rela' relocation case  or in case
     of compressed sections we might have malloc'd
     space (to ensure it is read-write or to decompress it
-    respectively, or both). In that case, free the space.  
+    respectively, or both). In that case, free the space.
     */
 void
 _dwarf_malloc_section_free(struct Dwarf_Section_s * sec)
 {
     /*  Compressed sections will be malloc not mmap
-        by the time we get here. 
+        by the time we get here.
         No matter what the preference was.  */
     if (sec->dss_was_malloc) {
         free(sec->dss_data);
-    } 
+    }
 #ifdef HAVE_FULL_MMAP
-    else {
+    else  if (sec->dss_computed_mmap_len) {
         int res = munmap(sec->dss_mmap_realarea,
-                    sec->dss_computed_mmap_len);
+            sec->dss_computed_mmap_len);
 #ifdef DEBUG_ALLOC
         if (res) {
             printf("FAILED to munmap!\n");
             fflush(stdout);
         }
 #endif /* DEBUG_ALLOC */
-        (void)res;
+        (void)res; /* To avoid compiler warning. */
+    } else {
+        /*  Something might be very wrong. Maybe.
+            Just pretend all is well. */
     }
 #endif /* HAVE_FULL_MMAP */
     sec->dss_data = 0;

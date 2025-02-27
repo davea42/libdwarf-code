@@ -138,7 +138,7 @@ set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
 }
 
 /* New in September 2023. */
-int 
+int
 dwarf_init_path_a(const char *path,
     char            * true_path_out_buffer,
     unsigned          true_path_bufferlen,
@@ -281,7 +281,7 @@ dwarf_init_path_dl_a(const char *path,
     Dwarf_Debug dbg = 0;
     char *file_path = 0;
     unsigned char  lpath_source = DW_PATHSOURCE_basic;
-    enum Dwarf_Sec_Alloc_Pref preferred_load_type = 
+    enum Dwarf_Sec_Alloc_Pref preferred_load_type =
         Dwarf_Alloc_Malloc;
 
     if (!ret_dbg) {
@@ -303,7 +303,7 @@ dwarf_init_path_dl_a(const char *path,
     }
 
     /*  Determine the type of section allocations:
-        mmap or malloc.  Sets global alloc type as side effect. 
+        mmap or malloc.  Sets global alloc type as side effect.
         DW_LOAD_PREF_MALLOC or DW_LOAD_PREF_MMAP*/
     preferred_load_type = _dwarf_determine_section_allocation_type();
 

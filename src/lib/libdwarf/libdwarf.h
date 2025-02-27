@@ -799,7 +799,7 @@ struct Dwarf_Obj_Access_Section_a_s {
 
     This is part of the allowance of mmap for
     loading sections of an object file.
-    
+
     @see dwarf_set_load_preference()
 */
 enum Dwarf_Sec_Alloc_Pref {
@@ -813,7 +813,7 @@ enum Dwarf_Sec_Alloc_Pref {
     from libdwarf are declared here.
 
     Unless you are reading object sections with
-    your own code 
+    your own code
     (as in src/bin/dwarfexample/jitreader.c)
     you will not need to fill in or use the struct.
 
@@ -838,7 +838,7 @@ struct Dwarf_Obj_Access_Methods_a_s {
         Dwarf_Unsigned  section_index,
         Dwarf_Debug dbg,
         int       * error);
-    /*  Added in 0.12.0 to allow mmap in section loading. 
+    /*  Added in 0.12.0 to allow mmap in section loading.
         If you are just using mmap for section loading
         and referring to this struct in your code
         you should leave this function pointer NULL. */
@@ -9812,9 +9812,9 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     @{
 
     Functions related to the choice of malloc/read
-    or mmap for object section memory allocation. 
+    or mmap for object section memory allocation.
 
-    The default allocation preference is mmap. 
+    The default allocation preference is mmap.
 
     The environment variable DWARF_WHICH_ALLOC
     is also involved at runtime.
@@ -9862,8 +9862,8 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     ignored.
     @return
     Always returns the previous value of this runtime global
-    preference. 
-    
+    preference.
+
 */
 DW_API enum Dwarf_Sec_Alloc_Pref dwarf_set_load_preference(
     enum Dwarf_Sec_Alloc_Pref dw_load_preference);
@@ -9894,7 +9894,7 @@ DW_API enum Dwarf_Sec_Alloc_Pref dwarf_set_load_preference(
     non-null pointer arguments.
     If dw_dbg is invalid or NULL the function returns DW_DLV_ERROR.
     Never returns DW_DLV_NO_ENTRY.
- 
+
 */
 DW_API int dwarf_get_mmap_count(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_mmap_count,
@@ -9902,7 +9902,6 @@ DW_API int dwarf_get_mmap_count(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_total_alloc);
 /*! @}
 */
-
 
 #ifdef __cplusplus
 }

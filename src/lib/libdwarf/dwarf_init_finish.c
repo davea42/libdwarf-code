@@ -373,7 +373,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     secdata.dss_ignore_reloc_group_sec = TRUE;
     res = _dwarf_load_section(dbg,&secdata,error);
     if (res != DW_DLV_OK) {
-      
+
         _dwarf_malloc_section_free(&secdata);
         return res;
     }
@@ -1388,7 +1388,7 @@ do_decompress(Dwarf_Debug dbg,
 #endif /* HAVE_ZLIB && HAVE_ZSTD */
 
 /*  Load the ELF section with the specified index and set its
-    dss_data pointer to the memory where it was loaded.  
+    dss_data pointer to the memory where it was loaded.
     This is problematic for mmap use, as more needs
     to be recorded in the section data to munmap.
 */
@@ -1429,16 +1429,16 @@ _dwarf_load_section(Dwarf_Debug dbg,
 #ifdef HAVE_FULL_MMAP
     if (o->ai_methods->om_load_section_a &&
         (pref == Dwarf_Alloc_Mmap)) {
-        
+
         res = o->ai_methods->om_load_section_a(o->ai_object,
             section->dss_index,
             &pref,
-            &data_ptr, &data_len, 
+            &data_ptr, &data_len,
             &mmap_real_area,&mmap_offset,&mmap_len,
             &errc);
-    } else 
+    } else
 #endif /* HAVE_FULL_MMAP */
-    if(o->ai_methods->om_load_section) {
+    if (o->ai_methods->om_load_section) {
         res = o->ai_methods->om_load_section(o->ai_object,
             section->dss_index,
             &data_ptr,
@@ -1491,7 +1491,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
                 DW_DLV_ERROR);
         }
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
-        /*  This handles both malloc and mmap case. 
+        /*  This handles both malloc and mmap case.
             Possibly updating dss_was_malloc if required,
             and setting pref to Dwarf_Alloc_Malloc if
             required. */

@@ -111,7 +111,7 @@ struct generic_shdr {
     Dwarf_Unsigned gh_entsize;
 
     /*  Zero unless content read in. Malloc space
-        of size gh_size,  in bytes. 
+        of size gh_size,  in bytes.
         or if load type Dwarf_Alloc_Mmap
         gh_content is a pointer to the user data.
         free() or
@@ -202,7 +202,7 @@ typedef struct elf_filedata_s {
 
     Dwarf_Unsigned f_max_secdata_offset;
     Dwarf_Unsigned f_max_progdata_offset;
-    
+
     void (*f_copy_word) (void *, const void *, unsigned long);
 
     struct location      f_loc_ehdr;

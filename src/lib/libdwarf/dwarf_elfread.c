@@ -196,7 +196,6 @@ static int elf_get_nolibelf_section_info(void *obj,
     return DW_DLV_NO_ENTRY;
 }
 
-
 /*  This interface does not support mmap. It is malloc only */
 static int
 elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
@@ -271,8 +270,8 @@ elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
 }
 
 #ifdef HAVE_FULL_MMAP
-/*   Calls elf_load_nolibelf_section() if 
-     malloc  is preferred. */
+/*  Calls elf_load_nolibelf_section() if
+    malloc  is preferred. */
 static int
 elf_load_nolibelf_section_a (void* obj,
     Dwarf_Unsigned    dw_section_index,
@@ -305,7 +304,7 @@ elf_load_nolibelf_section_a (void* obj,
         long           pagesize = sysconf(_SC_PAGESIZE);
         unsigned long  pagesizebits = 0;
         Dwarf_Unsigned pageoff = 0;
-        dwarf_elf_object_access_internals_t *elf = 
+        dwarf_elf_object_access_internals_t *elf =
             (dwarf_elf_object_access_internals_t*)(obj);
         void *         mmptr = 0;
 
@@ -346,7 +345,8 @@ elf_load_nolibelf_section_a (void* obj,
             realarea = (Dwarf_Small*)mmptr;
             sp->gh_mmap_realarea = (char*)realarea;
             sp->gh_computed_mmaplen = computed_mmaplen;
-            sp->gh_content   = (char *)realarea + (secoffset&pagesizebits);
+            sp->gh_content   = (char *)realarea +
+                (secoffset&pagesizebits);
             *return_data_ptr = (Dwarf_Small *)sp->gh_content;
             *dw_alloc_type =  sp->gh_load_type;
             *return_data_len = seclen;
@@ -655,10 +655,10 @@ _dwarf_destruct_elf_nlaccess(
         case Dwarf_Alloc_Mmap: {
             munmap(shp->gh_mmap_realarea,
                 (size_t)shp->gh_computed_mmaplen);
-            /* If returned non-zero unmap failed */ 
+            /* If returned non-zero unmap failed */
         } break;
         default: break;
-           /*  something disastrously wrong. No free/mmap */   
+            /*  something disastrously wrong. No free/mmap */
         }
         shp->gh_content = 0;
         shp->gh_mmap_realarea = (char *)-1;
