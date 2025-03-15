@@ -426,10 +426,11 @@ pe_load_section (void *obj, Dwarf_Unsigned section_index,
     return DW_DLV_NO_ENTRY;
 }
 
-void
-_dwarf_destruct_pe_access(
-    struct Dwarf_Obj_Access_Interface_a_s *aip)
+static void
+_dwarf_destruct_pe_access(void* obj)
 {
+    struct Dwarf_Obj_Access_Interface_a_s * aip =
+        (struct Dwarf_Obj_Access_Interface_a_s * )obj;
     dwarf_pe_object_access_internals_t *pep = 0;
     Dwarf_Unsigned i = 0;
 
@@ -876,7 +877,8 @@ static Dwarf_Obj_Access_Methods_a pe_methods = {
     pe_get_section_count,
     pe_load_section,
     0 /* ignore pe relocations. */,
-    0 /* Not allowing use of mmap */
+    0 /* Not allowing use of mmap */,
+    _dwarf_destruct_pe_access
 };
 
 /* On any error this frees internals. */

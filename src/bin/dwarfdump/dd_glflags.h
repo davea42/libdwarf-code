@@ -148,6 +148,8 @@ struct glflags_s {
     Dwarf_Bool gf_weakname_flag;   /* SGI only */
 
     Dwarf_Bool gf_print_utf8_flag;
+    Dwarf_Bool gf_print_section_allocations;
+    Dwarf_Bool gf_allocation_via_mmap;
 
     Dwarf_Bool gf_header_flag; /* Control printing of Elf header. */
     Dwarf_Bool gf_section_groups_flag;

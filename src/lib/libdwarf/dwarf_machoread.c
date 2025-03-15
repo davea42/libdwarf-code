@@ -270,9 +270,10 @@ macho_load_section (void *obj, Dwarf_Unsigned section_index,
 }
 
 static void
-_dwarf_destruct_macho_internals(
-    dwarf_macho_object_access_internals_t *mp)
+_dwarf_destruct_macho_internals(void *obj)
 {
+    dwarf_macho_object_access_internals_t *mp =
+        (dwarf_macho_object_access_internals_t *)obj;
     Dwarf_Unsigned i = 0;
 
     if (mp->mo_destruct_close_fd) {
@@ -304,7 +305,9 @@ _dwarf_destruct_macho_internals(
     free(mp);
     return;
 }
-void
+
+
+static void
 _dwarf_destruct_macho_access(
     struct Dwarf_Obj_Access_Interface_a_s *aip)
 {
@@ -949,9 +952,11 @@ static Dwarf_Obj_Access_Methods_a const macho_methods = {
     macho_load_section,
     /*  We do not do macho relocations.
         dsym files do not require it. */
-    NULL,
+    0,
     /*Not handling mmap yet. */
-    NULL
+    0,
+    _dwarf_destruct_macho_internals
+    
 };
 
 /* Reads universal binary headers, gets to

@@ -539,22 +539,19 @@ dwarf_finish(Dwarf_Debug dbg)
     if (dbg->de_obj_file) {
         /*  The initial character of a valid
             dbg->de_obj_file->object struct is a letter:
-            E, F, M, or P */
+            E, F, M, or P, but E will not happen. */
         char otype  = *(char *)(dbg->de_obj_file->ai_object);
 
         switch(otype) {
-        case 'E':
+        case 'E': /* libelf. Impossible for years now. */
             break;
         case 'F':
             /* Non-libelf elf access */
-            _dwarf_destruct_elf_nlaccess(dbg->de_obj_file);
-            break;
         case 'M':
-            _dwarf_destruct_macho_access(dbg->de_obj_file);
-            break;
         case 'P':
-            _dwarf_destruct_pe_access(dbg->de_obj_file);
-            break;
+            /* These take care of data alloc/mmap
+                by object type. */
+            dbg->de_obj_file->ai_methods->om_finish(dbg->de_obj_file);
         default:
             /*  Do nothing. A serious internal error */
             break;
@@ -571,7 +568,10 @@ dwarf_finish(Dwarf_Debug dbg)
         here so no duplicate free will occur.
         It never returns DW_DLV_ERROR.
         Not all code uses libdwarf exactly as we do
-        hence the free() there. */
+        hence the free() there. 
+        This free/munmap as appropriate from the
+        DWARF data point of view independent of
+        object details. */
     return dwarf_object_finish(dbg);
 }
 

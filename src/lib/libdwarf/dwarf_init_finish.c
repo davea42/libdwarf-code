@@ -92,6 +92,76 @@
 #define SHF_COMPRESSED (1 << 11)
 #endif
 
+/*#define DWARF_DEBUG_LOAD */
+#ifdef DWARF_DEBUG_LOAD
+static const char * _dwarf_pref_name(enum Dwarf_Sec_Alloc_Pref pref)
+{
+     switch(pref) {
+     case Dwarf_Alloc_Malloc) {
+         return "Dwarf_Alloc_Malloc"; 
+     case Dwarf_Alloc_Mmap){
+         return "Dwarf_Alloc_Mmap"; 
+     case Dwarf_Alloc_None){
+         return "Dwarf_Alloc_None"; 
+     }
+     return "Unknown. Error";
+}
+
+static void dump_load_data(const char *msg,
+     Dwarf_Section sec,
+     int line,
+     const char *file)
+{
+    printf("Section Load of %s %s line %d file %s\n",
+        sec->dss_name,msg,line,_dwarf_basename(file));  
+    printf("  preference      : %s\n",_dwarf_pref_name(
+        sec->dss_load_preference));
+    printf("  data            : %p\n",(void *)sec->dss_data);
+    printf("  Actual load     : %s\n",_dwarf_pref_name(
+        sec->dss_actual_load_type));
+    printf("  secsize         : %lu\n",
+        (unsigned long)sec->dss_size);
+    printf("  did_decompress  : %u\n",sec->dss_did_decompress);
+    printf("  mmap_len        : %lu\n",
+        (unsigned long)sec->dss_computed_mmap_len);
+    printf("  mmap_offset     : %lu\n",
+        (unsigned long)sec->dss_computed_mmap_offset);
+    printf("  mmap_data       : %p\n",
+        (void *)sec->dss_mmap_realarea);
+}
+
+static void
+validate_section_load_data(const char *msg,
+     Dwarf_Section sec,
+     int line,
+     const char *file)
+{
+     enum Dwarf_Sec_Alloc_Pref pref = sec->dss_actual_load_type;
+     Dwarf_Unsigned mmap_len = sec->dss_computed_mmap_len;
+
+     dump_load_data(msg,sec,line,file);
+     switch(pref) {
+     case Dwarf_Alloc_Malloc: {
+     } break;
+     case Dwarf_Alloc_Mmap: {
+          if (!mmap_len) {
+              printf("FAIL load data mmap\n");
+              /* debugging only */
+              exit(1);
+          }
+     } break;
+     case Dwarf_Alloc_None: {
+     } break;
+     default:
+          dump_load_data(msg,sec,line,file);
+          printf("FAIL load data mmap\n");
+          /* debugging only */
+          exit(1);
+     } /* end switch */
+}
+#endif /* DWARF_DEBUG_LOAD  */
+
+
 /* This static is copied to the dbg on dbg init
    so that the static need not be referenced at
    run time, preserving better locality of
@@ -373,7 +443,6 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     secdata.dss_ignore_reloc_group_sec = TRUE;
     res = _dwarf_load_section(dbg,&secdata,error);
     if (res != DW_DLV_OK) {
-
         _dwarf_malloc_section_free(&secdata);
         return res;
     }
@@ -1381,7 +1450,8 @@ do_decompress(Dwarf_Debug dbg,
     _dwarf_malloc_section_free(section);
     section->dss_data = dest;
     section->dss_size = destlen;
-    section->dss_was_malloc= TRUE;
+    section->dss_was_alloc= TRUE;
+    section->dss_actual_load_type= Dwarf_Alloc_Malloc;
     section->dss_did_decompress = TRUE;
     return DW_DLV_OK;
 }
@@ -1407,6 +1477,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
     Dwarf_Small   *data_ptr = 0;
     enum Dwarf_Sec_Alloc_Pref pref =
         _dwarf_determine_section_allocation_type();
+    enum Dwarf_Sec_Alloc_Pref finaltype = pref;
 
     /* check to see if the section is already loaded */
     if (section->dss_data !=  NULL) {
@@ -1427,12 +1498,10 @@ _dwarf_load_section(Dwarf_Debug dbg,
         That is never true of DWARF sections  */
     data_len = section->dss_size;
 #ifdef HAVE_FULL_MMAP
-    if (o->ai_methods->om_load_section_a &&
-        (pref == Dwarf_Alloc_Mmap)) {
-
+    if (o->ai_methods->om_load_section_a) {
         res = o->ai_methods->om_load_section_a(o->ai_object,
             section->dss_index,
-            &pref,
+            &finaltype,
             &data_ptr, &data_len,
             &mmap_real_area,&mmap_offset,&mmap_len,
             &errc);
@@ -1443,6 +1512,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
             section->dss_index,
             &data_ptr,
             &errc);
+        finaltype = Dwarf_Alloc_Malloc;
     } else {
         _dwarf_error_string(dbg, error,
             DW_DLE_SECTION_ERROR,
@@ -1470,12 +1540,15 @@ _dwarf_load_section(Dwarf_Debug dbg,
             zero-size. */
         return res;
     }
-    /*  If was malloc, them mmap_len will be zero */
+    section->dss_was_alloc = FALSE;
     section->dss_computed_mmap_offset = mmap_offset;
     section->dss_computed_mmap_len = mmap_len;
     section->dss_mmap_realarea = mmap_real_area;
     section->dss_size = data_len;
     section->dss_data = data_ptr;
+    section->dss_load_preference = pref; 
+    section->dss_actual_load_type = finaltype;
+
     if (section->dss_ignore_reloc_group_sec) {
         /* Neither zdebug nor reloc apply to .group sections. */
         return res;
@@ -1508,6 +1581,8 @@ _dwarf_load_section(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
 #endif /* defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
         section->dss_did_decompress = TRUE;
+        section->dss_actual_load_type = Dwarf_Alloc_Malloc;
+        section->dss_was_alloc = TRUE;
     }
     if (_dwarf_apply_relocs == 0) {
         return res;

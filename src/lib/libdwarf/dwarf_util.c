@@ -71,11 +71,6 @@ dwarf_package_version(void)
 {
     return PACKAGE_VERSION;
 }
-#ifdef DEBUG_PRIMARY_DBG
-/*  These functions are helpers in printing data while
-    debugging problems.
-    In normal use these are not compiled or used.
-    Created November 2024. */
 
 const char *
 _dwarf_basename(const char *full)
@@ -97,6 +92,11 @@ _dwarf_basename(const char *full)
     }
     return (full+slashat);
 }
+#ifdef DEBUG_PRIMARY_DBG
+/*  These functions are helpers in printing data while
+    debugging problems.
+    In normal use these are not compiled or used.
+    Created November 2024. */
 void
 _dwarf_print_is_primary(const char *msg,
     Dwarf_Debug p,

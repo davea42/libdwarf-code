@@ -769,16 +769,6 @@ string_is_in_debug_section(Dwarf_Debug dbg,void * space)
     return FALSE;
 }
 
-#if 0
-/*  We default to malloc as it is available always for
-    every object.   mmap is useful for gigantic
-    DWARF sections.  */
-enum Dwarf_Sec_Alloc_Pref {
-    Dwarf_Alloc_Unspecified=0,
-    Dwarf_Alloc_Malloc=1,
-    Dwarf_Alloc_Mmap=2};
-#endif
-
 static enum Dwarf_Sec_Alloc_Pref _dwarf_global_load_preference =
     Dwarf_Alloc_Malloc;
 
@@ -797,6 +787,8 @@ dwarf_set_load_preference(
     case  Dwarf_Alloc_Mmap:
         _dwarf_global_load_preference = dw_load_preference;
         break;
+    case  Dwarf_Alloc_None:
+        break; /* ignore */
     default: break;
     }
 #else
@@ -807,15 +799,17 @@ dwarf_set_load_preference(
 int
 dwarf_get_mmap_count(Dwarf_Debug dbg,
     Dwarf_Unsigned *dw_mmap_count,
+    Dwarf_Unsigned *dw_mmap_size,
     Dwarf_Unsigned *dw_malloc_count,
-    Dwarf_Unsigned *dw_total_alloc)
+    Dwarf_Unsigned *dw_malloc_size)
 {
     unsigned long  total_entries =
         dbg->de_debug_sections_total_entries;
     unsigned  long i = 0;
     Dwarf_Unsigned mma_count = 0;
+    Dwarf_Unsigned mma_size = 0;
     Dwarf_Unsigned mal_count = 0;
-    Dwarf_Unsigned totalspace = 0;
+    Dwarf_Unsigned mal_size = 0;
 
     for ( ; i < total_entries; ++i) {
         struct Dwarf_Section_s *sec =
@@ -824,21 +818,31 @@ dwarf_get_mmap_count(Dwarf_Debug dbg,
         if (!sec->dss_size) {
             continue;
         }
-        if (sec->dss_was_malloc) {
+        switch(sec->dss_actual_load_type) {
+        case  Dwarf_Alloc_Malloc:
             mal_count++;
-        } else {
+            mal_size += sec->dss_size;
+            break;
+        case  Dwarf_Alloc_Mmap:
             mma_count++;
+            mma_size += sec->dss_size;
+            break;
+        case  Dwarf_Alloc_None:
+        default:
+            break;
         }
-        totalspace += sec->dss_size;
     }
     if (dw_mmap_count) {
         *dw_mmap_count = mma_count;
     }
+    if (dw_mmap_size) {
+        *dw_mmap_size = mma_size;
+    }
     if (dw_malloc_count) {
         *dw_malloc_count = mal_count;
     }
-    if (dw_total_alloc) {
-        *dw_total_alloc = totalspace;
+    if (dw_malloc_size) {
+        *dw_malloc_size = mal_size;
     }
     return DW_DLV_OK;
 }
@@ -850,6 +854,7 @@ _dwarf_determine_section_allocation_type(void)
     return _dwarf_global_load_preference;
 #else
     char *whichalloc = getenv("DWARF_WHICH_ALLOC");
+    
     if (whichalloc) {
         if (!strcmp(whichalloc,"mmap")) {
             dwarf_set_load_preference(Dwarf_Alloc_Mmap);
@@ -1184,28 +1189,36 @@ _dwarf_malloc_section_free(struct Dwarf_Section_s * sec)
     /*  Compressed sections will be malloc not mmap
         by the time we get here.
         No matter what the preference was.  */
-    if (sec->dss_was_malloc) {
-        free(sec->dss_data);
-    }
-#ifdef HAVE_FULL_MMAP
-    else  if (sec->dss_computed_mmap_len) {
-        int res = munmap(sec->dss_mmap_realarea,
-            sec->dss_computed_mmap_len);
-#ifdef DEBUG_ALLOC
-        if (res) {
-            printf("FAILED to munmap!\n");
-            fflush(stdout);
+    switch(sec->dss_actual_load_type) {
+    case Dwarf_Alloc_Malloc:
+        if (sec->dss_was_alloc) {
+            free(sec->dss_data);
         }
+        break;
+#ifdef HAVE_FULL_MMAP
+    case Dwarf_Alloc_Mmap:
+        if (sec->dss_was_alloc) {
+            int res = munmap(sec->dss_mmap_realarea,
+                sec->dss_computed_mmap_len);
+#ifdef DEBUG_ALLOC 
+            if (res) {
+                printf("FAILED to munmap!\n");
+                fflush(stdout);
+            }
 #endif /* DEBUG_ALLOC */
         (void)res; /* To avoid compiler warning. */
-    } else {
-        /*  Something might be very wrong. Maybe.
-            Just pretend all is well. */
-    }
 #endif /* HAVE_FULL_MMAP */
+        }
+        break;
+    case Dwarf_Alloc_None:
+    default:
+    break;
+    }
     sec->dss_data = 0;
+#if 0
     sec->dss_size = 0;
-    sec->dss_was_malloc = FALSE;
+#endif
+    sec->dss_was_alloc = FALSE;
     sec->dss_mmap_realarea = 0;
     sec->dss_computed_mmap_len = 0;
     sec->dss_computed_mmap_offset = 0;
@@ -1274,6 +1287,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     freecontextlist(dbg,&dbg->de_info_reading);
     freecontextlist(dbg,&dbg->de_types_reading);
     /* Housecleaning done. Now really free all the space. */
+fflush(stdout);
     _dwarf_malloc_section_free(&dbg->de_debug_info);
     _dwarf_malloc_section_free(&dbg->de_debug_types);
     _dwarf_malloc_section_free(&dbg->de_debug_abbrev);

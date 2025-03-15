@@ -117,15 +117,18 @@ struct generic_shdr {
         free() or
         unmap this  this if not null*/
     char *       gh_content;
+    /*  Actual load type */
     enum Dwarf_Sec_Alloc_Pref gh_load_type;
+    /*  Normally TRUE, meaning do free/munmap in dwarf_finish() */
+    Dwarf_Small  gh_was_alloc;
     char *       gh_mmap_realarea;
     Dwarf_Unsigned gh_computed_mmaplen;
 
     /*  If a .rel or .rela section this will point
         to generic relocation records if such
         have been loaded.
-        free() this if not null. */
-    Dwarf_Unsigned          gh_relcount;
+        free() this if not null, always malloc. */
+    Dwarf_Unsigned        gh_relcount;
     struct generic_rela * gh_rels;
 
     /*  For SHT_GROUP based  grouping, which
@@ -140,7 +143,7 @@ struct generic_shdr {
 
     /*  Content of an SHT_GROUP section as an array
         of integers. [0] is the version, which
-        can only be one(1) . */
+        can only be one(1) . Free this on dwarf_finish() */
     Dwarf_Unsigned * gh_sht_group_array;
     /*  Number of elements in the gh_sht_group_array. */
     Dwarf_Unsigned   gh_sht_group_array_count;

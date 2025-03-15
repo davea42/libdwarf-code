@@ -36,7 +36,7 @@ void * _libdwarf_malloc(size_t s)
     total_alloc += s;
     if ((unsigned long)s > largest_alloc) {
         largest_alloc = s;
-        printf("dadebug line %d largest_alloc %lu\n",
+        printf("LIBDWARF_MALLOC line %d largest_alloc %lu\n",
             __LINE__,
             largest_alloc);
         fflush(stdout);
@@ -46,7 +46,13 @@ void * _libdwarf_malloc(size_t s)
         }
 #endif
     }
-    return xmalloc(s);
+    {
+    void *r = xmalloc(s);
+    printf("LIBDWARF_MALLOC alloc malloc ret %p size %lu\n",r,
+        (unsigned long)s);
+    fflush(stdout);
+    return r;
+    }
 }
 void * _libdwarf_calloc(size_t n, size_t s)
 {
@@ -54,7 +60,7 @@ void * _libdwarf_calloc(size_t n, size_t s)
     total_alloc += n*s;
     if (n  > largest_alloc ) {
         largest_alloc = n*s;
-        printf("dadebug line %d largest_alloc %lu "
+        printf("LIBDWARF_MALLOC line %d largest_alloc %lu "
             " n=%lu s=%lu\n",
             __LINE__,
             largest_alloc,
@@ -64,7 +70,7 @@ void * _libdwarf_calloc(size_t n, size_t s)
     }
     if (s  > largest_alloc ) {
         largest_alloc = n*s;
-        printf("dadebug line %d largest_alloc %lu "
+        printf("LIBDWARF_MALLOC line %d largest_alloc %lu "
             " n=%lu s=%lu\n",
             __LINE__,
             largest_alloc,
@@ -74,7 +80,7 @@ void * _libdwarf_calloc(size_t n, size_t s)
     }
     if ((n * s) > largest_alloc) {
         largest_alloc = s*n;
-        printf("dadebug line %d largest_alloc %lu "
+        printf("LIBDWARF_MALLOC line %d largest_alloc %lu "
             " n=%lu s=%lu\n",
             __LINE__,
             largest_alloc,
@@ -82,7 +88,13 @@ void * _libdwarf_calloc(size_t n, size_t s)
             (unsigned long)s);
         fflush(stdout);
     }
-    return xcalloc(n,s);
+    {
+    void *r = xcalloc(n,s);
+    printf("LIBDWARF_MALLOC alloc calloc ret %p size %lu\n",r,
+        (unsigned long)s);
+    fflush(stdout);
+    return r;
+    }
 }
 void * _libdwarf_realloc(void * p, size_t s)
 {
@@ -90,24 +102,32 @@ void * _libdwarf_realloc(void * p, size_t s)
     total_alloc += s;
     if ((s)  > largest_alloc) {
         largest_alloc = s;
-        printf("dadebug line %d largest_alloc %lu\n",
+        printf("LIBDWARF_MALLOC line %d largest_alloc %lu\n",
             __LINE__,
             largest_alloc);
         fflush(stdout);
     }
-    return xrealloc(p,s);
+    {
+    void *r = xrealloc(p,s);
+    printf("LIBDWARF_MALLOC alloc realloc ret %p size %lu\n",r,
+        (unsigned long)s);
+    fflush(stdout);
+    return r;
+    }
 }
 void _libdwarf_free(void *p)
 {
     free_count++;
+    printf("LIBDWARF_MALLOC alloc free %p\n",p);
+    fflush(stdout);
     xfree(p);
 }
 void _libdwarf_finish(void)
 {
-    printf("dadebug at finish total   alloc %lu\n",total_alloc);
-    printf("dadebug at finish largest alloc %lu\n",largest_alloc);
-    printf("dadebug at finish alloc count   %lu\n",alloc_count);
-    printf("dadebug at finish    free count %lu\n",free_count);
+    printf("LIBDWARF_MALLOC at finish total   alloc %lu\n",total_alloc);
+    printf("LIBDWARF_MALLOC at finish largest alloc %lu\n",largest_alloc);
+    printf("LIBDWARF_MALLOC at finish alloc count   %lu\n",alloc_count);
+    printf("LIBDWARF_MALLOC at finish    free count %lu\n",free_count);
     fflush(stdout);
     total_alloc = 0;
     largest_alloc = 0;
