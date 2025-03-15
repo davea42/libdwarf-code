@@ -1,0 +1,96 @@
+<h1>Libdwarf Internals Introduction</h1>
+
+<p>The library is organized into a
+conceptual LeftHandSide (LHS, DWARF related) and a conceptual
+RightHandSide (RHS,object file related).
+All the functions in the API
+are functions in the LHS, and the LHS
+knows nothing about the actual object
+file.</p>
+
+<p>The RHS provides a small number
+of function pointers and the LHS
+uses those functions to access any
+object file being read.
+The RHS knows nothing about the
+functions in the LHS.</p>
+
+<p>There are three RHS code blocks.
+An Elf, a PE, and a MacOS block
+(reflected in header and source names in libdwarf).
+The structure of simple Elf objects is 
+reflected in the function pointers each
+of the three provide.
+The PE and MacOS blocks hide the differences from Elf
+from the LHS.</p>
+
+<p>All the code blocks are available at runtime, there
+is no selecting at library-build time. </p>
+
+<h1>Libdwarf Internals Overview</h1>
+
+<h2>Initialization</h2>
+
+<p>Any one of the functions</p>
+
+<p>dwarf<em>init</em>path(),
+  dwarf<em>init</em>path<em>a(),
+  dwarf</em>init<em>path</em>dl(),
+  dwarf<em>init</em>path<em>dl</em>a(), or
+  dwarf<em>init</em>b() may be used.</p>
+
+<p>dwarf<em>init</em>path<em>dl</em>a() is the most general, but
+for most objects dwarf<em>init</em>path()
+suffices. Other flavors allow more control
+in looking to find an object file containing
+actual DWARF when given a path to an object
+without DWARF data (compilers provide hints
+to libdwarf to help find the DWARF-containing object).</p>
+
+<p>When initialization is complete both the LHS DWARF
+data and the RHS object-specific data have arrays
+of sections.  These are defined as, and must be,
+one-to-one identical in terms of numbering so
+index B in one and index B in the other refer to
+the same actual object section. This is crucial
+as section index is what connects LHS data
+and RHS data.</p>
+
+<h2>Reading DWARF via the API.</h2>
+
+<p>The API functions work on any object, regardless
+of ABI and all functions account for endianness.</p>
+
+<h2>dwarf_finish()</h2>
+
+<p>Finish by calling dwarf_finish(), releasing all
+memory allocations and making any pointers to libdwarf
+data in your
+application memory stale and unusable.</p>
+
+<p>Before release 0.12.0 the functions</p>
+
+<p><em>dwarf</em>destruct<em>elf</em>nlaccess(dbg->de<em>obj</em>file),
+  <em>dwarf</em>destruct<em>macho</em>access(dbg->de<em>obj</em>file),
+  <em>dwarf</em>destruct<em>pe</em>access(dbg->de<em>obj</em>file).</p>
+
+<p>were visible to the entire library, but as of 0.12.0
+there is a new function pointer in Dwarf<em>Obj</em>Access<em>Methods</em>a:
+om_finish(), and those three are declared static, invisible
+to the LHS.</p>
+
+<h1>The Special Case</h1>
+
+<p>If there is no object file to read (such as with
+just-in-time DWARF creation) <br />
+an extra initialization call (dwarf<em>obj</em>init())
+lets one invent RHS code that behaves as if
+there was a file and present the DWARF data
+to the LHS in the same was as for the
+standard object files.</p>
+
+<p>Initialize by calling dwarf<em>object</em>init_b().</p>
+
+<p>Finish by calling dwarf<em>object</em>finish().</p>
+
+<p>See src/bin/dwarfexample/jitreader.c  </p>
