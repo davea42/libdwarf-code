@@ -357,6 +357,8 @@ static void arg_format_suppress_uri(void);
 static void arg_format_suppress_uri_msg(void);
 static void arg_format_suppress_utf8(void);
 
+static void arg_print_section_allocations(void);
+static void arg_allocate_via_mmap(void);
 static void arg_format_file(void);
 static void arg_format_gcc(void);
 static void arg_format_groupnumber(void);
@@ -488,6 +490,8 @@ static const char *usage_long_text[] = {
 "-N   --print-ranges      Print ranges section",
 "     --print-raw-rnglists Print entire .debug_rnglists section",
 "     --print-raw-loclists Print entire .debug_loclists section",
+"     --print-section_allocations Print summary of section ",
+"                         allocations via mmap and those via malloc", 
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
 "-tv  --print-static-var  Print static var section",
@@ -674,7 +678,7 @@ static const char *usage_long_text[] = {
 "                             (wide format) with -S",
 " ",
 "-------------------------------------------------------------------",
-"Help & Version",
+"Help, Version, and Miscellaneous",
 "-------------------------------------------------------------------",
 "-h   --help          Print this dwarfdump help message.",
 "-v   --verbose       Show more information.",
@@ -697,6 +701,9 @@ static const char *usage_long_text[] = {
 "     --trace=0      Shows --trace values (1,2,3) that",
 "                    turn on detailed tracking of dwarfdump",
 "                    internal tables (for debugging dwarfdump).",
+"     --allocate-via-mmap  When possible allocations for",
+"                    loading sections will be with mmap.",
+"                    See also environment variable DWARF_WHICH_ALLOC.",
 "",
 };
 
@@ -804,6 +811,7 @@ OPT_PRINT_STRINGS,            /* -s   --print-strings     */
 OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
 OPT_PRINT_TYPE,               /* -y   --print-type        */
 OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
+OPT_PRINT_ALLOCATIONS,        /* --print-section_allocations */
 
 /* debuglink options */
 OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
@@ -835,9 +843,8 @@ OPT_SHOW_ARGS,                /*   --show-args               */
 OPT_TRACE,                    /* -# --trace=<num>            */
 
 OPT_NO_DUP_ATTR_CHECK,        /*  --no-dup-attr-check  */
-
 OPT_ALLOC_TREE_OFF,           /* --suppress-de-alloc-tree */
-
+OPT_ALLOCATE_VIA_MMAP,        /* --allocate-via-mmap */
 OPT_END
 };
 
@@ -956,6 +963,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-str-offsets", dwno_argument, 0, OPT_PRINT_STR_OFFSETS},
 {"print-type",        dwno_argument, 0, OPT_PRINT_TYPE       },
 {"print-weakname",    dwno_argument, 0, OPT_PRINT_WEAKNAME   },
+{"print-section_allocations", dwno_argument, 0, OPT_PRINT_ALLOCATIONS },
 
 /*  GNU debuglink options */
 {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
@@ -981,7 +989,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"search-regex-count",    dwrequired_argument, 0,
     OPT_SEARCH_REGEX_COUNT   },
 
-/* Help & Version. */
+/* Help & Version & miscellaneous. */
 {"help",          dwno_argument, 0, OPT_HELP         },
 {"verbose",       dwno_argument, 0, OPT_VERBOSE      },
 {"verbose-more",  dwno_argument, 0, OPT_VERBOSE_MORE },
@@ -989,6 +997,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"show-dwarfdump-conf",dwno_argument, 0, OPT_SHOW_DWARFDUMP_CONF },
 {"show-args",     dwno_argument, 0, OPT_SHOW_ARGS },
 {"no-dup-attr-check", dwno_argument, 0, OPT_NO_DUP_ATTR_CHECK },
+{"allocate-via-mmap", dwno_argument, 0, OPT_ALLOCATE_VIA_MMAP },
 
 /* Trace. */
 {"trace", dwrequired_argument, 0, OPT_TRACE},
@@ -2135,6 +2144,11 @@ void arg_print_weaknames(void)
     glflags.gf_weakname_flag = TRUE;
     suppress_check_dwarf();
 }
+/* Option --print-section_allocations */
+void arg_print_section_allocations(void)
+{
+    glflags. gf_print_section_allocations = TRUE;
+}
 
 /*  Option '-W[...]' */
 void arg_W_multiple_selection(void)
@@ -2456,6 +2470,12 @@ static void arg_x_invalid(void)
     arg_usage_error = TRUE;
     glflags.gf_count_major_errors++;
 }
+/*  --allocate-via-mmap */
+static void arg_allocate_via_mmap(void)
+{
+    glflags.gf_allocation_via_mmap = TRUE;
+    dwarf_set_load_preference(Dwarf_Alloc_Mmap);
+}
 
 /*  Process the command line arguments and set the
     appropriate options. All
@@ -2633,6 +2653,8 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_STR_OFFSETS: arg_print_str_offsets(); break;
         case OPT_PRINT_TYPE:        arg_print_types();       break;
         case OPT_PRINT_WEAKNAME:    arg_print_weaknames();   break;
+        case OPT_PRINT_ALLOCATIONS:    arg_print_section_allocations();
+            break;
 
         /* debuglink attributes */
         case OPT_NO_FOLLOW_DEBUGLINK: arg_no_follow_debuglink();break;
@@ -2681,6 +2703,9 @@ set_command_options(int argc, char *argv[])
             /*  Suppress nearly all libdwarf de_alloc_tree
                 record keeping. */
             dwarf_set_de_alloc_flag(FALSE);
+            break;
+        case OPT_ALLOCATE_VIA_MMAP:
+            arg_allocate_via_mmap();
             break;
 
         default: arg_usage_error = TRUE; break;

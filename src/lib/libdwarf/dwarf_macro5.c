@@ -1324,7 +1324,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     section_size = dbg->de_debug_macro.dss_size;
     /* guarding against overflow */
     /*  The '3'  ensures the header initial bytes present too. */
-    if ((macro_offset >= section_size) || 
+    if ((macro_offset >= section_size) ||
         ((3+macro_offset) >= section_size) ) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);

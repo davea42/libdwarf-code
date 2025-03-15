@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright (C) 2009-2023 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2025 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -91,6 +91,76 @@
     as of February 2016. Elf Section Flag */
 #define SHF_COMPRESSED (1 << 11)
 #endif
+
+/*#define DWARF_DEBUG_LOAD */
+#ifdef DWARF_DEBUG_LOAD
+static const char * _dwarf_pref_name(enum Dwarf_Sec_Alloc_Pref pref)
+{
+     switch(pref) {
+     case Dwarf_Alloc_Malloc) {
+         return "Dwarf_Alloc_Malloc"; 
+     case Dwarf_Alloc_Mmap){
+         return "Dwarf_Alloc_Mmap"; 
+     case Dwarf_Alloc_None){
+         return "Dwarf_Alloc_None"; 
+     }
+     return "Unknown. Error";
+}
+
+static void dump_load_data(const char *msg,
+     Dwarf_Section sec,
+     int line,
+     const char *file)
+{
+    printf("Section Load of %s %s line %d file %s\n",
+        sec->dss_name,msg,line,_dwarf_basename(file));  
+    printf("  preference      : %s\n",_dwarf_pref_name(
+        sec->dss_load_preference));
+    printf("  data            : %p\n",(void *)sec->dss_data);
+    printf("  Actual load     : %s\n",_dwarf_pref_name(
+        sec->dss_actual_load_type));
+    printf("  secsize         : %lu\n",
+        (unsigned long)sec->dss_size);
+    printf("  did_decompress  : %u\n",sec->dss_did_decompress);
+    printf("  mmap_len        : %lu\n",
+        (unsigned long)sec->dss_computed_mmap_len);
+    printf("  mmap_offset     : %lu\n",
+        (unsigned long)sec->dss_computed_mmap_offset);
+    printf("  mmap_data       : %p\n",
+        (void *)sec->dss_mmap_realarea);
+}
+
+static void
+validate_section_load_data(const char *msg,
+     Dwarf_Section sec,
+     int line,
+     const char *file)
+{
+     enum Dwarf_Sec_Alloc_Pref pref = sec->dss_actual_load_type;
+     Dwarf_Unsigned mmap_len = sec->dss_computed_mmap_len;
+
+     dump_load_data(msg,sec,line,file);
+     switch(pref) {
+     case Dwarf_Alloc_Malloc: {
+     } break;
+     case Dwarf_Alloc_Mmap: {
+          if (!mmap_len) {
+              printf("FAIL load data mmap\n");
+              /* debugging only */
+              exit(1);
+          }
+     } break;
+     case Dwarf_Alloc_None: {
+     } break;
+     default:
+          dump_load_data(msg,sec,line,file);
+          printf("FAIL load data mmap\n");
+          /* debugging only */
+          exit(1);
+     } /* end switch */
+}
+#endif /* DWARF_DEBUG_LOAD  */
+
 
 /* This static is copied to the dbg on dbg init
    so that the static need not be referenced at
@@ -373,10 +443,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     secdata.dss_ignore_reloc_group_sec = TRUE;
     res = _dwarf_load_section(dbg,&secdata,error);
     if (res != DW_DLV_OK) {
-        if (secdata.dss_data_was_malloc) {
-            free(secdata.dss_data);
-            secdata.dss_data = 0;
-        }
+        _dwarf_malloc_section_free(&secdata);
         return res;
     }
     if (!secdata.dss_data) {
@@ -384,10 +451,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     if (doas->as_entrysize != 4) {
-        if (secdata.dss_data_was_malloc) {
-            free(secdata.dss_data);
-            secdata.dss_data = 0;
-        }
+        _dwarf_malloc_section_free(&secdata);
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
@@ -414,10 +478,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         if ((data+DWARF_32BIT_SIZE) > secend) {
             /* Duplicates the check in READ_UNALIGNED_CK
                 so we can free allocated memory bere. */
-            if (secdata.dss_data_was_malloc) {
-                free(secdata.dss_data);
-                secdata.dss_data = 0;
-            }
+            _dwarf_malloc_section_free(&secdata);
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
         }
@@ -428,10 +489,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             secend);
         if (fval != 1 && fval != 0x1000000) {
             /*  Could be corrupted elf object. */
-            if (secdata.dss_data_was_malloc) {
-                free(secdata.dss_data);
-                secdata.dss_data = 0;
-            }
+            _dwarf_malloc_section_free(&secdata);
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
         }
@@ -443,10 +501,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             if ((data+DWARF_32BIT_SIZE) > secend) {
                 /* Duplicates the check in READ_UNALIGNED_CK
                     so we can free allocated memory bere. */
-                if (secdata.dss_data_was_malloc) {
-                    free(secdata.dss_data);
-                    secdata.dss_data = 0;
-                }
+                _dwarf_malloc_section_free(&secdata);
                 _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
                 return DW_DLV_ERROR;
             }
@@ -463,10 +518,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 _dwarf_memcpy_swap_bytes(&valr,&val,
                     DWARF_32BIT_SIZE);
                 if (valr > section_count) {
-                    if (secdata.dss_data_was_malloc) {
-                        free(secdata.dss_data);
-                        secdata.dss_data = 0;
-                    }
+                    _dwarf_malloc_section_free(&secdata);
                     _dwarf_error(dbg,error,
                         DW_DLE_GROUP_INTERNAL_ERROR);
                     return DW_DLV_ERROR;
@@ -492,10 +544,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     continue;
                 }
                 if (resx == DW_DLV_ERROR){
-                    if (secdata.dss_data_was_malloc) {
-                        free(secdata.dss_data);
-                        secdata.dss_data = 0;
-                    }
+                    _dwarf_malloc_section_free(&secdata);
                     _dwarf_error(dbg,error,err);
                     return resx;
                 }
@@ -511,19 +560,13 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     doasx.as_name,
                     error);
                 if (res != DW_DLV_OK) {
-                    if (secdata.dss_data_was_malloc) {
-                        free(secdata.dss_data);
-                        secdata.dss_data = 0;
-                    }
+                    _dwarf_malloc_section_free(&secdata);
                     return res;
                 }
             }
         }
     }
-    if (secdata.dss_data_was_malloc) {
-        free(secdata.dss_data);
-        secdata.dss_data = 0;
-    }
+    _dwarf_malloc_section_free(&secdata);
     return DW_DLV_OK;
 }
 
@@ -1404,24 +1447,37 @@ do_decompress(Dwarf_Debug dbg,
         }
     }
     /* Z_OK */
+    _dwarf_malloc_section_free(section);
     section->dss_data = dest;
     section->dss_size = destlen;
-    section->dss_data_was_malloc = TRUE;
+    section->dss_was_alloc= TRUE;
+    section->dss_actual_load_type= Dwarf_Alloc_Malloc;
     section->dss_did_decompress = TRUE;
     return DW_DLV_OK;
 }
 #endif /* HAVE_ZLIB && HAVE_ZSTD */
 
 /*  Load the ELF section with the specified index and set its
-    dss_data pointer to the memory where it was loaded.  */
+    dss_data pointer to the memory where it was loaded.
+    This is problematic for mmap use, as more needs
+    to be recorded in the section data to munmap.
+*/
 int
 _dwarf_load_section(Dwarf_Debug dbg,
-    struct Dwarf_Section_s *section,
-    Dwarf_Error * error)
+    Dwarf_Section section,
+    Dwarf_Error  *error)
 {
     int res  = DW_DLV_ERROR;
-    int err = 0;
     struct Dwarf_Obj_Access_Interface_a_s *o = 0;
+    int            errc = 0;
+    Dwarf_Unsigned data_len = 0;
+    Dwarf_Small   *mmap_real_area = 0;
+    Dwarf_Unsigned mmap_offset = 0;
+    Dwarf_Unsigned mmap_len = 0;
+    Dwarf_Small   *data_ptr = 0;
+    enum Dwarf_Sec_Alloc_Pref pref =
+        _dwarf_determine_section_allocation_type();
+    enum Dwarf_Sec_Alloc_Pref finaltype = pref;
 
     /* check to see if the section is already loaded */
     if (section->dss_data !=  NULL) {
@@ -1439,19 +1495,39 @@ _dwarf_load_section(Dwarf_Debug dbg,
 
         There is also a convention for 'bss' that that section
         and its like sections have no data but do have a size.
-        That is never true of DWARF sections */
-    res = o->ai_methods->om_load_section(
-        o->ai_object, section->dss_index,
-        &section->dss_data, &err);
-    if (res == DW_DLV_ERROR) {
-        DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
+        That is never true of DWARF sections  */
+    data_len = section->dss_size;
+#ifdef HAVE_FULL_MMAP
+    if (o->ai_methods->om_load_section_a) {
+        res = o->ai_methods->om_load_section_a(o->ai_object,
+            section->dss_index,
+            &finaltype,
+            &data_ptr, &data_len,
+            &mmap_real_area,&mmap_offset,&mmap_len,
+            &errc);
+    } else
+#endif /* HAVE_FULL_MMAP */
+    if (o->ai_methods->om_load_section) {
+        res = o->ai_methods->om_load_section(o->ai_object,
+            section->dss_index,
+            &data_ptr,
+            &errc);
+        finaltype = Dwarf_Alloc_Malloc;
+    } else {
+        _dwarf_error_string(dbg, error,
+            DW_DLE_SECTION_ERROR,
+            "DW_DLE_SECTION_ERROR: "
+            " struct Dwarf_Obj_Access_Interface_a_s "
+            "is missing an om_load_section function "
+            "pointer. Corrupt user setup.");
+        return DW_DLV_ERROR;
     }
-    /*  For PE and mach-o all section data was always
-        malloc'd. We do not need to set dss_data_was_malloc
-        though as the o->object data will eventually free
-        the original section data.
-        The first character of any o->object struct gives the type. */
-
+    if (res == DW_DLV_ERROR) {
+        _dwarf_error_string(dbg, error,
+            errc," Error in attempting to load section into"
+            " memory, possibly corrupt DWARF.");
+        return res;
+    }
     if (res == DW_DLV_NO_ENTRY) {
         /*  Gets this for section->dss_index 0.
             Which by ELF definition is a section index
@@ -1464,6 +1540,15 @@ _dwarf_load_section(Dwarf_Debug dbg,
             zero-size. */
         return res;
     }
+    section->dss_was_alloc = FALSE;
+    section->dss_computed_mmap_offset = mmap_offset;
+    section->dss_computed_mmap_len = mmap_len;
+    section->dss_mmap_realarea = mmap_real_area;
+    section->dss_size = data_len;
+    section->dss_data = data_ptr;
+    section->dss_load_preference = pref; 
+    section->dss_actual_load_type = finaltype;
+
     if (section->dss_ignore_reloc_group_sec) {
         /* Neither zdebug nor reloc apply to .group sections. */
         return res;
@@ -1479,6 +1564,10 @@ _dwarf_load_section(Dwarf_Debug dbg,
                 DW_DLV_ERROR);
         }
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+        /*  This handles both malloc and mmap case.
+            Possibly updating dss_was_malloc if required,
+            and setting pref to Dwarf_Alloc_Malloc if
+            required. */
         res = do_decompress(dbg,section,error);
         if (res != DW_DLV_OK) {
             return res;
@@ -1492,6 +1581,8 @@ _dwarf_load_section(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
 #endif /* defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
         section->dss_did_decompress = TRUE;
+        section->dss_actual_load_type = Dwarf_Alloc_Malloc;
+        section->dss_was_alloc = TRUE;
     }
     if (_dwarf_apply_relocs == 0) {
         return res;
@@ -1504,9 +1595,9 @@ _dwarf_load_section(Dwarf_Debug dbg,
     }
     /*apply relocations */
     res = o->ai_methods->om_relocate_a_section(o->ai_object,
-        section->dss_index, dbg, &err);
+        section->dss_index, dbg, &errc);
     if (res == DW_DLV_ERROR) {
-        DWARF_DBG_ERROR(dbg, err, res);
+        DWARF_DBG_ERROR(dbg, errc, DW_DLV_ERROR);
     }
     return res;
 }

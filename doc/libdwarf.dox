@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-12-23 v0.11.2
+    @date 2024-12-23 v0.12.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1084,7 +1084,19 @@
 
     We list these with newest first.
 
-    <b>Changes 0.11.1 to 0.11.2</b>
+    <b>Changes 0.11.1 to 0.12.0</b>
+
+    To optionally support mmap/munmap of object files
+    sections we read we have added a function prototype
+    for struct Dwarf_Obj_Access_Methods_a_s function
+    om_load_section(). This will help when
+    reading multi gigiabyte object files.
+    This is a binary incompatibility requiring
+    recompile of your code and libdwarf.
+    It is a source incompatibility if and only if your code
+    directly refers to the struct, something only done
+    when creating one's own object reader code
+    (see dwarf_object_init_b()). 
 
     Added new API function dwarf_machine_architecture_a() which
     has an additional argument added to let dwarfdump
@@ -1112,7 +1124,35 @@
     libdwarf by default. Pass non-zero value
     to allow duplicate attributes in a Debugging Information
     Entry through to callers.
+
+    Added the ability to select, at runtime, whether libdwarf
+    will use malloc to load section content
+    from an object file being read (previously the only option)
+    or will use mmap instead.  
+    If the build determines mmap
+    is unavailble then malloc will be used.
     
+    Added API function dwarf_set_load_preference() giving
+    callers the option to choose the default section load
+    functions.  libdwarf now recognizes the environment
+    variable DWARF_WHICH_ALLOC to select whether the library
+    uses mmap or malloc/read to load object section data, and
+    the environment variable values 'mmap' or 'malloc'
+    are the only values recognized.
+    A recognized environment variable overrides 
+    dwarf_set_load_preference() values.
+    If the build determines mmap is unavailble
+    then malloc will be used.
+
+    Added API function dwarf_get_mmap_count() giving callers
+    the ability to determine what section loads were used
+    and the total amount of section data loaded.
+    
+    <b>Changes 0.11.0 to 0.11.1</b>
+
+    Corrected handling of DWARF5 .debug_rnglists and
+    .debug_loclists. No API change, no incompatibilities. 
+
     <b>Changes 0.10.1 to 0.11.0</b>
 
     Added function dwarf_get_ranges_baseaddress()

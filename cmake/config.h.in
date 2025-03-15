@@ -28,6 +28,8 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine HAVE_SYS_TYPES_H 1
 
+/* Define to 1 if mmap, sysconf, munmap are available */
+#cmakedefine HAVE_FULL_MMAP 1
 
 /*  Define to the uintptr_t to the type of an unsigned integer
     type wide enough to hold a pointer

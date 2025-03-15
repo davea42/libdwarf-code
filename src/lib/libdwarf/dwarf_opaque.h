@@ -77,12 +77,11 @@
 #define DBG_HAS_SECONDARY(p) (DBG_IS_PRIMARY(p) && \
     (DBG_IS_SECONDARY((p)->de_secondary_dbg)))
 
-#define DEBUG_PRIMARY_DBG 1 /* only for debugging */
+/*  For debugging. */
+const char * _dwarf_basename(const char *full);
+
 #undef  DEBUG_PRIMARY_DBG
 #ifdef DEBUG_PRIMARY_DBG
-const char *
-_dwarf_basename(const char *full);
-
 void
 _dwarf_print_is_primary(const char *msg,Dwarf_Debug p,int line,
     const char *filepath);
@@ -417,7 +416,16 @@ struct Dwarf_Section_s {
         Purpose: to handle DW_EH_PE_pcrel encoding. Leaving
         it zero is fine for non-elf.  */
     Dwarf_Addr     dss_addr;
-    Dwarf_Small    dss_data_was_malloc;
+
+    Dwarf_Unsigned dss_computed_mmap_offset;
+    Dwarf_Unsigned dss_computed_mmap_len;
+    Dwarf_Small *  dss_mmap_realarea;
+    /*  Value is Dwarf_Alloc_Malloc=1 or Dwarf_Alloc_Mmap=2 */
+    enum Dwarf_Sec_Alloc_Pref  dss_load_preference;
+    /*  Any valid Dwarf_Alloc_*, tells if free() or 
+        equivalent required for dss_data. */
+    enum Dwarf_Sec_Alloc_Pref  dss_actual_load_type;
+    
     /*  is_in_use set during initial object reading to
         detect duplicates. Ignored after setup done. */
     Dwarf_Small    dss_is_in_use;
@@ -435,8 +443,9 @@ struct Dwarf_Section_s {
 
     /*  If this is zdebug, to start  data/size are the
         raw section bytes.
-        Initially for all sections dss_data_was_malloc set FALSE
-            and dss_requires_decompress set FALSE.
+        Initially for all sections 
+            dss_was_alloc set FALSE
+            dss_requires_decompress set FALSE. 
         For zdebug set dss_zdebug_requires_decompress set TRUE
             In that case it is likely ZLIB compressed but
             we do not know that just scanning section headers.
@@ -447,10 +456,11 @@ struct Dwarf_Section_s {
         Set dss_data dss_size to point to malloc space and
             malloc size.
         Set dss_did_decompress FALSE
-        Set dss_was_malloc  TRUE */
+        Set dss_was_alloc  TRUE */
     Dwarf_Small    dss_zdebug_requires_decompress;
     Dwarf_Small    dss_did_decompress;
-    Dwarf_Small dss_shf_compressed;  /* section flag SHF_COMPRESS */
+    Dwarf_Small    dss_shf_compressed; /* section SHF_COMPRESS */
+    Dwarf_Small    dss_was_alloc;
 
     /* Section compression starts with ZLIB chars*/
     Dwarf_Small dss_ZLIB_compressed;
@@ -660,11 +670,12 @@ struct Dwarf_Debug_s {
     char de_in_tdestroy; /* for de_alloc_tree  DW202309-001 */
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
     Dwarf_Small de_path_source;
+    Dwarf_Small de_preferred_load_type; /* DW_LOAD_PREF_MALLOC etc*/
     /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
     const char *de_path;
-
+    
     const char ** de_gnu_global_paths;
     unsigned      de_gnu_global_path_count;
 
@@ -1113,8 +1124,6 @@ _dwarf_elf_nlsetup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-void _dwarf_destruct_elf_nlaccess(
-    struct Dwarf_Obj_Access_Interface_a_s *aip);
 
 extern int _dwarf_macho_setup(int fd,
     char *true_path,
@@ -1127,8 +1136,6 @@ extern int _dwarf_macho_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-void _dwarf_destruct_macho_access(
-    struct Dwarf_Obj_Access_Interface_a_s *aip);
 
 extern int _dwarf_pe_setup(int fd,
     char *path,
@@ -1140,8 +1147,6 @@ extern int _dwarf_pe_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-void _dwarf_destruct_pe_access(
-    struct Dwarf_Obj_Access_Interface_a_s *aip);
 
 void _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
     Dwarf_Error *error,
@@ -1173,6 +1178,12 @@ int  _dwarf_readr(int fd, char *buf, Dwarf_Unsigned size,
 int  _dwarf_seekr(int fd, Dwarf_Unsigned loc, int seektype,
     Dwarf_Unsigned *out_loc);
 int  _dwarf_openr(const char *name);
+
+/*   This does free or munmap as appropriate. */
+void _dwarf_malloc_section_free(struct Dwarf_Section_s * sec);
+
+enum Dwarf_Sec_Alloc_Pref
+    _dwarf_determine_section_allocation_type(void);
 
 int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_Attribute attr,

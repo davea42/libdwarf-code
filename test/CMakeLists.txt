@@ -270,6 +270,7 @@ if (DO_TESTING)
     target_compile_definitions(selfsetupsections PRIVATE
         ${DW_LIBDWARF_STATIC})
     target_compile_options(selfsetupsections PRIVATE
+        "-D TESTING "
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
         "-DLIBDWARF_BUILD")
     target_compile_options(selfsetupsections PRIVATE ${DW_FWALL})

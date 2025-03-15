@@ -1,5 +1,5 @@
 project('libdwarf', ['c','cpp'],
-  version: '0.11.2',
+  version: '0.12.0',
   default_options : [
     'buildtype=debugoptimized',
     'warning_level=3',
@@ -136,18 +136,18 @@ config_dir = [include_directories('.')]
 # configuration
 
 # sys/stat.h is for dwarfgen.
+# sys/mman.h is for mmap() and sysconf()
 header_checks = [
   'fcntl.h',
   'inttypes.h',
   'malloc.h',
   'stdint.h',
   'sys/stat.h',
+  'sys/mman.h',
 ]
-
 if sys_windows == false
   header_checks += 'unistd.h'
 endif
-
 config_h = configuration_data()
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
@@ -182,6 +182,27 @@ foreach t : [ 'uint64_t', 'uintptr_t', 'intptr_t' ]
     error('Sanity check failed: type @0@ not provided via stdint.h'.format(t))
   endif
 endforeach
+
+code = '''
+  #include <unistd.h>
+  #include <string.h>
+  #include <stdlib.h>
+  #include <sys/mman.h>
+  int main()
+  {
+      long pagesize = sysconf(_SC_PAGESIZE);
+      int fd = 4;
+      mmap(0, 100,PROT_READ|PROT_WRITE,MAP_PRIVATE,
+         fd,100);
+      munmap((void *)100,100);
+      return 0;
+  }'''
+### or use compiler.links?
+mmapresult = cc.compiles(code,name: 'mmap check')
+if mmapresult
+  config_h.set10('HAVE_FULL_MMAP',true)
+endif
+
 
 # Do this early so we have the base source and build directory names
 # for this and test/meson.build
@@ -273,6 +294,9 @@ summary({'OS': host_os,
 summary({'zlib': (zlib_deps.found() ? 'yes' : 'no'),
          'libzstd': (libzstd_deps.found() ? 'yes' : 'no'),
         }, section: 'Referenced Libraries:')
+
+summary({'mmap available': (mmapresult ? 'yes' : 'no'),
+        }, section: 'Optional Features:')
 
 summary({'prefix': dir_prefix,
          'bindir': dir_bin,

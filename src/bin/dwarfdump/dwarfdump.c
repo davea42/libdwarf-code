@@ -1806,6 +1806,42 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
+    if (glflags.gf_print_section_allocations) {
+        Dwarf_Unsigned mmap_count = 0;
+        Dwarf_Unsigned mmap_size = 0;
+        Dwarf_Unsigned malloc_count = 0;
+        Dwarf_Unsigned malloc_size = 0;
+        Dwarf_Unsigned total_alloc = 0;
+        enum Dwarf_Sec_Alloc_Pref pref = 0;
+        dwarf_get_mmap_count(dbg,&mmap_count,
+            &mmap_size,
+            &malloc_count, &malloc_size);
+        printf("\n");
+        printf("Section allocation summary:\n");
+        printf("  Count sections mmap-ed          : %8"
+            DW_PR_DUu "\n",
+            mmap_count);   
+        printf("  Size sections mmap-ed           : %8"
+            DW_PR_DUu  " (0x%" DW_PR_XZEROS DW_PR_DUx   ")\n",
+            mmap_size,mmap_size);  
+
+        printf("  Count sections malloc-ed        : %8"
+            DW_PR_DUu "\n",
+            malloc_count);  
+        printf("  Size  sections malloc-ed        : %8"
+            DW_PR_DUu  " (0x%" DW_PR_XZEROS DW_PR_DUx   ")\n",
+            malloc_size,malloc_size);  
+        total_alloc = malloc_size + mmap_size;
+        printf("  Total section allocation (bytes): %8"
+            DW_PR_DUu " (0x%"  DW_PR_XZEROS DW_PR_DUx ")\n",
+            total_alloc,total_alloc);
+
+        pref = dwarf_set_load_preference(0);
+        printf("  Global preference for sections  : %s\n",
+            pref == Dwarf_Alloc_Malloc?"Dwarf_Alloc_Malloc":
+            pref == Dwarf_Alloc_Mmap?  "Dwarf_Alloc_Mmap":
+            "<Unknown. an ERROR");
+    }
     if (glflags.gf_debug_addr_missing) {
         printf("\nERROR: At some point "
             "the .debug_addr section was needed but missing, "

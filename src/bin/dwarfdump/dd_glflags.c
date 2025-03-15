@@ -150,6 +150,8 @@ init_global_flags(void)
     /* Tells libdwarf to look for duplicated attrs. */
     glflags.gf_no_check_duplicated_attributes = FALSE;
     glflags.gf_no_sanitize_strings = FALSE;
+    glflags.gf_print_section_allocations = FALSE;
+    glflags.gf_allocation_via_mmap = FALSE;
 
     /* lots of checks make no sense on a dwp debugfission object. */
     glflags.gf_suppress_checking_on_dwp = FALSE;
