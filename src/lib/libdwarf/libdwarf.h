@@ -803,7 +803,9 @@ struct Dwarf_Obj_Access_Section_a_s {
     @see dwarf_set_load_preference()
 */
 enum Dwarf_Sec_Alloc_Pref {
-    Dwarf_Alloc_Unspecified=0,
+    /* No dynamic allocation */
+    Dwarf_Alloc_None=0,
+    /* alternative allocations */
     Dwarf_Alloc_Malloc=1,
     Dwarf_Alloc_Mmap=2};
 
@@ -816,6 +818,15 @@ enum Dwarf_Sec_Alloc_Pref {
     your own code
     (as in src/bin/dwarfexample/jitreader.c)
     you will not need to fill in or use the struct.
+
+    om_relocate_a_section uses malloc/read to
+    get section contents and returns a pointer to
+    the malloc space through dw_return_data, which
+    is recorded in the applicable section data.
+
+    om_load_section_a uses either malloc/read
+    or mmap and consequently returns more data
+    as needed for eventual free() or munmap().
 
 */
 
@@ -839,11 +850,13 @@ struct Dwarf_Obj_Access_Methods_a_s {
         Dwarf_Debug dbg,
         int       * error);
     /*  Added in 0.12.0 to allow mmap in section loading.
-        If you are just using mmap for section loading
+        If you are just using malloc for section loading
         and referring to this struct in your code
-        you should leave this function pointer NULL. */
+        you should leave this function pointer NULL (zero). */
     int              (*om_load_section_a)(void* obj,
         Dwarf_Unsigned             dw_section_index,
+        /*  dw_alloc_pref is input preference and also 
+            output with the actual alloced type */
         enum Dwarf_Sec_Alloc_Pref *dw_alloc_pref,
         Dwarf_Small              **dw_return_data_ptr,
         Dwarf_Unsigned            *dw_return_data_len,
@@ -851,6 +864,7 @@ struct Dwarf_Obj_Access_Methods_a_s {
         Dwarf_Unsigned            *dw_return_mmap_offset,
         Dwarf_Unsigned            *dw_return_mmap_len,
         int                       *dw_error);
+    void             (*om_finish)(void * obj); 
 };
 struct Dwarf_Obj_Access_Interface_a_s {
     void*                             ai_object;
@@ -3296,12 +3310,14 @@ DW_API int dwarf_formblock(Dwarf_Attribute dw_attr,
     @param dw_attr
     The Dwarf_Attribute of interest.
     @param dw_returned_string
-    Puts a pointer to a string in the DWARF information
-    if the FORM of the attribute is some sort of string FORM.
+    On success puts a pointer to a string existing in
+    an appropriate DWARF section into dw_returned_string.
+    Never free() or dealloc the returned string.
     @param dw_error
     The usual error pointer.
     @return
     DW_DLV_OK if it succeeds.
+
 */
 DW_API int dwarf_formstring(Dwarf_Attribute dw_attr,
     char   **        dw_returned_string,
@@ -4090,12 +4106,17 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
     The Dwarf_Line of interest.
     @param dw_returned_name
     On success it reads the file register and finds
-    the source file name from the line table header
-    and returns a pointer to that file name string
+    constructs a file name from a directory and
+    filename there and
+    and returns a pointer to that string
     through the pointer.
+    It is necessary to deallocthe returned string
+    as, for example, 
+    `dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);`
+    ( Older versions of this function incorrectly
+    said not to free() or dwarf_dealloc(). )
     @param dw_error
     The usual error pointer.
-    Do not dealloc or free the string.
     @return
     DW_DLV_OK if it succeeds.
 */
@@ -9830,7 +9851,7 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 
 /*! @brief Set/Retrieve section allocation preference.
 
-    @since {0.11.2}
+    @since {0.12.0}
 
     By default object file sections are loaded
     using malloc and read (Dwarf_Alloc_Malloc).
@@ -9842,7 +9863,6 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     cause mmap() to be used when possible.
 
     dw_load_preference is one of
-    Dwarf_Alloc_Unspecified (0)
     Dwarf_Alloc_Malloc      (1)
     Dwarf_Alloc_Mmap        (2)
 
@@ -9861,8 +9881,8 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     Any other value passed in dw_load_preference is
     ignored.
     @return
-    Always returns the previous value of this runtime global
-    preference.
+    Always returns the value before dw_load_preference
+    applied, of this runtime global preference.
 
 */
 DW_API enum Dwarf_Sec_Alloc_Pref dwarf_set_load_preference(
@@ -9870,24 +9890,35 @@ DW_API enum Dwarf_Sec_Alloc_Pref dwarf_set_load_preference(
 
 /*! @brief Retrieve count of mmap/malloc sections
 
-    @since {0.11.2}
+    @since {0.12.0}
+
+    Note that compressed section contents will
+    be expanded into a malloc/read section
+    in all cases.
 
     @param dw_dbg
     A valid open Dwarf_Debug.
     @param dw_mmap_count
-    On success the number of sections read/allocated
+    On success the number of sections allocated
+    with mmap is returned.
+    If null passed in the argument is ignored.
+    @param dw_mmap_size
+    On success the size total in bytes of sections allocated
     with mmap is returned.
     If null passed in the argument is ignored.
     @param dw_malloc_count
     On success the number of sections read/allocated
     with read/malloc is returned.
     If null passed in the argument is ignored.
+    On success the number of sections allocated
+    with malloc/read is returned.
+    @param dw_malloc_size
+    On success the total size in bytes of sections 
+    with malloc/read is returned.
+    If null passed in the argument is ignored.
     On success the number of sections read/allocated
     with read/malloc is returned.
-    @param dw_total_alloc
-    On success returns the total byte count
-    of sections allocated for this Dwarf_Debug.
-    If null passed in the argument is ignored.
+
     @return
     On success returns DW_DLV_OK and sets
     the counts and total size through the respective
@@ -9898,8 +9929,9 @@ DW_API enum Dwarf_Sec_Alloc_Pref dwarf_set_load_preference(
 */
 DW_API int dwarf_get_mmap_count(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_mmap_count,
+    Dwarf_Unsigned *dw_mmap_size,
     Dwarf_Unsigned *dw_malloc_count,
-    Dwarf_Unsigned *dw_total_alloc);
+    Dwarf_Unsigned *dw_malloc_size);
 /*! @}
 */
 
