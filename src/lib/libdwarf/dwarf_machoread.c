@@ -270,10 +270,9 @@ macho_load_section (void *obj, Dwarf_Unsigned section_index,
 }
 
 static void
-_dwarf_destruct_macho_internals(void *obj)
+_dwarf_destruct_macho_internals(
+    dwarf_macho_object_access_internals_t *mp)
 {
-    dwarf_macho_object_access_internals_t *mp =
-        (dwarf_macho_object_access_internals_t *)obj;
     Dwarf_Unsigned i = 0;
 
     if (mp->mo_destruct_close_fd) {
@@ -308,9 +307,11 @@ _dwarf_destruct_macho_internals(void *obj)
 
 
 static void
-_dwarf_destruct_macho_access(
-    struct Dwarf_Obj_Access_Interface_a_s *aip)
+_dwarf_destruct_macho_access(void *obj)
 {
+    struct Dwarf_Obj_Access_Interface_a_s * aip =
+        (struct Dwarf_Obj_Access_Interface_a_s *)obj;
+
     dwarf_macho_object_access_internals_t *mp = 0;
 
     if (!aip) {
@@ -955,7 +956,7 @@ static Dwarf_Obj_Access_Methods_a const macho_methods = {
     0,
     /*Not handling mmap yet. */
     0,
-    _dwarf_destruct_macho_internals
+    _dwarf_destruct_macho_access
     
 };
 
