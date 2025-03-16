@@ -1820,17 +1820,17 @@ process_one_file(
         printf("Section allocation summary:\n");
         printf("  Count sections mmap-ed          : %8"
             DW_PR_DUu "\n",
-            mmap_count);   
+            mmap_count);
         printf("  Size sections mmap-ed           : %8"
             DW_PR_DUu  " (0x%" DW_PR_XZEROS DW_PR_DUx   ")\n",
-            mmap_size,mmap_size);  
+            mmap_size,mmap_size);
 
         printf("  Count sections malloc-ed        : %8"
             DW_PR_DUu "\n",
-            malloc_count);  
+            malloc_count);
         printf("  Size  sections malloc-ed        : %8"
             DW_PR_DUu  " (0x%" DW_PR_XZEROS DW_PR_DUx   ")\n",
-            malloc_size,malloc_size);  
+            malloc_size,malloc_size);
         total_alloc = malloc_size + mmap_size;
         printf("  Total section allocation (bytes): %8"
             DW_PR_DUu " (0x%"  DW_PR_XZEROS DW_PR_DUx ")\n",

@@ -491,7 +491,7 @@ static const char *usage_long_text[] = {
 "     --print-raw-rnglists Print entire .debug_rnglists section",
 "     --print-raw-loclists Print entire .debug_loclists section",
 "     --print-section_allocations Print summary of section ",
-"                         allocations via mmap and those via malloc", 
+"                         allocations via mmap and those via malloc",
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
 "-tv  --print-static-var  Print static var section",
@@ -703,7 +703,8 @@ static const char *usage_long_text[] = {
 "                    internal tables (for debugging dwarfdump).",
 "     --allocate-via-mmap  When possible allocations for",
 "                    loading sections will be with mmap.",
-"                    See also environment variable DWARF_WHICH_ALLOC.",
+"                    See also environment variable",
+"                    DWARF_WHICH_ALLOC.",
 "",
 };
 
@@ -950,7 +951,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-lines-short", dwno_argument, 0, OPT_PRINT_LINES_SHORT},
 {"print-loc",         dwno_argument, 0, OPT_PRINT_LOC        },
 {"print-macinfo",     dwno_argument, 0, OPT_PRINT_MACINFO    },
-{"print-machine-arch", dwno_argument, 0, OPT_PRINT_MACHINE_ARCH    },
+{"print-machine-arch", dwno_argument, 0, OPT_PRINT_MACHINE_ARCH},
 {"print-producers",   dwno_argument, 0, OPT_PRINT_PRODUCERS  },
 {"print-pubnames",    dwno_argument, 0, OPT_PRINT_PUBNAMES   },
 {"print-ranges",      dwno_argument, 0, OPT_PRINT_RANGES     },
@@ -963,7 +964,8 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-str-offsets", dwno_argument, 0, OPT_PRINT_STR_OFFSETS},
 {"print-type",        dwno_argument, 0, OPT_PRINT_TYPE       },
 {"print-weakname",    dwno_argument, 0, OPT_PRINT_WEAKNAME   },
-{"print-section_allocations", dwno_argument, 0, OPT_PRINT_ALLOCATIONS },
+{"print-section_allocations", dwno_argument, 0,
+    OPT_PRINT_ALLOCATIONS },
 
 /*  GNU debuglink options */
 {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
@@ -2653,7 +2655,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_STR_OFFSETS: arg_print_str_offsets(); break;
         case OPT_PRINT_TYPE:        arg_print_types();       break;
         case OPT_PRINT_WEAKNAME:    arg_print_weaknames();   break;
-        case OPT_PRINT_ALLOCATIONS:    arg_print_section_allocations();
+        case OPT_PRINT_ALLOCATIONS: arg_print_section_allocations();
             break;
 
         /* debuglink attributes */
