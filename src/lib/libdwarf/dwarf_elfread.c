@@ -304,6 +304,7 @@ elf_load_nolibelf_section_a (void* obj,
         Dwarf_Unsigned seclen = 0;
         Dwarf_Small   *realarea = (void*)-1;
         Dwarf_Unsigned computed_mmaplen = 0;
+        Dwarf_Unsigned computed_mmapend = 0;
         long           pagesize = sysconf(_SC_PAGESIZE);
         unsigned long  pagesizebits = 0;
         Dwarf_Unsigned pageoff = 0;
@@ -319,7 +320,8 @@ elf_load_nolibelf_section_a (void* obj,
                 *return_data_ptr = (Dwarf_Small *)sp->gh_content;
                 return DW_DLV_OK;
             }
-            if (!sp->gh_size) {
+            seclen = sp->gh_size;
+            if (!seclen) {
                 return DW_DLV_NO_ENTRY;
             }
             /*  Guarding against bad values and
@@ -332,15 +334,42 @@ elf_load_nolibelf_section_a (void* obj,
                 return DW_DLV_ERROR;
             }
             secoffset = sp->gh_offset;
-            seclen = sp->gh_size;
             pagesizebits = pagesize -1;
             pageoff = secoffset & ~pagesizebits;
             computed_mmaplen = (seclen + (secoffset - pageoff) +
                 pagesizebits) & ~pagesizebits;
+            computed_mmapend = computed_mmaplen+pageoff;
+            /*  mmap tiny is formally ok, but since we
+                are doing mmap per_section we do not
+                want overlaps with other mmap. 
+                Overlap seems to fail. */
+            if (seclen < (Dwarf_Unsigned)(4096*2) ||
+                computed_mmaplen >= elf->f_filesize ||
+                computed_mmapend >= elf->f_filesize) {
+                /* Does NOT alter *return_data_len */
+                res = elf_load_nolibelf_section(obj,
+                    dw_section_index,
+                    return_data_ptr,errc);
+                *return_mmap_base_ptr = 0;
+                *return_mmap_offset = 0;
+                *return_mmap_len = 0;
+                *dw_alloc_type = Dwarf_Alloc_Malloc;
+                /* *return_data_len =  not set */
+                return res;
+            }
             mmptr = mmap(0, (size_t)computed_mmaplen,
                 PROT_READ|PROT_WRITE, MAP_PRIVATE,
                 elf->f_fd,(off_t)pageoff);
             if (mmptr == (void *)-1) {
+#if 0
+printf("dadebug maplen %lu pageoff %lu gh_size %lu endmap %lu filesz %lu %d\n",
+(unsigned long)computed_mmaplen,
+(unsigned long)pageoff,
+(unsigned long)sp->gh_size,
+(unsigned long)(computed_mmaplen+pageoff),
+(unsigned long)elf->f_filesize,__LINE__);
+fflush(stdout);
+#endif
                 *errc = DW_DLE_ELF_SECTION_ERROR;
                 return DW_DLV_ERROR;
             }
@@ -359,6 +388,7 @@ elf_load_nolibelf_section_a (void* obj,
             *return_mmap_len = computed_mmaplen;
             return DW_DLV_OK;
         }
+        return DW_DLV_NO_ENTRY;
     }
     break;
     case Dwarf_Alloc_None:

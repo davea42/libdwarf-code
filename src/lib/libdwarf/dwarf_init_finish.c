@@ -1507,27 +1507,35 @@ _dwarf_load_section(Dwarf_Debug dbg,
             &errc);
     } else
 #endif /* HAVE_FULL_MMAP */
-    if (o->ai_methods->om_load_section) {
-        res = o->ai_methods->om_load_section(o->ai_object,
-            section->dss_index,
-            &data_ptr,
-            &errc);
-        finaltype = Dwarf_Alloc_Malloc;
-    } else {
-        _dwarf_error_string(dbg, error,
-            DW_DLE_SECTION_ERROR,
-            "DW_DLE_SECTION_ERROR: "
-            " struct Dwarf_Obj_Access_Interface_a_s "
-            "is missing an om_load_section function "
-            "pointer. Corrupt user setup.");
-        return DW_DLV_ERROR;
+    {
+        if (o->ai_methods->om_load_section) {
+            res = o->ai_methods->om_load_section(o->ai_object,
+                section->dss_index,
+                &data_ptr,
+                &errc);
+            finaltype = Dwarf_Alloc_Malloc;
+        } else {
+            _dwarf_error_string(dbg, error,
+                DW_DLE_SECTION_ERROR,
+                "DW_DLE_SECTION_ERROR: "
+                " struct Dwarf_Obj_Access_Interface_a_s "
+                "is missing an om_load_section function "
+                "pointer. Corrupt user setup.");
+            return DW_DLV_ERROR;
+        }
     }
+    if (res == DW_DLV_ERROR) {
+        DWARF_DBG_ERROR(dbg, errc, DW_DLV_ERROR);
+    }
+#if 0
+Hold off on this, keep old error for the moment
     if (res == DW_DLV_ERROR) {
         _dwarf_error_string(dbg, error,
             errc," Error in attempting to load section into"
             " memory, possibly corrupt DWARF.");
         return res;
     }
+#endif
     if (res == DW_DLV_NO_ENTRY) {
         /*  Gets this for section->dss_index 0.
             Which by ELF definition is a section index

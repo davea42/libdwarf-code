@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2024-12-23 v0.12.0
+    @date 2025-03-16 v0.12.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1091,8 +1091,13 @@
     for struct Dwarf_Obj_Access_Methods_a_s function
     om_load_section(). This will help when
     reading multi gigiabyte object files.
+    And we added a function prototype for destructing
+    the object specific data while removing library
+    internal public functions.
+
     This is a binary incompatibility requiring
-    recompile of your code and libdwarf.
+    recompile of your code using libdwarf and libdwarf
+    itself.
     It is a source incompatibility if and only if your code
     directly refers to the struct, something only done
     when creating one's own object reader code
@@ -1137,7 +1142,8 @@
     functions.  libdwarf now recognizes the environment
     variable DWARF_WHICH_ALLOC to select whether the library
     uses mmap or malloc/read to load object section data, and
-    the environment variable values 'mmap' or 'malloc'
+    the environment variable values 'DWARF_WHICH_ALLOC=mmap'
+    or 'DWARF_WHICH_ALLOC=malloc'
     are the only values recognized.
     A recognized environment variable overrides 
     dwarf_set_load_preference() values.
