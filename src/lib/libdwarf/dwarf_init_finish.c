@@ -96,24 +96,24 @@
 #ifdef DWARF_DEBUG_LOAD
 static const char * _dwarf_pref_name(enum Dwarf_Sec_Alloc_Pref pref)
 {
-     switch(pref) {
-     case Dwarf_Alloc_Malloc) {
-         return "Dwarf_Alloc_Malloc"; 
-     case Dwarf_Alloc_Mmap){
-         return "Dwarf_Alloc_Mmap"; 
-     case Dwarf_Alloc_None){
-         return "Dwarf_Alloc_None"; 
-     }
-     return "Unknown. Error";
+    switch(pref) {
+    case Dwarf_Alloc_Malloc) {
+        return "Dwarf_Alloc_Malloc";
+    case Dwarf_Alloc_Mmap){
+        return "Dwarf_Alloc_Mmap";
+    case Dwarf_Alloc_None){
+        return "Dwarf_Alloc_None";
+    }
+    return "Unknown. Error";
 }
 
 static void dump_load_data(const char *msg,
-     Dwarf_Section sec,
-     int line,
-     const char *file)
+    Dwarf_Section sec,
+    int line,
+    const char *file)
 {
     printf("Section Load of %s %s line %d file %s\n",
-        sec->dss_name,msg,line,_dwarf_basename(file));  
+        sec->dss_name,msg,line,_dwarf_basename(file));
     printf("  preference      : %s\n",_dwarf_pref_name(
         sec->dss_load_preference));
     printf("  data            : %p\n",(void *)sec->dss_data);
@@ -132,35 +132,34 @@ static void dump_load_data(const char *msg,
 
 static void
 validate_section_load_data(const char *msg,
-     Dwarf_Section sec,
-     int line,
-     const char *file)
+    Dwarf_Section sec,
+    int line,
+    const char *file)
 {
-     enum Dwarf_Sec_Alloc_Pref pref = sec->dss_actual_load_type;
-     Dwarf_Unsigned mmap_len = sec->dss_computed_mmap_len;
+    enum Dwarf_Sec_Alloc_Pref pref = sec->dss_actual_load_type;
+    Dwarf_Unsigned mmap_len = sec->dss_computed_mmap_len;
 
-     dump_load_data(msg,sec,line,file);
-     switch(pref) {
-     case Dwarf_Alloc_Malloc: {
-     } break;
-     case Dwarf_Alloc_Mmap: {
-          if (!mmap_len) {
-              printf("FAIL load data mmap\n");
-              /* debugging only */
-              exit(1);
-          }
-     } break;
-     case Dwarf_Alloc_None: {
-     } break;
-     default:
-          dump_load_data(msg,sec,line,file);
-          printf("FAIL load data mmap\n");
-          /* debugging only */
-          exit(1);
-     } /* end switch */
+    dump_load_data(msg,sec,line,file);
+    switch(pref) {
+    case Dwarf_Alloc_Malloc: {
+    } break;
+    case Dwarf_Alloc_Mmap: {
+        if (!mmap_len) {
+            printf("FAIL load data mmap\n");
+            /* debugging only */
+            exit(1);
+        }
+    } break;
+    case Dwarf_Alloc_None: {
+    } break;
+    default:
+        dump_load_data(msg,sec,line,file);
+        printf("FAIL load data mmap\n");
+        /* debugging only */
+        exit(1);
+    } /* end switch */
 }
 #endif /* DWARF_DEBUG_LOAD  */
-
 
 /* This static is copied to the dbg on dbg init
    so that the static need not be referenced at
@@ -1554,7 +1553,7 @@ Hold off on this, keep old error for the moment
     section->dss_mmap_realarea = mmap_real_area;
     section->dss_size = data_len;
     section->dss_data = data_ptr;
-    section->dss_load_preference = pref; 
+    section->dss_load_preference = pref;
     section->dss_actual_load_type = finaltype;
 
     if (section->dss_ignore_reloc_group_sec) {

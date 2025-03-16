@@ -7,7 +7,7 @@
 */
 
 /*  Normally LIBDWARF_MALLOC is not defined.
-    Only defined when researching malloc use in libdwarf. 
+    Only defined when researching malloc use in libdwarf.
     Best to add this define into libdwarf_private.h too,
 */
 

@@ -451,7 +451,7 @@ extern "C" {
 /*  As of 6 January 2025 the DWARF committee promises
     not to change the name or the assigned number of
     the following two attributes. So
-    compilers are free to use these now with DWARF 5 
+    compilers are free to use these now with DWARF 5
     or earlier. The applicable FORMs of are
     of form class constant (See DWARF5 Section 7.5.5 Classes
     and Forms). */

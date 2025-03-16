@@ -568,7 +568,7 @@ dwarf_finish(Dwarf_Debug dbg)
         here so no duplicate free will occur.
         It never returns DW_DLV_ERROR.
         Not all code uses libdwarf exactly as we do
-        hence the free() there. 
+        hence the free() there.
         This free/munmap as appropriate from the
         DWARF data point of view independent of
         object details. */

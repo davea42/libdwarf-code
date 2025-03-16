@@ -422,10 +422,10 @@ struct Dwarf_Section_s {
     Dwarf_Small *  dss_mmap_realarea;
     /*  Value is Dwarf_Alloc_Malloc=1 or Dwarf_Alloc_Mmap=2 */
     enum Dwarf_Sec_Alloc_Pref  dss_load_preference;
-    /*  Any valid Dwarf_Alloc_*, tells if free() or 
+    /*  Any valid Dwarf_Alloc_*, tells if free() or
         equivalent required for dss_data. */
     enum Dwarf_Sec_Alloc_Pref  dss_actual_load_type;
-    
+
     /*  is_in_use set during initial object reading to
         detect duplicates. Ignored after setup done. */
     Dwarf_Small    dss_is_in_use;
@@ -443,9 +443,9 @@ struct Dwarf_Section_s {
 
     /*  If this is zdebug, to start  data/size are the
         raw section bytes.
-        Initially for all sections 
+        Initially for all sections
             dss_was_alloc set FALSE
-            dss_requires_decompress set FALSE. 
+            dss_requires_decompress set FALSE.
         For zdebug set dss_zdebug_requires_decompress set TRUE
             In that case it is likely ZLIB compressed but
             we do not know that just scanning section headers.
@@ -675,7 +675,7 @@ struct Dwarf_Debug_s {
         was used to initialize things.
         Used with the .gnu_debuglink section. */
     const char *de_path;
-    
+
     const char ** de_gnu_global_paths;
     unsigned      de_gnu_global_path_count;
 

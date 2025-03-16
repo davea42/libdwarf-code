@@ -855,7 +855,7 @@ struct Dwarf_Obj_Access_Methods_a_s {
         you should leave this function pointer NULL (zero). */
     int              (*om_load_section_a)(void* obj,
         Dwarf_Unsigned             dw_section_index,
-        /*  dw_alloc_pref is input preference and also 
+        /*  dw_alloc_pref is input preference and also
             output with the actual alloced type */
         enum Dwarf_Sec_Alloc_Pref *dw_alloc_pref,
         Dwarf_Small              **dw_return_data_ptr,
@@ -864,7 +864,7 @@ struct Dwarf_Obj_Access_Methods_a_s {
         Dwarf_Unsigned            *dw_return_mmap_offset,
         Dwarf_Unsigned            *dw_return_mmap_len,
         int                       *dw_error);
-    void             (*om_finish)(void * obj); 
+    void             (*om_finish)(void * obj);
 };
 struct Dwarf_Obj_Access_Interface_a_s {
     void*                             ai_object;
@@ -4111,7 +4111,7 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
     and returns a pointer to that string
     through the pointer.
     It is necessary to deallocthe returned string
-    as, for example, 
+    as, for example,
     `dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);`
     ( Older versions of this function incorrectly
     said not to free() or dwarf_dealloc(). )
@@ -9913,7 +9913,7 @@ DW_API enum Dwarf_Sec_Alloc_Pref dwarf_set_load_preference(
     On success the number of sections allocated
     with malloc/read is returned.
     @param dw_malloc_size
-    On success the total size in bytes of sections 
+    On success the total size in bytes of sections
     with malloc/read is returned.
     If null passed in the argument is ignored.
     On success the number of sections read/allocated

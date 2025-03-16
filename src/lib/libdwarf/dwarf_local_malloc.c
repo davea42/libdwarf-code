@@ -124,10 +124,14 @@ void _libdwarf_free(void *p)
 }
 void _libdwarf_finish(void)
 {
-    printf("LIBDWARF_MALLOC at finish total   alloc %lu\n",total_alloc);
-    printf("LIBDWARF_MALLOC at finish largest alloc %lu\n",largest_alloc);
-    printf("LIBDWARF_MALLOC at finish alloc count   %lu\n",alloc_count);
-    printf("LIBDWARF_MALLOC at finish    free count %lu\n",free_count);
+    printf("LIBDWARF_MALLOC at finish total   alloc %lu\n",
+        total_alloc);
+    printf("LIBDWARF_MALLOC at finish largest alloc %lu\n",
+        largest_alloc);
+    printf("LIBDWARF_MALLOC at finish alloc count   %lu\n",
+        alloc_count);
+    printf("LIBDWARF_MALLOC at finish    free count %lu\n",
+        free_count);
     fflush(stdout);
     total_alloc = 0;
     largest_alloc = 0;

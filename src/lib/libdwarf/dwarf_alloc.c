@@ -854,7 +854,7 @@ _dwarf_determine_section_allocation_type(void)
     return _dwarf_global_load_preference;
 #else
     char *whichalloc = getenv("DWARF_WHICH_ALLOC");
-    
+
     if (whichalloc) {
         if (!strcmp(whichalloc,"mmap")) {
             dwarf_set_load_preference(Dwarf_Alloc_Mmap);
@@ -1200,7 +1200,7 @@ _dwarf_malloc_section_free(struct Dwarf_Section_s * sec)
         if (sec->dss_was_alloc) {
             int res = munmap(sec->dss_mmap_realarea,
                 sec->dss_computed_mmap_len);
-#ifdef DEBUG_ALLOC 
+#ifdef DEBUG_ALLOC
             if (res) {
                 printf("FAILED to munmap!\n");
                 fflush(stdout);

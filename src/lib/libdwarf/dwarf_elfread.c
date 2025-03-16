@@ -341,7 +341,7 @@ elf_load_nolibelf_section_a (void* obj,
             computed_mmapend = computed_mmaplen+pageoff;
             /*  mmap tiny is formally ok, but since we
                 are doing mmap per_section we do not
-                want overlaps with other mmap. 
+                want overlaps with other mmap.
                 Overlap seems to fail. */
             if (seclen < (Dwarf_Unsigned)(4096*2) ||
                 computed_mmaplen >= elf->f_filesize ||
@@ -361,15 +361,6 @@ elf_load_nolibelf_section_a (void* obj,
                 PROT_READ|PROT_WRITE, MAP_PRIVATE,
                 elf->f_fd,(off_t)pageoff);
             if (mmptr == (void *)-1) {
-#if 0
-printf("dadebug maplen %lu pageoff %lu gh_size %lu endmap %lu filesz %lu %d\n",
-(unsigned long)computed_mmaplen,
-(unsigned long)pageoff,
-(unsigned long)sp->gh_size,
-(unsigned long)(computed_mmaplen+pageoff),
-(unsigned long)elf->f_filesize,__LINE__);
-fflush(stdout);
-#endif
                 *errc = DW_DLE_ELF_SECTION_ERROR;
                 return DW_DLV_ERROR;
             }
@@ -670,7 +661,7 @@ elf_relocations_nolibelf(void* obj_in,
 static void
 _dwarf_destruct_elf_nlaccess(void * obj)
 {
-    struct Dwarf_Obj_Access_Interface_a_s *aip = 
+    struct Dwarf_Obj_Access_Interface_a_s *aip =
         (struct Dwarf_Obj_Access_Interface_a_s *)obj;
     dwarf_elf_object_access_internals_t *ep = 0;
     struct generic_shdr *shp = 0;
@@ -687,13 +678,13 @@ _dwarf_destruct_elf_nlaccess(void * obj)
         shp->gh_rels = 0;
         switch(alloc) {
         case Dwarf_Alloc_Malloc:
-            if(shp->gh_was_alloc) {
+            if (shp->gh_was_alloc) {
                 free(shp->gh_content);
             }
             break;
 #ifdef HAVE_FULL_MMAP
         case Dwarf_Alloc_Mmap: {
-            if(shp->gh_was_alloc) {
+            if (shp->gh_was_alloc) {
                 munmap(shp->gh_mmap_realarea,
                     (size_t)shp->gh_computed_mmaplen);
                 /* If returned non-zero unmap failed */

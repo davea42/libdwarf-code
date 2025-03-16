@@ -305,7 +305,6 @@ _dwarf_destruct_macho_internals(
     return;
 }
 
-
 static void
 _dwarf_destruct_macho_access(void *obj)
 {
@@ -957,7 +956,7 @@ static Dwarf_Obj_Access_Methods_a const macho_methods = {
     /*Not handling mmap yet. */
     0,
     _dwarf_destruct_macho_access
-    
+
 };
 
 /* Reads universal binary headers, gets to
