@@ -1080,6 +1080,59 @@
     dwarf_init_path() or dwarf_init_path_dl()
     calls in the running program.
 
+    @section dwsec_mmap 
+
+    As of version 0.12.0 libdwarf allows callers
+    to select mmap (instead of malloc/read) to access
+    object section DWARF data.
+    Even if mmap is selected it is possible libdwarf
+    will chose to use malloc in specific cases.
+
+    If at library build time the required functions/header
+    are not available the following will have no effect.
+
+    One way to select mmap is to call
+
+    @code
+    dwarf_set_load_preference(Dwarf_Alloc_Mmap);
+    @endcode
+
+    Another way to select mmap is with an 
+    environment variable
+
+    @code
+    export DWARF_WHICH_ALLOC=mmap
+    @endcode
+
+    so libdwarf will see the variable at runtime.
+
+    The environment variable overrides the
+    function call.    
+
+    Calling dwarf_set_load_preference(0)
+    will return the current overall preference 
+    will return the current overall preference,
+    an instance of
+    
+    @code
+    enum Dwarf_Sec_Alloc_Pref  
+    @endcode
+    
+    The new function  
+
+    @code
+    dwarf_get_mmap_count(Dwarf_Debug dw_dbg)
+    @endcode
+
+    returns the application count and size
+    of allocations for DWARF sections
+    from the open Dwarf_Debug
+    pointer. 
+
+    Each supported build environment has a new
+    build option to prevent libdwarf from assuming
+    that things in the build are always present.
+
     @section dwsec_changes Recent Changes
 
     We list these with newest first.

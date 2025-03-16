@@ -90,7 +90,7 @@ AC_ARG_ENABLE([wall],
 
 AC_ARG_ENABLE([doc],
    [AS_HELP_STRING([--enable-doc],
-                   [build and install Doxygen documentation @<:@default=no@:>@])],
+      [build and install Doxygen documentation @<:@default=no@:>@])],
    [
     AS_IF(
         [test "x${enableval}" = "xyes"],
@@ -98,6 +98,17 @@ AC_ARG_ENABLE([doc],
         [enable_doc="no"])
    ],
    [enable_doc="no"])
+
+AC_ARG_ENABLE([mmap],
+   [AS_HELP_STRING([--enable-mmap],
+      [build with mmap support if possible @<:@default=yes@:>@])],
+   [
+    AS_IF(
+        [test "x${enableval}" = "xno"],
+        [enable_mmap="no"],
+        [enable_mmap="yes"])
+   ],
+   [enable_mmap="yes"])
 
 ### Default options with respect to host
 
@@ -204,29 +215,37 @@ AC_CHECK_HEADERS([unistd.h sys/types.h malloc.h])
 ### for uintptr_t and open and open argument defines
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h fcntl.h])
 ###relevant for mmap
-have_mmap = "no"
-AC_COMPILE_IFELSE(
-  [ AC_LANG_PROGRAM(
-    [[
-    #include <unistd.h>
-    #include <string.h>
-    #include <stdlib.h>
-    #include <sys/mman.h>
-    ]],
-    [[
+have_mmap="no"
+AS_IF(  
+  [test "x${enable_mmap}" = "xyes"],
+  [
+    AC_COMPILE_IFELSE(
+    [ AC_LANG_PROGRAM(
+      [[
+      #include <unistd.h>
+      #include <string.h>
+      #include <stdlib.h>
+      #include <sys/mman.h>
+      ]],
+      [  [
         long pagesize = sysconf(_SC_PAGESIZE);
         int fd = 4;
         mmap(0, 100,PROT_READ|PROT_WRITE,MAP_PRIVATE,
             fd,100);
         munmap((void *)100,100);
-    ]]
-    )
-  ],
-  [ have_mmap="yes"
-    AC_DEFINE(
-      [HAVE_FULL_MMAP], [1],
-      [Set to 1 as mmap/munmap is usable])
-  ],
+      ]]
+      )
+    ],
+    [ have_mmap="yes"
+      AC_DEFINE(
+        [HAVE_FULL_MMAP], [1],
+        [Set to 1 as mmap/munmap is usable])
+      AC_DEFINE(
+        [HAVE_SYS_MMAP_H], [1],
+        [Set to 1 as sys/mmap.h is usable])
+    ],
+    [ have_mmap = "no"]
+  ]),
   [ have_mmap = "no"]
 )
 

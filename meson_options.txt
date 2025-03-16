@@ -42,3 +42,9 @@ option('libdwarfspecialmalloc',
   value : false,
   description : 'Compile libdwarf (only) with special malloc code'
 )
+
+option('buildmmap',
+  type : 'boolean',
+  value : true,
+  description : 'Compile libdwarf with mmap support if possible'
+) 

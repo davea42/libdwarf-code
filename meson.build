@@ -135,6 +135,9 @@ config_dir = [include_directories('.')]
 
 # configuration
 
+buildmmap = get_option('buildmmap')
+mmapresult = false
+
 # sys/stat.h is for dwarfgen.
 # sys/mman.h is for mmap() and sysconf()
 header_checks = [
@@ -143,11 +146,14 @@ header_checks = [
   'malloc.h',
   'stdint.h',
   'sys/stat.h',
-  'sys/mman.h',
 ]
 if sys_windows == false
   header_checks += 'unistd.h'
 endif
+if buildmmap == true
+  header_checks += 'sys/mman.h'
+endif
+
 config_h = configuration_data()
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
@@ -198,9 +204,11 @@ code = '''
       return 0;
   }'''
 ### or use compiler.links?
-mmapresult = cc.compiles(code,name: 'mmap check')
-if mmapresult
-  config_h.set10('HAVE_FULL_MMAP',true)
+if get_option('buildmmap') == true
+  mmapresult = cc.compiles(code,name: 'mmap check')
+  if mmapresult
+    config_h.set10('HAVE_FULL_MMAP',true)
+  endif
 endif
 
 

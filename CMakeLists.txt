@@ -8,6 +8,7 @@ project(libdwarf VERSION 0.12.0
 # libdwarf
 option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 option(BUILD_SHARED "build shared library libdwarf[p].so and use it" FALSE)
+option(BUILD_MMAP "build library allowing mmap" TRUE)
 
 option(ENABLE_DECOMPRESSION
     "Enables support for compressed debug sections if both libz/libzstd are present"
@@ -134,7 +135,9 @@ if (${isBigEndian})
 endif()
 
 check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H)
+if (BUILD_MMAP)
 check_include_file( "sys/mman.h"      HAVE_SYS_MMAN_H)
+endif()
 check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H )
 check_include_file( "stdint.h"        HAVE_STDINT_H   )
 check_include_file( "unistd.h"        HAVE_UNISTD_H   )
@@ -160,7 +163,7 @@ if(HAVE_STDINT_H)
   }" HAVE_INTPTR_T)
 endif()
 
-if(HAVE_SYS_MMAN_H)
+if(BUILD_MMAP AND HAVE_SYS_MMAN_H )
   check_c_source_compiles("
   #include <unistd.h>
   #include <string.h>
@@ -175,8 +178,6 @@ if(HAVE_SYS_MMAN_H)
       munmap((void *)100,100);
       return 0;
   }" HAVE_FULL_MMAP)
- 
-
 endif()
 
 if (HAVE_UINTPTR_T)
