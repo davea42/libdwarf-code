@@ -1,4 +1,7 @@
 # Libdwarf Internals Introduction
+
+Updated: 16 March 2025
+
 The library is organized into a
 conceptual LeftHandSide (LHS, DWARF related) and a conceptual
 RightHandSide (RHS,object file related).
@@ -6,6 +9,19 @@ All the functions in the API
 are functions in the LHS, and the LHS
 knows nothing about the actual object
 file.
+
+All the source files for LHS and RHS  are in src/lib/libdwarf.
+
+RHS source to read Elf:dwarf_elf_access.h dwarf_elfread.h
+dwarf_elf_defines.h dwarf_elf_rel_detector.c
+dwarf_elf_load_headers.c dwarf_elf_rel_detector.h
+dwarf_elfread.c dwarf_elfstructs.h
+
+RHS source to read PE: dwarf_pe_descr.h dwarf_peread.c
+dwarf_peread.h
+
+RHS source to read MacOS objects: dwarf_macho_loader.h 
+dwarf_machoread.c dwarf_machoread.h
 
 The RHS provides a small number
 of function pointers and the LHS
@@ -66,8 +82,6 @@ memory allocations and making any pointers to libdwarf
 data in your
 application memory stale and unusable.
 
-
-
 Before release 0.12.0 the functions
 
   _dwarf_destruct_elf_nlaccess(dbg->de_obj_file),
@@ -78,7 +92,6 @@ were visible to the entire library, but as of 0.12.0
 there is a new function pointer in Dwarf_Obj_Access_Methods_a:
 om_finish(), and those three are declared static, invisible
 to the LHS.
-
 
 # The Special Case
 
