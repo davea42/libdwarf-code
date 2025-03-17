@@ -490,7 +490,7 @@ static const char *usage_long_text[] = {
 "-N   --print-ranges      Print ranges section",
 "     --print-raw-rnglists Print entire .debug_rnglists section",
 "     --print-raw-loclists Print entire .debug_loclists section",
-"     --print-section_allocations Print summary of section ",
+"     --print-section-allocations Print summary of section ",
 "                         allocations via mmap and those via malloc",
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
@@ -812,7 +812,7 @@ OPT_PRINT_STRINGS,            /* -s   --print-strings     */
 OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
 OPT_PRINT_TYPE,               /* -y   --print-type        */
 OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
-OPT_PRINT_ALLOCATIONS,        /* --print-section_allocations */
+OPT_PRINT_ALLOCATIONS,        /* --print-section-allocations */
 
 /* debuglink options */
 OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
@@ -964,7 +964,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-str-offsets", dwno_argument, 0, OPT_PRINT_STR_OFFSETS},
 {"print-type",        dwno_argument, 0, OPT_PRINT_TYPE       },
 {"print-weakname",    dwno_argument, 0, OPT_PRINT_WEAKNAME   },
-{"print-section_allocations", dwno_argument, 0,
+{"print-section-allocations", dwno_argument, 0,
     OPT_PRINT_ALLOCATIONS },
 
 /*  GNU debuglink options */
@@ -2146,7 +2146,7 @@ void arg_print_weaknames(void)
     glflags.gf_weakname_flag = TRUE;
     suppress_check_dwarf();
 }
-/* Option --print-section_allocations */
+/* Option --print-section-allocations */
 void arg_print_section_allocations(void)
 {
     glflags. gf_print_section_allocations = TRUE;
