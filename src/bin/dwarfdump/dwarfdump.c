@@ -1030,7 +1030,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
             &basesize,&baselow);
         ln = likely_names;
     } else {
-        lncount = dwarf_get_section_count(dbg);
+        lncount = (int)dwarf_get_section_count(dbg);
         if (!lncount) {
             return DW_DLV_NO_ENTRY;
         }
