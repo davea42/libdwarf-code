@@ -891,7 +891,8 @@ limit_of_code_when_elf(Dwarf_Debug dbg,
         struct likely_names_s *lx = 0;
 
         lx = ln + ct;
-        res = dwarf_get_section_info_by_index_a(dbg,ct,&cname,
+        /*  The truncation of ct here is awful. Sorry. */
+        res = dwarf_get_section_info_by_index_a(dbg,(int)ct,&cname,
             &caddr,&csize,&cflags,&coffset,&err);
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,err);
@@ -907,7 +908,8 @@ limit_of_code_when_elf(Dwarf_Debug dbg,
         lx->low = caddr;
         lx->size = csize;
         lx->end = csize +caddr;
-        lx->origindex = ct;
+        /* Horrible cast. Sorry. */
+        lx->origindex = (int)ct;
     }
     return DW_DLV_OK;
 }
@@ -949,7 +951,8 @@ limit_of_code_non_elf(Dwarf_Debug dbg,
         lx->low = clow;
         lx->size = csize;
         lx->end = csize +clow;
-        lx->origindex = ct;
+        /* Horrible cast. Sorry. */
+        lx->origindex = (int)ct;
         if (ct == ORIGLKLYTEXTINDEX) {
             basesize = csize;
             baselow  = clow;
