@@ -189,12 +189,12 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
                     the vast majority of cases.
                     So this should not be slow. */
                 for (i = 0; i < ary_used; ++i) {
-                    if (ary[i] == attr_number) {
+                    if (ary[i] == (Dwarf_Half)attr_number) {
                         iserror = TRUE;
                     }
                 }
                 if (ary_used < (MAX_AT_CK -1)) {
-                    ary[ary_used] = attr_number;
+                    ary[ary_used] = (Dwarf_Half)attr_number;
                     ++ary_used;
                 }  else {
                     /*  Else ignore, Really unusual count
@@ -213,7 +213,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
                     "Abbreviation attribute 0x%x"
                     " is duplicated",
                     attr_number);
-                dwarf_get_AT_name(attr_number,&atname);
+                dwarf_get_AT_name((Dwarf_Half)attr_number,&atname);
                 dwarfstring_append_printf_s(&m,
                     " (%s)", (char *)atname);
                 _dwarf_error_string(dbg, error,
