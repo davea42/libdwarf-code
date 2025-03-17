@@ -1195,8 +1195,8 @@ _dwarf_malloc_section_free(struct Dwarf_Section_s * sec)
             free(sec->dss_data);
         }
         break;
-#ifdef HAVE_FULL_MMAP
     case Dwarf_Alloc_Mmap:
+#ifdef HAVE_FULL_MMAP
         if (sec->dss_was_alloc) {
             int res = munmap(sec->dss_mmap_realarea,
                 sec->dss_computed_mmap_len);
@@ -1206,18 +1206,16 @@ _dwarf_malloc_section_free(struct Dwarf_Section_s * sec)
                 fflush(stdout);
             }
 #endif /* DEBUG_ALLOC */
-        (void)res; /* To avoid compiler warning. */
-#endif /* HAVE_FULL_MMAP */
+            (void)res; /* To avoid compiler warning. */
         }
+#endif /* HAVE_FULL_MMAP */
         break;
     case Dwarf_Alloc_None:
     default:
     break;
     }
     sec->dss_data = 0;
-#if 0
-    sec->dss_size = 0;
-#endif
+    /* sec->dss_size = 0; */
     sec->dss_was_alloc = FALSE;
     sec->dss_mmap_realarea = 0;
     sec->dss_computed_mmap_len = 0;
@@ -1287,7 +1285,6 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     freecontextlist(dbg,&dbg->de_info_reading);
     freecontextlist(dbg,&dbg->de_types_reading);
     /* Housecleaning done. Now really free all the space. */
-fflush(stdout);
     _dwarf_malloc_section_free(&dbg->de_debug_info);
     _dwarf_malloc_section_free(&dbg->de_debug_types);
     _dwarf_malloc_section_free(&dbg->de_debug_abbrev);
