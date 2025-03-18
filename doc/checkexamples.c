@@ -1510,14 +1510,14 @@ int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampled Using dwarf_srclines_b() and linecontext
-    @brief Example two using dwarf_srclines_b()
+    @brief Example two using dwarf_srclines_b(), dwarf_linesrc().
     @see dwarf_srclines_b
     @see dwarf_srclines_from_linecontext
     @see dwarf_srclines_dealloc_b
 
     @code
 */
-int exampled(Dwarf_Die somedie,Dwarf_Error *error)
+int exampled(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
     Dwarf_Signed       count = 0;
     Dwarf_Line_Context context = 0;
@@ -1541,7 +1541,17 @@ int exampled(Dwarf_Die somedie,Dwarf_Error *error)
     }
     line = linebuf;
     for (i = 0; i < count; ++line,++i) {
-        /* use line */
+        char * filename = 0;
+        int lres = 0;
+        Dwarf_Line dline = linebuf[i];
+
+        lres = dwarf_linesrc(dline,&filename,error);
+        if (lres != DW_DLV_OK) {
+            dwarf_srclines_dealloc_b(context);
+            return lres;
+        }
+        /* use filename */
+        dwarf_dealloc(dbg, filename, DW_DLA_STRING);
     }
     dwarf_srclines_dealloc_b(context);
     return DW_DLV_OK;

@@ -4111,7 +4111,7 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
     and returns a pointer to that string
     through the pointer.
     It is necessary to deallocthe returned string
-    as, for example,
+    with
     `dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);`
     ( Older versions of this function incorrectly
     said not to free() or dwarf_dealloc(). )
@@ -4119,6 +4119,8 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
     The usual error pointer.
     @return
     DW_DLV_OK if it succeeds.
+
+    @see exampled
 */
 DW_API int dwarf_linesrc(Dwarf_Line dw_line,
     char      ** dw_returned_name,
