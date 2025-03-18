@@ -68,6 +68,7 @@ struct Dwarf_Abbrev_s {
 };
 
 int _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
+    Dwarf_Unsigned abbrev_offset,
     Dwarf_Byte_Ptr abbrev_ptr,
     Dwarf_Byte_Ptr abbrev_section_end,
     Dwarf_Unsigned *abbrev_count_out,

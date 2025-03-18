@@ -82,6 +82,7 @@ dwarf_library_allow_dup_attr(int dw_v)
 }
 
 #define MAX_AT_CK 30
+#define MAX_AT_STD_CK 256
 
 /*  There are about 330 DW_AT_names including
     the standard names and the extensions.
@@ -101,6 +102,7 @@ dwarf_library_allow_dup_attr(int dw_v)
     values happens later. */
 int
 _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
+    Dwarf_Unsigned abbrev_offset /* of this set*/,
     Dwarf_Byte_Ptr abbrev_ptr,
     Dwarf_Byte_Ptr abbrev_section_end,
     Dwarf_Unsigned *abbrev_count_out,
@@ -122,9 +124,9 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     Dwarf_Half ary[MAX_AT_CK];
     int  ary_used = 0;
     /*  This checks all standard attribute numbers. */
-    char arysmall[256];
+    char arysmall[MAX_AT_STD_CK];
 
-    memset(arysmall,0, sizeof(arysmall));
+    memset(arysmall,0, MAX_AT_STD_CK);
     memset(ary,0,MAX_AT_CK * sizeof(Dwarf_Half));
     /*  The abbreviations table ends with an entry with a single
         byte of zero for the abbreviation code.
@@ -137,6 +139,9 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         list. */
 
     do {
+        attr_number = 0;
+        attr_form = 0;
+
         DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_number,
             dbg,error,abbrev_section_end);
         if (attr_number > DW_AT_hi_user) {
@@ -180,7 +185,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         }
         if (!_dwarf_allow_dup_attr) {
             int iserror = FALSE;
-            if (attr_number <= 0xff) {
+            if (attr_number < MAX_AT_STD_CK) {
                 iserror = arysmall[attr_number];
                 arysmall[attr_number] = 1;
             } else {
@@ -216,6 +221,9 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
                 dwarf_get_AT_name((Dwarf_Half)attr_number,&atname);
                 dwarfstring_append_printf_s(&m,
                     " (%s)", (char *)atname);
+                dwarfstring_append_printf_u(&m,
+                    " abbrev block offset 0x%x",
+                    abbrev_offset);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ABBREV_ATTR_DUPLICATION,
                     dwarfstring_string(&m));
@@ -296,6 +304,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr abbrev_ptr_out = 0;
     Dwarf_Byte_Ptr abbrev_section_end = 0;
     Dwarf_Abbrev ret_abbrev = 0;
+    Dwarf_Unsigned abbrev_offset = offset;
     Dwarf_Unsigned labbr_count = 0;
     Dwarf_Unsigned utmp     = 0;
     Dwarf_Unsigned abbrev_implicit_const_count_out = 0;
@@ -383,7 +392,8 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_abbrev_ptr = abbrev_ptr;
     ret_abbrev->dab_next_ptr = abbrev_ptr;
     ret_abbrev->dab_next_index = 0;
-    res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
+    res = _dwarf_count_abbrev_entries(dbg, abbrev_offset,
+        abbrev_ptr,
         abbrev_section_end,&labbr_count,
         &abbrev_implicit_const_count_out,
         &abbrev_ptr_out,error);

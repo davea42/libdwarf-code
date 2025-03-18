@@ -1095,7 +1095,8 @@ printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
         /*  Cycle thru the abbrev content,
             ignoring the content except
             to find the end of the content. */
-        res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
+        res = _dwarf_count_abbrev_entries(dbg,
+            context->cc_abbrev_offset,abbrev_ptr,
             end_abbrev_ptr,&atcount,&impl_const_count,
             &abbrev_ptr2,error);
         if (res != DW_DLV_OK) {
