@@ -118,9 +118,9 @@ echo "have ninja..................: $haveninja"
 echo "have msys2..................: $havemsys2"
 
 spath=`pwd`
-tpath=/tmp/allsimple
-bbase=/tmp/allsimple
-tbase=/tmp/allsimpleinstalled
+tpath=/tmp/allsimple-v0.12
+bbase=/tmp/allsimple-v0.12
+tbase=/tmp/allsimpleinstalled-v0.12
 echo "Source directory............: $spath"
 echo "Run builds in temp directory: $bbase"
 echo "Store install directories in: $tbase"

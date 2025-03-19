@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-03-18 v0.12.0
+    @date 2025-03-19 v0.12.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1148,13 +1148,24 @@
     the object specific data while removing library
     internal public functions.
 
-    This is a binary incompatibility requiring
-    recompile of your code using libdwarf and libdwarf
-    itself.
-    It is a source incompatibility if and only if your code
-    directly refers to the struct, something only done
-    when creating one's own object reader code
-    (see dwarf_object_init_b()). 
+    If an application does not call any of the functions
+    which are new in v0.12.0 then it will work
+    without recompilation.
+
+    Any application calling the new functions (for
+    example, v0.12.0 dwarfdump) will only work with
+    a v0.12.0 libdwarf.
+
+    If one is calling dwarf_object_init_b()
+    (almost no one ever calls this function)
+    one is therefore instantiating 
+    struct Dwarf_Obj_Access_Methods_a_s
+    oneself, you will surely find that your application
+    will not work with libdwarf 0.12.0.
+    Moreover, recompilation
+    will fail unless you update your source to add
+    the two new pointers to your instantiation (typically
+    just add two zeros or NULLs in that struct instance).
 
     Added new API function dwarf_machine_architecture_a() which
     has an additional argument added to let dwarfdump
@@ -1200,8 +1211,8 @@
     are the only values recognized.
     A recognized environment variable overrides 
     dwarf_set_load_preference() values.
-    If the build determines mmap is unavailble
-    then malloc will be used.
+    If the libdwarf build determines mmap is unavailble
+    then only malloc will be used.
 
     Added API function dwarf_get_mmap_count() giving callers
     the ability to determine what section loads were used
