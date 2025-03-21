@@ -111,10 +111,6 @@ endmacro()
 # view folders on supported IDEs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# tells cmake to look in 64bit first (cmake
-# would probably do this anyway).
-set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
-
 ### begin what was configure.cmake
 # cmake macros
 include(TestBigEndian)
