@@ -8849,6 +8849,10 @@ DW_API int dwarf_get_LLE_name(unsigned int dw_val_in,
 DW_API int dwarf_get_LLEX_name(unsigned int dw_val_in,
     const char ** dw_s_out );
 
+/*! @brief dwarf_get_LNAME
+*/
+DW_API int dwarf_get_LNAME_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
 /*! @brief dwarf_get_LNCT_name
 */
 DW_API int dwarf_get_LNCT_name(unsigned int dw_val_in,
