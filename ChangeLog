@@ -1,3 +1,157 @@
+2025-03-28:  David Anderson
+    commit ab3a3b92594ccebbd3b5678c680fc557cb16bead
+
+    Now we handle the latest DW V6 language_name:
+    DW_LNAME_Nim
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-03-28:  David Anderson
+    commit ad7d97b0434757cb3f43b77e0c322ae5005af9cf
+
+    Added and documented
+    dwarf_language_version_string()
+    to the API so programs can interpret the
+    version (as an integer) in detail should
+    they wish to do so.
+
+    The intent is the actual version is an integer
+    and trivial to compare.  It's possible
+    (though highly unlikely) that a real version
+    might not be representable directly.
+    DW_AT_language_version is a DWARF class CONSTANT,
+    not a string.
+
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-03-27:  David Anderson
+    commit e2a9d050652d0ff1b908dc02dfdb8c9ba177fad0
+
+    Regenerated, now says version is 0.12.0
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+    Regenerated with 'make rebuild' using configure
+    and now including dwarf_get_LNAME_name()
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+    Added the DW_LNAME logical compiler naming from
+    DWARF6.  dwarfstd.org says these are things which
+    will not change (more may be added) and compilers
+    are explicitly allowed to generate DW_LNAME.
+            modified:   src/lib/libdwarf/libdwarf.h
+    Added the function prototype dwarf_get_LNAME_name()
+    which returns the ascii string, such as
+    "DW_LNAME_C" when 0x03 is passed in.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2025-03-23:  flagarde
+    commit 8a87114729a6615fdd1f4fc59acb5ba7c5313a91
+
+    Suppress FIND_LIBRARY_USE_LIB64_PATHS (#281)
+
+    As mentioned in the command CMake already deals with this. Worse adding this ourself could create some trouble for people using this repo with add_subdirectory or FetchContent etc...
+
+2025-03-19:  David Anderson
+    commit f3498509cff5bf364201d594c82caa8b519580be
+
+    Tweaking Changes wording.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+    Now the files it builds include the version,
+    specifically 0.12 now, in the directories
+    created in /var/tmp.
+            modified:   scripts/allsimplebuilds.sh
+
+2025-03-18:  David Anderson
+    commit 40378de7942921d3d0841c67fc5069ff4b0827a1
+
+    Now with dwarf_linesrc() shown and used properly
+    with dwarf_dealloc.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+    Mentions example of dwarf_linesrc()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-03-18:  David Anderson
+    commit 5f4300e0e357ee4d9f97821ff36794b3401c66a7
+
+    Additions to options for mmap and
+    adding the MISCELLANEOUS section.
+            modified:   dwarfdump.1
+
+2025-03-18:  David Anderson
+    commit a4f432b3755fddaabf32cc930f98d93ad10ce538
+
+    Changing internal prototype so in case of duplication
+    an additional offset of the abbrev block is printed
+    when finding the count of entries in a single abbrev.
+            modified:   dwarf_abbrev.c
+            modified:   dwarf_abbrev.h
+
+    To match the revised prototype getting abbrev count..
+            modified:   dwarf_util.c
+
+2025-03-17:  David Anderson
+    commit e36a0bae95b7d53b3b4ed2acfc5b0025f00ca289
+
+    Corrected spelling of new long options,
+    using - not _ in the options.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2025-03-17:  David Anderson
+    commit 9e3b7d06b0eb4c5139614ea84c46a9449c830824
+
+    Added a cast to avoid VS warning.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-03-17:  David Anderson
+    commit 2c78ec2d525b4e732060c897add64caa49d2ec3c
+
+    Two places implicit conversion of attribute
+    from Dwarf_Unsigned to Dwarf_Half gave warning.
+    Now has two casts. By definition attribute
+    numbers (names) fit in 16 bits.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+
+2025-03-17:  David Anderson
+    commit 0aa7b761d1afc9067b92d241e015801065180004
+
+    Fixing warnings from VS.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-03-17:  David Anderson
+    commit fcb06732b2d17663a2211512c8f5c78bfb8e0ba3
+
+    Bad handling of HAVE_FULL_MMAP, noted
+    by VS build failing.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2025-03-16:  David Anderson
+    commit 1b3d257a9c2f736098aaf34038e498e26b4df46f
+
+    Now only with 2025
+            modified:   ChangeLog
+
+    All the 2924 changes
+            new file:   ChangeLog2024
+
+2025-03-16:  David Anderson
+    commit dae7881e329a3e2549d081bdf856e6d8db3ba340
+
+    Up to date with git log, now with mmap support
+            modified:   ChangeLog
+
 2025-03-16:  David Anderson
     commit eda7a95c0da68a7b5c40bd01b5d9e01736676f50
 
