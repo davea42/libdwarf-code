@@ -1217,6 +1217,15 @@
     Added API function dwarf_get_mmap_count() giving callers
     the ability to determine what section loads were used
     and the total amount of section data loaded.
+
+    Added API function dwarf_get_LANGUAGE_name() to be
+    able to easily get a string for DW_LNAME_Ada etc.
+
+    Added API function dwarf_language_version_string().
+    This returns information defined by
+    DWARF 6 and useful in interpreting DWARF6
+    language-version strings based on
+    a  name accessed from DW_AT_language_name attribute.
     
     <b>Changes 0.11.0 to 0.11.1</b>
 

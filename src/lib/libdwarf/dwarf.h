@@ -1182,7 +1182,7 @@ most-likely-useful name. */
 #define DW_LANG_Fortran08               0x0023 /* DWARF5 */
 #define DW_LANG_RenderScript            0x0024 /* DWARF5 */
 #define DW_LANG_BLISS                   0x0025 /* DWARF5 */
-/*  The committee has, in  
+/*  The committee has, in
     https://dwarfstd.org/languages-v6.html
     specified that these language code, may be
     used by compilers now, and promises these
@@ -1225,7 +1225,7 @@ most-likely-useful name. */
 
 #define DW_LANG_hi_user                 0xffff
 
-/*  The committee has, in  
+/*  The committee has, in
     https://dwarfstd.org/languages-v6.html
     specified that these language code, may be
     used by compilers now, and promises these
