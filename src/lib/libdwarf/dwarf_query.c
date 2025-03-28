@@ -2351,6 +2351,7 @@ int dwarf_language_version_string(
     case DW_LNAME_P4:
     case DW_LNAME_Metal:
     case DW_LNAME_V:
+    case DW_LNAME_Nim:
         *dw_default_lower_bound = 0;
         *dw_version_scheme = "VVMMPP";
         break;

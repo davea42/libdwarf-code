@@ -1276,6 +1276,7 @@ most-likely-useful name. */
 #define DW_LNAME_Metal             0x002c  /* DWARF6 */
 #define DW_LNAME_V                 0x002d  /* DWARF6 */
 #define DW_LNAME_Algol68           0x002e  /* DWARF6 */
+#define DW_LNAME_Nim               0x002f  /* DWARF6 */
 
 /* Identifier case name. */
 #define DW_ID_case_sensitive            0x00

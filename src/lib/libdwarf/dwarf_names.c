@@ -3066,6 +3066,9 @@ dwarf_get_LNAME_name (unsigned int val,
     case DW_LNAME_Algol68:
         *s_out = "DW_LNAME_Algol68";
         return DW_DLV_OK;
+    case DW_LNAME_Nim:
+        *s_out = "DW_LNAME_Nim";
+        return DW_DLV_OK;
     default: break;
     }
     return DW_DLV_NO_ENTRY;
