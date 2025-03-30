@@ -290,6 +290,8 @@ format_sig8_string(Dwarf_Sig8*data, char* str_buf,unsigned
 {
     unsigned i = 0;
     char *cp = str_buf;
+    char *sigbytep = &data->signature[0];
+
     if (buf_size <  19) {
         printf("FAIL: internal coding error in test.\n");
         cleanupstr();
@@ -298,9 +300,9 @@ format_sig8_string(Dwarf_Sig8*data, char* str_buf,unsigned
     strcpy(cp,"0x");
     cp += 2;
     buf_size -= 2;
-    for (; i < sizeof(data->signature); ++i,cp+=2,buf_size--) {
-        snprintf(cp, buf_size, "%02x",
-            (unsigned char)(data->signature[i]));
+    for (; i < sizeof(Dwarf_Sig8); ++i,cp+=2,buf_size-=2) {
+        snprintf(cp, buf_size, "%02x", *(unsigned char *)sigbytep);
+        ++sigbytep;
     }
     return;
 }
@@ -384,6 +386,7 @@ main(int argc, char **argv)
     int i = 0;
     #define MACHO_PATH_LEN 2000
     char macho_real_path[MACHO_PATH_LEN];
+    int dup_attr_check = TRUE;
 
     macho_real_path[0] = 0;
     for (i = 1; i < (argc-1) ; ++i) {
@@ -427,6 +430,10 @@ main(int argc, char **argv)
         }
         if (strcmp(argv[i],"--simpleerrhand") == 0) {
             simpleerrhand=1;
+            continue;
+        }
+        if (strcmp(argv[i],"--no-dup-attr-check") == 0) {
+            dup_attr_check = FALSE;
             continue;
         }
         if (startswithextractnum(argv[i],
@@ -489,6 +496,9 @@ main(int argc, char **argv)
         errhand = simple_error_handler;
         /* Not a very useful errarg... */
         errarg = (Dwarf_Ptr)1;
+    }
+    if (!dup_attr_check) {
+        dwarf_library_allow_dup_attr(TRUE);
     }
     if (use_init_fd) {
         /*  For testing a libdwarf init function.
