@@ -2718,7 +2718,8 @@ set_command_options(int argc, char *argv[])
 /*  This is a hack allowing us to pretend that
     dwarfdump  --suppress-de-alloc-tree foo.o
     has no arguments.  Because the args here really
-    are special for use by dwarfdump developers and
+    are special for use by dwarfdump developers  or
+    special situations and
     even with these special args we want do_all() to be
     called by process_args() below if there are no
     'normal' - or -- args.
@@ -2741,6 +2742,8 @@ static const char *simplestdargs[] ={
 "--suppress-de-alloc-tree",
 "--suppress-debuglink-crc",
 "--no-follow-debuglink",
+"--no-dup-attr-check",
+"--allocate-via-mmap",
 0
 };
 
