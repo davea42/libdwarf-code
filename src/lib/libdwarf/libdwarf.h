@@ -9742,7 +9742,7 @@ DW_API int dwarf_set_de_alloc_flag(int dw_v);
     really want the library to avoid this basic
     DWARF-correctness check.
 
-    @since {0.11.2}
+    @since {0.12.0}
 
     @param dw_v
     If non-zero passed in libdwarf will avoid the checks
@@ -9860,7 +9860,7 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 /*! @}
 */
 
-/*! @defgroup sectionallocpref Section allocation preference
+/*! @defgroup sectionallocpref Section allocation: malloc or mmap 
     @{
 
     Functions related to the choice of malloc/read
