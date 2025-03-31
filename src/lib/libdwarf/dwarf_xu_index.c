@@ -97,7 +97,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
 
-    printf("%s ",msg);
+    printf("%s %p: ",msg, (void *)start);
     for (; cur < end; cur++) {
         printf("%02x ", *cur);
     }
