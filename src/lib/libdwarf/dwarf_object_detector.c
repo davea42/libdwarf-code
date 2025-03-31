@@ -513,30 +513,30 @@ _dwarf_object_detector_fd_a(int fd,
     unsigned *endian,
     unsigned *offsetsize,
     Dwarf_Unsigned fileoffsetbase,
-    Dwarf_Unsigned  *filesize,
+    Dwarf_Unsigned  *filesize_out,
     int *errcode)
 {
     struct elf_header h;
     Dwarf_Unsigned readlen = sizeof(h);
-    Dwarf_Unsigned fsize = 0;
+    Dwarf_Unsigned filesize = 0;
     Dwarf_Unsigned remaininglen  = 0;
     int            res = 0;
 
-    res = _dwarf_seekr(fd,0,SEEK_END,&fsize);
+    res = _dwarf_seekr(fd,0,SEEK_END,&filesize);
     if (res != DW_DLV_OK) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    if (fsize <= readlen) {
+    if (filesize <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
-    if (fsize <= fileoffsetbase) {
+    if (filesize <= fileoffsetbase) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    remaininglen = fsize - fileoffsetbase;
+    remaininglen = filesize - fileoffsetbase;
     if (remaininglen <= readlen) {
         /* Not a real object file */
         *errcode = DW_DLE_FILE_TOO_SMALL;
@@ -565,28 +565,28 @@ _dwarf_object_detector_fd_a(int fd,
             return res;
         }
         *ftype = DW_FTYPE_ELF;
-        *filesize = (Dwarf_Unsigned)fsize;
+        *filesize_out = (Dwarf_Unsigned)filesize;
         return DW_DLV_OK;
     }
     if (is_mach_o_universal(&h,endian,offsetsize)) {
         *ftype = DW_FTYPE_APPLEUNIVERSAL;
-        *filesize = (Dwarf_Unsigned)fsize;
+        *filesize_out = (Dwarf_Unsigned)filesize;
         return DW_DLV_OK;
     }
     if (is_mach_o_magic(&h,endian,offsetsize)) {
         *ftype = DW_FTYPE_MACH_O;
-        *filesize = (Dwarf_Unsigned)fsize;
+        *filesize_out = (Dwarf_Unsigned)filesize;
         return DW_DLV_OK;
     }
     if (is_archive_magic(&h)) {
         *ftype = DW_FTYPE_ARCHIVE;
-        *filesize = (Dwarf_Unsigned)fsize;
+        *filesize_out = (Dwarf_Unsigned)filesize;
         return DW_DLV_OK;
     }
-    res = is_pe_object(fd,fsize,endian,offsetsize,errcode);
+    res = is_pe_object(fd,filesize,endian,offsetsize,errcode);
     if (res == DW_DLV_OK ) {
         *ftype = DW_FTYPE_PE;
-        *filesize = (Dwarf_Unsigned)fsize;
+        *filesize_out = (Dwarf_Unsigned)filesize;
         return DW_DLV_OK;
     }
     /* Unknown object format. */
@@ -932,7 +932,7 @@ dwarf_object_detector_path_b(
     unsigned *    ftype,
     unsigned *    endian,
     unsigned *    offsetsize,
-    Dwarf_Unsigned * filesize,
+    Dwarf_Unsigned * filesize_out,
     unsigned char *  pathsource,
     int *errcode)
 {
@@ -991,7 +991,7 @@ dwarf_object_detector_path_b(
         }
         dwarfstring_destructor(&m);
         fd = _dwarf_openr(outpath);
-        /* fall through to get fsize etc */
+        /* fall through to get filesize etc */
     } else {
         lpathsource = DW_PATHSOURCE_basic;
         fd = _dwarf_openr(path);
@@ -1003,7 +1003,7 @@ dwarf_object_detector_path_b(
         return DW_DLV_NO_ENTRY;
     }
     res = dwarf_object_detector_fd(fd,
-        ftype,endian,offsetsize,filesize,errcode);
+        ftype,endian,offsetsize,filesize_out,errcode);
     if (res != DW_DLV_OK) {
         lpathsource = DW_PATHSOURCE_unspecified;
     }
