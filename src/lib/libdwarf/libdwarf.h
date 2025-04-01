@@ -9868,12 +9868,13 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 
     The default allocation preference is mmap.
 
-    The environment variable DWARF_WHICH_ALLOC
+    The shell environment variable DWARF_WHICH_ALLOC
     is also involved at runtime.
     If the value is 'malloc' then use of read/malloc
     is preferred.
     If the value is 'mmap' then use of mmap is
-    preferred.
+    preferred (Example: 'export DWARF_WHICH_ALLOC=mmap').
+    Otherwise, the environment value is checked and ignored.
 
     If present and valid this environment variable
     takes precedence over
