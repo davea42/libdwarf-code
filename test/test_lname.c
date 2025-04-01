@@ -40,23 +40,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* atol() exit() getenv() */
 #include <string.h> /* strcmp() strlen() strncmp() */
 
-#include "libdwarf.h"
-#include "libdwarf_private.h"
-
 #define TRUE  1
 #define FALSE 0
 
 /* We don't allow arbitrary DW_DLE line length. */
 #define MAXDEFINELINE 1000
 static char buffer[MAXDEFINELINE];
-static char buffer2[MAXDEFINELINE];
 
 /* Arbitrary. A much smaller max length value would work. */
 #define MAX_NUM_LENGTH 12
 
 /*  Increase this when the actual number of DW_LNAME_name
     instances approaches this number. */
-#define MAX_LNAME_LEN 20
+#define MAX_LNAME_LEN 30
 #define LNAME_INSTANCE_MAX  100
 struct instance_s {
    char name[MAX_LNAME_LEN];
@@ -69,7 +65,7 @@ int              header_count;
 struct instance_s csource[LNAME_INSTANCE_MAX];
 int              csource_count;
 
-void
+static void
 _dwarf_safe_strcpy(char *out,
     size_t outlen,
     const char *in_s,
@@ -100,7 +96,7 @@ _dwarf_safe_strcpy(char *out,
     *cpo = 0;
 }
 
-void
+static void
 check_for_dup(struct instance_s *ary,int count, 
     char *name, const char *msg)
 {
@@ -117,7 +113,7 @@ check_for_dup(struct instance_s *ary,int count,
 } 
 
 /* return TRUE on error */
-static int
+static void
 check_hdr_match(void)
 {
     int k = 0;
@@ -135,8 +131,8 @@ check_hdr_match(void)
         foundh = FALSE;
         foundc = FALSE;
        
-        for ( ; l < csource_count; ++l) {
-            struct instance_s * curc = &csource[k];
+        for (l = 0 ; l < csource_count; ++l) {
+            struct instance_s * curc = &csource[l];
             
             if (strcmp(curh->name,curc->name)) {
                 continue;
@@ -145,18 +141,19 @@ check_hdr_match(void)
             foundh= TRUE;
             curc->count++;
             if (curc->count > 1) {
-                printf("FAIL DUP %s in csource\n",
-                    curc->name);
+                printf("FAIL DUP %s in csource count %d\n",
+                    curc->name,curc->count);
                 exit(EXIT_FAILURE);
             }
+            break;
         }
         if (!foundc) {
-            printf("FAIL to find %s in csource\n",
+            printf("FAIL to find curc %s in csource\n",
                 curh->name);
             exit(EXIT_FAILURE);
         }
         if (!foundh) {
-            printf("FAIL to find %s in csource\n",
+            printf("FAIL to find curh %s in csource\n",
                 curh->name);
             exit(EXIT_FAILURE);
         }
@@ -172,15 +169,11 @@ read_lname_csrc(char *path)
     /*  The format should be
         case<space>name<colon> */
     unsigned linenum = 0;
-    unsigned long prevdefval = 0;
-    unsigned cur_dle_line = 0;
-    unsigned foundlast = 0;
-    unsigned foundlouser = 0;
     FILE*fin = 0;
 
     fin = fopen(path, "r");
     if (!fin) {
-        printf("Unable to open define list to read %s\n",path);
+        printf("Unable to open define csource to read %s\n",path);
         exit(EXIT_FAILURE);
     }
     for ( ;;++linenum) {
@@ -189,9 +182,6 @@ read_lname_csrc(char *path)
         char   *curdefname = 0;
         char   *pastname = 0;
         unsigned curdefname_len = 0;
-        char   *numstart = 0;
-        char   *endptr = 0;
-        unsigned long v = 0;
         int    name_ok = FALSE;
 
         line = fgets(buffer,MAXDEFINELINE,fin);
@@ -203,26 +193,27 @@ read_lname_csrc(char *path)
         line[linelen-1] = 0;
         --linelen;
         if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
-            printf("define line %u is too long!\n",linenum);
+            printf("case line %u is too long!\n",linenum);
             exit(EXIT_FAILURE);
         }
         if (strncmp(line,"    case DW_LNAME_",18)) {
             /* Skip the non- case DW_LNAME lines */
             continue;
         }
-        curdefname = line+10;
+        curdefname = line+9;
         /* ASSERT: line ends with NUL byte. */
         for ( ; ; curdefname_len++) {
             pastname = curdefname +curdefname_len;
             if (!*pastname) {
                 /* At end of line. Missing value. */
-                printf("define line %u of %s: has no number value!\n",
+                printf("WARNING: csrc case name has no comment  %d %s\n",
                     linenum,path);
-                exit(EXIT_FAILURE);
+                continue;
             }
             if (*pastname == ' ' || *pastname == ':') {
                 /* Ok. Now insert into table. */
                 name_ok = TRUE;
+                --curdefname_len;
                 *pastname = 0;
                 break;
             }
@@ -232,12 +223,7 @@ read_lname_csrc(char *path)
                  csource_count,__LINE__);
             exit(EXIT_FAILURE);
         }
-        if (header_count +1 != v) {
-            printf(" Fail checking defines: count %d v %d\n",
-                 header_count,(int)v);
-            exit(EXIT_FAILURE);
-        }
-        if (strlen(curdefname)+1 <= MAX_LNAME_LEN) {
+        if (strlen(curdefname)+1 >=  MAX_LNAME_LEN) {
             printf("Name %s is too long for table at %u\n",
                 curdefname,
                 (unsigned)strlen(curdefname));
@@ -264,15 +250,11 @@ read_lname_hdr(char *path)
         and we are intentionally quite rigid about it all except
         that the number of spaces before any comment is allowed. */
     unsigned linenum = 0;
-    unsigned long prevdefval = 0;
-    unsigned cur_dle_line = 0;
-    unsigned foundlast = 0;
-    unsigned foundlouser = 0;
     FILE*fin = 0;
 
     fin = fopen(path, "r");
     if (!fin) {
-        printf("Unable to open define list to read %s\n",path);
+        printf("Unable to open define dwarf.h to read %s\n",path);
         exit(EXIT_FAILURE);
     }
     for ( ;;++linenum) {
@@ -298,19 +280,13 @@ read_lname_hdr(char *path)
             printf("define line %u is too long!\n",linenum);
             exit(EXIT_FAILURE);
         }
-        if (strncmp(line,"#define DW_LNAME__",21)) {
+        if (strncmp(line,"#define DW_LNAME_",17)) {
             /* Skip the non- DW_DLE_ lines */
             continue;
         }
         curdefname = line+8;
         /* ASSERT: line ends with NUL byte. */
         for ( ; ; curdefname_len++) {
-            if (foundlouser) {
-                printf("define line %u has  stuff after "
-                    "DW_DLE_LO_USER!\n",
-                    linenum);
-                exit(EXIT_FAILURE);
-            }
             pastname = curdefname +curdefname_len;
             if (!*pastname) {
                 /* At end of line. Missing value. */
@@ -353,12 +329,12 @@ read_lname_hdr(char *path)
                 linenum,e,e,line);
             exit(EXIT_FAILURE);
         }
-        if (header_count +1 != v) {
+        if ((header_count +1) != (int)v) {
             printf(" Fail checking defines: count %d v %d line %d\n",
                  header_count,(int)v, __LINE__);
             exit(EXIT_FAILURE);
         }
-        if (strlen(curdefname)+1 <= MAX_LNAME_LEN) {
+        if (strlen(curdefname)+1 >= MAX_LNAME_LEN) {
             printf("Name %s is too long for table at %d\n",
                 curdefname,
                 (int)strlen(curdefname));
@@ -377,31 +353,6 @@ read_lname_hdr(char *path)
     fclose(fin);
 }
 
-#if 0
-static void
-read_next_line(FILE *fin,unsigned linenum,unsigned int *quotedlen)
-{
-    char        *line = 0;
-    size_t       linelen = 0;
-    unsigned int qlen2 = 0;
-
-    line = fgets(buffer2,MAXDEFINELINE,fin);
-    if (!line) {
-        printf("inner end file line %u is too long!\n",linenum);
-        exit(EXIT_FAILURE);
-    }
-    linelen = strlen(line);
-    line[linelen-1] = 0;
-    --linelen;
-    if (linelen >= (unsigned long)(MAXDEFINELINE-1)) {
-        printf("inner line %u is too long!\n",linenum);
-        exit(EXIT_FAILURE);
-    }
-    quoted_length(line,&qlen2);
-    *quotedlen = qlen2;
-}
-
-#endif
 static char pathbufhdr[2000];
 static char pathbufc[2000];
 static void
@@ -423,7 +374,6 @@ local_safe_strcpy(char *targ,char *src,
 int
 main(int argc, char **argv)
 {
-    unsigned     i       = 0;
     char        *path    = 0;
     size_t       len     = 0;
     const char  *libpath="/src/lib/libdwarf/dwarf.h";

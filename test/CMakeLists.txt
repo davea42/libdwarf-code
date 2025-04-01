@@ -11,6 +11,7 @@ if (DO_TESTING)
     target_compile_options(selfteststring PRIVATE ${DW_FWALL})
     add_test(NAME selfteststring COMMAND selfteststring)
 endif()
+
 if (DO_TESTING)
     set_source_group(TESTEXTRASTRING "Source Files"
         ${PROJECT_SOURCE_DIR}/test/test_extra_flag_strings.c
@@ -39,7 +40,7 @@ if (DO_TESTING)
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.h
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.c
         ${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_error.h)
-    add_executable(selftest_linkedtopath ${TESTEXTRASTRING})
+    add_executable(selftest_linkedtopath ${TESTLINKEDTOPATH})
     target_compile_definitions(selftest_linkedtopath PRIVATE
         ${DW_LIBDWARF_STATIC})
     target_compile_options(selftest_linkedtopath PRIVATE
@@ -49,6 +50,17 @@ if (DO_TESTING)
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selftest_linkedtopath PRIVATE ${DW_FWALL})
     add_test(NAME selftest_linkedtopath COMMAND selftest_linkedtopath)
+endif()
+
+if (DO_TESTING)
+    set_source_group(TESTLNAME "Source Files"
+        ${PROJECT_SOURCE_DIR}/test/test_lname.c)
+    add_executable(selftestlname ${TESTLNAME})
+    target_compile_options(selftestlname PRIVATE
+        "-DTESTING -DLIBDWARF_BUILD" )
+    target_compile_options(selftestlname PRIVATE ${DW_FWALL})
+    add_test(NAME selftestlname COMMAND
+        selftestlname -f "${PROJECT_SOURCE_DIR}")
 endif()
 
 if (DO_TESTING)

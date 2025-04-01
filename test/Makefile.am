@@ -35,6 +35,8 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_ignoresec.trs \
   test_linkedtopath.log \
   test_linkedtopath.trs \
+  test_lname.trs\
+  test_lname.log\
   test_macrocheck.log \
   test_macrocheck.trs \
   test_makenametest.log \
@@ -66,6 +68,7 @@ TESTS = test_canonical  \
   test_ignoresec \
   test_int64_test \
   test_linkedtopath \
+  test_lname \
   test_macrocheck \
   test_makenametest \
   test_regex \
@@ -86,6 +89,7 @@ check_PROGRAMS = test_canonical \
   test_ignoresec \
   test_int64_test \
   test_linkedtopath \
+  test_lname \
   test_macrocheck \
   test_makenametest \
   test_regex \
@@ -195,6 +199,15 @@ test_linkedtopath_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
+
+test_lname_SOURCES = test_lname.c 
+test_lname_CFLAGS =  $(DWARF_CFLAGS_WARN) -DTESTING
+test_lname_CPPFLAGS = -DTESTING \
+-DLIBDWARF_BUILD \
+-I$(top_srcdir) \
+-I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf
+
 
 test_macrocheck_SOURCES = test_macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \

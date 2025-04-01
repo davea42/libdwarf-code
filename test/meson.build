@@ -110,7 +110,10 @@ endforeach
 argstests = [
   [
    'test_errmsglist.c',
-   '../src/lib/libdwarf/dwarf_safe_strcpy.c',
+   '../src/lib/libdwarf/dwarf_safe_strcpy.c'
+  ],
+  [
+   'test_lname.c'
   ]
 ]
 
