@@ -800,6 +800,9 @@ struct Dwarf_Obj_Access_Section_a_s {
     This is part of the allowance of mmap for
     loading sections of an object file.
 
+    The option of using mmap() only applies to
+    Elf object files in this release.
+
     @see dwarf_set_load_preference()
 */
 enum Dwarf_Sec_Alloc_Pref {
@@ -9866,10 +9869,12 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     Functions related to the choice of malloc/read
     or mmap for object section memory allocation.
 
-    The default allocation preference is mmap.
+    The default allocation preference is malloc().
 
+   
     The shell environment variable DWARF_WHICH_ALLOC
-    is also involved at runtime.
+    is also involved at runtime but it only applies
+    to reading Elf object files..
     If the value is 'malloc' then use of read/malloc
     is preferred.
     If the value is 'mmap' then use of mmap is
@@ -9893,6 +9898,8 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     The preference of Dwarf_Alloc_Mmap does not guarantee mmap
     will be used for object section data, but does
     cause mmap() to be used when possible.
+
+    In 0.12.0 mmap() is only usable on Elf object files.
 
     dw_load_preference is one of
     Dwarf_Alloc_Malloc      (1)
