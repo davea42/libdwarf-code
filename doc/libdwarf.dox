@@ -1139,6 +1139,8 @@
 
     <b>Changes 0.11.1 to 0.12.0</b>
 
+    Released 02 April 2025
+
     To optionally support mmap/munmap of object files
     sections we read we have added a function prototype
     for struct Dwarf_Obj_Access_Methods_a_s function
