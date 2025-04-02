@@ -1,3 +1,122 @@
+2025-04-02:  David Anderson
+    commit 78232149dfa4740387aedbc0a5bb4e3ba111258e
+
+    Regenerated, now April.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+    Added release date of 0.12.0
+            modified:   doc/libdwarf.dox
+
+2025-04-01:  David Anderson
+    commit d17ee7fd000076c923d50cf654c7be7f5af1442f
+
+    regenerated
+            modified:   doc/libdwarf.pdf
+    Now mentions mmap() is usable only
+    on Elf object files. Other objects always use malloc().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-04-01:  David Anderson
+    commit 7f7df06c5b16e5a0edd0730adbd1566777989eb4
+
+    Updated date to April 2.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+    Added fuller explanation of the use of
+    shell envronment variable 'DWARF_WHICH_ALLOC'
+    to influence the use of malloc() vs mmap().
+    mmap() is only usable (in this release) on Elf
+    object files.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-03-31:  David Anderson
+    commit 61e39cfb6d33cfeb232ab902be7a339f0ba9f3ca
+
+    Now 'make check' and the like protect against
+    errors in setting up DW_LNAME data and code.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+            modified:   test/test_lname.c
+
+2025-03-31:  David Anderson
+    commit 6000fa71301fcd8aeba863188449e2a03954439c
+
+    Renaming for configure sanity.
+            renamed:    ../../../test/test_LNAME.c -> ../../../test/test_lname.c
+
+2025-03-31:  David Anderson
+    commit 092ce1afd56464c082e0f86a2052b971ba5b1006
+
+    New test code, not yet tested.
+            new file:   test/test_LNAME.c
+
+2025-03-31:  David Anderson
+    commit 5388eb015258d2e13185dcefd8eaf1a869c54d43
+
+    Added these to the list of arguments that
+    are sort of artifical (like -v) and do not
+    count as removing the default-set of
+    sections dwarfdump will print
+    +"--no-dup-attr-check",
+    +"--allocate-via-mmap",
+
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2025-03-31:  David Anderson
+    commit 7ab2b8ae36415aae9096bc42044db51f26a8be84
+
+    Renaming locals and an argument for slightly
+    better clarity.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2025-03-31:  David Anderson
+    commit 4735bf67d34af7447a46ec036ee1159de6cfb646
+
+    Slight improvement of output for the debug-only function
+    dump_bytes().
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2025-03-31:  David Anderson
+    commit c535d52a8be7ac7ab9058ec0195190716f5c310b
+
+    Corrected an @since to 0.12.0
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-03-30:  David Anderson
+    commit 08ff7580f0afe0ea9b4ba61092cc545512e4360e
+
+    On linux gdb and valgrind  and libc notice
+    that printf of sequential byte pairs, where
+    the byte-pairs accidentally overlap (!) due
+    to a mistake in this source... is bogus.
+
+    MacOS notices too, but it reports "Trace/BPT trap: 5"
+    which is quite mysterious.
+    This is a serious bug which has been in place
+    since support for the DWARF5 .debug_names section
+    was added.  It crashes the app reading the .debug_info
+    section reliably.
+
+    Of course simplereader is just an example, but
+    still...needs to be correct
+
+    It had been hidden from testing before due to an oversight in
+    the  debugfissionb directory in regressiontests
+    was coded. We now prevent corrupt
+    DWARF with duplicated attributes in a PE file from
+    showing an error and avoiding
+    any meaingful test. Just for this case.
+    So the tests are now fixed too.
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2025-03-28:  David Anderson
+    commit 1baf707364137410a9ed85ee8491ff88886b77f8
+
+    Up to date with git log now.
+            modified:   ChangeLog
+
 2025-03-28:  David Anderson
     commit ab3a3b92594ccebbd3b5678c680fc557cb16bead
 
