@@ -234,14 +234,14 @@ AS_IF(
           void *ptr = mmap(0, 100, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 100);
           munmap(ptr, 100);
         ]]
-      )],
-      [
+     )],
+     [
         have_mmap="yes"
         AC_DEFINE([HAVE_FULL_MMAP], [1], [Set to 1 as mmap/munmap is usable])
         AC_DEFINE([HAVE_SYS_MMAP_H], [1], [Set to 1 as sys/mman.h is usable])
-      ],
-      [have_mmap="no"]
-    )
+     ],
+    [have_mmap="no"]
+  )
   ],
   [have_mmap="no"]
 )
