@@ -22,7 +22,7 @@ if (DO_TESTING)
     target_compile_definitions(selftestextrastring PRIVATE
         ${DW_LIBDWARF_STATIC})
     target_compile_options(selftestextrastring PRIVATE
-         "-DTESTING -DLIBDWARF_BUILD" )
+         "-DTESTING  ${LIBDWARF_STATIC}" )
     target_compile_options(selftestextrastring PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarfp")
