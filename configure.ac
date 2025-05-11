@@ -220,30 +220,33 @@ AS_IF(
   [test "x${enable_mmap}" = "xyes"],
   [
     AC_COMPILE_IFELSE(
-      [AC_LANG_PROGRAM(
-        [[
-          #include <unistd.h>
-          #include <string.h>
-          #include <stdlib.h>
-          #include <sys/mman.h>
-        ]],
-        [[
-          long pagesize = sysconf(_SC_PAGESIZE);
-          (void)pagesize;
-          int fd = 4;
-          void *ptr = mmap(0, 100, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 100);
-          munmap(ptr, 100);
-        ]]
-     )],
-     [
-        have_mmap="yes"
-        AC_DEFINE([HAVE_FULL_MMAP], [1], [Set to 1 as mmap/munmap is usable])
-        AC_DEFINE([HAVE_SYS_MMAP_H], [1], [Set to 1 as sys/mman.h is usable])
-     ],
-    [have_mmap="no"]
-  )
-  ],
-  [have_mmap="no"]
+    [ AC_LANG_PROGRAM(
+      [[
+      #include <unistd.h>
+      #include <string.h>
+      #include <stdlib.h>
+      #include <sys/mman.h>
+      ]],
+      [[
+        long pagesize = sysconf(_SC_PAGESIZE);
+        (void)pagesize;
+        int fd = 4;
+        void *ptr = mmap(0, 100, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 100);
+        munmap(ptr, 100);
+      ]]
+      )
+    ],
+    [ have_mmap="yes"
+      AC_DEFINE(
+        [HAVE_FULL_MMAP], [1],
+        [Set to 1 as mmap/munmap is usable])
+      AC_DEFINE(
+        [HAVE_SYS_MMAP_H], [1],
+        [Set to 1 as sys/mman.h is usable])
+    ],
+    [ have_mmap="no" ]
+  )],
+  [ have_mmap="no" ]
 )
 
 AS_IF(
