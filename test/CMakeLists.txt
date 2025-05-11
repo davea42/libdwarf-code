@@ -358,3 +358,7 @@ if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
     set(dlshdir   "${PROJECT_SOURCE_DIR}/test")
     add_test(NAME selfdebuglinkb COMMAND sh -c "${dlshdir}/test_debuglink-b.sh ${dlbasedir}")
 endif()
+
+if(MINGW OR MSYS OR WIN32)
+    target_link_libraries(selftest_linkedtopath PRIVATE dwarf)
+endif()
