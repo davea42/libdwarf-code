@@ -227,9 +227,10 @@ AS_IF(
       #include <stdlib.h>
       #include <sys/mman.h>
       ]],
-      [  [
+      [[
         long pagesize = sysconf(_SC_PAGESIZE);
         int fd = 4;
+        (void)pagesize;
         mmap(0, 100,PROT_READ|PROT_WRITE,MAP_PRIVATE,
             fd,100);
         munmap((void *)100,100);
@@ -245,7 +246,8 @@ AS_IF(
         [Set to 1 as sys/mmap.h is usable])
     ],
     [ have_mmap = "no"]
-  ]),
+   )
+  ],
   [ have_mmap = "no"]
 )
 
