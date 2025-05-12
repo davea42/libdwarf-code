@@ -48,6 +48,9 @@ if (DO_TESTING)
     target_compile_options(selftest_linkedtopath PRIVATE
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarf"
         "-I${PROJECT_SOURCE_DIR}/src/lib/libdwarfp")
+    if(MINGW OR MSYS OR WIN32)
+        target_link_libraries(selftest_linkedtopath PRIVATE dwarf)
+    endif()
     target_compile_options(selftest_linkedtopath PRIVATE ${DW_FWALL})
     add_test(NAME selftest_linkedtopath COMMAND selftest_linkedtopath)
 endif()
