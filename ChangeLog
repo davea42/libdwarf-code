@@ -1,3 +1,44 @@
+2025-05-16:  David Anderson
+    commit fca77b6d72d3a59645b5cb79cad9f354f777b5bb
+
+    Changes 0.12.0 -> 2.0.0
+            modified:   doc/libdwarf.dox
+    make rebuild updated the 'Generated for' ... comment
+    in the generated source to show as 2.0.0..
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-05-16:  David Anderson
+    commit 4b58b72ffadc862b499d31fc8b820265894f00e3
+
+    New release 2.0.0
+    (skipping 1.x.x entirely)
+            modified:   CMakeLists.txt
+            modified:   ChangeLog
+            modified:   README.md
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+    fixing indent mistakes
+            modified:   test/test_lname.c
+
+2025-05-16:  David Anderson
+    commit 7464a64c588b0b8d0a779b2f505f1872e6f6e2fd
+
+    Improved small example.
+            modified:   tools/makerelease.sh
+    Fixed the version upldate in tools/makerelease.sh
+    to have the correct trailing newline.
+            modified:   tools/updatesemanticversion.py
+
 2025-05-12:  David Anderson
     commit a98c669b3cdd6a4ace9872663425bc116dc758f1
 
