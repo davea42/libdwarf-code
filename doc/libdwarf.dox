@@ -1137,6 +1137,19 @@
 
     We list these with newest first.
 
+    <b>Changes 0.12.0 to 2.0.0</b>
+
+    Skipping all versions 1.x.x because before libdwarf used
+    Semantic Versioning gcc built libdwarf.so.1.0.0 .
+
+    Fixed a longstanding bug in configure.ac
+    which began to cause builds to fail with recent
+    autoconf.
+
+    Fixed a problem in test/CmakeLists.txt that caused 
+    current builds to fail on Msys2 Mingw64.  Had been
+    working for many months.
+
     <b>Changes 0.11.1 to 0.12.0</b>
 
     Released 02 April 2025
