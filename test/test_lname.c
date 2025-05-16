@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*  Usage:  ./test_LNAME
-    where an env var gives path to source tree 
+    where an env var gives path to source tree
     or
     ./test_LNAM -f <path to source tree>
 */
@@ -55,9 +55,9 @@ static char buffer[MAXDEFINELINE];
 #define MAX_LNAME_LEN 30
 #define LNAME_INSTANCE_MAX  100
 struct instance_s {
-   char name[MAX_LNAME_LEN];
-   int  value;
-   int  count;
+    char name[MAX_LNAME_LEN];
+    int  value;
+    int  count;
 };
 
 struct instance_s header[LNAME_INSTANCE_MAX];
@@ -97,20 +97,20 @@ _dwarf_safe_strcpy(char *out,
 }
 
 static void
-check_for_dup(struct instance_s *ary,int count, 
+check_for_dup(struct instance_s *ary,int count,
     char *name, const char *msg)
 {
-     struct instance_s *cur = ary;
-     int k = 0;
-     
-     for ( ; k < count; ++k,++cur) {
-         if (!strcmp(cur->name,name)) {
-             printf("FAIL found %s duplicated %s\n",
-                 name,msg);
-             exit(EXIT_FAILURE);
-         }
-     }
-} 
+    struct instance_s *cur = ary;
+    int k = 0;
+
+    for ( ; k < count; ++k,++cur) {
+        if (!strcmp(cur->name,name)) {
+            printf("FAIL found %s duplicated %s\n",
+                name,msg);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
 
 /* return TRUE on error */
 static void
@@ -130,10 +130,10 @@ check_hdr_match(void)
         struct instance_s * curh = &header[k];
         foundh = FALSE;
         foundc = FALSE;
-       
+
         for (l = 0 ; l < csource_count; ++l) {
             struct instance_s * curc = &csource[l];
-            
+
             if (strcmp(curh->name,curc->name)) {
                 continue;
             }
@@ -162,7 +162,7 @@ check_hdr_match(void)
 
 /*  Fill in struct instance_s csource[LNAME_INSTANCE_MAX] */
 
-static void 
+static void
 read_lname_csrc(char *path)
 {
 
@@ -206,8 +206,8 @@ read_lname_csrc(char *path)
             pastname = curdefname +curdefname_len;
             if (!*pastname) {
                 /* At end of line. Missing value. */
-                printf("WARNING: csrc case name has no comment  %d %s\n",
-                    linenum,path);
+                printf("WARNING: csrc case name has no comment"
+                    "%d %s\n", linenum,path);
                 continue;
             }
             if (*pastname == ' ' || *pastname == ':') {
@@ -220,7 +220,7 @@ read_lname_csrc(char *path)
         }
         if (!name_ok) {
             printf(" Fail checking case  %d src line %d\n",
-                 csource_count,__LINE__);
+                csource_count,__LINE__);
             exit(EXIT_FAILURE);
         }
         if (strlen(curdefname)+1 >=  MAX_LNAME_LEN) {
@@ -331,7 +331,7 @@ read_lname_hdr(char *path)
         }
         if ((header_count +1) != (int)v) {
             printf(" Fail checking defines: count %d v %d line %d\n",
-                 header_count,(int)v, __LINE__);
+                header_count,(int)v, __LINE__);
             exit(EXIT_FAILURE);
         }
         if (strlen(curdefname)+1 >= MAX_LNAME_LEN) {
@@ -345,7 +345,7 @@ read_lname_hdr(char *path)
         ++header_count;
         if (header_count >= LNAME_INSTANCE_MAX) {
             printf("FAIL. No more room in header table, line %d\n",
-               __LINE__);
+                __LINE__);
             exit(EXIT_FAILURE);
         }
         /* Ignoring rest of line */
@@ -405,7 +405,8 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     len = strlen(path);
-    local_safe_strcpy(pathbufhdr,path,sizeof(pathbufhdr),(unsigned)len);
+    local_safe_strcpy(pathbufhdr,path,sizeof(pathbufhdr),
+        (unsigned)len);
     local_safe_strcpy(pathbufhdr+len,(char *)libpath,
         (unsigned)(sizeof(pathbufhdr) -len -1),
         (unsigned)strlen(libpath));
@@ -415,7 +416,7 @@ main(int argc, char **argv)
         (unsigned)(sizeof(pathbufc) -len -1),
         (unsigned)strlen(srchdr));
 
-    read_lname_hdr(pathbufhdr); 
+    read_lname_hdr(pathbufhdr);
     read_lname_csrc(pathbufc);
     check_hdr_match();
     /* OK. */

@@ -1,3 +1,85 @@
+2025-05-12:  David Anderson
+    commit a98c669b3cdd6a4ace9872663425bc116dc758f1
+
+    Updated:
+    Version 0.12.0 -> 0.12.1
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2025-05-12:  David Anderson
+    commit 4ac51d64c2b88d0d6ea230bc47ce210503284cb0
+
+    Normal auto update.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+    Adding so cmake in test dir works for test_linkedtopath build
+            modified:   test/CMakeLists.txt
+
+2025-05-11:  David Anderson
+    commit a07931e2d8ab575a0b4d933e0a44938ba69fbb6d
+
+    Fixing issue with test_debuglink.c
+    and msys2 cmake build.
+    Not passing -DLIBDWARF_BUILD
+    but the value of
+     ${LIBDWARF_STATIC}
+    (either -DLIBDWARF_BUILD for static or empty for shared)
+            modified:   test/CMakeLists.txt
+
+2025-05-11:  David Anderson
+    commit a0ef4c734abe8fbb0d37341c4a58a07d1bdfa0a0
+
+      Adding (void) to suppress any compiler error/warning
+      about unused local variable.
+    @@ -227,9 +227,10 @@ AS_IF(
+           #include <stdlib.h>
+           #include <sys/mman.h>
+           ]],
+    -      [  [
+    +      [[
+             long pagesize = sysconf(_SC_PAGESIZE);
+             int fd = 4;
+    +        (void)pagesize;
+             mmap(0, 100,PROT_READ|PROT_WRITE,MAP_PRIVATE,
+                 fd,100);
+             munmap((void *)100,100);
+
+      Correct an old mistake here, the termination scopes
+      were incorrect.  As of now, though, configure
+      notices the error and we get an error in running
+      the generated configure. Now fixed.
+    @@ -245,7 +246,8 @@ AS_IF(
+             [Set to 1 as sys/mmap.h is usable])
+         ],
+         [ have_mmap = "no"]
+    -  ]),
+    +   )
+    +  ],
+       [ have_mmap = "no"]
+     )
+
+            modified:   configure.ac
+
+2025-04-02:  David Anderson
+    commit c532c653ea23ada335bce06d352ad8470cc8a5a2
+
+    Mentions new release 0.12.0
+            modified:   README.md
+
+2025-04-02:  David Anderson
+    commit c42652c53e5afc61364b736879ebaa302e3f2b43
+
+    Now up to date with git log and 0.12.0 release,
+    though not included as here in the release,
+    the release has  enough data.
+            modified:   ChangeLog
+            modified:   doc/libdwarf.pdf
+
 2025-04-02:  David Anderson
     commit 78232149dfa4740387aedbc0a5bb4e3ba111258e
 
