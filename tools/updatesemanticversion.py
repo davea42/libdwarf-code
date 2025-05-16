@@ -10,7 +10,7 @@ import sys
 
 def usage():
     print("Example of use:")
-    print("  python3 tools/updatesemanticversion.py 0.2.0")
+    print("  python3 tools/updatesemanticversion.py 2.0.0")
     print("Then git push as appropriate")
     sys.exit(0)
 
@@ -108,7 +108,7 @@ def updatedoxversion(doxcount, l, sver):
 def updatemakerelease(mrcount, l, sver):
     if l.startswith("d="):
         wds= l.split("=");
-        l2= ''.join(["d=",sver])
+        l2= ''.join(["d=",sver,"\n"])
         return l2, int(mrcount + 1)
     return l,mrcount;
 

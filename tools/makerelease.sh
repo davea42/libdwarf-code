@@ -4,7 +4,8 @@
 # It uses configure and computes values we put
 # in www.prevanders.net/dwarf.html 
 
-d=0.12.1chkres() {
+d=0.12.1
+chkres() {
 r=$1
 m=$2
 if [ $r -ne 0 ]
