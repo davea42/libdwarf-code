@@ -14,6 +14,12 @@ then
   exit 1
 fi
 
+spath=`pwd`
+d=2.0.0
+tpath="/tmp/allsimple-v$d"
+bbase=$tpath
+tbase="/tmp/allsimpleinstalled-v$d"
+
 echo 'Starting allsimplebuilds.sh' \
    `date "+%Y-%m-%d %H:%M:%S"`
 stsecs=`date '+%s'`
@@ -117,10 +123,6 @@ echo "have meson..................: $havemeson"
 echo "have ninja..................: $haveninja"
 echo "have msys2..................: $havemsys2"
 
-spath=`pwd`
-tpath=/tmp/allsimple-v0.12
-bbase=/tmp/allsimple-v0.12
-tbase=/tmp/allsimpleinstalled-v0.12
 echo "Source directory............: $spath"
 echo "Run builds in temp directory: $bbase"
 echo "Store install directories in: $tbase"

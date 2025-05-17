@@ -111,6 +111,13 @@ def updatemakerelease(mrcount, l, sver):
         l2= ''.join(["d=",sver,"\n"])
         return l2, int(mrcount + 1)
     return l,mrcount;
+"d=0.10.2"
+def updateallsimplebuilds(asbcount, l, sver):
+    if l.startswith("d="):
+        wds= l.split("=");
+        l2= ''.join(["d=",sver,"\n"])
+        return l2, int(asbcount + 1)
+    return l,asbcount;
 
 def updatemmversion(mmcount, l, sver):
     if l.startswith(mm):
@@ -144,12 +151,13 @@ def updateacversion(account, l, sver, maj, min, mic):
     return l, int(account)
 
 
-#  type is "ac" or "cm"
+#  type is "ac" or "cm" (etc)
 def updatefile(fname, type, sver, maj, min, mic):
     foundcm = 0
     foundac = 0
     foundlh = 0
     foundmm = 0
+    foundasb = 0
     founddox = 0
     foundmmeson = 0
     foundmr = 0
@@ -182,6 +190,10 @@ def updatefile(fname, type, sver, maj, min, mic):
             continue
         elif type == "mr":
             lx, foundmr = updatemakerelease(foundmr, l, sver)
+            outdata += [lx]
+            continue
+        elif type == "asb":
+            lx, foundasb = updateallsimplebuilds(foundasb, l, sver)
             outdata += [lx]
             continue
         elif type == "dox":
@@ -254,3 +266,4 @@ if __name__ == "__main__":
     updatefile("doc/libdwarfp.mm", "mm", sver, maj, min, mic)
     updatefile("meson.build", "mmeson", sver, maj, min, mic)
     updatefile("tools/makerelease.sh", "mr", sver, maj, min, mic)
+    updatefile("scripts/allsimplebuilds.sh", "asb", sver, maj, min, mic)
