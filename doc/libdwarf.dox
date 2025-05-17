@@ -1150,6 +1150,12 @@
     current builds to fail on Msys2 Mingw64.  Had been
     working for many months.
 
+    Updated the error report (for zlib, zstd) when
+    decompression exceeds a heuristic. Now reports
+    the compressed-len and the uncompressed-len.
+    Increased the heuristic multiple allowed from 16
+    to 32.
+
     <b>Changes 0.11.1 to 0.12.0</b>
 
     Released 02 April 2025

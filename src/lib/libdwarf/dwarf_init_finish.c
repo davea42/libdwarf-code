@@ -1195,6 +1195,80 @@ dwarf_object_finish(Dwarf_Debug dbg)
 }
 
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+
+static int
+check_uncompr_inflation(Dwarf_Debug dbg,
+    Dwarf_Error *error,
+    Dwarf_Unsigned uncompressed_len,
+    Dwarf_Unsigned srclen,
+    Dwarf_Unsigned max_inflated_len,
+    const char *libname)
+{
+    char buf[100];
+
+    buf[0] = 0;
+    if (srclen > 50)  {
+        /*  If srclen not super tiny lets check the following. */
+        if (uncompressed_len < (srclen/2)) {
+            dwarfstring m;
+
+            dwarfstring_constructor_static(&m,buf,sizeof(buf));
+            dwarfstring_append_printf_s(&m,
+            /*  Violates the approximate invariant about
+                compression not actually inflating. */
+                "DW_DLE_ZLIB_UNCOMPRESS_ERROR:"
+                " The %s compressed section  is"
+                "absurdly small. Corrupt dwarf",(char *)libname);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_ZLIB_UNCOMPRESS_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+    }
+    if (max_inflated_len < srclen) {
+        /* The calculation overflowed. */
+        dwarfstring m;
+
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
+        dwarfstring_append_printf_s(&m,
+            /*  Violates the approximate invariant about
+                compression not actually inflating. */
+            "DW_DLE_ZLIB_UNCOMPRESS_ERROR:"
+            " The %s compressed section  is"
+            " absurdly large so arithmentic overflow."
+            " So corrupt dwarf",(char *)libname);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ZLIB_UNCOMPRESS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    if (uncompressed_len > max_inflated_len) {
+        dwarfstring m;
+
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
+        /*  This has happened to a specific
+            set of gcc options, though we have no
+            test case with this issue. */
+        dwarfstring_append_printf_s(&m,
+            "DW_DLE_ZLIB_UNCOMPRESS_ERROR"
+            " The %s compressed section ",(char *)libname);
+        dwarfstring_append_printf_u(&m,
+            "(length %u)",srclen);
+        dwarfstring_append_printf_u(&m,
+            " uncompresses to %u bytes which seems"
+            " absurdly large given the input section.",
+            uncompressed_len);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ZLIB_UNCOMPRESS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    return DW_DLV_OK;
+}
+
 /*  case 1:
     The input stream is assumed to contain
     the four letters
@@ -1220,8 +1294,8 @@ dwarf_object_finish(Dwarf_Debug dbg)
 /*  ALLOWED_ZLIB_INFLATION is a heuristic, not necessarily right.
     The test case klingler2/compresseddebug.amd64 actually
     inflates about 8 times.  */
-#define ALLOWED_ZLIB_INFLATION 16
-#define ALLOWED_ZSTD_INFLATION 16
+#define ALLOWED_ZLIB_INFLATION 32
+#define ALLOWED_ZSTD_INFLATION 32
 static int
 do_decompress(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
@@ -1316,40 +1390,15 @@ do_decompress(Dwarf_Debug dbg,
             though we, here, assume  such a limit to check
             for sanity in the object file.
             These tests are heuristics.  */
+        int res = 0;
         Dwarf_Unsigned max_inflated_len =
             srclen*ALLOWED_ZLIB_INFLATION;
 
-        if (srclen > 50)  {
-            /*  If srclen not super tiny lets check the following. */
-            if (uncompressed_len < (srclen/2)) {
-                /*  Violates the approximate invariant about
-                    compression not actually inflating. */
-                _dwarf_error_string(dbg, error,
-                    DW_DLE_ZLIB_UNCOMPRESS_ERROR,
-                    "DW_DLE_ZLIB_UNCOMPRESS_ERROR"
-                    " The zlib compressed section  is"
-                    "absurdly small. Corrupt dwarf");
-                return DW_DLV_ERROR;
-            }
-        }
-        if (max_inflated_len < srclen) {
-            /* The calculation overflowed. */
-            _dwarf_error_string(dbg, error,
-                DW_DLE_ZLIB_UNCOMPRESS_ERROR,
-                "DW_DLE_ZLIB_UNCOMPRESS_ERROR:"
-                " The zlib compressed section  is"
-                " absurdly large so arithmentic overflow."
-                " So corrupt dwarf");
-            return DW_DLV_ERROR;
-        }
-        if (uncompressed_len > max_inflated_len) {
-            _dwarf_error_string(dbg, error,
-                DW_DLE_ZLIB_UNCOMPRESS_ERROR,
-                "DW_DLE_ZLIB_UNCOMPRESS_ERROR"
-                " The zlib compressed section  is"
-                " absurdly large given the input section"
-                " length. So corrupt dwarf");
-            return DW_DLV_ERROR;
+        res = check_uncompr_inflation(dbg,
+             error, uncompressed_len, srclen,max_inflated_len, 
+             "zlib");
+        if (res != DW_DLV_OK) {
+             return res;
         }
     }
     if (zstdcompress) {
@@ -1359,41 +1408,16 @@ do_decompress(Dwarf_Debug dbg,
             though we, here, assume  such a limit to check
             for sanity in the object file.
             These tests are heuristics.  */
+        int res = 0;
         Dwarf_Unsigned max_inflated_len =
             srclen*ALLOWED_ZSTD_INFLATION;
+        res = check_uncompr_inflation(dbg,
+             error, uncompressed_len, srclen,max_inflated_len, 
+             "zstd");
+        if (res != DW_DLV_OK) {
+             return res;
+        }
 
-        if (srclen > 50)  {
-            /*  If srclen not super tiny lets check the following. */
-            if (uncompressed_len < (srclen/2)) {
-                /*  Violates the approximate invariant about
-                    compression not actually inflating. */
-                _dwarf_error_string(dbg, error,
-                    DW_DLE_ZLIB_UNCOMPRESS_ERROR,
-                    "DW_DLE_ZLIB_UNCOMPRESS_ERROR"
-                    " The zstd compressed section  is"
-                    "absurdly small. Corrupt dwarf");
-                return DW_DLV_ERROR;
-            }
-        }
-        if (max_inflated_len < srclen) {
-            /* The calculation overflowed. */
-            _dwarf_error_string(dbg, error,
-                DW_DLE_ZLIB_UNCOMPRESS_ERROR,
-                "DW_DLE_ZLIB_UNCOMPRESS_ERROR"
-                " The zstd compressed section  is"
-                " absurdly large so arithmentic overflow."
-                " So corrupt dwarf");
-            return DW_DLV_ERROR;
-        }
-        if (uncompressed_len > max_inflated_len) {
-            _dwarf_error_string(dbg, error,
-                DW_DLE_ZLIB_UNCOMPRESS_ERROR,
-                "DW_DLE_ZLIB_UNCOMPRESS_ERROR"
-                " The zstd compressed section  is"
-                " absurdly large given the input section"
-                " length. So corrupt dwarf");
-            return DW_DLV_ERROR;
-        }
     }
     if ((src +srclen) > endsection) {
         _dwarf_error_string(dbg, error,
