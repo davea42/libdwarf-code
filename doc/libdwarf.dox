@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-15-16 v2.0.0
+    @date 2025-15-18 v2.0.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -15,13 +15,28 @@
     B) Are the titles on the Modules page  meaningful to you?
 
     Anything else you find misleading or confusing?
-    Send suggestions to ( libdwarf-list (at)
-    prevanders with final characters .org ) Sorry
+    Send suggestions to ( libdwarf (at)
+    linuxmail with final characters .org ) Sorry
     about the simple obfuscation to keep bots
-    away. It's actually a simple email address,
-    not a list.
+    away.
 
     Thanks in advance for any suggestions.
+
+    @section clone_command Downloading Libdwarf
+
+    Project page is at <b>github.com/davea42/libdwarf-code</b>
+
+    For details on licensing, see COPYING .
+    on the project page.
+
+    README.md may be of interest.
+
+    Examples of using libdwarf are in doc/checkexamples.c
+    and src/bin/dwarfexamples.
+
+    To download source, do:
+
+    <b>git clone https://github.com/davea42/libdwarf-code</b>
 
     @section dwsec_intro Introduction
 

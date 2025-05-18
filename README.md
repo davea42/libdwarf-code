@@ -1,6 +1,6 @@
 # This is libdwarf README.md
 
-Updated 16 May 2025
+Updated 18 May 2025
 
 ## Goal
 Libdwarf has been focused for years
@@ -19,6 +19,12 @@ support will be added (as soon as
 reasonably possible) to libdwarf for all
 changes/additions while continuing to support
 previous versions.
+
+Libdwarf reads files from disk, it does not
+read running programs or running shared objects.
+
+See REQUIREMENTS below for information
+on what libraries are needed.
 
 ## github actions
 ci runs builds on Linux, Freebsd, msys2, and MacOS
@@ -61,6 +67,9 @@ with zlib(libz) or libzstd
 neither those libraries nor their header files
 are required for building/using
 libdwarf/dwarfdump.
+
+No libraries other than libc are needed to build or
+use libdwarf or dwarfdump.
 
     Ubuntu:
     sudo apt install xz pkgconf zlib1g zlib1g-dev libzstd1

@@ -2286,8 +2286,16 @@ int dwarf_language_version_string(
 {
     const char *lname = 0;
     int res = 0;
+    unsigned int ui = 0;
+    unsigned int unreasonable_name = 65535;
 
-    res = dwarf_get_LNAME_name((unsigned int)dw_lang_name,&lname);
+    if (dw_lang_name >= unreasonable_name) {
+         /*   Want to deal with improper code calling here,
+              not just trim off upper bits in the cast.  */
+         return DW_DLV_NO_ENTRY;
+    }
+    ui = (unsigned int)dw_lang_name;
+    res = dwarf_get_LNAME_name(ui,&lname);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }

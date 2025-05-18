@@ -245,10 +245,10 @@ AS_IF(
         [HAVE_SYS_MMAP_H], [1],
         [Set to 1 as sys/mmap.h is usable])
     ],
-    [ have_mmap = "no"]
+    [ have_mmap="no"]
    )
   ],
-  [ have_mmap = "no"]
+  [ have_mmap="no"]
 )
 
 AS_IF(
