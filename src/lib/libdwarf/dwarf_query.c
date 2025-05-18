@@ -2287,7 +2287,7 @@ int dwarf_language_version_string(
     const char *lname = 0;
     int res = 0;
 
-    res = dwarf_get_LNAME_name(dw_lang_name,&lname);
+    res = dwarf_get_LNAME_name((unsigned int)dw_lang_name,&lname);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
