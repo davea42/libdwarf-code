@@ -24,7 +24,7 @@
 
     @section clone_command Downloading Libdwarf
 
-    Project page is at <b>github.com/davea42/libdwarf-code</b>
+    Project page is at <b>https://github.com/davea42/libdwarf-code</b>
 
     For details on licensing, see COPYING .
     on the project page.
@@ -36,7 +36,12 @@
 
     To download source, do:
 
-    <b>git clone https://github.com/davea42/libdwarf-code</b>
+    <b>git clone https://github.com/davea42/libdwarf-code code</b>
+
+    Some tests simply assume the project source base name is
+    <b>code</b> which is why the above is as shown.
+    This is a grave historical misfeature that needs to be fixed in
+    the test scripts.
 
     @section dwsec_intro Introduction
 
