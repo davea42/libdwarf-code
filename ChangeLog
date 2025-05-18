@@ -1,3 +1,54 @@
+2025-05-18:  David Anderson
+    commit adfcbb542e792e4e4a497695620c13d834533368
+
+    Clarification on libraries needed.
+            modified:   README.md
+    Corrects typos in configure.ac (related to have_mmap)
+            modified:   configure.ac
+    Updates to today's date. Adds a section on
+    downloading the library.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+    Improves dwarf_language_version_string(), guarding
+    against a malicious-value input argument.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-05-17:  David Anderson
+    commit 8b7d924f14db56385e87adbe44f76cbe9744b8c4
+
+    In  dwarf_language_version_string() called
+    dwarf_get_LNAME_name without casting Dwarf_Unsigned
+    to unsigned int. Now with cast
+    Windows VS warning fixed.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-05-17:  David Anderson
+    commit 67cd09740080e55ecfa443182b96c34601acd362
+
+    Added a note as we revise the heuristics on
+    zstd/zlib to print the values resulting in error.
+            modified:   doc/libdwarf.dox
+    Improved error reports and created a new local function
+    so even with longer error-check code calling it
+    from two places (avoiding duplication)
+    results in 20 lines less source code.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2025-05-17:  David Anderson
+    commit 0a9a3acb94035295ccd76fa962c734b77b647486
+
+            modified:   scripts/allsimplebuilds.sh
+
+    Now also updates semantic version in scripts/allsimplebuilds.sh
+            modified:   tools/updatesemanticversion.py
+
+2025-05-16:  David Anderson
+    commit 74196785ec0a9761cd3f22342b3c724977014447
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2025-05-16:  David Anderson
     commit fca77b6d72d3a59645b5cb79cad9f354f777b5bb
 
