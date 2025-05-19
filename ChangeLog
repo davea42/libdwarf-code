@@ -1,3 +1,31 @@
+2025-05-19:  David Anderson
+    commit 4b8ee38733ab01419479224d157533190d276cab
+
+    Getting this to final, minor tweaks
+    about getting from github.
+            modified:   doc/libdwarf.pdf
+
+    Now that the leading element of semantic version
+    is 2 (instead of 0) some script elements needed
+    update to pass cmake and meson tests
+    on windows msys2 with shared libraries (dll).
+            modified:   test/CMakeLists.txt
+            modified:   test/meson.build
+            modified:   test/test_dwarfdump.py
+            modified:   test/test_dwarfdumpsetup.sh
+
+2025-05-18:  David Anderson
+    commit 92ece19483a939435698f7aaa8f1c97610704b23
+
+    Massaging a message abouut the project location.
+            modified:   doc/libdwarf.dox
+
+2025-05-18:  David Anderson
+    commit 1fd76e84d4e636e4d1e3f45e8f99bf358a471686
+
+    Now with latest changes.
+            modified:   ChangeLog
+
 2025-05-18:  David Anderson
     commit adfcbb542e792e4e4a497695620c13d834533368
 
