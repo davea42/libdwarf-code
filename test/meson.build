@@ -129,6 +129,7 @@ foreach atest_src : argstests
   test(atest_name,atexec, args: ['-f',projectbase])
 endforeach
 
+semantic_ver = meson.project_version()
 pyscripttests = [
   ['Elf'],
   ['PE',],
@@ -153,9 +154,10 @@ if py3_exe.found()
   foreach testscr : pyscripttests
     pytest_name = testscr[0]
     message(pytest_name)
+    semanticver = meson.project_version()
     buildbase = builddir
     pyexec_name = join_paths(projectbase,'test','test_dwarfdump.py')
-    test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase])
+    test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase, semanticver])
   endforeach
 endif
 

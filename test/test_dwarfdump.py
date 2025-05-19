@@ -3,7 +3,8 @@
 # for anyone to used for any purpose.
 #
 # Run in test dir as:
-# test_dwarfdump.py filetype buildsys sourcedirbase builddirbase
+# test_dwarfdump.py filetype buildsys sourcedirbase builddirbase \
+#  semanticver
 # where filetype is Elf, PE, or Macos
 # where buildsys is conf, cmake, or meson
 
@@ -54,6 +55,7 @@ class tdata:
         self.buildsystem = False
         self.srcbase = False
         self.bldbase = False
+        self.semanticver = False
         self.cwd = False
 
     def tprint(self):
@@ -61,7 +63,8 @@ class tdata:
         print("Testdata build system   :", self.buildsystem)
         print("Testdata source base dir:", self.srcbase)
         print("Testdata build base dir :", self.bldbase)
-        print("Testdata  working dir   :", self.cwd)
+        print("Testdata working dir    :", self.cwd)
+        print("Testdata Semantic Ver   :", self.semanticver)
 
 
 def setupfilesinvolved(td, dd):
@@ -169,16 +172,23 @@ def rundwarfdump(td, dd, dwarfdumppath, objpath, lmaxlines):
 # we are in windows copy dll from lib build to
 # the dwarfdump build directory.
 def copydll(td):
+    semantic = td.semanticver
+    svlist = semantic.split(".")
+    dllv = svlist[0]
+    print("Copy dll semantic:",semantic," Prefixnum",dllv)
+    dllname=''.join(["libdwarf-",dllv,".dll"])
     dllpath = os.path.join(td.bldbase,
-        "src/lib/libdwarf/libdwarf-0.dll")
+        "src/lib/libdwarf",dllname)
     targetdllpath= os.path.join(td.bldbase,
-        "src/bin/dwarfdump/libdwarf-0.dll")
+        "src/bin/dwarfdump",dllname)
+    print("dllpath",dllpath)
+    print("targetdllpath",targetdllpath)
     if os.path.exists(dllpath):
         if not os.path.exists(targetdllpath):
             shutil.copy(dllpath,targetdllpath)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("FAIL test_dwarfdump.py arg count wrong")
         sys.exit(1)
     td = tdata()
@@ -186,6 +196,7 @@ if __name__ == "__main__":
     td.buildsystem = sys.argv[2]
     td.srcbase = sys.argv[3]
     td.bldbase = sys.argv[4]
+    td.semanticver = sys.argv[5]
     td.cwd = os.getcwd()
     print("Running dwarfdump test")
     td.tprint()

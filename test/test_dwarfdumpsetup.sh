@@ -27,7 +27,7 @@ then
       top_blddir=`pwd`
       echo "For ninja set top blddir $top_blddir"
     else
-      ignore, we leav top_blddir as above.
+      echo "ignore, we leave top_blddir as above."
     fi
   fi
 else
