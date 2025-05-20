@@ -11,8 +11,8 @@ have_doc = 'no'
 if get_option('doc') == true
   doxygen = find_program('doxygen', required : false)
   if doxygen.found() == true
-  have_doc = 'yes'
-    doxygen_cmd = run_command(doxygen)
+    have_doc = 'yes'
+    doxygen_cmd = run_command(doxygen, check: true)
     if doxygen_cmd.returncode() == 0
       dir_doc = join_paths(dir_data, 'doc/libdwarf')
       install_subdir('html', install_dir : dir_doc)
