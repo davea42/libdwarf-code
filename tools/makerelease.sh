@@ -4,7 +4,7 @@
 # It uses configure and computes values we put
 # in www.prevanders.net/dwarf.html 
 
-d=2.0.0
+d=2.0.1
 chkres() {
 r=$1
 m=$2
