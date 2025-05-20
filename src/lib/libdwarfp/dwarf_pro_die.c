@@ -332,7 +332,7 @@ make_debug_str_entry(Dwarf_P_Debug dbg,
 {
     struct Dwarf_P_debug_str_entry_s *mt =
         (struct  Dwarf_P_debug_str_entry_s *)calloc(
-        sizeof(struct Dwarf_P_debug_str_entry_s),1);
+        1,sizeof(struct Dwarf_P_debug_str_entry_s));
     if (!mt) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
