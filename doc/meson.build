@@ -13,11 +13,9 @@ if get_option('doc') == true
   if doxygen.found() == true
     have_doc = 'yes'
     doxygen_cmd = run_command(doxygen, check: true)
-    if doxygen_cmd.returncode() == 0
-      dir_doc = join_paths(dir_data, 'doc/libdwarf')
-      install_subdir('html', install_dir : dir_doc)
-      install_subdir('latex', install_dir : dir_doc)
-    endif
+    dir_doc = join_paths(dir_data, 'doc/libdwarf')
+    install_subdir('html', install_dir : dir_doc)
+    install_subdir('latex', install_dir : dir_doc)
   else
     warning('doxygen not found, documentation generation is disabled')
   endif
