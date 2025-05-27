@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-15-18 v2.0.1
+    @date 2025-05-25 v2.0.1
 
     @section draft Suggestions for improvement are welcome.
 
@@ -26,15 +26,19 @@
 
     Project page is at <b>https://github.com/davea42/libdwarf-code</b>
 
-    For details on licensing, see COPYING .
-    on the project page.
+    There is a Releases area on the project page, click Latest
+    and you will be presented with 
+    options to download the source in three different forms.
 
-    README.md may be of interest.
+    For details on licensing, see COPYING in the files list.
+
+    README.md may be of interest (automatically shown on
+    the project page on github..
 
     Examples of using libdwarf are in doc/checkexamples.c
     and src/bin/dwarfexamples.
 
-    To download source, do:
+    To download source, one can also do:
 
     <b>git clone https://github.com/davea42/libdwarf-code code</b>
 
@@ -1156,6 +1160,11 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 2.0.0 to 2.0.1</b>
+
+    Fixed minor warnings from a compiler (dwarfgen) and from meson.
+    No change to output.
 
     <b>Changes 0.12.0 to 2.0.0</b>
 
