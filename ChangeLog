@@ -1,3 +1,77 @@
+2025-05-27:  David Anderson
+    commit 241d7df49baba5203b6fb7b0dbd686384e486741
+
+    Clarifying. Minor.
+            modified:   doc/libdwarf.dox
+
+2025-05-27:  David Anderson
+    commit 7ba7e631834563fb5e29fd0b067618eec5999729
+    Merge: cb0ad9a8 60739f37
+
+    Merge branch 'zwilcox-make_libdwarfp_build'
+     Fixing libdwarfp with dwarfgen build issue
+
+2025-05-26:  zwilcox
+    commit 60739f376b27be9286e8781143ffeebd9e9fe08a
+
+    meson build when trying to build libdwarfp.  Updating Makefile.am
+    (correction: this is about autoconf, nothing to
+    do with meson libdwarfp/Makefile.am)
+
+2025-05-20:  David Anderson
+    commit cb0ad9a8e4b178d802db8d5ae0b680a6a8858eeb
+
+    Version changed so regenerated these
+    with 'make rebuild' .
+    (version appears in a comment in the files)
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-05-20:  David Anderson
+    commit 615586dca09f6dde64339d5024c9dc5b33d13600
+
+    Since vtorri found minor issues
+    (libdwarfp and meson warning)
+    we update the version to 2.0.1
+
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2025-05-20:  vtorri
+    commit 83ea885454c453cdf687da2e4f0210bd73dd0905
+
+    meson: remove deprecated behavior (#292)
+
+    * meson: remove deprecated behavior
+
+            modified:   doc/meson.build
+
+    * remove useless code
+
+2025-05-20:  vtorri
+    commit 938d138ee245ac819f6b852b9f5025a5648e7e80
+
+    Fix minor warning in libdwarfp (#290)
+
+    modified:   src/lib/libdwarfp/dwarf_pro_die.c
+
+2025-05-19:  David Anderson
+    commit be6d4ca64e41698514dc2355f9ae75070aed119f
+
+    Minor fixes for msys2 shared-lib tests.
+            modified:   ChangeLog
+
 2025-05-19:  David Anderson
     commit 4b8ee38733ab01419479224d157533190d276cab
 
