@@ -1,3 +1,25 @@
+2025-05-28:  David Anderson
+    commit bd3aaa0c50e698266777e07381dbfe71540a2a52
+
+    This removes the only reference to LIBDWARFP_BUILD
+    in the project. Harmless, but it was never used.
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2025-05-28:  David Anderson
+    commit 2640238cc0a9a41507830b83546ce26f38196471
+
+    The heuristics trying to identify a bogus
+    decompression do not work properly, real
+    compression ratios can be extreme.
+    Now eliminated by #if 0
+            modified:   dwarf_init_finish.c
+
+2025-05-27:  David Anderson
+    commit e773c9fe00b27f1a6ea53232546d7de4874b6140
+
+    Now up to date.
+            modified:   ChangeLog
+
 2025-05-27:  David Anderson
     commit 241d7df49baba5203b6fb7b0dbd686384e486741
 
