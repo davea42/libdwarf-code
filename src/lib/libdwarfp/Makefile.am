@@ -55,9 +55,9 @@ dwarf_pro_vars.c \
 dwarf_pro_weaks.c
 
 
+### -DLIBDWARFP_BUILD this is not used anywhere Old mistake.
 libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
 libdwarfp_la_CPPFLAGS = \
--DLIBDWARFP_BUILD \
 -DLIBDWARF_BUILD \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
