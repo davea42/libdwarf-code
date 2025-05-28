@@ -1196,6 +1196,7 @@ dwarf_object_finish(Dwarf_Debug dbg)
 
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
 
+#if 0
 static int
 check_uncompr_inflation(Dwarf_Debug dbg,
     Dwarf_Error *error,
@@ -1227,7 +1228,8 @@ check_uncompr_inflation(Dwarf_Debug dbg,
         }
     }
     if (max_inflated_len < srclen) {
-        /* The calculation overflowed. */
+        /*  The calculation overflowed or compression
+            inflated the data. */
         dwarfstring m;
 
         dwarfstring_constructor_static(&m,buf,sizeof(buf));
@@ -1268,6 +1270,7 @@ check_uncompr_inflation(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
+#endif /* 0 */
 
 /*  case 1:
     The input stream is assumed to contain
@@ -1291,11 +1294,14 @@ check_uncompr_inflation(Dwarf_Debug dbg,
 
     */
 
+#if 0
 /*  ALLOWED_ZLIB_INFLATION is a heuristic, not necessarily right.
     The test case klingler2/compresseddebug.amd64 actually
     inflates about 8 times.  */
 #define ALLOWED_ZLIB_INFLATION 32
 #define ALLOWED_ZSTD_INFLATION 32
+#endif /* 0 */
+
 static int
 do_decompress(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
@@ -1383,6 +1389,8 @@ do_decompress(Dwarf_Debug dbg,
             " The compressed section is not properly formatted");
         return DW_DLV_ERROR;
     }
+#if 0
+    /*  The heuristics are unreliable. Turned off now  */
     if (!zstdcompress) {
         /*  According to zlib.net zlib essentially never expands
             the data when compressing.  There is no statement
@@ -1417,8 +1425,8 @@ do_decompress(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
              return res;
         }
-
     }
+#endif /* 0 */
     if ((src +srclen) > endsection) {
         _dwarf_error_string(dbg, error,
             DW_DLE_ZLIB_SECTION_SHORT,
