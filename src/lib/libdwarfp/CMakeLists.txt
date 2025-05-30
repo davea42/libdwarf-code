@@ -1,4 +1,7 @@
 set_source_group(SOURCES "Source Files"
+../libdwarf/dwarf_memcpy_swap.c
+../libdwarf/dwarf_string.c
+../libdwarf/dwarf_tsearchhash.c
 dwarf_pro_alloc.c dwarf_pro_arange.c
 dwarf_pro_debug_sup.c
 dwarf_pro_die.c dwarf_pro_dnames.c
@@ -29,9 +32,12 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
     ${PROJECT_BINARY_DIR}/config.h)
 
 if (BUILD_SHARED)
-    set(COMPILER_FLAGS -DLIBDWARF_BUILD -DPIC)
+    if(NOT BUILD_DWARFGEN)
+      set(CMAKE_C_VISIBILITY_PRESET hidden)
+    endif()
+    set(DEFS LIBDWARF_BUILD PIC)
 else()
-    set(COMPILER_FLAGS -DLIBDWARF_STATIC)
+    set(DEFS LIBDWARF_STATIC)
 endif()
 
 if (BUILD_SHARED)
@@ -41,7 +47,11 @@ else()
     add_library(dwarfp STATIC ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
     add_library(libdwarf::dwarfp-static ALIAS dwarfp)
 endif()
+if(MINGW OR MSYS OR WIN32)
+    target_link_libraries(dwarfp PRIVATE dwarf)
+endif()
 set_folder(dwarfp src/lib/libdwarfp)
+target_compile_definitions(dwarfp PUBLIC ${DEFS})
 target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/lib/libdwarf> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 set_target_properties(dwarfp PROPERTIES VERSION "${PROJECT_VERSION}" SOVERSION "${PROJECT_VERSION_MAJOR}")
 target_compile_options(dwarfp PRIVATE ${DW_COMPILER_FLAGS}
