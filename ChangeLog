@@ -1,3 +1,59 @@
+2025-05-31:  David Anderson
+    commit 1ff164059b46b630d05c93a1a44ab8f955ee7b77
+
+    On current MacOS (as with MSYS2) we need a
+       target_link_libraries(dwarfp PRIVATE dwarf)
+    when building shared libdwarfp
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+
+2025-05-31:  David Anderson
+    commit 1c233af544f82acdcf6d1a63acf5cc9a7c660a15
+
+    Now all the builds request dwarfgen build too.
+    Just for completeness, not because it's necessary
+    (except for running full regression tests).
+            modified:   scripts/allsimplebuilds.sh
+
+2025-05-30:  David Anderson
+    commit ebb64d792278b8f2656e465b7676daa3b5ebd37c
+
+    github Issue 293: cmake building dwarfgen and libdwarfp
+    failed.
+    The file failed to include three libdwarf files that
+    needed to be compiled here to expose hidden libdwarf
+    objects (to the libdwarfp context)
+    +../libdwarf/dwarf_memcpy_swap.c
+    +../libdwarf/dwarf_string.c
+    +../libdwarf/dwarf_tsearchhash.c
+
+    In addition added
+    +if(MINGW OR MSYS OR WIN32)
+    +    target_link_libraries(dwarfp PRIVATE dwarf)
+    +endif()
+
+    Plus, revised the compiler flags settings to make this
+    as much like the libdwarf CMakeLists.txt as possible:
+     if (BUILD_SHARED)
+    -    set(COMPILER_FLAGS -DLIBDWARF_BUILD -DPIC)
+    +    if(NOT BUILD_DWARFGEN)
+    +      set(CMAKE_C_VISIBILITY_PRESET hidden)
+    +    endif()
+    +    set(DEFS LIBDWARF_BUILD PIC)
+     else()
+    -    set(COMPILER_FLAGS -DLIBDWARF_STATIC)
+    +    set(DEFS LIBDWARF_STATIC)
+     endif()
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+
+    Now we can build shared-library libdwarfp-2.dll on
+    msys2.
+
+2025-05-28:  David Anderson
+    commit 3af021f64c698bb87c4b39f911a9612ab0b7b901
+
+    Noted removal of compression heuristics
+            modified:   ChangeLog
+
 2025-05-28:  David Anderson
     commit bd3aaa0c50e698266777e07381dbfe71540a2a52
 
