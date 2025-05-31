@@ -1,6 +1,7 @@
 2025-05-31:  David Anderson
     commit 1ff164059b46b630d05c93a1a44ab8f955ee7b77
 
+    Simplification of the fix to github Issue 293.
     On current MacOS (as with MSYS2) we need a
        target_link_libraries(dwarfp PRIVATE dwarf)
     when building shared libdwarfp
@@ -30,6 +31,9 @@
     +if(MINGW OR MSYS OR WIN32)
     +    target_link_libraries(dwarfp PRIVATE dwarf)
     +endif()
+    In 1ff164059b46b630d05c93a1a44ab8f955ee7b77 above
+    simplified to just
+    + target_link_libraries(dwarfp PRIVATE dwarf)
 
     Plus, revised the compiler flags settings to make this
     as much like the libdwarf CMakeLists.txt as possible:
