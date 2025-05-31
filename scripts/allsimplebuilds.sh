@@ -142,6 +142,8 @@ cd $tpath
 chkres $? "cd to $tpath fails"
 rm -rf *
 
+echo "You are unlikely to ever need libdwarfp or"
+echo "dwarfgen but we build those here for completeness"
 echo "Building with configure, shared library"
 if [ "$havemake" = "no" ]
 then
@@ -157,6 +159,7 @@ else
     --disable-static   \
     --enable-shared \
     --enable-dwarfexample \
+    --enable-dwarfgen \
     --prefix=$prefx
   chkres $? "configure setup shared fail c"
   make
@@ -186,6 +189,7 @@ else
     --disable-shared   \
     --enable-static \
     --enable-dwarfexample \
+    --enable-dwarfgen \
     --prefix=$prefx
   chkres $? "configure setup static fail c"
   make
@@ -213,6 +217,7 @@ else
     --prefix=$prefx \
     -Dwerror=false  \
     -Ddwarfexample=true \
+    -Ddwarfgen=true \
     . $spath
   chkres $? "Meson setup shared fail c"
   ninja
@@ -240,6 +245,7 @@ else
     --prefix=$prefx \
     -Dwerror=false  \
     -Ddwarfexample=true \
+    -Ddwarfgen=true \
     . $spath
   chkres $? "Meson setup static library fail c"
   ninja
@@ -266,6 +272,7 @@ else
     -DBUILD_SHARED=YES \
     -DBUILD_NON_SHARED=NO \
     -DBUILD_DWARFEXAMPLE:BOOL=YES \
+    -DBUILD_DWARFGEN:BOOL=YES \
     -DDO_TESTING:BOOL=YES \
     -DCMAKE_INSTALL_PREFIX=$prefx \
     $spath
@@ -292,6 +299,7 @@ else
   chkres $? "cd cmake static directory fail b"
   cmake -G Ninja  \
     -DBUILD_DWARFEXAMPLE:BOOL=YES \
+    -DBUILD_DWARFGEN:BOOL=YES \
     -DBUILD_SHARED=NO \
     -DBUILD_NON_SHARED=YES \
     -DDO_TESTING:BOOL=YES \
