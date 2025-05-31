@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-05-25 v2.0.1
+    @date 2025-05-31 v2.0.1
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1165,6 +1165,12 @@
 
     Fixed minor warnings from a compiler (dwarfgen) and from meson.
     No change to output.
+
+    Removed heuristic checks for decompress reasonableness
+    as such proved to be ... unreasonable.
+
+    Corrected the cmake build of shared-library 
+    libdwarfp/CMakeLists.txt
 
     <b>Changes 0.12.0 to 2.0.0</b>
 

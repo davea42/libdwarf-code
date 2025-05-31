@@ -47,10 +47,10 @@ else()
     add_library(dwarfp STATIC ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
     add_library(libdwarf::dwarfp-static ALIAS dwarfp)
 endif()
-# Macos needs the PRIVATE too using 'APPLE'
-if(MINGW OR MSYS OR WIN32 OR APPLE)
-    target_link_libraries(dwarfp PRIVATE dwarf)
-endif()
+# Macos needs the PRIVATE too using APPLE
+# needed with MINGW OR MSYS OR WIN32 OR APPLE
+# allowed everywhere.
+target_link_libraries(dwarfp PRIVATE dwarf)
 set_folder(dwarfp src/lib/libdwarfp)
 target_compile_definitions(dwarfp PUBLIC ${DEFS})
 target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/lib/libdwarf> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
