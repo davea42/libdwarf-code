@@ -2290,9 +2290,9 @@ int dwarf_language_version_string(
     unsigned int unreasonable_name = 65535;
 
     if (dw_lang_name >= unreasonable_name) {
-         /*   Want to deal with improper code calling here,
-              not just trim off upper bits in the cast.  */
-         return DW_DLV_NO_ENTRY;
+        /*  Want to deal with improper code calling here,
+            not just trim off upper bits in the cast.  */
+        return DW_DLV_NO_ENTRY;
     }
     ui = (unsigned int)dw_lang_name;
     res = dwarf_get_LNAME_name(ui,&lname);
