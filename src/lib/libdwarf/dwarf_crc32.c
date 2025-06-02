@@ -58,7 +58,7 @@
     Since lseek() (all systems/versions) returns
     a signed value, we check for < 0 as error
     rather than just check for -1. So it is clear
-    to symbolic exectution that conversion to
+    to symbolic execution that conversion to
     unsigned does not lose bits.
 */
 int
