@@ -454,7 +454,10 @@ dwarf_init_b(int fd,
     Dwarf_Unsigned   filesize = 0;
     int res = 0;
     int errcode = 0;
-
+#if 0
+    void *inmem_data;
+    Dwarf_Unsigned inmem_size = 0;
+#endif
     if (!ret_dbg) {
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
     }
@@ -462,8 +465,10 @@ dwarf_init_b(int fd,
         DW_DLV_ERROR */
     *ret_dbg = 0;
 
-    res = dwarf_object_detector_fd(fd, &ftype,
-        &endian,&offsetsize,&filesize,&errcode);
+    res = _dwarf_object_detector_fd_a(fd,
+        &ftype,
+        &endian,&offsetsize,0,
+        &filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
