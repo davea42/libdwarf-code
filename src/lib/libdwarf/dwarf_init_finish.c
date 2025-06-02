@@ -1403,10 +1403,10 @@ do_decompress(Dwarf_Debug dbg,
             srclen*ALLOWED_ZLIB_INFLATION;
 
         res = check_uncompr_inflation(dbg,
-             error, uncompressed_len, srclen,max_inflated_len, 
-             "zlib");
+            error, uncompressed_len, srclen,max_inflated_len,
+            "zlib");
         if (res != DW_DLV_OK) {
-             return res;
+            return res;
         }
     }
     if (zstdcompress) {
@@ -1420,10 +1420,10 @@ do_decompress(Dwarf_Debug dbg,
         Dwarf_Unsigned max_inflated_len =
             srclen*ALLOWED_ZSTD_INFLATION;
         res = check_uncompr_inflation(dbg,
-             error, uncompressed_len, srclen,max_inflated_len, 
-             "zstd");
+            error, uncompressed_len, srclen,max_inflated_len,
+            "zstd");
         if (res != DW_DLV_OK) {
-             return res;
+            return res;
         }
     }
 #endif /* 0 */
