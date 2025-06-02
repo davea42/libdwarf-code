@@ -9828,6 +9828,10 @@ DW_API int dwarf_get_universalbinary_count(
     DW_FTYPE_PE,
     DW_FTYPE_MACH_O, or
     DW_FTYPE_APPLEUNIVERSAL.
+
+    These are not meant to deal with a specific binary
+    inside a Macos Universal Binary (DW_FTYPE_APPLEUNIVERSAL).
+
 */
 DW_API int dwarf_object_detector_path_b(const char * dw_path,
     char           *dw_outpath_buffer,
@@ -9863,7 +9867,7 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 /*! @}
 */
 
-/*! @defgroup sectionallocpref Section allocation: malloc or mmap 
+/*! @defgroup sectionallocpref Section allocation: malloc or mmap
     @{
 
     Functions related to the choice of malloc/read
@@ -9871,7 +9875,6 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
 
     The default allocation preference is malloc().
 
-   
     The shell environment variable DWARF_WHICH_ALLOC
     is also involved at runtime but it only applies
     to reading Elf object files..
