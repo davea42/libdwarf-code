@@ -78,12 +78,29 @@ extern "C" {
 
 /*  Added September 2023 for Mach-O universal binaries */
 int _dwarf_object_detector_fd_a(int dw_fd,
+#if 0
+    void           *dw_inmemory,
+    Dwarf_Unsigned dw_inmem_size,
+#endif
     unsigned int   *dw_ftype,
     unsigned int   *dw_endian,
     unsigned int   *dw_offsetsize,
     Dwarf_Unsigned dw_offset_base,
     Dwarf_Unsigned *dw_filesize,
     int            *dw_errcode);
+
+#if 0
+    /*  Used when reading a block of memory
+        containing a complete object file. */
+int _dwarf_object_detector_inmemory(void *dw_memory,
+    Dwarf_Unsigned dw_memsize,
+    unsigned int   *dw_ftype,
+    unsigned int   *dw_endian,
+    unsigned int   *dw_offsetsize,
+    Dwarf_Unsigned  dw_offset_base,
+    Dwarf_Unsigned *dw_filesize,
+    int            *dw_errcode);
+#endif
 
 #ifdef __cplusplus
 }
