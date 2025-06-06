@@ -51,7 +51,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     The Linux kernel allows at most 0x7ffff000
     bytes in a read()*/
 int
-_dwarf_object_read_random(int fd, char *buf, Dwarf_Unsigned loc,
+_dwarf_object_read_random(int fd, char *out_buf, Dwarf_Unsigned loc,
     Dwarf_Unsigned size, Dwarf_Unsigned filesize, int *errc)
 {
     Dwarf_Unsigned endpoint = 0;
@@ -80,7 +80,7 @@ _dwarf_object_read_random(int fd, char *buf, Dwarf_Unsigned loc,
         *errc = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
-    res = _dwarf_readr(fd,buf,size,0);
+    res = _dwarf_readr(fd,out_buf,size,0);
     if (res != DW_DLV_OK) {
         *errc = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
