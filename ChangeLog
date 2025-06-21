@@ -1,3 +1,108 @@
+2025-06-21:  David Anderson
+    commit bd417fb77cd507c51ea5e611a3c30aef8dbef8e3
+
+    Fixed a bug in libdwarf for an unusual use of deebug link.
+    See Issue 297 (github) for details.
+
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_setup_sections.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-06-06:  David Anderson
+    commit 176f1f043d35a92e19c0d95e43834ebfcc0e769f
+
+    An output argument was not sensibly named,
+    buf -> out_buf
+            modified:   dwarf_object_read_common.c
+
+2025-06-02:  David Anderson
+    commit 91ab2091dea9bbd4eb64c4f88c2b51d3879df527
+
+    Correcting indent mistakes.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2025-06-02:  David Anderson
+    commit debe7f8bb7926ba230f34be23a3b231c25a9c355
+
+    Small preparation for reading in-memory object (if 0 / endif)
+    and removes seekr readr call to use the
+    generic (private) function to achieve the same thing.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2025-06-02:  David Anderson
+    commit 0b3cb6016fb00a541cfd5ec9b7a721ca30f456d1
+
+    Tiny preparation for reading in-memory object. Is #if 0 so
+    invisible to code.
+            modified:   src/lib/libdwarf/dwarf_object_detector.h
+
+2025-06-02:  David Anderson
+    commit 312c9f10e3bdd59a1e282e0ae85816fc85d05f52
+
+    Fixing indent mistakes.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-06-02:  David Anderson
+    commit 724ca877904f87cae99eb7d9b122ef66d28328c9
+
+    Fixing indent mistakes and adding a doxygen
+    comment referring to dwarf_object_detector
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-06-02:  David Anderson
+    commit 5ad8780cf0ab61a7ee292515e6c9fff7942166ec
+
+    Correcting indent mistakes.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+2025-06-02:  David Anderson
+    commit cb14048fb1249574ad1724efa163dca5df91eca4
+
+    Corrected spelling error in a comment.
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+
+2025-06-02:  David Anderson
+    commit 396855c397314c6fff710f03a602292165038c4a
+
+    Minor changes to Changes wording.
+            modified:   doc/libdwarf.dox
+
+2025-06-02:  David Anderson
+    commit 197c07fe7bd89f8019d952f805a0eacdfd52effe
+
+    New month, so these generated files show the new current
+    month.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-05-31:  David Anderson
+    commit 442cd4f9b094a92ac7b8f493507cd0d4f3e7947a
+
+    Minor clarification of libdwarfp/CMakeLists.txt
+    change
+            modified:   ChangeLog
+
+2025-05-31:  David Anderson
+    commit f89bdb3ed04943f798a16bf6441479ef1fa6b091
+
+    Documented fix to libdwarfp/CMakeLists.txt.
+            modified:   doc/libdwarf.dox
+
+    Now
+      target_link_libraries(dwarfp PRIVATE dwarf)
+    is unconditional. Needed for MSYS2 and APPLE
+    but accepted everywhere supported.
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+
+2025-05-31:  David Anderson
+    commit 199b24b0258fec5829bec11f369784f8a3c16f9a
+
+    Up to date with latest CMakeLists.txt for libdwarfp
+            modified:   ChangeLog
+
 2025-05-31:  David Anderson
     commit 1ff164059b46b630d05c93a1a44ab8f955ee7b77
 
