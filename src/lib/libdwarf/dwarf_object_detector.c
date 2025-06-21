@@ -864,6 +864,10 @@ _dwarf_debuglink_finder_internal(
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
+    /*  If an exe (with debuglink, possibly) has no DWARF
+        sections we should not give up till we look for
+        debuglink stuff, which as of gitbub issue 297,
+        no longer results in DW_DLV_NO_ENTRY. */
     for (p = 0;  p < gl_pathcount; ++p) {
         const char *lpath = 0;
 

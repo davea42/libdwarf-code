@@ -1173,6 +1173,12 @@
     Corrected the cmake build of shared-library 
     libdwarfp/CMakeLists.txt
 
+    Given an unusual object using debuglink but with
+    no sections with names
+    starting with .debug_ or _eh_frame, libdwarf  would complain
+    about not having any DWARF sections and ignore the debuglink
+    data. See github issue 297 for details of the fix.
+
     <b>Changes 0.12.0 to 2.0.0</b>
 
     Released 20 May 2025.

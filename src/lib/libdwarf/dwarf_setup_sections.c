@@ -508,19 +508,24 @@ _dwarf_enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         DW_DLE_DUPLICATE_TU_INDEX,0,
         FALSE,err);
 
-    /* GNU added this. It is not part of DWARF */
+    /*  GNU added this. It is not part of DWARF, but we will
+        consider it is so that debuglink can work.
+        Force have_dwarf TRUE github issue 297 */
     SET_UP_SECTION(dbg,scn_name,".gnu_debuglink",
         DW_GROUPNUMBER_DWO,
         &dbg->de_gnu_debuglink,
         DW_DLE_DUPLICATE_GNU_DEBUGLINK,0,
-        FALSE,err);
+        TRUE,err);
 
-    /* GNU added this. It is not part of DWARF */
+    /*  GNU added this. It is not part of DWARF, but we will
+        consider it is so that debuglink can work,
+        Force have_dwarf TRUE github issue 297 */
     SET_UP_SECTION(dbg,scn_name,".note.gnu.build-id",
         DW_GROUPNUMBER_DWO,
         &dbg->de_note_gnu_buildid,
-        DW_DLE_DUPLICATE_GNU_DEBUGLINK,0,
-        FALSE,err);
+        DW_DLE_DUPLICATE_NOTE_GNU_BUILD_ID,0,
+        TRUE,err);
+
     /* GNU added this. It is not part of DWARF */
     SET_UP_SECTION(dbg,scn_name,".debug_gnu_pubtypes.dwo",
         DW_GROUPNUMBER_DWO,

@@ -610,8 +610,8 @@ _dwarf_construct_linkedto_path(
     char          *pathname_in,
     char          *link_string_in, /* from debug link */
     dwarfstring   *link_string_fullpath_out,
-    unsigned char *buildid, /* from gnu buildid */
-    unsigned       buildid_length, /* from gnu buildid */
+    unsigned char *buildid, /* from gnu build-id */
+    unsigned       buildid_length, /* from gnu build-id */
     char        ***paths_out,
     unsigned      *paths_out_length,
     int *errcode)
@@ -805,7 +805,7 @@ _dwarf_extract_debuglink(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  The definition of .note.gnu.buildid contents (also
+/*  The definition of .note.gnu.build-id contents (also
     used for other GNU .note.gnu.  sections too. */
 struct buildid_s {
     char bu_ownernamesize[4];
