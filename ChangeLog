@@ -1,3 +1,84 @@
+2025-07-03:  David Anderson
+    commit 9a54519688244efa3c52c36f3cf0b605f7cbb902
+
+    Documented changes so far for 2.1.0
+            modified:   doc/libdwarf.dox
+
+    The API is unchanged. version now 2.1.0.
+            modified:   doc/libdwarfp.mm
+
+2025-07-03:  David Anderson
+    commit 8db56d8e7a5a75f2daa03fd4741e19e2dc4abc8f
+
+    Now returns data on DW_AT_language_name
+    and DW_AT_language_version (from DWARF6) correctly
+    and fully.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-07-03:  David Anderson
+    commit 3c7c9df3412a2e485d1380aabd113df95d3179d5
+
+    Now prints DW_AT_language_name and DW_AT_language_version
+    appropriately.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-07-03:  David Anderson
+    commit c129e191114e3c28926c22dd77a7fd17d831d337
+
+    Now with the complete set of LNAME functions
+    and improved doxygen comments on LNAME functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-03:  David Anderson
+    commit b911a58738249deef6372cfb6e068fd647a2bae8
+
+    For dwarfdump use, added function get_LNAME_name()
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_naming.h
+
+2025-07-03:  David Anderson
+    commit 5040ea4cf38a70d39fce150ea6c4f4c93f549dcf
+
+    Month name changed. July now
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-07-03:  David Anderson
+    commit b30f156873af9a88850c6b58e2e081854a4ab7f1
+
+    Since DW_AT_language_version has a string value
+    needed to add it to the relevant switch case.
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+
+2025-07-03:  David Anderson
+    commit f2c38c0138c6e296cefb3e39024b8fe350f00bff
+
+    Added a new option to dwarfgen that tells it
+    to emit DW_AT_language_name and DW_AT_language_version
+    to the output object if they are not already present.
+    Needed for testing the handling of those DWARF6
+    attributes.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/dwarfgen/general.h
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+
+2025-07-03:  David Anderson
+    commit f1df1c69c20c61409f521ef3ed0271c2759930e8
+
+    Changes to be committed right now
+    required changing new version from 2.0.1 to 2.1.0
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   tools/makerelease.sh
+
+2025-06-21:  David Anderson
+    commit 71240faa5e5fae178b5cddeb009d2eb43a779065
+
+    Describing recent changes (from git log)
+            modified:   ChangeLog
+
 2025-06-21:  David Anderson
     commit bd417fb77cd507c51ea5e611a3c30aef8dbef8e3
 
