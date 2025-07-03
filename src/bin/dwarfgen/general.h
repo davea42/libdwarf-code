@@ -48,6 +48,7 @@ extern struct CmdOptions {
     bool addSUNfuncoffsets;
     bool adddebugsup;
     bool addskipbranch;
+    bool addlanguageversion;
 } cmdoptions;
 
 template <typename T >

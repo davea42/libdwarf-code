@@ -298,7 +298,8 @@ CmdOptions cmdoptions = {
     false, //addframeadvanceloc
     false, //addSUNfuncoffsets
     false, //add_debug_sup
-    false //addskipbranch
+    false, //addskipbranch
+    false //addlanguageversion
 };
 
 // loff_t is signed for some reason (strange)
@@ -711,6 +712,7 @@ main(int argc, char **argv)
             {"show-reloc-details",dwno_argument,0,'r'},
             {"high-pc-as-const",dwno_argument,0,'h'},
             {"add-skip-branch-ops",dwno_argument,0,1007},
+            {"add-language-version",dwno_argument,0,1008},
             {0,0,0,0},
         };
         // -p is pointer size
@@ -768,6 +770,10 @@ main(int argc, char **argv)
             case 1007:
                 //{"add-skip-branch-ops",dwno_argument,0,1007},
                 cmdoptions.addskipbranch = true;
+                break;
+            case 1008:
+                //{"add-language-version",dwno_argument,0,1008},
+                cmdoptions.addlanguageversion = true;
                 break;
             case 'c':
                 // At present we can only create a single
