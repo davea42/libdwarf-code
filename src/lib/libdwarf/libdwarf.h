@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "2.0.1"
+#define DW_LIBDWARF_VERSION "2.1.0"
 #define DW_LIBDWARF_VERSION_MAJOR 2
-#define DW_LIBDWARF_VERSION_MINOR 0
-#define DW_LIBDWARF_VERSION_MICRO 1
+#define DW_LIBDWARF_VERSION_MINOR 1
+#define DW_LIBDWARF_VERSION_MICRO 0
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -2894,12 +2894,24 @@ DW_API int dwarf_bitoffset(Dwarf_Die dw_die,
 
 /*! @brief Return the value of the DW_AT_language attribute.
 
+    Returns DWARF5 DW_LANG language name.
+    The DW_LANG value returned lets one access
+    the LANG name as a string with dwarf_get_LANG_name()
+
+    To access DW_LNAME names (in DWARF5 or later)
+    see dwarf_srclanglname().
+    To get the DW_LNAME as a string, call 
+    dwarf_get_LNAME_name().
+
+    DWARF5 and earlier 
+
     The DIE should be a CU DIE.
     @param dw_die
     The DIE of interest.
     @param dw_returned_lang
     On success returns the language code (normally
     only found on a CU DIE). For example DW_LANG_C
+    (0x0002).
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -2909,17 +2921,83 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_lang,
     Dwarf_Error    * dw_error);
 
+/*! @brief Return the value of the DW_AT_language_name attribute.
+
+    New in v2.1.0 July 2025.
+            
+    Returns a DWARF6  DW_AT language_name name.
+    The DW_LNAME value returned lets one access
+    the LNAME name as a string with dwarf_get_LNAME_name()
+    Also see dwarf_language_version_data()
+    for valued based on  DW_LNAME names.
+
+    To access DW_LANG names (in DWARF5 or earlier)
+    see dwarf_srclang().
+
+    @param dw_die 
+    The DIE of interest, normally a CU_DIE.
+    @param dw_returned_lname
+    On success returns the language name (code) (normally
+    only found on a CU DIE). For example DW_LNAME_C
+    (0x0003).
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/  
+DW_API int dwarf_srclanglname(Dwarf_Die dw_die,
+    Dwarf_Unsigned *dw_returned_lname, 
+    Dwarf_Error    *dw_error);
+
 /*! @brief Return the value of the DW_AT_language_version attribute.
-    @param dw_lang_name
-    Pass in a DW_LNAME value, for example DW_LNAME_C.
+
+    New in v2.1.0 July 2025.
+
+    Finds the DW_AT_language_version of the DIE
+    if one is present.
+
+    The DIE should be a CU DIE.
+    @param dw_die
+    The DIE of interest.
+    @param dw_returned verstring
+    On success returns the language verion
+    string from a DW_AT_language_version
+    attributes (normally
+    only found on a CU DIE). For example DW_LNAME_C
+    would return a pointer to "YYYYMM"
+
+    Never free or dealloc the string, it is in static memory.
+    
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/ 
+
+DW_API int dwarf_srclanglname_version(Dwarf_Die dw_die,
+    const char  *dw_returned_verstring, 
+    Dwarf_Error *dw_error);
+
+
+/*! @brief Return values associated with DW_AT_language_name 
+
+    Returns the value of a the default-lower-bound
+    and a string defining the interpretation of
+    the DWARF6 version from the DW_AT_language_version attribute.
+    Replaces dwarf_language_version_string().
+
+    @param dw_lname_name
+    Pass in a DW_LNAME value, for example DW_LNAME_C
+    (0x0003).
     @param dw_default_lower_bound.
     On success returns the language code (normally
-    only found on a CU DIE). For example DW_LANG_C
+    only found on a CU DIE). For example DW_LNAME_C
     has a default lower bound of zero (0) that will
     be returned through the pointer.
     @param dw_version_scheme
     On success, return the version scheme,
-    For DW_LNAME_C the string returned would by "YYYYMM".
+    For DW_LNAME_C the string returned through
+    the pointer would by "YYYYMM".
     If there is no version scheme defined, return a NULL
     through the pointer.
     Never dealloc or free() any returned value
@@ -2929,8 +3007,13 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
     is unknown, returns  DW_DLV_NO_ENTRY.
     Never returns DW_DLV_ERROR;
 */
+DW_API int dwarf_language_version_data(
+    Dwarf_Unsigned dw_lname_name,
+    int *          dw_default_lower_bound,
+    const char   **dw_version_string);
+/*  OBSOLETE NAME. Do Not use, use dwarf_language_version_data */
 DW_API int dwarf_language_version_string(
-    Dwarf_Unsigned dw_lang_name,
+    Dwarf_Unsigned dw_lname_name,
     int *          dw_default_lower_bound,
     const char   **dw_version_string);
 
