@@ -1108,6 +1108,8 @@ dwarf_add_AT_string_a(Dwarf_P_Debug dbg,
     case DW_AT_MIPS_linkage_name:
     case DW_AT_name:
     case DW_AT_producer:
+    /*  New DWARF6. */
+    case DW_AT_language_version:
         break;
 
         default:
