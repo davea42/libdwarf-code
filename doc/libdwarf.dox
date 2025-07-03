@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-05-31 v2.0.1
+    @date 2025-05-31 v2.1.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1161,8 +1161,24 @@
 
     We list these with newest first.
 
-    <b>Changes 2.0.0 to 2.0.1</b>
+    <b>Changes 2.0.0 to 2.1.0</b>
 
+    Corrected (and tested) use of DWARF6 attributes
+    DW_AT_language_name and DW_AT_language_version.
+    As of July 2025 we are not aware of a released
+    compiler providing these attributes.
+  
+    Added function dwarf_srclanglname() so that
+    DW_AT_language_name attribute values can be accessed.
+    Added dwarf_language_version_data() because
+    dwarf_language_version_string() is not an
+    appropriate function name here.
+    The old name still exists and works.
+
+    Added dwarf_srclanglname_version() so that
+    the data provided in DWARF6 DW_AT_language_version
+    can be returned.  
+ 
     Fixed minor warnings from a compiler (dwarfgen) and from meson.
     No change to output.
 
