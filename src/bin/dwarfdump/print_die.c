@@ -2517,7 +2517,7 @@ dd_check_die_functions( Dwarf_Debug dbg,
     if (res == DW_DLV_OK) {
         /* Ok */
     } else if (res == DW_DLV_ERROR) {
-        check_functions_simple_fail("dwarf_srclang",error);
+        check_functions_simple_fail("dwarf_bitsize",error);
         DROP_ERROR_INSTANCE(dbg,res,error);
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     unsign = 0;
@@ -2563,6 +2563,35 @@ dd_check_die_functions( Dwarf_Debug dbg,
         }
     } else if (res == DW_DLV_ERROR) {
         check_functions_simple_fail("dwarf_srclang",error);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+
+    unsign = 0;
+    res = dwarf_srclanglname(die,&unsign,&error);
+    if (res == DW_DLV_OK) {
+        if ((unsign >=1) && (unsign <= DW_LNAME_Nim)) {
+            /* standard */
+        } else  {
+            switch(unsign) {
+                break;
+            default: {
+
+            struct esb_s m;
+            char ebuf[60];
+
+            esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
+            esb_append_printf_u(&m,
+                "dwarf_srclanglname fail "
+                "as the source language 0x%x "
+                "returned is unknown",unsign);
+            DWARF_CHECK_ERROR(check_functions_result,
+                esb_get_string(&m));
+            esb_destructor(&m);
+            }
+            }
+        }
+    } else if (res == DW_DLV_ERROR) {
+        check_functions_simple_fail("dwarf_srclanglname",error);
         DROP_ERROR_INSTANCE(dbg,res,error);
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     unsign = 0;
@@ -4703,6 +4732,73 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     }
 
     switch (attr) {
+    case DW_AT_language_version: {
+        char         atnamebuf[ESB_FIXED_ALLOC_SIZE];
+        struct esb_s langver;
+        
+        if (fc != DW_FORM_CLASS_STRING) {
+            remark_wrong_string_format(attr,theform);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return DW_DLV_NO_ENTRY;
+        }
+        esb_constructor_fixed(&langver,atnamebuf,
+            sizeof(atnamebuf));
+        tres = get_attr_value(dbg, tag, die,
+            dieprint_cu_goffset,attrib, srcfiles, srcfiles_cnt,
+            &langver, glflags.show_form_used,
+            glflags.verbose,err);
+        if (tres == DW_DLV_ERROR) {
+            print_error_and_continue(
+                "Cannot  get value "
+                "for DW_AT_language_version",
+                tres, *err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return tres;
+        }
+        esb_empty_string(&valname);
+        esb_append(&valname, esb_get_string(&langver));
+        esb_destructor(&langver);
+        }
+        break;
+    case DW_AT_language_name: {
+        int          lv_lower_bound = 0;
+        const char * lv_version_details = 0;
+
+        res = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_language_name", &valname,
+            get_LNAME_name, err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(
+                "Cannot get DW_AT_language_name value. ",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+
+        res = dwarf_language_version_data(uval,
+            &lv_lower_bound, &lv_version_details);
+        if (res == DW_DLV_OK) {
+            esb_append_printf_i(&valname,
+                "(low bound: %d",lv_lower_bound);
+            if (lv_version_details) {
+                esb_append_printf_s(&valname,
+                    " format: %s)",
+                    lv_version_details);
+            } else {
+                esb_append(&valname,
+                    " format unspecified)");
+            }
+        } else {
+            esb_append(&valname,
+                "(unable to read language_version details)");
+        }
+        }
+        break;
     case DW_AT_language:
         res = dd_get_integer_and_name(dbg, attrib,
             &uval,
@@ -8481,6 +8577,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_bit_size:
             case DW_AT_inline:
             case DW_AT_language:
+            case DW_AT_language_version:
             case DW_AT_visibility:
             case DW_AT_virtuality:
             case DW_AT_accessibility:
