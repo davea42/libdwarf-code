@@ -60,6 +60,8 @@ extern const char * get_VIRTUALITY_name(unsigned int val_in,
     int printonerr);
 extern const char * get_LANG_name(unsigned int val_in,
     int printonerr);
+extern const char * get_LNAME_name(unsigned int val_in,
+    int printonerr);
 extern const char * get_ID_name(unsigned int val_in,
     int printonerr);
 extern const char * get_CC_name(unsigned int val_in,

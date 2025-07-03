@@ -206,6 +206,12 @@ const char * get_LANG_name(unsigned int val_in,int printonerr)
     int res = dwarf_get_LANG_name(val_in,&v);
     return ellipname(res,val_in,v,"LANG",printonerr);
 }
+const char * get_LNAME_name(unsigned int val_in,int printonerr)
+{
+    const char *v = 0;
+    int res = dwarf_get_LNAME_name(val_in,&v);
+    return ellipname(res,val_in,v,"LNAME",printonerr);
+}
 const char * get_ID_name(unsigned int val_in,int printonerr)
 {
     const char *v = 0;
