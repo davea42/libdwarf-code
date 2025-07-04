@@ -1,3 +1,15 @@
+2025-07-04:  David Anderson
+    commit 6ecf529a3034c126f4cdf2b46c864f5590048072
+
+    Latest version, 2.1.0
+            modified:   doc/libdwarf.pdf
+
+2025-07-03:  David Anderson
+    commit 76009e416585394ef10df1889a49de7c53e80c1a
+
+    Now with data from git log on DW_AT_language_name (etc).
+            modified:   ChangeLog
+
 2025-07-03:  David Anderson
     commit 9a54519688244efa3c52c36f3cf0b605f7cbb902
 
