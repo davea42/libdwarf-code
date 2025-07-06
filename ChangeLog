@@ -1,3 +1,42 @@
+2025-07-07:  MrSmör
+    commit 6a0ace2b192bd0e3b6c9bb465685280c5e85db8d
+
+    Make meson generate a proper pkg-config file when absolute paths (#298)
+    are specified for includedir and libdir etc.
+
+    Showing just one example, the other two lines
+    are equivalent
+    Prefix and @0@ are in the output so if @0@ is full path
+    it does not work, as it has mixed full paths onto prefix.
+
+    -pkgconf.set('libdir', '${prefix}/@0@'.format(get_option('libdir')))
+
+    A full path in @0@ means (via join_paths) that
+    the prefix gets dropped (that is, path joining
+    works sensibly).
+    +pkgconf.set('libdir', join_paths('${prefix}','@0@'.format(get_option('libdir'))))
+
+            modified:   meson.build
+
+2025-07-05:  David Anderson
+    commit 6c54cee95eadaa5456db03ac617774de1b0399ee
+
+    make rebuild so these files now say (n comments)
+    they are part of 2.1.0
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-07-04:  David Anderson
+    commit 4f073405c2814ae16397935b7a6b9a4dbef90bdc
+
+    Up to date.
+            modified:   ChangeLog
+
 2025-07-04:  David Anderson
     commit 6ecf529a3034c126f4cdf2b46c864f5590048072
 
