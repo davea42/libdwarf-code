@@ -1282,7 +1282,7 @@
     from an object file being read (previously the only option)
     or will use mmap instead.  
     If the build determines mmap
-    is unavailble then malloc will be used.
+    is unavailable then malloc will be used.
     
     Added API function dwarf_set_load_preference() giving
     callers the option to choose the default section load
@@ -1294,7 +1294,7 @@
     are the only values recognized.
     A recognized environment variable overrides 
     dwarf_set_load_preference() values.
-    If the libdwarf build determines mmap is unavailble
+    If the libdwarf build determines mmap is unavailable
     then only malloc will be used.
 
     Added API function dwarf_get_mmap_count() giving callers
@@ -1660,8 +1660,8 @@
 
     It is now possible to run the build
     sanity tests in all three build mechanisms
-    (configure,cmake,meson) on linux, MacOS, FreeBSD,
-    and mingw msys2 (windows).  @e libdwarf README.md
+    (configure,cmake,meson) on linux, Macos, FreeBSD,
+    and Mingw msys2 (windows).  @e libdwarf README.md
     (or README) and README.cmake document how to
     do builds for each supported platform and build
     mechanism.
