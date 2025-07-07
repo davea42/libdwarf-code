@@ -106,13 +106,13 @@ extern "C" {
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
-#define DW_PATHSOURCE_dsym      2 /* MacOS dSYM */
+#define DW_PATHSOURCE_dsym      2 /* MacoS dSYM */
 #define DW_PATHSOURCE_debuglink 3 /* GNU debuglink */
 
 #ifndef DW_FTYPE_UNKNOWN
 #define DW_FTYPE_UNKNOWN    0
 #define DW_FTYPE_ELF        1  /* Unix/Linux/etc */
-#define DW_FTYPE_MACH_O     2  /* MacOS. */
+#define DW_FTYPE_MACH_O     2  /* MacoS. */
 #define DW_FTYPE_PE         3  /* Windows */
 #define DW_FTYPE_ARCHIVE    4  /* unix archive */
 #define DW_FTYPE_APPLEUNIVERSAL    5
@@ -1568,9 +1568,9 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     The returned string will be null-terminated.
     The path actually used is copied to true_path_out.
     If true_path_buffer len is zero or true_path_out_buffer
-    is zero  then the Special MacOS processing will not
+    is zero  then the Special MacoS processing will not
     occur, nor will the GNU_debuglink processing occur.
-    In case GNU debuglink data was followed or MacOS
+    In case GNU debuglink data was followed or MacoS
     dSYM applies the true_path_out
     will not match path and the initial byte will be
     non-null.
@@ -2965,9 +2965,8 @@ DW_API int dwarf_srclanglname(Dwarf_Die dw_die,
     attributes (normally
     only found on a CU DIE). For example DW_LNAME_C
     would return a pointer to "YYYYMM"
-
-    Never free or dealloc the string, it is in static memory.
-    
+    Never free or dealloc the string returned
+    through dw_returned_verstring, it is in static memory.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -3000,8 +2999,8 @@ DW_API int dwarf_srclanglname_version(Dwarf_Die dw_die,
     the pointer would by "YYYYMM".
     If there is no version scheme defined, return a NULL
     through the pointer.
-    Never dealloc or free() any returned value
-    as it is a static constant string.
+    Never dealloc or free() the string returned through
+    dw_version_scheme as it is a static constant string.
     @return
     Returns DW_DLV_OK or the dw_lang_name
     is unknown, returns  DW_DLV_NO_ENTRY.
@@ -3700,7 +3699,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
     -#  The file number denotes a name in the line table header.
     -#  If the name is not a full path (i.e. not starting
-        with / in posix/linux/MacOS) then prepend the appropriate
+        with / in posix/linux/Macos) then prepend the appropriate
         directory string from the line table header.
     -#  If the name is still not a full path then prepend
         the content of the DW_AT_comp_dir attribute
@@ -4516,7 +4515,7 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     Otherwise the value FALSE will be returned through
     dw_known_base.
     @param dw_baseaddress
-    if dw_known_base is retured as TRUE then
+    if dw_known_base is returned as TRUE then
     dw_baseaddress will be set with the correct pc value.
     Otherwise zero will be set through dw_baseaddress.
     @param dw_at_ranges_offset_present
@@ -8495,7 +8494,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
 /*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
 
     @{
-    When DWARF sections are in a differenct object
+    When DWARF sections are in a different object
     than the executable or a normal shared object.
     The special GNU section provides a way to name
     the object file with DWARF.
@@ -9054,8 +9053,8 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
 
     For non-Elf the name reported will be as if
     it were Elf sections. For example, not the names
-    MacOS puts in its object sections (which
-    the MacOS reader translates).
+    Macos puts in its object sections (which
+    the MacoS reader translates).
 
     These calls returning selected object header
     {machine architecture,flags)
