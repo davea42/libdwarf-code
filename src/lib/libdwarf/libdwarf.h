@@ -106,13 +106,13 @@ extern "C" {
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
-#define DW_PATHSOURCE_dsym      2 /* MacoS dSYM */
+#define DW_PATHSOURCE_dsym      2 /* Macos dSYM */
 #define DW_PATHSOURCE_debuglink 3 /* GNU debuglink */
 
 #ifndef DW_FTYPE_UNKNOWN
 #define DW_FTYPE_UNKNOWN    0
 #define DW_FTYPE_ELF        1  /* Unix/Linux/etc */
-#define DW_FTYPE_MACH_O     2  /* MacoS. */
+#define DW_FTYPE_MACH_O     2  /* Macos. */
 #define DW_FTYPE_PE         3  /* Windows */
 #define DW_FTYPE_ARCHIVE    4  /* unix archive */
 #define DW_FTYPE_APPLEUNIVERSAL    5
@@ -1568,9 +1568,9 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     The returned string will be null-terminated.
     The path actually used is copied to true_path_out.
     If true_path_buffer len is zero or true_path_out_buffer
-    is zero  then the Special MacoS processing will not
+    is zero  then the Special Macos processing will not
     occur, nor will the GNU_debuglink processing occur.
-    In case GNU debuglink data was followed or MacoS
+    In case GNU debuglink data was followed or Macos
     dSYM applies the true_path_out
     will not match path and the initial byte will be
     non-null.
@@ -9054,7 +9054,7 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
     For non-Elf the name reported will be as if
     it were Elf sections. For example, not the names
     Macos puts in its object sections (which
-    the MacoS reader translates).
+    the Macos reader translates).
 
     These calls returning selected object header
     {machine architecture,flags)
