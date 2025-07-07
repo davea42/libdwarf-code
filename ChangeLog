@@ -1,3 +1,28 @@
+2025-07-07:  David Anderson
+    commit 46d7f5cf651bf010c5f71e061ae4a62d73e461b0
+
+    Corrected date of the document.
+    Mention tentative release 20 July 2024.
+            modified:   doc/libdwarf.dox
+
+2025-07-07:  David Anderson
+    commit 14782677e994860707b969ade3f47fc798edccb6
+
+    Unified spelling to Macos.
+    Corrected spelling errors on a few words.
+    Corrected wording clarifying that
+    dwarf_language_version_data()
+    and dwarfsrclanglname_version() returned
+    string pointers must never be freed or
+    dealloc'd by library callers.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-06:  David Anderson
+    commit d60d790043895728716a06c0f79c85486fead270
+
+    explaining the fix to meson.build.
+            modified:   ChangeLog
+
 2025-07-07:  MrSmör
     commit 6a0ace2b192bd0e3b6c9bb465685280c5e85db8d
 
