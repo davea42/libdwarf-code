@@ -693,6 +693,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_RLE_ERROR(506) Generic .debug_rnglists read error"},
 {"DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL(507) "
     "MachO object seems corrupt"},
-{"DW_DLE_DUPLICATE_NOTE_GNU_BUILD_ID(508) Duplicated section "}
+{"DW_DLE_DUPLICATE_NOTE_GNU_BUILD_ID(508) Duplicated section "},
+{"DW_DLE_SYSCONF_VALUE_UNUSABLE(509) sysconf() return is < 200 "
+    "or greater than 100million"}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

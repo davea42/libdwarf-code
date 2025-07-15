@@ -30,6 +30,7 @@
 
 #include <stdlib.h> /* calloc() free() malloc() */
 #include <string.h> /* memset() strcat() strlen() */
+#include <stdio.h> /* debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -314,7 +315,12 @@ is_defundef(unsigned op)
 #endif /*0*/
 
 /*  On first call (for this macro_context),
-    build_ops_array is FALSE. On second,
+    build_ops_array is FALSE. 
+    We just calculate 
+        macro_context->mc_macro_ops_count 
+        macro_context->mc_ops_data_length
+        macro_context->mc_total_length 
+    On second,
     it is TRUE and we know the count so we allocate and fill in
     the ops array. */
 static int
@@ -333,8 +339,8 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
     int res = 0;
 
     dbg = macro_context->mc_dbg;
+    known_ops_count = macro_context->mc_macro_ops_count;
     if (build_ops_array) {
-        known_ops_count = macro_context->mc_macro_ops_count;
         opsarray = (struct Dwarf_Macro_Operator_s *)
             calloc(known_ops_count,
                 sizeof(struct Dwarf_Macro_Operator_s));
@@ -362,6 +368,19 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
                 Normally we don't see this, the end operator
                 signals end. */
             opslen = mdata - macro_context->mc_macro_ops;
+#if 0
+            /*  This test fails when there are corrupted FORms
+                so we lose a really useful and precise error
+                message and get this useless message. */
+            if (known_ops_count != opcount) {
+                _dwarf_error_string(dbg, error, 
+                    DW_DLE_MACRO_OP_UNHANDLED,
+                    "DW_DLE_MACRO_OP_UNHANDLED "
+                    "A miscount of ops_count "
+                    "So an internal libdwarf error");
+                return DW_DLV_ERROR;
+            }
+#endif /* 0 */
             macro_context->mc_macro_ops_count = opcount;
             macro_context->mc_ops_data_length = opslen;
             macro_context->mc_total_length = opslen +
@@ -999,13 +1018,8 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         /*  Compiler warning about unused opcode_number
             variable should be ignored. */
         Dwarf_Unsigned formcount = 0;
-#if 0   /* No need to actually read, just update pointer*/
-        Dwarf_Small opcode_number = 0;
-        READ_UNALIGNED_CK(dbg,opcode_number,Dwarf_Small,
-            macro_data,sizeof(Dwarf_Small),error,endptr);
-#endif /*0*/
-        macro_data += sizeof(Dwarf_Small);
 
+        macro_data += sizeof(Dwarf_Small);
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
             dbg, error, endptr);
         cur_offset = (formcount+ macro_data) - section_base;
@@ -1022,11 +1036,11 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     macro_context->mc_opcode_forms =  (struct Dwarf_Macro_Forms_s *)
         calloc(operand_table_count,
             sizeof(struct Dwarf_Macro_Forms_s));
-    macro_context->mc_opcode_count = operand_table_count;
     if (!macro_context->mc_opcode_forms) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
+    macro_context->mc_opcode_count = operand_table_count;
 
     curformentry = macro_context->mc_opcode_forms;
     for (i = 0; i < operand_table_count; ++i,++curformentry) {
@@ -1617,8 +1631,25 @@ dwarf_dealloc_macro_context(Dwarf_Macro_Context mc)
     if (!mc) {
         return;
     }
+    /*  Fixing coverity sccan CID 531842 and CID 531840. 
+        Memory leak. The destructor would do this,
+        but coverity scan does not seem to track that.
+        so we do the free()s here and removed the
+        use of _dwarf_macro_destructor() from dwarf_alloc.c 
+        And we will delete _dwarf_macro_destructor()
+        everywhere. */
     dbg = mc->mc_dbg;
-    /* See _dwarf_macro_destructor() here */
+    dealloc_macro_srcfiles(mc->mc_srcfiles, mc->mc_srcfiles_count);
+    mc->mc_srcfiles = 0;
+    mc->mc_srcfiles_count = 0;
+    free((void *)mc->mc_file_path); 
+    mc->mc_file_path = 0;
+    free(mc->mc_ops);
+    mc->mc_ops = 0;
+    free(mc->mc_opcode_forms);
+    mc->mc_opcode_forms = 0;
+    /*  See _dwarf_macro_destructor() here, this
+        has a destructor.  */
     dwarf_dealloc(dbg,mc,DW_DLA_MACRO_CONTEXT);
 }
 
@@ -1631,39 +1662,4 @@ _dwarf_macro_constructor(Dwarf_Debug dbg, void *m)
     mc->mc_sentinel = MC_SENTINEL;
     mc->mc_dbg = dbg;
     return DW_DLV_OK;
-}
-
-/*  Here we free various fields of Dwarf_Macro_Context.
-    The fields do not get dealloc'd.
-    If we had a separate destructor for hand-calling
-    (meaning when an error is detected during creation
-    of a  Dwarf_Macro_Context)
-    and one for calling by dwarf_dealloc() then
-    we could have the hand-calling dwarf_dealloc the fields
-    and the one called on the dealloc of a  Dwarf_Macro_Context
-    could leave the _dwarf_get_alloc() fields for for
-    normal dwarf_finish() cleanup.
-
-    But for now we share this destructor for both purposes
-    so no fields are _dwarf_get_alloc() and all are free-d
-    here..
-*/
-void
-_dwarf_macro_destructor(void *m)
-{
-    Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
-
-    dealloc_macro_srcfiles(mc->mc_srcfiles, mc->mc_srcfiles_count);
-    mc->mc_srcfiles = 0;
-    mc->mc_srcfiles_count = 0;
-    free((void *)mc->mc_file_path);
-    mc->mc_file_path = 0;
-    free(mc->mc_ops);
-    mc->mc_ops = 0;
-    free(mc->mc_opcode_forms);
-    mc->mc_opcode_forms = 0;
-    memset(mc,0,sizeof(*mc));
-    /*  Just a recognizable sentinel.
-        For debugging.  No real meaning . */
-    mc->mc_sentinel = 0xdeadbeef;
 }
