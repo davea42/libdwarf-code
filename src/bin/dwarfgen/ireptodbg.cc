@@ -165,6 +165,8 @@ addLanguageVersion(Dwarf_P_Debug dbg,
     (void)dbg;
     (void)Irep;
     (void)ourdie;
+    (void)inDie;
+    (void)inParent;
     if (level) {
         // No transformation of this sort is allowed.
         return;
@@ -173,15 +175,8 @@ addLanguageVersion(Dwarf_P_Debug dbg,
         // No transformation of this sort is wanted.
         return;
     }
-    Dwarf_Half dietag = inDie.getTag();
-    Dwarf_Half parenttag = inParent.getTag();
-    if (level > 0) {
-        /* The check is wrong for CU die */
-        if (dietag != DW_TAG_variable || 
-            parenttag != DW_TAG_subprogram) {
-            return;
-        }
-    }
+    /*  Coverity Scan CID 531841.  Deleting
+        duplicate check for level > 0 */
     list<IRAttr> revisedattrs;
     for (list<IRAttr>::iterator it = attrs.begin();
         it != attrs.end();
