@@ -306,14 +306,30 @@ elf_load_nolibelf_section_a (void* obj,
         Dwarf_Unsigned computed_mmaplen = 0;
         Dwarf_Unsigned computed_mmapend = 0;
         long           pagesize = sysconf(_SC_PAGESIZE);
-        unsigned long  pagesizebits = 0;
+        Dwarf_Unsigned upagesize = 0;
+        Dwarf_Unsigned pagesizebits = 0;
         Dwarf_Unsigned pageoff = 0;
         dwarf_elf_object_access_internals_t *elf =
             (dwarf_elf_object_access_internals_t*)(obj);
         void *         mmptr = 0;
 
+        /*  pagesize is guaranteed to be a multiple of 2,
+            and will be >= 512 and is usually 4096. 
+            this helps coverityscan know that sutracting one
+            from pagesize will not result in an 
+            anomalous number. */
+        if (pagesize < 200L || pagesize > (128L*1024L*1024L)) {
+            /*  verifying the value of pagesize to help fix
+                coverity scan CID  531843 */
+            *errc = DW_DLE_SYSCONF_VALUE_UNUSABLE;
+            return DW_DLV_ERROR;
+        }
+        upagesize = (Dwarf_Unsigned)pagesize;
+        pagesizebits = upagesize -1;
         if (0 < dw_section_index &&
             dw_section_index < elf->f_loc_shdr.g_count) {
+            Dwarf_Unsigned pageadjust = 0;
+
             struct generic_shdr *sp =
                 elf->f_shdr + dw_section_index;
             if (sp->gh_content) {
@@ -334,10 +350,33 @@ elf_load_nolibelf_section_a (void* obj,
                 return DW_DLV_ERROR;
             }
             secoffset = sp->gh_offset;
-            pagesizebits = pagesize -1;
             pageoff = secoffset & ~pagesizebits;
-            computed_mmaplen = (seclen + (secoffset - pageoff) +
-                pagesizebits) & ~pagesizebits;
+            /*  coverity scan CID 581843. Guarding
+                against possible overflow complaint
+                in computing computed_mmaplen. */
+            computed_mmaplen = seclen;
+            pageadjust = secoffset - pageoff;
+            computed_mmaplen += pageadjust;
+            if (computed_mmaplen > elf->f_filesize) {
+                *errc = DW_DLE_ELF_SECTION_ERROR;
+                return DW_DLV_ERROR;
+            }
+            computed_mmaplen += pagesizebits;
+            if (computed_mmaplen > elf->f_filesize) {
+                *errc = DW_DLE_ELF_SECTION_ERROR;
+                return DW_DLV_ERROR;
+            }
+            computed_mmaplen &= ~pagesizebits;
+            if (computed_mmaplen > elf->f_filesize) {
+                /*  impossible */
+                *errc = DW_DLE_ELF_SECTION_ERROR;
+                return DW_DLV_ERROR;
+            }
+            if (computed_mmaplen < seclen) {
+                /*  unsigned arith overflowed? */
+                *errc = DW_DLE_ELF_SECTION_ERROR;
+                return DW_DLV_ERROR;
+            }
             computed_mmapend = computed_mmaplen+pageoff;
             /*  mmap tiny is formally ok, but since we
                 are doing mmap per_section we do not
@@ -345,7 +384,9 @@ elf_load_nolibelf_section_a (void* obj,
                 Overlap seems to fail. */
             if (seclen < (Dwarf_Unsigned)(4096*2) ||
                 computed_mmaplen >= elf->f_filesize ||
-                computed_mmapend >= elf->f_filesize) {
+                computed_mmapend >= elf->f_filesize ||
+                /* overflow likely? */
+                computed_mmaplen < seclen) {
                 /* Does NOT alter *return_data_len */
                 res = elf_load_nolibelf_section(obj,
                     dw_section_index,
@@ -357,6 +398,10 @@ elf_load_nolibelf_section_a (void* obj,
                 /* *return_data_len =  not set */
                 return res;
             }
+            /*  Coverity Scan CID 531843. Possible overflow
+                computing computed_mmaplen.  This is
+                a false positive,  Marked as such
+                in coverity scan 16 July 2025. */
             mmptr = mmap(0, (size_t)computed_mmaplen,
                 PROT_READ|PROT_WRITE, MAP_PRIVATE,
                 elf->f_fd,(off_t)pageoff);
