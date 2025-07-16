@@ -212,6 +212,12 @@ int dwarf_discr_list(Dwarf_Debug dbg,
     ary = (struct Dwarf_Dsc_Entry_s *)calloc(arraycount,
         sizeof(struct Dwarf_Dsc_Entry_s));
     if (!ary) {
+        /*  Coverity scan CID 531838. Mem leak.
+            Free the block h points to here too. */
+        free(h->dsh_block);
+        h->dsh_block = 0;
+        h->dsh_block_len = 0;
+        dscblockp = 0;
         dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
@@ -220,7 +226,6 @@ int dwarf_discr_list(Dwarf_Debug dbg,
     h->dsh_array = ary;
     h->dsh_set_unsigned = 0;
     h->dsh_set_signed = 0;
-
     *dsc_head_out = h;
     *dsc_array_length_out = arraycount;
     return DW_DLV_OK;
