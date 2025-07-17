@@ -314,9 +314,9 @@ elf_load_nolibelf_section_a (void* obj,
         void *         mmptr = 0;
 
         /*  pagesize is guaranteed to be a multiple of 2,
-            and will be >= 512 and is usually 4096. 
+            and will be >= 512 and is usually 4096.
             this helps coverityscan know that sutracting one
-            from pagesize will not result in an 
+            from pagesize will not result in an
             anomalous number. */
         if (pagesize < 200L || pagesize > (128L*1024L*1024L)) {
             /*  verifying the value of pagesize to help fix

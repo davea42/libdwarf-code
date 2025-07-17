@@ -847,9 +847,9 @@ dwarf_dnames_header(Dwarf_Debug dbg,
         curptr += usedspace;
         for ( ; curptr < end_section; ++curptr) {
             if (*curptr) {
-                /* Fixing Coverity Scan CID 581830 
-                   resource leak if just call dealloc,
-                   so call local dealloc to do it. */
+                /*  Fixing Coverity Scan CID 581830
+                    resource leak if just call dealloc,
+                    so call local dealloc to do it. */
                 dwarf_dealloc_dnames(dn);
                 /*  One could argue this is a harmless error,
                     but for now assume it is real corruption. */

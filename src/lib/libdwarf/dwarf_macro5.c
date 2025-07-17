@@ -315,11 +315,11 @@ is_defundef(unsigned op)
 #endif /*0*/
 
 /*  On first call (for this macro_context),
-    build_ops_array is FALSE. 
-    We just calculate 
-        macro_context->mc_macro_ops_count 
+    build_ops_array is FALSE.
+    We just calculate
+        macro_context->mc_macro_ops_count
         macro_context->mc_ops_data_length
-        macro_context->mc_total_length 
+        macro_context->mc_total_length
     On second,
     it is TRUE and we know the count so we allocate and fill in
     the ops array. */
@@ -373,7 +373,7 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
                 so we lose a really useful and precise error
                 message and get this useless message. */
             if (known_ops_count != opcount) {
-                _dwarf_error_string(dbg, error, 
+                _dwarf_error_string(dbg, error,
                     DW_DLE_MACRO_OP_UNHANDLED,
                     "DW_DLE_MACRO_OP_UNHANDLED "
                     "A miscount of ops_count "
@@ -1631,18 +1631,18 @@ dwarf_dealloc_macro_context(Dwarf_Macro_Context mc)
     if (!mc) {
         return;
     }
-    /*  Fixing coverity sccan CID 531842 and CID 531840. 
+    /*  Fixing coverity sccan CID 531842 and CID 531840.
         Memory leak. The destructor would do this,
         but coverity scan does not seem to track that.
         so we do the free()s here and removed the
-        use of _dwarf_macro_destructor() from dwarf_alloc.c 
+        use of _dwarf_macro_destructor() from dwarf_alloc.c
         And we will delete _dwarf_macro_destructor()
         everywhere. */
     dbg = mc->mc_dbg;
     dealloc_macro_srcfiles(mc->mc_srcfiles, mc->mc_srcfiles_count);
     mc->mc_srcfiles = 0;
     mc->mc_srcfiles_count = 0;
-    free((void *)mc->mc_file_path); 
+    free((void *)mc->mc_file_path);
     mc->mc_file_path = 0;
     free(mc->mc_ops);
     mc->mc_ops = 0;

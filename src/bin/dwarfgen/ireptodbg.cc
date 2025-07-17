@@ -150,7 +150,7 @@ createskipbranchblock(
     return DW_DLV_OK;
 }
 
-static void 
+static void
 addLanguageVersion(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     Dwarf_P_Die ourdie,
@@ -197,45 +197,34 @@ addLanguageVersion(Dwarf_P_Debug dbg,
     //    add new attr.
 
         IRAttr attr2(DW_AT_language_name,
-                DW_FORM_udata,
-                DW_FORM_udata);
+            DW_FORM_udata,
+            DW_FORM_udata);
         attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
         IRFormConstant *f = new IRFormConstant(
-                DW_FORM_udata,
-                DW_FORM_udata,
-                DW_FORM_CLASS_CONSTANT,
-                IRFormConstant::UNSIGNED,
-                DW_LNAME_C,
-                0);
+            DW_FORM_udata,
+            DW_FORM_udata,
+            DW_FORM_CLASS_CONSTANT,
+            IRFormConstant::UNSIGNED,
+            DW_LNAME_C,
+            0);
         attr2.setFormData(f);
         revisedattrs.push_back(attr2);
     }
     if (!found_lv_version) {
     //    add new attr.
         IRAttr attr2(DW_AT_language_version,
-                DW_FORM_string,
-                DW_FORM_string);
-        attr2.setFormClass(DW_FORM_CLASS_STRING);
-        IRFormString *f = new IRFormString();
-        f->setInitialForm(DW_FORM_string);
-        f->setFinalForm(DW_FORM_string);
-        f->setString("YYYYMM");
+            DW_FORM_string,
+            DW_FORM_string);
+        attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
+        IRFormConstant *f = new IRFormConstant(
+            DW_FORM_udata,
+            DW_FORM_udata,
+            DW_FORM_CLASS_CONSTANT,
+            IRFormConstant::UNSIGNED,
+            199902,
+            0);
         attr2.setFormData(f);
         revisedattrs.push_back(attr2);
-#if 0
-    Dwarf_Half attrnum = DW_AT_name;
-    const char *attrname("vardata16");
-    IRAttr attr2(attrnum,
-        DW_FORM_string,
-        DW_FORM_string);
-    attr2.setFormClass(DW_FORM_CLASS_STRING);
-    IRFormString *f = new IRFormString();
-    f->setInitialForm(DW_FORM_string);
-    f->setFinalForm(DW_FORM_string);
-    f->setString(attrname);
-    attr2.setFormData(f);
-    revisedattrs.push_back(attr2);
-#endif
     }
     // Avoid memoryleak
     //attr.dropFormData();

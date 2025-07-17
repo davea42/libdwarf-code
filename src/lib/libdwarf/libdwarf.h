@@ -2901,10 +2901,10 @@ DW_API int dwarf_bitoffset(Dwarf_Die dw_die,
 
     To access DW_LNAME names (in DWARF5 or later)
     see dwarf_srclanglname().
-    To get the DW_LNAME as a string, call 
+    To get the DW_LNAME as a string, call
     dwarf_get_LNAME_name().
 
-    DWARF5 and earlier 
+    DWARF5 and earlier
 
     The DIE should be a CU DIE.
     @param dw_die
@@ -2925,7 +2925,7 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
 /*! @brief Return the value of the DW_AT_language_name attribute.
 
     New in v2.1.0 July 2025.
-            
+
     Returns a DWARF6  DW_AT language_name name.
     The DW_LNAME value returned lets one access
     the LNAME name as a string with dwarf_get_LNAME_name()
@@ -2935,7 +2935,7 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
     To access DW_LANG names (in DWARF5 or earlier)
     see dwarf_srclang().
 
-    @param dw_die 
+    @param dw_die
     The DIE of interest, normally a CU_DIE.
     @param dw_returned_lname
     On success returns the language name (code) (normally
@@ -2945,9 +2945,9 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
     The usual error detail return pointer.
     @return
     Returns DW_DLV_OK etc.
-*/  
+*/
 DW_API int dwarf_srclanglname(Dwarf_Die dw_die,
-    Dwarf_Unsigned *dw_returned_lname, 
+    Dwarf_Unsigned *dw_returned_lname,
     Dwarf_Error    *dw_error);
 
 /*! @brief Return the value of the DW_AT_language_version attribute.
@@ -2972,14 +2972,13 @@ DW_API int dwarf_srclanglname(Dwarf_Die dw_die,
     The usual error detail return pointer.
     @return
     Returns DW_DLV_OK etc.
-*/ 
+*/
 
 DW_API int dwarf_srclanglname_version(Dwarf_Die dw_die,
-    const char  *dw_returned_verstring, 
+    const char  *dw_returned_verstring,
     Dwarf_Error *dw_error);
 
-
-/*! @brief Return values associated with DW_AT_language_name 
+/*! @brief Return values associated with DW_AT_language_name
 
     Returns the value of a the default-lower-bound
     and a string defining the interpretation of

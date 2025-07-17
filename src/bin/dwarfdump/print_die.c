@@ -4735,8 +4735,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_language_version: {
         char         atnamebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s langver;
-        
-        if (fc != DW_FORM_CLASS_STRING) {
+
+        if (fc != DW_FORM_CLASS_CONSTANT) {
             remark_wrong_string_format(attr,theform);
             esb_destructor(&valname);
             esb_destructor(&esb_extra);
@@ -4784,7 +4784,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &lv_lower_bound, &lv_version_details);
         if (res == DW_DLV_OK) {
             esb_append_printf_i(&valname,
-                "(low bound: %d",lv_lower_bound);
+                " (low bound: %d",lv_lower_bound);
             if (lv_version_details) {
                 esb_append_printf_s(&valname,
                     " format: %s)",
@@ -8613,7 +8613,16 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     Dwarf_Bool hex_format = TRUE;
                     Dwarf_Half dwversion = 0;
 
-                    formx_unsigned(tempud,esbp,hex_format);
+                    if (attr == DW_AT_language_version) {
+                        hex_format = FALSE;
+                        formx_unsigned(tempud,esbp,hex_format);
+                        esb_append(esbp," (");
+                        hex_format = TRUE;
+                        formx_unsigned(tempud,esbp,hex_format);
+                        esb_append(esbp,")");
+                    } else {
+                        formx_unsigned(tempud,esbp,hex_format);
+                    }
                     /* Check attribute encoding */
                     if (glflags.gf_check_attr_encoding) {
                         check_attributes_encoding(attr,theform,
@@ -8778,34 +8787,77 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
-    case DW_FORM_sdata:
-        wres = dwarf_formsdata(attrib, &tempsd, err);
-        if (wres == DW_DLV_OK) {
-            Dwarf_Bool hxform=TRUE;
-            tempud = tempsd;
-            formx_unsigned_and_signed_if_neg(tempud,tempsd,
-                " (",hxform,esbp);
-        } else if (wres == DW_DLV_NO_ENTRY) {
-            /* nothing? */
-        } else {
-            print_error_and_continue(
-                "Cannot get DW_FORM_sdata value..",
-                wres, *err);
-            return wres;
+    case DW_FORM_sdata: {
+        Dwarf_Half attrs = 0;
+        int ares = 0;
+        Dwarf_Bool hxform=TRUE;
+        Dwarf_Error attrerr = 0;
+
+        ares = dwarf_whatattr(attrib, &attrs, &attrerr);
+        {   /* Do regardless of ares value! */
+            wres = dwarf_formsdata(attrib, &tempsd, err);
+            if (wres == DW_DLV_OK) {
+                tempud = tempsd;
+                if (attrs == DW_AT_language_version) {
+                    hxform = FALSE;
+                    formx_signed(tempsd,esbp);
+                    esb_append(esbp," (");
+                    hxform = TRUE;
+                    formx_unsigned_and_signed_if_neg(tempud,tempsd,
+                        " (",hxform,esbp);
+                    esb_append(esbp,")");
+                } else {
+                    formx_unsigned_and_signed_if_neg(tempud,tempsd,
+                        " (",hxform,esbp);
+                }
+            } else if (wres == DW_DLV_NO_ENTRY) {
+                /* nothing? */
+            } else {
+                print_error_and_continue(
+                    "Cannot get DW_FORM_sdata value..",
+                    wres, *err);
+                return wres;
+            }
+        }
+        if (ares == DW_DLV_ERROR) {
+            /* leave no trace, caught elsewhere. */
+            dwarf_dealloc_error(dbg,attrerr);
+        }
         }
         break;
-    case DW_FORM_udata:
-        wres = dwarf_formudata(attrib, &tempud, err);
-        if (wres == DW_DLV_OK) {
-            Dwarf_Bool hex_format = TRUE;
-            formx_unsigned(tempud,esbp,hex_format);
-        } else if (wres == DW_DLV_NO_ENTRY) {
-            /* nothing? */
-        } else {
-            print_error_and_continue(
-                "Cannot get DW_FORM_udata value..",
-                wres, *err);
-            return wres;
+    case DW_FORM_udata: {
+        Dwarf_Half attru = 0;
+        int ares = 0;
+        Dwarf_Error attrerr = 0;
+
+        ares = dwarf_whatattr(attrib, &attru, err);
+        {   /* Do regardless of ares value! */
+            wres = dwarf_formudata(attrib, &tempud, err);
+            if (wres == DW_DLV_OK) {
+                Dwarf_Bool hex_format = TRUE;
+                if (attru == DW_AT_language_version) {
+                    hex_format = FALSE;
+                    formx_unsigned(tempud,esbp,hex_format);
+                    esb_append(esbp," (");
+                    hex_format = TRUE;
+                    formx_unsigned(tempud,esbp,hex_format);
+                    esb_append(esbp,")");
+                } else {
+                    formx_unsigned(tempud,esbp,hex_format);
+                }
+            } else if (wres == DW_DLV_NO_ENTRY) {
+                /* nothing? */
+            } else {
+                print_error_and_continue(
+                    "Cannot get DW_FORM_udata value..",
+                    wres, *err);
+                return wres;
+            }
+        }
+        if (ares == DW_DLV_ERROR) {
+            /* leave no trace, caught elsewhere. */
+            dwarf_dealloc_error(dbg,attrerr);
+        }
         }
         break;
     /* various forms for strings. */

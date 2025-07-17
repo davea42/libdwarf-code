@@ -1752,8 +1752,8 @@ dwarf_srclanglname(Dwarf_Die die,
     Dwarf_Unsigned *ret_name, Dwarf_Error *error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die, 
-       DW_AT_language_name,
+    int res = _dwarf_die_attr_unsigned_constant(die,
+        DW_AT_language_name,
         &luns, error);
     *ret_name = luns;
     return res;
@@ -2291,9 +2291,9 @@ dwarf_machine_architecture(Dwarf_Debug dbg,
         dw_ub_index,  dw_comdat_groupnumber);
 }
 /*
-   
+
     DWARF6 DW_LNAME values are referenced
-    by using dwarf_language_version_string() 
+    by using dwarf_language_version_string()
     (these are permitted in DWARF5, see
     www.dwarfstd.org  )
 
