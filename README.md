@@ -34,6 +34,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
+    Version 2.1.0  Released 20 July      2025.
     Version 2.0.0  Released 20 May       2025.
     Version 0.12.0 Released  2 April     2025.
     Version 0.11.1 Released  1 December  2024.
@@ -41,7 +42,6 @@ using configure,cmake, and meson.
     Version 0.10.1 Released  1 July      2024.
     Version 0.9.2  Released  2 April     2024.
     Version 0.9.1  Released 27 January   2024.
-    Version 0.9.0  Released  8 December  2023.
 
 ## NOTE on linking against libdwarf.a
 
