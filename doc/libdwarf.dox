@@ -1163,7 +1163,7 @@
 
     <b>Changes 2.0.0 to 2.1.0</b>
 
-    Tentative release 20 July 2020
+    Released 20 July 2025
 
     Corrected (and tested) use of DWARF6 attributes
     DW_AT_language_name and DW_AT_language_version.
