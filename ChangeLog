@@ -1,3 +1,79 @@
+2025-07-17:  David Anderson
+    commit eae750bf66c1b4cb787cfb061a116ba6dbe748d9
+
+    July 20 is now official.
+            modified:   doc/libdwarf.dox
+
+2025-07-17:  David Anderson
+    commit 8457e97f361f2aab5a539480a5bcd9fc39139587
+
+    Release date and documentation now set  20 July 2025
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+
+2025-07-16:  David Anderson
+    commit fa54975b6a94425f61a0e5c3cf502d871b37827c
+
+    coverity scan CID  531843 is a false positive.
+    There is no real problem though the scan says
+    overflow is possible in the arithmetic.
+    The analysis is wrong.
+            modified:   ../../lib/libdwarf/dwarf_elfread.c
+
+2025-07-16:  David Anderson
+    commit 7cff033f87b3458d75cf8aad3da40e81d345cb35
+
+     Changes to be committed:
+        Coverity scan CID 531838. Mem leak.
+        Free the block h points to here too.
+            modified:   src/lib/libdwarf/dwarf_dsc.c
+
+2025-07-15:  David Anderson
+    commit fa68586b0a310180d2bde8ea9ed8c091c694a12d
+
+     Changes to be committed:
+    Removed duplicate check for level == 0
+    as coverity scan emitted a warning.
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+
+2025-07-15:  David Anderson
+    commit 140d08c5238be21aeb754426dfd79270c8bd26d1
+
+    Fixing Coverity Scan CID 591830, 531842 531840.
+    Update so DW_DLA_MACRO_CONTEXT
+    has zero for a destruct
+    This revision allows coverity to  understand
+    there is no leak.
+            modified:   dwarf_alloc.c
+            modified:   dwarf_debugnames.c
+            modified:   dwarf_errmsg_list.h
+
+    ensure the necessary free done in
+    dwarf_dealloc_macro_context().
+    Remove source and refs to _dwarf_dealloc_macro_context().
+            modified:   dwarf_macro5.c
+            modified:   dwarf_macro5.h
+            modified:   libdwarf.h
+
+2025-07-07:  David Anderson
+    commit 77064325bb007dfd1b2415ef0496766c27ca01c1
+
+    Corrected typos and spelling inconsistencies.
+            modified:   doc/libdwarf.dox
+
+2025-07-07:  David Anderson
+    commit 89e17f52904a70667c964aeada57eac9d5955971
+
+    A handful of the corrections to Macos were
+    wrong. Now fully consistent.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-07:  David Anderson
+    commit 605cd1e71cef7a859a2d4ac5914d120292c19030
+
+    Up to date.
+            modified:   ChangeLog
+
 2025-07-07:  David Anderson
     commit 46d7f5cf651bf010c5f71e061ae4a62d73e461b0
 
