@@ -454,10 +454,7 @@ dwarf_init_b(int fd,
     Dwarf_Unsigned   filesize = 0;
     int res = 0;
     int errcode = 0;
-#if 0
-    void *inmem_data;
-    Dwarf_Unsigned inmem_size = 0;
-#endif
+
     if (!ret_dbg) {
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
     }

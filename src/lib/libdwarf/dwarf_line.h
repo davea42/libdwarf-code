@@ -302,7 +302,6 @@ void _dwarf_set_line_table_regs_default_values(
 */
 struct Dwarf_Line_s {
     Dwarf_Addr li_address;  /* pc value of machine instr */
-#if 1
     struct li_inner_s {
         /* New as of DWARF4 */
         Dwarf_Unsigned li_discriminator;
@@ -348,7 +347,6 @@ struct Dwarf_Line_s {
         /* Mark a line record as being DW_LNS_set_address. */
         unsigned li_is_addr_set:1;
     } li_l_data;
-#endif /* 1 */
     Dwarf_Line_Context li_context; /* assoc Dwarf_Line_Context_s */
 
     /*  Set only on the actuals table of a two-level line table.

@@ -493,7 +493,6 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
 
         gshdr->gh_secnum = i;
         copysection32(ep,gshdr,psh);
-#if 1
         if (gshdr->gh_size >= ep->f_filesize &&
             gshdr->gh_type != SHT_NOBITS) {
             free(orig_psh);
@@ -501,7 +500,6 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
             *errcode = DW_DLE_SECTION_SIZE_ERROR;
             return DW_DLV_ERROR;
         }
-#endif /* 0 */
         isempty = is_empty_section(gshdr->gh_type);
         if (i == 0) {
             Dwarf_Unsigned shnum = 0;

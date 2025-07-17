@@ -1196,7 +1196,7 @@ dwarf_object_finish(Dwarf_Debug dbg)
 
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
 
-#if 0
+#if 0 /* Dropping heuristic check. Not reliable. */
 static int
 check_uncompr_inflation(Dwarf_Debug dbg,
     Dwarf_Error *error,
@@ -1294,7 +1294,7 @@ check_uncompr_inflation(Dwarf_Debug dbg,
 
     */
 
-#if 0
+#if 0 /* Dropping heuristic check. Not reliable. */
 /*  ALLOWED_ZLIB_INFLATION is a heuristic, not necessarily right.
     The test case klingler2/compresseddebug.amd64 actually
     inflates about 8 times.  */
@@ -1389,7 +1389,7 @@ do_decompress(Dwarf_Debug dbg,
             " The compressed section is not properly formatted");
         return DW_DLV_ERROR;
     }
-#if 0
+#if 0 /* Dropping heuristic check. Not reliable. */
     /*  The heuristics are unreliable. Turned off now  */
     if (!zstdcompress) {
         /*  According to zlib.net zlib essentially never expands
@@ -1558,7 +1558,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, errc, DW_DLV_ERROR);
     }
-#if 0
+#if 0 /* Not changing error, to disruptive of regression tests. */
 Hold off on this, keep old error for the moment
     if (res == DW_DLV_ERROR) {
         _dwarf_error_string(dbg, error,

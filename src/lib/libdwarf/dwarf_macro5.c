@@ -368,7 +368,7 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
                 Normally we don't see this, the end operator
                 signals end. */
             opslen = mdata - macro_context->mc_macro_ops;
-#if 0
+#if 0 /* Dropping a counterproductive test. */
             /*  This test fails when there are corrupted FORms
                 so we lose a really useful and precise error
                 message and get this useless message. */

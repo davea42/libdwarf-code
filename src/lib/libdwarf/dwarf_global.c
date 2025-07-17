@@ -1069,7 +1069,6 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             *out_phead_chain = 0;
             return DW_DLV_ERROR;
         }
-#if 1
         /*  If there is some kind of padding at the end of
             the section, following a pairs terminator,
             as emitted by some compilers, skip over that padding and
@@ -1084,7 +1083,6 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 pubnames_like_offset = finaloffset;
             }
         }
-#endif
         pubnames_like_ptr = pubnames_ptr_past_end_cu;
     } while (pubnames_like_ptr < section_end_ptr);
     *return_count = global_count;

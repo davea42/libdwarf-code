@@ -512,10 +512,6 @@ dwarf_object_detector_fd(int fd,
 
 int
 _dwarf_object_detector_fd_a(int fd,
-#if 0
-    void *   in_memory,
-    Dwarf_Unsigned in_mem_size,
-#endif
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
@@ -528,13 +524,7 @@ _dwarf_object_detector_fd_a(int fd,
     Dwarf_Unsigned filesize = 0;
     Dwarf_Unsigned remaininglen  = 0;
     int            res = 0;
-#if 0
-    char * memobj = (char *)in_memory;
 
-    if (memobj) {
-        filesize = in_mem_size;
-    } else
-#endif
     {
         res = _dwarf_seekr(fd,0,SEEK_END,&filesize);
         if (res != DW_DLV_OK) {
