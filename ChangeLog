@@ -1,4 +1,23 @@
 2025-07-17:  David Anderson
+    commit b0bef35daf7397dbb8447f5fa2e8e7f9e157a94c
+
+    Now all #if 0 have a comment explaining why.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.h
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2025-07-17:  David Anderson
+    commit 896bd621035d78a1682a63504579bc83c408b2f2
+
+     Changes to be committed:
+            Updated for release, all changes shown.
+            modified:   ChangeLog
+
+2025-07-17:  David Anderson
     commit eae750bf66c1b4cb787cfb061a116ba6dbe748d9
 
     July 20 is now official.
