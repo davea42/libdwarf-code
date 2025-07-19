@@ -1,3 +1,28 @@
+2025-07-18:  David Anderson
+    commit 11e987538f2820e2598bec6d18f77c6f90500323
+
+    Version for release 2.1.0
+            modified:   doc/libdwarf.pdf
+
+2025-07-17:  David Anderson
+    commit 6b133ed3deb1a871d7289c5a80ae39ca9befeace
+
+    All had trailing whitespace.
+    One or two had an indent error.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-17:  David Anderson
+    commit 42352f2d6bdd517177ccf261537c03a5d0bb18d0
+
+    Recording cleanup  of a few #if 0 for clarity.
+            modified:   ChangeLog
+
 2025-07-17:  David Anderson
     commit b0bef35daf7397dbb8447f5fa2e8e7f9e157a94c
 
