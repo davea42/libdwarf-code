@@ -272,6 +272,110 @@ elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
 }
 
 #ifdef HAVE_FULL_MMAP
+
+static int
+_dwarf_mmap_calc(Dwarf_Unsigned baseoff,
+    Dwarf_Unsigned objsecoff,
+    Dwarf_Unsigned seclen,
+    Dwarf_Unsigned filesize,
+    Dwarf_Unsigned *return_mmap_offset,
+    Dwarf_Unsigned *return_mmap_len,
+    Dwarf_Unsigned *return_pagesizebits,
+    int *errc)
+{
+    Dwarf_Unsigned computed_mmaplen = 0;
+    Dwarf_Unsigned computed_mmapend = 0;
+    long           pagesize = sysconf(_SC_PAGESIZE);
+    Dwarf_Unsigned upagesize = 0;
+    Dwarf_Unsigned pagesizebits = 0;
+    Dwarf_Unsigned pageoff = 0;
+    Dwarf_Unsigned tempmmaplen = 0;
+    Dwarf_Unsigned pageadjust = 0;
+    Dwarf_Unsigned secoff= 0;
+
+    /*  pagesize is guaranteed to be a multiple of 2,
+            and will be >= 512 and is usually 4096.
+            this helps coverityscan know that sutracting one
+            from pagesize will not result in an
+            anomalous number. */
+    if (pagesize < 200L || pagesize > (128L*1024L*1024L)) {
+        /*  verifying the value of pagesize to help fix
+            coverity scan CID  531843 */
+        *errc = DW_DLE_SYSCONF_VALUE_UNUSABLE;
+        return DW_DLV_ERROR;
+    }
+    /*  This is where there are multiple objects in a file,
+        such as a MacOS universal binary */
+    secoff = objsecoff + baseoff;
+    if (secoff < objsecoff ||
+        secoff < baseoff) {
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+    upagesize = (Dwarf_Unsigned)pagesize;
+    pagesizebits = upagesize -1;
+    /*  Guarding against bad values and
+        mmap of tiny sections. */
+    if (seclen > filesize ||
+        secoff > filesize ||
+        (seclen + secoff) > filesize ||
+        seclen < (4096*2)) {
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+     
+    pageoff = secoff & ~pagesizebits;
+    /*  coverity scan CID 581843. Guarding
+        against possible overflow complaint
+        in computing computed_mmaplen. */
+    computed_mmaplen = seclen;
+    if (secoff <  pageoff) {
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+    pageadjust = secoff - pageoff;
+
+    tempmmaplen = computed_mmaplen + pageadjust;
+    if (tempmmaplen < computed_mmaplen ||
+        tempmmaplen < pageadjust) {
+        /* overflow */
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+    computed_mmaplen = tempmmaplen;
+    tempmmaplen = computed_mmaplen + pagesizebits;
+    if (tempmmaplen > filesize ||
+        tempmmaplen < computed_mmaplen ||
+        tempmmaplen < pagesizebits) {
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+    computed_mmaplen = tempmmaplen;
+    computed_mmaplen &= ~pagesizebits;
+    tempmmaplen = computed_mmaplen+pageoff;
+    if (tempmmaplen > filesize ||
+        tempmmaplen < computed_mmaplen ||
+        tempmmaplen < pagesizebits) {
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+    computed_mmapend = computed_mmaplen+pageoff;
+    if (computed_mmapend > filesize ||
+        computed_mmapend < computed_mmaplen ||
+        computed_mmapend  < pageoff) {
+        *errc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+
+    computed_mmaplen = tempmmaplen;
+    *return_mmap_offset = pageoff;
+    *return_mmap_len = computed_mmaplen;
+    *return_pagesizebits = pagesizebits;
+    return DW_DLV_OK;
+}
+
+
+
 /*  Calls elf_load_nolibelf_section() if
     malloc  is preferred. */
 static int
@@ -300,35 +404,20 @@ elf_load_nolibelf_section_a (void* obj,
         return res;
     }
     case Dwarf_Alloc_Mmap: {
-        Dwarf_Unsigned secoffset = 0;
-        Dwarf_Unsigned seclen = 0;
+        Dwarf_Unsigned baseoff = 0; /* for Macos might be non-zero */
         Dwarf_Small   *realarea = (void*)-1;
         Dwarf_Unsigned computed_mmaplen = 0;
-        Dwarf_Unsigned computed_mmapend = 0;
-        long           pagesize = sysconf(_SC_PAGESIZE);
-        Dwarf_Unsigned upagesize = 0;
-        Dwarf_Unsigned pagesizebits = 0;
         Dwarf_Unsigned pageoff = 0;
         dwarf_elf_object_access_internals_t *elf =
             (dwarf_elf_object_access_internals_t*)(obj);
         void *         mmptr = 0;
 
-        /*  pagesize is guaranteed to be a multiple of 2,
-            and will be >= 512 and is usually 4096.
-            this helps coverityscan know that sutracting one
-            from pagesize will not result in an
-            anomalous number. */
-        if (pagesize < 200L || pagesize > (128L*1024L*1024L)) {
-            /*  verifying the value of pagesize to help fix
-                coverity scan CID  531843 */
-            *errc = DW_DLE_SYSCONF_VALUE_UNUSABLE;
-            return DW_DLV_ERROR;
-        }
-        upagesize = (Dwarf_Unsigned)pagesize;
-        pagesizebits = upagesize -1;
         if (0 < dw_section_index &&
             dw_section_index < elf->f_loc_shdr.g_count) {
-            Dwarf_Unsigned pageadjust = 0;
+            Dwarf_Unsigned seclen = 0;
+            Dwarf_Unsigned secoffset = 0;
+            int localerrc = 0;
+            Dwarf_Unsigned pagesizebits = 0;
 
             struct generic_shdr *sp =
                 elf->f_shdr + dw_section_index;
@@ -340,53 +429,12 @@ elf_load_nolibelf_section_a (void* obj,
             if (!seclen) {
                 return DW_DLV_NO_ENTRY;
             }
-            /*  Guarding against bad values and
-                against overflow */
-            if (sp->gh_size > elf->f_filesize ||
-                sp->gh_offset > elf->f_filesize ||
-                (sp->gh_size + sp->gh_offset) >
-                    elf->f_filesize) {
-                *errc = DW_DLE_ELF_SECTION_ERROR;
-                return DW_DLV_ERROR;
-            }
             secoffset = sp->gh_offset;
-            pageoff = secoffset & ~pagesizebits;
-            /*  coverity scan CID 581843. Guarding
-                against possible overflow complaint
-                in computing computed_mmaplen. */
-            computed_mmaplen = seclen;
-            pageadjust = secoffset - pageoff;
-            computed_mmaplen += pageadjust;
-            if (computed_mmaplen > elf->f_filesize) {
-                *errc = DW_DLE_ELF_SECTION_ERROR;
-                return DW_DLV_ERROR;
-            }
-            computed_mmaplen += pagesizebits;
-            if (computed_mmaplen > elf->f_filesize) {
-                *errc = DW_DLE_ELF_SECTION_ERROR;
-                return DW_DLV_ERROR;
-            }
-            computed_mmaplen &= ~pagesizebits;
-            if (computed_mmaplen > elf->f_filesize) {
-                /*  impossible */
-                *errc = DW_DLE_ELF_SECTION_ERROR;
-                return DW_DLV_ERROR;
-            }
-            if (computed_mmaplen < seclen) {
-                /*  unsigned arith overflowed? */
-                *errc = DW_DLE_ELF_SECTION_ERROR;
-                return DW_DLV_ERROR;
-            }
-            computed_mmapend = computed_mmaplen+pageoff;
-            /*  mmap tiny is formally ok, but since we
-                are doing mmap per_section we do not
-                want overlaps with other mmap.
-                Overlap seems to fail. */
-            if (seclen < (Dwarf_Unsigned)(4096*2) ||
-                computed_mmaplen >= elf->f_filesize ||
-                computed_mmapend >= elf->f_filesize ||
-                /* overflow likely? */
-                computed_mmaplen < seclen) {
+            res = _dwarf_mmap_calc(baseoff,secoffset,
+                seclen,elf->f_filesize,
+                &pageoff,&computed_mmaplen,
+                &pagesizebits,&localerrc);
+            if (res == DW_DLV_ERROR ) {
                 /* Does NOT alter *return_data_len */
                 res = elf_load_nolibelf_section(obj,
                     dw_section_index,
@@ -398,6 +446,7 @@ elf_load_nolibelf_section_a (void* obj,
                 /* *return_data_len =  not set */
                 return res;
             }
+            
             /*  Coverity Scan CID 531843. Possible overflow
                 computing computed_mmaplen.  This is
                 a false positive,  Marked as such
@@ -406,8 +455,20 @@ elf_load_nolibelf_section_a (void* obj,
                 PROT_READ|PROT_WRITE, MAP_PRIVATE,
                 elf->f_fd,(off_t)pageoff);
             if (mmptr == (void *)-1) {
+                /* Does NOT alter *return_data_len */
+                res = elf_load_nolibelf_section(obj,
+                    dw_section_index,
+                    return_data_ptr,errc);
+                *return_mmap_base_ptr = 0;
+                *return_mmap_offset = 0;
+                *return_mmap_len = 0;
+                *dw_alloc_type = Dwarf_Alloc_Malloc;
+                /* *return_data_len =  not set */
+                return res;
+#if 0  /* suppressing mmap fail use malloc instead */
                 *errc = DW_DLE_ELF_SECTION_ERROR;
                 return DW_DLV_ERROR;
+#endif
             }
             sp->gh_load_type = Dwarf_Alloc_Mmap;
             realarea = (Dwarf_Small*)mmptr;
