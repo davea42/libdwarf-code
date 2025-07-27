@@ -294,13 +294,13 @@ _dwarf_mmap_calc(Dwarf_Unsigned baseoff,
     Dwarf_Unsigned secoff= 0;
 
     /*  pagesize is guaranteed to be a multiple of 2,
-            and will be >= 512 and is usually 4096.
-            this helps coverityscan know that sutracting one
-            from pagesize will not result in an
-            anomalous number. */
+        and will be >= 512 and is usually 4096.
+        this helps Coverityscan know that subtracting one
+        from pagesize will not result in an
+        anomalous number. */
     if (pagesize < 200L || pagesize > (128L*1024L*1024L)) {
         /*  verifying the value of pagesize to help fix
-            coverity scan CID  531843 */
+            Coverity scan CID  531843 */
         *errc = DW_DLE_SYSCONF_VALUE_UNUSABLE;
         return DW_DLV_ERROR;
     }
@@ -323,9 +323,9 @@ _dwarf_mmap_calc(Dwarf_Unsigned baseoff,
         *errc = DW_DLE_ELF_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
-     
+
     pageoff = secoff & ~pagesizebits;
-    /*  coverity scan CID 581843. Guarding
+    /*  Coverity scan CID 581843. Guarding
         against possible overflow complaint
         in computing computed_mmaplen. */
     computed_mmaplen = seclen;
@@ -373,8 +373,6 @@ _dwarf_mmap_calc(Dwarf_Unsigned baseoff,
     *return_pagesizebits = pagesizebits;
     return DW_DLV_OK;
 }
-
-
 
 /*  Calls elf_load_nolibelf_section() if
     malloc  is preferred. */
@@ -446,11 +444,11 @@ elf_load_nolibelf_section_a (void* obj,
                 /* *return_data_len =  not set */
                 return res;
             }
-            
+
             /*  Coverity Scan CID 531843. Possible overflow
                 computing computed_mmaplen.  This is
                 a false positive,  Marked as such
-                in coverity scan 16 July 2025. */
+                in Coverity scan 16 July 2025. */
             mmptr = mmap(0, (size_t)computed_mmaplen,
                 PROT_READ|PROT_WRITE, MAP_PRIVATE,
                 elf->f_fd,(off_t)pageoff);
