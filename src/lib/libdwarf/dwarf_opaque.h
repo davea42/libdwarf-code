@@ -202,6 +202,15 @@ struct Dwarf_CU_Context_s {
         compiler is set to CC_PROD_METROW */
     Dwarf_Small cc_producer;
 
+    /*  Data relating to DW_AT_language_name
+        and DW_AT_language_version from CU DIE */
+    Dwarf_Half     cc_language_name;
+    Dwarf_Bool     cc_have_language_version;
+    int            cc_language_default_lowbound;
+    Dwarf_Unsigned cc_language_version;
+    const char    *cc_language_version_scheme;
+    const char    *cc_language_version_name;
+
     /*  cc_debug_offset is the global offset in the section
         of the area length field of the CU.
         The CU header of the CU is at offset

@@ -4735,6 +4735,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_language_version: {
         char         atnamebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s langver;
+#if 0
+        const char *version_name = 0;
+        const char *version_scheme = 0;
+#endif
 
         if (fc != DW_FORM_CLASS_CONSTANT) {
             remark_wrong_string_format(attr,theform);
@@ -4757,6 +4761,23 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return tres;
         }
+#if 0
+printf("dadebug language_version line %d\n",__LINE__);
+        tres = dwarf_lvn_name(die,&version_name,&version_scheme);
+printf("dadebug language_version res %d line %d\n",tres,__LINE__);
+        if (tres == DW_DLV_OK) {
+            esb_append(&langver," (version: ");
+            if (version_name) {
+                esb_append(&langver,version_name);
+            }
+            esb_append(&langver,")");
+            esb_append(&langver," (version scheme: ");
+            if (version_scheme) {
+                esb_append(&langver,version_scheme);
+            }
+            esb_append(&langver,")");
+        }
+#endif
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&langver));
         esb_destructor(&langver);
@@ -4764,7 +4785,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     case DW_AT_language_name: {
         int          lv_lower_bound = 0;
-        const char * lv_version_details = 0;
+        const char  *lv_version_details = 0;
 
         res = dd_get_integer_and_name(dbg, attrib,
             &uval,
@@ -8612,14 +8633,33 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 if (wres == DW_DLV_OK) {
                     Dwarf_Bool hex_format = TRUE;
                     Dwarf_Half dwversion = 0;
+                    const char *version_name = 0;
+                    const char *version_scheme = 0;
 
                     if (attr == DW_AT_language_version) {
+#if 0
+printf("dadebug language_version line %d\n",__LINE__);
+#endif
                         hex_format = FALSE;
                         formx_unsigned(tempud,esbp,hex_format);
                         esb_append(esbp," (");
                         hex_format = TRUE;
                         formx_unsigned(tempud,esbp,hex_format);
                         esb_append(esbp,")");
+                        wres = dwarf_lvn_name(die,&version_name,
+                            &version_scheme);
+                        if (wres == DW_DLV_OK) {
+                            esb_append(esbp," (version: ");
+                            if (version_name) {
+                                esb_append(esbp,version_name);
+                            }
+                            esb_append(esbp,")");
+                            esb_append(esbp," (version scheme: ");
+                            if (version_scheme) {
+                                esb_append(esbp,version_scheme);
+                            }
+                            esb_append(esbp,")");
+                       }
                     } else {
                         formx_unsigned(tempud,esbp,hex_format);
                     }
@@ -8799,13 +8839,34 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (wres == DW_DLV_OK) {
                 tempud = tempsd;
                 if (attrs == DW_AT_language_version) {
+                    const char * version_name = 0;
+                    const char * version_scheme = 0;
+
                     hxform = FALSE;
+#if 0
+printf("dadebug language_version line %d\n",__LINE__);
+#endif
                     formx_signed(tempsd,esbp);
                     esb_append(esbp," (");
                     hxform = TRUE;
                     formx_unsigned_and_signed_if_neg(tempud,tempsd,
                         " (",hxform,esbp);
                     esb_append(esbp,")");
+                    wres = dwarf_lvn_name(die,&version_name,
+                            &version_scheme);
+                    if (wres == DW_DLV_OK) {
+                        esb_append(esbp," (version: ");
+                        if (version_name) {
+                            esb_append(esbp,version_name);
+                        }
+                        esb_append(esbp,")");
+                        esb_append(esbp," (version scheme: ");
+                        if (version_scheme) {
+                            esb_append(esbp,version_scheme);
+                        }
+                        esb_append(esbp,")");
+                    }
+              
                 } else {
                     formx_unsigned_and_signed_if_neg(tempud,tempsd,
                         " (",hxform,esbp);
@@ -8832,6 +8893,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
         ares = dwarf_whatattr(attrib, &attru, err);
         {   /* Do regardless of ares value! */
+            const char * version_name = 0;
+            const char * version_scheme = 0;
             wres = dwarf_formudata(attrib, &tempud, err);
             if (wres == DW_DLV_OK) {
                 Dwarf_Bool hex_format = TRUE;
@@ -8842,6 +8905,24 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     hex_format = TRUE;
                     formx_unsigned(tempud,esbp,hex_format);
                     esb_append(esbp,")");
+#if 0
+printf("dadebug language_version line %d\n",__LINE__);
+#endif
+
+                    wres = dwarf_lvn_name(die,&version_name,
+                            &version_scheme);
+                    if (wres == DW_DLV_OK) {
+                        esb_append(esbp," (version: ");
+                        if (version_name) {
+                            esb_append(esbp,version_name);
+                        }
+                        esb_append(esbp,")");
+                        esb_append(esbp," (version scheme: ");
+                        if (version_scheme) {
+                            esb_append(esbp,version_scheme);
+                        }
+                        esb_append(esbp,")");
+                    }
                 } else {
                     formx_unsigned(tempud,esbp,hex_format);
                 }

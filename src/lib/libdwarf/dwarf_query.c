@@ -2293,7 +2293,7 @@ dwarf_machine_architecture(Dwarf_Debug dbg,
 /*
 
     DWARF6 DW_LNAME values are referenced
-    by using dwarf_language_version_string()
+    by using dwarf_language_version_data()
     (these are permitted in DWARF5, see
     www.dwarfstd.org  )
 
@@ -2304,7 +2304,7 @@ dwarf_machine_architecture(Dwarf_Debug dbg,
 
 int dwarf_language_version_data(
     Dwarf_Unsigned dw_lang_name,
-    int *          dw_default_lower_bound,
+    int          *dw_default_lower_bound,
     const char   **dw_version_scheme)
 {
     const char *lname = 0;
@@ -2402,7 +2402,7 @@ int dwarf_language_version_data(
 /*  OBSOLETE NAME:  Do not use dwarf_language_version_string(). */
 int dwarf_language_version_string(
     Dwarf_Unsigned dw_lang_name,
-    int *          dw_default_lower_bound,
+    int           *dw_default_lower_bound,
     const char   **dw_version_scheme)
 {
     return dwarf_language_version_data(dw_lang_name,

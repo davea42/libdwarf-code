@@ -3008,13 +3008,132 @@ DW_API int dwarf_srclanglname_version(Dwarf_Die dw_die,
 */
 DW_API int dwarf_language_version_data(
     Dwarf_Unsigned dw_lname_name,
-    int *          dw_default_lower_bound,
+    int          *dw_default_lower_bound,
     const char   **dw_version_string);
+
 /*  OBSOLETE NAME. Do Not use, use dwarf_language_version_data */
 DW_API int dwarf_language_version_string(
     Dwarf_Unsigned dw_lname_name,
-    int *          dw_default_lower_bound,
+    int           *dw_default_lower_bound,
     const char   **dw_version_string);
+
+/*! @brief Return language version name
+
+    New in version 2.2.0 July 2025
+
+    Returns the value of a the name of the DWARF6
+    DW_AT_language_version as a string, as "C++98" for example.
+    And the string defining the format of the language version,
+    for example 'YYYYMM" if  DW_LNAME_C.
+    Never free or dealloc the returned string, it is static memory
+
+    @param dw_lv_lang
+    Pass in a DW_LNAME value, for example DW_LNAME_C
+    (0x0003).
+    @param Pass in the language version, for example
+    201103 (meeaning C++ 11). 
+    @param dw_ret_version_name
+    On success, return the name of the version,
+    "C++11" for example. Never free or dealloc the string.
+    @param dw_reg_version_scheme
+    On success, returns 
+    For DW_LNAME_C the string returned through
+    the pointer would be "YYYYMM".
+    If there is no version scheme defined, return a NULL
+    through the pointer.
+    Never dealloc or free() the string returned through
+    dw_version_scheme as it is a static constant string.
+    @return
+    Returns DW_DLV_OK or the dw_lang_name
+    is unknown, returns  DW_DLV_NO_ENTRY.
+    Never returns DW_DLV_ERROR;
+*/
+DW_API int dwarf_lvn_name_direct(Dwarf_Unsigned dw_lv_lang,
+    Dwarf_Unsigned dw_lv_ver,
+    const char   **dw_ret_version_name,
+    const char   **dw_ret_version_scheme);
+
+/*! @brief Return values associated with DW_AT_language_version
+
+    New in version 2.2.0 July 2025
+
+    Given any valid DIE for a Compilation Unit
+    returns the value of a the CU_DIE name of the DWARF6
+    DW_AT_language_version as a string, as "C++98" for example.
+    And the string defining the format of the language version,
+    for example 'YYYYMM" if  DW_LNAME_C.
+    Never free or dealloc the returned string, it is static memory
+
+    @param dw_die
+    Pass in any valid open Dwarf_Die for the compilation
+    unit of interest. 
+    @param dw_reg_version_name
+    On success returns the language version name string through
+    the pointer. Never dealloc or free the string,
+    it points to static memory.
+    @param dw_ret_version_scheme
+    On success, return the version scheme,
+    For DW_LNAME_C the string returned through
+    the pointer would by "YYYYMM".
+    If there is no version scheme defined, return a NULL
+    through the pointer.
+    Never dealloc or free() the string returned through
+    dw_version_scheme as it is a static constant string.
+    @return
+    Returns DW_DLV_OK or the dw_lang_name
+    is unknown, returns  DW_DLV_NO_ENTRY.
+    Never returns DW_DLV_ERROR;
+*/
+
+DW_API int dwarf_lvn_name(Dwarf_Die dw_die,
+    const char   **dw_ret_version_name,
+    const char   **dw_ret_version_scheme);
+
+/*! @brief Return values associated with DW_AT_language_version
+
+    New in version 2.2.0 July 2025
+
+    Primarily used by dwarfdump. This enables access to the
+    instances of DWARF6 language version table known
+    to this version of libdwarf.
+    None of the strings returned through pointer should
+    be dealloc-d or free-d, they are static strings.
+
+    @param dw_lvn_index
+    To see all table entries,
+    pass in the index of a table entry, beginning with
+    0, and call again with subsequent numbers untill
+    the function returns DW_DLV_NO_ENTRY (meaning 
+    there are no more entries). The index has no intrinsic
+    meaning.
+    @param dw_lvn_language_name
+    On success, the function returns the language name
+    through the pointer. For example, a value like
+    DW_LNAME_C.
+    @param dw_lvn_language_version
+    On success, the function returns the language version
+    through the pointer. For example a number such as
+    for C: 199901.
+    @param dw_lvn_language_version_scheme
+    On success, the function returns a pointer to a string
+    identifying the format of the language version
+    through the pointer. For example "YYYYMM"
+    for C.
+    @param dw_lvn_language_version_name
+    On success, the function returns a pointer to a string
+    for C.
+    identifying the name of the language version
+    through the pointer. For example: "C99".
+    @return
+
+*/
+DW_API int dwarf_lvn_table_entry(Dwarf_Unsigned dw_lvn_index,
+    Dwarf_Unsigned *dw_lvn_language_name,
+    Dwarf_Unsigned *dw_lvn_language_version,
+    const char    **dw_lvn_language_version_scheme,
+    const char    **dw_lvn_language_version_name);
+    
+
 
 /*! @brief Return the value of the DW_AT_ordering attribute.
 

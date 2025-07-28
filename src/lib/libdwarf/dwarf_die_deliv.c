@@ -1372,6 +1372,51 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 break;
             }
             switch(attrnum) {
+            case DW_AT_language_name:{
+                /*  arranges to set the cc_language
+                    values whichever order the attributes. */
+                int lres = 0;
+                Dwarf_Unsigned uval = 0;
+                lres = dwarf_formudata(attr,
+                    &uval, error);
+                if (lres == DW_DLV_OK) {
+                    cucon->cc_language_name = (Dwarf_Half)uval;
+                } else {
+                    return lres;
+                }
+                if (cucon->cc_have_language_version) {
+                    /* Ignore return code */
+                    dwarf_lvn_name_direct(
+                        cucon->cc_language_name,
+                        cucon->cc_language_version,
+                        &cucon->cc_language_version_name,
+                        &cucon->cc_language_version_scheme);
+                }
+            }
+            break;
+            case DW_AT_language_version: {
+                /*  arranges to set the cc_language
+                    values whichever order the attributes. */
+                int lres = 0;
+                Dwarf_Unsigned uval = 0;
+                lres = dwarf_formudata(attr,
+                    &uval, error);
+                if (lres == DW_DLV_OK) {
+                    cucon->cc_language_version = uval;
+                    cucon->cc_have_language_version = TRUE;
+                } else {
+                    return lres;
+                }
+                if (cucon->cc_language_name) {
+                    /* Ignore return code */
+                    lres = dwarf_lvn_name_direct(
+                        cucon->cc_language_name,
+                        cucon->cc_language_version,
+                        &cucon->cc_language_version_name,
+                        &cucon->cc_language_version_scheme);
+                }
+            }
+            break;
             case DW_AT_producer:
                 set_producer_type(cudie,cu_context);
                 break;
