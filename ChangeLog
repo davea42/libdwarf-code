@@ -1,3 +1,134 @@
+2025-07-29:  David Anderson
+    commit da649ae15c061ad51e7b1248f8e32cafdc0aeab8
+
+     Changes to be committed:
+    Implements a new dwarfdump option:
+       '--print-language-version-table'
+
+    which prints the DWARF6 specified values
+    related to DW_AT_language_version.
+    It prints the available values as specified in
+    www.dwarfstd.org , not the usage of such in an object file.
+
+    Dwarfdump automatically reports all the details
+    when reporting DW_AT_language_name and
+    DW_AT_language_version attributes, no special options required.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/dd_lvn_table.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-07-29:  David Anderson
+    commit a0ebe21ae4431f31ddacd70e03335e94114270ad
+
+    Now the new file dd_lvn_table.c is built.
+    lvn refers to DWARF6 language version name
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/meson.build
+
+2025-07-29:  David Anderson
+    commit f2928fbd53692dd1c6cf7be1a4388b8e6bd4eaf2
+
+    Latest doxygen required update of Doxyfile. Done.
+            modified:   doc/Doxyfile
+    Now with correct date, today.
+            modified:   doc/libdwarf.dox
+
+2025-07-29:  David Anderson
+    commit 484f2597fed9a4af90ccbe11f5e1130d3d37ff66
+
+    All about DWARF6 language_version is now available
+    and reportable.
+    Some trailing whitespace removed.
+            new file:   src/bin/dwarfdump/dd_lvn_table.c
+            modified:   src/lib/libdwarf/dwarf_lvn_name.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-28:  David Anderson
+    commit 9c4390966458b4c6f7564d8f8c48159f63758260
+
+    More complete reporting on DW_AT_language_version
+            modified:   src/bin/dwarfdump/print_die.c
+    Now with new API functions
+    dwarf_lvn_name_direct()
+    dwarf_lvn_name()
+    dwarf_lvn_table_entry()
+    for the language version name values.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Now with data about DWARF6 DW_AT_language_version
+    and DW_AT_language name
+            new file:   src/lib/libdwarf/dwarf_lvn_name.c
+    Build the new source file
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+
+2025-07-27:  David Anderson
+    commit d02b4bebe45a1eb7c6bc340d9e3db8d256d7f1c6
+
+    Comments now show the release id for next release of 2.2.0
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-07-27:  David Anderson
+    commit 9a0118b12fbe33d5a19765f7604c717535664b3e
+
+    Remove trailing spaces and fix indents.
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2025-07-26:  David Anderson
+    commit f3830639c80d00bfba17b73d6f7d99da69ba1ff3
+
+    This fixes the  Coverity Scan CID 531843 possible
+    overflow issue by recoding the calculations
+    for mmap very carefully into a new private
+    function _dwarf_mmap_calc().
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2025-07-22:  David Anderson
+    commit 06b794b7c0da080b7933223493b89f2512975de7
+
+    Was 2.1.0 now is 2.2.0
+    because will add new functions soon.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2025-07-20:  David Anderson
+    commit 1c7ec08565bc5ea8ae952b8ffc1a3ebc77d9cab2
+
+    Move packaging status to the end.
+            modified:   README.md
+
+2025-07-20:  David Anderson
+    commit 00de1e28c1c04ee001160ccaf2b1642932eeb91c
+
+    Packaged libdwarf by vtorri
+            modified:   README.md
+
+2025-07-19:  David Anderson
+    commit 2fb65851ff757eb8f6f6777954bdfa4bced2911e
+
+    Up to date
+            modified:   ChangeLog
+
 2025-07-18:  David Anderson
     commit 11e987538f2820e2598bec6d18f77c6f90500323
 
