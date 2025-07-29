@@ -16,6 +16,7 @@ dwarfdump_src = [
   'dd_esb.c',
   'dd_glflags.c',
   'dd_helpertree.c',
+  'dd_lvn_table.c',
   'dd_macrocheck.c',
   'dd_makename.c',
   'dd_naming.c',

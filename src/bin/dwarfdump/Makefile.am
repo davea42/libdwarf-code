@@ -24,6 +24,7 @@ dd_compiler_info.c \
 dd_compiler_info.h \
 dd_defined_types.h \
 dd_elf_cputype.h \
+dd_lvn_table.c \
 dd_pe_cputype.h \
 dd_minimal.h \
 dd_regex.c \
