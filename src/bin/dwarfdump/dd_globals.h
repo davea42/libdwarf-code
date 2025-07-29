@@ -376,6 +376,7 @@ dd_print_sig8_target(Dwarf_Debug dbg,
     Dwarf_Error *err);
 
 Dwarf_Bool dd_form_refers_local_info(Dwarf_Half form);
+void print_language_version_table(void);
 
 #ifdef __cplusplus
 }

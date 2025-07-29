@@ -379,6 +379,7 @@ static void arg_print_debug_sup(void);
 static void arg_print_fission(void);
 static void arg_print_gnu_frame(void);
 static void arg_print_info(void);
+static void arg_print_language_version_table(void);
 static void arg_print_lines(void);
 static void arg_print_lines_short(void);
 static void arg_print_loc(void);
@@ -477,6 +478,8 @@ static const char *usage_long_text[] = {
 "     --print-debug-names Print .debug_names section",
 "     --print-debug-sup   Print .debug_sup section",
 "-i   --print-info        Print info section",
+"     --print-language-version-table print the DWARF6 ",
+"                         language version table",
 "-l   --print-lines       Print line section",
 "-ls  --print-lines-short Print line section, but do not",
 "                         print <pc> address",
@@ -813,7 +816,8 @@ OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
 OPT_PRINT_TYPE,               /* -y   --print-type        */
 OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
 OPT_PRINT_ALLOCATIONS,        /* --print-section-allocations */
-
+OPT_PRINT_LANGUAGE_VERSION_TABLE,
+    /* --print-language-version_table */
 /* debuglink options */
 OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
 OPT_ADD_DEBUGLINK_PATH,      /* --add-debuglink-path=<text> */
@@ -947,6 +951,8 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-fission",     dwno_argument, 0, OPT_PRINT_FISSION    },
 {"print-frame",       dwno_argument, 0, OPT_PRINT_FRAME      },
 {"print-info",        dwno_argument, 0, OPT_PRINT_INFO       },
+{"print-language-version-table",       dwno_argument, 0,
+    OPT_PRINT_LANGUAGE_VERSION_TABLE },
 {"print-lines",       dwno_argument, 0, OPT_PRINT_LINES      },
 {"print-lines-short", dwno_argument, 0, OPT_PRINT_LINES_SHORT},
 {"print-loc",         dwno_argument, 0, OPT_PRINT_LOC        },
@@ -1661,6 +1667,14 @@ void arg_l_multiple_selection(void)
     } else {
         arg_print_lines();
     }
+}
+
+/*  Option '--print-language-version-table' */
+void arg_print_language_version_table(void)
+{
+    /* shows the DWARF6 language version table */
+    glflags.gf_print_language_version_table = TRUE;
+    suppress_check_dwarf();
 }
 
 /*  Option '-l' */
@@ -2638,6 +2652,8 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_FISSION:     arg_print_fission();     break;
         case OPT_PRINT_FRAME:       arg_print_debug_frame(); break;
         case OPT_PRINT_INFO:        arg_print_info();        break;
+        case OPT_PRINT_LANGUAGE_VERSION_TABLE:
+            arg_print_language_version_table();       break;
         case OPT_PRINT_LINES:       arg_print_lines();       break;
         case OPT_PRINT_LINES_SHORT: arg_print_lines_short(); break;
         case OPT_PRINT_LOC:         arg_print_loc();         break;

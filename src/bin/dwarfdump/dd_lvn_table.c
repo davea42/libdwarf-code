@@ -31,7 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*  Printing the language name and version details
     for DWARF6. Using information from the
-    standard, not information from any object file. 
+    standard, not information from any object file.
     See dwarfstd.org/languages-v6.html  */
 
 #include <config.h>
@@ -40,14 +40,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_defined_types.h"
+#include "libdwarf_private.h"
 #include "dd_checkutil.h"
 #include "dd_glflags.h"
 #include "dd_globals.h"
-#if 0
-#include "dd_makename.h"
-#include "dd_naming.h"
-#endif
-#include "dd_esb.h"
 
 void
 print_language_version_table(void)
@@ -59,13 +55,14 @@ print_language_version_table(void)
     const char * v_scheme = 0;
     const char * v_name = 0;
     const char * language_name_string = 0;
-   
 
     printf("\n");
     printf("DWARF6 Language Version Codes\n");
     printf("\n");
-    printf("  Language       Language Version  Version Scheme\n");  
-    printf("\n");
+    printf("  []   Language                      Language          "
+        "Version\n");
+    printf("                                     Version           "
+        "Scheme\n");
 
     for ( ; ; ++i) {
         res = dwarf_lvn_table_entry(i,
@@ -77,19 +74,18 @@ print_language_version_table(void)
         res = dwarf_get_LNAME_name(language_name,
             &language_name_string);
         if (res == DW_DLV_NO_ENTRY) {
-            language_name_string = "<unknownb>";
+            language_name_string = "<unknown>";
         }
 
-        printf("  [%2 " DW_PR_DUu "] ",i);
+        printf("  [%2" DW_PR_DUu "] ",i);
 
         printf("%-20s ",language_name_string);
-        printf("(%04x" DW_PR_DUx ") ",language_name);
+        printf("(0x%04" DW_PR_DUx ") ",language_name);
 
         printf("%-8s ",v_name);
         printf("(%6" DW_PR_DUu ") ",language_version);
 
-        printf("(%-12s ") ",v_scheme);
+        printf("%-12s ",v_scheme);
         printf("\n");
     }
 }
-

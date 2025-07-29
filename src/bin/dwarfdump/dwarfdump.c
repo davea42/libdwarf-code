@@ -1845,6 +1845,9 @@ process_one_file(
             pref == Dwarf_Alloc_Mmap?  "Dwarf_Alloc_Mmap":
             "<Unknown. an ERROR");
     }
+    if (glflags.gf_print_language_version_table) {
+        print_language_version_table();
+    }
     if (glflags.gf_debug_addr_missing) {
         printf("\nERROR: At some point "
             "the .debug_addr section was needed but missing, "
