@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-07-20 v2.2.0
+    @date 2025-07-29 v2.2.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1160,6 +1160,13 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 2.1.0 to 2.2.0</b>
+
+    Added functions dwarf_lvn_name_direct()
+    dwarf_lvn_name() dwarf_lvn_table_entry()
+    enabling access to all the fields relevant in
+    DWARF6 DW_AT_language_version attributes.
 
     <b>Changes 2.0.0 to 2.1.0</b>
 
