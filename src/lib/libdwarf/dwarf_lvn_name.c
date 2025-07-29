@@ -67,27 +67,18 @@ static const struct Dwarf_LVN_s _dwarf_lvn_data[] =
 {DW_LNAME_C,202311UL,"C23"},
 
 {DW_LNAME_C_plus_plus,199711UL,"C++98"},
-{DW_LNAME_C_plus_plus,201103UL,"C++11"},	
-{DW_LNAME_C_plus_plus,201402UL,"C++14"},	
-{DW_LNAME_C_plus_plus,201703UL,"C++17"},	
+{DW_LNAME_C_plus_plus,201103UL,"C++11"},
+{DW_LNAME_C_plus_plus,201402UL,"C++14"},
+{DW_LNAME_C_plus_plus,201703UL,"C++17"},
 {DW_LNAME_C_plus_plus,202002UL,"C++20"},
 {DW_LNAME_C_plus_plus,202302UL,"C++23"}
 };
 
-static Dwarf_Unsigned lvn_indexmax = 
+static Dwarf_Unsigned lvn_indexmax =
     (Dwarf_Unsigned)(sizeof(_dwarf_lvn_data)/
     sizeof(struct Dwarf_LVN_s));
 
-
-/*New CU_Context fields:
-  Dwarf_Half     cc_language_name;
-  Dwarf_Bool     cc_have_language_version;
-  Dwarf_Unsigned cc_language_version;
-  Dwarf_Unsigned cc_language_default_lowbound;
-  const char    *cc_language_version_name; */
-
-
-/*  Never returns DW_DLV_ERROR 
+/*  Never returns DW_DLV_ERROR
     Callers must have found DW_AT_language_version
     attribute and pass in its value
     as dw_lv_ver for this to return a meaningful value.
@@ -127,11 +118,11 @@ dwarf_lvn_name_direct(Dwarf_Unsigned dw_lv_lang,
     return DW_DLV_NO_ENTRY;
 }
 
-/*  Never returns DW_DLV_ERROR 
+/*  Never returns DW_DLV_ERROR
     On success returns a language version name
     such as "C++11" and a language version scheme
 */
-int 
+int
 dwarf_lvn_name(Dwarf_Die dw_die,
     const char **dw_ret_name,
     const char **dw_ret_version_scheme)
@@ -166,11 +157,10 @@ dwarf_lvn_table_entry(Dwarf_Unsigned dw_lvn_index,
     const char     **dw_lvn_language_version_name)
 {
     Dwarf_LVN lvn = 0;
-    if (dw_lvn_index >= lvn_indexmax) { 
-          return DW_DLV_NO_ENTRY;
+    if (dw_lvn_index >= lvn_indexmax) {
+        return DW_DLV_NO_ENTRY;
     }
-    lvn = &_dwarf_lvn_data[lvn_indexmax];
-
+    lvn = &_dwarf_lvn_data[dw_lvn_index];
     if (dw_lvn_language_name) {
         *dw_lvn_language_name  = lvn->lvn_lang;
     }
@@ -184,15 +174,9 @@ dwarf_lvn_table_entry(Dwarf_Unsigned dw_lvn_index,
         int lowerbound = 0;
         const char *verscheme = 0;
         dwarf_language_version_data(lvn->lvn_lang,
-          &lowerbound,
-          &verscheme);
+            &lowerbound,
+            &verscheme);
         *dw_lvn_language_version_scheme = verscheme;
     }
     return DW_DLV_OK;
 }
-
-#if 0
-
-new dwarfdump option
---print-language-version-table
-#endif
