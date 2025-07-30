@@ -141,11 +141,15 @@ mmapresult = false
 # sys/stat.h is for dwarfgen.
 # sys/mman.h is for mmap() and sysconf()
 header_checks = [
-  'fcntl.h',
-  'inttypes.h',
+  'unistd.h',
+  'sys/types.h',
   'malloc.h',
   'stdint.h',
+  'inttypes.h',
+  'stddef.h',
+  'fcntl.h',
   'sys/stat.h',
+  'stdafx.h',
 ]
 if sys_windows == false
   header_checks += 'unistd.h'
