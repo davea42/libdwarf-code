@@ -69,6 +69,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_FULL_MMAP
 #include <sys/mman.h> /* mmap */
 #endif /* HAVE_FULL_MMAP */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>  /*  off_t */
+#endif /* HAVE_SYS_TYPES_H */
 #include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
 

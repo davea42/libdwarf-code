@@ -26,11 +26,7 @@
 #ifdef _MSC_VER /* Macro to select VS compiler */
 #include <windows.h>
 typedef SSIZE_T ssize_t;
-#ifdef _WIN64
-typedef long long off_t;
-#else
-typedef long off_t;
-#endif
+/* typedef of off_t were causing trouble for some. Removed. */
 #endif /* _MSC_VER */
 
 #ifndef TRUE

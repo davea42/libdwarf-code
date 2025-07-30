@@ -60,7 +60,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek() off_t */
 #endif /* HAVE_UNISTD_H */
-
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>  /*  off_t */
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h> /* open() O_RDONLY */
 #endif /* HAVE_FCNTL_H */

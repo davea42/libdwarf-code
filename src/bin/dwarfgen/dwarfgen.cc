@@ -84,7 +84,7 @@
 #include <vector>
 #include <string.h> /* for strchr etc */
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>  /* For open() S_IRUSR etc */
+#include <sys/types.h>  /* For open() S_IRUSR off_t */
 #endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>  /* For open() S_IRUSR etc */
