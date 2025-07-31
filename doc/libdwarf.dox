@@ -258,7 +258,7 @@
     can do what it likes with the error situation.
     The library will continue from the error and
     will return an error code on returning to your
-    @elibdwarf call ... but the calling function will not
+    @libdwarf call ... but the calling function will not
     know what the error was.
 
     @code
