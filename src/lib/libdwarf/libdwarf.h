@@ -955,7 +955,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_EXPR_VAL_OFFSET     1
 #define DW_EXPR_EXPRESSION     2
 #define DW_EXPR_VAL_EXPRESSION 3
-/*! @} */
+/*! @} endgroup framedefines*/
 
 /*! @defgroup dwdla DW_DLA alloc/dealloc typename&number
     @{
@@ -1014,7 +1014,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLA_STR_OFFSETS     0x40
 /* struct Dwarf_Debug_Addr_Table_s */
 #define DW_DLA_DEBUG_ADDR      0x41
-/*! @} */
+/*! @} endgroup dwdla */
 
 /*! @defgroup dwdle DW_DLE Dwarf_Error numbers
     @{
@@ -1543,7 +1543,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
 #define DW_DLE_LAST        509
 #define DW_DLE_LO_USER     0x10000
-/*! @} */
+/*! @} endgroup dw_dle */
 
 /*! @section initfinish Initialization And Finish Operations */
 
@@ -1918,8 +1918,8 @@ DW_API int dwarf_set_tied_dbg(Dwarf_Debug dw_split_dbg,
 DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Dwarf_Debug * dw_tieddbg_out,
     Dwarf_Error * dw_error);
-/*! @}
-*/
+/*! @} endgroup initfunctions */
+
 /*! @defgroup compilationunit Compilation Unit (CU) Access
 
     @{
@@ -2297,7 +2297,7 @@ DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
     Otherwise it means the DIE is in .debug_types.
 */
 DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
-/*! @} */
+/*! @} endgroup compilationunit */
 
 /*! @defgroup dieentry Debugging Information Entry (DIE) content
     @{
@@ -2749,6 +2749,12 @@ DW_API int dwarf_die_offsets(Dwarf_Die dw_die,
     @param dw_offset_size
     Returns the offset_size (4 or 8) of the CU
     this DIE is contained in.
+    @return
+    On success, returns DW_DLV_OK.
+    If dw_die is null or its contents are
+    corrupted retuns DW_DLV_ERROR and there
+    is nothing useful returned. 
+    Never returns DW_DLV_NO_ENTRY.
 */
 DW_API int dwarf_get_version_of_die(Dwarf_Die dw_die,
     Dwarf_Half * dw_version,
@@ -3147,7 +3153,7 @@ DW_API int dwarf_lvn_table_entry(Dwarf_Unsigned dw_lvn_index,
 DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_order,
     Dwarf_Error*     dw_error);
-/*! @} */
+/*! @} endgroup dieentry */
 
 /*! @defgroup attrform DIE Attribute and Attribute-Form Details
     @{
@@ -3769,7 +3775,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     Dwarf_Signed   * dw_out_discr_high,
     Dwarf_Error    * dw_error);
 
-/*! @} */
+/*! @} endgroup attrform */
 
 /*! @defgroup linetable Line Table For a CU
     @{
@@ -4528,7 +4534,7 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     dwarf_register_printf_callback(Dwarf_Debug dw_dbg,
     struct Dwarf_Printf_Callback_Info_s * dw_callbackinfo);
 
-/*! @} */
+/*! @} endgroup linetable */
 /*! @defgroup ranges Ranges: code addresses in DWARF3-4
 
     @{
@@ -4656,7 +4662,7 @@ DW_API int dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_at_ranges_offset,
     Dwarf_Error    *dw_error);
 
-/*! @} */
+/*! @} endgroup ranges */
 
 /*! @defgroup rnglists Rnglists: code addresses in DWARF5
 
@@ -4912,7 +4918,8 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_entry_operand1,
     Dwarf_Unsigned * dw_entry_operand2,
     Dwarf_Error    * dw_error);
-/*! @} */
+/*! @} endgroup rnglists */
+
 /*! @defgroup locations Locations of data: DWARF2-DWARF5
     @{
 */
@@ -5315,7 +5322,7 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_expr_ops_offset,
     Dwarf_Small   ** dw_expr_opsdata,
     Dwarf_Error    * dw_error);
-/*! @} */
+/*! @} endgroup locations */
 
 /*! @defgroup debugaddr .debug_addr access:  DWARF5
     @{
@@ -5442,7 +5449,7 @@ DW_API int dwarf_debug_addr_by_index(Dwarf_Debug_Addr_Table dw_dat,
 DW_API void dwarf_dealloc_debug_addr_table(
     Dwarf_Debug_Addr_Table dw_dat);
 
-/*! @} */
+/*! @} endgroup debugaddr */
 
 /*! @defgroup macro Macro Access: DWARF5
 
@@ -5731,7 +5738,7 @@ DW_API int dwarf_get_macro_import(
     Dwarf_Unsigned   dw_op_number,
     Dwarf_Unsigned * dw_target_offset,
     Dwarf_Error    * dw_error);
-/*! @} */
+/*! @} endgroup macro */
 
 /*! @defgroup macinfo Macro Access: DWARF2-4
 
@@ -5793,7 +5800,7 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
     Dwarf_Macro_Details ** dw_details,
     Dwarf_Error *          dw_error);
 
-/*! @} */
+/*! @} endgroup macinfo */
 
 /*! @defgroup frame Stack Frame Access
 
@@ -6621,7 +6628,7 @@ DW_API Dwarf_Half dwarf_set_frame_same_value(
 DW_API Dwarf_Half dwarf_set_frame_undefined_value(
     Dwarf_Debug dw_dbg,
     Dwarf_Half  dw_value);
-/*! @} */
+/*! @} endgroup frame */
 
 /*! @defgroup abbrev Abbreviations Section Details
 
@@ -6772,7 +6779,7 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
     Dwarf_Off      * dw_offset,
     Dwarf_Error    * dw_error);
 
-/*! @} */
+/*! @} endgroup abbrev */
 /*! @defgroup string String Section .debug_str Details
 
     @{
@@ -6811,7 +6818,7 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     Dwarf_Signed *   dw_strlen_of_string,
     Dwarf_Error*     dw_error);
 
-/*! @} */
+/*! @} endgroup string */
 /*! @defgroup str_offsets Str_Offsets section details
 
     @{
@@ -6970,7 +6977,7 @@ DW_API int dwarf_str_offsets_statistics(
     Dwarf_Unsigned * dw_table_count,
     Dwarf_Error    * dw_error);
 
-/*! @} */
+/*! @} endgroup str_offsets */
 /*! @defgroup dwarferror Dwarf_Error Functions
     @{
     These functions aid in understanding handling.
@@ -7024,7 +7031,7 @@ DW_API void  dwarf_error_creation(Dwarf_Debug dw_dbg ,
 */
 DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
     Dwarf_Error dw_error);
-/*! @} */
+/*! @} endgroup dwarferror */
 
 /*! @defgroup dwarfdealloc Generic dwarf_dealloc Function
     @{
@@ -7067,7 +7074,7 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
 */
 DW_API void dwarf_dealloc(Dwarf_Debug dw_dbg,
     void* dw_space, Dwarf_Unsigned dw_type);
-/*! @} */
+/*! @} endgroup dwarfdealloc */
 /*! @defgroup debugsup Access to Section .debug_sup
     @{
 */
@@ -7093,7 +7100,7 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_checksum_len,
     Dwarf_Small   ** dw_checksum,
     Dwarf_Error    * dw_error);
-/*! @} */
+/*! @} endgroup debugsup */
 
 /*! @defgroup debugnames Fast Access to .debug_names DWARF5
     @{
@@ -7501,7 +7508,7 @@ DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned *dw_offset_of_next_entrypool,
     Dwarf_Error    *dw_error);
 
-/*! @} */
+/*! @} endgroup debugnames */
 
 /*! @defgroup aranges Fast Access to a CU given a code address
     @{
@@ -7621,10 +7628,9 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
     Dwarf_Unsigned*  dw_length,
     Dwarf_Off     *  dw_cu_die_offset,
     Dwarf_Error   *  dw_error );
-/*! @} */
+/*! @} endgroup aranges */
 
 /*! @defgroup pubnames Fast Access to .debug_pubnames and more.
-
     @{
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -7887,7 +7893,7 @@ DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
 DW_API int dwarf_return_empty_pubnames(Dwarf_Debug dw_dbg,
     int          dw_flag);
 
-/*! @} */
+/*! @} endgroup pubnames */
 
 /*! @defgroup gnupubnames Fast Access to GNU .debug_gnu_pubnames
     @{
@@ -8022,7 +8028,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
     unsigned char   *dw_typeofentry,
     Dwarf_Error     *dw_error);
 
-/*! @} */
+/*! @} endgroup gpubnames */
 
 /*! @defgroup gdbindex Fast Access to Gdb Index
 
@@ -8372,7 +8378,7 @@ DW_API int dwarf_gdbindex_string_by_offset(
     Dwarf_Unsigned   dw_stringoffset,
     const char    ** dw_string_ptr,
     Dwarf_Error   *  dw_error);
-/*! @} */
+/*! @} endgroup gdbindex */
 
 /*! @defgroup splitdwarf Fast Access to Split Dwarf (Debug Fission)
     @{
@@ -8605,7 +8611,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
 /*  END debugfission dwp .debug_cu_index
     and .debug_tu_index meaningful operations. */
 
-/*! @} */
+/*! @} endgroup splitdwarf */
 
 /*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
 
@@ -8824,7 +8830,7 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
 DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
     unsigned long dw_len,
     unsigned int  dw_init);
-/*! @} */
+/*! @} endgroup gnudebuglink */
 
 /*! @defgroup harmless Harmless Error recording
 
@@ -8928,7 +8934,7 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
 */
 DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     char * dw_newerror);
-/*! @} */
+/*! @} endgroup harmless */
 
 /*! @defgroup Naming Names DW_TAG_member etc as strings
 
@@ -9149,7 +9155,7 @@ DW_API int dwarf_get_VIS_name(unsigned int dw_val_in,
 */
 DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
     const char ** dw_s_out);
-/*! @} */
+/*! @} endgroup Naming */
 
 /*! @defgroup objectsections Object Sections Data
     @{
@@ -9675,7 +9681,7 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_debug_names_size,
     Dwarf_Unsigned * dw_debug_loclists_size,
     Dwarf_Unsigned * dw_debug_rnglists_size);
-/*! @} */
+/*! @} endgroup objectsections */
 
 /*! @defgroup secgroups Section Groups Objectfile Data
 
@@ -9766,7 +9772,7 @@ DW_API int dwarf_sec_group_map(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_sec_numbers_array,
     const char    **dw_sec_names_array,
     Dwarf_Error    *dw_error);
-/*! @} */
+/*! @} endgroup secgroups */
 
 /*! @defgroup leb LEB Encode and Decode
     @{
@@ -9800,7 +9806,7 @@ DW_API int dwarf_decode_signed_leb128(char *dw_leb,
     Dwarf_Unsigned *dw_leblen,
     Dwarf_Signed   *dw_outval,
     char           *dw_endptr);
-/*! @} */
+/*! @} endgroup leb */
 
 /*! @defgroup miscellaneous Miscellaneous Functions
     @{
@@ -10010,8 +10016,7 @@ DW_API int dwarf_get_universalbinary_count(
     Dwarf_Unsigned *dw_current_index,
     Dwarf_Unsigned *dw_available_count);
 
-/*! @}
-*/
+/*! @} endgroup miscellaneous */
 
 /*! @defgroup objectdetector Determine Object Type of a File
     @{
@@ -10063,8 +10068,7 @@ DW_API int dwarf_object_detector_fd(int dw_fd,
     unsigned int   *dw_offsetsize,
     Dwarf_Unsigned *dw_filesize,
     int            *dw_errcode);
-/*! @}
-*/
+/*! @} endgroup objectdetector */
 
 /*! @defgroup sectionallocpref Section allocation: malloc or mmap
     @{
@@ -10173,8 +10177,7 @@ DW_API int dwarf_get_mmap_count(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *dw_mmap_size,
     Dwarf_Unsigned *dw_malloc_count,
     Dwarf_Unsigned *dw_malloc_size);
-/*! @}
-*/
+/*! @} endgroup sectionallocpref */
 
 #ifdef __cplusplus
 }
