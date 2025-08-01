@@ -2753,7 +2753,7 @@ DW_API int dwarf_die_offsets(Dwarf_Die dw_die,
     On success, returns DW_DLV_OK.
     If dw_die is null or its contents are
     corrupted retuns DW_DLV_ERROR and there
-    is nothing useful returned. 
+    is nothing useful returned.
     Never returns DW_DLV_NO_ENTRY.
 */
 DW_API int dwarf_get_version_of_die(Dwarf_Die dw_die,
