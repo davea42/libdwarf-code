@@ -1,3 +1,70 @@
+2025-08-01:  David Anderson
+    commit c3909758894e1a8b9eabc64c9830b0465c05aba7
+
+    Added DW_FORM_exprloc as a block form per DWARF5 (one place).
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-08-01:  David Anderson
+    commit a8e69832df00deba4d5fbd62624d91a80cae70ca
+
+    Completed the list of attributes that
+    have exprloc as only, or possible, form.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-08-01:  David Anderson
+    commit 4ddbda72a7520c302d2f8fabf060205f857a7c18
+
+    Removing trailing whitespace.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-31:  David Anderson
+    commit 80692811b3ce2d034d57fa664547ba4b012dbce8
+
+    Small changes to doxygen comments for more uniformity
+    and clarity.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-07-31:  David Anderson
+    commit bf4161e124831ffb3ce74e036fb5f26e663f3194
+
+    Corrected the new Doxyfile doxygen kind of forced on us.
+    Now again we get everything.
+            modified:   doc/Doxyfile
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2025-07-30:  David Anderson
+    commit 6276577b665e93d362e567e9678c13c7419fa706
+
+    This is a fix for github issue 263 where library build
+    was failing.
+
+    Now including "sys/types.h" whereever off_t used.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_seekr.c
+    Removed horrible typedef of off_t for Windows builds.
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+2025-07-30:  David Anderson
+    commit 1f7e3e0973bb28966433843a06b2a0e1ebea4617
+
+    Now each build mechanism has the same list of
+    standard headers checked-for in the same order.
+    The resulting config.h at build time is
+    does not always show the #defines in the
+    same order as in these files.
+            modified:   CMakeLists.txt
+            modified:   cmake/config.h.in
+            modified:   configure.ac
+            modified:   meson.build
+
+2025-07-29:  David Anderson
+    commit 6a7a25804cab63566a8b1db5d976f8601effcec1
+
+    Up to date.
+            modified:   ChangeLog
+
 2025-07-29:  David Anderson
     commit da649ae15c061ad51e7b1248f8e32cafdc0aeab8
 
