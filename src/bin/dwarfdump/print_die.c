@@ -3623,6 +3623,7 @@ is_form_block(int form)
     if (form == DW_FORM_block1 ||
         form == DW_FORM_block2 ||
         form == DW_FORM_block4 ||
+        form == DW_FORM_exprloc ||
         form == DW_FORM_block)  {
         return TRUE;
     }
