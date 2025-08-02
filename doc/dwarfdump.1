@@ -993,6 +993,17 @@ $(HOME)/dwarfdump.conf
 
 <install-prefix>/lib/dwarfdump.conf
 .SH NOTES
+As of version 2.2.0 dwarfdump will check block FORMS such
+as DW_FORM_block2 (etc) for content that looks like
+a valid UTF8 string. Any such 
+is printed in hex with a leading 0x and ending
+with a colon (:). Following that the string (if
+longer than 1 byte and less than 5000
+bytes long) is
+printed with a leading "Block As Quoted String " which
+is there so to make searching for such in dwarfdump output
+relatively simple.
+
 In some cases compilers use DW_FORM_data1 (for example)
 and in such cases the signedness of the value must be taken
 from context. 
