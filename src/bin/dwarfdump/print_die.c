@@ -62,6 +62,9 @@ Portions Copyright 2007-2024 David Anderson. All rights reserved.
 #include "dd_attr_form.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
+#ifdef HAVE_UTF8
+#include "dd_utf8.h"
+#endif /* HAVE_UTF8 */
 
 #define VSFBUFSZ 200
 #define DIE_STACK_SIZE 800  /* A hard limit. */
@@ -5886,20 +5889,51 @@ op_has_no_operands(Dwarf_Small op)
 }
 
 /*  Sometimes a DW_OP_implicit_const value
+    ar a FORM_block*
     is actually a string from gcc.
     A crude heuristic.
     We are looking for ascii here hoping
     it is somewhat useful..
     It will be sanitized before being
     printed.
-*/
+*/  
 static Dwarf_Bool
 looks_like_string(unsigned long length,const unsigned char *bp)
-{
-    const unsigned char *end = 0;
+{           
+    size_t str_len = 0;
+    if (!bp || !length) {
+        return FALSE;
+    }       
     if (bp[length-1]) {
         return FALSE;
     }
+    if (length < 2) {
+        /*  single zero byte: is silly to print empty string */
+        return FALSE;
+    }
+    if (length > 5000) {
+        /* arbitrary max as string */
+        return FALSE;
+    }
+    /*  Ugly cast.... Sorry. */
+    str_len = strlen((const char *)bp);
+    if (str_len != (size_t)(length - 1)) {
+        /*  Extra NUL bytes, not a string. */
+        return FALSE;
+    }
+#ifdef HAVE_UTF8
+    {
+    int res = 0;
+                    
+    res = dd_utf8_checkCodePoints((unsigned char *)bp);
+    if (res == DW_DLV_ERROR) {
+        return FALSE;
+    }                   
+    }                   
+#else /* !HAVE_UTF8 */
+    {
+    const unsigned char *end = 0;
+
     end = bp+length-1;
     for ( ; bp < end; ++bp) {
         /*  A crude test */
@@ -5908,8 +5942,11 @@ looks_like_string(unsigned long length,const unsigned char *bp)
             return FALSE;
         }
     }
+    }
+#endif /* HAVE_UTF8 */
     return TRUE;
 }
+
 
 static void
 show_contents(struct esb_s *string_out,
@@ -8035,6 +8072,23 @@ check_for_mips_fde(Dwarf_Debug dbg,
     esb_append(esbp,">");
 }
 
+static int
+suppress_block_as_string(Dwarf_Half attrnum)
+{
+    switch(attrnum) {
+    case DW_AT_data_member_location:
+    case DW_AT_data_location:
+    case DW_AT_GNU_call_site_value:
+    case DW_AT_location:
+    case DW_AT_call_value:
+    case DW_AT_call_target:
+        return TRUE;
+    default:
+        break;
+    }
+    return FALSE;
+}
+
 /*  Fill buffer with attribute value.
     We pass in tag so we can try to do the right thing with
     broken compiler DW_TAG_enumerator
@@ -8533,7 +8587,25 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     *(u + (unsigned char *) tempb->bl_data));
             }
             if (tempb->bl_len) {
+                Dwarf_Half attrblk = 0;
+                int restf = FALSE;
+                int atres = 0;
+
                 esb_append(esbp,": ");
+                atres = dwarf_whatattr(attrib, &attrblk, err);
+                if (atres == DW_DLV_ERROR) {
+                    /* Serious error. impossible? */
+                    DROP_ERROR_INSTANCE(dbg,atres,*err);
+                } else if (atres == DW_DLV_OK &&
+                    !suppress_block_as_string(attrblk)) {
+                    restf = looks_like_string(tempb->bl_len,
+                        (unsigned char *)tempb->bl_data);
+                    if (restf) {
+                        esb_append(esbp,"Block As Quoted String: '");
+                        esb_append(esbp,tempb->bl_data);
+                        esb_append(esbp,"' ");
+                    }
+                } 
             }
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
             tempb = 0;
