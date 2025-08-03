@@ -8076,12 +8076,23 @@ static int
 suppress_block_as_string(Dwarf_Half attrnum)
 {
     switch(attrnum) {
-    case DW_AT_data_member_location:
+    case DW_AT_call_data_location:
+    case DW_AT_call_data_value:
+    case DW_AT_call_origin:
+    case DW_AT_call_target:
+    case DW_AT_call_target_clobbered:
+    case DW_AT_call_value:
     case DW_AT_data_location:
+    case DW_AT_data_member_location:
+    case DW_AT_frame_base:
+    case DW_AT_GNU_call_site_target:
     case DW_AT_GNU_call_site_value:
     case DW_AT_location:
-    case DW_AT_call_value:
-    case DW_AT_call_target:
+    case DW_AT_return_addr:
+    case DW_AT_segment:
+    case DW_AT_string_length:
+    case DW_AT_use_location:
+    case DW_AT_vtable_elem_location:
         return TRUE;
     default:
         break;
