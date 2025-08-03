@@ -1,3 +1,58 @@
+2025-08-03:  David Anderson
+    commit 57d24c2a571b0218956752e465e1b74ba77a25cf
+
+    If a user builds libdwarf/dwarfdump with certain
+    options (for example -std=c99 ) this results
+    in a build failure (see github issue #302).
+    So now we set, and document the
+    definition of __USE_OPEN_EXTENDED in
+    all builds to avoid the failure.
+            modified:   README.md
+            modified:   READMEcmake.md
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   meson.build
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+2025-08-02:  David Anderson
+    commit e259eb2a3278e520fe62f146a9f5f6ceb7397de0
+
+    Added to the list where FORM_block cannot be
+    a text string.
+            modified:   print_die.c
+
+2025-08-02:  David Anderson
+    commit 509388e64d0d72e2a0f98c38cc8eaf18216f4e90
+
+    Now, when a FORM_block
+    has what looks like a valid text string, add output
+    with that string preceded by Block As Quoted String followed
+    by the string value enclosed in ''.
+    No attempt is made to escape such a quote in the string.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-08-02:  David Anderson
+    commit 188f7b7d884c34c3563e14a8cc6e90f9ae0a8368
+
+    Now August, changing the line mentioning month name.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-08-02:  David Anderson
+    commit d3c2479f4efe8fbb9cb3b88aae92d2d643526d99
+
+    Mention new header 'Block As Quoted String' printed
+    with some attributes.  Eases finding such
+    instances.
+            modified:   doc/dwarfdump.1
+
+2025-08-01:  David Anderson
+    commit af1093563bcefd41ce4ddca64635902e8c972101
+
+    Up to date with latest commits.
+            modified:   ChangeLog
+
 2025-08-01:  David Anderson
     commit c3909758894e1a8b9eabc64c9830b0465c05aba7
 
