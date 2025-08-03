@@ -104,6 +104,7 @@ set_folder(dwarf src/lib/libdwarf)
 target_compile_options(dwarf PRIVATE ${COMPILER_FLAGS} ${DW_FWALL})
 msvc_posix(dwarf)
 target_compile_definitions(dwarf PUBLIC ${DEFS})
+target_compile_definitions(dwarf PRIVATE __USE_XOPEN_EXTENDED)
 target_include_directories(dwarf PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>

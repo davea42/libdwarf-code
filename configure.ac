@@ -412,6 +412,11 @@ AS_IF(
 AC_MSG_CHECKING([whether sanitize options are used])
 AC_MSG_RESULT([${enable_sanitize}])
 
+# if the builder specifies -std=c99 or various other
+# options linking will fail as strdup() is hidden.
+# So we do the following.
+CFLAGS="${CFLAGS} -D__USE_XOPEN_EXTENDED"
+
 # -fvisibility
 AS_IF(
     [test "x${enable_shared}" = "xyes" && test "x${have_win32}" = "xno"],
@@ -429,7 +434,6 @@ AS_IF(
     ])
 
 ### Checks for linker characteristics
-
 
 ### Checks for library functions
 

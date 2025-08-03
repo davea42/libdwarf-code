@@ -43,6 +43,18 @@ using configure,cmake, and meson.
     Version 0.9.2  Released  2 April     2024.
     Version 0.9.1  Released 27 January   2024.
 
+## NOTE on build failing as strdup() missing
+
+If certain gcc build options are used (for example
+-std=c99 ) gcc turns off some extensions. 
+Beginning in v2.2.0 the build systems define __USE_XOPEN_EXTENDED
+so that the GNU extionsions are still visible.
+In CMakeLists.txt, for example, one wants (in appropriate
+CMakeLists.txt)
+
+    target_compile_definitions(dwarf PRIVATE __USE_XOPEN_EXTENDED)
+    target_compile_definitions(dwarfdump PRIVATE __USE_XOPEN_EXTENDED)
+
 ## NOTE on linking against libdwarf.a
 
 If you are linking code against a static
