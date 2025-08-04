@@ -64,8 +64,8 @@ add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 set_folder(dwarfdump src/bin/dwarfdump)
 
 target_compile_definitions(dwarfdump PRIVATE
-    "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib" ${DW_LIBDWARF_STATIC})
-target_compile_definitions(dwarfdump PRIVATE __USE_XOPEN_EXTENDED)
+    "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib" ${DW_LIBDWARF_STATIC}
+    _GNU_SOURCE)
 target_compile_options(dwarfdump PRIVATE ${DW_FWALL})
 
 target_link_libraries(dwarfdump PRIVATE dwarf)

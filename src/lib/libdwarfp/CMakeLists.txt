@@ -53,6 +53,7 @@ endif()
 target_link_libraries(dwarfp PRIVATE dwarf)
 set_folder(dwarfp src/lib/libdwarfp)
 target_compile_definitions(dwarfp PUBLIC ${DEFS})
+target_compile_definitions(dwarfp PRIVATE _GNU_SOURCE)
 target_include_directories(dwarfp PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/lib/libdwarf> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 set_target_properties(dwarfp PROPERTIES VERSION "${PROJECT_VERSION}" SOVERSION "${PROJECT_VERSION_MAJOR}")
 target_compile_options(dwarfp PRIVATE ${DW_COMPILER_FLAGS}

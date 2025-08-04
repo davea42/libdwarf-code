@@ -464,7 +464,7 @@ static void free_paths(void)
 }
 
 static char *
-basename(char *filepath)
+localbasename(char *filepath)
 {
     unsigned long lastindex = 0;
     char         *cp = filepath;
@@ -517,7 +517,7 @@ main(int argc, char **argv)
         filenamein = arg;
         one_file_debuglink(filenamein,gl_pathnames,gl_pathcount,
             no_follow_debuglink);
-        printf("=======done with %s\n",basename(filenamein));
+        printf("=======done with %s\n",localbasename(filenamein));
     }
     free_paths();
     return 0;
