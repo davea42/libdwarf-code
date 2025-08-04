@@ -8,11 +8,13 @@ Consider switching entirely to meson for your build.
 
 If certain gcc build options are used (for example
 -std=c99 ) gcc turns off some extensions. 
-Beginning in v2.2.0 the build systems define __USE_XOPEN_EXTENDED
+Beginning in v2.2.0 the build systems define _GNU_SOURCE
 so that the GNU extionsions are still visible.
-In CMakeLists.txt, for example, one wants
+In their CMakeLists.txt for example, one wants
 
-    target_compile_definitions(dwarf PRIVATE __USE_XOPEN_EXTENDED)
+    target_compile_definitions(dwarf PRIVATE _GNU_SOURCE)
+    target_compile_definitions(dwarfp PRIVATE _GNU_SOURCE)
+    target_compile_definitions(dwarf PRIVATE _GNU_SOURCE)
 
 Unless a shared library is specifically requested
 cmake builds a static library: libdwarf.a
