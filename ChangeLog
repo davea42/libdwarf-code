@@ -1,3 +1,52 @@
+2025-08-04:  David Anderson
+    commit dd550f959e0173dff3f91526121d18e291298909
+
+    Now documenting use of _GNU_SOURCE
+    for builds with certain gcc flags set,
+    such as -std=c99.  Some packages that
+    include and build libdwarf do insert
+    such options.
+            modified:   README.md
+            modified:   READMEcmake.md
+            modified:   doc/libdwarf.dox
+
+2025-08-04:  David Anderson
+    commit 7f8abdcd9f85ee2be202b90e7bb3632bb256b3dd
+
+    Testing revealed that the earlier use of
+    -D__USE_OPEN_EXTENDED really did not
+    work though that is what stddef.h wants.
+    Now uses -D_GNU_SOURCE which has the wanted effect.
+    Only needed one place to apply everywhere for GNU confiture.
+            modified:   configure.ac
+
+2025-08-04:  David Anderson
+    commit 2cd13a5117337b9557f7ef723e3e58f9c56872cd
+
+    Simple in meson. One place with _GNU_SOURCE
+            modified:   meson.build
+
+2025-08-04:  David Anderson
+    commit 63a9c1d19937654b01ad0679f63c55a61c44a748
+
+    Getting -D_GNU_SOURCE to appear everywhere properly
+    took many entries.
+    Whether we use cmake target_compile_definitions
+    or target_compile_options is not critical, but
+    the syntax is not quite identical for these.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+            modified:   test/CMakeLists.txt
+
+2025-08-03:  David Anderson
+    commit 252efd134ad37c1f4984ca9644c3b8cc7a7859f9
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2025-08-03:  David Anderson
     commit 57d24c2a571b0218956752e465e1b74ba77a25cf
 
