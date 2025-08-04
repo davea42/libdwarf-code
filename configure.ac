@@ -302,7 +302,6 @@ AC_ARG_VAR([DWARF_BIGENDIAN],
 # error: 'strcmp' reading 1 or more bytes from a region of
 # size 0 [-Werror=stringop-overread]
 # !strcmp(postzprefix,targname+DPREFIXLEN)
-
 c_common_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Werror -Wno-long-long"
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
@@ -415,7 +414,7 @@ AC_MSG_RESULT([${enable_sanitize}])
 # if the builder specifies -std=c99 or various other
 # options linking will fail as strdup() is hidden.
 # So we do the following.
-CFLAGS="${CFLAGS} -D__USE_XOPEN_EXTENDED"
+CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
 
 # -fvisibility
 AS_IF(
