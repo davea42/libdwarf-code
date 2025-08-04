@@ -61,7 +61,7 @@ dev_cppflags = []
 dev_cppflags_onlylibdwarf = []
 dev_ldflags = []
 
-# -D__USE_XOPEN_EXTENDED is needed as otherwise
+# -D_GNU_SOURCE is needed as otherwise
 # certain gcc options (such as -std=c99 )
 # will prevent building because strdup()
 # in string.h will be invisible.
@@ -79,7 +79,7 @@ dev_cflags_try = [
   '-Wsign-compare',
   '-Wno-missing-field-initializers',
   '-fno-omit-frame-pointer',
-  '-D__USE_XOPEN_EXTENDED'
+  '-D_GNU_SOURCE'
 ]
 sanitize_flags_try = [
   '-fsanitize=address',
