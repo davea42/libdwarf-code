@@ -1,0 +1,25 @@
+
+name: linuxc99autotools
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux_autotools_c99:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: autoreconf
+      run:  autoreconf -vif
+    - name: configure
+      run:  CFLAGS="-std=c99" ./configure --enable-dwarfexample
+    - name: make -j
+      run:  make
+    - name: make -j check
+      run:  make check
+    - name: make distcheck
+      run:  make distcheck
+
