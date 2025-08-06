@@ -23,7 +23,7 @@ jobs:
       run:  make check
     - name: make distcheck
       run:  make distcheck
-    linux_autotools_c99:
+  linux_autotools_c99:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
       run:  make check
     - name: make distcheck
       run:  make distcheck
-    linux_autotools_c17:
+  linux_autotools_c17:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -51,7 +51,6 @@ jobs:
       run:  make check
     - name: make distcheck
       run:  make distcheck
-
   linux_cmake:
     runs-on: ubuntu-latest
     steps:
