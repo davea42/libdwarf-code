@@ -1,0 +1,43 @@
+
+
+name: linuxc99cmake
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  linuxc99cmake:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cmake
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential cmake
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c99" cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        make
+        ctest -R self
+
+  linuxc17make:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cmake
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential cmake
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c17" cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        make 
+        ctest -R self
+
+

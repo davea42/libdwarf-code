@@ -22,7 +22,7 @@ jobs:
       run:  make check
     - name: make distcheck
       run:  make distcheck
-  linux_autotools_c23:
+  linux_autotools_c17:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
