@@ -66,7 +66,33 @@ jobs:
         cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         make
         ctest -R self
-
+  linuxc99cmake:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cmake
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential cmake
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c99" cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        make
+        ctest -R self
+  linuxc17make:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cmake
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential cmake
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c17" cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        make
   linux_meson:
     runs-on: ubuntu-latest
     steps:  
@@ -86,6 +112,45 @@ jobs:
         meson setup -Ddwarfexample=true . ..
         ninja
         ninja test                       
+  linuxc99meson:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install meson / ninja
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Install doxygen
+      run: |
+        sudo apt install doxygen
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c99" meson setup -Ddwarfexample=true . ..
+        ninja
+        ninja test
+  linuxc17meson:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install meson / ninja
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Install doxygen
+      run: |
+        sudo apt install doxygen
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c17" meson setup -Ddwarfexample=true . ..
+        ninja
+        ninja test
+
 
   freebsd_autotools:
     runs-on: ubuntu-latest
