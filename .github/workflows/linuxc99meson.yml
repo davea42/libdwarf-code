@@ -1,0 +1,51 @@
+
+
+name: linuxc99meson
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  linuxc99meson:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install meson / ninja
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Install doxygen
+      run: |
+        sudo apt install doxygen
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c99" meson setup -Ddwarfexample=true . ..
+        ninja
+        ninja test
+  linuxc17meson:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install meson / ninja
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Install doxygen
+      run: |
+        sudo apt install doxygen
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        CFLAGS="-std=c17" meson setup -Ddwarfexample=true . ..
+        ninja
+        ninja test
+
