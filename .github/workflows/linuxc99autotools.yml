@@ -29,7 +29,7 @@ jobs:
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
-      run:  CFLAGS="-std=c23" ./configure --enable-dwarfexample
+      run:  CFLAGS="-std=c17" ./configure --enable-dwarfexample
     - name: make -j
       run:  make
     - name: make -j check
