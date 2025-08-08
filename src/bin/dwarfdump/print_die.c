@@ -81,7 +81,6 @@ struct OpBranchHead_s {
     struct OpBranchEntry_s * bh_ops_array;
 };
 
-
 /*  Defaults to all 0, never changes */
 static const LoHiPc  lohipc_zero;
 
@@ -1244,7 +1243,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (nres == DW_DLV_OK && glflags.gf_print_all_srcfiles) {
             dd_all_srcfiles_insert_new(dbg,cu_die);
         }
-       
 
         if (!loop_count) {
             /*  So compress flags show, we waited till
@@ -5903,14 +5901,14 @@ op_has_no_operands(Dwarf_Small op)
     it is somewhat useful..
     It will be sanitized before being
     printed.
-*/  
+*/
 static Dwarf_Bool
 looks_like_string(unsigned long length,const unsigned char *bp)
-{           
+{
     size_t str_len = 0;
     if (!bp || !length) {
         return FALSE;
-    }       
+    }
     if (bp[length-1]) {
         return FALSE;
     }
@@ -5931,12 +5929,12 @@ looks_like_string(unsigned long length,const unsigned char *bp)
 #ifdef HAVE_UTF8
     {
     int res = 0;
-                    
+
     res = dd_utf8_checkCodePoints((unsigned char *)bp);
     if (res == DW_DLV_ERROR) {
         return FALSE;
-    }                   
-    }                   
+    }
+    }
 #else /* !HAVE_UTF8 */
     {
     const unsigned char *end = 0;
@@ -5953,7 +5951,6 @@ looks_like_string(unsigned long length,const unsigned char *bp)
 #endif /* HAVE_UTF8 */
     return TRUE;
 }
-
 
 static void
 show_contents(struct esb_s *string_out,
@@ -8623,7 +8620,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         esb_append(esbp,tempb->bl_data);
                         esb_append(esbp,"' ");
                     }
-                } 
+                }
             }
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
             tempb = 0;

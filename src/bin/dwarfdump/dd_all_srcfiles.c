@@ -70,7 +70,7 @@ static void * srcfiles_tree = 0;
 #if 0 /* debugging only */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
-{   
+{
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
     printf("%s (0x%lx) ",msg,(unsigned long)start);
@@ -78,19 +78,18 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
         printf("%02x", *cur);
     }
     printf("\n");
-}   
-static char * 
+}
+static char *
 keyprint(const void *k)
 {
     struct All_Srcfiles_Entry * m =
-           (struct All_Srcfiles_Entry *)k;
+        (struct All_Srcfiles_Entry *)k;
     char * key = m->ase_srcfilename;
     printf("key %s\n",key);
     return key;
-     
+
 }
 #endif /* 0 */
-
 
 static struct All_Srcfiles_Entry *
 all_srcfiles_create_entry(char *key )
@@ -127,7 +126,7 @@ all_srcfiles_compare_func(const void *l, const void *r)
     const struct All_Srcfiles_Entry *ml = l;
     const struct All_Srcfiles_Entry *mr = r;
     int res = strcmp(ml->ase_srcfilename,mr->ase_srcfilename);
-    
+
     return res;
 }
 
@@ -142,7 +141,8 @@ dd_all_srcfiles_insert(char *name)
     /*  tsearch records e's contents unless e
         is already present . We must not free it till
         destroy time if it got added to tree.  */
-    retval = dwarf_tsearch(e,&srcfiles_tree, all_srcfiles_compare_func);
+    retval = dwarf_tsearch(e,&srcfiles_tree,
+        all_srcfiles_compare_func);
     if (retval) {
         re = *(struct All_Srcfiles_Entry **)retval;
         if (re != e) {
@@ -165,16 +165,15 @@ dd_all_srcfiles_insert_new(Dwarf_Debug dbg, Dwarf_Die cu_die)
     char       **srcfiles = 0;
     Dwarf_Error srcerr = 0;
     Dwarf_Signed i = 0;
-    
 
     res = dwarf_srcfiles(cu_die,
-                &srcfiles, &srcfiles_cnt, &srcerr); 
+        &srcfiles, &srcfiles_cnt, &srcerr);
     if (res == DW_DLV_OK) {
         for ( ; i < srcfiles_cnt; ++i) {
-             char *filepath = srcfiles[i];
-             
-             dd_all_srcfiles_insert(filepath);
-             dwarf_dealloc(dbg,filepath,DW_DLA_STRING);
+            char *filepath = srcfiles[i];
+
+            dd_all_srcfiles_insert(filepath);
+            dwarf_dealloc(dbg,filepath,DW_DLA_STRING);
         }
         dwarf_dealloc(dbg,srcfiles,DW_DLA_LIST);
     }
@@ -189,10 +188,10 @@ dd_all_srcfiles_insert_new(Dwarf_Debug dbg, Dwarf_Die cu_die)
 static unsigned long count = 0;
 static void
 all_srcfiles_walk_print(const void *nodep,
-    const DW_VISIT which, 
+    const DW_VISIT which,
     const int depth)
-{ 
-    struct All_Srcfiles_Entry *ase = 
+{
+    struct All_Srcfiles_Entry *ase =
         *(struct All_Srcfiles_Entry**)nodep;
 
     (void)depth;
@@ -200,7 +199,7 @@ all_srcfiles_walk_print(const void *nodep,
         return;
     }
     /* dwarf_postorder */
-    count += 1; 
+    count += 1;
     /*  Could print the count too.  */
     printf("%s\n",sanitized(ase->ase_srcfilename));
 }
@@ -223,7 +222,3 @@ void dd_destroy_all_srcfiles(void)
         srcfiles_tree = 0;
     }
 }
-
-
-
-

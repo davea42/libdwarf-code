@@ -50,4 +50,3 @@ void dd_destroy_all_srcfiles(void);
 #endif /* __cplusplus */
 
 #endif /* DD_ALL_SRCFILES_H */
-

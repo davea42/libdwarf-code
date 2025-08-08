@@ -689,7 +689,7 @@ static const char *usage_long_text[] = {
 "                         allocations via mmap and those via malloc.",
 "     --print-all-srcfiles print a sorted list of unique ",
 "                    file names defined in the DWARF.",
-"     --print-language-version-table print the DWARF6 ",     
+"     --print-language-version-table print the DWARF6 ",
 "                         language version table.",
 "     --show-dwarfdump-conf Show what dwarfdump.conf is being used.",
 "     --show-args    Show the  current date, time, library version,",
