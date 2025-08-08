@@ -186,6 +186,7 @@ dd_all_srcfiles_insert_new(Dwarf_Debug dbg, Dwarf_Die cu_die)
     return;
 }
 static unsigned long count = 0;
+static unsigned long countdups = 0;
 static void
 all_srcfiles_walk_print(const void *nodep,
     const DW_VISIT which,
@@ -200,6 +201,8 @@ all_srcfiles_walk_print(const void *nodep,
     }
     /* dwarf_postorder */
     count += 1;
+    /* not double-counting, 1 is original. */
+    countdups += ase->ase_dupcount - 1;
     /*  Could print the count too.  */
     printf("%s\n",sanitized(ase->ase_srcfilename));
 }
@@ -210,9 +213,11 @@ void
 dd_print_all_srcfiles(void)
 {
     count = 0;
+    countdups = 0;
     printf("\nAll unique source files, sorted by name\n");
     dwarf_twalk(srcfiles_tree,all_srcfiles_walk_print);
-    printf("\n Number of unique names %lu\n",count);
+    printf("\n Number of unique names    %lu\n",count);
+    printf("\n Number of duplicate names %lu\n",countdups);
 }
 
 void dd_destroy_all_srcfiles(void)

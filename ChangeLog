@@ -1,3 +1,116 @@
+2025-08-08:  David Anderson
+    commit 587e95c21f519b59d11ee7cc34fd61c74058dbec
+
+    Removing trailing whitespace,
+    fixing indents.
+            modified:   src/bin/dwarfdump/dd_all_srcfiles.c
+            modified:   src/bin/dwarfdump/dd_all_srcfiles.h
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-08-08:  David Anderson
+    commit 55a987c7918bc34c4fb8f5f3ed362c875b08c18e
+
+    Adding the dwarfdump option
+        --print-all-srcfiles
+    which prints, at the end of a dwarfdump run,
+    all the sourcefiles named in the DWARF.
+
+    This fixes github issue 272.
+
+    dd_all_srcfiles.{c,h}
+    are new and do all the work.
+    Mentions new file(s)
+            modified:   CMakeLists.txt
+    Mentions new file(s)
+            modified:   Makefile.am
+
+    This does all the work.
+            modified:   dd_all_srcfiles.c
+
+    Tidying up formatting
+            modified:   dd_attr_form.c
+    Implementing the new option.
+            modified:   dd_command_options.c
+    New internal flag gf_print_all_srcfiles
+            modified:   dd_glflags.c
+            modified:   dd_glflags.h
+    Nothing, really.
+            modified:   dd_tsearchbal.c
+
+    Does final print of the new option
+            modified:   dwarfdump.c
+    Mentions new file(s)
+            modified:   meson.build
+    Adds the filenames for later final print
+            modified:   print_die.c
+
+2025-08-07:  David Anderson
+    commit 4d6b01c3a325d1ea52bc5b4b885809cff054da23
+
+    New dwarfdump functions.
+    Not complete yet.
+            new file:   dd_all_srcfiles.c
+            new file:   dd_all_srcfiles.h
+
+2025-08-06:  David Anderson
+    commit 8f82593cff046c28d3687e10348264b191c325ef
+
+    Fixing typos c99,c17
+            modified:   test.yml
+
+2025-08-06:  David Anderson
+    commit 9c12914402481483de6746a515c87101ce11263a
+
+    Now testing autotools, meson, cmake using
+    CFLAGS="-std=c99" and c17.
+            modified:   test.yml
+
+2025-08-06:  David Anderson
+    commit 31cf52113189c0a1c1551b66695091f42473483e
+
+    test -std=c99 and -std=c17
+            new file:   linuxc99meson.yml
+
+2025-08-06:  David Anderson
+    commit 4569ad202eabf9dbfa82b28937f819fdd690c4da
+
+    Now testing c99 and c17
+            modified:   linuxc99autotools.yml
+    Now testing c99 and c17
+            new file:   linuxc99cmake.yml
+            modified:   test.yml
+
+2025-08-06:  David Anderson
+    commit 0be6609cdff5c7f9941e8fd7730361afe1ad8815
+
+    use c99 & c17, c23 not yet availabl
+            modified:   linuxc99autotools.yml
+
+2025-08-05:  David Anderson
+    commit 5e429d5a40fdebb7f53003f03f107d9c250e4a1b
+
+    Added c23 test too
+            modified:   linuxc99autotools.yml
+
+2025-08-05:  David Anderson
+    commit 5f3a5f101204a2d54e954c3ddac4f7e5b67556e0
+
+    Now with -std
+            new file:   linuxc99autotools.yml
+
+2025-08-05:  David Anderson
+    commit cb0f3248a4ba2d68ed2c2178e2af21adfd533658
+
+    Correcting a typo as contents: needs a space before 'read'
+            modified:   freebsd_autotools.yml
+
+2025-08-04:  David Anderson
+    commit 631b42d911819207810bdae36361d55e70f1af6c
+
+    Up to date
+            modified:   ChangeLog
+
 2025-08-04:  David Anderson
     commit dd550f959e0173dff3f91526121d18e291298909
 
