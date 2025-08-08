@@ -39,24 +39,61 @@
 #include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
 
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* O_RDONLY open() */
+#endif /* HAVE_FCNTL_H */
+#ifdef HAVE_UTF8
+/*  locale.h is guaranteed in C90 and later,
+    but langinfo.h might not be present. */
+#include "locale.h"
+#include "langinfo.h"
+#endif /* HAVE_UTF8 */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_globals.h"
-
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
 #include "dd_all_srcfiles.h"
 #include "dd_tsearchbal.h"
+#include "dd_esb.h"
 #ifdef HAVE_UTF8
 #include "dd_utf8.h"
 #endif /* HAVE_UTF8 */
 
-void * srcfiles_tree = 0;
+static void * srcfiles_tree = 0;
+
+#if 0 /* debugging only */
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{   
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}   
+static char * 
+keyprint(const void *k)
+{
+    struct All_Srcfiles_Entry * m =
+           (struct All_Srcfiles_Entry *)k;
+    char * key = m->ase_srcfilename;
+    printf("key %s\n",key);
+    return key;
+     
+}
+#endif /* 0 */
+
 
 static struct All_Srcfiles_Entry *
-all_srcfiles_create_entry(char *name)
+all_srcfiles_create_entry(char *key )
 {
     struct All_Srcfiles_Entry *mp =
         (struct All_Srcfiles_Entry *)malloc(
@@ -64,11 +101,11 @@ all_srcfiles_create_entry(char *name)
     if (!mp) {
         return 0;
     }
-    if (!name) {
-        /* mistake somewhere
+    if (!key) {
+        /* mistake somewhere */
         return NULL;
     }
-    mp->ase_srcfilename = (char *)strdup(name);
+    mp->ase_srcfilename = (char *)strdup(key);
     mp->ase_dupcount = 1;
     return mp;
 }
@@ -89,23 +126,23 @@ all_srcfiles_compare_func(const void *l, const void *r)
 {
     const struct All_Srcfiles_Entry *ml = l;
     const struct All_Srcfiles_Entry *mr = r;
-
     int res = strcmp(ml->ase_srcfilename,mr->ase_srcfilename);
     
     return res;
 }
 
 static struct All_Srcfiles_Entry *
-dd_all_srcfiles_insert(char *name,void **srctree)
+dd_all_srcfiles_insert(char *name)
 {
     void *retval = 0;
     struct All_Srcfiles_Entry *re = 0;
-    struct All_Srcfiles_Entry *e;
+    struct All_Srcfiles_Entry *e = 0;
+
     e  = all_srcfiles_create_entry(name);
     /*  tsearch records e's contents unless e
         is already present . We must not free it till
         destroy time if it got added to tree.  */
-    retval = dwarf_tsearch(e,srctree, all_srcfiles_compare_func);
+    retval = dwarf_tsearch(e,&srcfiles_tree, all_srcfiles_compare_func);
     if (retval) {
         re = *(struct All_Srcfiles_Entry **)retval;
         if (re != e) {
@@ -120,7 +157,7 @@ dd_all_srcfiles_insert(char *name,void **srctree)
     return re;
 }
 
-static void
+void
 dd_all_srcfiles_insert_new(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
     int res = 0;
@@ -135,20 +172,37 @@ dd_all_srcfiles_insert_new(Dwarf_Debug dbg, Dwarf_Die cu_die)
     if (res == DW_DLV_OK) {
         for ( ; i < srcfiles_cnt; ++i) {
              char *filepath = srcfiles[i];
-             struct All_Srcfiles_Entry *entry = 0; 
              
-             dd_all_srcfiles_insert(filepath,&srcfiles_tree);
+             dd_all_srcfiles_insert(filepath);
              dwarf_dealloc(dbg,filepath,DW_DLA_STRING);
         }
         dwarf_dealloc(dbg,srcfiles,DW_DLA_LIST);
     }
     if (res == DW_DLV_ERROR) {
-        DROP_ERROR_INSTANCE(dbg,srcf,srcerr);
+        DROP_ERROR_INSTANCE(dbg,res,srcerr);
         srcfiles = 0;
         srcfiles_cnt = 0;
         return;
     }
     return;
+}
+static unsigned long count = 0;
+static void
+all_srcfiles_walk_print(const void *nodep,
+    const DW_VISIT which, 
+    const int depth)
+{ 
+    struct All_Srcfiles_Entry *ase = 
+        *(struct All_Srcfiles_Entry**)nodep;
+
+    (void)depth;
+    if (which == dwarf_preorder || which == dwarf_endorder) {
+        return;
+    }
+    /* dwarf_postorder */
+    count += 1; 
+    /*  Could print the count too.  */
+    printf("%s\n",sanitized(ase->ase_srcfilename));
 }
 
 /*  Since the balanced tree is in sorted order already
@@ -156,11 +210,13 @@ dd_all_srcfiles_insert_new(Dwarf_Debug dbg, Dwarf_Die cu_die)
 void
 dd_print_all_srcfiles(void)
 {
-   
-FIXME
+    count = 0;
+    printf("\nAll unique source files, sorted by name\n");
+    dwarf_twalk(srcfiles_tree,all_srcfiles_walk_print);
+    printf("\n Number of unique names %lu\n",count);
 }
 
-void destroy_all_srcfiles(void)
+void dd_destroy_all_srcfiles(void)
 {
     if (srcfiles_tree) {
         dwarf_tdestroy(srcfiles_tree,all_srcfiles_free_func);

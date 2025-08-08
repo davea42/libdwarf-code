@@ -109,6 +109,7 @@ do_all(void)
     glflags.gf_pubnames_flag = TRUE;
     glflags.gf_macinfo_flag = TRUE;
     glflags.gf_macro_flag = TRUE;
+    glflags.gf_print_all_srcfiles = FALSE;
     glflags.gf_aranges_flag = TRUE;
     /*  Do not do
         glflags.gf_loc_flag = TRUE
@@ -368,6 +369,7 @@ static void arg_format_producer(void);
 static void arg_format_snc(void);
 
 static void arg_print_all(void);
+static void arg_print_all_srcfiles(void);
 static void arg_print_abbrev(void);
 static void arg_print_aranges(void);
 static void arg_print_debug_frame(void);
@@ -478,8 +480,6 @@ static const char *usage_long_text[] = {
 "     --print-debug-names Print .debug_names section",
 "     --print-debug-sup   Print .debug_sup section",
 "-i   --print-info        Print info section",
-"     --print-language-version-table print the DWARF6 ",
-"                         language version table",
 "-l   --print-lines       Print line section",
 "-ls  --print-lines-short Print line section, but do not",
 "                         print <pc> address",
@@ -493,8 +493,6 @@ static const char *usage_long_text[] = {
 "-N   --print-ranges      Print ranges section",
 "     --print-raw-rnglists Print entire .debug_rnglists section",
 "     --print-raw-loclists Print entire .debug_loclists section",
-"     --print-section-allocations Print summary of section ",
-"                         allocations via mmap and those via malloc",
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
 "-tv  --print-static-var  Print static var section",
@@ -687,9 +685,15 @@ static const char *usage_long_text[] = {
 "-v   --verbose       Show more information.",
 "-vv  --verbose-more  Show even more information.",
 "-V   --version       Print version information.",
-"     --show-dwarfdump-conf Show what dwarfdump.conf is being used",
+"     --print-section-allocations Print summary of section ",
+"                         allocations via mmap and those via malloc.",
+"     --print-all-srcfiles print a sorted list of unique ",
+"                    file names defined in the DWARF.",
+"     --print-language-version-table print the DWARF6 ",     
+"                         language version table.",
+"     --show-dwarfdump-conf Show what dwarfdump.conf is being used.",
 "     --show-args    Show the  current date, time, library version,",
-"                    dwarfdump version, and command arguments",
+"                    dwarfdump version, and command arguments.",
 "     --suppress-de-alloc-tree Turns off the libdwarf-cleanup of",
 "                    libdwarf-allocated memory on calling",
 "                    dwarf_finish(). Used to test that",
@@ -788,6 +792,7 @@ OPT_FORMAT_SNC,               /* -cs      --format-snc           */
 /* Print Debug Sections                                   */
 OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
 OPT_PRINT_ALL,                /* -a   --print-all         */
+OPT_PRINT_ALL_SRCFILES,       /*      --print-all-srcfiles         */
 OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
 OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-names */
 OPT_PRINT_DEBUG_ADDR,         /*      --print-debug-addr */
@@ -941,6 +946,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 /* Print Debug Sections. */
 {"print-abbrev",      dwno_argument, 0, OPT_PRINT_ABBREV     },
 {"print-all",         dwno_argument, 0, OPT_PRINT_ALL        },
+{"print-all-srcfiles",dwno_argument, 0, OPT_PRINT_ALL_SRCFILES },
 {"print-aranges",     dwno_argument, 0, OPT_PRINT_ARANGES    },
 {"print-debug-addr",  dwno_argument, 0, OPT_PRINT_DEBUG_ADDR},
 {"print-debug-names", dwno_argument, 0, OPT_PRINT_DEBUG_NAMES},
@@ -1079,6 +1085,11 @@ void arg_print_all(void)
 {
     suppress_check_dwarf();
     do_all();
+}
+/*  Option '--print-all-srcfiles' */
+void arg_print_all_srcfiles(void)
+{
+    glflags.gf_print_all_srcfiles = TRUE;
 }
 
 /*  Option '-b' */
@@ -2641,6 +2652,7 @@ set_command_options(int argc, char *argv[])
         /* Print Debug Sections. */
         case OPT_PRINT_ABBREV:      arg_print_abbrev();      break;
         case OPT_PRINT_ALL:         arg_print_all();         break;
+        case OPT_PRINT_ALL_SRCFILES: arg_print_all_srcfiles(); break;
         case OPT_PRINT_ARANGES:     arg_print_aranges();     break;
         case OPT_PRINT_DEBUG_NAMES: arg_print_debug_names(); break;
         case OPT_PRINT_DEBUG_ADDR:  arg_print_debug_addr();  break;

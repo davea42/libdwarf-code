@@ -62,6 +62,7 @@ Portions Copyright 2007-2024 David Anderson. All rights reserved.
 #include "dd_attr_form.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
+#include "dd_all_srcfiles.h"
 #ifdef HAVE_UTF8
 #include "dd_utf8.h"
 #endif /* HAVE_UTF8 */
@@ -79,6 +80,7 @@ struct OpBranchHead_s {
     Dwarf_Half               bh_opcount;
     struct OpBranchEntry_s * bh_ops_array;
 };
+
 
 /*  Defaults to all 0, never changes */
 static const LoHiPc  lohipc_zero;
@@ -1238,6 +1240,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             &next_cu_offset,
             &cu_type, pod_err);
 #endif /* ORIGINAL_HEADER_API */
+
+        if (nres == DW_DLV_OK && glflags.gf_print_all_srcfiles) {
+            dd_all_srcfiles_insert_new(dbg,cu_die);
+        }
+       
 
         if (!loop_count) {
             /*  So compress flags show, we waited till

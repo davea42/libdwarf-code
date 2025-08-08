@@ -69,7 +69,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dd_tsearchbal.h"
 
 #define IMPLEMENTD15 1
-
+#undef BUILD_TDUMP
 #ifdef DW_CHECK_CONSISTENCY
 struct ts_entry;
 void

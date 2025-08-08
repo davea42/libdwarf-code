@@ -181,6 +181,7 @@ init_global_flags(void)
 
     /* Extensive frames check */
     glflags.gf_check_frames_extended = FALSE;
+    glflags.gf_print_all_srcfiles = FALSE;
 
     glflags.gf_check_locations      = FALSE;
     glflags.gf_print_usage_tag_attr = FALSE;

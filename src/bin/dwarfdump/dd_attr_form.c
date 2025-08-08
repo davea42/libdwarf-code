@@ -68,10 +68,10 @@ print_3key_record(const char *msg,int num,Three_Key_Entry *e)
 }
 #endif /* 0 */
 
-void * threekey_tag_tag_base; /* tag-tree recording */
-void * threekey_tag_attr_base; /* for tag_attr recording */
+void * threekey_tag_tag_base;   /* tag-tree recording */
+void * threekey_tag_attr_base;  /* for tag_attr recording */
 void * threekey_attr_form_base; /* for attr/class/form recording */
-void * threekey_tag_use_base; /* for simple tag counting */
+void * threekey_tag_use_base;   /* for simple tag counting */
 
 int
 make_3key(Dwarf_Half k1,

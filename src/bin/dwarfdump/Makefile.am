@@ -10,6 +10,8 @@ bin_PROGRAMS = dwarfdump
 dwarfdump_SOURCES = \
 dd_addrmap.c \
 dd_addrmap.h \
+dd_all_srcfiles.c \
+dd_all_srcfiles.h \
 dd_attr_form.h \
 dd_attr_form.c \
 dd_canonical_append.h \

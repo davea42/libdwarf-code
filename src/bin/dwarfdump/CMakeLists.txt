@@ -1,5 +1,6 @@
 
 set_source_group(SOURCES "Source Files" dd_addrmap.c
+    dd_all_srcfiles.c
     dd_checkutil.c dd_common.c dd_regex.c dd_safe_strcpy.c
     dwarfdump.c dd_dwconf.c dd_helpertree.c
     dd_glflags.c dd_command_options.c dd_compiler_info.c
@@ -33,7 +34,8 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
     dd_naming.c dd_esb.c dd_tsearchbal.c)
 	
 set_source_group(HEADERS "Header Files"
-  dd_addrmap.h dd_attr_form.h dd_checkutil.h dd_common.h dd_regex.h
+  dd_addrmap.h dd_all_srcfiles.h
+  dd_attr_form.h dd_checkutil.h dd_common.h dd_regex.h
   dd_safe_strcpy.h dd_dwconf.h
   dd_minimal.h
   dd_command_options.h dd_compiler_info.h

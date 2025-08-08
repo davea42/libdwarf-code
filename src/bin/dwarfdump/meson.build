@@ -1,6 +1,7 @@
 
 dwarfdump_src = [
   'dd_addrmap.c',
+  'dd_all_srcfiles.c',
   'dd_attr_form.c',
   'dd_canonical_append.c',
   'dd_checkutil.c',

@@ -91,6 +91,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_mac_cputype.h"
 #include "dd_elf_cputype.h"
 #include "dd_pe_cputype.h"
+#include "dd_all_srcfiles.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -1407,7 +1408,8 @@ process_one_file(
         update_section_flags_per_groups();
     }
     reset_overall_CU_error_data();
-    if (glflags.gf_info_flag || glflags.gf_line_flag ||
+    if (glflags.gf_print_all_srcfiles ||
+        glflags.gf_info_flag || glflags.gf_line_flag ||
         glflags.gf_types_flag ||
         glflags.gf_check_macros || glflags.gf_macinfo_flag ||
         glflags.gf_macro_flag ||
@@ -1845,6 +1847,11 @@ process_one_file(
             pref == Dwarf_Alloc_Mmap?  "Dwarf_Alloc_Mmap":
             "<Unknown. an ERROR");
     }
+    if (glflags.gf_print_all_srcfiles) {
+        dd_print_all_srcfiles();
+        dd_destroy_all_srcfiles();
+    }
+
     if (glflags.gf_print_language_version_table) {
         print_language_version_table();
     }
