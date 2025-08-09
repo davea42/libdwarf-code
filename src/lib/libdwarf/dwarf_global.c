@@ -1426,6 +1426,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
     Dwarf_Global_Context con = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Off cuhdr_off = 0;
+    Dwarf_Off cuhsum = 0;
 
     if (global == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_NULL);
@@ -1454,9 +1455,21 @@ dwarf_global_name_offsets(Dwarf_Global global,
     CHECK_DBG(dbg,error,"dwarf_global_name_offsets()");
     /*  Cannot refer to debug_types, see p141 of
         DWARF4 Standard */
+    cuhsum = cuhdr_off + MIN_CU_HDR_SIZE;
+    if (cuhsum < cuhdr_off || cuhsum < MIN_CU_HDR_SIZE) {
+        /*overflow*/
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        build_off_end_msg(cuhdr_off,cuhdr_off,
+            dbg->de_debug_info.dss_size,&m);
+        _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     if (dbg->de_debug_info.dss_size &&
-        ((cuhdr_off + MIN_CU_HDR_SIZE) >=
-        dbg->de_debug_info.dss_size)) {
+        cuhsum >= dbg->de_debug_info.dss_size) {
         dwarfstring m;
 
         dwarfstring_constructor(&m);
