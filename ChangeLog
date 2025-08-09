@@ -1,4 +1,40 @@
 2025-08-08:  David Anderson
+    commit 67c26c25f776303c154079a419bab34f29f35547
+
+    Regenerated with bug 202508-001
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-08-08:  David Anderson
+    commit aedc3c4cebdc84fe1e4b342df18b1b53110df534
+
+    Noting bug ossfuzz 437060549 in vulnerabilities.
+            modified:   bugxml/data.txt
+
+2025-08-08:  David Anderson
+    commit efa242489a69b13bc6eedc6766880335ac42d158
+
+    Fixing  ossfuzz 437060549 .
+    Also known as DW202508-001.
+    An addition of offsets was not checked for overflow.
+    Now we check.
+    The code has been unsafe (in reading a carefully
+    corrupted object file) for many years.
+    The bug was in release 20060308 (March 2006)
+    (look for MIN_CU_HDR_SIZE).
+            modified:   dwarf_global.c
+
+2025-08-08:  David Anderson
+    commit 2da2b4059e477600e359483bdbcfd9fa492369aa
+
+    Previous changes update.
+            modified:   ChangeLog
+    Now --print-all-srcfiles adds the count of
+    duplicated (across the entire object) DWARF file names.
+            modified:   src/bin/dwarfdump/dd_all_srcfiles.c
+
+2025-08-08:  David Anderson
     commit 587e95c21f519b59d11ee7cc34fd61c74058dbec
 
     Removing trailing whitespace,

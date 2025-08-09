@@ -6,16 +6,14 @@ reportedby: David Korczynski
 vulnerability: Heap buffer overflow in dwarf_globals.c
 product: libdwarf
 description: A corrupt (fuzzed) object file resulted
-  in an overflow and an incorrect check and
-  incorrect access to memory.
+  in an overflow and an incorrect check and incorrect access to memory.
   The error check is now valid.
-  This has been a vulnerability for 20 years, I suspect,
-  though the exact date of the error has not been
-  determined. 
+  The bug has been present since at least 2006 (release dwarf-20060308).
+  Look for MIN_CU_HDR_SIZE in dwarf_global.c .
 datefixed:  2025-08-08
 references: regressiontests/ossfuzz437060549/fuzz_globals-4771320878661632
 gitfixid: efa242489a69b13bc6eedc6766880335ac42d158
-tarrelease:
+tarrelease: predicting 2.2.0
 endrec:  DW202508-001
 
 
@@ -34,7 +32,7 @@ description: A corrupt (fuzzed) .debug_macro resulted in
 datefixed:  2025-01-07
 references: regressiontests/ossfuzz394644267/fuzz_macro_dwarf5-5504709091983360 fuzz_macro_dwarf5-5504709091983360
 gitfixid: 156156a80affdc63b851fbf7fdc01e4d41849eb0
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec:  DW202502-001
 
 
@@ -56,7 +54,7 @@ description: A 20K list of attributes to one DIE in
 datefixed:  2024-12-28 
 references: regressiontests/DW202412-011/fuzz_die_cu_attrs-5424995441901568
 gitfixid: 2161332885c50074f15c0e1a7339c330cbf88c62
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-011
 
 id: DW202412-010
@@ -74,7 +72,7 @@ description: A mistake made in 2021 resulted in adding
 datefixed: 2024-12-23 
 references: regressiontests/ossfuzz385742125/fuzz_die_cu_print-5500979604160512
 gitfixid: 375d102768ee1ff953f97a93345318db3f63ea3c
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-010
 
 
@@ -95,7 +93,7 @@ description: A very badly damaged MachO object
 datefixed: 2024-12-24
 references: regressiontests/DW202412-009/fuzz_init_path-5854698061496320
 gitfixid: 
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-009
 
 
@@ -120,7 +118,7 @@ description: A very badly damaged object
 datefixed: 2024-12-23 
 references: regressiontests/ossfuzz385466100/fuzz_die_cu_offset-6604029974609920
 gitfixid: 4e6e7cafa6bef0629e5ea2bbf63a4e2f84c5a938
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-008
 
 id: DW202412-007
@@ -139,7 +137,7 @@ description: A certain corrupted location expression
 datefixed: 2024-12-11
 references: regressiontests/ossfuzz42536144/fuzz_die_cu_attrs_loclist-5906068650655744
 gitfixid: a0d983611468e3882c9fee92197d321ae4580c1a
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-007
 
 id: DW202412-006
@@ -163,7 +161,7 @@ description: In dwarf_dnames_header()
 datefixed: 2024-12-10  
 references:regressiontests/ossfuzz383170474/fuzz_globals-4515360770228224.fuzz
 gitfixid:  43be4567488c8b531d1ae98fe128f5eda374098e
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-006
 
 
@@ -182,7 +180,7 @@ description: A corrupted PE object results
 datefixed: 2024-12-10  
 references:regressiontests/ossfuzz380108595/fuzz_aranges-5572243180027904
 gitfixid:  43be4567488c8b531d1ae98fe128f5eda374098e
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-005
 
 id: DW202412-004
@@ -199,7 +197,7 @@ description: A corrupted PE object results
 datefixed: 2024-12-11
 references:regressiontests/ossfuzz379159140/fuzz_die_cu_print-5335984847257600 
 gitfixid:   e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-004
 
 
@@ -219,7 +217,7 @@ description: A corrupted PE object results
 datefixed: 2024-12-11
 references:regressiontests/ossfuzz372754161/fuzz_globals-6058837938864128
 gitfixid:   e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-003
 
 id: DW202412-002
@@ -245,7 +243,7 @@ description: A corrupted object results
 datefixed: 2024-12-12
 references:regressiontests/ossfuzz371659894/fuzz_die_cu_attrs-6661686947282944
 gitfixid:  e69eb5da569ce8d3a76ac1aa2f1ae9d371729dbf
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-002
 
 id: DW202412-001
@@ -261,7 +259,7 @@ description: Too large a malloc due to reading a
 datefixed: 2024-12-11
 references:regressiontests/ossfuzz371721677/fuzz_die_cu_e_print-4913953320271872
 gitfixid: e9340b7fb01f9ee479a1a26cc10895d4eb305cc6
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202412-001
 
 
@@ -287,7 +285,7 @@ description: Reading from address zero due to a lack of
 datefixed: 2024-12-05
 references: regressiontests/ossfuzz42538203/fuzz_findfuncbypc-5117956621664256
 gitfixid: 9f11f8351c85f7715144943f72cd72f011616fe8
-tarrelease:
+tarrelease: libdwarf-0.12.0.tar.xz
 endrec: DW202409-001
 
 id: DW202407-012
@@ -307,7 +305,7 @@ description: The code added in git fix id
 datefixed: 2024-07-28
 references: regressiontests/ossfuzz70763/fuzz_macro_dwarf5-5161075908083712
 gitfixid: 1b79d618bf5aab2bda9be495c531b13e94ae056a
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-012
 
 id: DW202407-011
@@ -327,7 +325,7 @@ description: The code added in git fix id
 datefixed: 2024-07-28
 references: regressiontests/ossfuzz70753/fuzz_die_cu_offset-6598270743281664
 gitfixid: 1b79d618bf5aab2bda9be495c531b13e94ae056a
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-011
 
 id: DW202407-010
@@ -345,7 +343,7 @@ description: Libdwarf was referencing freed space
 datefixed: 2024-07-27
 references: regressiontests/ossfuzz70721/fuzz_macro_dwarf5-4907954017468416
 gitfixid: 6fa96f95e043bac9b98ca6f7a9a542dae8f46cd
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-010
 
 
@@ -362,7 +360,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70287/
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-009
 
 
@@ -380,7 +378,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70282/
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-008
 
 id: DW202407-007
@@ -396,7 +394,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70278/
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-007
 
 
@@ -413,7 +411,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70277/
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-006
 
 
@@ -430,7 +428,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70266/fuzz_findfuncbypc-6093996460408832
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-005
 
 
@@ -447,7 +445,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70263/fuzz_die_cu-4960441042796544
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-004
 
 id: DW202407-003
@@ -463,7 +461,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70256/fuzz_rng-483822291655065
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-003
 
 id: DW202407-002
@@ -479,7 +477,7 @@ description: Libdwarf was not checking a field in
 datefixed: 2024-07-10
 references: regressiontests/ossfuzz70246/fuzz_macro_dwarf5-5128935898152960
 gitfixid: d7c4efdcc7952b38a237a36ccedf364018e0fb1c
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-002
 
 id: DW202407-001
@@ -494,7 +492,7 @@ description: Libdwarf was failing to free()
 datefixed: 2024-07-09
 references: regressiontests/ossfuzz70244/fuzz_die_cu_attrs_loclist-4958134427254784
 gitfixid: 906a4428a5d92e17948da4249cfccbe8f5ae8005
-tarrelease:
+tarrelease: libdwarf-0.11.0.tar.xz
 endrec: DW202407-001
 
 
