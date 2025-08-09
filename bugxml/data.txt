@@ -1,4 +1,24 @@
 
+id: DW202508-001
+fuzzer: oss fuzz 437060549
+datereported: 2025-08-07
+reportedby: David Korczynski
+vulnerability: Heap buffer overflow in dwarf_globals.c
+product: libdwarf
+description: A corrupt (fuzzed) object file resulted
+  in an overflow and an incorrect check and
+  incorrect access to memory.
+  The error check is now valid.
+  This has been a vulnerability for 20 years, I suspect,
+  though the exact date of the error has not been
+  determined. 
+datefixed:  2025-08-08
+references: regressiontests/ossfuzz437060549/fuzz_globals-4771320878661632
+gitfixid: efa242489a69b13bc6eedc6766880335ac42d158
+tarrelease:
+endrec:  DW202508-001
+
+
 id: DW202502-001
 fuzzer: oss fuzz 394644267
 datereported: 2025-02-05
