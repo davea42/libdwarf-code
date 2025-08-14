@@ -10,18 +10,16 @@
 <vulnerability> Heap buffer overflow in dwarf_globals.c
 </vulnerability>
 <description> A corrupt (fuzzed) object file resulted
-  in an overflow and an incorrect check and
-  incorrect access to memory.
+  in an overflow and an incorrect check and incorrect access to memory.
   The error check is now valid.
-  This has been a vulnerability for 20 years, I suspect,
-  though the exact date of the error has not been
-  determined.
+  The bug has been present since at least 2006 (release dwarf-20060308).
+  Look for MIN_CU_HDR_SIZE in dwarf_global.c .
 </description>
 <datefixed>2025-08-08</datefixed>
 <references> regressiontests/ossfuzz437060549/fuzz_globals-4771320878661632
 </references>
 <gitfixid>efa242489a69b13bc6eedc6766880335ac42d158</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202502-001</dwid>
@@ -43,7 +41,7 @@
 <references> regressiontests/ossfuzz394644267/fuzz_macro_dwarf5-5504709091983360 fuzz_macro_dwarf5-5504709091983360
 </references>
 <gitfixid>156156a80affdc63b851fbf7fdc01e4d41849eb0</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-011</dwid>
@@ -68,7 +66,7 @@
 <references> regressiontests/DW202412-011/fuzz_die_cu_attrs-5424995441901568
 </references>
 <gitfixid>2161332885c50074f15c0e1a7339c330cbf88c62</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-010</dwid>
@@ -90,7 +88,7 @@
 <references> regressiontests/ossfuzz385742125/fuzz_die_cu_print-5500979604160512
 </references>
 <gitfixid>375d102768ee1ff953f97a93345318db3f63ea3c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-009</dwid>
@@ -114,7 +112,7 @@
 <references> regressiontests/DW202412-009/fuzz_init_path-5854698061496320
 </references>
 <gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-008</dwid>
@@ -141,7 +139,7 @@
 <references> regressiontests/ossfuzz385466100/fuzz_die_cu_offset-6604029974609920
 </references>
 <gitfixid>4e6e7cafa6bef0629e5ea2bbf63a4e2f84c5a938</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-007</dwid>
@@ -164,7 +162,7 @@
 <references> regressiontests/ossfuzz42536144/fuzz_die_cu_attrs_loclist-5906068650655744
 </references>
 <gitfixid>a0d983611468e3882c9fee92197d321ae4580c1a</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-006</dwid>
@@ -192,7 +190,7 @@
 <references>regressiontests/ossfuzz383170474/fuzz_globals-4515360770228224.fuzz
 </references>
 <gitfixid>43be4567488c8b531d1ae98fe128f5eda374098e</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-005</dwid>
@@ -213,7 +211,7 @@
 <references>regressiontests/ossfuzz380108595/fuzz_aranges-5572243180027904
 </references>
 <gitfixid>43be4567488c8b531d1ae98fe128f5eda374098e</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-004</dwid>
@@ -234,7 +232,7 @@
 <references>regressiontests/ossfuzz379159140/fuzz_die_cu_print-5335984847257600
 </references>
 <gitfixid>e9340b7fb01f9ee479a1a26cc10895d4eb305cc6</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-003</dwid>
@@ -255,7 +253,7 @@
 <references>regressiontests/ossfuzz372754161/fuzz_globals-6058837938864128
 </references>
 <gitfixid>e9340b7fb01f9ee479a1a26cc10895d4eb305cc6</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-002</dwid>
@@ -285,7 +283,7 @@
 <references>regressiontests/ossfuzz371659894/fuzz_die_cu_attrs-6661686947282944
 </references>
 <gitfixid>e69eb5da569ce8d3a76ac1aa2f1ae9d371729dbf</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202412-001</dwid>
@@ -305,7 +303,7 @@
 <references>regressiontests/ossfuzz371721677/fuzz_die_cu_e_print-4913953320271872
 </references>
 <gitfixid>e9340b7fb01f9ee479a1a26cc10895d4eb305cc6</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202409-001</dwid>
@@ -333,7 +331,7 @@
 <references> regressiontests/ossfuzz42538203/fuzz_findfuncbypc-5117956621664256
 </references>
 <gitfixid>9f11f8351c85f7715144943f72cd72f011616fe8</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.12.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-012</dwid>
@@ -357,7 +355,7 @@
 <references> regressiontests/ossfuzz70763/fuzz_macro_dwarf5-5161075908083712
 </references>
 <gitfixid>1b79d618bf5aab2bda9be495c531b13e94ae056a</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-011</dwid>
@@ -381,7 +379,7 @@
 <references> regressiontests/ossfuzz70753/fuzz_die_cu_offset-6598270743281664
 </references>
 <gitfixid>1b79d618bf5aab2bda9be495c531b13e94ae056a</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-010</dwid>
@@ -403,7 +401,7 @@
 <references> regressiontests/ossfuzz70721/fuzz_macro_dwarf5-4907954017468416
 </references>
 <gitfixid>6fa96f95e043bac9b98ca6f7a9a542dae8f46cd</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-009</dwid>
@@ -423,7 +421,7 @@
 <references> regressiontests/ossfuzz70287/
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-008</dwid>
@@ -443,7 +441,7 @@
 <references> regressiontests/ossfuzz70282/
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-007</dwid>
@@ -463,7 +461,7 @@
 <references> regressiontests/ossfuzz70278/
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-006</dwid>
@@ -483,7 +481,7 @@
 <references> regressiontests/ossfuzz70277/
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-005</dwid>
@@ -503,7 +501,7 @@
 <references> regressiontests/ossfuzz70266/fuzz_findfuncbypc-6093996460408832
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-004</dwid>
@@ -523,7 +521,7 @@
 <references> regressiontests/ossfuzz70263/fuzz_die_cu-4960441042796544
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-003</dwid>
@@ -543,7 +541,7 @@
 <references> regressiontests/ossfuzz70256/fuzz_rng-483822291655065
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-002</dwid>
@@ -563,7 +561,7 @@
 <references> regressiontests/ossfuzz70246/fuzz_macro_dwarf5-5128935898152960
 </references>
 <gitfixid>d7c4efdcc7952b38a237a36ccedf364018e0fb1c</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202407-001</dwid>
@@ -582,7 +580,7 @@
 <references> regressiontests/ossfuzz70244/fuzz_die_cu_attrs_loclist-4958134427254784
 </references>
 <gitfixid>906a4428a5d92e17948da4249cfccbe8f5ae8005</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-0.11.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202406-002</dwid>
