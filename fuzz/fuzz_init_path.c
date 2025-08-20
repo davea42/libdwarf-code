@@ -27,10 +27,18 @@ limitations under the License.
  */
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
-  sprintf(filename, "/tmp/libfuzzer.%d", getpid());
 
+#ifdef DWREGRESSIONTEMP
+  /*  Under msys2, the /tmp/ results in an open fail,
+      so we discard the /tmp/ here */
+  sprintf(filename, "junklibfuzzer.%d", getpid());
+#else
+  sprintf(filename, "/tmp/libfuzzer.%d", getpid());
+#endif
   FILE *fp = fopen(filename, "wb");
   if (!fp) {
+    printf("FAIL libfuzzer cannot open temp as writeable %s\n",
+        filename);
     return 0;
   }
   fwrite(data, size, 1, fp);

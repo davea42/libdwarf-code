@@ -92,11 +92,21 @@ DW_UT_partial                   0x03  /* DWARF5 */
 #endif
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-  char filepath[256];
-  sprintf(filepath, "/tmp/libfuzzer.%d", getpid());
+  char filename[256];
 
-  FILE *fp = fopen(filepath, "wb");
+#ifdef DWREGRESSIONTEMP 
+  /*  under msys2, the /tmp/ results in an open fail,
+      so we discard the /tmp/. No need for
+      /tmp/ in Linux anyway. libdwarf regressiontests
+      use it this way. */
+  sprintf(filename, "junklibfuzzer.%d", getpid());
+#else
+  sprintf(filename, "/tmp/libfuzzer.%d", getpid());
+#endif
+  FILE *fp = fopen(filename, "wb");
   if (!fp) {
+    printf("FAIL libfuzzer cannot open temp as writeable %s\n",
+        filename);
     return 0;
   }
   fwrite(data, size, 1, fp);
@@ -117,7 +127,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
       check_coup_dir (for example). */
   memset(&target_data,0,sizeof(target_data));
   int res =
-      dwarf_init_path(filepath, 0, 0, DW_GROUPNUMBER_ANY, 0, 0, &dbg, &error);
+      dwarf_init_path(filename, 0, 0, DW_GROUPNUMBER_ANY, 0, 0, &dbg, &error);
   if (res == DW_DLV_ERROR) {
     dwarf_dealloc_error(dbg, error);
     dwarf_finish(dbg);
@@ -126,7 +136,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     res = dwarf_finish(dbg);
   }
 
-  unlink(filepath);
+  unlink(filename);
   return 0;
 }
 

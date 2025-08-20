@@ -1928,11 +1928,6 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
 
     New in v0.9.0 November 2023.
 
-    The library keeps track of where it is in the object file
-    and it knows where to find 'next'.
-
-    It returns the CU_DIE pointer through dw_cu_die;
-
     dwarf_next_cu_header_e() is preferred over
     dwarf_next_cu_header_d() as the latter requires
     a second (immediate) step to access the CU-DIE
@@ -2019,10 +2014,16 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     libdwarf v0.8.0 and earlier (and it also works
     for later versions).
 
-    This version will eventually be deprecated.
+    Replace all uses of dwarf_next_cu_header_d()
+    and use dwarf_next_cu_header_e instead.
+
+    Assuming you continue to use dwarf_next_cu_header_d()
+    read the following carefully.
 
     The library keeps track of where it is in the object file
-    and it knows where to find 'next'.
+    following a call to dwarf_next_cu_header_d()
+    and it knows (see next paragraph) how to
+    interpret dwarf_siblingof_b(dw_dbg,NULL,dw_is_info, &cu_die,...).
 
     In order to read the DIE tree of the CU this
     records information in the dw_dbg data and
@@ -2040,7 +2041,8 @@ DW_API int dwarf_next_cu_header_e(Dwarf_Debug dw_dbg,
     @see examplecuhdrd
 
     All arguments are the same as dwarf_next_cu_header_e()
-    except that there is no dw_cu_die argument here.
+    except that there is no dw_cu_die argument in
+    dwarf_next_cu_header_d().
 */
 
 DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
@@ -3017,7 +3019,11 @@ DW_API int dwarf_language_version_data(
     int          *dw_default_lower_bound,
     const char   **dw_version_string);
 
-/*  OBSOLETE NAME. Do Not use, use dwarf_language_version_data */
+/*! @brief dwarf_language_version_string is obsolete.
+
+    OBSOLETE NAME. Do Not use dwarf_language_version_string()
+    use dwarf_language_version_data().
+*/
 DW_API int dwarf_language_version_string(
     Dwarf_Unsigned dw_lname_name,
     int           *dw_default_lower_bound,
@@ -6654,7 +6660,7 @@ DW_API Dwarf_Half dwarf_set_frame_undefined_value(
     When libdwarf itself reads abbreviations  to
     access DIEs the offset comes
     from the Compilation Unit Header debug_abbrev_offset field.
-    @see dwarf_next_cu_header_d
+    @see dwarf_next_cu_header_e
 
     @param dw_dbg
     The Dwarf_Debug of interest.
