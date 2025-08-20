@@ -1,3 +1,69 @@
+2025-08-20:  David Anderson
+    commit 550d3570b2fbebe2f9dd28d7e8df754543a1d45f
+
+    When LIBDWARFTEMP is defined change the name
+    of the temp file to start with junk
+    to better match what is routine in the regressiontests.
+    And to something that works just fine with Win msys2.
+    (in msys2 "/tmp/anything" will not work for open(  "wb")
+    whereas "anything" will work.)
+            modified:   fuzz/fuzz_aranges.c
+            modified:   fuzz/fuzz_crc.c
+            modified:   fuzz/fuzz_crc_32.c
+            modified:   fuzz/fuzz_debug_addr_access.c
+            modified:   fuzz/fuzz_debug_str.c
+            modified:   fuzz/fuzz_debuglink.c
+            modified:   fuzz/fuzz_die_cu.c
+            modified:   fuzz/fuzz_die_cu_attrs.c
+            modified:   fuzz/fuzz_die_cu_attrs_loclist.c
+            modified:   fuzz/fuzz_die_cu_e.c
+            modified:   fuzz/fuzz_die_cu_e_print.c
+            modified:   fuzz/fuzz_die_cu_info1.c
+            modified:   fuzz/fuzz_die_cu_offset.c
+            modified:   fuzz/fuzz_die_cu_print.c
+            modified:   fuzz/fuzz_dnames.c
+            modified:   fuzz/fuzz_findfuncbypc.c
+            modified:   fuzz/fuzz_gdbindex.c
+            modified:   fuzz/fuzz_globals.c
+            modified:   fuzz/fuzz_gnu_index.c
+            modified:   fuzz/fuzz_init_b.c
+            modified:   fuzz/fuzz_init_binary.c
+            modified:   fuzz/fuzz_init_path.c
+            modified:   fuzz/fuzz_macro_dwarf4.c
+            modified:   fuzz/fuzz_macro_dwarf5.c
+            modified:   fuzz/fuzz_rng.c
+            modified:   fuzz/fuzz_set_frame_all.c
+            modified:   fuzz/fuzz_showsectgrp.c
+            modified:   fuzz/fuzz_simplereader_tu.c
+            modified:   fuzz/fuzz_srcfiles.c
+            modified:   fuzz/fuzz_stack_frame_access.c
+            modified:   fuzz/fuzz_str_offsets.c
+            modified:   fuzz/fuzz_tie.c
+            modified:   fuzz/fuzz_xuindex.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-08-20:  David Anderson
+    commit 06ba15c0576f3747f6bf68eefcaa451519a2d77b
+
+    Corrected the project name here to "libdwarf"
+            modified:   doc/Doxyfile
+
+2025-08-14:  David Anderson
+    commit a6a4e37656ac8df696d7fee26c696fcbc6ae0566
+
+    Adding release information to places it was
+    accidentally omitted for previous releases.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-08-09:  David Anderson
+    commit bc1a83a568347519e37fce070d4bc7ea679b5a84
+
+    Documenting DW202508-001.
+            modified:   ChangeLog
+            modified:   bugxml/data.txt
+
 2025-08-08:  David Anderson
     commit 67c26c25f776303c154079a419bab34f29f35547
 
