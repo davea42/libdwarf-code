@@ -33,7 +33,7 @@ limitations under the License.
  */
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   char filename[256];
-#ifdef LIBDWARFTEMP
+#ifdef DWREGRESSIONTEMP
   /* Under msys2, the /tmp/ results in an open fail */
   sprintf(filename, "junklibfuzzer.%d", getpid());
 #else
