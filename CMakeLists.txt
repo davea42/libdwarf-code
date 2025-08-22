@@ -44,9 +44,9 @@ macro(msvc_posix target)
     endif()
 endmacro()
 
-set(LIBDWARF_CRT "MD" CACHE STRING "Either MT or MD, specifies whether to use the static or dynamic MSVCRT.")
-
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(LIBDWARF_CRT "MD" CACHE STRING "Either MT or MD, specifies whether to use the static or dynamic MSVCRT.")
+
   # Use CMAKE_MSVC_RUNTIME in versions 3.15 and up
   if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15")
     cmake_policy(SET CMP0091 NEW)
@@ -55,7 +55,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
       set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     elseif(LIBDWARF_CRT STREQUAL "MD")
       message(STATUS "Using MD runtime by CMAKE_MSVC_RUNTIME_LIBRARY")
-      set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+      set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     else()
       message(FATAL_ERROR "LIBDWARF_CRT must be MT or MD")
     endif()
