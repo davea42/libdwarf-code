@@ -1,3 +1,58 @@
+2025-08-25:  David Anderson
+    commit 95e38720d3a90e5ab687873f5e9b87e7ac6e7b44
+
+    Useful for testing on Msys2 Windows
+            modified:   test/canonicalpath.py
+
+2025-08-25:  David Anderson
+    commit 9149dff5bac0bdd9f305a4f9998c1d0c937f770b
+
+    When building for regression testing, ensure the program
+    name is just ./dwarfdump (important for Msys2 testing,
+    ok for all testing).
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2025-08-25:  David Anderson
+    commit 1304f68c0b3932daa3518a663f10d37342cdecf4
+
+    On Msys2 (Windows) these have to have O_BINARY
+    set for open().  was left off of these two before.
+            modified:   fuzz/fuzz_die_cu.c
+            modified:   fuzz/fuzz_die_cu_e.c
+
+2025-08-22:  Degen's Regens
+    commit 71856d9e82eb0e47e9f4808f0a3ea213ea01fd8b
+
+    MSVC /MD(d) is MultiThreaded(Debug)**DLL** (#303)
+
+    This from pull request 303.
+
+    modified: CMakeLists.txt, see
+        set(LIBDWARF_CRT "MD" CACHE STRING 
+        "Either MT or MD, specifies whether to use the static or dynamic MSVCRT.")
+
+        and 
+
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+   
+    See
+    https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html
+    for details.
+
+2025-08-21:  David Anderson
+    commit 581fc7f17d5554138ac6e82b472a3b1cc9688cdd
+
+    Two places failed to spell DWREGRESSIONTEMP
+    correctly in #ifdef
+            modified:   fuzz/fuzz_aranges.c
+            modified:   fuzz/fuzz_crc_32.c
+
+2025-08-20:  David Anderson
+    commit 5f5ef88fd8abaac9239b12ff8699f6a3b67278d6
+
+    up to date
+            modified:   ChangeLog
+
 2025-08-20:  David Anderson
     commit 550d3570b2fbebe2f9dd28d7e8df754543a1d45f
 
