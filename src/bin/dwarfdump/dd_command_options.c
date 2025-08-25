@@ -2811,9 +2811,21 @@ lacking_normal_args (int argct,char **args)
 const char *
 process_args(int argc, char *argv[])
 {
+    /*   If building for a regression test run
+         on msys2 , use fixed 
+         name, fullname instead of argv[0], so tests pass */
+    char *regressions = getenv("DWREGRESSIONTEMP"); 
+
     /* the call sets up glflags.newprogname, returns its string */
-    glflags.program_name = special_program_name(argv[0]);
-    glflags.program_fullname = argv[0];
+    if (regressions && !strcmp(regressions,"y")) {
+        /* for the benefit of testing on msys2 so names
+           match. */
+        glflags.program_name = "./dwarfdump";
+        glflags.program_fullname = "./dwarfdump";
+    } else {
+        glflags.program_name = special_program_name(argv[0]);
+        glflags.program_fullname = argv[0];
+    }
 
     suppress_check_dwarf();
     if (argv[1] && lacking_normal_args(argc-1,argv+1)) {
