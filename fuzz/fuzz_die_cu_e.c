@@ -58,7 +58,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   Dwarf_Error *errp = 0;
   int i = 0;
 
-  fuzz_fd = open(filename, O_RDONLY|O_RDONLY);
+  fuzz_fd = open(filename, O_RDONLY|O_BINARY);
   if (fuzz_fd != -1) {
     res =
         dwarf_init_b(fuzz_fd, DW_GROUPNUMBER_ANY, errhand, errarg, &dbg, errp);
