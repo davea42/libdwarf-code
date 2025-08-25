@@ -14,7 +14,7 @@ import os
 import sys
 
 def dowinb(s):
-    winb="C:/msys64/"
+    winb="C:/msys64/davea/"
     w= s.replace(winb,"/")
     return w
 
