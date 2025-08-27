@@ -141,6 +141,12 @@ config_dir = [include_directories('.')]
 
 # configuration
 
+# For msys2 regressiontesting, and only that.
+dev_regressiontesting = get_option('regressiontesting')
+if dev_regressiontesting 
+  dev_cflags += ['-DDWREGRESSIONTEMP']
+endif
+
 buildmmap = get_option('buildmmap')
 mmapresult = false
 
@@ -329,3 +335,4 @@ summary({'compilation': 'ninja',
          'installation': 'ninja install',
          'Cflags': dev_cflags,
         }, section: 'Compilation')
+
