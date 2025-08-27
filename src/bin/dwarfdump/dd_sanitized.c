@@ -27,6 +27,7 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 
 #include <config.h>
 #include <stdio.h> /* FILE decl for dd_esb.h */
+#include <string.h> /* strcmp strncmp */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -106,7 +107,9 @@ know any % is a sanitized char. We could double up
 a % into %% on output, but switching to %25 is simpler
 and for readers and prevents ambiguity.
 If a % is found then utf8 is suppressed for the entire string
-and uri-style %25 is used and.
+and uri-style %25 is used.
+We avoid using the % symbol itself in strings, so we expect uri-style
+is not suppressed.
 
 If the dwarfdump runtime environment is UTF-8
 and the necessary locale() and nl_langinfo()
@@ -117,16 +120,34 @@ expected.
 
 */
 #define SANBUF_SIZE 400
-/*  Allocates as esb_constructor_fixed() would,
-    so for strings shorter than
+/*  Allocates as esb_constructor_fixed() would.
+    For strings shorter than
     SANBUF_SIZE bytes no malloc needed. */
 static char sanbufa[SANBUF_SIZE];
 static char sanbufb[SANBUF_SIZE];
-static int usebufa = TRUE;
+static char sanbufc[SANBUF_SIZE];
+static int usebufnum = 0;
+#ifdef DWREGRESSIONTEMP
+static char sanbufhomea[SANBUF_SIZE];
+static char sanbufhomeb[SANBUF_SIZE];
+static char sanbufhomec[SANBUF_SIZE];
+#endif /* DWREGRESSIONTEMP */
+
 static struct esb_s localesba = {sanbufa,
     SANBUF_SIZE,0,1,0};
 static struct esb_s localesbb = {sanbufb,
     SANBUF_SIZE,0,1,0};
+static struct esb_s localesbc = {sanbufc,
+    SANBUF_SIZE,0,1,0};
+#ifdef DWREGRESSIONTEMP
+static struct esb_s localhomeifya = {sanbufhomea,
+    SANBUF_SIZE,0,1,0};
+static struct esb_s localhomeifyb = {sanbufhomeb,
+    SANBUF_SIZE,0,1,0};
+static struct esb_s localhomeifyc = {sanbufhomec,
+    SANBUF_SIZE,0,1,0};
+static int usehomeifynum = 0;
+#endif /* DWREGRESSIONTEMP */
 
 /*  dwarfdump-sanitize table
     1 means printable ASCII character (byte)
@@ -260,20 +281,102 @@ sanitized_string_destructor(void)
 {
     esb_destructor(&localesba);
     esb_destructor(&localesbb);
+    esb_destructor(&localesbc);
+#ifdef DWREGRESSIONTEMP
+    esb_destructor(&localhomeifya);
+    esb_destructor(&localhomeifyb);
+    esb_destructor(&localhomeifyc);
+#endif
 }
+#ifdef DWREGRESSIONTEMP
+static int
+look_for_substr(const char *s,const char *match,
+    int matchlen)
+{
+     const char *cp = s;
+     int remaining = strlen(s);
+
+     if (remaining < matchlen) {
+         return -1;
+     }
+     for ( ; *cp ; ++cp,--remaining) {
+         if (*cp != match[0]) {
+             continue;
+         }
+         if (remaining < matchlen) {
+             /*  No match possible */
+             return -1;
+         }
+         if (strncmp(cp,match,matchlen)) {
+             continue;
+         }
+         return (int)(cp - s);
+     }
+     return -1;
+}
+/*  This makes the simplifying assumption that
+    a Windows path will only appear once in a string,
+    but could be generalized if necessary.  */
+static Dwarf_Bool
+fullpathtohome(const char *s,struct esb_s *out)
+{
+     int pos = -1;
+     const char *match="C:/msys64/davea/home/admin";
+     size_t strlenmatch = strlen(match);
+
+     pos = look_for_substr(s,match,(int)strlenmatch);
+     if (pos < 0) {
+         return FALSE;
+     }
+     esb_appendn(out,s,pos-1);
+     esb_append(out,"$HOME");
+     esb_append(out,s+strlenmatch);
+     return TRUE;
+}
+#endif /* DWREGRESSIONTEMP */
 
 /*  Because we reuse static esb's this MUST NOT
-    be called a third time before printing
+    be called a fourth time before printing
     out the initial returns.  It is rarely
     a problem.  But it is up to the caller to
     behave correctly to avoid getting
-    incorect strings.
+    incorrect strings.
+
+    We need this to substitute
+    $HOME for windows C: etc file names.
 */
 const char *
 sanitized(const char *s)
 {
     const char *sout = 0;
     struct esb_s *lsp = 0;
+#ifdef DWREGRESSIONTEMP
+    struct esb_s *hsp = 0;
+    Dwarf_Bool changed = FALSE;
+    switch (usehomeifynum) {
+    case 0:
+       hsp = &localhomeifya;
+       usehomeifynum = 1;
+       break;
+    case 1:
+       hsp = &localhomeifyb;
+       usehomeifynum = 2;
+       break;
+    case 2:
+       hsp = &localhomeifyc;
+       usehomeifynum = 0;
+       break;
+    default: /*  Impossible! */
+       hsp = &localhomeifya;
+       usehomeifynum = 1;
+       break;
+    }
+    esb_empty_string(hsp);
+    changed = fullpathtohome(s,hsp); 
+    if (changed) {
+        s = (const char *)esb_get_string(hsp);
+    }
+#endif
 
 #ifndef TESTING
     if (glflags.gf_no_sanitize_strings) {
@@ -288,7 +391,7 @@ sanitized(const char *s)
         when we build the next sanitized string
         so we just empty the localesb.
         One reason it's expensive is that we do the appends
-        in such small batches in do_sanity-insert().
+        in such small batches in do_sanity_insert().
         */
 
 #ifndef TESTING
@@ -301,8 +404,24 @@ sanitized(const char *s)
     }
 #endif /* HAVE_UTF8 */
 #endif /* TESTING */
-    lsp = usebufa? &localesba: &localesbb;
-    usebufa = !usebufa;
+    switch (usebufnum) {
+    case 0:
+       lsp = &localesba;
+       usebufnum = 1;
+       break;
+    case 1:
+       lsp = &localesbb;
+       usebufnum = 2;
+       break;
+    case 2:
+       lsp = &localesbc;
+       usebufnum = 0;
+       break;
+    default: /*  Impossible! */
+       lsp = &localesba;
+       usebufnum = 1;
+       break;
+    }
     esb_empty_string(lsp);
     do_sanity_insert(s,lsp);
     sout = esb_get_string(lsp);

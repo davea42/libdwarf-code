@@ -62,6 +62,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "locale.h"
 #include "langinfo.h"
 #endif /* HAVE_UTF8 */
+#include <string.h>
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -544,20 +545,21 @@ main(int argc, char *argv[])
 
                 esb_constructor(&m);
                 errmsg = dwarf_errmsg_by_number(errcode);
-                homeify((char *)sanitized(tied_file_name),&m);
+                homeify((char *)tied_file_name,&m);
                 printf("%s ERROR:  can't open tied file"
                     ".. %s: %s\n",
                     glflags.program_name,
-                    esb_get_string(&m),
+                    sanitized(esb_get_string(&m)),
                     errmsg);
                 esb_destructor(&m);
             } else {
                 struct esb_s m;
                 esb_constructor(&m);
-                homeify((char *)sanitized(tied_file_name),&m);
+                homeify((char *)tied_file_name,&m);
                 printf(
                     "%s ERROR: tied file not an object file '%s'.\n",
-                    glflags.program_name, esb_get_string(&m));
+                    glflags.program_name, 
+                    sanitized(esb_get_string(&m)));
                 esb_destructor(&m);
             }
             glflags.gf_count_major_errors++;
@@ -578,8 +580,8 @@ main(int argc, char *argv[])
                 "main file \'%s\' not "
                 "the same kind of object!\n",
                 glflags.program_name,
-                esb_get_string(&m),
-                esb_get_string(&mgf));
+                sanitized(esb_get_string(&m)),
+                sanitized(esb_get_string(&mgf)));
             esb_destructor(&m);
             esb_destructor(&mgf);
             free(temp_path_buf);
@@ -1094,47 +1096,42 @@ homeify(char *s, struct esb_s* out)
     char *home = getenv("HOME");
     size_t homelen = 0;
 
-#ifdef _WIN32
-    /*  Windows In msys2
-        $HOME might be C:\msys64\home\admin
-        which messes up regression testing.
-        For msys2 with a simple setup this
-        helps regressiontesting.
-    */
-    char *winprefix = "C:/msys64/home/";
-    char *domain = getenv("USERDOMAIN");
-    char *user = getenv("USER");
-    size_t winlen = 15;
-
-    if (domain && !strcmp(domain,"MSYS")) {
-
-        if (strncmp(s,winprefix,winlen)) {
-            /* giving up, not msys2 */
-            esb_append(out,s);
-            return;
-        }
-        if (user) {
-            /*  \\home\\admin
-                Change to $HOME
-                This is a crude way to get some
-                regressiontests to pass.
-            */
-            size_t userlen = strlen(user);
-            esb_append(out,"$HOME");
-            esb_append(out,s+winlen+userlen);
-            return;
-        } else {
-            /* giving up */
-            esb_append(out,s);
-            return;
-        }
-    }
-#endif /* _WIN32 */
     if (!home) {
         /* giving up */
         esb_append(out,s);
         return;
     }
+#if 0
+#ifdef _WIN32
+    {
+    /*  Windows In msys2
+        $HOME might be C:\msys64\home\admin
+        which messes up regression testing.
+        And it shows as "C:/msys64/davea/".
+        For msys2 with a simple setup this
+        helps regressiontesting.
+        $HOME in msys2 should be /home/admin/
+        in testing (running as user admin).
+        and that is C:/msys64/home/davea
+        when  windows is providing a windows-centric full path.
+        Somewhat odd, but we do see slash(/) not backslash (\) .
+    */
+    char *winprefix = "C:/msys64/home/davea/home/admin";
+    /*char *domain = getenv("USERDOMAIN"); */
+    char *user = getenv("USER");
+    size_t winlen = strlen(winprefix);
+
+    if (user && !strncmp(s,winprefix,winlen)) {
+        /*  Change to $HOME so regressiontests work
+            reliably */
+        size_t userlen = strlen(user);
+        esb_append(out,"$HOME");
+        esb_append(out,s+winlen+userlen);
+        return;
+    } 
+    }
+#endif /* _WIN32 */
+#endif /* 0 */
     homelen = strlen(home);
     if (strlen(s) <= homelen) {
         /*  Giving up, s is shorter than $HOME alone. */
@@ -1178,6 +1175,7 @@ process_one_file(
     const char   *title = 0;
     unsigned char path_source = 0;
     int           localerrno = 0;
+    
 
     if (glflags.gf_no_check_duplicated_attributes) {
         /*  This means libdwarf won't check for duplicated
@@ -1215,16 +1213,21 @@ process_one_file(
     }
     if (dres == DW_DLV_NO_ENTRY) {
         if (glflags.group_number > 0) {
+            struct esb_s m;
+
+            esb_constructor(&m);
+            homeify((char *)file_name,&m);
             printf("No DWARF information present in %s "
                 "for section group %d \n",
-                file_name,glflags.group_number);
+                sanitized(esb_get_string(&m)),glflags.group_number);
+            esb_destructor(&m);
         } else {
             struct esb_s m;
 
             esb_constructor(&m);
             homeify((char *)file_name,&m);
             printf("No DWARF information present in %s\n",
-                esb_get_string(&m));
+                sanitized(esb_get_string(&m)));
             esb_destructor(&m);
         }
         return dres;
@@ -1287,8 +1290,13 @@ process_one_file(
             /* path_source = DW_PATHSOURCE_basic; */
         }
         if (dres == DW_DLV_NO_ENTRY) {
+            struct esb_s m;
+
+            esb_constructor(&m);
+            homeify((char *)tied_file_name,&m);
             printf("No DWARF information present in tied file: %s\n",
-                tied_file_name);
+                sanitized(esb_get_string(&m)));
+            esb_destructor(&m);
             return dres;
         }
         if (dres == DW_DLV_ERROR) {
