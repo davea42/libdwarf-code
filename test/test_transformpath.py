@@ -35,9 +35,10 @@ def readin(srcfile):
 
 
 #  for Windows msys2, the default prefixes of msys2 /
-globalroot = ["C:/msys64", "D:/msys64"]
+globalroot = ["C:/msys64/davea"]
+# ignore D: too messy.
 
-modstr = {"D:": "/d", "C:": "/c", "d:": "/d", "c:": "/c"}
+modstr = { "C:": "/c",  "c:": "/c"}
 
 
 def winmodsrcrep(insrc):
@@ -52,19 +53,17 @@ def winmodsrcrep(insrc):
     return False, insrc
 
 
-#   This to hide unwanted d: c: from Windows
+#   This to hide unwanted c: from Windows
 #   result of getcwd
 #   so the regression test works.
 #   This is not particularly general or safe
 #   or fast.. But the number of records to check is small.
-#   It assumes the disk of the source is
-#   either D: or C:
-#   msys2 reports D: as /d hence we do not look for /D .
-#   d: c: are probably not useful.
+#   It assumes the disk of the source is   C:
+#   c: are probably not useful.
 def pathrep(l1, srcpath, repstr):
     # print("dadebug pathrep: on ",l1,"srcpath", srcpath," repstr",repstr)
     if not l1.find(srcpath) == -1:
-        # for p in ["D:","C:","d:","c:","/d","/c",""]:
+        # for p in ["C:","c:","/c",""]:
         for p in [""]:
             modsource = "".join([p, srcpath])
             # print("dadebug pathrep ck modsrc",modsource)
@@ -109,16 +108,16 @@ def transform(ilines, srcpath, binpath):
             chgd, l2 = pathrep(l1, srcpath, "..src..")
             if not chgd:
                 chgd, l2 = pathrep(l1, globalroot[0], "")
-                if not chgd:
-                    chgd, l2 = pathrep(l1, globalroot[1], "")
+                #if not chgd:
+                #    chgd, l2 = pathrep(l1, globalroot[1], "")
             # print("dadebug result:",l2)
             out += [l2]
             continue
         if linetype == "gp":
             # print("dadebug try global path")
             chgd, l5 = pathrep(l1, globalroot[0], "")
-            if not chgd:
-                chgd, l5 = pathrep(l1, globalroot[1], "")
+            #if not chgd:
+            #    chgd, l5 = pathrep(l1, globalroot[1], "")
             # print("dadebug result:",l5)
             out += [l5]
             continue
