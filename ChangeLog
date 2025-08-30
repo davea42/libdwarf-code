@@ -1,3 +1,53 @@
+2025-08-30:  David Anderson
+    commit 331433447b76f1b9d269b581565d572ebd15747c
+
+    Correcting the new regressiontesting option to
+    default to false.
+            modified:   meson_options.txt
+    Final cleanups of the modifications allowing
+    all supported platforms to run regressiontesting.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-08-27:  David Anderson
+    commit ea86ca155df2b2274f7c32fac77207020dd74498
+
+    Does the actual work of turning C:<stuff> to
+    be $HOME for Msys2 regressiontesting.
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+    New code (compiled in in Msys2 builds) to
+    radically improve the pass rate by
+    using ./dwarfdump a object name, not using
+    C: Windows stype name in output.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-08-27:  David Anderson
+    commit 70127363185dc7446b4d1c1d4a0e2d18959c92dc
+
+    Remove references to D and D: that
+    applied to an older, odder Win10 Msys2
+    test machine.
+            modified:   test/test_transformpath.py
+
+2025-08-27:  David Anderson
+    commit c64505d4d811c5bba441c1d51b7753c8f460b5b6
+
+    We use meson to build for regression testing
+    so we add a new option regressiontesting
+    for build time control (needed for Msys2 builds)
+            modified:   meson.build
+    Looks for option regressiontesting so
+    we can have the build for regression testing
+    do as we require (Msys2)
+            modified:   meson_options.txt
+
+2025-08-25:  David Anderson
+    commit beb810fd980b3728bfce536f0040407d1403d1d3
+
+    With latest and additional detail on pull request 303
+            modified:   ChangeLog
+
 2025-08-25:  David Anderson
     commit 95e38720d3a90e5ab687873f5e9b87e7ac6e7b44
 
