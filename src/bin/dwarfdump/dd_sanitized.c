@@ -96,27 +96,27 @@ GS  Group separator     29 1D   Alt-29  Ctrl-] ^]
 RS  Record separator    30 1E   Alt-30  Ctrl-^ ^^
 US  Unit separator      31 1F   Alt-31  Ctrl-_ ^_
 
-In addition,  characters decimal 141, 157, 127,128, 129
-143,144,157
-appear to be questionable too.
-Not in iso-8859-1 nor in html character entities list.
+In addition,  characters decimal 141, 157, 127,128,
+129 143,144,157 appear to be questionable too.  Not in
+iso-8859-1 nor in html character entities list.
 
 We translate all strings with a % to do sanitizing.
 we change a literal ASCII '%' char to %25 so readers
-know any % is a sanitized char. We could double up
-a % into %% on output, but switching to %25 is simpler
-and for readers and prevents ambiguity.
-If a % is found then utf8 is suppressed for the entire string
-and uri-style %25 is used.
-We avoid using the % symbol itself in strings, so we expect uri-style
-is not suppressed.
+know any % is a sanitized char. We could double up a %
+into %% on output, but switching to %25 is simpler and
+for readers and prevents ambiguity.  If a % is found then
+utf8 is suppressed for the entire string and uri-style %25
+is used.  We avoid using the % symbol itself in strings,
+so we expect uri-style is not suppressed.
 
-If the dwarfdump runtime environment is UTF-8
-and the necessary locale() and nl_langinfo()
-functions are available and the string
-has no unwanted bytes then utf8 names
-are printed using utf8 so they look as
-expected.
+If the dwarfdump runtime environment is UTF-8 and
+the necessary locale() and nl_langinfo() functions are
+available and the string has no unwanted bytes then utf8
+names are printed using utf8 so they look as expected.
+
+DWREGRESSIONTEMP is defined for Windows Msys2 and its
+special issues with naming in regression testing and
+defined for all platforms when running regression tests.
 
 */
 #define SANBUF_SIZE 400
@@ -286,7 +286,7 @@ sanitized_string_destructor(void)
     esb_destructor(&localhomeifya);
     esb_destructor(&localhomeifyb);
     esb_destructor(&localhomeifyc);
-#endif
+#endif /* DWREGRESSIONTEMP */
 }
 #ifdef DWREGRESSIONTEMP
 static int
@@ -328,7 +328,9 @@ fullpathtohome(const char *s,struct esb_s *out)
      if (pos < 0) {
          return FALSE;
      }
-     esb_appendn(out,s,pos-1);
+     if (pos > 0) {
+         esb_appendn(out,s,pos);
+     }
      esb_append(out,"$HOME");
      esb_append(out,s+strlenmatch);
      return TRUE;
@@ -376,7 +378,7 @@ sanitized(const char *s)
     if (changed) {
         s = (const char *)esb_get_string(hsp);
     }
-#endif
+#endif /* DWREGRESSIONTEMP */
 
 #ifndef TESTING
     if (glflags.gf_no_sanitize_strings) {

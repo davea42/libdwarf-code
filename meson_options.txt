@@ -49,10 +49,11 @@ option('buildmmap',
   description : 'Compile libdwarf with mmap support if possible'
 ) 
 
-# This is crucial for testing on Windows msys2
-# It is harmless (but not advised) for other platforms.
+# This is crucial for testing on Windows msys2 so that
+# it works for all platforms.
+# It is required for all platforms.
 option('regressiontesting',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Compile libdwarf&dwarfdump for regression testing'
 )

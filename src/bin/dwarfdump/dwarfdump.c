@@ -1102,7 +1102,7 @@ homeify(char *s, struct esb_s* out)
         return;
     }
 #if 0
-#ifdef _WIN32
+/*  sanitized() takes care of this for Msys2 Windows */
     {
     /*  Windows In msys2
         $HOME might be C:\msys64\home\admin
@@ -1114,8 +1114,8 @@ homeify(char *s, struct esb_s* out)
         in testing (running as user admin).
         and that is C:/msys64/home/davea
         when  windows is providing a windows-centric full path.
-        Somewhat odd, but we do see slash(/) not backslash (\) .
-    */
+        Somewhat odd, but we do see slash(/) 
+        not backslash (\) .  */
     char *winprefix = "C:/msys64/home/davea/home/admin";
     /*char *domain = getenv("USERDOMAIN"); */
     char *user = getenv("USER");
@@ -1130,7 +1130,6 @@ homeify(char *s, struct esb_s* out)
         return;
     } 
     }
-#endif /* _WIN32 */
 #endif /* 0 */
     homelen = strlen(home);
     if (strlen(s) <= homelen) {
@@ -1151,7 +1150,7 @@ homeify(char *s, struct esb_s* out)
         return;
     }
     esb_append(out,"$HOME");
-    /*  Append, starting at the / in x */
+    /*  Append, starting at the / in s */
     esb_append(out,s+homelen);
     return;
 }

@@ -58,7 +58,6 @@
 #include "libdwarf_private.h" /* For malloc/calloc debug */
 
 static const char *remove_quotes_pair(const char *text);
-static char *special_program_name(char *n);
 static void suppress_check_dwarf(void);
 
 /*  These configure items are for the
@@ -204,41 +203,6 @@ remove_quotes_pair(const char *text)
         }
     }
     return p;
-}
-
-/*  By trimming a /dwarfdump.O
-    down to /dwarfdump  (keeping any prefix
-    or suffix)
-    we can avoid a sed command in
-    regressiontests/DWARFTEST.sh
-    and save 12 minutes run time of a regression
-    test.
-
-    The effect is, when nothing has changed in the
-    normal output, that the program_name matches too.
-    Because we don't want a different name of dwarfdump
-    to cause a mismatch.  */
-static char *
-special_program_name(char *n)
-{
-    char * mp = "/dwarfdump.O";
-    char * revstr = "/dwarfdump";
-    char *cp = n;
-    size_t mslenszt = strlen(mp);
-
-    for ( ; *cp; ++cp) {
-        if (*cp == *mp) {
-            if (!strncmp(cp,mp,mslenszt)){
-                esb_append(glflags.newprogname,revstr);
-                cp += mslenszt-1;
-            } else {
-                esb_appendn(glflags.newprogname,cp,1);
-            }
-        } else {
-            esb_appendn(glflags.newprogname,cp,1);
-        }
-    }
-    return esb_get_string(glflags.newprogname);
 }
 
 static void suppress_check_dwarf(void)
@@ -2812,20 +2776,19 @@ const char *
 process_args(int argc, char *argv[])
 {
     /*   If building for a regression test run
-         on msys2 , use fixed 
-         name, fullname instead of argv[0], so tests pass */
-    char *regressions = getenv("DWREGRESSIONTEMP"); 
-
-    /* the call sets up glflags.newprogname, returns its string */
-    if (regressions && !strcmp(regressions,"y")) {
+         on msys2 (and everywhere) , use fixed 
+         name, fullname instead of argv[0], so tests pass
+         identically in all supported environments */
+#ifdef DWREGRESSIONTEMP
         /* for the benefit of testing on msys2 so names
-           match. */
-        glflags.program_name = "./dwarfdump";
-        glflags.program_fullname = "./dwarfdump";
-    } else {
-        glflags.program_name = special_program_name(argv[0]);
-        glflags.program_fullname = argv[0];
-    }
+           match. We do it for all platforms for
+           full consistency. */
+    glflags.program_name     = "./dwarfdump";
+    glflags.program_fullname = "./dwarfdump";
+#else /* ! DWREGRESSIONTEMP */
+    glflags.program_name     = argv[0];
+    glflags.program_fullname = argv[0];
+#endif /* DWREGRESSIONTEMP */
 
     suppress_check_dwarf();
     if (argv[1] && lacking_normal_args(argc-1,argv+1)) {
