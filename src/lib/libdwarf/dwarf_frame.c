@@ -1298,6 +1298,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             localregtab[lreg].ru_is_offset = 0; /* arbitrary */
             localregtab[lreg].ru_value_type = DW_EXPR_EXPRESSION;
+            localregtab[lreg].ru_register = reg_no;
             localregtab[lreg].ru_block.bl_data = instr_ptr;
             localregtab[lreg].ru_block.bl_len = block_len;
             if (make_instr) {
