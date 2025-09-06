@@ -68,6 +68,7 @@ static void print_reg(int r);
 
 static int just_print_selected_regs = 0;
 static int print_selected_regs = 0;
+static int stop_at_n_fdes = 0;
 
 /*  Depending on the ABI we set INITIAL_VAL
     differently.  For ia64 initial value is
@@ -114,6 +115,8 @@ main(int argc, char **argv)
     Dwarf_Ptr errarg = 0;
     int regtabrulecount = 0;
     int curopt = 0;
+    const char *countstr = "--stop-at-fde-n=";
+    int countstr_len = strlen(countstr);
 
     for (curopt = 1;curopt < argc; ++curopt) {
         if (strncmp(argv[curopt],"--",2)) {
@@ -122,6 +125,16 @@ main(int argc, char **argv)
         if (!strcmp(argv[curopt],"--just-print-selected-regs")) {
             just_print_selected_regs++;
             continue;
+        }
+        if (!strncmp(argv[curopt],countstr,countstr_len)) {
+            char *carg = argv[curopt];
+            if (!carg[countstr_len]) {
+               printf("Improper %s arg, needs a number. Ignored\n",
+                   carg);
+            } else {
+                 stop_at_n_fdes = atoi((const char *)
+                     (carg+countstr_len));
+            }
         }
         if (!strcmp(argv[curopt],"--print-selected-regs")) {
             print_selected_regs++;
@@ -230,6 +243,11 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     for (fdenum = 0; fdenum < fde_element_count; ++fdenum) {
         Dwarf_Cie cie = 0;
 
+        if (stop_at_n_fdes && fdenum >= stop_at_n_fdes) {
+            printf("\nStopping at %d FDEs by request\n",
+                stop_at_n_fdes);
+            break;
+        }
         res = dwarf_get_cie_of_fde(fde_data[fdenum],&cie,&error);
         if (res != DW_DLV_OK) {
             printf("Error accessing cie of fdenum %" DW_PR_DSd
