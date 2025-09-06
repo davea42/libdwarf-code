@@ -543,6 +543,14 @@ typedef struct Dwarf_Ranges_s {
             block.bl_len.
         Other values of dw_value_type are an error.
 
+        DWARF is showing what a debugger would act on to
+        calculate actual register values. Libdwarf does
+        not know any register values and cannot calculate
+        any.  If a caller wishes to actually do the
+        proper calculations the caller must provide
+        its own register data space and calculate new values
+        and new register status in the caller's register data.
+
         Note that this definition can only deal correctly
         with register numbers that fit in a 16 bit
         unsigned value.  Removing this
