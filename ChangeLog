@@ -1,3 +1,36 @@
+2025-09-06:  David Anderson
+    commit a0268d0507b010b1a4aa0f4611690fe73b3ccd07
+
+    For DW_EXPR_EXPRESSION set the ru_register as its
+    register number (no longer unknown or SAME_FRAME)
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2025-09-06:  David Anderson
+    commit c81b51c4f11d226400aa3d538366e5deee56ad5e
+
+    Added explanation about the frame instruction tables
+    for Dwarf_Regtable_Entry3.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-09-06:  David Anderson
+    commit 390e33b900670f72965ab302e3a6ba9389450528
+
+    This example is much more complete.
+            modified:   src/bin/dwarfexample/frame1.c
+
+2025-09-02:  David Anderson
+    commit d8b18839e8073e0f41d2e794cdbb1b74ee038b02
+
+    Normal update to current month.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-08-30:  David Anderson
+    commit f1506f63219ca484f79b5153f155a3390659af99
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2025-08-30:  David Anderson
     commit 331433447b76f1b9d269b581565d572ebd15747c
 
