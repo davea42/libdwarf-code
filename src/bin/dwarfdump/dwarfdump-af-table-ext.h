@@ -93,6 +93,8 @@ struct Three_Key_Entry_s dd_threekey_af_table_ext [] = {
 /* 0x201a DW_AT_HP_linkage_name */
 /* 0x2015 DW_AT_HP_prof_version_id */
 /* 0x2026 DW_AT_INTEL_other_endian */
+/* 0x3e02 DW_AT_LLVM_sysroot */
+{0x3e02,0x000b,0,2,0,0},
 /* 0x2009 DW_AT_MIPS_abstract_name */
 {0x2009,0x000b,0,2,0,0},
 /* 0x200f DW_AT_MIPS_allocatable_dopetype */

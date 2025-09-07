@@ -250,6 +250,10 @@ DW_AT_HP_prof_version_id
 DW_AT_INTEL_other_endian
 
 0xffffffff
+DW_AT_LLVM_sysroot
+DW_FORM_CLASS_STRING
+
+0xffffffff
 DW_AT_MIPS_abstract_name
 DW_FORM_CLASS_STRING
 
