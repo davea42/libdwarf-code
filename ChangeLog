@@ -1,3 +1,55 @@
+2025-09-08:  David Anderson
+    commit 5ff80544d49da5977ea23cab6cb6382d0e852f54
+
+    Changed a particular error in dwarf_string()
+    report a couple of the relevant values
+    for clarity (same error, just more detail
+    in the error).
+    One user situation encountered the error,
+    see github issue  #269.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2025-09-08:  David Anderson
+    commit c64744e948d13050238e0ecb35efa396d7f95f4b
+
+    Used by LLVM in Macos Sequoia.
+
+    DW_AT_APPLE_sdk
+    DW_FORM_CLASS_STRING
+
+            modified:   src/bin/attr_form/attr_formclass_ext.list
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+
+2025-09-07:  David Anderson
+    commit f8eda5e03cc549963b21ac99123c006abc928cec
+
+    On Macos, certain extensions of
+    the standard attributes for DW_TAG_compile_unit
+    DW_AT_LLVM_sysroot and DW_AT_APPLE_sdk
+    as well as identifying DW_AT_LLVM_sysroot
+    being of DW_FORM_CLASS_STRING
+    are now in use.
+    Regenerated the .h files to match
+    so -ka does not issue warnings on seeing these now-normal
+    items.
+            modified:   src/bin/attr_form/attr_formclass_ext.list
+            modified:   src/bin/tag_attr/tag_attr_ext.list
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+
+2025-09-06:  David Anderson
+    commit 5d4a13a633ca13e1075dda09aee091b4a9d8c284
+
+    Added new option for regression testing:
+    now can stop after N fdes.
+            modified:   dwarfexample/frame1.c
+
+2025-09-06:  David Anderson
+    commit df27d0012db0e5e4d802aac4cf18c4a021408145
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2025-09-06:  David Anderson
     commit a0268d0507b010b1a4aa0f4611690fe73b3ccd07
 
