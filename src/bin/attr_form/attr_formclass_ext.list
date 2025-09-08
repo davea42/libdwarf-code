@@ -76,6 +76,10 @@ DW_AT_APPLE_optimized
 DW_AT_APPLE_runtime_class
 
 0xffffffff
+DW_AT_APPLE_sdk
+DW_FORM_CLASS_STRING
+
+0xffffffff
 DW_AT_GNAT_descriptive_type
 
 0xffffffff
