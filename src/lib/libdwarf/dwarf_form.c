@@ -1848,19 +1848,28 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         baseoffset += cu_context->cc_str_offsets_tab_to_array;
         have_array_offset = TRUE;
     } else { /* do nothing */}
+    indexoffset = index_to_offset_entry * length_size;
     if (baseoffset > sectionlen ||
         (baseoffset+length_size) > sectionlen ||
-        (baseoffset+(index_to_offset_entry *length_size)) >
-            sectionlen) {
-        _dwarf_error_string(dbg, error,
-            DW_DLE_ATTR_FORM_SIZE_BAD,
+        (baseoffset+indexoffset) > sectionlen) {
+        dwarfstring m;
+ 
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
             "DW_DLE_ATTR_FORM_SIZE_BAD: "
             "An Attribute value (offset  into "
-            ".debug_str_offsets) is impossibly "
-            "large. Corrupt Dwarf.");
+            ".debug_str_offsets) exceeds "
+            "section length "
+            "of 0x%x.",sectionlen);
+        dwarfstring_append_printf_u(&m,
+            " Invalid offset is 0x%x ."
+            "Corrupt Dwarf.",baseoffset+indexoffset);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ATTR_FORM_SIZE_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    indexoffset = index_to_offset_entry* length_size;
     if (!have_array_offset) {
         /*  missing any connection to a specific
             str_offsets table this guesses at table zero.
