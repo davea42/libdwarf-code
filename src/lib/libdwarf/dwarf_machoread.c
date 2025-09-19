@@ -116,29 +116,30 @@ print_arch_item(unsigned int i,
 
 /* MACH-O and dwarf section names */
 static struct macho_sect_names_s {
-    char const *ms_moname;
-    char const *ms_dwname;
+    char const *ms_moname; /* Macho sect name */
+    char const *ms_dwname; /* Elf/dwarf name */
 } const SectionNames [] = {
     { "", "" },  /* ELF index-0 entry */
-    { "__debug_abbrev",         ".debug_abbrev" },
-    { "__debug_aranges",        ".debug_aranges" },
-    { "__debug_frame",          ".debug_frame" },
-    { "__debug_info",           ".debug_info" },
-    { "__debug_addr",           ".debug_addr" },
-    { "__debug_line",           ".debug_line" },
-    { "__debug_rnglists",           ".debug_rnglists" },
-    { "__debug_loclists",           ".debug_loclists" },
-    { "__debug_macinfo",        ".debug_macinfo" },
-    { "__debug_loc",            ".debug_loc" },
+    { "__debug_abbrev",         ".debug_abbrev"   },
+    { "__debug_aranges",        ".debug_aranges"  },
+    { "__debug_frame",          ".debug_frame"    },
+    { "__debug_info",           ".debug_info"     },
+    { "__debug_addr",           ".debug_addr"     },
+    { "__debug_line",           ".debug_line"     },
+    { "__debug_rnglists",       ".debug_rnglists" },
+    { "__debug_loclists",       ".debug_loclists" },
+    { "__debug_macinfo",        ".debug_macinfo"  },
+    { "__debug_loc",            ".debug_loc"      },
     { "__debug_pubnames",       ".debug_pubnames" },
     { "__debug_pubtypes",       ".debug_pubtypes" },
-    { "__debug_str",            ".debug_str" },
-    { "__debug_str_offs",            ".debug_str_offsets" },
-    { "__debug_line_str",            ".debug_line_str" },
-    { "__debug_ranges",         ".debug_ranges" },
-    { "__debug_macro",          ".debug_macro" },
-    { "__debug_names",          ".debug_names" },
-    { "__debug_gdb_scri",       ".debug_gdb_scripts" }
+    { "__debug_str",            ".debug_str"      },
+    { "__debug_str_offs",       ".debug_str_offsets" },
+    { "__debug_line_str",       ".debug_line_str" },
+    { "__debug_ranges",         ".debug_ranges"   },
+    { "__debug_macro",          ".debug_macro"    },
+    { "__debug_names",          ".debug_names"    },
+    { "__debug_gdb_scri",       ".debug_gdb_scripts" },
+    { "__text",                 ".text"           },
 };
 
 static int
@@ -602,33 +603,53 @@ _dwarf_macho_load_dwarf_section_details32(
     Dwarf_Unsigned seci = 0;
     Dwarf_Unsigned seccount = segp->nsects;
     Dwarf_Unsigned secalloc = seccount+1;
+
+    /* offset of sections being added */
     Dwarf_Unsigned curoff = segp->sectionsoffset;
     Dwarf_Unsigned shdrlen = sizeof(struct section);
-
+    Dwarf_Unsigned newcount = 0;
     struct generic_macho_section *secs = 0;
 
-    secs = (struct generic_macho_section *)calloc(
-        (size_t)secalloc,
-        sizeof(struct generic_macho_section));
-    if (!secs) {
-        *errcode = DW_DLE_ALLOC_FAIL;
-        return DW_DLV_OK;
-    }
-    mfp->mo_dwarf_sections = secs;
-    mfp->mo_dwarf_sectioncount = secalloc;
-    if ((curoff  > mfp->mo_filesize) ||
-        (seccount > mfp->mo_filesize) ||
-        (curoff+(seccount*sizeof(struct section)) >
-            mfp->mo_filesize)) {
-        *errcode = DW_DLE_FILE_TOO_SMALL;
-        return DW_DLV_ERROR;
-    }
-    secs->offset_of_sec_rec = curoff;
-    /*  Leave 0 section all zeros except our offset,
+    if (mfp->mo_dwarf_sections) {
+        struct generic_macho_section * originalsections =
+            mfp->mo_dwarf_sections;
+        newcount = mfp->mo_dwarf_sectioncount + seccount;
+        secs = (struct generic_macho_section *)calloc(
+            newcount,
+            sizeof(struct generic_macho_section));
+        if (!secs) {
+            *errcode = DW_DLE_ALLOC_FAIL;
+            return DW_DLV_OK;
+        }
+        memcpy(secs,mfp->mo_dwarf_sections,
+            mfp->mo_dwarf_sectioncount *
+            sizeof(struct generic_macho_section));
+        mfp->mo_dwarf_sections = secs;
+        seci =  mfp->mo_dwarf_sectioncount ;
+        mfp->mo_dwarf_sectioncount = newcount;
+        free(originalsections);
+        secs += seci;
+        secs->offset_of_sec_rec = curoff;
+        secalloc = newcount;
+    } else {
+        secs = (struct generic_macho_section *)calloc(
+            secalloc,
+            sizeof(struct generic_macho_section));
+        if (!secs) {
+            *errcode = DW_DLE_ALLOC_FAIL;
+            return DW_DLV_OK;
+        }
+        newcount = secalloc;
+        mfp->mo_dwarf_sections = secs;
+        mfp->mo_dwarf_sectioncount = secalloc;
+        secs->offset_of_sec_rec = curoff;
+        /*  Leave 0 section all zeros except our offset,
         elf-like in a sense */
-    secs->dwarfsectname = "";
-    ++secs;
-    seci = 1;
+        secs->dwarfsectname = "";
+        seci = 1;
+        ++secs;
+    }
+
     for (; seci < secalloc; ++seci,++secs,curoff += shdrlen ) {
         struct section mosec;
         int res = 0;
@@ -660,9 +681,13 @@ _dwarf_macho_load_dwarf_section_details32(
         ASNAR(mfp->mo_copy_word,secs->reloff,mosec.reloff);
         ASNAR(mfp->mo_copy_word,secs->nreloc,mosec.nreloc);
         ASNAR(mfp->mo_copy_word,secs->flags,mosec.flags);
-        if (secs->offset > mfp->mo_filesize ||
+        /* __text section size apparently refers to
+            executable, not dSYM, so do not check here */
+
+        if (!strcmp(secs->segname,"__DWARF") &&
+            (secs->offset > mfp->mo_filesize ||
             secs->size > mfp->mo_filesize ||
-            (secs->offset+secs->size) > mfp->mo_filesize) {
+            (secs->offset+secs->size) > mfp->mo_filesize)) {
             *errcode  = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
@@ -686,30 +711,48 @@ _dwarf_macho_load_dwarf_section_details64(
     Dwarf_Unsigned secalloc = seccount+1;
     Dwarf_Unsigned curoff = segp->sectionsoffset;
     Dwarf_Unsigned shdrlen = sizeof(struct section_64);
+    Dwarf_Unsigned newcount = 0;
     struct generic_macho_section *secs = 0;
 
-    secs = (struct generic_macho_section *)calloc(
-        (size_t)secalloc,
-        sizeof(struct generic_macho_section));
-    if (!secs) {
-        *errcode = DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
+    if (mfp->mo_dwarf_sections) {
+        struct generic_macho_section * originalsections =
+            mfp->mo_dwarf_sections;
+        newcount = mfp->mo_dwarf_sectioncount + seccount;
+        secs = (struct generic_macho_section *)calloc(
+            newcount,
+            sizeof(struct generic_macho_section));
+        if (!secs) {
+            *errcode = DW_DLE_ALLOC_FAIL;
+            return DW_DLV_OK;
+        }
+        memcpy(secs,mfp->mo_dwarf_sections,
+            mfp->mo_dwarf_sectioncount *
+            sizeof(struct generic_macho_section));
+        mfp->mo_dwarf_sections = secs;
+        seci =  mfp->mo_dwarf_sectioncount ;
+        mfp->mo_dwarf_sectioncount = newcount;
+        free(originalsections);
+        secs += seci;
+        secs->offset_of_sec_rec = curoff;
+        secalloc = newcount;
+    } else {
+        secs = (struct generic_macho_section *)calloc(
+            secalloc,
+            sizeof(struct generic_macho_section));
+        if (!secs) {
+            *errcode = DW_DLE_ALLOC_FAIL;
+            return DW_DLV_OK;
+        }      
+        newcount = secalloc;
+        mfp->mo_dwarf_sections = secs;
+        mfp->mo_dwarf_sectioncount = secalloc;
+        secs->offset_of_sec_rec = curoff;
+        /*  Leave 0 section all zeros except our offset,
+            elf-like in a sense */
+        secs->dwarfsectname = "";
+        seci = 1;
+        ++secs;
     }
-    mfp->mo_dwarf_sections = secs;
-    mfp->mo_dwarf_sectioncount = secalloc;
-    secs->offset_of_sec_rec = curoff;
-    /*  Leave 0 section all zeros except our offset,
-        elf-like in a sense */
-    secs->dwarfsectname = "";
-    ++secs;
-    if ((curoff  > mfp->mo_filesize) ||
-        (seccount > mfp->mo_filesize) ||
-        (curoff+(seccount*sizeof(struct section_64)) >
-            mfp->mo_filesize)) {
-        *errcode = DW_DLE_FILE_TOO_SMALL;
-        return DW_DLV_ERROR;
-    }
-    seci = 1;
     for (; seci < secalloc; ++seci,++secs,curoff += shdrlen ) {
         int res = 0;
         struct section_64 mosec;
@@ -742,9 +785,13 @@ _dwarf_macho_load_dwarf_section_details64(
         ASNAR(mfp->mo_copy_word,secs->reloff,mosec.reloff);
         ASNAR(mfp->mo_copy_word,secs->nreloc,mosec.nreloc);
         ASNAR(mfp->mo_copy_word,secs->flags,mosec.flags);
-        if (secs->offset > mfp->mo_filesize ||
+
+        /*  __text section size apparently refers to executable,
+            not dSYM, so do not check here */
+        if (!strcmp(secs->segname,"__DWARF") &&
+            (secs->offset > mfp->mo_filesize ||
             secs->size > mfp->mo_filesize ||
-            (secs->offset+secs->size) > mfp->mo_filesize) {
+            (secs->offset+secs->size) > mfp->mo_filesize)) {
             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
@@ -794,26 +841,17 @@ _dwarf_macho_load_dwarf_sections(
     }
     for ( ; segi < mfp->mo_segment_count; ++segi,++segp) {
         int res = 0;
-
-        switch (ftype) {
-        case MH_DSYM: {
-            if (strcmp(segp->segname,"__DWARF")) {
-                /* No DWARF in this segment */
-                continue;
-            }
-            }
-            /*  will have DWARF */
-            break;
-        case MH_OBJECT:
-            /* Likely has DWARF */
-            break;
-        default:
-            /* We do not think it can have DWARF */
+        if (!strcmp(segp->segname,"__PAGEZERO")) {
+            continue;
+        }
+        if (!strcmp(segp->segname,"__LINKEDIT")) {
             continue;
         }
         res = _dwarf_macho_load_dwarf_section_details(mfp,
             segp,segi,errcode);
-        return res;
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     }
     return DW_DLV_OK;
 }
