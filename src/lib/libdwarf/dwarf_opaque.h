@@ -1231,6 +1231,14 @@ _dwarf_has_SECT_fission(Dwarf_CU_Context ctx,
     unsigned int      SECT_number, /* example: DW_SECT_RNGLISTS */
     Dwarf_Bool       *hasfissionoffset,
     Dwarf_Unsigned   *loclistsbase);
+int
+_dwarf_read_str_index_val_itself(Dwarf_Debug dbg,
+    unsigned theform, Dwarf_Small *info_ptr,
+    Dwarf_Small *section_end,
+    Dwarf_Unsigned *return_index,
+    Dwarf_Unsigned *return_index_length,
+    Dwarf_Error *error) ;
+
 
 int _dwarf_skip_leb128(char * leb,
     Dwarf_Unsigned * leblen,
