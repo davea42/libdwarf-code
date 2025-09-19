@@ -2376,31 +2376,32 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     int res = 0;
+    Dwarf_Small *debug_line_str_data =0;
+    Dwarf_Unsigned debug_line_str_size =0;
+    Dwarf_Small *debug_line_str_end =0;
+
+    res = _dwarf_load_section(dbg,
+        &dbg->de_debug_line_str,error);
+    if (res == DW_DLV_ERROR) {
+            return res;
+    }
+    debug_line_str_data = dbg->de_debug_line_str.dss_data;
+    debug_line_str_size = dbg->de_debug_line_str.dss_size;
+    debug_line_str_end = debug_line_str_data + debug_line_str_size;
 
     switch (form) {
     case DW_FORM_line_strp: {
-        Dwarf_Small *secstart = 0;
-        Dwarf_Small *secend = 0;
         Dwarf_Small *strptr = 0;
         Dwarf_Unsigned offset = 0;
         Dwarf_Small *offsetptr = *line_ptr;
-
-        res = _dwarf_load_section(dbg,
-            &dbg->de_debug_line_str,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-
-        secstart = dbg->de_debug_line_str.dss_data;
-        secend = secstart + dbg->de_debug_line_str.dss_size;
 
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
             offsetptr, offset_size,
             error,line_ptr_end);
         *line_ptr += offset_size;
-        strptr = secstart + offset;
+        strptr = debug_line_str_data + offset;
         res = _dwarf_check_string_valid(dbg,
-            secstart,strptr,secend,
+            debug_line_str_data,strptr,debug_line_str_end,
             DW_DLE_LINE_STRP_OFFSET_BAD,error);
         if (res != DW_DLV_OK) {
             return res;
@@ -2422,6 +2423,45 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         *line_ptr += strlen((const char *)strptr) + 1;
         return DW_DLV_OK;
         }
+    case DW_FORM_strx1:
+    case DW_FORM_strx2:
+    case DW_FORM_strx3:
+    case DW_FORM_strx4:
+    case DW_FORM_strx:  {
+        Dwarf_Unsigned offset = 0;
+        Dwarf_Unsigned index_length = 0;
+        char *stritself = 0;
+        res = _dwarf_read_str_index_val_itself(dbg,form,
+               *line_ptr,    
+               line_ptr_end,
+               &offset,
+               &index_length,
+               error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
+            form,
+            offset,
+            &stritself,
+            error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        res = _dwarf_check_string_valid(dbg,
+/*
+FIXME
+*/
+            debug_line_str_data ,stritself,debug_line_str_end,
+            DW_DLE_LINE_STRING_BAD,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }       
+        *line_ptr = *line_ptr + index_length;
+        *return_str = stritself;
+        return DW_DLV_OK;
+    }
+        
     default:
         report_ltype_form_issue(dbg, (Dwarf_Half)ltype,
             (Dwarf_Half)form,0,error);
