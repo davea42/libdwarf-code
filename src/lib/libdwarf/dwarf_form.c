@@ -1119,45 +1119,54 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
 /*  The index value here is the value of the
     attribute with this form.
     FORMs passed in are always strx forms. */
-static int
-dw_read_str_index_val_itself(Dwarf_Debug dbg,
+int
+_dwarf_read_str_index_val_itself(Dwarf_Debug dbg,
     unsigned theform,
     Dwarf_Small *info_ptr,
     Dwarf_Small *section_end,
     Dwarf_Unsigned *return_index,
+    Dwarf_Unsigned *return_index_length,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned index = 0;
+    Dwarf_Unsigned indexlen = 0;
 
     switch(theform) {
     case DW_FORM_strx:
     case DW_FORM_GNU_str_index:
-        DECODE_LEB128_UWORD_CK(info_ptr,index,
+        DECODE_LEB128_UWORD_LEN_CK(info_ptr,index, indexlen,
             dbg,error,section_end);
         break;
     case DW_FORM_strx1:
         READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
             info_ptr, 1,
             error,section_end);
+        indexlen = 1;
         break;
     case DW_FORM_strx2:
         READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
             info_ptr, 2,
             error,section_end);
+        indexlen = 2;
         break;
     case DW_FORM_strx3:
         READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
             info_ptr, 3,
             error,section_end);
+        indexlen = 3;
         break;
     case DW_FORM_strx4:
         READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
             info_ptr, 4,
             error,section_end);
+        indexlen = 4;
         break;
     default:
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_STR_INDEX);
         return DW_DLV_ERROR;
+    }
+    if (return_index_length) {
+        *return_index_length = indexlen;
     }
     *return_index = index;
     return DW_DLV_OK;
@@ -1165,7 +1174,9 @@ dw_read_str_index_val_itself(Dwarf_Debug dbg,
 
 /*  Part of DebugFission.  So a dwarf dumper application
     can get the index and print it for the user.
-    A convenience function.  New May 2014
+    Returns/
+    A convenience function.  
+    New May 2014
     Also used with DWARF5 forms.  */
 int
 dwarf_get_debug_str_index(Dwarf_Attribute attr,
@@ -1191,8 +1202,8 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
         _dwarf_calculate_info_section_end_ptr(cu_context);
     info_ptr = attr->ar_debug_ptr;
 
-    indxres = dw_read_str_index_val_itself(dbg, theform, info_ptr,
-        section_end, &index,error);
+    indxres = _dwarf_read_str_index_val_itself(dbg, theform, info_ptr,
+        section_end, &index,0,error);
     if (indxres == DW_DLV_OK) {
         *return_index = index;
         return indxres;
@@ -1797,9 +1808,15 @@ dwarf_formblock(Dwarf_Attribute attr,
 }
 
 /*  This is called for attribute with strx form
-    or macro5 with strx form.
-    No relation to the Name Table or
-    to  FIXME */
+    or macro5 with strx form or line table header
+    with strx form.
+    No relation to the Name Table.
+    This returns an offset  into .debug_line_str (if line table)
+    or .debug_str (if macro5 or a DIE).
+    If line table use .debug_str_offsets[.dwo]. 
+    See DWARF5, page 158.
+    */
+
 int
 _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small *data_ptr,
@@ -1824,7 +1841,9 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned str_sect_offset = 0;
     Dwarf_Unsigned length_size  = 0;
     Dwarf_Bool have_array_offset = FALSE;
-
+/*
+FIXME
+*/
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -1834,9 +1853,12 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     length_size = cu_context->cc_length_size;
     /*  If this is a dwp we look there, but I suppose
         we could also look for the section in the tied
-        executable object file it is not here. FIXME */
-    idxres = dw_read_str_index_val_itself(dbg,
-        attrform,data_ptr,end_data_ptr,&index_to_offset_entry,error);
+        executable object file it is not here. FIXME 
+        We are reading a value which is to be used
+        to index into .debug_str_offsets. */
+    idxres = _dwarf_read_str_index_val_itself(dbg,
+        attrform,data_ptr,end_data_ptr,&index_to_offset_entry,
+        0,error);
     if ( idxres != DW_DLV_OK) {
         return idxres;
     }
@@ -1849,6 +1871,9 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         have_array_offset = TRUE;
     } else { /* do nothing */}
     indexoffset = index_to_offset_entry * length_size;
+    /*  We know where to go in the string offsets table,
+        but first validate the actual place to look
+        in the table to be sure it seems legitimate. */
     if (baseoffset > sectionlen ||
         (baseoffset+length_size) > sectionlen ||
         (baseoffset+indexoffset) > sectionlen) {
@@ -1946,6 +1971,28 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+#if 0
+static int
+is_strx(unsigned form) {
+   switch(form){
+   case DW_FORM_GNU_str_index:
+   case DW_FORM_strx1:
+   case DW_FORM_strx2:
+   case DW_FORM_strx3:
+   case DW_FORM_strx4:
+   case DW_FORM_strx:
+       return TRUE;
+   default:
+       break;
+   }
+   return FALSE;
+}
+#endif
+
+/*  Extracts a string from .debug_line_str
+    offset must be a string-table offset, not
+    an offset into a str_offsets table.
+*/
 int
 _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     unsigned attrform,
@@ -1983,7 +2030,34 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             secbegin = dbg->de_debug_line_str.dss_data;
             strbegin= dbg->de_debug_line_str.dss_data + offset;
             secend = dbg->de_debug_line_str.dss_data + secsize;
-        } else {
+        } 
+#if 0
+else if (is_strx(attrform)) { 
+            Dwarf_Unsigned offsettostr= 0;
+
+            res = _dwarf_extract_string_offset_via_str_offsets(dbg,
+                infoptr,
+                secend,
+                attrform,
+                cu_context,
+                &offsettostr,
+                error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+        }
+        offset = offsettostr;
+
+            res = _dwarf_load_section(dbg,
+                &dbg->de_debug_str_offsets,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+FIXME
+
+        }
+#endif
+        else {
             /* DW_FORM_strp  etc */
             res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
             if (res != DW_DLV_OK) {
