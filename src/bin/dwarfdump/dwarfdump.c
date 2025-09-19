@@ -1024,15 +1024,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
 
-    if (dw_ftype != DW_FTYPE_ELF) {
-        lncount = LIKELYNAMESMAX;
-        memset(likely_names,0,sizeof(likely_names));
-        res = limit_of_code_non_elf(dbg,
-            likely_names,
-            lncount,
-            &basesize,&baselow);
-        ln = likely_names;
-    } else {
+    if (dw_ftype == DW_FTYPE_ELF ) {
         lncount = (int)dwarf_get_section_count(dbg);
         if (!lncount) {
             return DW_DLV_NO_ENTRY;
@@ -1055,6 +1047,14 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
             ln = 0;
             return res;
         }
+    } else {
+        lncount = LIKELYNAMESMAX;
+        memset(likely_names,0,sizeof(likely_names));
+        res = limit_of_code_non_elf(dbg,
+            likely_names,
+            lncount,
+            &basesize,&baselow);
+        ln = likely_names;
     }
 
     qsort(ln,lncount,sizeof(struct likely_names_s),
