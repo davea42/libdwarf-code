@@ -8613,7 +8613,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     DROP_ERROR_INSTANCE(dbg,atres,*err);
                 } else if (atres == DW_DLV_OK &&
                     !suppress_block_as_string(attrblk)) {
-                    restf = looks_like_string(tempb->bl_len,
+                    restf = looks_like_string(
+                        (unsigned long)tempb->bl_len,
                         (unsigned char *)tempb->bl_data);
                     if (restf) {
                         esb_append(esbp,"Block As Quoted String: '");

@@ -71,7 +71,8 @@ print_language_version_table(void)
         if (res == DW_DLV_NO_ENTRY) {
             break;
         }
-        res = dwarf_get_LNAME_name(language_name,
+        res = dwarf_get_LNAME_name(
+            (unsigned int)language_name,
             &language_name_string);
         if (res == DW_DLV_NO_ENTRY) {
             language_name_string = "<unknown>";

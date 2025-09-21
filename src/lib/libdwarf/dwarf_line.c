@@ -2431,7 +2431,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Unsigned offset = 0;
         Dwarf_Unsigned index_length = 0;
         char *stritself = 0;
-        res = _dwarf_read_str_index_val_itself(dbg,form,
+        res = _dwarf_read_str_index_val_itself(dbg,
+            (unsigned int)form,
             *line_ptr,
             line_ptr_end,
             &offset,
@@ -2441,7 +2442,7 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
             return res;
         }
         res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
-            form,
+            (unsigned int)form,
             offset,
             &stritself,
             error);
