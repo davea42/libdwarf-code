@@ -1,3 +1,106 @@
+2025-09-21:  David Anderson
+    commit b1d87d3ebd60d0f7ea5269add0f37d1a11fa61c6
+
+    Removing blocks surrounded by #if 0 and #endif.
+    These are obsolete.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_section_groups.c
+
+2025-09-21:  David Anderson
+    commit 651ceb7069b311911152a87efcf7c2fc44925f67
+
+    Altering to fix indents and remove trailing whitespace,
+    resulting in code following the project codingstyle.
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+    Fixes oss fuzz 446356422. A corrupt mach-o
+    object caused writing bogus data into improper
+    memory address.
+    libdwarfbug id: DW202509-001
+    The bug has been in the source for two days.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2025-09-21:  David Anderson
+    commit 85f03e8dc1d2aab1491b869cf18d85df0cea3940
+
+    Correcting indents and trailing whitespace
+    to follow project codingstyle.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2025-09-21:  David Anderson
+    commit c89a5b5381d68ae8dabe5c29c101657135e50801
+
+    Corrected tentative 2.2.0 release
+            modified:   README.md
+
+2025-09-21:  David Anderson
+    commit cda478d9ad9f40eeac07aa7e9d5e54471238a71c
+
+    Mention planned release October 10 for version 2.2.0.
+            modified:   README.md
+    Document recent Changes/bug-fixes for 2.2.0.
+            modified:   doc/libdwarf.dox
+
+2025-09-21:  David Anderson
+    commit 24f6d3387c8b2c265ad4c69fbe87dd70831236db
+
+    Document the use of normal extensions to the standard
+    for what FORMS can be used in what attributes.
+            modified:   src/bin/attr_form/attr_formclass_ext.list
+    Regenerated
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+
+2025-09-19:  David Anderson
+    commit a503fa3bb08e26d6c04fbd11eb74eb1f64b59c9e
+
+    Now reads __TEXT segment section data so we can get __text
+    (.text in elf) bounds for line table checks.
+    Made the table of mach-o to elf name transforms
+    better looking.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2025-09-19:  David Anderson
+    commit 050867385de45271b3ed8170ad0bf56924b5b209
+
+    _dwarf_decode_line_string_form() now handles strx forms,
+    this should have been done months ago.
+    Oversight.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2025-09-19:  David Anderson
+    commit c76434db7482bc9983e164240b9761d42bb75267
+
+    _dwarf_read_str_index_val_itself() has a new argument
+    so callers wanting to know how much space used in the
+    form have that data. Related to reading index
+    (as strx) to resolve the index to find a string
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2025-09-19:  David Anderson
+    commit 9f3b8c7804a3adf5abf02627d57956a7cdf2d9c1
+
+    One internal function now used with dwarf_form.c
+    and dwarf_line.c, so public (not static) now.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2025-09-19:  David Anderson
+    commit bef88bf8d5e7e0564824656c56c546062f1b1f48
+
+    Rearranged a few lines for clarity.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-09-08:  David Anderson
+    commit a5a92324429e5016aa97b07ba73483735592a8d9
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2025-09-08:  David Anderson
     commit 5ff80544d49da5977ea23cab6cb6382d0e852f54
 

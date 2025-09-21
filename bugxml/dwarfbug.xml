@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202509-001</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446356422</fuzzer>
+<datereported>2025-09-19</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Heap buffer overflow loading Mach-o section data
+</vulnerability>
+<description> A corrupt (fuzzed) Apple Mach-o object file resulted
+  in an overflow in copying object data to internal structures.
+  The bug was present in the code for 2 days.
+</description>
+<datefixed>2025-09-21</datefixed>
+<references> regressiontests/ossfuzz446356422/fuzz_crc_32-4931308642172928
+</references>
+<gitfixid></gitfixid>
+<tarrelease>predicting 2.2.0</tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202508-001</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 437060549</fuzzer>
