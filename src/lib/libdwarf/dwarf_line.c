@@ -2383,7 +2383,7 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
     res = _dwarf_load_section(dbg,
         &dbg->de_debug_line_str,error);
     if (res == DW_DLV_ERROR) {
-            return res;
+        return res;
     }
     debug_line_str_data = dbg->de_debug_line_str.dss_data;
     debug_line_str_size = dbg->de_debug_line_str.dss_size;
@@ -2432,11 +2432,11 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Unsigned index_length = 0;
         char *stritself = 0;
         res = _dwarf_read_str_index_val_itself(dbg,form,
-               *line_ptr,    
-               line_ptr_end,
-               &offset,
-               &index_length,
-               error);
+            *line_ptr,
+            line_ptr_end,
+            &offset,
+            &index_length,
+            error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -2449,19 +2449,16 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
             return res;
         }
         res = _dwarf_check_string_valid(dbg,
-/*
-FIXME
-*/
             debug_line_str_data ,stritself,debug_line_str_end,
             DW_DLE_LINE_STRING_BAD,error);
         if (res != DW_DLV_OK) {
             return res;
-        }       
+        }
         *line_ptr = *line_ptr + index_length;
         *return_str = stritself;
         return DW_DLV_OK;
     }
-        
+
     default:
         report_ltype_form_issue(dbg, (Dwarf_Half)ltype,
             (Dwarf_Half)form,0,error);

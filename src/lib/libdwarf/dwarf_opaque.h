@@ -1239,7 +1239,6 @@ _dwarf_read_str_index_val_itself(Dwarf_Debug dbg,
     Dwarf_Unsigned *return_index_length,
     Dwarf_Error *error) ;
 
-
 int _dwarf_skip_leb128(char * leb,
     Dwarf_Unsigned * leblen,
     char           * endptr);

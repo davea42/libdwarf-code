@@ -1175,7 +1175,7 @@ _dwarf_read_str_index_val_itself(Dwarf_Debug dbg,
 /*  Part of DebugFission.  So a dwarf dumper application
     can get the index and print it for the user.
     Returns/
-    A convenience function.  
+    A convenience function.
     New May 2014
     Also used with DWARF5 forms.  */
 int
@@ -1813,7 +1813,7 @@ dwarf_formblock(Dwarf_Attribute attr,
     No relation to the Name Table.
     This returns an offset  into .debug_line_str (if line table)
     or .debug_str (if macro5 or a DIE).
-    If line table use .debug_str_offsets[.dwo]. 
+    If line table use .debug_str_offsets[.dwo].
     See DWARF5, page 158.
     */
 
@@ -1853,7 +1853,7 @@ FIXME
     length_size = cu_context->cc_length_size;
     /*  If this is a dwp we look there, but I suppose
         we could also look for the section in the tied
-        executable object file it is not here. FIXME 
+        executable object file it is not here. FIXME
         We are reading a value which is to be used
         to index into .debug_str_offsets. */
     idxres = _dwarf_read_str_index_val_itself(dbg,
@@ -1878,7 +1878,7 @@ FIXME
         (baseoffset+length_size) > sectionlen ||
         (baseoffset+indexoffset) > sectionlen) {
         dwarfstring m;
- 
+
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_ATTR_FORM_SIZE_BAD: "
@@ -1971,24 +1971,6 @@ FIXME
     return DW_DLV_OK;
 }
 
-#if 0
-static int
-is_strx(unsigned form) {
-   switch(form){
-   case DW_FORM_GNU_str_index:
-   case DW_FORM_strx1:
-   case DW_FORM_strx2:
-   case DW_FORM_strx3:
-   case DW_FORM_strx4:
-   case DW_FORM_strx:
-       return TRUE;
-   default:
-       break;
-   }
-   return FALSE;
-}
-#endif
-
 /*  Extracts a string from .debug_line_str
     offset must be a string-table offset, not
     an offset into a str_offsets table.
@@ -2030,34 +2012,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             secbegin = dbg->de_debug_line_str.dss_data;
             strbegin= dbg->de_debug_line_str.dss_data + offset;
             secend = dbg->de_debug_line_str.dss_data + secsize;
-        } 
-#if 0
-else if (is_strx(attrform)) { 
-            Dwarf_Unsigned offsettostr= 0;
-
-            res = _dwarf_extract_string_offset_via_str_offsets(dbg,
-                infoptr,
-                secend,
-                attrform,
-                cu_context,
-                &offsettostr,
-                error);
-            if (res != DW_DLV_OK) {
-                return res;
-            }
-        }
-        offset = offsettostr;
-
-            res = _dwarf_load_section(dbg,
-                &dbg->de_debug_str_offsets,error);
-            if (res != DW_DLV_OK) {
-                return res;
-            }
-FIXME
-
-        }
-#endif
-        else {
+        } else {
             /* DW_FORM_strp  etc */
             res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
             if (res != DW_DLV_OK) {

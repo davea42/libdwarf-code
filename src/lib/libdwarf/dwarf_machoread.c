@@ -112,16 +112,16 @@ print_arch_item(unsigned int i,
 
 /*  We do not expect non-ascii characters in segmant
     names.*/
-static int 
+static int
 not_ascii(const char *s)
 {
-     unsigned char *cp = (unsigned char *)s;
-     for (  ; *cp ; ++cp) {
-         if (*cp < 0x20 || *cp > 0x7e) {
-             return TRUE;
-         }
-     }
-     return FALSE;
+    unsigned char *cp = (unsigned char *)s;
+    for (  ; *cp ; ++cp) {
+        if (*cp < 0x20 || *cp > 0x7e) {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 /*  There are reports that this limit of the number of bytes of
@@ -474,7 +474,7 @@ load_segment_command_content32(
     if (not_ascii(msp->segname)) {
         /* make the name safe to print */
         strcpy(msp->segname,"<no name>");
-    }    
+    }
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -535,7 +535,7 @@ load_segment_command_content64(
     if (not_ascii(msp->segname)) {
         /* make the name safe to print */
         strcpy(msp->segname,"<no name>");
-    }    
+    }
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -772,7 +772,7 @@ _dwarf_macho_load_dwarf_section_details64(
         if (!secs) {
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_OK;
-        }      
+        }
         newcount = secalloc;
         mfp->mo_dwarf_sections = secs;
         mfp->mo_dwarf_sectioncount = secalloc;
