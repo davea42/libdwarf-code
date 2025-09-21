@@ -7,6 +7,7 @@ vulnerability: Heap buffer overflow loading Mach-o section data
 product: libdwarf
 description: A corrupt (fuzzed) Apple Mach-o object file resulted
   in an overflow in copying object data to internal structures.
+  Possibly leading to crash and denial of service.
   The bug was present in the code for 2 days.
 datefixed:  2025-09-21
 references: regressiontests/ossfuzz446356422/fuzz_crc_32-4931308642172928

@@ -11,12 +11,13 @@
 </vulnerability>
 <description> A corrupt (fuzzed) Apple Mach-o object file resulted
   in an overflow in copying object data to internal structures.
+  Possibly leading to crash and denial of service.
   The bug was present in the code for 2 days.
 </description>
 <datefixed>2025-09-21</datefixed>
 <references> regressiontests/ossfuzz446356422/fuzz_crc_32-4931308642172928
 </references>
-<gitfixid></gitfixid>
+<gitfixid>651ceb7069b311911152a87efcf7c2fc44925f67</gitfixid>
 <tarrelease>predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
