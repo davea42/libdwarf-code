@@ -266,7 +266,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         break;
     }
-#if 0
+#if 0 /* Would probably be wasteful ? */
     esb_append_printf_u(esbp," length: %u",lle_byte_count);
 #endif
     return DW_DLV_OK;

@@ -77,47 +77,6 @@ freeall_groups_tables(void)
 
 #define TRUE 1
 #define FALSE 0
-#if 0 /* No longer needed, not used now */
-static struct  glfsetting_s {
-    const char *secname;
-    Dwarf_Bool *flag;
-    Dwarf_Bool origset;
-    Dwarf_Bool origflag;
-} glftab[] = {
-{".debug_abbrev",       &glflags.gf_abbrev_flag,FALSE,FALSE},
-{".debug_aranges",      &glflags.gf_aranges_flag,FALSE,FALSE},
-{".debug_debug_macinfo",&glflags.gf_macinfo_flag,FALSE,FALSE},
-{".debug_debug_macro",  &glflags.gf_macro_flag,FALSE,FALSE},
-{".debug_debug_names",  &glflags.gf_debug_names_flag,FALSE,FALSE},
-{".debug_eh_frame",     &glflags.gf_eh_frame_flag,FALSE,FALSE},
-{".debug_frame",        &glflags.gf_frame_flag,FALSE,FALSE},
-{".gdb_index",          &glflags.gf_gdbindex_flag,FALSE,FALSE},
-{".debug_info",         &glflags.gf_info_flag,FALSE,FALSE},
-{".debug_line",         &glflags.gf_line_flag,FALSE,FALSE},
-{".debug_loc",          &glflags.gf_loc_flag,FALSE,FALSE},
-/*{".debug_loclists",     &glflags.gf_loclists_flag,FALSE,FALSE}, */
-{".debug_pubnames",     &glflags.gf_pubnames_flag,FALSE,FALSE},
-
-/* SGI only */
-{".debug_pubtypes",     &glflags.gf_pubtypes_flag,FALSE,FALSE},
-
-{".debug_ranges",       &glflags.gf_ranges_flag,FALSE,FALSE},
-/*{".debug_rnglists",     &glflags.gf_rnglists_flag,FALSE,FALSE}, */
-
-/* SGI only */
-{".debug_static_func",  &glflags.gf_static_func_flag,FALSE,FALSE},
-
-/* SGI only */
-{".debug_static_var",   &glflags.gf_static_var_flag,FALSE,FALSE},
-
-{".debug_str",          &glflags.gf_string_flag,FALSE,FALSE},
-{".debug_types",        &glflags.gf_types_flag,FALSE,FALSE},
-
-/* SGI only */
-{".debug_weaknames",    &glflags.gf_weakname_flag,FALSE,FALSE},
-{0,0,0,0}
-};
-#endif /* 0 */
 
 /*  If a section is not in group N but is in group 1
     then turn off its flag. Since sections are never

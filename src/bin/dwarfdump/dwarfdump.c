@@ -1101,36 +1101,6 @@ homeify(char *s, struct esb_s* out)
         esb_append(out,s);
         return;
     }
-#if 0
-/*  sanitized() takes care of this for Msys2 Windows */
-    {
-    /*  Windows In msys2
-        $HOME might be C:\msys64\home\admin
-        which messes up regression testing.
-        And it shows as "C:/msys64/davea/".
-        For msys2 with a simple setup this
-        helps regressiontesting.
-        $HOME in msys2 should be /home/admin/
-        in testing (running as user admin).
-        and that is C:/msys64/home/davea
-        when  windows is providing a windows-centric full path.
-        Somewhat odd, but we do see slash(/)
-        not backslash (\) .  */
-    char *winprefix = "C:/msys64/home/davea/home/admin";
-    /*char *domain = getenv("USERDOMAIN"); */
-    char *user = getenv("USER");
-    size_t winlen = strlen(winprefix);
-
-    if (user && !strncmp(s,winprefix,winlen)) {
-        /*  Change to $HOME so regressiontests work
-            reliably */
-        size_t userlen = strlen(user);
-        esb_append(out,"$HOME");
-        esb_append(out,s+winlen+userlen);
-        return;
-    }
-    }
-#endif /* 0 */
     homelen = strlen(home);
     if (strlen(s) <= homelen) {
         /*  Giving up, s is shorter than $HOME alone. */
