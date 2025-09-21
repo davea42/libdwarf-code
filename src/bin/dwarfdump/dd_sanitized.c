@@ -293,26 +293,26 @@ static int
 look_for_substr(const char *s,const char *match,
     int matchlen)
 {
-     const char *cp = s;
-     int remaining = strlen(s);
+    const char *cp = s;
+    int remaining = strlen(s);
 
-     if (remaining < matchlen) {
-         return -1;
-     }
-     for ( ; *cp ; ++cp,--remaining) {
-         if (*cp != match[0]) {
-             continue;
-         }
-         if (remaining < matchlen) {
-             /*  No match possible */
-             return -1;
-         }
-         if (strncmp(cp,match,matchlen)) {
-             continue;
-         }
-         return (int)(cp - s);
-     }
-     return -1;
+    if (remaining < matchlen) {
+        return -1;
+    }
+    for ( ; *cp ; ++cp,--remaining) {
+        if (*cp != match[0]) {
+            continue;
+        }
+        if (remaining < matchlen) {
+            /*  No match possible */
+            return -1;
+        }
+        if (strncmp(cp,match,matchlen)) {
+            continue;
+        }
+        return (int)(cp - s);
+    }
+    return -1;
 }
 /*  This makes the simplifying assumption that
     a Windows path will only appear once in a string,
@@ -320,20 +320,20 @@ look_for_substr(const char *s,const char *match,
 static Dwarf_Bool
 fullpathtohome(const char *s,struct esb_s *out)
 {
-     int pos = -1;
-     const char *match="C:/msys64/davea/home/admin";
-     size_t strlenmatch = strlen(match);
+    int pos = -1;
+    const char *match="C:/msys64/davea/home/admin";
+    size_t strlenmatch = strlen(match);
 
-     pos = look_for_substr(s,match,(int)strlenmatch);
-     if (pos < 0) {
-         return FALSE;
-     }
-     if (pos > 0) {
-         esb_appendn(out,s,pos);
-     }
-     esb_append(out,"$HOME");
-     esb_append(out,s+strlenmatch);
-     return TRUE;
+    pos = look_for_substr(s,match,(int)strlenmatch);
+    if (pos < 0) {
+        return FALSE;
+    }
+    if (pos > 0) {
+        esb_appendn(out,s,pos);
+    }
+    esb_append(out,"$HOME");
+    esb_append(out,s+strlenmatch);
+    return TRUE;
 }
 #endif /* DWREGRESSIONTEMP */
 
@@ -357,24 +357,24 @@ sanitized(const char *s)
     Dwarf_Bool changed = FALSE;
     switch (usehomeifynum) {
     case 0:
-       hsp = &localhomeifya;
-       usehomeifynum = 1;
-       break;
+        hsp = &localhomeifya;
+        usehomeifynum = 1;
+        break;
     case 1:
-       hsp = &localhomeifyb;
-       usehomeifynum = 2;
-       break;
+        hsp = &localhomeifyb;
+        usehomeifynum = 2;
+        break;
     case 2:
-       hsp = &localhomeifyc;
-       usehomeifynum = 0;
-       break;
+        hsp = &localhomeifyc;
+        usehomeifynum = 0;
+        break;
     default: /*  Impossible! */
-       hsp = &localhomeifya;
-       usehomeifynum = 1;
-       break;
+        hsp = &localhomeifya;
+        usehomeifynum = 1;
+        break;
     }
     esb_empty_string(hsp);
-    changed = fullpathtohome(s,hsp); 
+    changed = fullpathtohome(s,hsp);
     if (changed) {
         s = (const char *)esb_get_string(hsp);
     }
@@ -408,21 +408,21 @@ sanitized(const char *s)
 #endif /* TESTING */
     switch (usebufnum) {
     case 0:
-       lsp = &localesba;
-       usebufnum = 1;
-       break;
+        lsp = &localesba;
+        usebufnum = 1;
+        break;
     case 1:
-       lsp = &localesbb;
-       usebufnum = 2;
-       break;
+        lsp = &localesbb;
+        usebufnum = 2;
+        break;
     case 2:
-       lsp = &localesbc;
-       usebufnum = 0;
-       break;
+        lsp = &localesbc;
+        usebufnum = 0;
+        break;
     default: /*  Impossible! */
-       lsp = &localesba;
-       usebufnum = 1;
-       break;
+        lsp = &localesba;
+        usebufnum = 1;
+        break;
     }
     esb_empty_string(lsp);
     do_sanity_insert(s,lsp);

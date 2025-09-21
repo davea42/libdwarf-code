@@ -558,7 +558,7 @@ main(int argc, char *argv[])
                 homeify((char *)tied_file_name,&m);
                 printf(
                     "%s ERROR: tied file not an object file '%s'.\n",
-                    glflags.program_name, 
+                    glflags.program_name,
                     sanitized(esb_get_string(&m)));
                 esb_destructor(&m);
             }
@@ -1114,7 +1114,7 @@ homeify(char *s, struct esb_s* out)
         in testing (running as user admin).
         and that is C:/msys64/home/davea
         when  windows is providing a windows-centric full path.
-        Somewhat odd, but we do see slash(/) 
+        Somewhat odd, but we do see slash(/)
         not backslash (\) .  */
     char *winprefix = "C:/msys64/home/davea/home/admin";
     /*char *domain = getenv("USERDOMAIN"); */
@@ -1128,7 +1128,7 @@ homeify(char *s, struct esb_s* out)
         esb_append(out,"$HOME");
         esb_append(out,s+winlen+userlen);
         return;
-    } 
+    }
     }
 #endif /* 0 */
     homelen = strlen(home);
@@ -1174,7 +1174,6 @@ process_one_file(
     const char   *title = 0;
     unsigned char path_source = 0;
     int           localerrno = 0;
-    
 
     if (glflags.gf_no_check_duplicated_attributes) {
         /*  This means libdwarf won't check for duplicated

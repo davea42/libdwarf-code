@@ -110,6 +110,20 @@ print_arch_item(unsigned int i,
 }
 #endif
 
+/*  We do not expect non-ascii characters in segmant
+    names.*/
+static int 
+not_ascii(const char *s)
+{
+     unsigned char *cp = (unsigned char *)s;
+     for (  ; *cp ; ++cp) {
+         if (*cp < 0x20 || *cp > 0x7e) {
+             return TRUE;
+         }
+     }
+     return FALSE;
+}
+
 /*  There are reports that this limit of the number of bytes of
     Macho object commands is a hard limit kernel in iOS.  */
 #define MAX_COMMANDS_SIZE  16464
@@ -457,6 +471,10 @@ load_segment_command_content32(
     _dwarf_safe_strcpy(msp->segname,
         sizeof(msp->segname),
         sc.segname,sizeof(sc.segname));
+    if (not_ascii(msp->segname)) {
+        /* make the name safe to print */
+        strcpy(msp->segname,"<no name>");
+    }    
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -514,6 +532,10 @@ load_segment_command_content64(
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
     _dwarf_safe_strcpy(msp->segname,sizeof(msp->segname),
         sc.segname,sizeof(sc.segname));
+    if (not_ascii(msp->segname)) {
+        /* make the name safe to print */
+        strcpy(msp->segname,"<no name>");
+    }    
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -613,6 +635,10 @@ _dwarf_macho_load_dwarf_section_details32(
     if (mfp->mo_dwarf_sections) {
         struct generic_macho_section * originalsections =
             mfp->mo_dwarf_sections;
+        if (!seccount) {
+            /* No sections. Odd. Unexpected. */
+            return DW_DLV_OK;
+        }
         newcount = mfp->mo_dwarf_sectioncount + seccount;
         secs = (struct generic_macho_section *)calloc(
             newcount,
@@ -717,6 +743,10 @@ _dwarf_macho_load_dwarf_section_details64(
     if (mfp->mo_dwarf_sections) {
         struct generic_macho_section * originalsections =
             mfp->mo_dwarf_sections;
+        if (!seccount) {
+            /* No sections. Odd. Unexpected. */
+            return DW_DLV_OK;
+        }
         newcount = mfp->mo_dwarf_sectioncount + seccount;
         secs = (struct generic_macho_section *)calloc(
             newcount,

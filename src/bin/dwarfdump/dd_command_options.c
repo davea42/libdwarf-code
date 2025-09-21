@@ -2775,14 +2775,14 @@ lacking_normal_args (int argct,char **args)
 const char *
 process_args(int argc, char *argv[])
 {
-    /*   If building for a regression test run
-         on msys2 (and everywhere) , use fixed 
-         name, fullname instead of argv[0], so tests pass
-         identically in all supported environments */
+    /*  If building for a regression test run
+        on msys2 (and everywhere) , use fixed
+        name, fullname instead of argv[0], so tests pass
+        identically in all supported environments */
 #ifdef DWREGRESSIONTEMP
         /* for the benefit of testing on msys2 so names
-           match. We do it for all platforms for
-           full consistency. */
+            match. We do it for all platforms for
+            full consistency. */
     glflags.program_name     = "./dwarfdump";
     glflags.program_fullname = "./dwarfdump";
 #else /* ! DWREGRESSIONTEMP */
