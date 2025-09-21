@@ -21,6 +21,7 @@ struct Three_Key_Entry_s dd_threekey_af_table_ext [] = {
 /* 0x3fe3 DW_AT_APPLE_isa */
 /* 0x3fe5 DW_AT_APPLE_major_runtime_vers */
 /* 0x3fe7 DW_AT_APPLE_omit_frame_ptr */
+{0x3fe7,0x0005,0,2,0,0},
 /* 0x3fe1 DW_AT_APPLE_optimized */
 /* 0x3fe6 DW_AT_APPLE_runtime_class */
 /* 0x3fef DW_AT_APPLE_sdk */

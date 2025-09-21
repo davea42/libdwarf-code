@@ -68,6 +68,7 @@ DW_AT_APPLE_major_runtime_vers
 
 0xffffffff
 DW_AT_APPLE_omit_frame_ptr
+DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_APPLE_optimized
