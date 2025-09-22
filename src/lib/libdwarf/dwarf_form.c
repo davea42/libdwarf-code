@@ -1208,6 +1208,12 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
         *return_index = index;
         return indxres;
     }
+    res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+
     length_size = cu_context->cc_length_size;
     sectionlen = dbg->de_debug_str_offsets.dss_size;
     if (index > sectionlen ||
@@ -1841,9 +1847,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned str_sect_offset = 0;
     Dwarf_Unsigned length_size  = 0;
     Dwarf_Bool have_array_offset = FALSE;
-/*
-FIXME
-*/
+
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -1907,8 +1911,7 @@ FIXME
                 DWARF5. but some early GNU compilers emitted
                 DWARF4 .debug_str_offsets, so lets check
                 the first table.  */
-            Dwarf_Unsigned stsize =
-                dbg->de_debug_str_offsets.dss_size;
+            Dwarf_Unsigned stsize = 0;
             Dwarf_Unsigned length           = 0;
             Dwarf_Unsigned table_length     = 0;
             Dwarf_Half local_offset_size    = 0;
@@ -1916,6 +1919,11 @@ FIXME
             Dwarf_Half version              = 0;
             Dwarf_Half padding              = 0;
 
+            res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+            stsize = dbg->de_debug_str_offsets.dss_size;
             res = _dwarf_trial_read_dwarf_five_hdr(dbg,
                 headeroffset,stsize,
                 &table_offset_to_array,

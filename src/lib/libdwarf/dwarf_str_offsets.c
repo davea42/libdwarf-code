@@ -153,10 +153,15 @@ dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table sot,
     Dwarf_Unsigned secsize = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Small *end_ptr = 0;
+    int res = 0;
 /* so_section_size */
 
     VALIDATE_SOT(sot)
     dbg = sot->so_dbg;
+    res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
     secsize = dbg->de_debug_str_offsets.dss_size;
     if (index >= sot->so_array_entry_count) {
         return DW_DLV_NO_ENTRY;
