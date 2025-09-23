@@ -5,10 +5,15 @@ datereported: 2025-09-23
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_debuglink  testcase.
 product: libdwarf
-description:
-datefixed:
-references: regressiontests/ossfuzz446726228/
-gitfixid:
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object. Where 'command-size' times
+  'command-count' exceeds the size of the object file.
+  The fix for DW202509-002 oss fuzz 446726229
+  also added these checks for error.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-23
+references: regressiontests/ossfuzz446726228/fuzz_debuglink-4854619680604160
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
 tarrelease:
 endrec:  DW202509-009
 
@@ -110,12 +115,12 @@ description: A corrupted MacOS objectfile containing
   Segment names are defined by the compiler 
   and we now check for valid segment names.
   This vulnerability has been present since Mach-o
-  object support was added in 2021.
+  object support was added in 2018.
   We now check that section names are plain ASCII
   (such are defined by the ABI and compiler-writers.)
 datefixed: 2025-09-23 
 references: regressiontests/ossfuzz446726229/fuzz_globals-5387186766938112
-gitfixid: 
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e 
 tarrelease: Predicting 2.2.0 
 endrec:  DW202509-002
 
