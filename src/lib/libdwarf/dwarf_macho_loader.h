@@ -849,6 +849,8 @@ struct section_64 { /* for 64-bit architectures */
                     /* protections and catches NULL */
                     /* references for MH_EXECUTE files */
 
+#define    SEG_DWARF    "__DWARF"  /* Added by libdwarf */
+#define    SEG_DATA_CONST    "__DATA_CONST"  /* Added by libdwarf */
 #define    SEG_TEXT    "__TEXT"  /* the tradition UNIX text segment */
 #define    SECT_TEXT    "__text"
                     /* the real text part of the text */

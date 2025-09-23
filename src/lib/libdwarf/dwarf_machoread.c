@@ -110,8 +110,40 @@ print_arch_item(unsigned int i,
 }
 #endif
 
-/*  We do not expect non-ascii characters in segmant
-    names.*/
+/*  One wonders if a duplicated segname name is an error.
+    I suppose so, but we do not yet check for that. */
+static const char *
+knownsegnames[] = {
+SEG_DWARF,
+SEG_TEXT,
+SEG_DATA,
+SEG_DATA_CONST,
+SEG_ICON,
+SEG_IMPORT,
+SEG_LINKEDIT,
+SEG_OBJC,
+SEG_PAGEZERO,
+SEG_UNIXSTACK,
+};
+
+static int
+is_known_segname(char *sname)
+{
+    char *s_in = sname;
+    int i = 0;
+    int end = sizeof(knownsegnames)/sizeof(char *);
+
+    for ( ; i < end; ++i) {
+        if (strcmp(s_in,knownsegnames[i])) {
+            continue;
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+/*  We do not expect non-ascii characters in section
+    names, they are defined by the compiler-writers
+    and ABI rules. We allow an empty name... */
 static int
 not_ascii(const char *s)
 {
@@ -371,7 +403,10 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     if (mfp->mo_command_count >= mfp->mo_filesize ||
         mfp->mo_command_count >=  MAX_COMMANDS_SIZE ||
         mfp->mo_header.sizeofcmds >  MAX_COMMANDS_SIZE ||
-        mfp->mo_header.sizeofcmds >= mfp->mo_filesize) {
+        mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
+        (mfp->mo_header.sizeofcmds*mfp->mo_command_count >=
+            mfp->mo_filesize)
+        ) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -413,7 +448,9 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
     if (mfp->mo_command_count >= mfp->mo_filesize ||
         mfp->mo_command_count >=  MAX_COMMANDS_SIZE ||
-        mfp->mo_header.sizeofcmds >= MAX_COMMANDS_SIZE) {
+        mfp->mo_header.sizeofcmds >= MAX_COMMANDS_SIZE ||
+        (mfp->mo_header.sizeofcmds*mfp->mo_command_count >=
+            mfp->mo_filesize)) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -471,9 +508,9 @@ load_segment_command_content32(
     _dwarf_safe_strcpy(msp->segname,
         sizeof(msp->segname),
         sc.segname,sizeof(sc.segname));
-    if (not_ascii(msp->segname)) {
-        /* make the name safe to print */
-        strcpy(msp->segname,"<no name>");
+    if (!is_known_segname(msp->segname)) {
+        *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
+        return DW_DLV_ERROR;
     }
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
@@ -532,9 +569,8 @@ load_segment_command_content64(
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
     _dwarf_safe_strcpy(msp->segname,sizeof(msp->segname),
         sc.segname,sizeof(sc.segname));
-    if (not_ascii(msp->segname)) {
-        /* make the name safe to print */
-        strcpy(msp->segname,"<no name>");
+    if (!is_known_segname(msp->segname)) {
+        return DW_DLV_ERROR;
     }
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
@@ -697,6 +733,10 @@ _dwarf_macho_load_dwarf_section_details32(
         _dwarf_safe_strcpy(secs->sectname,
             sizeof(secs->sectname),
             mosec.sectname,sizeof(mosec.sectname));
+        if (not_ascii(secs->sectname) ) {
+            *errcode  = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            return DW_DLV_ERROR;
+        }
         _dwarf_safe_strcpy(secs->segname,
             sizeof(secs->segname),
             mosec.segname,sizeof(mosec.segname));
@@ -805,9 +845,14 @@ _dwarf_macho_load_dwarf_section_details64(
         _dwarf_safe_strcpy(secs->sectname,
             sizeof(secs->sectname),
             mosec.sectname,sizeof(mosec.sectname));
+        if (not_ascii(secs->sectname) ) {
+            *errcode  = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            return DW_DLV_ERROR;
+        }
         _dwarf_safe_strcpy(secs->segname,
             sizeof(secs->segname),
             mosec.segname,sizeof(mosec.segname));
+
         ASNAR(mfp->mo_copy_word,secs->addr,mosec.addr);
         ASNAR(mfp->mo_copy_word,secs->size,mosec.size);
         ASNAR(mfp->mo_copy_word,secs->offset,mosec.offset);
