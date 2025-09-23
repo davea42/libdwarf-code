@@ -1,4 +1,124 @@
 
+id: DW202509-009
+fuzzer: oss fuzz 446726228
+datereported: 2025-09-23
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_debuglink  testcase.
+product: libdwarf
+description:
+datefixed:
+references: regressiontests/ossfuzz446726228/
+gitfixid:
+tarrelease:
+endrec:  DW202509-009
+
+
+
+id: DW202509-008
+fuzzer: oss fuzz 446831123
+datereported: 2025-09-23
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_rng  testcase.
+product: libdwarf
+description:
+datefixed:
+references: regressiontests/ossfuzz446831123/
+gitfixid:
+tarrelease:
+endrec:  DW202509-008
+
+
+id: DW202509-007
+fuzzer: oss fuzz 446735540
+datereported: 2025-09-23
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_dnames  testcase.
+product: libdwarf
+description:
+datefixed:
+references: regressiontests/ossfuzz446735540/
+gitfixid:
+tarrelease:
+endrec:  DW202509-007
+
+id: DW202509-006
+fuzzer: oss fuzz 446856589
+datereported: 2025-09-23
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_tie  testcase.
+product: libdwarf
+description:
+datefixed:
+references: regressiontests/ossfuzz446856589/
+gitfixid:
+tarrelease:
+endrec:  DW202509-006
+
+
+
+id: DW202509-005
+fuzzer: oss fuzz 446746574
+datereported: 2025-09-23
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_aranges  testcase.
+product: libdwarf
+description:
+datefixed:
+references: regressiontests/ossfuzz446746574/
+gitfixid:
+tarrelease:
+endrec:  DW202509-005
+
+
+id: DW202509-004
+fuzzer: oss fuzz 446781574
+datereported: 2025-09-22
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_gdbindex  testcase.
+product: libdwarf
+description:
+datefixed:  
+references: regressiontests/ossfuzz446781574/
+gitfixid:
+tarrelease:
+endrec:  DW202509-004
+
+
+
+id: DW202509-003
+fuzzer: oss fuzz 446729093
+datereported: 2025-09-22
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_init_binary testcase.
+product: libdwarf
+description: 
+datefixed:  
+references: regressiontests/ossfuzz446729093/
+gitfixid: 
+tarrelease: Predicting 2.2.0 
+endrec:  DW202509-003
+
+id: DW202509-002
+fuzzer: oss fuzz 446726229
+datereported: 2025-09-22
+reportedby: David Korczynski
+vulnerability: Excessive time in fuzz_globals testcase.
+product: libdwarf
+description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler 
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2021.
+  We now check that section names are plain ASCII
+  (such are defined by the ABI and compiler-writers.)
+datefixed: 2025-09-23 
+references: regressiontests/ossfuzz446726229/fuzz_globals-5387186766938112
+gitfixid: 
+tarrelease: Predicting 2.2.0 
+endrec:  DW202509-002
+
 id: DW202509-001
 fuzzer: oss fuzz 446356422
 datereported: 2025-09-19

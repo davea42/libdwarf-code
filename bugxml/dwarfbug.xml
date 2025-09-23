@@ -1,6 +1,134 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202509-009</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446726228</fuzzer>
+<datereported>2025-09-23</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_debuglink  testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446726228/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-008</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446831123</fuzzer>
+<datereported>2025-09-23</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_rng  testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446831123/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-007</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446735540</fuzzer>
+<datereported>2025-09-23</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_dnames  testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446735540/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-006</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446856589</fuzzer>
+<datereported>2025-09-23</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_tie  testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446856589/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-005</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446746574</fuzzer>
+<datereported>2025-09-23</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_aranges  testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446746574/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-004</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446781574</fuzzer>
+<datereported>2025-09-22</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_gdbindex  testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446781574/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-003</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446729093</fuzzer>
+<datereported>2025-09-22</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_init_binary testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446729093/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-002</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 446726229</fuzzer>
+<datereported>2025-09-22</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time in fuzz_globals testcase.
+</vulnerability>
+<description></description>
+<datefixed></datefixed>
+<references> regressiontests/ossfuzz446726229/
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202509-001</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 446356422</fuzzer>
