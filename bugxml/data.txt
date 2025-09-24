@@ -13,7 +13,7 @@ description: Vulnerability involving slow access to
   Been a vulnerability since Mach-o support added in 2018.
 datefixed: 2025-09-23
 references: regressiontests/ossfuzz446726228/fuzz_debuglink-4854619680604160
-gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
 tarrelease:
 endrec:  DW202509-009
 
@@ -25,10 +25,17 @@ datereported: 2025-09-23
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_rng  testcase.
 product: libdwarf
-description:
-datefixed:
-references: regressiontests/ossfuzz446831123/
-gitfixid:
+description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  (Segment names are defined by the ABI and compiler-writers).
+datefixed: 2025-09-23
+references: regressiontests/ossfuzz446831123/fuzz_rng-6527551318327296
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
 tarrelease:
 endrec:  DW202509-008
 
@@ -65,8 +72,7 @@ description: A corrupted MacOS objectfile containing
   and we now check for valid segment names.
   This vulnerability has been present since Mach-o
   object support was added in 2018.
-  We now check that segment names are valid
-  (such names are defined by the ABI and compiler-writers).
+  We now check that segment names are valid.
 datefixed: 2025-09-23
 references: regressiontests/ossfuzz446856589/fuzz_tie-5831785406857216
 gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
@@ -88,8 +94,8 @@ description: A corrupted MacOS objectfile containing
   and we now check for valid segment names.
   This vulnerability has been present since Mach-o
   object support was added in 2018.
-  We now check that section names are plain ASCII
-  (such are defined by the ABI and compiler-writers.)
+  We now check that section names are plain ASCII.
+  (Such are defined by the ABI and compiler-writers.)
 datefixed: 2025-09-23  
 references: regressiontests/ossfuzz446746574/fuzz_aranges-4698786724380672
 gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
@@ -148,8 +154,7 @@ description: A corrupted MacOS objectfile containing
   and we now check for valid segment names.
   This vulnerability has been present since Mach-o
   object support was added in 2018.
-  We now check that section names are plain ASCII
-  (such are defined by the ABI and compiler-writers.)
+  We now check that section names are plain ASCII.
 datefixed: 2025-09-23 
 references: regressiontests/ossfuzz446726229/fuzz_globals-5387186766938112
 gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e 
@@ -179,7 +184,8 @@ reportedby: David Korczynski
 vulnerability: Heap buffer overflow in dwarf_globals.c
 product: libdwarf
 description: A corrupt (fuzzed) object file resulted
-  in an overflow and an incorrect check and incorrect access to memory.
+  in an overflow and an incorrect check and incorrect 
+  access to memory.
   The error check is now valid.
   The bug has been present since at least 2006 (release 
   dwarf-20060308).

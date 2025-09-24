@@ -9,11 +9,17 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_debuglink  testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446726228/
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object. Where 'command-size' times
+  'command-count' exceeds the size of the object file.
+  The fix for DW202509-002 oss fuzz 446726229
+  also added these checks for error.
+  Been a vulnerability since Mach-o support added in 2018.
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446726228/fuzz_debuglink-4854619680604160
 </references>
-<gitfixid></gitfixid>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
 <tarrelease></tarrelease>
 </dwbug>
 <dwbug>
@@ -25,11 +31,19 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_rng  testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446831123/
+<description> A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  (Segment names are defined by the ABI and compiler-writers).
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446831123/fuzz_rng-6527551318327296
 </references>
-<gitfixid></gitfixid>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
 <tarrelease></tarrelease>
 </dwbug>
 <dwbug>
@@ -41,12 +55,19 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_dnames  testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446735540/
+<description> A corrupted MacOS objectfile containing
+  unreasonable header fields for the size and count
+  of segments lead to excessive time trying to
+  read the file.  We now more thoroughly check
+  the fields.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446735540/fuzz_dnames-5931269398790144
 </references>
-<gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
+<tarrelease>Predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-006</dwid>
@@ -57,12 +78,20 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_tie  testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446856589/
+<description> A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that segment names are valid.
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446856589/fuzz_tie-5831785406857216
 </references>
-<gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
+<tarrelease>Predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-005</dwid>
@@ -73,12 +102,21 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_aranges  testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446746574/
+<description> A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that section names are plain ASCII.
+  (Such are defined by the ABI and compiler-writers.)
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446746574/fuzz_aranges-4698786724380672
 </references>
-<gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
+<tarrelease>Predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-004</dwid>
@@ -89,12 +127,18 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_gdbindex  testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446781574/
+<description> Reading a corrupted object takes excessive
+  time due to the failure to notice the corruption.
+  Segment size and segment counts (multiplied)
+  gave value larger than file size.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446781574/fuzz_gdbindex-4712655307997184
 </references>
-<gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
+<tarrelease>Predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-003</dwid>
@@ -105,12 +149,18 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_init_binary testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446729093/
+<description> Reading a corrupted object takes excessive
+  time due to the failure to notice the corruption.
+  Segment size and segment counts (multiplied)
+  gave value larger than file size.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446729093/fuzz_init_binary-5396366991097856
 </references>
-<gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
+<tarrelease>Predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-002</dwid>
@@ -121,12 +171,20 @@
 <product>libdwarf</product>
 <vulnerability> Excessive time in fuzz_globals testcase.
 </vulnerability>
-<description></description>
-<datefixed></datefixed>
-<references> regressiontests/ossfuzz446726229/
+<description> A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that section names are plain ASCII.
+</description>
+<datefixed>2025-09-23</datefixed>
+<references> regressiontests/ossfuzz446726229/fuzz_globals-5387186766938112
 </references>
-<gitfixid></gitfixid>
-<tarrelease></tarrelease>
+<gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
+<tarrelease>Predicting 2.2.0</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-001</dwid>
@@ -158,9 +216,11 @@
 <vulnerability> Heap buffer overflow in dwarf_globals.c
 </vulnerability>
 <description> A corrupt (fuzzed) object file resulted
-  in an overflow and an incorrect check and incorrect access to memory.
+  in an overflow and an incorrect check and incorrect
+  access to memory.
   The error check is now valid.
-  The bug has been present since at least 2006 (release dwarf-20060308).
+  The bug has been present since at least 2006 (release
+  dwarf-20060308).
   Look for MIN_CU_HDR_SIZE in dwarf_global.c .
 </description>
 <datefixed>2025-08-08</datefixed>

@@ -64,11 +64,19 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446726228/
+<p>description: Vulnerability involving slow access to
+  a corrupted Mach-o object. Where 'command-size' times
+  'command-count' exceeds the size of the object file.
+  The fix for DW202509-002 oss fuzz 446726229
+  also added these checks for error.
+  Been a vulnerability since Mach-o support added in 2018.
 </p>
-<p>gitfixid:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446726228/fuzz_debuglink-4854619680604160
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-008">2) DW202509-008</h3>
@@ -85,11 +93,21 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446831123/
+<p>description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  (Segment names are defined by the ABI and compiler-writers).
 </p>
-<p>gitfixid:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446831123/fuzz_rng-6527551318327296
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-007">3) DW202509-007</h3>
@@ -106,12 +124,22 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446735540/
+<p>description: A corrupted MacOS objectfile containing
+  unreasonable header fields for the size and count
+  of segments lead to excessive time trying to
+  read the file.  We now more thoroughly check
+  the fields.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
 </p>
-<p>gitfixid:</p>
-<p>tarrelease:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446735540/fuzz_dnames-5931269398790144
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
+<p>tarrelease: Predicting 2.2.0
+</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-006">4) DW202509-006</h3>
 <p>id: DW202509-006
@@ -127,12 +155,23 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446856589/
+<p>description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that segment names are valid.
 </p>
-<p>gitfixid:</p>
-<p>tarrelease:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446856589/fuzz_tie-5831785406857216
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
+<p>tarrelease: Predicting 2.2.0
+</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-005">5) DW202509-005</h3>
 <p>id: DW202509-005
@@ -148,12 +187,24 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446746574/
+<p>description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that section names are plain ASCII.
+  (Such are defined by the ABI and compiler-writers.)
 </p>
-<p>gitfixid:</p>
-<p>tarrelease:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446746574/fuzz_aranges-4698786724380672
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
+<p>tarrelease: Predicting 2.2.0
+</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-004">6) DW202509-004</h3>
 <p>id: DW202509-004
@@ -169,12 +220,21 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446781574/
+<p>description: Reading a corrupted object takes excessive
+  time due to the failure to notice the corruption.
+  Segment size and segment counts (multiplied)
+  gave value larger than file size.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
 </p>
-<p>gitfixid:</p>
-<p>tarrelease:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446781574/fuzz_gdbindex-4712655307997184
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
+<p>tarrelease: Predicting 2.2.0
+</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-003">7) DW202509-003</h3>
 <p>id: DW202509-003
@@ -190,12 +250,21 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446729093/
+<p>description: Reading a corrupted object takes excessive
+  time due to the failure to notice the corruption.
+  Segment size and segment counts (multiplied)
+  gave value larger than file size.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
 </p>
-<p>gitfixid:</p>
-<p>tarrelease:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446729093/fuzz_init_binary-5396366991097856
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
+<p>tarrelease: Predicting 2.2.0
+</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-002">8) DW202509-002</h3>
 <p>id: DW202509-002
@@ -211,12 +280,23 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description:</p>
-<p>datefixed:</p>
-<p>references: regressiontests/ossfuzz446726229/
+<p>description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that section names are plain ASCII.
 </p>
-<p>gitfixid:</p>
-<p>tarrelease:</p>
+<p>datefixed: 2025-09-23
+</p>
+<p>references: regressiontests/ossfuzz446726229/fuzz_globals-5387186766938112
+</p>
+<p>gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+</p>
+<p>tarrelease: Predicting 2.2.0
+</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202509-001">9) DW202509-001</h3>
 <p>id: DW202509-001
@@ -261,9 +341,11 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>product: libdwarf
 </p>
 <p>description: A corrupt (fuzzed) object file resulted
-  in an overflow and an incorrect check and incorrect access to memory.
+  in an overflow and an incorrect check and incorrect
+  access to memory.
   The error check is now valid.
-  The bug has been present since at least 2006 (release dwarf-20060308).
+  The bug has been present since at least 2006 (release
+  dwarf-20060308).
   Look for MIN_CU_HDR_SIZE in dwarf_global.c .
 </p>
 <p>datefixed: 2025-08-08
