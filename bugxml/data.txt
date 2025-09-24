@@ -39,11 +39,17 @@ datereported: 2025-09-23
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_dnames  testcase.
 product: libdwarf
-description:
-datefixed:
-references: regressiontests/ossfuzz446735540/
-gitfixid:
-tarrelease:
+description: A corrupted MacOS objectfile containing
+  unreasonable header fields for the size and count
+  of segments lead to excessive time trying to
+  read the file.  We now more thoroughly check
+  the fields.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+datefixed: 2025-09-23
+references: regressiontests/ossfuzz446735540/fuzz_dnames-5931269398790144 
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+tarrelease: Predicting 2.2.0 
 endrec:  DW202509-007
 
 id: DW202509-006
@@ -52,11 +58,19 @@ datereported: 2025-09-23
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_tie  testcase.
 product: libdwarf
-description:
-datefixed:
-references: regressiontests/ossfuzz446856589/
-gitfixid:
-tarrelease:
+description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that segment names are valid
+  (such names are defined by the ABI and compiler-writers).
+datefixed: 2025-09-23
+references: regressiontests/ossfuzz446856589/fuzz_tie-5831785406857216
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+tarrelease: Predicting 2.2.0 
 endrec:  DW202509-006
 
 
@@ -67,11 +81,19 @@ datereported: 2025-09-23
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_aranges  testcase.
 product: libdwarf
-description:
-datefixed:
-references: regressiontests/ossfuzz446746574/
-gitfixid:
-tarrelease:
+description: A corrupted MacOS objectfile containing
+  segments with unknown strings as the
+  segment name exceeded reasonable bounds on run time.
+  Segment names are defined by the compiler
+  and we now check for valid segment names.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+  We now check that section names are plain ASCII
+  (such are defined by the ABI and compiler-writers.)
+datefixed: 2025-09-23  
+references: regressiontests/ossfuzz446746574/fuzz_aranges-4698786724380672
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+tarrelease: Predicting 2.2.0 
 endrec:  DW202509-005
 
 
@@ -81,11 +103,16 @@ datereported: 2025-09-22
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_gdbindex  testcase.
 product: libdwarf
-description:
-datefixed:  
-references: regressiontests/ossfuzz446781574/
-gitfixid:
-tarrelease:
+description: Reading a corrupted object takes excessive
+  time due to the failure to notice the corruption.
+  Segment size and segment counts (multiplied)
+  gave value larger than file size.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+datefixed: 2025-09-23  
+references: regressiontests/ossfuzz446781574/fuzz_gdbindex-4712655307997184
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+tarrelease: Predicting 2.2.0 
 endrec:  DW202509-004
 
 
@@ -96,10 +123,15 @@ datereported: 2025-09-22
 reportedby: David Korczynski
 vulnerability: Excessive time in fuzz_init_binary testcase.
 product: libdwarf
-description: 
-datefixed:  
-references: regressiontests/ossfuzz446729093/
-gitfixid: 
+description: Reading a corrupted object takes excessive
+  time due to the failure to notice the corruption.
+  Segment size and segment counts (multiplied)
+  gave value larger than file size.
+  This vulnerability has been present since Mach-o
+  object support was added in 2018.
+datefixed: 2025-09-23  
+references: regressiontests/ossfuzz446729093/fuzz_init_binary-5396366991097856
+gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
 tarrelease: Predicting 2.2.0 
 endrec:  DW202509-003
 
@@ -149,7 +181,8 @@ product: libdwarf
 description: A corrupt (fuzzed) object file resulted
   in an overflow and an incorrect check and incorrect access to memory.
   The error check is now valid.
-  The bug has been present since at least 2006 (release dwarf-20060308).
+  The bug has been present since at least 2006 (release 
+  dwarf-20060308).
   Look for MIN_CU_HDR_SIZE in dwarf_global.c .
 datefixed:  2025-08-08
 references: regressiontests/ossfuzz437060549/fuzz_globals-4771320878661632
