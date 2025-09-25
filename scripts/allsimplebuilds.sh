@@ -316,11 +316,15 @@ fi
 
 for i in $tbase/allconfiguresharedinstalled $tbase/allconfigurestaticinstalled $tbase/allmesonsharedinstalled $tbase/allmesonstaticinstalled $tbase/allcmakesharedinstalled $tbase/allscmakestaticinstalled
 do
-  cd $i
-  find . -type f -print >/tmp/x.$$
-  l=`wc -l < /tmp/x.$$`
-  echo "$i has $l files"
-  rm /tmp/x.$$
+  if [ -d $i ]
+  then
+    find . -type f -print >/tmp/x.$$
+    l=`wc -l < /tmp/x.$$`
+    echo "$i has $l files"
+    rm /tmp/x.$$
+  else
+    echo "Skip $i, it is not built."
+  fi
 done
 cd $spath
 ndsecs=`date '+%s'`
