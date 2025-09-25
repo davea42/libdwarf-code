@@ -94,15 +94,16 @@ keyprint(const void *k)
 static struct All_Srcfiles_Entry *
 all_srcfiles_create_entry(char *key )
 {
-    struct All_Srcfiles_Entry *mp =
-        (struct All_Srcfiles_Entry *)malloc(
+    struct All_Srcfiles_Entry *mp = 0;
+
+    if (!key) {
+        /* mistake somewhere */
+        return 0;
+    }
+    mp = (struct All_Srcfiles_Entry *)malloc(
         sizeof(struct All_Srcfiles_Entry));
     if (!mp) {
         return 0;
-    }
-    if (!key) {
-        /* mistake somewhere */
-        return NULL;
     }
     mp->ase_srcfilename = (char *)strdup(key);
     mp->ase_dupcount = 1;
