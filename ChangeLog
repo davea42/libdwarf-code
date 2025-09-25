@@ -1,3 +1,94 @@
+2025-09-24:  David Anderson
+    commit ab1ce3208ed2f7ac72d034deaab5d92c163198b4
+
+    All the new September vulnerabilities are fixed
+    and verified. So all such we know of are fixed.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-09-24:  David Anderson
+    commit fe70d26c7ec93d3b6d9d20f718cbc6fac92b3e18
+
+    Additional detail added.
+            modified:   bugxml/data.txt
+
+2025-09-23:  David Anderson
+    commit 11852a16c4f12f6140ac1e3f5a3299bf6f10f6b6
+
+    Updating vulnerability data.
+            modified:   bugxml/data.txt
+
+2025-09-23:  David Anderson
+    commit 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
+
+    Defining (documenting) two existing Segment names.
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+
+    To find corrupted Mach-o objects we are using segment
+    and section names as a kind of proxy.
+    We validate segment names against a known list
+    and we validate section names by ensuring they
+    are plain ascii.
+    All these names are defined by an ABI or by the
+    compiler-writers for the ABI.
+
+    This fixes oss fuzz 446726229 (a.k.a DW202509-002)
+    which was unprepared for this sort of corruption,
+    starting from the initial handling of Mach-o
+    objects in 2018.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2025-09-23:  David Anderson
+    commit 5956743e1170d8dda82da07c1b790de9d02e1579
+
+    Vulnerabilities updated.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-09-22:  David Anderson
+    commit d9583458424e13699bc855f3fab775ed8d7d377d
+
+    Under certain conditions, the library would
+    use the size of the .debug_str_offsets section
+    without actually loading the section.
+    Now we ensure it is loaded if present in the object.
+    Github libdwarf issue #269
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2025-09-21:  David Anderson
+    commit 3217f1b2574c4244d356d2e66a5b07463190fb80
+
+    Added four casts to avoid warnings from VisualStudio.
+            modified:   src/bin/dwarfdump/dd_lvn_table.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2025-09-21:  David Anderson
+    commit ec8571a7a0fb0fc287994c235279b8bba0c9e1e3
+
+    Added an additional detail about vulnerability
+    446356422  aka DW202509-001
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-09-21:  David Anderson
+    commit 2bff154986781efc244b8f8d9b95887be9784123
+
+    Updated to match git log
+            modified:   ChangeLog
+    Listing DW202509-001, oss fuzz 446356422.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
 2025-09-21:  David Anderson
     commit b1d87d3ebd60d0f7ea5269add0f37d1a11fa61c6
 
