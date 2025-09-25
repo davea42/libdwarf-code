@@ -1,3 +1,50 @@
+2025-09-25:  David Anderson
+    commit d03b6e67753f33b116b7bd3f2b2422988209aed7
+
+    CoverityScan issue 400783. Around lines 1382 and 1405
+    two return were missing the required
+    local_attrlist_dealloc(dbg,atcount,alist)
+    before the return.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2025-09-25:  David Anderson
+    commit 5620381de442ef7976e14ab703e5c210e3fc1d0e
+
+    In all_srcfiles_create_entry() we could cause
+    a memory leak.  Coverity Scan issue 548972.
+    Reordered a couple lines of code to make
+    the leak impossible.
+            modified:   src/bin/dwarfdump/dd_all_srcfiles.c
+
+2025-09-25:  David Anderson
+    commit 22a582ba74af7d4a65e07b656b31d375b9f57977
+
+    coverity scan noticed dead code. Issue 548973.
+    The dead code was just a mistake in this
+    example program. Removed the lines testing INITIAL_VAL.
+            modified:   src/bin/dwarfexample/frame1.c
+
+2025-09-25:  David Anderson
+    commit d33c9bd168058200924cf7234514c434479c4808
+
+    Split a too-long line to two lines
+    to match project codingstandard.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2025-09-25:  David Anderson
+    commit 4b56aa6d220df233ef255e677fa4d89ea7621981
+
+    When one or more build methods are not done
+    remark on that in the place we mention install
+    file counts per build method.
+            modified:   scripts/allsimplebuilds.sh
+
+2025-09-25:  David Anderson
+    commit 9c941c33e95263b8e4aa3e4157ca9ec5d03a2efc
+
+    Up to date with git log data.
+            modified:   ChangeLog
+
 2025-09-24:  David Anderson
     commit ab1ce3208ed2f7ac72d034deaab5d92c163198b4
 
