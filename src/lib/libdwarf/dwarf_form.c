@@ -1919,7 +1919,8 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             Dwarf_Half version              = 0;
             Dwarf_Half padding              = 0;
 
-            res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
+            res = _dwarf_load_section(dbg,
+                &dbg->de_debug_str_offsets,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
