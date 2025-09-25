@@ -1382,6 +1382,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 if (lres == DW_DLV_OK) {
                     cucon->cc_language_name = (Dwarf_Half)uval;
                 } else {
+                    local_attrlist_dealloc(dbg,atcount,alist);
                     return lres;
                 }
                 if (cucon->cc_have_language_version) {
@@ -1405,6 +1406,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     cucon->cc_language_version = uval;
                     cucon->cc_have_language_version = TRUE;
                 } else {
+                    local_attrlist_dealloc(dbg,atcount,alist);
                     return lres;
                 }
                 if (cucon->cc_language_name) {
