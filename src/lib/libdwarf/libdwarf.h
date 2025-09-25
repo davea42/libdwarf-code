@@ -6048,6 +6048,62 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
     Dwarf_Unsigned * dw_outlen,
     Dwarf_Error    * dw_error);
 
+/*! @typedef dwarf_iterate_fde_info_callback_function_type
+
+    Used as a function pointer to a user-written
+    callback function. This provides the register
+    table for a given row address.
+
+    See dwarf_iterate_fde_info_for_all_regs3()
+
+    @param dw_row_pc
+    The address for the row the callback is being
+    invoked for
+    @param dw_reg_table
+    The register table for the address
+    @param dw_user_data
+    Passes your callback a pointer to space you allocated
+    @return
+    Return TRUE if iteration is done, FALSE if it should
+    continue
+*/
+typedef Dwarf_Bool (* dwarf_iterate_fde_info_callback_function_type)(Dwarf_Addr dw_row_pc,
+    Dwarf_Regtable3* dw_reg_table, void * dw_user_data);
+
+/*! @brief Iterate all rows for a given FDE, invoking
+    the provided callback for each row. Iteration
+    continues until all rows have been visited, or
+    until the callback returns TRUE.
+
+    This is much more efficient than repeatedly calling
+    dwarf_get_fde_info_for_all_regs3_b() when you need
+    to extract all rows of an FDE.
+
+    @param dw_fde
+    Pass in the FDE of interest.
+    @param dw_reg_table_size
+    Pass in the size of the register table that should
+    be passed to the callback in the dw_reg_table
+    parameter
+    @param dw_callback
+    The callback that should b invoked for each row
+    in the FDE. The register table of size 
+    @dw_reg_table_size is passed to the callback.
+    @param dw_callback_user_data
+    User data that's passed to the callback
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK if iteration succeeded
+
+*/
+DW_API int dwarf_iterate_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
+    Dwarf_Half       dw_reg_table_size,
+    dwarf_iterate_fde_info_callback_function_type dw_callback,
+    void*            dw_callback_user_data,
+    Dwarf_Error*     dw_error);
+
+
 /*! @brief Return information on frame registers at a given pc value
 
     An FDE at a given pc (code address)
@@ -6094,7 +6150,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde dw_fde,
     this doesn't output dw_has_more_rows and dw_subsequent_pc.
 
     If you need to iterate through all rows of the FDE, consider
-    switching to dwarf_get_fde_info_for_all_regs3_b() as it is more
+    switching to dwarf_iterate_fde_info_for_all_regs3() as it is more
     efficient.
 */
 DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
