@@ -80,7 +80,7 @@ static int stop_at_n_fdes = 0;
 #define SAME_VAL DW_FRAME_SAME_VAL
 #define CFA_VAL DW_FRAME_CFA_COL
 /*#define INITIAL_VAL UNDEF_VAL */
-#define INITIAL_VAL SAME_VAL 
+#define INITIAL_VAL SAME_VAL
 
 /* Dumping a dwarf-expression as a byte stream. */
 static void
@@ -129,11 +129,11 @@ main(int argc, char **argv)
         if (!strncmp(argv[curopt],countstr,countstr_len)) {
             char *carg = argv[curopt];
             if (!carg[countstr_len]) {
-               printf("Improper %s arg, needs a number. Ignored\n",
-                   carg);
+                printf("Improper %s arg, needs a number. Ignored\n",
+                    carg);
             } else {
-                 stop_at_n_fdes = atoi((const char *)
-                     (carg+countstr_len));
+                stop_at_n_fdes = atoi((const char *)
+                    (carg+countstr_len));
             }
         }
         if (!strcmp(argv[curopt],"--print-selected-regs")) {
@@ -372,9 +372,6 @@ print_fde_col(Dwarf_Signed k,
         if (reg_used == SAME_VAL) {
             printf(" SAME_VAL");
             /* break; */
-        } else if (reg_used == INITIAL_VAL) {
-            printf(" INITIAL_VAL");
-            /*break; */
         } else if (reg_used == UNDEF_VAL) {
             printf(" UNDEF_VAL");
         }
@@ -518,7 +515,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
         next_jsave = jsave+1;
         printf("\n");
         printf(" FDE columns (registers) for pc 0x%"
-             DW_PR_DUx "\n",jsave);
+            DW_PR_DUx "\n",jsave);
         for (k = 0; k < selected_cols_count ; ++k ) {
             Dwarf_Unsigned reg = 0;
             Dwarf_Unsigned offset_relevant = 0;
@@ -877,7 +874,6 @@ print_reg(int r)
     }
 }
 
-
 static char *
 value_type_name(int valuetype,char *buf,unsigned buflen)
 {
@@ -891,7 +887,7 @@ value_type_name(int valuetype,char *buf,unsigned buflen)
         return "DW_EXPR_EXPRESSION";
     case DW_EXPR_VAL_EXPRESSION:
         return "DW_EXPR_VAL_EXPRESSION";
-    default: 
+    default:
         break;
     }
     snprintf(buf,buflen, "Unknown(%d)",valuetype);
