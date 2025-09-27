@@ -1,6 +1,105 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202509-013</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447396726</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time reading fuzz_xuindex testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details did not complete in
+  a reasonable time. Corrupted section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+  We now check more thoroughly and return error
+  so there is no slowdown.
+</description>
+<datefixed>2025-09-27</datefixed>
+<references> regressiontests/ossfuzz447396726/fuzz_xuindex-4824455521304576
+</references>
+<gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-012</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447421051</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time reading fuzz_str_offsets testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details did not complete in
+  a reasonable time. Corrupted section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+  We now check more thoroughly and return error
+  so there is no slowdown.
+</description>
+<datefixed>2025-09-27</datefixed>
+<references> regressiontests/447421051/fuzz_str_offsets-4859796391264256
+</references>
+<gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-011</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447445674</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time reading fuzz_str_offsets testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details did not complete in
+  a reasonable time. Corrupted section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+  We now check more thoroughly and return error
+  so there is no slowdown.
+</description>
+<datefixed>2025-09-27</datefixed>
+<references> regressiontests/ossfuzz447445674/fuzz_str_offsets-4859796391264256
+</references>
+<gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-010</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447457197</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time running fuzz_tie test case.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details did not complete in
+  a reasonable time.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+  We now check more thoroughly and return error
+  so there is no slowdown.
+</description>
+<datefixed>2025-09-27</datefixed>
+<references> regressiontests/ossfuzz447457197/fuzz_tie-4785079261134848
+</references>
+<gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202509-009</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 446726228</fuzzer>
