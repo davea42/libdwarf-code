@@ -72,6 +72,7 @@ dwarf_loclists.c \
 dwarf_lvn_name.c \
 dwarf_macho_loader.h \
 dwarf_machoread.c \
+dwarf_64machoread.c \
 dwarf_machoread.h \
 dwarf_macro.c \
 dwarf_macro.h \

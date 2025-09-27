@@ -39,6 +39,7 @@ libdwarf_src = [
   'dwarf_loclists.c',
   'dwarf_lvn_name.c',
   'dwarf_machoread.c',
+  'dwarf_64machoread.c',
   'dwarf_macro.c',
   'dwarf_macro5.c',
   'dwarf_memcpy_swap.c',

@@ -1,3 +1,73 @@
+id: DW202509-013
+fuzzer: oss fuzz 447396726
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_xuindex testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details did not complete in
+  a reasonable time. Corrupted section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-27
+references: regressiontests/ossfuzz447396726/fuzz_xuindex-4824455521304576
+gitfixid:
+tarrelease:
+endrec:  DW202509-013
+
+id: DW202509-012
+fuzzer: oss fuzz 447421051
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_str_offsets testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details did not complete in
+  a reasonable time. Corrupted section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-27
+references: regressiontests/ossfuzz447445674/fuzz_str_offsets-4859796391264256
+gitfixid:
+tarrelease:
+endrec:  DW202509-012
+
+id: DW202509-011
+fuzzer: oss fuzz 447445674
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_str_offsets testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object. 
+  Reading 64bit section details did not complete in
+  a reasonable time. Corrupted section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-27
+references: regressiontests/ossfuzz447445674/fuzz_str_offsets-4859796391264256 
+gitfixid: 
+tarrelease:
+endrec:  DW202509-011
+
+id: DW202509-010
+fuzzer: oss fuzz 447457197
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time running fuzz_tie test case.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object. 
+  Reading 64bit section details did not complete in
+  a reasonable time.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-27
+references: regressiontests/ossfuzz447457197/fuzz_tie-4785079261134848
+gitfixid: 
+tarrelease:
+endrec:  DW202509-010
 
 id: DW202509-009
 fuzzer: oss fuzz 446726228

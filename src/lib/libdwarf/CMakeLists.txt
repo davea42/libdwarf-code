@@ -21,7 +21,7 @@ dwarf_loclists.c
 dwarf_locationop_read.c
 dwarf_local_malloc.c
 dwarf_lvn_name.c
-dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
+dwarf_machoread.c dwarf_64machoread.c dwarf_macro.c dwarf_macro5.c
 dwarf_memcpy_swap.c
 dwarf_names.c
 dwarf_object_read_common.c dwarf_object_detector.c

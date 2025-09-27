@@ -33,6 +33,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef DWARF_MACHOREAD_H
 #define DWARF_MACHOREAD_H
 
+/*  There are reports that this limit of the number of bytes of
+    Macho object commands is a hard limit kernel in iOS.  */
+#define MAX_COMMANDS_SIZE  16464
+
 struct Dwarf_Universal_Arch_s;
 struct Dwarf_Universal_Head_s {
     Dwarf_Unsigned au_magic;
@@ -153,6 +157,34 @@ int _dwarf_load_macho_header(
 int _dwarf_load_macho_commands(
     dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
+
+int _dwarf_load_macho_header64(
+    dwarf_macho_object_access_internals_t *mfp,
+    int *errcode);
+int _dwarf_load_segment_command_content64(
+    dwarf_macho_object_access_internals_t *mfp,
+    struct generic_macho_command *mmp,
+    struct generic_macho_segment_command *msp,
+    Dwarf_Unsigned mmpindex,int *errcode);
+int
+_dwarf_macho_load_dwarf_section_details64(
+    dwarf_macho_object_access_internals_t *mfp,
+    struct generic_macho_segment_command *segp,
+    Dwarf_Unsigned segi,
+    int *errcode);
+
+int _dwarf_fill_in_uni_arch_64(
+    struct fat_arch_64 * fa,
+    struct Dwarf_Universal_Head_s *duhd,
+    void (*word_swap) (void *, const void *, unsigned long),
+    int *errcode);
+
+int _dwarf_is_known_segname(char *sname);
+/*  We do not expect non-ascii characters in section
+    names, they are defined by the compiler-writers
+    and ABI rules. We allow an empty name... */
+int _dwarf_not_ascii(const char *s);
+
 
 #ifdef __cplusplus
 }
