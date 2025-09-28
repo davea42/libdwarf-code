@@ -39,8 +39,10 @@ int _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     Dwarf_Debug dbg, Dwarf_Error*error);
 
 int _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
-    Dwarf_Unsigned * result,
-    Dwarf_Debug dbg, Dwarf_Error *error);
+    Dwarf_Unsigned * result);
+
+int _dwarf_uint64_add( Dwarf_Unsigned dw_lhs, Dwarf_Unsigned dw_rhs,
+    Dwarf_Unsigned *dw_result);
 
 #if 0
 /* See:

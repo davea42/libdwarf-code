@@ -557,8 +557,12 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
             /* CHECK OVERFLOW */
             alres = _dwarf_uint64_mult(adv_pc_val,
-                code_alignment_factor,&adv_pc,dbg,error);
+                code_alignment_factor,&adv_pc);
             if (alres == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_ARITHMETIC_OVERFLOW,
+                    "DW_DLE_ARITHMETIC_OVERFLOW "
+                    "unsigned 64bit multiply overflow");
                 FREELOCALMALLOC;
                 return DW_DLV_ERROR;
             }
@@ -568,10 +572,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "negative new location");
             }
 
-            possible_subsequent_pc = current_loc +
-                (Dwarf_Unsigned)adv_pc;
-            if (possible_subsequent_pc < current_loc &&
-                possible_subsequent_pc < adv_pc) {
+            alres = _dwarf_uint64_add(current_loc,(Dwarf_Unsigned)adv_pc,
+               &possible_subsequent_pc);
+            if (alres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "add overflowed");
@@ -614,8 +617,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             /*  CHECK OVERFLOW */
             adres = _dwarf_int64_mult(
                 (Dwarf_Signed)factored_N_value,
-                data_alignment_factor,
-                &result,dbg, error);
+                data_alignment_factor, &result,dbg,error);
             if (adres == DW_DLV_ERROR) {
                 FREELOCALMALLOC;
                 return DW_DLV_ERROR;
@@ -707,16 +709,20 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             adres = _dwarf_uint64_mult(
                 advloc_val,
                 code_alignment_factor,
-                &adv_loc,dbg,error);
+                &adv_loc);
             if (adres == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_ARITHMETIC_OVERFLOW,
+                    "DW_DLE_ARITHMETIC_OVERFLOW "
+                    "unsigned 64bit multiply overflow");
                 FREELOCALMALLOC;
                 return adres;
             }
 
             /* CHECK OVERFLOW add */
-            possible_subsequent_pc =  current_loc + adv_loc;
-            if (possible_subsequent_pc < current_loc &&
-                possible_subsequent_pc < adv_loc) {
+            adres = _dwarf_uint64_add(current_loc,adv_loc,
+                &possible_subsequent_pc);
+            if (adres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "add overflowed calcating subsequent pc");
@@ -756,8 +762,12 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             adres = _dwarf_uint64_mult(
                 advloc_val,
                 code_alignment_factor,
-                &adv_loc,dbg,error);
+                &adv_loc);
             if (adres == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_ARITHMETIC_OVERFLOW,
+                    "DW_DLE_ARITHMETIC_OVERFLOW "
+                    "unsigned 64bit multiply overflow");
                 FREELOCALMALLOC;
                 return adres;
             }
@@ -769,9 +779,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
 
             /* CHECK OVERFLOW add */
-            possible_subsequent_pc =  current_loc + adv_loc;
-            if (possible_subsequent_pc < current_loc &&
-                possible_subsequent_pc < adv_loc) {
+            adres = _dwarf_uint64_add(current_loc,adv_loc,
+               &possible_subsequent_pc);
+            if (adres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "add overflowed");
@@ -810,16 +820,19 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             /* CHECK OVERFLOW */
             adres = _dwarf_uint64_mult(
                 advloc_val,
-                code_alignment_factor,
-                &adv_loc,dbg,error);
+                code_alignment_factor,&adv_loc);
             if (adres == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_ARITHMETIC_OVERFLOW,
+                    "DW_DLE_ARITHMETIC_OVERFLOW "
+                    "unsigned 64bit multiply overflow");
                 FREELOCALMALLOC;
                 return adres;
             }
             /* CHECK OVERFLOW add */
-            possible_subsequent_pc =  current_loc + adv_loc;
-            if (possible_subsequent_pc < current_loc &&
-                possible_subsequent_pc < adv_loc) {
+            adres =_dwarf_uint64_add(current_loc,
+                adv_loc,&possible_subsequent_pc);
+            if (adres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "unsigned add overflowed");
@@ -856,16 +869,19 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             /* CHECK OVERFLOW */
             adres = _dwarf_uint64_mult(advloc_val,
-                code_alignment_factor,&adv_loc,
-                dbg,error);
+                code_alignment_factor,&adv_loc);
             if (adres == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg,error,
+                    DW_DLE_ARITHMETIC_OVERFLOW,
+                    "DW_DLE_ARITHMETIC_OVERFLOW "
+                    "unsigned 64bit multiply overflow");
                 FREELOCALMALLOC;
                 return adres;
             }
             /* CHECK OVERFLOW add */
-            possible_subsequent_pc =  current_loc + adv_loc;
-            if (possible_subsequent_pc < current_loc &&
-                possible_subsequent_pc < adv_loc) {
+            adres = _dwarf_uint64_add(current_loc,
+                adv_loc,&possible_subsequent_pc);
+            if (adres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "unsigned add overflowed");
@@ -1734,7 +1750,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             adres = _dwarf_int64_mult(
                 (Dwarf_Signed)offset,
                 data_alignment_factor,
-                &result,dbg, error);
+                &result,dbg,error);
             if (adres == DW_DLV_ERROR) {
                 FREELOCALMALLOC;
                 return DW_DLV_ERROR;

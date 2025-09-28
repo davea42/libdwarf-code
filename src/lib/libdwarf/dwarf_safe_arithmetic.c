@@ -111,11 +111,21 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     return DW_DLV_OK;
 }
 
+/*  An unsigned overflow is not an overflow to
+    C or C++. So the multiply is always safe to do
+    and cannot cause any exception in hardware.
+    The result is not implementation-defined.
+    In libdwarf we want to check
+    as it means there is something bogus
+    in the DWARF or object file.  See any C standard
+    "Multiplicative operators" */
 int
 _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
-    Dwarf_Unsigned * result, Dwarf_Debug dbg,
-    Dwarf_Error *error)
+    Dwarf_Unsigned * result)
 {
+#if 0
+    This attempts to avoid doing the mult if overflow,
+    but for C this is unnecessary.
     if (y && (x > (ULLONG_MAX/y))) {
         _dwarf_error_string(dbg,error,
             DW_DLE_ARITHMETIC_OVERFLOW,
@@ -126,6 +136,41 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     if (result) {
         *result = x*y;
     }
+#endif /*  */
+    Dwarf_Unsigned computed = x * y;
+    Dwarf_Unsigned bigger = 0;
+
+    *result = computed;
+    if (!computed) {
+        return DW_DLV_OK;
+    }
+    bigger = (x > y)?x:y;
+    if (computed < bigger)  {
+        return DW_DLV_ERROR;
+    }
+    return DW_DLV_OK;
+}
+
+/*  In C add is not a detectable overflow.
+    So we check with extra effort. */
+int
+_dwarf_uint64_add(
+    Dwarf_Unsigned dw_lhs,
+    Dwarf_Unsigned dw_rhs,
+    Dwarf_Unsigned *dw_result)
+{
+    Dwarf_Unsigned computed = dw_lhs + dw_rhs;
+    Dwarf_Unsigned bigger = 0;
+
+    if (!dw_lhs || !dw_rhs) {
+         *dw_result = computed;
+         return DW_DLV_OK;
+    }
+    bigger = (dw_lhs > dw_rhs)?dw_lhs:dw_rhs;
+    *dw_result = computed;
+    if (computed && computed < bigger)  {
+        return DW_DLV_ERROR;
+    }
     return DW_DLV_OK;
 }
 
@@ -134,7 +179,7 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
 https://stackoverflow.com/questions/3944505/
 detecting-signed-overflow-in-c-c
 */
-int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
+int _dwarf_int64_add(Dwarf_Signed l, Dwarf_Signed r,
     Dwarf_Signed *sum, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
@@ -161,4 +206,4 @@ int _dwarf_signed_add_check(Dwarf_Signed l, Dwarf_Signed r,
     }
     return DW_DLV_OK;
 }
-#endif /* 0 */
+#endif /* 0 ignoring add check */
