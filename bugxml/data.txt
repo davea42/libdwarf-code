@@ -1,3 +1,64 @@
+id: DW202509-016
+fuzzer: oss fuzz 447629673
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_globals testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+datefixed: 
+references: regressiontests/ossfuzz447629673/fuzz_die_cu_print-4591618901737472
+gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
+tarrelease:
+endrec:  DW202509-016
+
+id: DW202509-015
+fuzzer: oss fuzz 447580449
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_globals testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+datefixed: 
+references: regressiontests/ossfuzz447580449/fuzz_debuglink-469140951407001
+gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
+tarrelease:
+endrec:  DW202509-015
+
+id: DW202509-014
+fuzzer: oss fuzz 447580450
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_globals testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Reading 64bit section details (section name) 
+  did not complete in
+  a reasonable time. Corrupted 64bit section data
+  caused the slowness.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+datefixed: 2025-09-27
+references: regressiontests/ossfuzz447580450/fuzz_globals-4845056734593024
+gitfixid: 5a73dc27a73678b59d6b3a1d3fef07d48cd24597
+tarrelease:
+endrec:  DW202509-014
+
+
 id: DW202509-013
 fuzzer: oss fuzz 447396726
 datereported: 2025-09-25
@@ -11,7 +72,7 @@ description: Vulnerability involving slow access to
   caused the slowness.
   Been a vulnerability since Mach-o support added in 2018,
   though only exposed as of a couple of weeks ago..
-  We now check more thoroughly and return error
+  We now check more thoroughly and return error quickly
   so there is no slowdown.
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447396726/fuzz_xuindex-4824455521304576
@@ -32,7 +93,7 @@ description: Vulnerability involving slow access to
   caused the slowness.
   Been a vulnerability since Mach-o support added in 2018,
   though only exposed as of a couple of weeks ago..
-  We now check more thoroughly and return error
+  We now check more thoroughly and return error quickly
   so there is no slowdown.
 datefixed: 2025-09-27
 references: regressiontests/447421051/fuzz_str_offsets-4859796391264256
@@ -53,7 +114,7 @@ description: Vulnerability involving slow access to
   caused the slowness.
   Been a vulnerability since Mach-o support added in 2018,
   though only exposed as of a couple of weeks ago..
-  We now check more thoroughly and return error
+  We now check more thoroughly and return error quickly
   so there is no slowdown.
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447445674/fuzz_str_offsets-4859796391264256 
@@ -73,7 +134,7 @@ description: Vulnerability involving slow access to
   a reasonable time.
   Been a vulnerability since Mach-o support added in 2018,
   though only exposed as of a couple of weeks ago..
-  We now check more thoroughly and return error
+  We now check more thoroughly and return error quickly
   so there is no slowdown.
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447457197/fuzz_tie-4785079261134848
