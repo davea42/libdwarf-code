@@ -1,3 +1,158 @@
+id: DW202509-024
+fuzzer: oss fuzz 447805105
+datereported: 2025-09-26
+reportedby: David Korczynski
+vulnerability: Excessive time running fuzz_showsectgrp testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-29
+references: regressiontests/ossfuzz447805105/fuzz_showsectgrp-5078066159484928
+gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+tarrelease:
+endrec:  DW202509-024
+
+
+id: DW202509-023
+fuzzer: oss fuzz 447421051
+datereported: 2025-09-24
+reportedby: David Korczynski
+vulnerability: Excessive time running fuzz_crc_32 testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-29
+references: regressiontests/ossfuzz447421051/fuzz_crc_32-6747299494821888
+gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+tarrelease:
+endrec:  DW202509-023
+
+
+id: DW202509-022
+fuzzer: oss fuzz 447586815
+datereported: 2025-09-26
+reportedby: David Korczynski 
+vulnerability: Excessive time running fuzz_die_cu_e testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object. 
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-29
+references: regressiontests/ossfuzz447586815/fuzz_die_cu_e-6725653933391872
+gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+tarrelease:
+endrec:  DW202509-022
+
+id: DW202509-021
+fuzzer: oss fuzz 	447600209
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time running fuzz_debug_str testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-29
+references: regressiontests/ossfuzz447600209/fuzz_debug_str-6405288967340032
+gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+tarrelease:
+endrec:  DW202509-021
+
+
+id: DW202509-020
+fuzzer: oss fuzz 447797928 
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time running fuzz_init_b testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of segments times segment size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 2025-09-29
+references: regressiontests/ossfuzz447797928 fuzz_init_b-6276293315592
+gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+tarrelease: 
+endrec:  DW202509-020 
+
+
+
+id: DW202509-019
+fuzzer: oss fuzz 447702256
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_init_binary testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+datefixed: 2025-09-28
+references: regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
+gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
+tarrelease:
+endrec:  DW202509-019
+
+
+id: DW202509-018
+fuzzer: oss fuzz 447702256
+datereported: 2025-09-25
+reportedby: David Korczynski 
+vulnerability: Excessive time reading fuzz_init_binary testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+datefixed: 2025-09-28
+references: regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
+gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
+tarrelease: 
+endrec:  DW202509-018
+
+
+id: DW202509-017
+fuzzer: oss fuzz 447702256
+datereported: 2025-09-25
+reportedby: David Korczynski
+vulnerability: Excessive time reading fuzz_init_binary testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+datefixed: 2025-09-28
+references: regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064 
+gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
+tarrelease:
+endrec:  DW202509-017
+
+
 id: DW202509-016
 fuzzer: oss fuzz 447629673
 datereported: 2025-09-25

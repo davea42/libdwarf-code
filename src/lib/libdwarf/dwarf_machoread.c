@@ -494,15 +494,10 @@ _dwarf_macho_load_segment_commands(
         sizeof(struct generic_macho_segment_command),
         &segtotsize);
     if (res == DW_DLV_ERROR) { 
-        printf("ERROR loading segment commands a multiply "
-            " overflows\n");
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }
     if (segtotsize > MAX_COMMANDS_SIZE ) {
-        printf("ERROR loading segment commands the total byte size "
-            "of the commands (%lu)"
-            "is excessive\n",(unsigned long)segtotsize);
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }

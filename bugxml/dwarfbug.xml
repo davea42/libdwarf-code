@@ -1,6 +1,75 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202509-019</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447702256</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time reading fuzz_init_binary testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+</description>
+<datefixed>2025-09-28</datefixed>
+<references> regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
+</references>
+<gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-018</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447702256</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time reading fuzz_init_binary testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+</description>
+<datefixed>2025-09-28</datefixed>
+<references> regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
+</references>
+<gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-017</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447702256</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time reading fuzz_init_binary testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  Inappropriate non-ascii characters in section names.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018,
+  though only exposed as of a couple of weeks ago..
+</description>
+<datefixed>2025-09-28</datefixed>
+<references> regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
+</references>
+<gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202509-016</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 447629673</fuzzer>

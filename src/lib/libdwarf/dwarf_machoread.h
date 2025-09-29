@@ -34,8 +34,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DWARF_MACHOREAD_H
 
 /*  There are reports that this limit of the number of bytes of
-    Macho object commands is a hard limit kernel in iOS.  */
-#define MAX_COMMANDS_SIZE  16464
+    define MAX_COMMANDS_SIZE  16464
+    Macho object commands is a hard limit kernel in iOS, but
+    we have real non-iOS objects needing a bigger command
+    space.  */
+#define MAX_COMMANDS_SIZE  20000
 
 struct Dwarf_Universal_Arch_s;
 struct Dwarf_Universal_Head_s {
