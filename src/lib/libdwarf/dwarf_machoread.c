@@ -31,7 +31,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  See also dwarf_64machoread.c for the 64bit
     reading code. Makes it easier (using separate files
     view/edit simultaneously) to ensore the 32
-    and 64 bit behave equivalently. */
+    and 64 bit behave equivalently. 
+    A useful resource is
+    https://en.wikipedia.org/wiki/Mach-O */
 
 #include <config.h>
 #include <stdlib.h> /* calloc() free() malloc() */
@@ -53,6 +55,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_macho_loader.h"
 #include "dwarf_machoread.h"
 #include "dwarf_object_detector.h"
+#include "dwarf_safe_arithmetic.h"
 
 #if 0 /* dump_bytes */
 static void
@@ -350,6 +353,7 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     struct mach_header mh32;
     int res = 0;
     Dwarf_Unsigned inner = mfp->mo_inner_offset;
+    Dwarf_Unsigned commandsizetotal = 0;
 
     if (sizeof(mh32) > mfp->mo_filesize) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
@@ -372,9 +376,14 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     ASNAR(mfp->mo_copy_word,mfp->mo_header.flags,mh32.flags);
     mfp->mo_header.reserved = 0;
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
+    res = _dwarf_uint64_mult(mfp->mo_header.sizeofcmds,
+        mfp->mo_command_count,&commandsizetotal);
+    if (res == DW_DLV_ERROR) {
+        *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
+        return DW_DLV_ERROR;
+    }
     if (mfp->mo_command_count >= mfp->mo_filesize ||
-        mfp->mo_command_count >=  MAX_COMMANDS_SIZE ||
-        mfp->mo_header.sizeofcmds >  MAX_COMMANDS_SIZE ||
+        commandsizetotal >=  MAX_COMMANDS_SIZE ||
         mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
         (mfp->mo_header.sizeofcmds*mfp->mo_command_count >=
             mfp->mo_filesize)
@@ -473,12 +482,31 @@ _dwarf_macho_load_segment_commands(
     dwarf_macho_object_access_internals_t *mfp,int *errcode)
 {
     Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned segtotsize = 0;
+    int            res = 0;
     struct generic_macho_command *mmp = 0;
     struct generic_macho_segment_command *msp = 0;
 
     if (mfp->mo_segment_count < 1) {
         return DW_DLV_OK;
     }
+    res = _dwarf_uint64_mult(mfp->mo_segment_count,
+        sizeof(struct generic_macho_segment_command),
+        &segtotsize);
+    if (res == DW_DLV_ERROR) { 
+        printf("ERROR loading segment commands a multiply "
+            " overflows\n");
+        *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
+        return DW_DLV_ERROR;
+    }
+    if (segtotsize > MAX_COMMANDS_SIZE ) {
+        printf("ERROR loading segment commands the total byte size "
+            "of the commands (%lu)"
+            "is excessive\n",(unsigned long)segtotsize);
+        *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
+        return DW_DLV_ERROR;
+    }
+
     mfp->mo_segment_commands =
         (struct generic_macho_segment_command *)
         calloc((size_t)mfp->mo_segment_count,
@@ -501,7 +529,6 @@ _dwarf_macho_load_segment_commands(
     }
     for (i = 0 ; i < mfp->mo_command_count; ++i,++mmp) {
         unsigned cmd = (unsigned)mmp->cmd;
-        int res = DW_DLV_OK;
 
         if (cmd == LC_SEGMENT) {
             res = load_segment_command_content32(mfp,mmp,msp,
@@ -527,6 +554,7 @@ _dwarf_macho_load_dwarf_section_details32(
     struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi, int *errcode)
 {
+    int res = 0;
     Dwarf_Unsigned seci = 0;
     Dwarf_Unsigned seccount = segp->nsects;
     Dwarf_Unsigned secalloc = seccount+1;
@@ -538,22 +566,39 @@ _dwarf_macho_load_dwarf_section_details32(
     struct generic_macho_section *secs = 0;
 
     if (mfp->mo_dwarf_sections) {
+        Dwarf_Unsigned secssizetot = 0;
         struct generic_macho_section * originalsections =
             mfp->mo_dwarf_sections;
+
         if (!seccount) {
             /* No sections. Odd. Unexpected. */
             return DW_DLV_OK;
         }
         newcount = mfp->mo_dwarf_sectioncount + seccount;
+        res = _dwarf_uint64_mult(newcount,
+            sizeof(struct generic_macho_section),
+            &secssizetot);
+        if (res != DW_DLV_OK) {
+            /* overflow */
+            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            return DW_DLV_ERROR;
+        }
+        if (secssizetot > mfp->mo_filesize ) {
+
+            /*  Really supposed to refer to size on disk, this
+                is therefore approximate test. */
+             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            return DW_DLV_ERROR;
+        }
+
         secs = (struct generic_macho_section *)calloc(
-            newcount,
-            sizeof(struct generic_macho_section));
+            1,secssizetot);
         if (!secs) {
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_OK;
         }
         memcpy(secs,mfp->mo_dwarf_sections,
-            mfp->mo_dwarf_sectioncount *
+            mfp->mo_dwarf_sectioncount*
             sizeof(struct generic_macho_section));
         mfp->mo_dwarf_sections = secs;
         seci =  mfp->mo_dwarf_sectioncount ;
@@ -563,14 +608,29 @@ _dwarf_macho_load_dwarf_section_details32(
         secs->offset_of_sec_rec = curoff;
         secalloc = newcount;
     } else {
+        Dwarf_Unsigned secssizetot = 0;
+
+        newcount = secalloc;
+        res = _dwarf_uint64_mult(newcount,
+            sizeof(struct generic_macho_section),
+            &secssizetot);
+        if (res != DW_DLV_OK) {
+            /* overflow */
+            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            return DW_DLV_ERROR;
+        }  
+        if (secssizetot > mfp->mo_filesize ) {
+            /*  Really supposed to refer to size on disk, this
+                is therefore approximate sanity test. */
+             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            return DW_DLV_ERROR;
+        }
         secs = (struct generic_macho_section *)calloc(
-            secalloc,
-            sizeof(struct generic_macho_section));
+            1,secssizetot);
         if (!secs) {
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_OK;
         }
-        newcount = secalloc;
         mfp->mo_dwarf_sections = secs;
         mfp->mo_dwarf_sectioncount = secalloc;
         secs->offset_of_sec_rec = curoff;
@@ -583,7 +643,6 @@ _dwarf_macho_load_dwarf_section_details32(
 
     for (; seci < secalloc; ++seci,++secs,curoff += shdrlen ) {
         struct section mosec;
-        int res = 0;
         Dwarf_Unsigned endoffset = 0;
         Dwarf_Unsigned inner = mfp->mo_inner_offset;
         Dwarf_Unsigned offplussize = 0;
@@ -618,10 +677,9 @@ _dwarf_macho_load_dwarf_section_details32(
             *errcode  = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
-        _dwarf_safe_strcpy(secs->segname,
-            sizeof(secs->segname),
+        _dwarf_safe_strcpy(secs->segname, sizeof(secs->segname),
             mosec.segname,sizeof(mosec.segname));
-        if (!secs->segname[0]) {
+        if (!_dwarf_is_known_segname(secs->segname)) {
             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
@@ -632,9 +690,10 @@ _dwarf_macho_load_dwarf_section_details32(
         ASNAR(mfp->mo_copy_word,secs->reloff,mosec.reloff);
         ASNAR(mfp->mo_copy_word,secs->nreloc,mosec.nreloc);
         ASNAR(mfp->mo_copy_word,secs->flags,mosec.flags);
-
-        offplussize = secs->offset+secs->size;
-        if (offplussize < secs->offset || offplussize< secs->size){
+        /*offplussize = secs->offset+secs->size; */
+        res = _dwarf_uint64_add(secs->offset,secs->size,
+            &offplussize);
+        if (res == DW_DLV_ERROR){
             /* overflow in add */
             *errcode  = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
@@ -695,6 +754,12 @@ _dwarf_macho_load_dwarf_sections(
         /* We do not think it can have DWARF */
         return DW_DLV_OK;
     }
+    if (mfp->mo_segment_count > MAX_COMMANDS_SIZE) {
+        /*  It's really bad, the size is supposed to be size on disk,
+            so this is a likely silly check. */
+        *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+        return DW_DLV_ERROR;
+    }
     for ( ; segi < mfp->mo_segment_count; ++segi,++segp) {
         int res = 0;
         if (0 == strcmp(segp->segname,"__PAGEZERO")) {
@@ -727,6 +792,7 @@ _dwarf_load_macho_commands(
     unsigned segment_command_count = 0;
     int res = 0;
     Dwarf_Unsigned inner = mfp->mo_inner_offset;
+    Dwarf_Unsigned commandsizetotal = 0;
 
     if (mfp->mo_command_count >= mfp->mo_filesize) {
         /* corrupt object. */
@@ -759,6 +825,7 @@ _dwarf_load_macho_commands(
         }
         ASNAR(mfp->mo_copy_word,mcp->cmd,mc.cmd);
         ASNAR(mfp->mo_copy_word,mcp->cmdsize,mc.cmdsize);
+        commandsizetotal += mcp->cmdsize;
         mcp->offset_this_command = curoff;
         curoff += mcp->cmdsize;
         if (mcp->cmdsize > mfp->mo_filesize ||
@@ -774,6 +841,7 @@ _dwarf_load_macho_commands(
         }
     }
     mfp->mo_segment_count = segment_command_count;
+    mfp->mo_segment_size_total = commandsizetotal;
     res = _dwarf_macho_load_segment_commands(mfp,errcode);
     if (res != DW_DLV_OK) {
         free(mfp->mo_commands);

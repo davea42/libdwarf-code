@@ -145,6 +145,8 @@ typedef struct dwarf_macho_filedata_s {
     Dwarf_Unsigned  mo_offset_after_commands;
 
     Dwarf_Unsigned mo_segment_count;
+    Dwarf_Unsigned mo_segment_size_total;
+
     struct generic_macho_segment_command *mo_segment_commands;
 
     Dwarf_Unsigned mo_dwarf_sectioncount;
