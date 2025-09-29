@@ -1,6 +1,116 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202509-024</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447805105</fuzzer>
+<datereported>2025-09-26</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time running fuzz_showsectgrp testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</description>
+<datefixed>2025-09-29</datefixed>
+<references> regressiontests/ossfuzz447805105/fuzz_showsectgrp-5078066159484928
+</references>
+<gitfixid>f5261095a4a217cfe91d7d463cb9febf5adb9191</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-023</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447421051</fuzzer>
+<datereported>2025-09-24</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time running fuzz_crc_32 testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</description>
+<datefixed>2025-09-29</datefixed>
+<references> regressiontests/ossfuzz447421051/fuzz_crc_32-6747299494821888
+</references>
+<gitfixid>f5261095a4a217cfe91d7d463cb9febf5adb9191</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-022</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447586815</fuzzer>
+<datereported>2025-09-26</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time running fuzz_die_cu_e testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</description>
+<datefixed>2025-09-29</datefixed>
+<references> regressiontests/ossfuzz447586815/fuzz_die_cu_e-6725653933391872
+</references>
+<gitfixid>481058cdd698baf281e49b1c3b3bfe3ccab75b86</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-021</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 	447600209</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time running fuzz_debug_str testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of commands times commands size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</description>
+<datefixed>2025-09-29</datefixed>
+<references> regressiontests/ossfuzz447600209/fuzz_debug_str-6405288967340032
+</references>
+<gitfixid>481058cdd698baf281e49b1c3b3bfe3ccab75b86</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202509-020</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 447797928</fuzzer>
+<datereported>2025-09-25</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Excessive time running fuzz_init_b testcase.
+</vulnerability>
+<description> Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  The count of segments times segment size is too large to be real.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</description>
+<datefixed>2025-09-29</datefixed>
+<references> regressiontests/ossfuzz447797928 fuzz_init_b-6276293315592
+</references>
+<gitfixid>481058cdd698baf281e49b1c3b3bfe3ccab75b86</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202509-019</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 447702256</fuzzer>

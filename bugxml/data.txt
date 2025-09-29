@@ -12,7 +12,7 @@ description: Vulnerability involving slow access to
   Been a vulnerability since Mach-o support added in 2018.
 datefixed: 2025-09-29
 references: regressiontests/ossfuzz447805105/fuzz_showsectgrp-5078066159484928
-gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+gitfixid: f5261095a4a217cfe91d7d463cb9febf5adb9191
 tarrelease:
 endrec:  DW202509-024
 
@@ -31,7 +31,7 @@ description: Vulnerability involving slow access to
   Been a vulnerability since Mach-o support added in 2018.
 datefixed: 2025-09-29
 references: regressiontests/ossfuzz447421051/fuzz_crc_32-6747299494821888
-gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+gitfixid: f5261095a4a217cfe91d7d463cb9febf5adb9191
 tarrelease:
 endrec:  DW202509-023
 
