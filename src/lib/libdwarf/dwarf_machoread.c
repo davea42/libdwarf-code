@@ -1066,12 +1066,7 @@ _dwarf_macho_object_access_internals_init(
     if (internals->mo_dwarf_sections) {
         sp = internals->mo_dwarf_sections+1;
     } else {
-        /*  There are no dwarf sections,
-            count better be zero. */
-        if (internals->mo_dwarf_sectioncount) {
-            *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
-            return DW_DLV_ERROR;
-        }
+        /*  There are no dwarf sections, but could be .text */
     }
     for (i = 1; i < internals->mo_dwarf_sectioncount ; ++i,++sp) {
         int j = 1;

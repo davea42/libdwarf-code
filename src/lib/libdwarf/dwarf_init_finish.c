@@ -964,7 +964,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                                 obj_section_index,is_rela);
                         }
                     } else {
-                        /* Something is wrong with the ELF file. */
+                        /* Something is wrong with the object file. */
                         free(sections);
                         DWARF_DBG_ERROR(dbg, DW_DLE_ELF_SECT_ERR,
                             DW_DLV_ERROR);

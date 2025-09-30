@@ -337,11 +337,13 @@ dwarf_init_path_dl_a(const char *path,
             }
         }
     }
-    if (res != DW_DLV_OK) {
+    if (res != DW_DLV_OK && true_path_out_buffer && true_path_bufferlen) {
         /*  So as a last resort in case
             of data corruption in the object.
-            Lets try without
-            investigating debuglink  or dSYM. */
+            Lets try without investigating debuglink  or dSYM. 
+            But it is silly to do
+            if the previous call was the same already, hence
+            the checks on true_path_out_buffer and true_path_bufferlen. */
         res = dwarf_object_detector_path_b(path,
             0,
             0,
