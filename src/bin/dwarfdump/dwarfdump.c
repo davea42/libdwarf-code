@@ -1161,7 +1161,8 @@ process_one_file(
     {
         /*  This will go for the real main file, whether
             an underlying dSYM or via debuglink or
-            if those find nothing then the original. */
+            if those find nothing then the original. 
+            Unless glflags.gf_no_follow_debuglink is set! */
         char  *tb = temp_path_buf;
         size_t tblen = temp_path_buf_len;
         title = "dwarf_init_path_dl fails.";
