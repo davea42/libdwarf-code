@@ -379,15 +379,12 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     res = _dwarf_uint64_mult(mfp->mo_header.sizeofcmds,
         mfp->mo_command_count,&commandsizetotal);
     if (res == DW_DLV_ERROR) {
+        /* overflow  in multiply */
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
-    if (mfp->mo_command_count >= mfp->mo_filesize ||
-        commandsizetotal >=  MAX_COMMANDS_SIZE ||
-        mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
-        (mfp->mo_header.sizeofcmds*mfp->mo_command_count >=
-            mfp->mo_filesize)
-        ) {
+    if (commandsizetotal >= mfp->mo_filesize ||
+        commandsizetotal >=  MAX_COMMANDS_SIZE ) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -497,15 +494,17 @@ _dwarf_macho_load_segment_commands(
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }
+#if 0
+    Not appropriate, segtotsize is internal space,not file space.
     if (segtotsize > MAX_COMMANDS_SIZE ) {
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }
+#endif
 
     mfp->mo_segment_commands =
         (struct generic_macho_segment_command *)
-        calloc((size_t)mfp->mo_segment_count,
-        sizeof(struct generic_macho_segment_command));
+        calloc(1, segtotsize);
     if (!mfp->mo_segment_commands) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
@@ -516,7 +515,6 @@ _dwarf_macho_load_segment_commands(
 
     /*  This is a heuristic sanity check for a badly
         damaged object.
-        We have no information  better limits.
         See dwarfbug DW202412-009. */
     if ( mfp->mo_header.sizeofcmds > MAX_COMMANDS_SIZE) {
         *errcode = DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL;
