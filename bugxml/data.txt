@@ -1,3 +1,23 @@
+id: DW202510-001
+fuzzer: oss fuzz 448522799
+datereported: 2025-10-01
+reportedby: David Korczynski
+vulnerability: Excessive time running fuzz_gnu_index testcase.
+product: libdwarf
+description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  A segment name is incorrect.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+datefixed: 
+references: regressiontests/ossfuzz448522799/fuzz_gnu_index-5175853874216960
+gitfixid: 
+tarrelease: 
+endrec:  DW202510-001dwarf_64machoread.c
+
+
+
 id: DW202509-024
 fuzzer: oss fuzz 447805105
 datereported: 2025-09-26
@@ -10,10 +30,10 @@ description: Vulnerability involving slow access to
   We now check more thoroughly and return error quickly
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
-datefixed: 2025-09-29
+datefixed: 2025-09-30
 references: regressiontests/ossfuzz447805105/fuzz_showsectgrp-5078066159484928
-gitfixid: f5261095a4a217cfe91d7d463cb9febf5adb9191
-tarrelease:
+gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-024
 
 
@@ -32,7 +52,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-29
 references: regressiontests/ossfuzz447421051/fuzz_crc_32-6747299494821888
 gitfixid: f5261095a4a217cfe91d7d463cb9febf5adb9191
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-023
 
 
@@ -51,7 +71,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-29
 references: regressiontests/ossfuzz447586815/fuzz_die_cu_e-6725653933391872
 gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-022
 
 id: DW202509-021
@@ -69,7 +89,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-29
 references: regressiontests/ossfuzz447600209/fuzz_debug_str-6405288967340032
 gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-021
 
 
@@ -88,7 +108,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-29
 references: regressiontests/ossfuzz447797928 fuzz_init_b-6276293315592
 gitfixid: 481058cdd698baf281e49b1c3b3bfe3ccab75b86
-tarrelease: 
+tarrelease:  Predicting 2.2.0
 endrec:  DW202509-020 
 
 
@@ -109,7 +129,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-28
 references: regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
 gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-019
 
 
@@ -129,7 +149,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-28
 references: regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
 gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
-tarrelease: 
+tarrelease:  Predicting 2.2.0
 endrec:  DW202509-018
 
 
@@ -149,7 +169,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-28
 references: regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064 
 gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-017
 
 
@@ -169,7 +189,7 @@ description: Vulnerability involving slow access to
 datefixed: 
 references: regressiontests/ossfuzz447629673/fuzz_die_cu_print-4591618901737472
 gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-016
 
 id: DW202509-015
@@ -188,7 +208,7 @@ description: Vulnerability involving slow access to
 datefixed: 
 references: regressiontests/ossfuzz447580449/fuzz_debuglink-469140951407001
 gitfixid: 972fbafe2c39eca740512751258ff760753fc9f3
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-015
 
 id: DW202509-014
@@ -210,7 +230,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447580450/fuzz_globals-4845056734593024
 gitfixid: 5a73dc27a73678b59d6b3a1d3fef07d48cd24597
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-014
 
 
@@ -232,7 +252,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447396726/fuzz_xuindex-4824455521304576
 gitfixid: 5a73dc27a73678b59d6b3a1d3fef07d48cd24597
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-013
 
 id: DW202509-012
@@ -253,7 +273,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-27
 references: regressiontests/447421051/fuzz_str_offsets-4859796391264256
 gitfixid: 5a73dc27a73678b59d6b3a1d3fef07d48cd24597
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-012
 
 id: DW202509-011
@@ -274,7 +294,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447445674/fuzz_str_offsets-4859796391264256 
 gitfixid:  5a73dc27a73678b59d6b3a1d3fef07d48cd24597
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-011
 
 id: DW202509-010
@@ -294,7 +314,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-27
 references: regressiontests/ossfuzz447457197/fuzz_tie-4785079261134848
 gitfixid:  5a73dc27a73678b59d6b3a1d3fef07d48cd24597
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-010
 
 id: DW202509-009
@@ -312,7 +332,7 @@ description: Vulnerability involving slow access to
 datefixed: 2025-09-23
 references: regressiontests/ossfuzz446726228/fuzz_debuglink-4854619680604160
 gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
-tarrelease:
+tarrelease: Predicting 2.2.0
 endrec:  DW202509-009
 
 
@@ -334,7 +354,7 @@ description: A corrupted MacOS objectfile containing
 datefixed: 2025-09-23
 references: regressiontests/ossfuzz446831123/fuzz_rng-6527551318327296
 gitfixid: 9c638a21357279b9e4b1ee0c4ff7a128c3f1632e
-tarrelease:
+tarrelease:  Predicting 2.2.0
 endrec:  DW202509-008
 
 
