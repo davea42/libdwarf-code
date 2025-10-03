@@ -1,3 +1,166 @@
+2025-10-02:  David Anderson
+    commit ca60b2611f1a12d631b3fff17a205f4b17588250
+
+    A change in current month, and minor updates
+    to the recent vulnerability reports from oss fuzz.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-10-02:  David Anderson
+    commit 2ddab336b7d1f236fe40807ab75a558a60178517
+
+    Shorten code by taking advantage of safe-multipy
+    creating one important size and check that against
+    relevant values. Easier to read too.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2025-09-30:  David Anderson
+    commit 43bb5458f5600d231f1e11d31cf2b29748fd1925
+
+    Added a test to avoid duplicating initialization work
+    (user options in (for example)dwarfdump
+    determine if it was duplicative.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+    Correct a one-line comment.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+    Remove a corruption check, capabilities added this
+    month made the check incorrect now.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+    Updated the MAX_COMMANDS_SIZE sanity value from 20000
+    to 30000 as a real Mach-o object (in regressiontests) has 23000
+    bytes of command data.
+    Some corrupted Mach-o objects  have garbage values
+    so the maximim is useful.
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+
+2025-09-30:  David Anderson
+    commit 3e57b1cc6bc139c9388affa6b6830cca35c2aceb
+
+    Corrected a comment.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-09-29:  David Anderson
+    commit fc4771d82cfdcf76e82420ecd17a6957896c996c
+
+    Now listing DW202509-001 through -024.
+    Bugs found by oss fuzz and now fixed.
+    They were all issues when, in 2018, we wrote the code
+    for reading mach-o objects.
+    Updated to latest bug data
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-09-29:  David Anderson
+    commit f5261095a4a217cfe91d7d463cb9febf5adb9191
+
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+    Final enhancements to mach-o reading.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+
+2025-09-29:  David Anderson
+    commit 481058cdd698baf281e49b1c3b3bfe3ccab75b86
+
+    Changes to detect corruption.
+    ossfuzz447797928
+
+    Mach-o object file, corrupted...
+    Failure from not checking that the
+    number of commands and command_size
+    were sensible and appropriate.
+
+    Theses failure to detect began in 2018
+    when the code was first written.
+            modified:   dwarf_64machoread.c
+            modified:   dwarf_machoread.c
+            modified:   dwarf_machoread.h
+
+2025-09-28:  David Anderson
+    commit c1f5ca9d6c90a1b83fd73e84979eb856d965f308
+
+    More vulnerabilities listed.
+    All fixed, we believe.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-09-28:  David Anderson
+    commit 972fbafe2c39eca740512751258ff760753fc9f3
+
+    We need to check for add and multiply overflows everwhere (even in
+    simply reading object files).
+    These issues arrive in corrupt object files, and we
+    want to catch all such.
+    Now the _dwarf_uint64_mult is easily used everywhere in libdwarf.
+    And _dwarf_uint64_add() is easily used everywhere in libdwarf.
+
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+
+2025-09-27:  David Anderson
+    commit 427ad75a4dc2b52568c4490bd0e201e5d621b1fe
+
+    With latest vulnerabilities (all fixed
+    in libdwarf source).
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-09-27:  David Anderson
+    commit 5a73dc27a73678b59d6b3a1d3fef07d48cd24597
+
+    Newest vulnerabilties: 4 more mach-o object issues.
+            modified:   bugxml/data.txt
+
+    Tests for these four vulnerabilities
+
+    DW202509-013 new :   ossfuzz447396726
+    DW202509-012 new :   ossfuzz447421051
+    DW202509-011 new :   ossfuzz447445674
+    DW202509-010 new :   ossfuzz447457197
+    All these test for  vunerabilities when reading
+    corrupted Mach-o object files
+
+    All four filed 25 September 2025 by oss fuzz
+    system, with test cases.
+    All have been a vulnerability since Mach-o support added in 2018.
+
+    adding dwarf_64machoread.c to the source list.
+
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+
+    Split out src/lib/libdwarf/dwarf_64machoread.c so the
+    *64() functions in dwarf_64machoread.c
+    and the *32() functions in dwarf_machoread.c
+    This makes it easy to see that 32bit and 64bit source
+    is properly equivalent (bring up each an an editor to
+    see this).
+
+    modified: src/lib/libdwarf/dwarf_64machoread.c
+    modified: src/lib/libdwarf/dwarf_machoread.c
+
+2025-09-25:  David Anderson
+    commit 6c37ac55142d714c77dccb96498f22e826a5a607
+
+    Up to date with git log, just now fixed
+    three issues found be CoverityScan.
+            modified:   ChangeLog
+
 2025-09-25:  David Anderson
     commit d03b6e67753f33b116b7bd3f2b2422988209aed7
 
