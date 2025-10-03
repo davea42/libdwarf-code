@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of October 2025</p>
-<p> Record count: 228 </p>
+<p> Record count: 230 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -7484,7 +7484,64 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>datefixed:</p>
 <p>references: regressiontests/ossfuzz448522799/fuzz_gnu_index-5175853874216960
 </p>
-<p>gitfixid:</p>
+<p>gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202510-002">229) DW202510-002</h3>
+<p>id: DW202510-002
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 448717186
+</p>
+<p>datereported: 2025-09-30
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Excessive time running fuzz_debug_str testcase.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  A segment name is incorrect.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</p>
+<p>datefixed:</p>
+<p>references: regressiontests/ossfuzz448717186/
+</p>
+<p>gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202510-003">230) DW202510-003</h3>
+<p>id: DW202510-003
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 449018019
+</p>
+<p>datereported: 2025-10-02
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Excessive time running fuzz_crc_32 testcase.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Vulnerability involving slow access to
+  a corrupted Mach-o object.
+  A segment name is incorrect.
+  We now check more thoroughly and return error quickly
+  so there is no slowdown.
+  Been a vulnerability since Mach-o support added in 2018.
+</p>
+<p>datefixed:</p>
+<p>references: regressiontests/ossfuzz449018019/
+</p>
+<p>gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
