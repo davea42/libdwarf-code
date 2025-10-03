@@ -64,8 +64,11 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     Dwarf_Signed * result, Dwarf_Debug dbg,
     Dwarf_Error*error)
 {
-    if (result) {
-        *result = 0;
+    if (!x || !y) {
+        if (result) {
+            *result = 0;
+        }
+        return DW_DLV_OK;
     }
     if (sizeof(Dwarf_Signed) != 8) {
         _dwarf_error_string(dbg,error,
@@ -140,8 +143,10 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     Dwarf_Unsigned computed = x * y;
     Dwarf_Unsigned bigger = 0;
 
-    *result = computed;
-    if (!computed) {
+    if(result) {
+        *result = computed;
+    }
+    if (!x || !y) {
         return DW_DLV_OK;
     }
     bigger = (x > y)?x:y;
@@ -151,25 +156,27 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     return DW_DLV_OK;
 }
 
-/*  In C add is not a detectable overflow.
+/*  In C unsigned add is not a detectable overflow.
     So we check with extra effort. */
 int
 _dwarf_uint64_add(
     Dwarf_Unsigned dw_lhs,
     Dwarf_Unsigned dw_rhs,
-    Dwarf_Unsigned *dw_result)
+    Dwarf_Unsigned *result)
 {
     Dwarf_Unsigned computed = dw_lhs + dw_rhs;
     Dwarf_Unsigned bigger = 0;
 
     if (!dw_lhs || !dw_rhs) {
-         *dw_result = computed;
+         *result = computed;
          return DW_DLV_OK;
     }
     bigger = (dw_lhs > dw_rhs)?dw_lhs:dw_rhs;
-    *dw_result = computed;
     if (computed && computed < bigger)  {
         return DW_DLV_ERROR;
+    }
+    if (result) {
+        *result = computed;
     }
     return DW_DLV_OK;
 }
@@ -183,6 +190,12 @@ int _dwarf_int64_add(Dwarf_Signed l, Dwarf_Signed r,
     Dwarf_Signed *sum, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
+    if (!l || !r) {
+        if (sum) {
+            *sum = l + r;
+        }
+        return DW_DLV_OK;
+    }
     if (l >= 0) {
         if ((0x7fffffffffffffffLL - l) < r) {
             _dwarf_error_string(dbg,error,
