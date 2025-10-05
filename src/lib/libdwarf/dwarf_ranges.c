@@ -465,9 +465,7 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
         return DW_DLV_OK;
     }
     /*  If the DIE passed in has a DW_AT_ranges attribute
-        we will use that DIE ranges offset.
-        Otherwise we use the DW_AT_ranges from the
-        CU DIE (if any). */
+        we use that DIE ranges offset.  */
     res = _dwarf_determine_die_range_offset(dw_dbg,
         dw_die,&have_die_ranges_offset,&die_ranges_offset,
         &have_die_base_addr,&die_base_addr,dw_error);
