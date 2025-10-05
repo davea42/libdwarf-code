@@ -1162,6 +1162,8 @@
 
     <b>Changes 2.1.0 to 2.2.0</b>
 
+    Released 10 October 2025
+
     Added functions dwarf_lvn_name_direct()
     dwarf_lvn_name() dwarf_lvn_table_entry()
     enabling access to all the fields relevant in
@@ -1176,8 +1178,8 @@
     Corrected a bug in reading line table data
     that used DW_FORM_strx (and other strx forms).
 
-    Fixed a failure to handle a corrupted Apple Mach-o object
-    file.
+    Fixed various failures to handle corrupted
+    (fuzzed) Apple Mach-o object files.
 
     <b>Changes 2.0.0 to 2.1.0</b>
 
