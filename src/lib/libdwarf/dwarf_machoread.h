@@ -34,10 +34,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DWARF_MACHOREAD_H
 
 /*  There are reports that this limit of the number of bytes of
-        define MAX_COMMANDS_SIZE  16464
+    define MAX_COMMANDS_SIZE  16464
     Macho object commands is a hard limit kernel in iOS, but
     we have real non-iOS objects needing a bigger command
-    space (one having 22848 bytes): 
+    space (one having 22848 bytes):
     regressiontests/macho-kask/dd64copy.macho  */
 #define MAX_COMMANDS_SIZE  30000
 
@@ -190,7 +190,6 @@ int _dwarf_is_known_segname(char *sname);
     names, they are defined by the compiler-writers
     and ABI rules. We allow an empty name... */
 int _dwarf_not_ascii(const char *s);
-
 
 #ifdef __cplusplus
 }

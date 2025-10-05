@@ -366,7 +366,7 @@ dwarf_dealloc_ranges(Dwarf_Debug dbg, Dwarf_Ranges * rangesbuf,
     dwarf_dealloc(dbg,rangesbuf, DW_DLA_RANGES);
 }
 
-/*  Also used to determine DIE base_address,
+/*  In the past, determined DIE base_address,
     but that was wrong.
     Only a CU_die DW_AT_low_pc can provide
     a CU-wide base address and that is done when a CU is first
@@ -467,12 +467,7 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     /*  If the DIE passed in has a DW_AT_ranges attribute
         we will use that DIE ranges offset.
         Otherwise we use the DW_AT_ranges from the
-        CU DIE (if any)
-        If the DIE passed in has a DW_AT_low_pc
-        attribute we will use that as the ranges
-        base address, otherwise we use the
-        cu context base adddress (if present) ...
-        which may be incorrect... ? */
+        CU DIE (if any). */
     res = _dwarf_determine_die_range_offset(dw_dbg,
         dw_die,&have_die_ranges_offset,&die_ranges_offset,
         &have_die_base_addr,&die_base_addr,dw_error);

@@ -143,7 +143,7 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     Dwarf_Unsigned computed = x * y;
     Dwarf_Unsigned bigger = 0;
 
-    if(result) {
+    if (result) {
         *result = computed;
     }
     if (!x || !y) {
@@ -168,8 +168,8 @@ _dwarf_uint64_add(
     Dwarf_Unsigned bigger = 0;
 
     if (!dw_lhs || !dw_rhs) {
-         *result = computed;
-         return DW_DLV_OK;
+        *result = computed;
+        return DW_DLV_OK;
     }
     bigger = (dw_lhs > dw_rhs)?dw_lhs:dw_rhs;
     if (computed && computed < bigger)  {

@@ -56,8 +56,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_safe_arithmetic.h"
 
-
-
 /* load_macho_header64(dwarf_macho_object_access_internals_t *mfp) */
 int
 _dwarf_load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
@@ -67,7 +65,6 @@ _dwarf_load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     int res = 0;
     Dwarf_Unsigned inner = mfp->mo_inner_offset;
     Dwarf_Unsigned commandsizetotal = 0;
-
 
     if (sizeof(mh64) > mfp->mo_filesize) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
@@ -107,7 +104,6 @@ _dwarf_load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     mfp->mo_command_start_offset = sizeof(mh64);
     return DW_DLV_OK;
 }
-
 
 int
 _dwarf_load_segment_command_content64(
@@ -198,7 +194,8 @@ _dwarf_macho_load_dwarf_section_details64(
             return DW_DLV_OK;
         }
         newcount = mfp->mo_dwarf_sectioncount + seccount;
-        res = _dwarf_uint64_mult(newcount,sizeof(struct generic_macho_section),
+        res = _dwarf_uint64_mult(newcount,
+            sizeof(struct generic_macho_section),
             &secssizetot);
         if (res != DW_DLV_OK) {
             /* overflow */
@@ -209,7 +206,7 @@ _dwarf_macho_load_dwarf_section_details64(
 
             /*  Really supposed to refer to size on disk, this
                 is therefore approximate test. */
-             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
         secs = (struct generic_macho_section *)calloc(
@@ -232,19 +229,20 @@ _dwarf_macho_load_dwarf_section_details64(
         Dwarf_Unsigned secssizetot = 0;
 
         newcount = secalloc;
-        res = _dwarf_uint64_mult(newcount,sizeof(struct generic_macho_section),
+        res = _dwarf_uint64_mult(newcount,
+            sizeof(struct generic_macho_section),
             &secssizetot);
         if (res != DW_DLV_OK) {
             /* overflow */
             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
-        }   
+        }
         if (secssizetot > mfp->mo_filesize ) {
             /*  Really supposed to refer to size on disk, this
                 is therefore approximate test. */
-             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
-        }   
+        }
         secs = (struct generic_macho_section *)calloc(
             1,secssizetot);
         if (!secs) {
@@ -320,7 +318,7 @@ _dwarf_macho_load_dwarf_section_details64(
             return DW_DLV_ERROR;
         }
         /*  __text section size apparently refers to executable,
-            not dSYM, so do not check here 
+            not dSYM, so do not check here
             No check for __text.
             All sections in __DWARF checked  */
         if (0 == strcmp(secs->segname,"__DWARF")) {

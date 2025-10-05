@@ -31,7 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  See also dwarf_64machoread.c for the 64bit
     reading code. Makes it easier (using separate files
     view/edit simultaneously) to ensore the 32
-    and 64 bit behave equivalently. 
+    and 64 bit behave equivalently.
     A useful resource is
     https://en.wikipedia.org/wiki/Mach-O */
 
@@ -394,7 +394,6 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     return DW_DLV_OK;
 }
 
-
 int
 _dwarf_load_macho_header(dwarf_macho_object_access_internals_t *mfp,
     int *errcode)
@@ -490,7 +489,7 @@ _dwarf_macho_load_segment_commands(
     res = _dwarf_uint64_mult(mfp->mo_segment_count,
         sizeof(struct generic_macho_segment_command),
         &segtotsize);
-    if (res == DW_DLV_ERROR) { 
+    if (res == DW_DLV_ERROR) {
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }
@@ -580,7 +579,7 @@ _dwarf_macho_load_dwarf_section_details32(
 
             /*  Really supposed to refer to size on disk, this
                 is therefore approximate test. */
-             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
 
@@ -611,11 +610,11 @@ _dwarf_macho_load_dwarf_section_details32(
             /* overflow */
             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
-        }  
+        }
         if (secssizetot > mfp->mo_filesize ) {
             /*  Really supposed to refer to size on disk, this
                 is therefore approximate sanity test. */
-             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
+            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
         secs = (struct generic_macho_section *)calloc(
@@ -693,7 +692,7 @@ _dwarf_macho_load_dwarf_section_details32(
         }
         /*  __text section size apparently refers to executable,
             not dSYM, so do not check here:
-            No check for __text. 
+            No check for __text.
             So all sections in __DWARF checked  */
         if (0 == strcmp(secs->segname,"__DWARF")) {
             if (secs->offset > mfp->mo_filesize ||

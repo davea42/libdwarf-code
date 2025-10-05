@@ -572,8 +572,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "negative new location");
             }
 
-            alres = _dwarf_uint64_add(current_loc,(Dwarf_Unsigned)adv_pc,
-               &possible_subsequent_pc);
+            alres = _dwarf_uint64_add(current_loc,
+                (Dwarf_Unsigned)adv_pc,
+                &possible_subsequent_pc);
             if (alres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -780,7 +781,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
             /* CHECK OVERFLOW add */
             adres = _dwarf_uint64_add(current_loc,adv_loc,
-               &possible_subsequent_pc);
+                &possible_subsequent_pc);
             if (adres == DW_DLV_ERROR) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
