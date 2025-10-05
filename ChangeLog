@@ -1,3 +1,59 @@
+2025-10-05:  David Anderson
+    commit f331022af93b2e21fe9d42ecee6a7180882e272b
+
+    Fixing indents, too-long lines,
+    and trailing whitespace to follow
+    the libdwarf codingstyle.
+    All in src/lib/libdwarf:
+            modified:   dwarf_64machoread.c
+            modified:   dwarf_frame.c
+            modified:   dwarf_generic_init.c
+            modified:   dwarf_machoread.c
+            modified:   dwarf_machoread.h
+            modified:   dwarf_ranges.c
+            modified:   dwarf_safe_arithmetic.c
+
+2025-10-05:  David Anderson
+    commit 846d2f297d5945f101591779fca969609209db9c
+
+    Minor update to 2.2.0 Changes
+            modified:   doc/libdwarf.dox
+
+2025-10-04:  David Anderson
+    commit 69c18567fced10e1b802a10f7b9dd234bceb489d
+
+    Date update for Oct 10 release.
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+
+2025-10-04:  David Anderson
+    commit dcefe605c97728304b28f9fa53dec10eb6324753
+
+    Remove trailing whitespace.
+            modified:   dwarfdump/dwarfdump.c
+
+2025-10-03:  David Anderson
+    commit 47febef9d37fc55b0a2763c41d586954569f04ce
+
+    Fixed a bug!  For a special case it was just...wrong.
+    Fixed.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+
+2025-10-03:  David Anderson
+    commit 365a18162ab27dfc0ebe46958d5316b3908f312f
+
+    New bug reports.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-10-03:  David Anderson
+    commit 564d71c3375b11d492375b5578bd397d830c1978
+
+    Up to date
+            modified:   ChangeLog
+
 2025-10-02:  David Anderson
     commit ca60b2611f1a12d631b3fff17a205f4b17588250
 
