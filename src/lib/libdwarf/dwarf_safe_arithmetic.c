@@ -65,9 +65,7 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
     Dwarf_Error*error)
 {
     if (!x || !y) {
-        if (result) {
-            *result = 0;
-        }
+        *result = 0;
         return DW_DLV_OK;
     }
     if (sizeof(Dwarf_Signed) != 8) {
@@ -108,9 +106,7 @@ _dwarf_int64_mult(Dwarf_Signed x, Dwarf_Signed y,
             "Signed 64bit multiply overflow(e)");
         return DW_DLV_ERROR;
     }
-    if (result) {
-        *result = x * y;
-    }
+    *result = x * y;
     return DW_DLV_OK;
 }
 
@@ -136,16 +132,12 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
             "unsigned 64bit multiply overflow");
         return DW_DLV_ERROR;
     }
-    if (result) {
-        *result = x*y;
-    }
+    *result = x*y;
 #endif /*  */
     Dwarf_Unsigned computed = x * y;
     Dwarf_Unsigned bigger = 0;
 
-    if (result) {
-        *result = computed;
-    }
+    *result = computed;
     if (!x || !y) {
         return DW_DLV_OK;
     }
@@ -175,9 +167,7 @@ _dwarf_uint64_add(
     if (computed && computed < bigger)  {
         return DW_DLV_ERROR;
     }
-    if (result) {
-        *result = computed;
-    }
+    *result = computed;
     return DW_DLV_OK;
 }
 
@@ -187,13 +177,11 @@ https://stackoverflow.com/questions/3944505/
 detecting-signed-overflow-in-c-c
 */
 int _dwarf_int64_add(Dwarf_Signed l, Dwarf_Signed r,
-    Dwarf_Signed *sum, Dwarf_Debug dbg,
+    Dwarf_Signed *result, Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     if (!l || !r) {
-        if (sum) {
-            *sum = l + r;
-        }
+        *result = l + r;
         return DW_DLV_OK;
     }
     if (l >= 0) {
@@ -214,9 +202,7 @@ int _dwarf_int64_add(Dwarf_Signed l, Dwarf_Signed r,
             return DW_DLV_ERROR;
         }
     }
-    if (sum) {
-        *sum = l + r;
-    }
+    *result = l + r;
     return DW_DLV_OK;
 }
 #endif /* 0 ignoring add check */
