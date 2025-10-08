@@ -24,6 +24,8 @@
 
     Cleanup, removing useless code so that
     always all three arguments required and used. Simpler.
+    The functions are private to libdwarf, so this
+    change is invisible to library users.
             modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
             modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
 
