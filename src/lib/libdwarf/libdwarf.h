@@ -4633,7 +4633,8 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
 
     The function allows callers to calculate
     actual address from .debug_ranges data
-    in a simple and efficient way.
+    in a simple and efficient way by returning
+    the CU DIE ranges baseaddress.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -4655,12 +4656,12 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     dw_baseaddress will be set with the correct pc value.
     Otherwise zero will be set through dw_baseaddress.
     @param dw_at_ranges_offset_present
-    Set to 1 (TRUE) if the dw_die has the attribute
-    DW_AT_ranges, otherwise set to zero (FALSE).
+    Set to 1 (TRUE) if dw_die has the attribute DW_AT_ranges.
     @param dw_at_ranges_offset
-    Set to the value of dw_die DW_AT_ranges attribute
-    of dw_die if and only iff
-    dw_at_ranges_offset_present was set to 1.
+    Set to the value of DW_AT_ranges attribute
+    of dw_die if dw_at_ranges_offset_present was set to TRUE.
+    The offset is of the beginning of the
+    .debug_ranges section range lists applying to this DIE.
     @param dw_error
     The usual error detail return pointer.
     @return
