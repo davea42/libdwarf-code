@@ -476,7 +476,6 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
             *dw_error = 0;
         }
     }
-
     context = dw_die->di_cu_context;
     if (!context) {
         _dwarf_error_string(dw_dbg, dw_error,
@@ -486,14 +485,10 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
         return DW_DLV_ERROR;
     }
     if (have_die_ranges_offset) {
+        /*  From dw_die */
         local_ranges_offset_present = have_die_ranges_offset;
         local_ranges_offset = die_ranges_offset;
-    } else {
-        local_ranges_offset_present =
-            context->cc_at_ranges_offset_present;
-        local_ranges_offset =
-            context->cc_at_ranges_offset;
-    }
+    } 
     if (dw_at_ranges_offset) {
         *dw_at_ranges_offset = local_ranges_offset;
     }
