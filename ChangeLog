@@ -1,3 +1,44 @@
+2025-10-08:  David Anderson
+    commit cb83f9301367eadb5e5469daa36087122977297f
+
+    Final version for release. No changes.
+            modified:   doc/libdwarf.pdf
+
+2025-10-08:  David Anderson
+    commit 1cdd80dd8ed85d79eed109c7d61289bedbbe64f1
+
+    Slight clarification of doxygen comments
+    about dwarf_get_ranges_baseaddress()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2025-10-08:  David Anderson
+    commit 61ca2ee22c68fde80ba1a720c95597633e04361e
+
+    Removing inappropriate code from
+    dwarf_get_ranges_baseaddress() so that the code
+    does what the documentation says the code does.
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2025-10-07:  David Anderson
+    commit 86583f85349abb7b930972df8e4c8a6095558cd8
+
+    Cleanup, removing useless code so that
+    always all three arguments required and used. Simpler.
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.c
+            modified:   src/lib/libdwarf/dwarf_safe_arithmetic.h
+
+2025-10-05:  David Anderson
+    commit ce12a7be01b28850bf32ac3bdbb53eec9c7d0730
+
+    Removing incorrect comment.
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2025-10-05:  David Anderson
+    commit 03502dfa5dda4b7971094506d2e385c5b6d0c828
+
+    Latest changes, nothing substantive.
+            modified:   ChangeLog
+
 2025-10-05:  David Anderson
     commit f331022af93b2e21fe9d42ecee6a7180882e272b
 
