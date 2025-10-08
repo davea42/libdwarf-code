@@ -20,7 +20,7 @@
 <references> regressiontests/ossfuzz449018019/
 </references>
 <gitfixid>43bb5458f5600d231f1e11d31cf2b29748fd1925</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202510-002</dwid>
@@ -42,7 +42,7 @@
 <references> regressiontests/ossfuzz448717186/
 </references>
 <gitfixid>43bb5458f5600d231f1e11d31cf2b29748fd1925</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202510-001</dwid>
@@ -64,7 +64,7 @@
 <references> regressiontests/ossfuzz448522799/fuzz_gnu_index-5175853874216960
 </references>
 <gitfixid>43bb5458f5600d231f1e11d31cf2b29748fd1925</gitfixid>
-<tarrelease></tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-024</dwid>
@@ -86,7 +86,7 @@
 <references> regressiontests/ossfuzz447805105/fuzz_showsectgrp-5078066159484928
 </references>
 <gitfixid>43bb5458f5600d231f1e11d31cf2b29748fd1925</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-023</dwid>
@@ -108,7 +108,7 @@
 <references> regressiontests/ossfuzz447421051/fuzz_crc_32-6747299494821888
 </references>
 <gitfixid>f5261095a4a217cfe91d7d463cb9febf5adb9191</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-022</dwid>
@@ -130,7 +130,7 @@
 <references> regressiontests/ossfuzz447586815/fuzz_die_cu_e-6725653933391872
 </references>
 <gitfixid>481058cdd698baf281e49b1c3b3bfe3ccab75b86</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-021</dwid>
@@ -152,7 +152,7 @@
 <references> regressiontests/ossfuzz447600209/fuzz_debug_str-6405288967340032
 </references>
 <gitfixid>481058cdd698baf281e49b1c3b3bfe3ccab75b86</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-020</dwid>
@@ -174,7 +174,7 @@
 <references> regressiontests/ossfuzz447797928 fuzz_init_b-6276293315592
 </references>
 <gitfixid>481058cdd698baf281e49b1c3b3bfe3ccab75b86</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-019</dwid>
@@ -197,7 +197,7 @@
 <references> regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
 </references>
 <gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-018</dwid>
@@ -220,7 +220,7 @@
 <references> regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
 </references>
 <gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-017</dwid>
@@ -243,7 +243,7 @@
 <references> regressiontests/ossfuzz447702256/fuzz_init_binary-4759449983320064
 </references>
 <gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-016</dwid>
@@ -266,7 +266,7 @@
 <references> regressiontests/ossfuzz447629673/fuzz_die_cu_print-4591618901737472
 </references>
 <gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-015</dwid>
@@ -289,7 +289,7 @@
 <references> regressiontests/ossfuzz447580449/fuzz_debuglink-469140951407001
 </references>
 <gitfixid>972fbafe2c39eca740512751258ff760753fc9f3</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-014</dwid>
@@ -315,7 +315,7 @@
 <references> regressiontests/ossfuzz447580450/fuzz_globals-4845056734593024
 </references>
 <gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-013</dwid>
@@ -340,7 +340,7 @@
 <references> regressiontests/ossfuzz447396726/fuzz_xuindex-4824455521304576
 </references>
 <gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-012</dwid>
@@ -365,7 +365,7 @@
 <references> regressiontests/447421051/fuzz_str_offsets-4859796391264256
 </references>
 <gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-011</dwid>
@@ -390,7 +390,7 @@
 <references> regressiontests/ossfuzz447445674/fuzz_str_offsets-4859796391264256
 </references>
 <gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-010</dwid>
@@ -414,7 +414,7 @@
 <references> regressiontests/ossfuzz447457197/fuzz_tie-4785079261134848
 </references>
 <gitfixid>5a73dc27a73678b59d6b3a1d3fef07d48cd24597</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-009</dwid>
@@ -436,7 +436,7 @@
 <references> regressiontests/ossfuzz446726228/fuzz_debuglink-4854619680604160
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-008</dwid>
@@ -460,7 +460,7 @@
 <references> regressiontests/ossfuzz446831123/fuzz_rng-6527551318327296
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-007</dwid>
@@ -483,7 +483,7 @@
 <references> regressiontests/ossfuzz446735540/fuzz_dnames-5931269398790144
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-006</dwid>
@@ -507,7 +507,7 @@
 <references> regressiontests/ossfuzz446856589/fuzz_tie-5831785406857216
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-005</dwid>
@@ -532,7 +532,7 @@
 <references> regressiontests/ossfuzz446746574/fuzz_aranges-4698786724380672
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-004</dwid>
@@ -554,7 +554,7 @@
 <references> regressiontests/ossfuzz446781574/fuzz_gdbindex-4712655307997184
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-003</dwid>
@@ -576,7 +576,7 @@
 <references> regressiontests/ossfuzz446729093/fuzz_init_binary-5396366991097856
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-002</dwid>
@@ -600,7 +600,7 @@
 <references> regressiontests/ossfuzz446726229/fuzz_globals-5387186766938112
 </references>
 <gitfixid>9c638a21357279b9e4b1ee0c4ff7a128c3f1632e</gitfixid>
-<tarrelease>Predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202509-001</dwid>
@@ -620,7 +620,7 @@
 <references> regressiontests/ossfuzz446356422/fuzz_crc_32-4931308642172928
 </references>
 <gitfixid>651ceb7069b311911152a87efcf7c2fc44925f67</gitfixid>
-<tarrelease>predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202508-001</dwid>
@@ -643,7 +643,7 @@
 <references> regressiontests/ossfuzz437060549/fuzz_globals-4771320878661632
 </references>
 <gitfixid>efa242489a69b13bc6eedc6766880335ac42d158</gitfixid>
-<tarrelease>predicting 2.2.0</tarrelease>
+<tarrelease>libdwarf-2.2.0.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202502-001</dwid>
