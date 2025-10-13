@@ -7421,6 +7421,8 @@ static Dwarf_Bool attributes_encoding_do_init = TRUE;
     Only attributes with forms:
     DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and
     DW_FORM_data are checked
+    See print_tag_attributes_usage.c for examples of
+    a better way to do this.
 */
 static void
 check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
@@ -7500,7 +7502,8 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
                 esb_constructor(&lesb);
 
                 esb_append_printf_i(&lesb,
-                    "%" DW_PR_DSd " wasted byte(s)",wasted_bytes);
+                    "%" DW_PR_DSd
+                    " wasted byte(s)",wasted_bytes);
                 DWARF_CHECK_ERROR2(attr_encoding_result,
                     get_AT_name(attr,pd_dwarf_names_print_on_error),
                     esb_get_string(&lesb));
@@ -7521,13 +7524,17 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     }
 }
 
-/* Print a detailed encoding usage per attribute -kE */
+/*  Print a detailed encoding standard usage per attribute -kE
+    This would be better done using tree setup so non-standard
+    attributes with the problem are noted.
+    See print_tag_attributes_usage.c for code supporting
+    and showing tree setups.
+*/
 int
 print_attributes_encoding(Dwarf_Debug dbg,
     Dwarf_Error* attr_error)
 {
     if (attributes_encoding_table) {
-        Dwarf_Bool print_header = TRUE;
         Dwarf_Unsigned total_entries = 0;
         Dwarf_Unsigned total_bytes_formx = 0;
         Dwarf_Unsigned total_bytes_leb128 = 0;
@@ -7540,12 +7547,11 @@ print_attributes_encoding(Dwarf_Debug dbg,
 
         for (index = 0; index < DW_AT_lo_user; ++index) {
             if (attributes_encoding_table[index].leb128) {
-                if (print_header) {
-                    printf("\n*** SPACE USED BY ATTRIBUTE "
+                {
+                    printf("\n*** SPACE USED AND WASTED BY ATTRIBUTE "
                         "ENCODINGS ***\n");
-                    printf("Nro Attribute Name            "
-                        "   Entries     Data_x     leb128 Rate\n");
-                    print_header = FALSE;
+                    printf("Nro Attribute Name                 "
+                        "   Entries     Data_x     leb128-Better\n");
                 }
                 entries = attributes_encoding_table[index].entries;
                 bytes_formx = attributes_encoding_table[index].formx;
@@ -7554,16 +7560,17 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 total_entries += entries;
                 total_bytes_formx += bytes_formx;
                 total_bytes_leb128 += bytes_leb128;
-                saved_rate = (float)(bytes_leb128 * 100 /
-                    bytes_formx);
+                saved_rate = 0.0;
+                if (bytes_formx) {
+                    saved_rate = (((float)bytes_formx
+                        -(float)bytes_leb128)/
+                        (float)bytes_formx) * 100;
+                }
                 printf("%3d %-25s "
-                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu /* Entries */
-                    " "
-                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu /* FORMx */
-                    " "
-                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu /* LEB128 */
-                    " "
-                    "%3.0f%%"
+                    "  %10" DW_PR_DUu /* Entries */
+                    "  %10" DW_PR_DUu /* FORMx */
+                    "  %10" DW_PR_DUu /* LEB128 */
+                    "  %3.0f%%"
                     "\n",
                     ++count,
                     get_AT_name(index,pd_dwarf_names_print_on_error),
@@ -7573,43 +7580,56 @@ print_attributes_encoding(Dwarf_Debug dbg,
                     saved_rate);
             }
         }
-        if (!print_header) {
+        {
             /*  At least we have an entry, print summary
                 and percentage */
             Dwarf_Addr lower = 0;
             Dwarf_Unsigned size = 0;
             int infoerr = 0;
 
-            saved_rate = (float)((total_bytes_leb128 * 100) /
-                total_bytes_formx);
-            printf("** Summary **                 "
-                "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
-                "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */
-                "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* LEB128 */
-                "%3.0f%%"
-                "\n",
-                total_entries,
-                total_bytes_formx,
-                total_bytes_leb128,
-                saved_rate);
-            /*  Get .debug_info size (Very unlikely to have
-                an error here). */
-            infoerr = dwarf_get_section_info_by_name(dbg,
-                ".debug_info",&lower,
-                &size,attr_error);
-            if (infoerr == DW_DLV_ERROR) {
-                free(attributes_encoding_table);
-                attributes_encoding_table = 0;
-                attributes_encoding_do_init = TRUE;
-                return infoerr;
+            signed long saved =
+                total_bytes_formx -total_bytes_leb128;
+            if (total_bytes_formx) {
+                saved_rate = ((float)saved/(float)total_bytes_formx)
+                    *100;
             }
-            saved_rate = (float)((total_bytes_formx -
-                total_bytes_leb128)
-                * 100 / size);
-            if (saved_rate > 0) {
-                printf("\n** .debug_info size can be reduced "
-                    "by %.0f%% **\n",
+
+            if (total_entries) {
+                printf("** Summary **\n");
+                printf("  Entry Count           :"
+                    " %lu\n",
+                    (unsigned long)total_entries);
+                printf("  Data Bytes FORM datax :"
+                    " %lu\n",
+                    (unsigned long)total_bytes_formx);
+                printf("  Data Bytes as uleb    :"
+                    " %lu\n",
+                    (unsigned long)total_bytes_leb128);
+                printf("  Saving with uleb      :"
+                    " %3.0f%%\n",
                     saved_rate);
+                /*  Get .debug_info size (Very unlikely to have
+                    an error here). */
+                infoerr = dwarf_get_section_info_by_name(dbg,
+                    ".debug_info",&lower,
+                    &size,attr_error);
+                if (infoerr == DW_DLV_ERROR) {
+                    free(attributes_encoding_table);
+                    attributes_encoding_table = 0;
+                    attributes_encoding_do_init = TRUE;
+                    return infoerr;
+                }
+                saved_rate = 0.0;
+                if (size) {
+                    saved_rate = (float)((total_bytes_formx -
+                        (float)total_bytes_leb128)
+                        * 100 / size);
+                }
+                if (saved_rate > 0) {
+                    printf("\n** .debug_info size can be reduced "
+                        "by %.0f%% **\n",
+                        saved_rate);
+                }
             }
         }
         free(attributes_encoding_table);
