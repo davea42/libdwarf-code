@@ -1211,6 +1211,10 @@ most-likely-useful name. */
 #define DW_LANG_Hylo                    0x0042 /* DWARF6 */
 #define DW_LANG_V                       0x0043 /* DWARF6 */
 #define DW_LANG_Algol68                 0x0044 /* DWARF6 */
+#define DW_LANG_NIM                     0x0045 /* DWARF6 */
+#define DW_LANG_Erlang                  0x0046 /* DWARF6 */
+#define DW_LANG_Elixir                  0x0047 /* DWARF6 *' 
+#define DW_LANG_Gleam                   0x0048 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
@@ -1277,6 +1281,9 @@ most-likely-useful name. */
 #define DW_LNAME_V                 0x002d  /* DWARF6 */
 #define DW_LNAME_Algol68           0x002e  /* DWARF6 */
 #define DW_LNAME_Nim               0x002f  /* DWARF6 */
+#define DW_LNAME_Erlang            0x0030  /* DWARF6 */
+#define DW_LNAME_Elixir            0x0031  /* DWARF6 */
+#define DW_LNAME_Gleam             0x0032  /* DWARF6 */
 
 /* Identifier case name. */
 #define DW_ID_case_sensitive            0x00
