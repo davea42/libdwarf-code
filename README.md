@@ -337,6 +337,13 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
+### Post 0.11.0 
+
+See libdwarf.pdf or the libdwarf html
+documentation and look for the Changes section.
+See below for links to the documents.
+Since May 2021 we follow the Semantic Versioning standard.
+
 ### Comparing libdwarf-0.11.0 to libdwarf-0.9.1
 
 Added  dwarf_get_ranges_baseaddress() to the API.

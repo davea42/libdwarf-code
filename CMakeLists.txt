@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(libdwarf VERSION 2.2.0 
+project(libdwarf VERSION 2.2.1 
     DESCRIPTION "Library to access DWARF debugging information" 
     HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
     LANGUAGES C CXX)
