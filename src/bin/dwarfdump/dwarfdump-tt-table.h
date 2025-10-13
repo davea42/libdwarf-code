@@ -1,5 +1,5 @@
 /* Generated code, do not edit. */
-/* Generated for source version 2.2.0 */
+/* Generated for source version 2.2.1 */
 
 /* BEGIN FILE */
 
@@ -449,7 +449,9 @@ struct Three_Key_Entry_s dd_threekey_tt_std [] = {
 /* 0x34 - DW_TAG_variable                      */
 /* 0x19 - DW_TAG_variant                       */
 {0x0019,0x0033,0,1,0,0},
+{0x0019,0x000d,0,1,0,0},
 /* 0x33 - DW_TAG_variant_part                  */
+{0x0033,0x0019,0,1,0,0},
 /* 0x35 - DW_TAG_volatile_type                 */
 /* 0x22 - DW_TAG_with_stmt                     */
 {0,0,0,0,0,0}};
