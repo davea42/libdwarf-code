@@ -641,6 +641,7 @@ DW_TAG_member
 0xffffffff
 DW_TAG_variant_part
 DW_TAG_variant
+DW_TAG_member
 
 0xffffffff
 DW_TAG_volatile_type
