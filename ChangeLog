@@ -1,3 +1,141 @@
+2025-10-14:  David Anderson
+    commit 07361f6b1cccb8f6f9e0f4bd93399aab26a7373c
+
+    In check_ranges_list() a set of tests
+    in the loop lead to
+    multi-level indents.  That was silly.
+    Instead, for each special case of 'all is ok', just continue,
+    leaving the end of the loop to report the issue
+    with .debug_ranges. Flattening the code.
+    Simpler to follow.
+
+    In addition we now check and if low and hi are
+    the same pc, we accept as good (empty range), not an error
+    no matter what the pc is.
+    Typically, compilers use 1 as low and high for an empty range.
+
+    In src/bin/dwarfdump/
+
+            modified:   print_ranges.c
+
+2025-10-14:  David Anderson
+    commit 0217a4890b873dee7ecc764dd4d93ce950872c5f
+
+    New language codes Erlang Elixir Gleam
+            modified:   src/lib/libdwarf/dwarf.h
+    Now with the version scheme and default lower bound
+    for the new LNAME language codes.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-10-13:  David Anderson
+    commit 8f62b7bc7e5b92e0623b0501fc981169451b3469
+
+    Reformatted the output reporting (dwarfdump -ka) about
+    the instances of using FORM_data? vs leb space use.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-10-13:  David Anderson
+    commit 4b605033fd3986a8c0ec74803d533d0beef12e12
+
+    New language codes for Erlang,Elixir,Gleam
+            modified:   src/lib/libdwarf/dwarf.h
+    Added comments, no actual instance of the names
+    are yet available.
+            modified:   src/lib/libdwarf/dwarf_lvn_name.c
+
+2025-10-13:  David Anderson
+    commit 92b4fac4600eecc0c7e5df12c2aa30e80c7e813e
+
+    One more standard tag->tag usage that is standard
+    but was left out of the table.
+    Regenerated
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+    One more standard tag->tag usage that is standard
+    but was left out of the table.
+            modified:   src/bin/tag_tree/tag_tree.list
+
+2025-10-13:  David Anderson
+    commit cd76efe48116f88e34543a09b08d0cb099b18017
+
+    Updated tag-tree data, regenerated all this.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-10-13:  David Anderson
+    commit e567b54ca85a458a6ab0b1748a69ffd6116e233b
+
+    Now with version 2.2.1 as 2.2.0 is released.
+            modified:   CMakeLists.txt
+            modified:   README.md
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2025-10-13:  David Anderson
+    commit 884f74238332c6286107d00f352865742cc1046e
+
+    Standard tag_tree entries that were omitted
+    from the standard set before now.
+    @@ -636,9 +636,11 @@ DW_TAG_variable
+     0xffffffff
+     DW_TAG_variant
+     DW_TAG_variant_part
+    +DW_TAG_member
+
+     0xffffffff
+     DW_TAG_variant_part
+    +DW_TAG_variant
+
+            modified:   src/bin/tag_tree/tag_tree.list
+
+2025-10-08:  David Anderson
+    commit 9524054ee1d63495e72995ecec1d3336ff0e1391
+
+    Now all new entries with tar release
+    listed. 2.2.0
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-10-08:  David Anderson
+    commit 2e088b983562860f497b4fd789a3e61524eb857c
+    Merge: 3065d1c7 81618a04
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+
+    Just adding minor text for clarification.
+    Required merge.
+         ChangeLog
+
+2025-10-08:  David Anderson
+    commit 3065d1c735026fccb3d7db676b3c041397df011b
+
+    Clarifying a log entry on dwarf_safe_arithmetic.c .
+            modified:   ChangeLog
+
+2025-10-08:  David Anderson
+    commit e7a95d8202fe4c14cc21ad55824a3b276afc6a91
+
+    Updated, ready for 2.2.0 release.
+            modified:   ChangeLog
+
+2025-10-08:  David Anderson
+    commit 81618a04e596cfc16e60bac6b9f036f0918b9d5e
+
+    Updated, ready for 2.2.0 release.
+            modified:   ChangeLog
+
 2025-10-08:  David Anderson
     commit cb83f9301367eadb5e5469daa36087122977297f
 
