@@ -176,63 +176,71 @@ check_ranges_list(Dwarf_Debug dbg,
             /*  (0xffffffff,addr), use specific address
                 (current PU address) */
             base_address = r->dwr_addr2;
-        } else {
+            continue;
+        } 
+        {
             /* (offset,offset), update using CU address */
             lopc = r->dwr_addr1 + base_address;
             hipc = r->dwr_addr2 + base_address;
             DWARF_CHECK_COUNT(ranges_result,1);
 
+            if (lopc == hipc) {
+                /* An empty range. Ignore the addresses */
+                continue;
+            }
             /*  Check the low_pc and high_pc
                 are within a valid range in
                 the .text section */
             if (IsValidInBucketGroup(glflags.pRangesInfo,lopc) &&
                 IsValidInBucketGroup(glflags.pRangesInfo,hipc)) {
                 /* Valid values; do nothing */
-            } else {
-                /*  At this point may be
+                continue;
+            } 
+            /*  At this point may be
                     dealing with a
                     linkonce symbol */
-                if (IsValidInLinkonce(glflags.pLinkonceInfo,
+            if (IsValidInLinkonce(glflags.pLinkonceInfo,
                     glflags.PU_name,lopc,hipc)) {
-                    /* Valid values; do nothing */
-                } else {
-                    struct esb_s errbuf;
+                /* Valid values; do nothing */
+                continue;
+            } 
+            {
+                struct esb_s errbuf;
 
-                    bError = TRUE;
-                    esb_constructor(&errbuf);
-                    esb_append_printf_s(&errbuf,
-                        "%s: Address outside a "
-                        "valid .text range",sanitized(sec_name));
-                    DWARF_CHECK_ERROR(ranges_result,
-                        esb_get_string(&errbuf));
-                    esb_destructor(&errbuf);
-                    if (glflags.gf_check_verbose_mode && do_print) {
-                        /*  Update DIEs offset just for printing */
-                        int dioff_res = dwarf_die_offsets(cu_die,
-                            &glflags.DIE_section_offset,
-                            &glflags.DIE_offset,err);
-                        if (dioff_res != DW_DLV_OK) {
-                            simple_err_return_msg_either_action(
-                                dioff_res,
-                                "Call to dwarf_die_offsets failed "
-                                "for the CU DIE."
-                                "in printing ranges");
-                            return dioff_res;
-                        }
-                        printf(
-                            "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
-                            ", Base = 0x%" DW_PR_XZEROS DW_PR_DUx
-                            ", "
-                            "Low = 0x%" DW_PR_XZEROS DW_PR_DUx
-                            " (0x%" DW_PR_XZEROS  DW_PR_DUx
-                            "), High = 0x%"
-                            DW_PR_XZEROS  DW_PR_DUx
-                            " (0x%" DW_PR_XZEROS DW_PR_DUx
-                            ")\n",
-                            off,base_address,lopc,
-                            r->dwr_addr1,hipc,
-                            r->dwr_addr2);
+                bError = TRUE;
+                esb_constructor(&errbuf);
+                esb_append_printf_s(&errbuf,
+                    "%s: Address outside a "
+                    "valid .text range",sanitized(sec_name));
+                DWARF_CHECK_ERROR(ranges_result,
+                    esb_get_string(&errbuf));
+                esb_destructor(&errbuf);
+                if (glflags.gf_check_verbose_mode && do_print) {
+                    /*  Update DIEs offset just for printing */
+                    int dioff_res = dwarf_die_offsets(cu_die,
+                        &glflags.DIE_section_offset,
+                        &glflags.DIE_offset,err);
+                    if (dioff_res != DW_DLV_OK) {
+                        simple_err_return_msg_either_action(
+                            dioff_res,
+                            "Call to dwarf_die_offsets failed "
+                            "for the CU DIE."
+                            "in printing ranges");
+                        return dioff_res;
                     }
+                    printf(
+                        "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
+                        ", Base = 0x%" DW_PR_XZEROS DW_PR_DUx
+                        ", "
+                        "Low = 0x%" DW_PR_XZEROS DW_PR_DUx
+                        " (0x%" DW_PR_XZEROS  DW_PR_DUx
+                        "), High = 0x%"
+                        DW_PR_XZEROS  DW_PR_DUx
+                        " (0x%" DW_PR_XZEROS DW_PR_DUx
+                        ")\n",
+                        off,base_address,lopc,
+                        r->dwr_addr1,hipc,
+                        r->dwr_addr2);
                 }
             }
         }
