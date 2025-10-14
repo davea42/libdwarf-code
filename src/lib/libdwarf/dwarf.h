@@ -1213,7 +1213,7 @@ most-likely-useful name. */
 #define DW_LANG_Algol68                 0x0044 /* DWARF6 */
 #define DW_LANG_NIM                     0x0045 /* DWARF6 */
 #define DW_LANG_Erlang                  0x0046 /* DWARF6 */
-#define DW_LANG_Elixir                  0x0047 /* DWARF6 *' 
+#define DW_LANG_Elixir                  0x0047 /* DWARF6 */ 
 #define DW_LANG_Gleam                   0x0048 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000

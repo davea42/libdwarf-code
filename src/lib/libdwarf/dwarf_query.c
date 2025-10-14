@@ -2395,7 +2395,13 @@ int dwarf_language_version_data(
     case DW_LNAME_Metal:
     case DW_LNAME_V:
     case DW_LNAME_Nim:
+    case DW_LNAME_Gleam:
         *dw_default_lower_bound = 0;
+        *dw_version_scheme = "VVMMPP";
+        break;
+    case DW_LNAME_Erlang:
+    case DW_LNAME_Elixir:
+        *dw_default_lower_bound = 1;
         *dw_version_scheme = "VVMMPP";
         break;
     case DW_LNAME_HLSL:
