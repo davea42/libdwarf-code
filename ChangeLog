@@ -1,3 +1,19 @@
+2025-10-18:  David Anderson
+    commit ccedb2a5bbd6047a5083b05ae5db831ace2e4b29
+
+    Updating DW_LNAME and DW_LANG
+    language names  with a few new-ish DWARF6 language
+    names.
+            modified:   src/lib/libdwarf/dwarf.h
+    Regenerated.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-10-14:  David Anderson
+    commit a297a795d1987996edd17e0347163df0fbd70b13
+
+    ChangeLog up to date now.
+            modified:   ChangeLog
+
 2025-10-14:  David Anderson
     commit 07361f6b1cccb8f6f9e0f4bd93399aab26a7373c
 
