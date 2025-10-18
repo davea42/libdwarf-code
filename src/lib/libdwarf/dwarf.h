@@ -1206,6 +1206,12 @@ most-likely-useful name. */
 #define DW_LANG_OpenCL_CPP              0x0037 /* DWARF6 */
 #define DW_LANG_CPP_for_OpenCL          0x0038 /* DWARF6 */
 #define DW_LANG_SYCL                    0x0039 /* DWARF6 */
+#define DW_LANG_C_plus_plus_23          0x003a /* DWARF6 */
+#define DW_LANG_Odin                    0x003b /* DWARF6 */
+#define DW_LANG_P4                      0x003c /* DWARF6 */
+#define DW_LANG_Metal                   0x003d /* DWARF6 */
+#define DW_LANG_C23                     0x003e /* DWARF6 */
+#define DW_LANG_Fortran23               0x003f /* DWARF6 */
 #define DW_LANG_Ruby                    0x0040 /* DWARF6 */
 #define DW_LANG_Move                    0x0041 /* DWARF6 */
 #define DW_LANG_Hylo                    0x0042 /* DWARF6 */
@@ -1213,7 +1219,7 @@ most-likely-useful name. */
 #define DW_LANG_Algol68                 0x0044 /* DWARF6 */
 #define DW_LANG_NIM                     0x0045 /* DWARF6 */
 #define DW_LANG_Erlang                  0x0046 /* DWARF6 */
-#define DW_LANG_Elixir                  0x0047 /* DWARF6 */ 
+#define DW_LANG_Elixir                  0x0047 /* DWARF6 */
 #define DW_LANG_Gleam                   0x0048 /* DWARF6 */
 
 #define DW_LANG_lo_user                 0x8000

@@ -2879,6 +2879,24 @@ dwarf_get_LANG_name (unsigned int val,
     case DW_LANG_SYCL:
         *s_out = "DW_LANG_SYCL";
         return DW_DLV_OK;
+    case DW_LANG_C_plus_plus_23:
+        *s_out = "DW_LANG_C_plus_plus_23";
+        return DW_DLV_OK;
+    case DW_LANG_Odin:
+        *s_out = "DW_LANG_Odin";
+        return DW_DLV_OK;
+    case DW_LANG_P4:
+        *s_out = "DW_LANG_P4";
+        return DW_DLV_OK;
+    case DW_LANG_Metal:
+        *s_out = "DW_LANG_Metal";
+        return DW_DLV_OK;
+    case DW_LANG_C23:
+        *s_out = "DW_LANG_C23";
+        return DW_DLV_OK;
+    case DW_LANG_Fortran23:
+        *s_out = "DW_LANG_Fortran23";
+        return DW_DLV_OK;
     case DW_LANG_Ruby:
         *s_out = "DW_LANG_Ruby";
         return DW_DLV_OK;
@@ -2893,6 +2911,18 @@ dwarf_get_LANG_name (unsigned int val,
         return DW_DLV_OK;
     case DW_LANG_Algol68:
         *s_out = "DW_LANG_Algol68";
+        return DW_DLV_OK;
+    case DW_LANG_NIM:
+        *s_out = "DW_LANG_NIM";
+        return DW_DLV_OK;
+    case DW_LANG_Erlang:
+        *s_out = "DW_LANG_Erlang";
+        return DW_DLV_OK;
+    case DW_LANG_Elixir:
+        *s_out = "DW_LANG_Elixir";
+        return DW_DLV_OK;
+    case DW_LANG_Gleam:
+        *s_out = "DW_LANG_Gleam";
         return DW_DLV_OK;
     case DW_LANG_lo_user:
         *s_out = "DW_LANG_lo_user";
@@ -3068,6 +3098,15 @@ dwarf_get_LNAME_name (unsigned int val,
         return DW_DLV_OK;
     case DW_LNAME_Nim:
         *s_out = "DW_LNAME_Nim";
+        return DW_DLV_OK;
+    case DW_LNAME_Erlang:
+        *s_out = "DW_LNAME_Erlang";
+        return DW_DLV_OK;
+    case DW_LNAME_Elixir:
+        *s_out = "DW_LNAME_Elixir";
+        return DW_DLV_OK;
+    case DW_LNAME_Gleam:
+        *s_out = "DW_LNAME_Gleam";
         return DW_DLV_OK;
     default: break;
     }
