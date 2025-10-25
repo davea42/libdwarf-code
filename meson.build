@@ -247,6 +247,7 @@ subdir('src/bin/builduritable')
 subdir('src/bin/gennames')
 subdir('src/bin/tag_attr')
 subdir('src/bin/tag_tree')
+subdir('src/bin/checkDW_LANG')
 if get_option('dwarfexample') == true
   subdir('src/bin/dwarfexample')
 endif

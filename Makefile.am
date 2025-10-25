@@ -24,6 +24,7 @@ SUBDIRS += src/bin/tag_attr
 SUBDIRS += src/bin/attr_form
 SUBDIRS += src/bin/buildopstab
 SUBDIRS += src/bin/builduritable
+SUBDIRS += src/bin/checkDW_LANG
 
 ### rebuild is for maintainers to update C source
 ### that depends on certain (C and/or text) Files.
@@ -38,6 +39,7 @@ rebuild:
 	make -C src/bin/tag_attr    rebuild
 	make -C src/bin/attr_form   rebuild
 	make -C src/bin/buildopstab rebuild
+	make -C src/bin/checkDW_LANG rebuild
 doc:
 	make -C doc doc
 

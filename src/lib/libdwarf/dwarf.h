@@ -1190,6 +1190,7 @@ most-likely-useful name. */
 #define DW_LANG_Kotlin                  0x0026 /* DWARF6 */
 #define DW_LANG_Zig                     0x0027 /* DWARF6 */
 #define DW_LANG_Crystal                 0x0028 /* DWARF6 */
+/*  0x0029 has not been assigned to a language. */
 #define DW_LANG_C_plus_plus_17          0x002a /* DWARF6 */
 #define DW_LANG_C_plus_plus_20          0x002b /* DWARF6 */
 #define DW_LANG_C17                     0x002c /* DWARF6 */
