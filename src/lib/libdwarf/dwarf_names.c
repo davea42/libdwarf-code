@@ -3054,8 +3054,8 @@ dwarf_get_LNAME_name (unsigned int val,
     case DW_LNAME_GLSL:
         *s_out = "DW_LNAME_GLSL";
         return DW_DLV_OK;
-    case DW_LNAME_GLSLES:
-        *s_out = "DW_LNAME_GLSLES";
+    case DW_LNAME_GLSL_ES:
+        *s_out = "DW_LNAME_GLSL_ES";
         return DW_DLV_OK;
     case DW_LNAME_HLSL:
         *s_out = "DW_LNAME_HLSL";

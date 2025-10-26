@@ -2389,7 +2389,7 @@ int dwarf_language_version_data(
         *dw_version_scheme = "VVMM";
         break;
     case DW_LNAME_GLSL :
-    case DW_LNAME_GLSLES:
+    case DW_LNAME_GLSL_ES:
     case DW_LNAME_Ruby:
     case DW_LNAME_P4:
     case DW_LNAME_Metal:

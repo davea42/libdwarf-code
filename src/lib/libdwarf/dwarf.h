@@ -1273,7 +1273,7 @@ most-likely-useful name. */
 #define DW_LNAME_C_sharp           0x001e  /* DWARF6 */
 #define DW_LNAME_Mojo              0x001f  /* DWARF6 */
 #define DW_LNAME_GLSL              0x0020  /* DWARF6 */
-#define DW_LNAME_GLSLES            0x0021  /* DWARF6 */
+#define DW_LNAME_GLSL_ES           0x0021  /* DWARF6 */
 #define DW_LNAME_HLSL              0x0022  /* DWARF6 */
 #define DW_LNAME_OpenCL_CPP        0x0023  /* DWARF6 */
 #define DW_LNAME_CPP_for_OpenCL    0x0024  /* DWARF6 */
