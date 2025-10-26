@@ -12,4 +12,4 @@ buildlname_CPPFLAGS = \
   -I. -I$(top_srcdir)/src/lib/libdwarf 
 buildlname_CFLAGS = $(DWARF_CFLAGS_WARN)
 
-EXTRA_DIST = meson.build
+EXTRA_DIST = meson.build dwarf_lname_data.h
