@@ -4,10 +4,16 @@ All rights reserved.
 
 This software file is hereby placed in the public domain.
 For use by anyone for any purpose.
+
+This code is not in libdwarf itself, it simply checks
+some information in dwarf.h and emits  source file
+into the libdwarf source directory (which code
+gets compiled into libdwarf)
 */
 
+#include <config.h> /* for PACKAGE_VERSION */
 #include <stdio.h>  /* FILE fclose() fopen() fprintf() printf() */
-#include <stdlib.h> /* exit() getenv() */
+#include <stdlib.h> /* exit() getenv() qsort() */
 #include <string.h> /* strcmp() strcpy() strncmp() strlen() */
 
 #include "dwarf.h"
@@ -18,10 +24,13 @@ static char *input_name = 0;
 static char pathbuf[BUFSIZ];
 static char buffer[BUFSIZ];
 
+/* This for the output into dwarf_lname_version.c */
+static char outpath[BUFSIZ];
+
 #define FALSE 0
 #define TRUE  1
 
-static unsigned     tcount = sizeof(lnsix) / sizeof(lnsix[0]);
+static unsigned int tcount = sizeof(lnsix) / sizeof(lnsix[0]);
 static unsigned int touchcounts[sizeof(lnsix) / sizeof(lnsix[0])];
 
 static void
@@ -39,53 +48,53 @@ safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
 static void
 validatetouchcount(char *curdefname,unsigned long v)
 {
-     if (v >= tcount) {
-         printf("ERROR: For LNAME id 0x%04lx  there is "
-             "No count available, limit is %x. Something wrong!\n",
-             v,tcount);
-         exit(EXIT_FAILURE);
-     }
-     if (touchcounts[v]) {
-         printf("ERROR: For LNAME id 0x%04lx  we are double "
-             "counting at count 0x%x . Something wrong!\n",
-             v,touchcounts[v]);
-         exit(EXIT_FAILURE);
-     }
-     ++touchcounts[v];
-     if (lnsix[v].ln_value !=  v) {
-         printf("ERROR: For LNAME id 0x%04lx  not at the "
-             "correct entry vs "
-             " ln_value 0x%04x\n",
-             v,lnsix[v].ln_value);
-         exit(EXIT_FAILURE);
-     }
-     if (strcmp(curdefname,lnsix[v].ln_name)) {
-         printf("ERROR: For LNAME id 0x%04lx we find the"
-             " wrong string! name %s lnsixname %s \n",
-             v, curdefname,lnsix[v].ln_name);
-         exit(EXIT_FAILURE);
-     }
+    if (v >= tcount) {
+        printf("ERROR: For LNAME id 0x%04lx  there is "
+            "No count available, limit is %x. Something wrong!\n",
+            v,tcount);
+        exit(EXIT_FAILURE);
+    }
+    if (touchcounts[v]) {
+        printf("ERROR: For LNAME id 0x%04lx  we are double "
+            "counting at count 0x%x . Something wrong!\n",
+            v,touchcounts[v]);
+        exit(EXIT_FAILURE);
+    }
+    ++touchcounts[v];
+    if (lnsix[v].ln_value !=  v) {
+        printf("ERROR: For LNAME id 0x%04lx  not at the "
+            "correct entry vs "
+            " ln_value 0x%04x\n",
+            v,lnsix[v].ln_value);
+        exit(EXIT_FAILURE);
+    }
+    if (strcmp(curdefname,lnsix[v].ln_name)) {
+        printf("ERROR: For LNAME id 0x%04lx we find the"
+            " wrong string! name %s lnsixname %s \n",
+            v, curdefname,lnsix[v].ln_name);
+        exit(EXIT_FAILURE);
+    }
 }
+
 static void
-validatefinaltouchcount()
+validatefinaltouchcount(void)
 {
-     unsigned long i = 1;
-     /*  Skip [0], it is not real, just a placeholder.
-         0 is not a valid LNAME id */
-     for( ; i < tcount; ++i) {
-         if (touchcounts[i] != 1) {
-             printf(" ERROR: an entry in the LNAMES list "
-                 " with DW_LNAME id 0x%04lx has touchcount"
-                 " %u which indicates an error comparing "
-                 " dwarf.h and the lnsix table here.\n",
-                 i,touchcounts[i]);
+    unsigned long i = 1;
+    /*  Skip [0], it is not real, just a placeholder.
+        0 is not a valid LNAME id */
+    for ( ; i < tcount; ++i) {
+        if (touchcounts[i] != 1) {
+            printf(" ERROR: an entry in the LNAMES list "
+                " with DW_LNAME id 0x%04lx has touchcount"
+                " %u which indicates an error comparing "
+                " dwarf.h and the lnsix table here.\n",
+                i,touchcounts[i]);
             exit(EXIT_FAILURE);
-         }
-     }
+        }
+    }
 }
 
-
-/*  Writes a complete new function 
+/*  Writes a complete new function
     int dwarf_language_version_data(..)
     in
     dwarf_lname_version.c
@@ -94,22 +103,173 @@ validatefinaltouchcount()
     that function.
 
     We avoid anything in the new source file
-    representing date or time as we want 
+    representing date or time as we want
     re-running this (if no changes in dwarf_lname_data.h)
     outputs bit-for-bit identical dwarf_lname_version.c .
 */
 
+#if 0 /* debug dump function */
+static void
+dump_table(void)
+{
+    unsigned i = 0;
+
+    printf("lnsix table\n");
+    for ( ; i < tcount; ++i) {
+        struct lnsix_s * e = &lnsix[i];
+        printf("[ %2u] %-16s, %s,0x%04u,%u,%s;\n",
+        i,
+        e->ln_informal,
+        e->ln_name,
+        e->ln_value,
+        e->ln_low_bound,
+        e->ln_vscheme);
+    }
+    fflush(stdout);
+}
+#endif /* debug dump function */
+
+static int
+qcompar(const void *lh_i,const void *rh_i)
+{
+    const struct lnsix_s *lh = 0;
+    const struct lnsix_s *rh = 0;
+    int res = 0;
+    int res1 = 0;
+    int res2 = 0;
+
+    lh = lh_i;
+    rh = rh_i;
+    res=strcmp(lh->ln_vscheme,rh->ln_vscheme);
+    if (res) {
+        return res;
+    }
+    res1= lh->ln_low_bound - rh->ln_low_bound;
+    if (res1) {
+        return res1;
+    }
+    res2=strcmp(lh->ln_name,rh->ln_name);
+    return res2;
+}
+
+static int
+same_switch_part(struct lnsix_s *lh,struct lnsix_s *rh) {
+    if (strcmp(lh->ln_vscheme,rh->ln_vscheme)) {
+        return FALSE;
+    }
+    if (lh->ln_low_bound != rh->ln_low_bound) {
+        return FALSE;
+    }
+    return TRUE;
+}
 
 static void
-write_new_query_function(char *path)
+print_return_values(FILE *outfile,struct lnsix_s *cur)
 {
-    
-    printf("Query function not complete. %s\n",path);
+    fprintf(outfile,"        *dw_default_lower_bound = %u;\n",
+        cur->ln_low_bound);
+    if (!strcmp(cur->ln_vscheme,"")) {
+        fprintf(outfile,"        *dw_version_scheme = 0;\n");
+    } else {
+        fprintf(outfile,"        *dw_version_scheme = \"%s\";\n",
+            cur->ln_vscheme);
+    }
+    fprintf(outfile,
+        "        return DW_DLV_OK;\n");
 }
+
+static struct lnsix_s zerosix;
+static void
+print_table_entries(FILE *outfile)
+{
+    /* The zero entry is not relevant, a placeholder. */
+    unsigned i = 1;
+    signed int sublist_start = -1;
+    struct lnsix_s sublist_entry;
+    struct lnsix_s *cur = 0;
+    unsigned k = 0;
+
+    sublist_entry = zerosix;
+    for ( ;i < tcount; ++i) {
+        if (sublist_start < 0) {
+            sublist_entry = lnsix[i];
+            sublist_start = i;
+            continue;
+        }
+        cur = &lnsix[i];
+        if (same_switch_part(&sublist_entry,cur)) {
+            continue;
+        }
+        /*  now print switch cases   */
+        for (k = sublist_start; k < i; ++k) {
+            fprintf(outfile,"    case %s:\n",
+                lnsix[k].ln_name);
+        }
+        print_return_values(outfile,&sublist_entry);
+        sublist_start = i;
+        sublist_entry = lnsix[i];
+    }
+    for (k = sublist_start; k < i; ++k) {
+        fprintf(outfile,"    case %s:\n",
+            lnsix[k].ln_name);
+    }
+    print_return_values(outfile,&sublist_entry);
+    fprintf(outfile,"    default:\n");
+    fprintf(outfile,"        break;\n");
+}
+
+static void
+write_new_query_function(FILE *outfile)
+{
+    qsort(&lnsix[0],tcount,sizeof(struct lnsix_s), qcompar);
+    fprintf(outfile,"/* Generated code, do not edit. */\n");
+    fprintf(outfile,"/* Generated for source version %s */\n",
+        PACKAGE_VERSION);
+    fprintf(outfile, "\n");
+    fprintf(outfile, "#include \"dwarf.h\"\n");
+    fprintf(outfile, "#include \"libdwarf.h\"\n");
+
+    fprintf(outfile, "int\n");
+    fprintf(outfile, "dwarf_language_version_data(\n");
+    fprintf(outfile, "    Dwarf_Unsigned dw_lname,\n");
+    fprintf(outfile, "    int *dw_default_lower_bound,\n");
+    fprintf(outfile, "    const char   **dw_version_scheme)\n");
+
+    fprintf(outfile, "{\n");
+    fprintf(outfile, "    switch(dw_lname) {\n");
+    print_table_entries(outfile);
+    fprintf(outfile, "    }\n");
+    fprintf(outfile, "    return DW_DLV_NO_ENTRY;\n");
+    /* insert the details here. */
+    fprintf(outfile, "}\n");
+}
+static void
+setup_new_query_function(char *path)
+{
+    FILE *outfile = 0;
+    size_t pathlen = strlen(path);
+    char *outsuffix = "/src/lib/libdwarf/dwarf_lname_version.c";
+
+    safe_strcpy(outpath,path,(unsigned)sizeof(outpath),
+        (unsigned)pathlen);
+    safe_strcpy(outpath+pathlen,outsuffix,
+        (unsigned)sizeof(outpath)-(unsigned)pathlen,
+        (unsigned)strlen(outsuffix));
+    outfile = fopen(outpath,"w");
+    if (!outfile) {
+        printf("ERROR building dwarf_lname_version.c FAILED."
+            "Unable to open %s for output\n",outpath);
+        exit(EXIT_FAILURE);
+    }
+    write_new_query_function(outfile);
+    fclose(outfile);
+}
+
 /*  Issue error message and exit there is a mismatch,
-    this should never fail.  
+    this should never fail.
     It verifies that dwarf.h DW_LNAME values match
-    exactly the LNAME values in dwarf_lname_data.h*/
+    exactly the LNAME values in dwarf_lname_data.h */
+
 static void
 check_if_lname_complete(char *path)
 {
@@ -199,7 +359,7 @@ check_if_lname_complete(char *path)
             lastvalue = v;
             validatetouchcount(curdefname,v);
             continue;
-        } 
+        }
         if (lastvalue == v) {
             printf("define line %u: DW_LNAME number value "
                 " 0x%lx duplicated.\n",
@@ -254,7 +414,7 @@ int main(int argc, char**argv)
         exit(EXIT_FAILURE);
 
     }
-    safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
+    safe_strcpy(pathbuf,path,(unsigned)sizeof(pathbuf),(unsigned)len);
     {
         size_t remaining =  sizeof(pathbuf) -len -1;
         size_t tailpathlen = strlen(tailpath);
@@ -266,12 +426,12 @@ int main(int argc, char**argv)
         }
         /* Notice tailpath has a leading /  */
         safe_strcpy(pathbuf+len,(char *)tailpath,
-            remaining,tailpathlen);
+            (unsigned)remaining,(unsigned)tailpathlen);
     }
     input_name = pathbuf;
 
     check_if_lname_complete(pathbuf);
-    write_new_query_function(pathbuf);
+    setup_new_query_function(path);
 
     return 0;
 }

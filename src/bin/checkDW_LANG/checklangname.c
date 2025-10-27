@@ -4,34 +4,18 @@ All rights reserved.
 
 This software file is hereby placed in the public domain.
 For use by anyone for any purpose.
+
+This code is not in libdwarf itself, it simply checks
+some information in dwarf.h for correctness.
 */
-
-/* This uses this condensed table to make
-   a simple fast-access C table.
-   Reads dwarf.h to be sure the fast-access table
-   has all the named DW_OP in dwarf.h present.
-   Build and run with
-   make rebuild
-*/
-
-/*#include <config.h> */
-
 #include <stdio.h>  /* FILE fclose() fopen() fprintf() printf() */
 #include <stdlib.h> /* exit() getenv() */
 #include <string.h> /* strcmp() strcpy() strncmp() strlen() */
-
-#if 0
-#include "dwarf.h"
-#include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dd_opscounttab.h"
-#endif
 
 #define MAXDEFINELINE 1000
 static char *input_name = 0;
 static char pathbuf[BUFSIZ];
 static char buffer[BUFSIZ];
-
 #define FALSE 0
 #define TRUE  1
 
