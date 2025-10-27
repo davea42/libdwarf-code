@@ -488,7 +488,7 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
         /*  From dw_die */
         local_ranges_offset_present = have_die_ranges_offset;
         local_ranges_offset = die_ranges_offset;
-    } 
+    }
     if (dw_at_ranges_offset) {
         *dw_at_ranges_offset = local_ranges_offset;
     }
