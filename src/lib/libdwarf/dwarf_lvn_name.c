@@ -74,7 +74,7 @@ static const struct Dwarf_LVN_s _dwarf_lvn_data[] =
 {DW_LNAME_C_plus_plus,202302UL,"C++23"}
 };
 /*  Actual instances not yet available.
-    Nim    0 VVMMPP 
+    Nim    0 VVMMPP
     Erlang 1 VVMMPP
     Elixir 1 VVMMPP
     Gleam  0 VVMMPP */
