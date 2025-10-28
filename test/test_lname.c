@@ -377,7 +377,7 @@ main(int argc, char **argv)
     char        *path    = 0;
     size_t       len     = 0;
     const char  *libpath="/src/lib/libdwarf/dwarf.h";
-    const char  *srchdr="/src/lib/libdwarf/dwarf_query.c";
+    const char  *srchdr="/src/lib/libdwarf/dwarf_lname_version.c";
     int argn = 0;
 
     if (argc > 1) {

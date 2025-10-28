@@ -64,6 +64,7 @@ dwarf_leb.c \
 dwarf_line.c \
 dwarf_line.h \
 dwarf_line_table_reader_common.h \
+dwarf_lname_version.c \
 dwarf_loc.c \
 dwarf_loc.h \
 dwarf_loclists.h \
