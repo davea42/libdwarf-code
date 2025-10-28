@@ -1,3 +1,107 @@
+2025-10-28:  David Anderson
+    commit 074128be4eb9a6f96c0dc2172ce889cc715c378c
+
+    This changes nothing in the API.  It 
+    creates a better path to having accurate and complete
+    reporting of DWARF6 DW_AT_language and
+    the associated language data
+    (see dwarf_language_version_data() ) at all times
+    as more languages and language-version-details
+    are added into DWARF6.
+
+    Now lists dwarf_lname_version.c
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+
+    Deleted the code for DW_LNAME stuff, it is
+    now in dwarf_lname_version.c as generated code.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Added dwarf_lname_version.c
+            modified:   src/lib/libdwarf/meson.build
+
+    The test code now looks in dwarf_lname_version.c
+    in libdwarf to check its LNAME items in the switch.
+            modified:   test/test_lname.c
+
+2025-10-27:  David Anderson
+    commit eaec188b71a706051204ae4bc9a8fa3eea63e009
+
+    These generate a sourcefile in libdwarf (dwarf_lname_version.c)
+    that enables DWARF6 language version access.
+    The generated source is not yet used.
+            modified:   src/bin/buildDW_LNAME/buildlname.c
+            modified:   src/bin/buildDW_LNAME/dwarf_lname_data.h
+            modified:   src/bin/checkDW_LANG/checklangname.c
+
+    A new generated source which will replace
+    a function in dwarf_query.c
+            new file:   src/lib/libdwarf/dwarf_lname_version.c
+
+2025-10-27:  David Anderson
+    commit 26eba0ca3ef0119fdde4c7870703a5bb9e019add
+
+    Removed a trailing whitespace
+            modified:   src/lib/libdwarf/dwarf_lvn_name.c
+
+2025-10-27:  David Anderson
+    commit e8eb4c21e56022f1a07d5e8457da19a9792e275f
+
+    removed whitespace.
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+
+2025-10-26:  David Anderson
+    commit 0cb6aad5a7f108b0aa3b19f001c6c9859a1d1625
+
+    Small tweak to get the local  .h file into a release.
+            modified:   src/bin/buildDW_LNAME/Makefile.am
+
+2025-10-26:  David Anderson
+    commit 3d7f438855178cef5fa5f9140484c44d7a2f6aa5
+
+    Adds new dwarf.h checking code in
+    buildDW_LNAME
+    Adds a build of this new stuff.
+
+            modified:   Makefile.am
+            modified:   configure.ac
+            new file:   src/bin/buildDW_LNAME/Makefile.am
+            new file:   src/bin/buildDW_LNAME/README
+            new file:   src/bin/buildDW_LNAME/buildlname.c
+            new file:   src/bin/buildDW_LNAME/dwarf_lname_data.h
+            new file:   src/bin/buildDW_LNAME/meson.build
+    Corrects a small mistake here (made yesterday)
+            modified:   src/bin/checkDW_LANG/Makefile.am
+    Checking code above found an error in dwarf.h DW_LNAME
+    instance 0x21. These three fix it.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-10-25:  David Anderson
+    commit ec77d0064ec7fde20b6c17448dd713e3100ad7d0
+
+    Enabling build and run with configure.
+            modified:   ../../Makefile.am
+            modified:   ../../configure.ac
+            modified:   ../../meson.build
+
+    New test to ensure there are no surprising
+    omissions in dwarf.h on DW_LANG.
+            new file:   checkDW_LANG/Makefile.am
+    does the check.
+            new file:   checkDW_LANG/checklangname.c
+            new file:   checkDW_LANG/meson.build
+    Added a comment noting the 'missing' DW_LANG
+    for 0x0029.
+            modified:   ../lib/libdwarf/dwarf.h
+
+2025-10-18:  David Anderson
+    commit 8fa5a0186b90d252f5707baf80db2f5ffa2285e5
+
+    Up to date now.
+            modified:   ChangeLog
+
 2025-10-18:  David Anderson
     commit ccedb2a5bbd6047a5083b05ae5db831ace2e4b29
 
