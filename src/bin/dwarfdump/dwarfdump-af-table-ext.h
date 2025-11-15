@@ -18,6 +18,8 @@ struct Three_Key_Entry_s dd_threekey_af_table_ext [] = {
 /* 0x2300 DW_AT_ALTIUM_loclist */
 /* 0x3fe4 DW_AT_APPLE_block */
 /* 0x3fe2 DW_AT_APPLE_flags */
+/* 0x2905 DW_AT_go_package_name */
+{0x2905,0x000b,0,2,0,0},
 /* 0x3fe3 DW_AT_APPLE_isa */
 /* 0x3fe5 DW_AT_APPLE_major_runtime_vers */
 /* 0x3fe7 DW_AT_APPLE_omit_frame_ptr */

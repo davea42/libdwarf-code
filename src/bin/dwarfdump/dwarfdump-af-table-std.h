@@ -164,6 +164,7 @@ struct Three_Key_Entry_s dd_threekey_af_table_std [] = {
 {0x003f,0x0005,0,1,0,0},
 /* 0x0040 DW_AT_frame_base */
 {0x0040,0x0004,0,1,0,0},
+{0x0040,0x0002,0,1,0,0},
 {0x0040,0x000f,0,1,0,0},
 /* 0x0041 DW_AT_friend */
 {0x0041,0x000a,0,1,0,0},
@@ -187,6 +188,7 @@ struct Three_Key_Entry_s dd_threekey_af_table_std [] = {
 {0x0002,0x0004,0,1,0,0},
 {0x0002,0x000f,0,1,0,0},
 {0x0002,0x0007,0,1,0,0},
+{0x0002,0x0002,0,1,0,0},
 /* 0x008c DW_AT_loclists_base */
 {0x008c,0x0010,0,1,0,0},
 /* 0x0022 DW_AT_lower_bound */

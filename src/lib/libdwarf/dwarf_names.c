@@ -1396,6 +1396,15 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_go_runtime_type:
         *s_out = "DW_AT_go_runtime_type";
         return DW_DLV_OK;
+    case DW_AT_go_package_name:
+        *s_out = "DW_AT_go_package_name";
+        return DW_DLV_OK;
+    case DW_AT_go_dict_index:
+        *s_out = "DW_AT_go_dict_index";
+        return DW_DLV_OK;
+    case DW_AT_go_closure_offset:
+        *s_out = "DW_AT_go_closure_offset";
+        return DW_DLV_OK;
     case DW_AT_upc_threads_scaled:
         *s_out = "DW_AT_upc_threads_scaled";
         return DW_DLV_OK;
