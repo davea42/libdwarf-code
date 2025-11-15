@@ -61,6 +61,10 @@ DW_AT_APPLE_block
 DW_AT_APPLE_flags
 
 0xffffffff
+DW_AT_go_package_name
+DW_FORM_CLASS_STRING
+
+0xffffffff
 DW_AT_APPLE_isa
 
 0xffffffff
