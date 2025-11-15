@@ -654,18 +654,19 @@ extern "C" {
 #define DW_AT_GNU_bias                          0x2305 /* GNU */
 
 /*  Go-specific type attributes
-    Naming as lower-case go instead of GO is a small mistake
-    by the Go language folks, it seems. This is the
+    Naming as lower-case go instead of GO is the choice
+    the Go language folks chose, it seems. This is the
     common spelling for these. */
 #define DW_AT_go_kind                           0x2900
 #define DW_AT_go_key                            0x2901
 #define DW_AT_go_elem                           0x2902
-
 /*  Attribute for DW_TAG_member of a struct type.
     Nonzero value indicates the struct field is an embedded field.*/
 #define DW_AT_go_embedded_field                 0x2903
-
 #define DW_AT_go_runtime_type                   0x2904
+#define DW_AT_go_package_name                   0x2905
+#define DW_AT_go_dict_index                     0x2906
+#define DW_AT_go_closure_offset                 0x2907
 
 /* UPC extension. */
 #define DW_AT_upc_threads_scaled                0x3210 /* UPC */
