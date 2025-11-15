@@ -7606,7 +7606,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
                     " %lu\n",
                     (unsigned long)total_bytes_leb128);
                 printf("  Saving with uleb      :"
-                    " %3.0f%%\n",
+                    " %3.0f percent\n",
                     saved_rate);
                 /*  Get .debug_info size (Very unlikely to have
                     an error here). */
@@ -7627,7 +7627,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 }
                 if (saved_rate > 0) {
                     printf("\n** .debug_info size can be reduced "
-                        "by %.0f%% **\n",
+                        "by %.0f percent **\n",
                         saved_rate);
                 }
             }
