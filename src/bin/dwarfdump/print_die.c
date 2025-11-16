@@ -1862,21 +1862,35 @@ dd_check_die_abbrevs(Dwarf_Debug dbg, Dwarf_Die in_die,
             case DW_TAG_union_type:
             case DW_TAG_entry_point:
             case DW_TAG_inlined_subroutine:
-            case DW_TAG_typedef: /* seen in Go */
                 break;
             default:
+                /*  Once in a while Go compilers say DW_TAG_typedef
+                    has children but the abbreviation list does
+                    not reflect that properly.
+                    We don't think a child of that TAG
+                    is appropriate: we think it is a compiler bug. */
                 bError = (childres == DW_DLV_OK && !ab_has_child) ||
                     (childres == DW_DLV_NO_ENTRY && ab_has_child);
                 if (bError) {
                     struct esb_s pm;
                     const char *tagname = "<unknown DW_TAG>";
+                    const char *chres = (childres == DW_DLV_OK)?
+                        "yes":"no";
+                    const char *hasch = (ab_has_child)?"yes":"no";
 
                     esb_constructor(&pm);
                     tagname = get_TAG_name(tag,TRUE);
                     esb_append_printf_s(&pm,
-                        "check 'dw_children'"
-                        " flag combination."
-                        " on %s\n",tagname);
+                        "check 'dw_children'."
+                        " abbrev says has child? %s.",
+                        chres);
+                    esb_append_printf_s(&pm,
+                        " While the abbreviation list"
+                        " shows a child? %s.",
+                        hasch);
+                    esb_append_printf_s(&pm,
+                        " Check flag combination"
+                        " on %s. \n",tagname);
                     DWARF_CHECK_ERROR(
                         abbreviations_result,
                         esb_get_string(&pm));
