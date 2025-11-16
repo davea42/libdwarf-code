@@ -41,7 +41,6 @@ check_if_dw_lang_complete(char *path)
     int           loop_done = FALSE;
     const char   *oldop = "#define DW_LANG_";
     int           oldoplen = strlen(oldop);
-    int           langentry = -1;
     unsigned long lastvalue = 0;
 
     fin = fopen(path,"r");
@@ -74,7 +73,6 @@ check_if_dw_lang_complete(char *path)
             /* Not ours. */
             continue;
         }
-        ++langentry;
         /* ASSERT: line ends with NUL byte. */
         curdefname = line+8; /* now past #define */
         for ( ; ; curdefnamelen++) {
@@ -97,8 +95,8 @@ check_if_dw_lang_complete(char *path)
         endptr = 0;
         v = strtoul(numstart,&endptr,0);
         if (v == 0x8000 ) {
-            /* DW_LANG_lo_user, we are done with this checkable
-               part of the list */
+            /*  DW_LANG_lo_user, we are done with this checkable
+                part of the list */
             break;
         }
         if (v == 0 && endptr == numstart) {
@@ -126,7 +124,7 @@ check_if_dw_lang_complete(char *path)
             /* Nothing to check yet. Is first DW_LANG. */
             lastvalue = v;
             continue;
-        } 
+        }
         if (lastvalue == v) {
             printf("define line %u: DW_LANG number value "
                 " 0x%lx duplicated.\n",
@@ -136,7 +134,7 @@ check_if_dw_lang_complete(char *path)
         if (v == 0x002a && ((lastvalue +1) == 0x0029)) {
             /* 0x0029 is an unassigned value in DW_LANG table
             The DW_LANG DWARF6 table lists no language for 0x0029.
-            The original proposal on 0x0029 was for 
+            The original proposal on 0x0029 was for
             DW_LANG_Nasm March 2021,
             but on email discussion it was agreed the
             name DW_LANG_Assembly
