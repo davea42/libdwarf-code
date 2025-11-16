@@ -71,7 +71,7 @@ ellipname(int   res,
         checking_this_compiler()) {
         DWARF_CHECK_COUNT(dwarf_constants_result,1);
     }
-#endif
+#endif /* TRIVIAL_NAMING */
     if (res != DW_DLV_OK) {
         char buf[100];
         char *n;
@@ -96,7 +96,7 @@ ellipname(int   res,
             DWARF_ERROR_COUNT(dwarf_constants_result,1);
             DWARF_CHECK_ERROR_PRINT_CU();
         }
-#else
+#else /* TRIVIAL_NAMING */
         /* This is for the tree-generation, not dwarfdump itself. */
         /* printonerr is always TRUE. */
         if (printonerr) {
@@ -104,7 +104,7 @@ ellipname(int   res,
                 "Continuing. \n",ty,val_in,val_in );
             glflags.gf_count_major_errors++;
         }
-#endif
+#endif /* TRIVIAL_NAMING */
         n = makename(esb_get_string(&eb));
         if (!n) {
             printf("Out of memory extracting ellipsis name\n");
