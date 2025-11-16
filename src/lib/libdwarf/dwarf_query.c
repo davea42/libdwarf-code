@@ -1808,7 +1808,7 @@ dwarf_die_abbrev_code(Dwarf_Die die)
     return die->di_abbrev_code;
 }
 
-/*  Returns a flag through ablhas_child. Non-zero if
+/*  Returns a flag through ab_has_child. Non-zero if
     the DIE has children, zero if it does not.
     It has no Dwarf_Error arg!
 */
