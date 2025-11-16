@@ -219,20 +219,23 @@ DW_AT_GNU_vector
 
 0xffffffff
 DW_AT_go_kind
+DW_FORM_CLASS_CONSTANT
 
 0xffffffff
 DW_AT_go_key
+DW_FORM_CLASS_REFERENCE
 
 0xffffffff
 DW_AT_go_elem
+DW_FORM_CLASS_REFERENCE
 
 0xffffffff
 DW_AT_go_embedded_field
+DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_go_runtime_type
-
-
+DW_FORM_CLASS_ADDRESS
 
 /* some DW_AT_HP and all DW_AT_CPQ left off */
 0xffffffff

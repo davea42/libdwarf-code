@@ -918,6 +918,7 @@ DW_AT_sibling
 DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
+DW_AT_byte_size /* used by Go */
 
 0xffffffff
 DW_TAG_template_alias

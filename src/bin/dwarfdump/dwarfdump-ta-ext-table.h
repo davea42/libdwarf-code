@@ -6,6 +6,9 @@
 struct Three_Key_Entry_s dd_threekey_ta_ext [] = {
 /* 0x13 - DW_TAG_structure_type                */
 {0x0013,0x2007,0,2,0,0},
+{0x0013,0x2904,0,2,0,0},
+{0x0013,0x2900,0,2,0,0},
+{0x0013,0x2902,0,2,0,0},
 /* 0x11 - DW_TAG_compile_unit                  */
 {0x0011,0x3fe1,0,2,0,0},
 {0x0011,0x3fef,0,2,0,0},
@@ -17,6 +20,7 @@ struct Three_Key_Entry_s dd_threekey_ta_ext [] = {
 {0x0011,0x2133,0,2,0,0},
 {0x0011,0x2119,0,2,0,0},
 {0x0011,0x3e02,0,2,0,0},
+{0x0011,0x2905,0,2,0,0},
 /* 0x4a - DW_TAG_skeleton_unit                 */
 {0x004a,0x2131,0,2,0,0},
 {0x004a,0x2134,0,2,0,0},
@@ -25,15 +29,24 @@ struct Three_Key_Entry_s dd_threekey_ta_ext [] = {
 {0x004a,0x2132,0,2,0,0},
 {0x004a,0x2133,0,2,0,0},
 {0x004a,0x2119,0,2,0,0},
+/* 0x24 - DW_TAG_base_type                     */
+{0x0024,0x2904,0,2,0,0},
+{0x0024,0x2900,0,2,0,0},
 /* 0x3c - DW_TAG_partial_unit                  */
+/* 0x0f - DW_TAG_pointer_type                  */
+{0x000f,0x2900,0,2,0,0},
+{0x000f,0x2904,0,2,0,0},
 /* 0x0d - DW_TAG_member                        */
 {0x000d,0x2108,0,2,0,0},
 {0x000d,0x2109,0,2,0,0},
 {0x000d,0x210a,0,2,0,0},
 {0x000d,0x210b,0,2,0,0},
 {0x000d,0x2007,0,2,0,0},
+{0x000d,0x2903,0,2,0,0},
 /* 0x01 - DW_TAG_array_type                    */
 {0x0001,0x2107,0,2,0,0},
+{0x0001,0x2900,0,2,0,0},
+{0x0001,0x2904,0,2,0,0},
 /* 0x2e - DW_TAG_subprogram                    */
 {0x002e,0x2007,0,2,0,0},
 {0x002e,0x2001,0,2,0,0},
@@ -49,6 +62,11 @@ struct Three_Key_Entry_s dd_threekey_ta_ext [] = {
 {0x002e,0x2087,0,2,0,0},
 {0x002e,0x2086,0,2,0,0},
 {0x002e,0x2092,0,2,0,0},
+/* 0x16 - DW_TAG_typedef                       */
+{0x0016,0x2900,0,2,0,0},
+{0x0016,0x2904,0,2,0,0},
+{0x0016,0x2901,0,2,0,0},
+{0x0016,0x2902,0,2,0,0},
 /* 0x41 - DW_TAG_type_unit                     */
 {0x0041,0x2133,0,2,0,0},
 {0x0041,0x2130,0,2,0,0},
@@ -96,6 +114,10 @@ struct Three_Key_Entry_s dd_threekey_ta_ext [] = {
 /* 0x27 - DW_TAG_constant                      */
 {0x0027,0x2303,0,2,0,0},
 {0x0027,0x2304,0,2,0,0},
+/* 0x15 - DW_TAG_subroutine_type               */
+{0x0015,0x2902,0,2,0,0},
+{0x0015,0x2900,0,2,0,0},
+{0x0015,0x2904,0,2,0,0},
 /* 0x21 - DW_TAG_subrange_type                 */
 {0x0021,0x2305,0,2,0,0},
 /* 0x1d - DW_TAG_inlined_subroutine            */

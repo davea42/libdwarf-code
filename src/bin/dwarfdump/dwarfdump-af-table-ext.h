@@ -87,10 +87,15 @@ struct Three_Key_Entry_s dd_threekey_af_table_ext [] = {
 /* 0x2110 DW_AT_GNU_template_name */
 /* 0x2107 DW_AT_GNU_vector */
 /* 0x2900 DW_AT_go_kind */
+{0x2900,0x0003,0,2,0,0},
 /* 0x2901 DW_AT_go_key */
+{0x2901,0x000a,0,2,0,0},
 /* 0x2902 DW_AT_go_elem */
+{0x2902,0x000a,0,2,0,0},
 /* 0x2903 DW_AT_go_embedded_field */
+{0x2903,0x0005,0,2,0,0},
 /* 0x2904 DW_AT_go_runtime_type */
+{0x2904,0x0001,0,2,0,0},
 /* 0x2019 DW_AT_HP_all_variables_modifiable */
 /* 0x2000 DW_AT_HP_block_index */
 /* 0x2018 DW_AT_HP_cold_region_high_pc */
