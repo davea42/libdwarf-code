@@ -1862,15 +1862,26 @@ dd_check_die_abbrevs(Dwarf_Debug dbg, Dwarf_Die in_die,
             case DW_TAG_union_type:
             case DW_TAG_entry_point:
             case DW_TAG_inlined_subroutine:
+            case DW_TAG_typedef: /* seen in Go */
                 break;
             default:
                 bError = (childres == DW_DLV_OK && !ab_has_child) ||
                     (childres == DW_DLV_NO_ENTRY && ab_has_child);
                 if (bError) {
+                    struct esb_s pm;
+                    const char *tagname = "<unknown DW_TAG>";
+
+                    esb_constructor(&pm);
+                    tagname = get_TAG_name(tag,TRUE);
+                    esb_append_printf_s(&pm,
+                        "check 'dw_children'"
+                        " flag combination."
+                        " on %s\n",tagname);
                     DWARF_CHECK_ERROR(
                         abbreviations_result,
-                        "check 'dw_children'"
-                        " flag combination.");
+                        esb_get_string(&pm));
+                    esb_destructor(&pm);
+
                 }
                 break;
             }
