@@ -177,7 +177,7 @@ check_ranges_list(Dwarf_Debug dbg,
                 (current PU address) */
             base_address = r->dwr_addr2;
             continue;
-        } 
+        }
         {
             /* (offset,offset), update using CU address */
             lopc = r->dwr_addr1 + base_address;
@@ -195,15 +195,15 @@ check_ranges_list(Dwarf_Debug dbg,
                 IsValidInBucketGroup(glflags.pRangesInfo,hipc)) {
                 /* Valid values; do nothing */
                 continue;
-            } 
+            }
             /*  At this point may be
-                    dealing with a
-                    linkonce symbol */
+                dealing with a
+                linkonce symbol */
             if (IsValidInLinkonce(glflags.pLinkonceInfo,
-                    glflags.PU_name,lopc,hipc)) {
+                glflags.PU_name,lopc,hipc)) {
                 /* Valid values; do nothing */
                 continue;
-            } 
+            }
             {
                 struct esb_s errbuf;
 
