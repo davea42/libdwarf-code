@@ -7612,8 +7612,9 @@ print_attributes_encoding(Dwarf_Debug dbg,
             Dwarf_Unsigned size = 0;
             int infoerr = 0;
 
-            signed long saved =
-                total_bytes_formx -total_bytes_leb128;
+            Dwarf_Signed saved =
+                (Dwarf_Signed)total_bytes_formx - 
+                (Dwarf_Signed)total_bytes_leb128;
             if (total_bytes_formx) {
                 saved_rate = ((float)saved/(float)total_bytes_formx)
                     *100;
