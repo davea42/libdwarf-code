@@ -18,6 +18,7 @@ dd_canonical_append.h \
 dd_canonical_append.c \
 dd_checkutil.c \
 dd_checkutil.h \
+dd_check_attr_encoding.c \
 dd_command_options.c \
 dd_command_options.h \
 dd_common.c \

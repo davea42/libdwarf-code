@@ -4,6 +4,7 @@ dwarfdump_src = [
   'dd_all_srcfiles.c',
   'dd_attr_form.c',
   'dd_canonical_append.c',
+  'dd_check_attr_encoding.c',
   'dd_checkutil.c',
   'dd_command_options.c',
   'dd_common.c',
