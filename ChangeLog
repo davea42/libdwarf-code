@@ -1,3 +1,157 @@
+2025-11-21:  David Anderson
+    commit 22ca0cb47af5941fa51904c4d6b4593714e72f43
+
+    Here we are erasing technical debt: something that needed
+    doing to simplify maintenance.
+    All instances of
+    pd_dwarf_names_print_on_error
+    and instances of TRUE FALSE  or 1 or 0
+    passed to get_AT_name( or FORM or TAG etc)
+    have been removed as that flag value has not
+    been used for years.  Not wanted or needed.
+    Now gone.
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_check_attr_encoding.c
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_naming.h
+            modified:   src/bin/dwarfdump/dd_trace_abstract_origin_etc.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_sections.c
+
+2025-11-21:  David Anderson
+    commit 9a95763b9eaa9bd745932121a7b540bd550e6c74
+
+    Here we are erasing technical debt: something that needed
+    doing to simplify maintenance.
+    Adding src/bin/dwarfdump/dd_check_attr_encoding.c to
+    the build. It is composed of lines removed
+    from print_die.c to make certain updates easier.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/meson.build
+
+    Needed one global function definition for things
+    to link after moving code to
+    src/bin/dwarfdump/dd_check_attr_encoding.c.
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+    Removed some code.
+            modified:   src/bin/dwarfdump/print_die.c
+    Old code, now in new file.
+            new file:   src/bin/dwarfdump/dd_check_attr_encoding.c
+
+2025-11-17:  David Anderson
+    commit b1af413b8e283aa42594e71d9a531547b359bed6
+
+    Removes an implied conversion by
+    using explicit cast. Fix VS warning.
+            modified:   print_die.c
+
+2025-11-16:  David Anderson
+    commit 74a39d1512c652f0905a520959861dbd39c62a74
+
+    In case there is a strangeness in a TAG relative
+    to it's having possible children report the details
+    in detail to give a clue what the -ki report
+    is about.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-11-16:  David Anderson
+    commit b30ed8ea74c849f593e1df55b13b8c47fc4beb6f
+
+    Corrected a typo in a comment.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2025-11-16:  David Anderson
+    commit b29d558435d1b09cc9a21810e404b95be2a6b365
+
+    Added appropriate uses of combinations used in
+    DWARF from a Go compiler to the sets of known uses.
+            modified:   src/bin/attr_form/attr_formclass_ext.list
+            modified:   src/bin/tag_attr/tag_attr.list
+            modified:   src/bin/tag_attr/tag_attr_ext.list
+
+    Regenerated the tables dwarfdump uses to check for known uses.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+
+2025-11-16:  David Anderson
+    commit e07b07fc3d45f37b789e0f635ad0e2e85ceafced
+
+    Fixing indents, two places.
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+2025-11-16:  David Anderson
+    commit eba2baf906f910d740f29d4abe2d3984940a22d8
+
+    Added essential detail to a DWARF CHECK ( -ka)
+    warning about a die-children flag. Exposed
+    an omission in a switch() stmt, around line 1878
+            modified:   src/bin/dwarfdump/print_die.c
+
+2025-11-16:  David Anderson
+    commit 561965146a4179b7260aaaebdb91afb65f6d2320
+
+    Added comment on #endif #else for clarity.
+            modified:   src/bin/dwarfdump/dd_naming.c
+
+2025-11-16:  David Anderson
+    commit 1b5af5767e5815f33b19fb80516e5b8ce27f3545
+
+    Removed an unused local variable.
+            modified:   src/bin/checkDW_LANG/checklangname.c
+
+2025-11-15:  David Anderson
+    commit 6f3341bc01bac25f28ca8e030a7058e5777a7bf5
+
+    Now says percent rather than expecting reader to know
+    this common English percent (%) symbol.
+            modified:   ../dwarfdump/print_die.c
+
+2025-11-15:  David Anderson
+    commit a3a6c3aa823f953244aba894e7dd0d33eac37c34
+
+    Regenerated via 'make rebuild' for the new Go extension attributes.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-11-15:  David Anderson
+    commit 6c650f508b3aa4600bc63a2b5f3e24047fd03ff3
+
+    Now with a largef set of DW_AT_go attribute names.
+    Complete according to Go documentation on the web.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2025-11-15:  David Anderson
+    commit 82eadc2843df37e5c74dbb69a8a0441f781396fa
+
+    DW_AT_go* uses AT/FORM CLASS relationships not noted before.
+    Now expected.
+            modified:   src/bin/attr_form/attr_formclass.list
+            modified:   src/bin/attr_form/attr_formclass_ext.list
+
+2025-11-03:  David Anderson
+    commit 5d02b24fd27752a2517b8be1da09a364199dbc39
+
+    Normal monthly change in current month in
+    vulnerability data.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-10-28:  David Anderson
+    commit 6cfdca92f5578c181d09b698252e9052bc940d19
+
+    Now up to date.
+            modified:   ChangeLog
+
 2025-10-28:  David Anderson
     commit 074128be4eb9a6f96c0dc2172ce889cc715c378c
 
