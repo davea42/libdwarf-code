@@ -194,7 +194,7 @@ print_selected_attributes(Dwarf_Debug dbg,
             continue;
         }
         /* ok, this attribute is present */
-        atname = get_AT_name(attrid,FALSE);
+        atname = get_AT_name(attrid);
         res = dwarf_whatform(attr,&form,error);
         if (res == DW_DLV_ERROR) {
             error_report(res,"dwarf_whatform() problem: ",error);
@@ -355,7 +355,7 @@ print_die_basics(Dwarf_Debug dbg,
     } else {
         const char *actual_tag_name = 0;
 
-        actual_tag_name = get_TAG_name(tag,FALSE);
+        actual_tag_name = get_TAG_name(tag);
         printf("  CU die TAG                          : "
             "%s\n", actual_tag_name);
     }

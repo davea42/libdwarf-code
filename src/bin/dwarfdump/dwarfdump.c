@@ -2091,7 +2091,6 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
 
             } else if (sres == DW_DLV_ERROR) {
                 struct esb_s m;
-                int dwarf_names_print_on_error = 1;
 
                 dwarf_dealloc_attribute(attrib);
                 attrib = 0;
@@ -2099,8 +2098,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
                 esb_append(&m,"In determining if we should "
                     "skip this CU dwarf_formstring "
                     "gets an error on form ");
-                esb_append(&m,get_FORM_name(theform,
-                    dwarf_names_print_on_error));
+                esb_append(&m,get_FORM_name(theform));
                 esb_append(&m,".");
 
                 print_error_and_continue(

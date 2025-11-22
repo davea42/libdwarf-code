@@ -264,8 +264,7 @@ void  report_caller_error_drop_error(int dwdlv,
 
 /*  encoding_type_func used in print_die.c and
     print_lopc_hipc_attr.c  */
-typedef const char *(*encoding_type_func)
-    (unsigned,int doprintingonerr);
+typedef const char *(*encoding_type_func)(unsigned);
 int dd_get_integer_and_name(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Unsigned * uval_out,
@@ -351,7 +350,6 @@ int dd_trace_abstract_origin_etc(
     struct esb_s *valname,
     struct esb_s *esb_extra,
     int die_indent_level,
-    int pd_dwarf_names_print_on_error,
     Dwarf_Error *err);
 int
 dd_traverse_one_die(Dwarf_Debug dbg,

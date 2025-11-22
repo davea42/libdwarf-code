@@ -83,7 +83,6 @@ dd_trace_abstract_origin_etc(
     struct esb_s *valname,
     struct esb_s *esb_extra,
     int           die_indent_level,
-    int           pd_dwarf_names_print_on_error,
     Dwarf_Error  *err)
 {
     char typebuf[ESB_FIXED_ALLOC_SIZE];
@@ -113,7 +112,7 @@ dd_trace_abstract_origin_etc(
     if (tres == DW_DLV_ERROR) {
         struct esb_s m;
         const char *n =
-            get_AT_name(attrnum,pd_dwarf_names_print_on_error);
+            get_AT_name(attrnum);
         esb_constructor(&m);
         esb_append(&m,
             "Cannot get get value for a ");
@@ -179,8 +178,7 @@ dd_trace_abstract_origin_etc(
                 DROP_ERROR_INSTANCE(dbg,frres,*err);
             } else {
                 const char *n =
-                    get_AT_name(attrnum,
-                        pd_dwarf_names_print_on_error);
+                    get_AT_name(attrnum);
                 struct esb_s m;
                 esb_constructor(&m);
                 esb_append(&m,
@@ -197,8 +195,7 @@ dd_trace_abstract_origin_etc(
             }
         } else if (frres == DW_DLV_NO_ENTRY) {
             const char *n =
-                get_AT_name(attrnum,
-                pd_dwarf_names_print_on_error);
+                get_AT_name(attrnum);
             struct esb_s m;
 
             esb_constructor(&m);
@@ -215,8 +212,7 @@ dd_trace_abstract_origin_etc(
         }
         frres = dwarf_dieoffset(die, &die_goff, err);
         if (frres != DW_DLV_OK) {
-            const char *n = get_AT_name(attrnum,
-                pd_dwarf_names_print_on_error);
+            const char *n = get_AT_name(attrnum);
             struct esb_s m;
             esb_constructor(&m);
             esb_append(&m,
@@ -257,8 +253,7 @@ dd_trace_abstract_origin_etc(
                 int fresb = 0;
 
                 if (glflags.nTrace[KIND_VISITED_INFO]) {
-                    const char *atname = get_AT_name(attrnum,
-                        pd_dwarf_names_print_on_error);
+                    const char *atname = get_AT_name(attrnum);
                     fresb = dwarf_die_CU_offset(die,
                         &die_loff, err);
                     if (fresb == DW_DLV_OK) {
@@ -280,8 +275,7 @@ dd_trace_abstract_origin_etc(
                         status? FIXME */
                 if (fresb != DW_DLV_OK) {
                     const char *n =
-                        get_AT_name(attrnum,
-                        pd_dwarf_names_print_on_error);
+                        get_AT_name(attrnum);
                     struct esb_s m;
                     esb_constructor(&m);
                     esb_append(&m,
@@ -427,8 +421,7 @@ dd_trace_abstract_origin_etc(
             if (found == DW_DLV_ERROR) {
                 struct esb_s m;
                 const char *n =
-                    get_AT_name(attrnum,
-                    pd_dwarf_names_print_on_error);
+                    get_AT_name(attrnum);
                 esb_constructor(&m);
                 esb_append(&m,
                     "Cannot get get value for a ");

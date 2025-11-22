@@ -54,9 +54,6 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_attr_form.h"
 #include "dd_tsearchbal.h"
 
-/* always 1. so can be dropped entirely. */
-static int pd_dwarf_names_print_on_error = 1;
-
 /*  Borrow the definition from pro_encode_nm.h */
 /*  Bytes needed to encode a number.
     Not a tight bound, just a reasonable bound.
@@ -131,11 +128,10 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
             esb_constructor(&lesb);
             esb_append_printf_s(&lesb,
                 "Attribute %s has form ",
-                get_AT_name(attr,pd_dwarf_names_print_on_error));
+                get_AT_name(attr));
             esb_append_printf_s(&lesb,
                 " %s, An error",
-                get_FORM_name(theform,
-                    pd_dwarf_names_print_on_error));
+                get_FORM_name(theform));
             DWARF_CHECK_ERROR(attr_encoding_result,
                 esb_get_string(&lesb));
             esb_destructor(&lesb);
@@ -169,7 +165,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
                     "%" DW_PR_DSd
                     " wasted byte(s)",wasted_bytes);
                 DWARF_CHECK_ERROR2(attr_encoding_result,
-                    get_AT_name(attr,pd_dwarf_names_print_on_error),
+                    get_AT_name(attr),
                     esb_get_string(&lesb));
                 esb_destructor(&lesb);
                 /*  Add the optimized size to the specific
@@ -237,7 +233,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
                     "  %3.0f%%"
                     "\n",
                     ++count,
-                    get_AT_name(index,pd_dwarf_names_print_on_error),
+                    get_AT_name(index),
                     entries,
                     bytes_formx,
                     bytes_leb128,

@@ -150,8 +150,7 @@ printdupab(struct abbrev_entry_s * lastaep)
         "0x%"  DW_PR_XZEROS DW_PR_DUx ,
         lastaep->ae_attr);
     esb_append_printf_s(&msg,
-        " (%s)", get_AT_name((unsigned int)lastaep->ae_attr,
-        dwarf_names_print_on_error));
+        " (%s)", get_AT_name((unsigned int)lastaep->ae_attr));
     esb_append_printf_u(&msg,
         " %u times", lastaep->ae_dupcount);
     esb_append_printf_u(&msg,
@@ -218,8 +217,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             abbrev for entire CU. */
         tagname = "Abbrev 0: null abbrev entry";
     } else {
-        tagname = get_TAG_name((unsigned)tag,
-            dwarf_names_print_on_error);
+        tagname = get_TAG_name((unsigned)tag);
     }
     if ( glflags.gf_do_print_dwarf) {
         if (glflags.dense) {
@@ -263,8 +261,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     if (tag && glflags.gf_do_print_dwarf) {
         const char * child_name = 0;
 
-        child_name = get_children_name((int)(unsigned int)child_flag,
-            dwarf_names_print_on_error);
+        child_name = get_children_name((int)(unsigned int)child_flag);
         printf(" %s", child_name);
     }
     if (!glflags.dense) {
@@ -344,26 +341,20 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
             }
             if (glflags.dense) {
                 printf(" <%ld>%s<%s>%s", (unsigned long) off,
-                    get_AT_name((unsigned int)attr,
-                        dwarf_names_print_on_error),
-                    get_FORM_name((Dwarf_Half) form,
-                        dwarf_names_print_on_error),
+                    get_AT_name((unsigned int)attr),
+                    get_FORM_name((Dwarf_Half) form),
                     esb_get_string(&m));
             } else if (!esb_string_len(&m))  {
                 printf("       <0x%08lx>              %-28s%s\n",
                     (unsigned long) off,
-                    get_AT_name((unsigned int)attr,
-                        dwarf_names_print_on_error),
-                    get_FORM_name((Dwarf_Half) form,
-                        dwarf_names_print_on_error));
+                    get_AT_name((unsigned int)attr),
+                    get_FORM_name((Dwarf_Half) form));
             } else {
                 printf("       <0x%08lx>"
                     "              %-28s%-20s%s\n",
                     (unsigned long) off,
-                    get_AT_name((unsigned int)attr,
-                        dwarf_names_print_on_error),
-                    get_FORM_name((Dwarf_Half) form,
-                        dwarf_names_print_on_error),
+                    get_AT_name((unsigned int)attr),
+                    get_FORM_name((Dwarf_Half) form),
                     esb_get_string(&m));
             }
             esb_destructor(&m);

@@ -2087,7 +2087,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         printf(
             " Warning: Final FDE operator is useless "
             "but not an error. %s\n",
-            get_CFA_name(lastop,TRUE));
+            get_CFA_name(lastop));
     }
 }
 

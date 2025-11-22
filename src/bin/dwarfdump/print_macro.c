@@ -737,8 +737,7 @@ print_macro_ops(Dwarf_Debug dbg,
         esb_append_printf_u(&mtext,"0x%02x",macro_operator);
         esb_append_printf_s(&mtext," %-20s",
             (macro_operator?
-                get_MACRO_name(macro_operator,
-                    dwarf_names_print_on_error):
+                get_MACRO_name(macro_operator):
                 "end-of-macros"));
         if (glflags.gf_show_global_offsets) {
             esb_append_printf_u(&mtext," <GOFF=0x%"
@@ -755,7 +754,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 esb_append_printf_u(&mtext," 0x%02x",
                     form);
                 esb_append_printf_s(&mtext," %-18s ",
-                    get_FORM_name(form,dwarf_names_print_on_error));
+                    get_FORM_name(form));
 
             }
             esb_append(&mtext,"\n   ");
@@ -1336,15 +1335,13 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
                         "operandcount: %u\n",
                         prefix,
                         i,opcode_num,
-                        get_MACRO_name(opcode_num,
-                            dwarf_names_print_on_error),
+                        get_MACRO_name(opcode_num),
                         operand_count);
                     for (j = 0; j < operand_count; ++j) {
                         Dwarf_Small opnd = operand_array[j];
                         printf("%s    [%3u] 0x%04x %20s\n",
                             prefix,j,opnd,
-                            get_FORM_name(opnd,
-                                dwarf_names_print_on_error));
+                            get_FORM_name(opnd));
                     }
                 }
             }

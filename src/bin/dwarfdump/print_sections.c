@@ -42,8 +42,6 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 #include "print_sections.h"
 #include "print_frames.h"
 
-int dwarf_names_print_on_error = 1;
-
 /* The April 2005 dwarf_get_section_max_offsets()
    in libdwarf returns all max-offsets, but we only
    want one of those offsets. This function returns
