@@ -2894,7 +2894,9 @@ process_args(int argc, char *argv[])
     if (glflags.gf_do_check_dwarf) {
         /*  Reduce verbosity when checking
             (checking means checking-only). */
-        glflags.verbose = 1;
+        if (glflags.verbose) {
+            glflags.verbose = 1;
+        }
     }
     return do_uri_translation(argv[dwoptind],"file-to-process");
 }

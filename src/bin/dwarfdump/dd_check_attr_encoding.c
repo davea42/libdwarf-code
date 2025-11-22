@@ -156,21 +156,23 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
             encode_buffer,sizeof(encode_buffer));
         if (res == DW_DLV_OK) {
             if (attributes_encoding_factor[theform] > leb128_size) {
-                int wasted_bytes = attributes_encoding_factor[theform]
-                    - leb128_size;
-                struct esb_s lesb;
-                esb_constructor(&lesb);
-
-                esb_append_printf_i(&lesb,
-                    "%" DW_PR_DSd
-                    " wasted byte(s)",wasted_bytes);
-                DWARF_CHECK_ERROR2(attr_encoding_result,
-                    get_AT_name(attr),
-                    esb_get_string(&lesb));
-                esb_destructor(&lesb);
-                /*  Add the optimized size to the specific
-                    attribute, only if we are dealing with
-                    a standard attribute. */
+                if (glflags.verbose) {
+                    int wasted_bytes = attributes_encoding_factor[
+                        theform] - leb128_size;
+                    struct esb_s lesb;
+                    esb_constructor(&lesb);
+    
+                    esb_append_printf_i(&lesb,
+                        "%" DW_PR_DSd
+                        " wasted byte(s)",wasted_bytes);
+                    DWARF_CHECK_ERROR2(attr_encoding_result,
+                        get_AT_name(attr),
+                        esb_get_string(&lesb));
+                    esb_destructor(&lesb);
+                    /*  Add the optimized size to the specific
+                        attribute, only if we are dealing with
+                        a standard attribute. */
+                }
                 if (attr < DW_AT_lo_user) {
                     attributes_encoding_table[attr].entries += 1;
                     attributes_encoding_table[attr].formx   +=
@@ -204,12 +206,20 @@ print_attributes_encoding(Dwarf_Debug dbg,
         int index;
         int count = 0;
         float saved_rate = 0.0;
+        Dwarf_Bool intro_printed = FALSE;
 
         for (index = 0; index < DW_AT_lo_user; ++index) {
-            if (attributes_encoding_table[index].leb128) {
+            if (!intro_printed && 
+                attributes_encoding_table[index].leb128) {
                 {
+                    intro_printed = TRUE;
                     printf("\n*** SPACE USED AND WASTED BY ATTRIBUTE "
-                        "ENCODINGS ***\n");
+                        "ENCODINGS of DW_FORM_data<n> ***\n");
+                    if (!glflags.verbose) {
+                        printf("   To see each instance"
+                        " individually rerun "
+                        "dwarfdump adding option -v\n" );
+                    }
                     printf("Nro Attribute Name                 "
                         "   Entries     Data_x     leb128-Better\n");
                 }
@@ -241,8 +251,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
             }
         }
         {
-            /*  At least we have an entry, print summary
-                and percentage */
+            /*  If we have an entry, print summary and percentage */
             Dwarf_Addr lower = 0;
             Dwarf_Unsigned size = 0;
             int infoerr = 0;
@@ -256,6 +265,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
             }
 
             if (total_entries) {
+                const char * truename = "<missing>";
                 printf("** Summary **\n");
                 printf("  Entry Count           :"
                     " %lu\n",
@@ -269,10 +279,17 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 printf("  Saving with uleb      :"
                     " %3.0f percent\n",
                     saved_rate);
-                /*  Get .debug_info size (Very unlikely to have
-                    an error here). */
+                /*  Get .debug_info size  */
+                infoerr = dwarf_get_die_section_name(dbg,
+                    TRUE,&truename,attr_error);
+                if (infoerr != DW_DLV_OK) {
+                    truename = ".debug_info";
+                    if (infoerr == DW_DLV_ERROR) {
+                        return infoerr;
+                    }
+                }
                 infoerr = dwarf_get_section_info_by_name(dbg,
-                    ".debug_info",&lower,
+                    truename,&lower,
                     &size,attr_error);
                 if (infoerr == DW_DLV_ERROR) {
                     free(attributes_encoding_table);
@@ -282,13 +299,13 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 }
                 saved_rate = 0.0;
                 if (size) {
-                    saved_rate = (float)((total_bytes_formx -
-                        (float)total_bytes_leb128)
-                        * 100 / size);
+                    saved_rate = (float)(((total_bytes_formx -
+                        (float)total_bytes_leb128) * 100.0) / 
+                        (float)size);
                 }
-                if (saved_rate > 0) {
-                    printf("\n** .debug_info size can be reduced "
-                        "by %.0f percent **\n",
+                if (saved_rate > 0.0) {
+                    printf("** .debug_info size can be reduced "
+                        "by %.1f percent using leb **\n",
                         saved_rate);
                 }
             }
