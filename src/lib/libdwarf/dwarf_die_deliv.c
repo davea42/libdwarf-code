@@ -1447,7 +1447,8 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                             debug-fission extension DWO_id.
                         */
                         if (memcmp(&signature,&cucon->cc_signature,
-                            sizeof(signature))) {
+							sizeof(signature)) &&
+							dbg->de_harmless_errors_on) {
                             /*  The two sigs do not match! */
                             const char *m="DW_DLE_SIGNATURE_MISMATCH"
                                 "DWARF4 extension fission signature"
@@ -1960,33 +1961,36 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
         _dwarf_load_debug_types(dbg,&err2);
     if (resd == DW_DLV_ERROR) {
         if (reloc_incomplete(resd,err2)) {
-            /*  We will assume all is ok, though it is not.
-                Relocation errors need not be fatal. */
-            char msg_buf[300];
-            char *dwerrmsg = 0;
-            char *msgprefix =
-                "Relocations did not complete successfully, "
-                "but we are " " ignoring error: ";
-            size_t totallen = 0;
-            size_t prefixlen = 0;
+            if (dbg->de_harmless_errors_on) {
+                /*  We will assume all is ok, though it is not.
+                    Relocation errors need not be fatal. */
+                char msg_buf[300];
+                char* dwerrmsg = 0;
+                char* msgprefix =
+                    "Relocations did not complete successfully, "
+                    "but we are " " ignoring error: ";
+                size_t totallen = 0;
+                size_t prefixlen = 0;
 
-            dwerrmsg = dwarf_errmsg(err2);
-            prefixlen = strlen(msgprefix);
-            totallen = prefixlen + strlen(dwerrmsg);
-            if ( totallen >= sizeof(msg_buf)) {
-                const char *m= "Error:corrupted dwarf message table!";
-                /*  Impossible unless something corrupted.
-                    Provide a shorter dwerrmsg*/
-                _dwarf_safe_strcpy(msg_buf,sizeof(msg_buf),
-                    m,strlen(m));
-            } else {
-                _dwarf_safe_strcpy(msg_buf,sizeof(msg_buf),
-                    msgprefix,prefixlen);
-                _dwarf_safe_strcpy(msg_buf +prefixlen,
-                    sizeof(msg_buf)-prefixlen,
-                    dwerrmsg,strlen(dwerrmsg));
+                dwerrmsg = dwarf_errmsg(err2);
+                prefixlen = strlen(msgprefix);
+                totallen = prefixlen + strlen(dwerrmsg);
+                if (totallen >= sizeof(msg_buf)) {
+                    const char* m = "Error:corrupted dwarf message table!";
+                    /*  Impossible unless something corrupted.
+                        Provide a shorter dwerrmsg*/
+                    _dwarf_safe_strcpy(msg_buf, sizeof(msg_buf),
+                        m, strlen(m));
+                }
+                else {
+                    _dwarf_safe_strcpy(msg_buf, sizeof(msg_buf),
+                        msgprefix, prefixlen);
+                    _dwarf_safe_strcpy(msg_buf + prefixlen,
+                        sizeof(msg_buf) - prefixlen,
+                        dwerrmsg, strlen(dwerrmsg));
+                }
+                dwarf_insert_harmless_error(dbg, msg_buf);
             }
-            dwarf_insert_harmless_error(dbg,msg_buf);
             /*  Fall thru to use the newly loaded section.
                 even though it might not be adequately
                 relocated. */

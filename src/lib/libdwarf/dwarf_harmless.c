@@ -126,6 +126,15 @@ dwarf_get_harmless_error_list(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+int
+dwarf_set_harmless_errors_enabled(Dwarf_Debug dbg,
+	int v)
+{
+	int ov = dbg->de_harmless_errors_on;
+	dbg->de_harmless_errors_on = (char)v;
+	return ov;
+}
+
 /*  Insertion made public is only for testing the harmless error code,
     it is not necessarily useful for libdwarf client code aside
     from code testing libdwarf. */

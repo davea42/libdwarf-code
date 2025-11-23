@@ -252,7 +252,8 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             "abbrev final NUL byte");
         return DW_DLV_ERROR;
     }
-    if ( abcur < tabend) {
+	if (abcur < tabend &&
+		dbg->de_harmless_errors_on) {
         unsigned padcount = 0;
 
         for (; abcur < tabend; ++abcur) {

@@ -892,6 +892,12 @@ struct Dwarf_Debug_s {
 
     struct Dwarf_Harmless_s de_harmless_errors;
 
+    /*  Non-zero (the default) if harmless errors are tracked
+        normally. If zero, then harmless errors are not tracked,
+        which can improve performance by avoiding string copies
+        in various error paths. */
+    unsigned char de_harmless_errors_on;
+
     struct Dwarf_Printf_Callback_Info_s  de_printf_callback;
     void *   de_printf_callback_null_device_handle;
 
