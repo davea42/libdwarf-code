@@ -2892,11 +2892,20 @@ process_args(int argc, char *argv[])
     }
 
     if (glflags.gf_do_check_dwarf) {
-        /*  Reduce verbosity when checking
-            (checking means checking-only). */
         if (glflags.verbose) {
-            glflags.verbose = 1;
+            /*  Specifically now set > 1 for
+                dd_check_attr_encoding.c
+                to know extra detail is wanted there.
+                Somewhat messy conflation of flags. */
+            glflags.gf_check_verbose_mode++;
         }
+        /*  Set specific verbosity when checking
+            (checking means checking-only).
+            And ensure non-zero for error reporting CU/DIE
+            details during checking.
+            This affects how dd_check_attr_encoding.c
+            works. */
+        glflags.verbose = 1;
     }
     return do_uri_translation(argv[dwoptind],"file-to-process");
 }

@@ -205,8 +205,10 @@ struct glflags_s {
 
     Dwarf_Bool gf_check_names;
 
-    /* During '-k' mode, display errors */
-    Dwarf_Bool gf_check_verbose_mode;
+    /*  During '-k' mode, display errors if non-zero.
+        If > 1 then display DWARF CHECK errors
+        in full detail from  dd_check_attr_encoding.c */
+    int        gf_check_verbose_mode;
 
     Dwarf_Bool gf_check_frames;
     Dwarf_Bool gf_check_frames_extended; /* Extensive frames check */

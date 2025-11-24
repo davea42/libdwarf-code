@@ -379,7 +379,6 @@ void print_language_version_table(void);
 void check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value);
 
-
 #ifdef __cplusplus
 }
 #endif

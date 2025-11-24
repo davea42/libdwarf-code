@@ -52,7 +52,7 @@ extern const char * get_ID_name(unsigned int val_in);
 extern const char * get_CC_name(unsigned int val_in);
 extern const char * get_INL_name(unsigned int val_in);
 extern const char * get_ORD_name(unsigned int val_in);
-extern const char * get_DSC_name(unsigned int val_in); 
+extern const char * get_DSC_name(unsigned int val_in);
 extern const char * get_LNS_name(unsigned int val_in);
 extern const char * get_LNE_name(unsigned int val_in);
 extern const char * get_MACINFO_name(unsigned int val_in);

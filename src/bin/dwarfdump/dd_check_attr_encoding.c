@@ -57,7 +57,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 /*  Borrow the definition from pro_encode_nm.h */
 /*  Bytes needed to encode a number.
     Not a tight bound, just a reasonable bound.
-*/   
+*/
 #ifndef ENCODE_SPACE_NEEDED
 #define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
 #endif /* ENCODE_SPACE_NEEDED */
@@ -130,7 +130,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
                 "Attribute %s has form ",
                 get_AT_name(attr));
             esb_append_printf_s(&lesb,
-                " %s, An error",
+                " %s, an error",
                 get_FORM_name(theform));
             DWARF_CHECK_ERROR(attr_encoding_result,
                 esb_get_string(&lesb));
@@ -156,22 +156,23 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
             encode_buffer,sizeof(encode_buffer));
         if (res == DW_DLV_OK) {
             if (attributes_encoding_factor[theform] > leb128_size) {
-                if (glflags.verbose) {
+                if (glflags.gf_check_verbose_mode > 1) {
                     int wasted_bytes = attributes_encoding_factor[
                         theform] - leb128_size;
                     struct esb_s lesb;
                     esb_constructor(&lesb);
-    
+
                     esb_append_printf_i(&lesb,
                         "%" DW_PR_DSd
-                        " wasted byte(s)",wasted_bytes);
+                        " wasted ",wasted_bytes);
+                    esb_append_printf_s(&lesb,
+                        "%s",(wasted_bytes ==1)?"byte":"bytes");
+                    esb_append_printf_s(&lesb,
+                        " using form %s ",get_FORM_name(theform));
                     DWARF_CHECK_ERROR2(attr_encoding_result,
                         get_AT_name(attr),
                         esb_get_string(&lesb));
                     esb_destructor(&lesb);
-                    /*  Add the optimized size to the specific
-                        attribute, only if we are dealing with
-                        a standard attribute. */
                 }
                 if (attr < DW_AT_lo_user) {
                     attributes_encoding_table[attr].entries += 1;
@@ -209,17 +210,23 @@ print_attributes_encoding(Dwarf_Debug dbg,
         Dwarf_Bool intro_printed = FALSE;
 
         for (index = 0; index < DW_AT_lo_user; ++index) {
-            if (!intro_printed && 
+            if (!intro_printed &&
                 attributes_encoding_table[index].leb128) {
                 {
                     intro_printed = TRUE;
                     printf("\n*** SPACE USED AND WASTED BY ATTRIBUTE "
                         "ENCODINGS of DW_FORM_data<n> ***\n");
-                    if (!glflags.verbose) {
-                        printf("   To see each instance"
+                    if (glflags.gf_check_verbose_mode == 1){
+                        printf("    To see each instance"
                         " individually rerun "
                         "dwarfdump adding option -v\n" );
                     }
+                    printf("    Instances of linker relocated fields"
+                        " cannot be LEB\n");
+                    printf("    because few linkers know how to"
+                        " relocate LEB values\n");
+                    printf("    So some 'waste' listed may not "
+                        "really be wasted space.\n");
                     printf("Nro Attribute Name                 "
                         "   Entries     Data_x     leb128-Better\n");
                 }
@@ -300,7 +307,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
                 saved_rate = 0.0;
                 if (size) {
                     saved_rate = (float)(((total_bytes_formx -
-                        (float)total_bytes_leb128) * 100.0) / 
+                        (float)total_bytes_leb128) * 100.0) /
                         (float)size);
                 }
                 if (saved_rate > 0.0) {
