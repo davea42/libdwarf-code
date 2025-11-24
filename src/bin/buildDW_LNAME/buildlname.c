@@ -24,7 +24,6 @@ gets compiled into libdwarf)
 #define LNAMEBUFSIZ   1128
 static char buffer[LNAMEBUFSIZ];
 
-
 #define FALSE 0
 #define TRUE  1
 
