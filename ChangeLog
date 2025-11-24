@@ -1,3 +1,57 @@
+2025-11-24:  David Anderson
+    commit 8fa096c577d56cf02886fae0b7e9be88a24c30bd
+
+    Clarified the report this creates with a few lines of text
+            modified:   src/bin/dwarfdump/dd_check_attr_encoding.c
+    Updated the setting of glflags.gf_check_verbose_mode
+    and glflags.verbose so the reporting by
+    dd_check_attr_encoding.c is the most useful data.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Changed gf_check_verbose_mode from Dwarf_Bool to int
+    as we now need to allow it to have more selectivity.
+    For src/bin/dwarfdump/dd_check_attr_encoding.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+    Removed useless blank line.
+            modified:   src/bin/dwarfdump/dd_globals.h
+    Removed trailing whitespace.
+            modified:   src/bin/dwarfdump/dd_naming.h
+
+2025-11-24:  David Anderson
+    commit b0b039d8dae0cf1126b2b281ca97b20afc1c606d
+
+    removed one blank line where there were two.
+            modified:   src/bin/buildDW_LNAME/buildlname.c
+
+2025-11-24:  David Anderson
+    commit c383c8e1a04b45f3c162dac4d09d06652a7643b9
+
+    Messy string code is replaced by simple uses
+    of dwarfstring calls dwarfstring_constructor()
+    dwarfstring_destructor() and dwarfstring_append()
+    and dwarfstring_string() (source is in libdwarf).
+            modified:   src/bin/buildDW_LNAME/Makefile.am
+            modified:   src/bin/buildDW_LNAME/buildlname.c
+
+2025-11-22:  David Anderson
+    commit ed0b75dcbe851302c202a7782a7b87aa4e1e8ea5
+
+    By default avoids printing details about
+    use of leb instead of DW_FORM_data<n>
+    when doing checking (dwarfdump -ka for example).
+    But running dwarfdump with -v
+    as well as -ka shows each instance with
+    DWARF CHECK: DW_AT_decl_file: 3 wasted byte(s)
+    (3 is an example).
+            modified:   dd_check_attr_encoding.c
+            modified:   dd_command_options.c
+
+2025-11-22:  David Anderson
+    commit 409a86e6c7297481cc7b71c8b15889b707608e4c
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2025-11-21:  David Anderson
     commit 22ca0cb47af5941fa51904c4d6b4593714e72f43
 
