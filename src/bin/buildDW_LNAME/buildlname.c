@@ -18,32 +18,18 @@ gets compiled into libdwarf)
 
 #include "dwarf.h"
 #include "dwarf_lname_data.h"
+#include "dwarf_string.h"
 
 #define MAXDEFINELINE 1000
-static char *input_name = 0;
-static char pathbuf[BUFSIZ];
-static char buffer[BUFSIZ];
+#define LNAMEBUFSIZ   1128
+static char buffer[LNAMEBUFSIZ];
 
-/* This for the output into dwarf_lname_version.c */
-static char outpath[BUFSIZ];
 
 #define FALSE 0
 #define TRUE  1
 
 static unsigned int tcount = sizeof(lnsix) / sizeof(lnsix[0]);
 static unsigned int touchcounts[sizeof(lnsix) / sizeof(lnsix[0])];
-
-static void
-safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
-{
-    if (srclen > targlen) {
-        printf("Target name does not fit in buffer.\n"
-            "In buildopstabcount.c increase buffer size "
-            " from %u \n",(unsigned int)sizeof(buffer));
-        exit(EXIT_FAILURE);
-    }
-    strcpy(targ,src);
-}
 
 static void
 validatetouchcount(char *curdefname,unsigned long v)
@@ -183,14 +169,14 @@ static void
 print_table_entries(FILE *outfile)
 {
     /* The zero entry is not relevant, a placeholder. */
-    unsigned i = 1;
-    signed int sublist_start = -1;
-    struct lnsix_s sublist_entry;
+    unsigned        i = 1;
+    struct lnsix_s  sublist_entry;
     struct lnsix_s *cur = 0;
-    unsigned k = 0;
+    signed long     sublist_start = -1;
+    signed long     k = 0;
 
     sublist_entry = zerosix;
-    for ( ;i < tcount; ++i) {
+    for ( ;i < (unsigned)tcount; ++i) {
         if (sublist_start < 0) {
             sublist_entry = lnsix[i];
             sublist_start = i;
@@ -209,7 +195,7 @@ print_table_entries(FILE *outfile)
         sublist_start = i;
         sublist_entry = lnsix[i];
     }
-    for (k = sublist_start; k < i; ++k) {
+    for (k = sublist_start;k >= 0 &&  k < i; ++k) {
         fprintf(outfile,"    case %s:\n",
             lnsix[k].ln_name);
     }
@@ -243,24 +229,26 @@ write_new_query_function(FILE *outfile)
     /* insert the details here. */
     fprintf(outfile, "}\n");
 }
+
 static void
 setup_new_query_function(char *path)
 {
     FILE *outfile = 0;
-    size_t pathlen = strlen(path);
     char *outsuffix = "/src/lib/libdwarf/dwarf_lname_version.c";
+    struct dwarfstring_s m;
+    dwarfstring_constructor(&m);
 
-    safe_strcpy(outpath,path,(unsigned)sizeof(outpath),
-        (unsigned)pathlen);
-    safe_strcpy(outpath+pathlen,outsuffix,
-        (unsigned)sizeof(outpath)-(unsigned)pathlen,
-        (unsigned)strlen(outsuffix));
-    outfile = fopen(outpath,"w");
+    dwarfstring_append(&m,path);
+    dwarfstring_append(&m,outsuffix);
+    outfile = fopen(dwarfstring_string(&m),"w");
     if (!outfile) {
         printf("ERROR building dwarf_lname_version.c FAILED."
-            "Unable to open %s for output\n",outpath);
+            "Unable to open %s for output\n",
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         exit(EXIT_FAILURE);
     }
+    dwarfstring_destructor(&m);
     write_new_query_function(outfile);
     fclose(outfile);
 }
@@ -384,7 +372,7 @@ int main(int argc, char**argv)
 {
     const char *tailpath = "/src/lib/libdwarf/dwarf.h";
     char  *path  = 0;
-    unsigned len = 0;
+    struct dwarfstring_s m;
 
     if (argc > 1) {
         if (argc != 3) {
@@ -406,32 +394,11 @@ int main(int argc, char**argv)
             exit(EXIT_FAILURE);
         }
     }
-    len = strlen(path);
-    if (len >= sizeof(pathbuf)) {
-        printf(" buildopstab Input path greater length "
-            "than makes any sense:"
-            " Giving up\n");
-        exit(EXIT_FAILURE);
-
-    }
-    safe_strcpy(pathbuf,path,(unsigned)sizeof(pathbuf),(unsigned)len);
-    {
-        size_t remaining =  sizeof(pathbuf) -len -1;
-        size_t tailpathlen = strlen(tailpath);
-        if (tailpathlen >= remaining) {
-            printf(" buildopstab Input tailpath greater "
-                "length fits in buf: "
-                "Giving up\n");
-            exit(EXIT_FAILURE);
-        }
-        /* Notice tailpath has a leading /  */
-        safe_strcpy(pathbuf+len,(char *)tailpath,
-            (unsigned)remaining,(unsigned)tailpathlen);
-    }
-    input_name = pathbuf;
-
-    check_if_lname_complete(pathbuf);
+    dwarfstring_constructor(&m);
+    dwarfstring_append(&m,path);
+    dwarfstring_append(&m,(char *)tailpath);
+    check_if_lname_complete(dwarfstring_string(&m));
     setup_new_query_function(path);
-
+    dwarfstring_destructor(&m);
     return 0;
 }

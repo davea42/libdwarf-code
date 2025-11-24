@@ -7,7 +7,9 @@ CLEANFILES =
 rebuild: buildlname
 	./buildlname -f $(top_srcdir) 
 noinst_PROGRAMS = buildlname
-buildlname_SOURCES = buildlname.c
+buildlname_SOURCES = buildlname.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_string.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_string.h
 buildlname_CPPFLAGS = \
   -I. -I$(top_srcdir)/src/lib/libdwarf 
 buildlname_CFLAGS = $(DWARF_CFLAGS_WARN)
