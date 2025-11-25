@@ -214,7 +214,7 @@ validate_length(Dwarf_Debug dbg,
         address_size = dbg->de_pointer_size;
     }
     mod = total_len % address_size;
-    if (mod != 0) {
+    if (mod != 0 && dbg->de_harmless_errors_on) {
         dwarfstring  harm;
         Dwarf_Unsigned sectionoffset = ciefde_start - section_ptr;
 

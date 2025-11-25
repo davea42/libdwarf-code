@@ -8936,6 +8936,26 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
     Dwarf_Debug  dw_dbg,
     unsigned int dw_maxcount);
 
+/*!  @brief Enable or disable libdwarf tracking
+    of harmless errors. Harmless errors are
+    used by tools like dwarfdump. Disabling
+    harmless errors can improve performance by
+    avoiding string copies.
+    Defaults to enabled.
+
+    @param dw_dbg
+    Pass in an open Dwarf_Debug
+    @param dw_v
+    If zero passed in, harmless errors will not
+    be tracked and libdwarf will run somewhat faster
+    If non-zero passed in libdwarf will resume or
+    continue tracking harmless errors
+    @return
+    Returns the previous version of the flag.
+*/
+DW_API int dwarf_set_harmless_errors_enabled(Dwarf_Debug dw_dbg,
+    int dw_v);
+
 /*! @brief Harmless Error Insertion is only for testing
 
     Useful for testing the harmless error mechanism.
