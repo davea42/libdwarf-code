@@ -1,3 +1,41 @@
+2025-11-25:  David Anderson
+    commit 932853446d4fd36690f87889a3ad4f62627098ed
+
+    In the previous commit some files had tab characters
+    so failed to pass dicheck (dicheck-code project
+    on github).
+    Changing to leading spaces instead of tabs
+    in a very few places fixed the issues.
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+
+2025-11-25:  Ritesh Oedayrajsingh Varma
+    commit 238cf96c51e2ee59fa7cc96ee26661d7d514e33c
+
+    Added dwarf_set_harmless_errors_enabled API function (#309)
+
+    This can be used to disable harmless error tracking via
+    dwarf_insert_harmless_error. The cost of harmless error
+    tracking can be quite high, and is only needed for tests.
+
+The following files affected:
+    dwarf_arange.c:			dbg->de_harmless_errors_on) {
+    dwarf_debugnames.c:		dbg->de_harmless_errors_on) {
+    dwarf_die_deliv.c:          if (dbg->de_harmless_errors_on) {
+    dwarf_frame2.c:    if (mod != 0 && dbg->de_harmless_errors_on) {
+    dwarf_harmless.c:	int ov = dbg->de_harmless_errors_on;
+    dwarf_harmless.c:	dbg->de_harmless_errors_on = (char)v;
+    dwarf_init_finish.c:            dbg->de_harmless_errors_on = 1;
+
+
+2025-11-24:  David Anderson
+    commit 810ec4ee9e913f49a383953f48823912c2910df9
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2025-11-24:  David Anderson
     commit 8fa096c577d56cf02886fae0b7e9be88a24c30bd
 
