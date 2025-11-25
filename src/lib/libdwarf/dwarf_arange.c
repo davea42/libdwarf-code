@@ -354,8 +354,8 @@ _dwarf_get_aranges_list(Dwarf_Debug dbg,
         /*  A compiler could emit some padding bytes here. dwarf2/3
             (dwarf4 sec 7.20) does not clearly make extra padding
             bytes illegal. */
-		if (end_this_arange < arange_ptr &&
-			dbg->de_harmless_errors_on) {
+        if (end_this_arange < arange_ptr &&
+            dbg->de_harmless_errors_on) {
             Dwarf_Unsigned pad_count = arange_ptr - end_this_arange;
             Dwarf_Unsigned offset = arange_ptr - arange_ptr_start;
             dwarfstring aramsg;

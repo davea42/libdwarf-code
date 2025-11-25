@@ -128,11 +128,11 @@ dwarf_get_harmless_error_list(Dwarf_Debug dbg,
 
 int
 dwarf_set_harmless_errors_enabled(Dwarf_Debug dbg,
-	int v)
+    int v)
 {
-	int ov = dbg->de_harmless_errors_on;
-	dbg->de_harmless_errors_on = (char)v;
-	return ov;
+    int ov = dbg->de_harmless_errors_on;
+    dbg->de_harmless_errors_on = (char)v;
+    return ov;
 }
 
 /*  Insertion made public is only for testing the harmless error code,

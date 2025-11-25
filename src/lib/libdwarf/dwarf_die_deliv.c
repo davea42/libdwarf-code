@@ -1449,8 +1449,8 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                             debug-fission extension DWO_id.
                         */
                         if (memcmp(&signature,&cucon->cc_signature,
-							sizeof(signature)) &&
-							dbg->de_harmless_errors_on) {
+                            sizeof(signature)) &&
+                            dbg->de_harmless_errors_on) {
                             /*  The two sigs do not match! */
                             const char *m="DW_DLE_SIGNATURE_MISMATCH"
                                 "DWARF4 extension fission signature"
@@ -1978,7 +1978,8 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
                 prefixlen = strlen(msgprefix);
                 totallen = prefixlen + strlen(dwerrmsg);
                 if (totallen >= sizeof(msg_buf)) {
-                    const char* m = "Error:corrupted dwarf message table!";
+                    const char* m = 
+                        "Error:corrupted dwarf message table!";
                     /*  Impossible unless something corrupted.
                         Provide a shorter dwerrmsg*/
                     _dwarf_safe_strcpy(msg_buf, sizeof(msg_buf),
