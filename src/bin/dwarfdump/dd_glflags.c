@@ -138,6 +138,10 @@ init_global_flags(void)
     glflags.gf_check_self_references = FALSE;
     glflags.gf_check_functions = FALSE;
 
+    /*  Enable certain checks inside libdwarf.
+        This is the dwarfdump default */
+    glflags.gf_suppress_harmless = FALSE;
+
     /* Attributes encoding */
     glflags.gf_check_attr_encoding = FALSE;
 

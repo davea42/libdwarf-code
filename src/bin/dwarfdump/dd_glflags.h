@@ -58,7 +58,8 @@ typedef enum /* Dwarf_Check_Categories */ {
         won't really affect client code.  The 'harmless' errors
         are reported and otherwise ignored.  It is difficult to report
         the error when the error is noticed by libdwarf, the error
-        is reported at a later time.
+        is reported at a later time. See
+        dwarf_set_harmless_errors() to turn off such error checks.
         The other errors dwarfdump reports are also generally harmless
         but are detected by dwarfdump so it's possble to report the
         error as soon as the error is discovered. */
@@ -180,6 +181,10 @@ struct glflags_s {
     Dwarf_Bool gf_check_attr_encoding;   /* Attributes encoding */
     Dwarf_Bool gf_generic_1200_regs;
     Dwarf_Bool gf_suppress_check_extensions_tables;
+
+    /* a call to libdwarf will speed up the library
+        See dwarf_set_harmless_errors_enabled() */
+    int        gf_suppress_harmless; 
 
     /* The following tells libdwarf not to check for duplicated
         attributes if TRUE. */
