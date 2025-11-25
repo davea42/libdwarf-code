@@ -1160,6 +1160,15 @@
 
     We list these with newest first.
 
+    <b>Changes 2.2.0 to 2.2.1</b>
+
+    Added function dwarf_set_harmless_errors_enabled(
+    Dwarf_Debug dw_dbg,int dw_v). Passing in dw_v
+    of 0 (zero) turns off checking for what are really
+    harmless errors, which makes a meaningful improvement
+    in library performance for some calls.
+    By default harmless errors are checked-for.
+
     <b>Changes 2.1.0 to 2.2.0</b>
 
     Released 10 October 2025
