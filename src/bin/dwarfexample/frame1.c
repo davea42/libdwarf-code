@@ -757,7 +757,8 @@ print_fde_instrs(Dwarf_Debug dbg,
         printf("Problem getting fde range \n");
         exit(EXIT_FAILURE);
     }
-
+    /*  As a test case, we just chose an address. 
+        To see ALL the rows in the fde, start at lowpc instead */
     arbitrary_addr = lowpc + (func_length/2);
     printf("function low pc 0x%" DW_PR_DUx
         "  and length 0x%" DW_PR_DUx
