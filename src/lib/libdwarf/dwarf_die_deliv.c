@@ -1978,7 +1978,7 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
                 prefixlen = strlen(msgprefix);
                 totallen = prefixlen + strlen(dwerrmsg);
                 if (totallen >= sizeof(msg_buf)) {
-                    const char* m = 
+                    const char* m =
                         "Error:corrupted dwarf message table!";
                     /*  Impossible unless something corrupted.
                         Provide a shorter dwerrmsg*/
