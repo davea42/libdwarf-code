@@ -456,23 +456,6 @@ struct cie_fde_prefix_s {
     Dwarf_Unsigned cf_section_length;
 };
 
-int
-_dwarf_exec_frame_instr(Dwarf_Bool make_instr,
-    Dwarf_Bool search_pc,
-    Dwarf_Addr search_pc_val,
-    Dwarf_Addr initial_loc,
-    Dwarf_Small * start_instr_ptr,
-    Dwarf_Small * final_instr_ptr,
-    Dwarf_Frame table,
-    Dwarf_Cie cie,
-    Dwarf_Debug dbg,
-    Dwarf_Unsigned reg_num_of_cfa,
-    Dwarf_Bool * has_more_rows,
-    Dwarf_Addr * subsequent_pc,
-    Dwarf_Frame_Instr_Head *ret_frame_instr_head,
-    Dwarf_Unsigned * returned_frame_instr_count,
-    Dwarf_Error *error);
-
 int _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Small *frame_ptr_in,
     Dwarf_Small *section_ptr_in,
@@ -502,6 +485,27 @@ int _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     int use_gnu_cie_calc,
     Dwarf_Cie *cie_ptr_out,
         Dwarf_Error *error);
+int
+_dwarf_exec_frame_instr(Dwarf_Bool make_instr,
+    Dwarf_Bool search_pc,
+    Dwarf_Addr search_pc_val,
+    Dwarf_Addr initial_loc,
+    Dwarf_Small * start_instr_ptr,
+    Dwarf_Small * final_instr_ptr,
+    Dwarf_Frame table,
+    Dwarf_Cie cie,
+    Dwarf_Debug dbg,
+    Dwarf_Unsigned reg_num_of_cfa,
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
+    Dwarf_Frame_Instr_Head *ret_frame_instr_head,
+    Dwarf_Unsigned * returned_frame_instr_count,
+    Dwarf_Error *error);
+void _dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
+    Dwarf_Unsigned first, Dwarf_Unsigned last,
+    Dwarf_Unsigned initial_value);
+
+
 
 int _dwarf_frame_constructor(Dwarf_Debug dbg,void * );
 void _dwarf_frame_destructor (void *);
