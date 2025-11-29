@@ -70,6 +70,86 @@
 
 #define MIN(a,b)  (((a) < (b))? (a):(b))
 
+/*
+    _dwarf_exec_frame_instr() is the heart of the
+    debug_frame stuff.  Don't even
+    think of reading this without reading both the Libdwarf and
+    consumer API carefully first.  This function executes
+    frame instructions contained in a Cie or an Fde, but does in a
+    number of different ways depending on the information sought.
+    Start_instr_ptr points to the first byte of the frame instruction
+    stream, and final_instr_ptr one past the last byte.
+
+    The function begins reading instructions from the beginning
+    at initial_loc, the low pc of the FDE. Always.
+
+    The offsets returned in the frame instructions are factored.  That
+    is they need to be multiplied by either the code_alignment_factor
+    or the data_alignment_factor, as appropriate to obtain the actual
+    offset.  This makes it possible to expand an instruction stream
+    without the corresponding Cie.  However, when an Fde frame instr
+    sequence is being expanded there must be a valid Cie
+    with a pointer to an initial table row.
+
+    If successful, returns DW_DLV_OK
+        And sets returned_count thru the pointer
+        if make_instr is TRUE.
+        If make_instr is FALSE returned_count
+        should NOT be used by the caller (returned_count
+        is set to 0 thru the pointer by this routine...)
+    If unsuccessful, returns DW_DLV_ERROR
+        and sets returned_error to the error code
+
+    It does not do a whole lot of input validation being a private
+    function.  Please make sure inputs are valid.
+
+    (1) If make_instr is TRUE, it makes a list of pointers to
+    Dwarf_Frame_Op structures containing the frame instructions
+    executed.  A pointer to this list is returned in ret_frame_instr.
+    Make_instr is TRUE only when a list of frame instructions is to be
+    returned.  In this case since we are not interested
+    in the contents
+    of the table, the input Cie can be NULL.  This is the only case
+    where the input Cie can be NULL.
+
+    (2) If search_pc is TRUE, frame instructions are executed till
+    either a location is reached that is greater than the
+    search_pc_val
+    provided, or all instructions are executed.  At this point the
+    last row of the table generated is returned in a structure.
+    A pointer to this structure is supplied in table.
+
+    (3) This function is also used to create the initial table row
+    defined by a Cie.  In this case, the Dwarf_Cie pointer cie, is
+    NULL.  For an FDE, however, cie points to the associated Cie.
+
+    (4) If search_pc is TRUE and (has_more_rows and subsequent_pc
+        are non-null) then:
+            has_more_rows is set TRUE if there are instruction
+            bytes following the detection of search_over.
+            If all the instruction bytes have been seen
+            then *has_more_rows is set FALSE.
+
+            If *has_more_rows is TRUE then *subsequent_pc
+            is set to the pc value that is the following
+            row in the table.
+
+    make_instr - make list of frame instr? 0/1
+    ret_frame_instr -  Ptr to list of ptrs to frame instrs
+    search_pc  - Search for a pc value?  0/1
+    search_pc_val -  Search for this pc value
+    initial_loc - Initial code location value, low pc
+        of the fde.
+    start_instr_ptr -   Ptr to start of frame instrs.
+    final_instr_ptr -   Ptr just past frame instrs.
+    table       -     Ptr to struct with last row.
+    cie     -   Ptr to Cie used by the Fde.
+
+    Different cies may have distinct address-sizes, so the cie
+    is used, not de_pointer_size.
+
+*/
+
 /*  Cleans up the in-process linked list of these
     in case of early exit in
     _dwarf_exec_frame_instr.  */
