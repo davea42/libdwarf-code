@@ -1,3 +1,80 @@
+2025-11-29:  David Anderson
+    commit 124ad31f5756f8d826fc9996da0b22c8b7eef616
+
+    Now adds dwarf_cfa_read.c to the build:
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+    Now with the long introductory comment.
+            modified:   src/lib/libdwarf/dwarf_cfa_read.c
+    Now with the code solely for _dwarf_exec_frame_instr()
+    completely removed.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2025-11-29:  David Anderson
+    commit d5aabec21b6c81eb4f31add73b8f95c02722a675
+
+    _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
+    and
+    void _dwarf_init_reg_rules_ru(struct Dw
+    are now declared here, used in more than
+    one source file.
+            modified:   dwarf_frame.h
+
+2025-11-29:  David Anderson
+    commit a7c365e189cf208866dcc5bd3f86b2ea21378a23
+
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2025-11-29:  David Anderson
+    commit 85758c8ae13431c2fc17afdb6a44ed943f1f08b0
+
+    Adding explanatory comment.
+            modified:   ../../bin/dwarfexample/frame1.c
+
+    Removed _dwarf_exec_frame_instr() from
+    dwarf_frame.c and placed it here,
+    where it's easier to grasp and work with
+    (the overall control is at the beginning of
+    the file and ending control is at the end,
+    the middle is a giant switch statement
+    with all DW_CFA* listed).
+            new file:   dwarf_cfa_read.c
+
+2025-11-25:  David Anderson
+    commit 835cc216fda5283cd82f92495885790245e0f701
+
+    New option -suppress-harmless-errors so dwarfdump
+    can choose whether to do and report the harmless error checks.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+    new flag gf_suppress_harmless default FALSE in dwarfdump.
+            modified:   src/bin/dwarfdump/dd_glflags.c
+    defines gf_suppress_harmless
+            modified:   src/bin/dwarfdump/dd_glflags.h
+    based on gf_suppress_harmless either lets libdwarf
+    default (ignore harmless) appy or calls
+    dwarf_set_harmless_errors_enabled(dbg,1)
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2025-11-25:  David Anderson
+    commit 0d1760096059ae596a9052ee586028ab64a8b996
+
+    Now libdwarf defaults to not doing harmless_error checks
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2025-11-25:  David Anderson
+    commit ba09ee4ed50977a1c1401858587c8e05bef512ad
+
+            modified:   doc/libdwarf.dox
+    Documented the addition of a function to the API.
+
+2025-11-25:  David Anderson
+    commit 95593d69a199d16d6e68fd8504683c9f72952d94
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
 2025-11-25:  David Anderson
     commit 932853446d4fd36690f87889a3ad4f62627098ed
 
