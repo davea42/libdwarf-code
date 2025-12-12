@@ -315,6 +315,11 @@ _dwarf_enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         &dbg->de_debug_line_str,
         DW_DLE_DEBUG_LINE_DUPLICATE,0,
         FALSE,err);
+    SET_UP_SECTION(dbg,scn_name,".debug_line_str__DWARF",
+        group_number,
+        &dbg->de_debug_line_str,
+        DW_DLE_DEBUG_LINE_DUPLICATE,0,
+        FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_line.dwo",
         DW_GROUPNUMBER_DWO,
         &dbg->de_debug_line,
@@ -389,6 +394,12 @@ _dwarf_enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_str_offsets",
+        group_number,
+        &dbg->de_debug_str_offsets,
+        DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_str_offs__DWARF",
         group_number,
         &dbg->de_debug_str_offsets,
         DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
