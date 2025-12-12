@@ -1287,8 +1287,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
         if (res == DW_DLV_OK) {
             /* FALL THROUGH */
         } else if (res == DW_DLV_NO_ENTRY) {
-            if (array == NULL)
-            {
+            if (array == NULL) {
                 _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
                     "DW_DLE_LOCLISTS_ERROR: "
                     "no .debug_loclists context available");
