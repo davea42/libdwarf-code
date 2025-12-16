@@ -1,3 +1,82 @@
+2025-12-16:  David Anderson
+    commit 822955dbf32b38e7d1a9e386115aee43c2d516cb
+
+    Altered git pull (last commit) to follow
+    the project coding standard of line length.
+            modified:   dwarf_die_deliv.c
+
+2025-12-16:  David Anderson
+    commit d189773aaddb6b3534a24679ba23b10303f325a6
+    Merge: c735260d c8e17f31
+
+    Merge branch 'COJIDAT-fix_apple_dwarf5_read'
+    Now allowing Apple to use a DW_AT_GNU attribute,
+    something new in latest Apple command line
+    compile tools.
+
+2025-12-16:  David Anderson
+    commit c8e17f31a9526ffc2fcc8193321f7c790466a9a7
+
+    Comments added on use of dwarf_object_init_b()
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+    Comments added about the null test added for
+    an incomplete user-written reader for
+    dwarf_object_init_b()
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+
+2025-12-16:  David Anderson
+    commit df912e5e1050d76efec5d89b884f15e458496ef4
+    Merge: c735260d f63bb97a
+
+    Merge branch 'fix_apple_dwarf5_read' of https://github.com/COJIDAT/libdwarf-code into COJIDAT-fix_apple_dwarf5_read
+    Apple is now using a DW_AT_GNU attribute,
+    so we need to recognize that.
+
+2025-12-15:  Vladimir Gordeev
+    commit f63bb97ae0cfe0c61d382e1869d06402dee8d21c
+
+    remove invalid section
+
+2025-12-14:  Alex Petenchea
+    commit c735260d0a3c43d92195b1a66bcffdfcfeb0c2ce
+
+     Prevent a NULL deref in _dwarf_loclists_fill_in_lle_head (#312)
+
+    * Prevent a NULL deref in _dwarf_loclists_fill_in_lle_head() when thre is no loclists context
+
+    * Use project's code style
+
+2025-12-12:  Vladimir Gordeev
+    commit b0b8cead4bae6e59f3e56f77f7609e1620285231
+
+    Fix for Apple DWARF5
+
+2025-12-05:  David Anderson
+    commit 3c9f5f73a8c539624a6da0e9205cd153fce25ed3
+    Merge: 4eb2758b 2d1cdb75
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    Fixing PACKAGE_VERSION in cmake/config.h.in
+
+2025-12-05:  Peter Hill
+    commit 2d1cdb75baf1d652c5bda4e442ee06a13594c1da
+
+    Remove redefined `PACKAGE_VERSION` macro (#310)
+
+2025-12-05:  David Anderson
+    commit 4eb2758b2964d91d3d50b577de80277c90ac10f5
+
+    Automated update
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2025-11-29:  David Anderson
+    commit c6fa84b355c40c92dc83a86a447c23e6eb76d3f0
+
+    Up to date.
+            modified:   ChangeLog
+
 2025-11-29:  David Anderson
     commit 124ad31f5756f8d826fc9996da0b22c8b7eef616
 
