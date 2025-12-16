@@ -1429,7 +1429,9 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     non-standard version
                     of split dwarf. Not DWARF5. */
                 int sres = 0;
-                if (version_stamp != DW_CU_VERSION4 && !(version_stamp == DW_CU_VERSION5 && cucon->cc_producer == CC_PROD_Apple)) {
+                if (version_stamp != DW_CU_VERSION4 &&
+                    !(version_stamp == DW_CU_VERSION5 &&
+                    cucon->cc_producer == CC_PROD_Apple)) {
                     /* Not supposed to happen. */
                     local_attrlist_dealloc(dbg,atcount,alist);
                     _dwarf_error(dbg,error,
