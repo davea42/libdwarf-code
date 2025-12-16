@@ -1807,16 +1807,19 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
     call dwarf_dealloc_error even though
     the returned Dwarf_Debug is NULL.
 
-    @see jitreader
+    Since libdwarf is not reading the object directly
+    in this case it us up to the code actually reading
+    the object to check the object file for format and
+    do sufficient format-specific checks for correctness
+    and return DW_DLV_ERROR if object checks fail.
 
-    and  @see dw_noobject Reading DWARF not in object file
+    @see userobjread
+    src/bin/dwarfexample/jitreader.c
 
     @param dw_obj
     A data structure filled out by the caller so libdwarf
     can access DWARF data not in a supported object file format.
     @param dw_errhand
-    Pass in NULL normally.
-    @param dw_errarg
     Pass in NULL normally.
     @param dw_groupnumber
     The value passed in should be DW_GROUPNUMBER_ANY
@@ -5832,6 +5835,7 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
     See DWARF5 Section 6.4 Call Frame Information,
     page 171.
 
+    see doc/checkexamples.c exampleq()
     @see exampleq
 
     The FDE array returned through dw_fde_data
