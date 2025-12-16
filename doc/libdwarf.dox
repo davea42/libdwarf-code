@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-10-08 v2.2.1
+    @date 2025-12-14 v2.2.1
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1102,6 +1102,35 @@
     call while leaving the setting unchanged for further
     dwarf_init_path() or dwarf_init_path_dl()
     calls in the running program.
+
+    @section userobjread Object Reading By User Code
+
+    With the usual libdwarf initialization functions
+    the library does extensive checks of object formats
+    and attempts to find all object errors and returns
+    error codes reading objects with errors affecting
+    the library.
+    Including, for example, object header errors
+    and relocation section errors.
+    The intent is to return correct output
+    for correct DWARF and avoid program
+    crashes in the library when the object or
+    DWARF data is corrupt (returning error codes
+    as appropriate).
+
+    dwarf_object_init_b() is an alternative to the
+    usual libdwarf initialization functions -- making it possible
+    to read object formats libdwarf knows nothing about.
+    This interface delegates the object reading to user code.
+
+    dwarf_object_init_b() requires the user code to
+    provide correct and complete section
+    information for the sections the library requires.
+    The library cannot guarantee correct,
+    successful, crash-free operation if the user code reading
+    an object is insufficiently careful, thorough,
+    and consistent in returning DW_DLV_OK,
+    DW_DLV_NO_ENTRY, and DW_DLV_ERROR as applicable.
 
     @section dwsec_mmap 
 
