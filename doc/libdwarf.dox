@@ -516,7 +516,8 @@
         This is the only value you
         might need to change, given the defaults
         of the others are set reasonably large by
-        default.
+        default.  Setting this higher than necessary
+        wastes cpu time and memory space.
 
     @b Undefined_Value: A register number that means
         the register value is undefined. For example due
