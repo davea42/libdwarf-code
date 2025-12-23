@@ -202,7 +202,11 @@ main(int argc, char **argv)
         you have to know which is right.
 
         In dwarfdump we get the SAME_VAL, UNDEF_VAL,
-        INITIAL_VAL CFA_VAL from dwconf_s struct.   */
+        INITIAL_VAL CFA_VAL from dwconf_s struct.   
+
+        Do not make regtabrulecount higher than
+        necessary for your system, a value higher
+        than necessary wastes cpu time and memory use. */
     regtabrulecount=1999;
     dwarf_set_frame_undefined_value(dbg, UNDEF_VAL);
     dwarf_set_frame_rule_initial_value(dbg, INITIAL_VAL);
