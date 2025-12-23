@@ -3,6 +3,7 @@ examples = [
   'dwdebuglink.c',
   'findfuncbypc.c',
   'frame1.c',
+  'frame2.c',
   'jitreader.c',
   'showsectiongroups.c',
   'simplereader.c'

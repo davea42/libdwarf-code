@@ -69,25 +69,47 @@
 #define INVALIDUNSIGNED(x)  ((x) & (((Dwarf_Unsigned)1) << 63))
 
 #define MIN(a,b)  (((a) < (b))? (a):(b))
+/*  Cleans up the in-process linked list of these
+    in case of early exit in
+    _dwarf_exec_frame_instr.  */
+static void
+_dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
+{
+    Dwarf_Frame_Instr cur = fr;
+    Dwarf_Frame_Instr next = 0;
+    for ( ; cur ; cur = next) {
+        next = cur->fi_next;
+        free(cur);
+    }
+}
 
 /*
     _dwarf_exec_frame_instr() is the heart of the
     debug_frame stuff.  Don't even
-    think of reading this without reading both the Libdwarf and
-    consumer API carefully first.  This function executes
-    frame instructions contained in a Cie or an Fde, but does in a
-    number of different ways depending on the information sought.
-    Start_instr_ptr points to the first byte of the frame instruction
-    stream, and final_instr_ptr one past the last byte.
+    think of reading this without reading both the Libdwarf
+    and consumer API carefully first.  This function
+    executes frame instructions contained in a Cie or an
+    Fde, but does in a number of different ways depending
+    on the information sought.  Start_instr_ptr points
+    to the first byte of the frame instruction stream,
+    and final_instr_ptr one past the last byte.
+
+    In addition have the structs Dwarf_Regtable_Entry3_s
+    and struct Dwarf_Regtable3_s from libdwarf.h
+    on hand to refer to.  From dwarf_frame.h: struct
+    Dwarf_Regtable3_s, Dwarf_Reg_Rule_s, Dwarf_Frame_s,
+    Dwarf_Regtable_Entry3_s_i, Dwarf_Regtable3_s_i,
+    and Dwarf_Fde_s.
 
     The function begins reading instructions from the beginning
     at initial_loc, the low pc of the FDE. Always.
 
-    The offsets returned in the frame instructions are factored.  That
-    is they need to be multiplied by either the code_alignment_factor
-    or the data_alignment_factor, as appropriate to obtain the actual
-    offset.  This makes it possible to expand an instruction stream
-    without the corresponding Cie.  However, when an Fde frame instr
+    The offsets returned in the frame instructions are
+    factored.  That is they need to be multiplied by either
+    the code_alignment_factor or the data_alignment_factor,
+    as appropriate to obtain the actual offset.  This makes
+    it possible to expand an instruction stream without the
+    corresponding Cie.  However, when an Fde frame instr
     sequence is being expanded there must be a valid Cie
     with a pointer to an initial table row.
 
@@ -103,25 +125,30 @@
     It does not do a whole lot of input validation being a private
     function.  Please make sure inputs are valid.
 
-    (1) If make_instr is TRUE, it makes a list of pointers to
-    Dwarf_Frame_Op structures containing the frame instructions
-    executed.  A pointer to this list is returned in ret_frame_instr.
-    Make_instr is TRUE only when a list of frame instructions is to be
-    returned.  In this case since we are not interested
-    in the contents
-    of the table, the input Cie can be NULL.  This is the only case
-    where the input Cie can be NULL.
+    (1) If make_instr is TRUE, it makes a list of pointers
+    to Dwarf_Frame_Op structures containing an easy to
+    parse intermediate language representing the frame
+    instructions involved.  A pointer to this list is
+    returned in ret_frame_instr.  Make_instr is TRUE only
+    when a list of frame instructions is to be returned.
+    In this case since we are not interested in the
+    contents of the table, the input Cie can be NULL.
+    This is the only case where the input Cie can be NULL.
+    The table argument is NULL.
+    Only called this way from dwarf_expand_frame_instructions()
 
-    (2) If search_pc is TRUE, frame instructions are executed till
-    either a location is reached that is greater than the
-    search_pc_val
-    provided, or all instructions are executed.  At this point the
-    last row of the table generated is returned in a structure.
+    (2) If search_pc is TRUE, frame instructions are
+    executed till either a location is reached that
+    is greater than the search_pc_val provided, or all
+    instructions are executed.  At this point the last
+    row of the table generated is returned in a structure.
     A pointer to this structure is supplied in table.
 
-    (3) This function is also used to create the initial table row
-    defined by a Cie.  In this case, the Dwarf_Cie pointer cie, is
-    NULL.  For an FDE, however, cie points to the associated Cie.
+    (3) This function is also used to create the
+    initial table row defined by a Cie.  In this case,
+    the Dwarf_Cie pointer cie, is NULL.  For an FDE,
+    however, cie points to the associated Cie.  Case (5)
+    is FALSE in this case.
 
     (4) If search_pc is TRUE and (has_more_rows and subsequent_pc
         are non-null) then:
@@ -133,6 +160,12 @@
             If *has_more_rows is TRUE then *subsequent_pc
             is set to the pc value that is the following
             row in the table.
+    (5) if  iter_data is non-null  we are not returning
+        data of interest here, but we are calling a
+        user-written function to return row user data.
+        We will iterate through all the rows in the
+        fde  and call the callback function with each
+        row. In this case (1),(2),(3), and (4) are FALSE.
 
     make_instr - make list of frame instr? 0/1
     ret_frame_instr -  Ptr to list of ptrs to frame instrs
@@ -144,41 +177,87 @@
     final_instr_ptr -   Ptr just past frame instrs.
     table       -     Ptr to struct with last row.
     cie     -   Ptr to Cie used by the Fde.
+    iter_data - data used when iterating using a
+        callback function.
 
     Different cies may have distinct address-sizes, so the cie
     is used, not de_pointer_size.
-
 */
 
-/*  Cleans up the in-process linked list of these
-    in case of early exit in
-    _dwarf_exec_frame_instr.  */
 static void
-_dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
+_dwarf_fill_frame_table(Dwarf_Frame table,
+    struct Dwarf_Reg_Rule_s *localregtab ,
+    Dwarf_Addr current_loc,
+    unsigned reg_count,
+    struct Dwarf_Reg_Rule_s* cfa_reg)
 {
-    Dwarf_Frame_Instr cur = fr;
-    Dwarf_Frame_Instr next = 0;
-    for ( ; cur ; cur = next) {
-        next = cur->fi_next;
-        free(cur);
+    struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
+    struct Dwarf_Reg_Rule_s *t3reg = localregtab;
+    unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,
+        reg_count);
+    unsigned curreg = 0;
+
+    table->fr_loc = current_loc;
+    for (; curreg < minregcount ; curreg++, t3reg++, t2reg++) {
+        *t2reg = *t3reg;
     }
+
+    /*  Do not update the main table with the cfa_reg.
+        Just leave cfa_reg as cfa_reg. */
+    table->fr_cfa_rule = *cfa_reg;
+}
+
+/*   Here we need to populate Dwarf_Regtable3,
+    The public regtable, with the cfa row and with
+    the one row of registers. */
+static int
+_dwarf_emit_row(
+    struct Dwarf_Allreg_Args_s *iter_data,
+    Dwarf_Unsigned reg_count,
+    Dwarf_Addr row_pc,
+    Dwarf_Bool has_more_rows,
+    Dwarf_Addr subsequent_pc,
+    int        *errcode)
+{
+    int res = 0;
+    Dwarf_Addr table_row_pc = 0;
+
+    _dwarf_rule_copy(iter_data->aa_dbg,
+        iter_data->aa_pubregtable,
+        iter_data->aa_regtab3,
+        iter_data->aa_regti,
+        reg_count,
+        &table_row_pc);
+    if (row_pc != table_row_pc) {
+        *errcode = DW_DLE_FRAME_ITERATOR_ERR;
+        return DW_DLV_ERROR;
+    }
+    res = iter_data->aa_callback(iter_data->aa_regtab3,row_pc,
+        has_more_rows,subsequent_pc,
+        iter_data->aa_user_data);
+    if (res == DW_DLV_ERROR) {
+        *errcode = DW_DLE_FRAME_ITERATOR_ERR;
+        return DW_DLV_ERROR;
+    }
+    return res;
 }
 
 int
 _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
-    Dwarf_Bool search_pc,
-    Dwarf_Addr search_pc_val,
-    Dwarf_Addr initial_loc,
-    Dwarf_Small * start_instr_ptr,
-    Dwarf_Small * final_instr_ptr,
-    Dwarf_Frame table,
-    Dwarf_Cie cie,
-    Dwarf_Debug dbg,
+    Dwarf_Bool     search_pc,
+    Dwarf_Addr     search_pc_val,
+    Dwarf_Addr     initial_loc,
+    Dwarf_Small   *start_instr_ptr,
+    Dwarf_Small   *final_instr_ptr,
+    Dwarf_Frame    table,
+    Dwarf_Cie      cie,
+    Dwarf_Debug    dbg,
     Dwarf_Unsigned reg_num_of_cfa,
-    Dwarf_Bool * has_more_rows,
-    Dwarf_Addr * subsequent_pc,
+    Dwarf_Bool    *has_more_rows,
+    Dwarf_Addr    *subsequent_pc,
     Dwarf_Frame_Instr_Head *ret_frame_instr_head,
-    Dwarf_Unsigned * returned_frame_instr_count,
+    Dwarf_Unsigned *returned_frame_instr_count,
+    struct Dwarf_Allreg_Args_s *iter_data,
     Dwarf_Error *error)
 {
 /*  The following macro depends on macreg and
@@ -236,8 +315,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         registers up to the point where we stop the search
         or run out of instructions. */
     Dwarf_Unsigned reg_count = dbg->de_frame_reg_rules_entry_count;
-    struct Dwarf_Reg_Rule_s *localregtab = calloc(reg_count,
-        sizeof(struct Dwarf_Reg_Rule_s));
+    struct Dwarf_Reg_Rule_s *localregtab = 0;
 
     struct Dwarf_Reg_Rule_s cfa_reg;
 
@@ -259,7 +337,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Frame top_stack = NULL;
 
     /*  These are used only when make_instr is TRUE. Curr_instr is a
-        pointer to the current frame instruction executed.
+        poineer to the current frame instruction executed.
         Curr_instr_ptr, head_instr_list, and curr_instr_list are
         used to form a chain of Dwarf_Frame_Op structs.
         Dealloc_instr_ptr is
@@ -290,14 +368,28 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         did not have a valid augmentation. */
     Dwarf_Bool need_augmentation = FALSE;
     Dwarf_Unsigned instr_area_length = 0;
-
     Dwarf_Unsigned i = 0;
+    Dwarf_Bool local_has_more_rows = FALSE;
 
+    if (has_more_rows) {
+        local_has_more_rows = *has_more_rows;
+    }
+    localregtab = (struct Dwarf_Reg_Rule_s *)calloc(reg_count,
+        sizeof(struct Dwarf_Reg_Rule_s));
     /*  Initialize first row from associated Cie.
         Using temp regs explicitly */
-
     if (!localregtab) {
         SER(DW_DLE_ALLOC_FAIL);
+    } else {
+        if (iter_data) {
+            iter_data->aa_localregtab  = localregtab;
+            iter_data->aa_cfa_reg  = &cfa_reg;
+        }
+    }
+    if (iter_data && !table) {
+        /*  libdwarf internal error, if iter_data we
+            need table. */
+        SER(DW_DLE_FRAME_ITERATOR_ERR);
     }
     {
         struct Dwarf_Reg_Rule_s *t1reg = localregtab;
@@ -326,8 +418,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             for ( ; curreg < minregcount ;
                 curreg++, t1reg++, t2reg++) {
                 *t1reg = *t2reg;
-            } cfa_reg =
-            cie->ci_initial_table->fr_cfa_rule;
+            }
+            cfa_reg = cie->ci_initial_table->fr_cfa_rule;
         } else {
             _dwarf_init_reg_rules_ru(localregtab,0,reg_count,
                 dbg->de_frame_rule_initial_value);
@@ -349,6 +441,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     instr_ptr = start_instr_ptr;
     instr_area_length = (uintptr_t)
         (final_instr_ptr - start_instr_ptr);
+    /* LOOP TOP */
     while ((instr_ptr < final_instr_ptr) && (!search_over)) {
         Dwarf_Small   instr = 0;
         Dwarf_Small   opcode = 0;
@@ -364,7 +457,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         }
         fp_instr_offset = instr_ptr - start_instr_ptr;
         if (instr_ptr >= final_instr_ptr) {
-            _dwarf_error(NULL, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+            SER(DW_DLE_DF_FRAME_DECODING_ERROR);
             return DW_DLV_ERROR;
         }
         instr = *(Dwarf_Small *) instr_ptr;
@@ -426,7 +519,24 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "add overflowed");
             }
-
+            if (iter_data && instr_ptr > start_instr_ptr) {
+                int errcode = 0;
+                local_has_more_rows =
+                    (instr_ptr < final_instr_ptr)?1:0;
+                _dwarf_fill_frame_table(table,localregtab,
+                    current_loc,reg_count,&cfa_reg);
+                alres =_dwarf_emit_row(iter_data,
+                    reg_count,
+                    current_loc,
+                    local_has_more_rows,
+                    possible_subsequent_pc,
+                    &errcode);
+                if (alres == DW_DLV_ERROR) {
+                    SER(errcode);
+                }
+                current_loc = possible_subsequent_pc;
+                continue;
+            }
             search_over = search_pc &&
                 (possible_subsequent_pc > search_pc_val);
             /* If gone past pc needed, retain old pc.  */
@@ -524,6 +634,23 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     SER(DW_DLE_DF_NEW_LOC_LESS_OLD_LOC);
                 }
             }
+            if (iter_data && instr_ptr > start_instr_ptr) {
+                int errcode = 0;
+                local_has_more_rows =
+                    (instr_ptr < final_instr_ptr)?1:0;
+                _dwarf_fill_frame_table(table,localregtab,
+                    current_loc,reg_count,&cfa_reg);
+                adres = _dwarf_emit_row(iter_data,
+                    reg_count,
+                    current_loc,
+                    local_has_more_rows,possible_subsequent_pc,
+                    &errcode);
+                if (adres == DW_DLV_ERROR) {
+                    SER(errcode);
+                }
+                current_loc = possible_subsequent_pc;
+                continue;
+            }
             search_over = search_pc && (new_loc > search_pc_val);
             /* If gone past pc needed, retain old pc.  */
             possible_subsequent_pc =  new_loc;
@@ -574,9 +701,25 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "add overflowed calcating subsequent pc");
             }
+            if (iter_data && instr_ptr > start_instr_ptr) {
+                int errcode = 0;
+                local_has_more_rows =
+                    (instr_ptr < final_instr_ptr)?1:0;
+                _dwarf_fill_frame_table(table,localregtab,
+                    current_loc,reg_count,&cfa_reg);
+                adres = _dwarf_emit_row(iter_data,
+                    reg_count,
+                    current_loc,
+                    local_has_more_rows,possible_subsequent_pc,
+                    &errcode);
+                if (adres == DW_DLV_ERROR) {
+                    SER(errcode);
+                }
+                current_loc = possible_subsequent_pc;
+                continue;
+            }
             search_over = search_pc &&
-            (possible_subsequent_pc > search_pc_val);
-
+                (possible_subsequent_pc > search_pc_val);
             /* If gone past pc needed, retain old pc.  */
             if (!search_over) {
                 current_loc = possible_subsequent_pc;
@@ -633,8 +776,26 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "add overflowed");
             }
+            if (iter_data && instr_ptr > start_instr_ptr) {
+                int errcode = 0;
+                local_has_more_rows =
+                    (instr_ptr < final_instr_ptr)?1:0;
+                _dwarf_fill_frame_table(table,localregtab,
+                    current_loc,reg_count,&cfa_reg);
+                adres =_dwarf_emit_row(iter_data,
+                    reg_count,
+                    current_loc,
+                    local_has_more_rows,possible_subsequent_pc,
+                    &errcode);
+                if (adres == DW_DLV_ERROR) {
+                    SER(errcode);
+                }
+                current_loc = possible_subsequent_pc;
+                continue;
+
+            }
             search_over = search_pc &&
-            (possible_subsequent_pc > search_pc_val);
+                (possible_subsequent_pc > search_pc_val);
             /* If gone past pc needed, retain old pc.  */
             if (!search_over) {
                 current_loc = possible_subsequent_pc;
@@ -685,6 +846,23 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "unsigned add overflowed");
             }
 
+            if (iter_data && instr_ptr > start_instr_ptr) {
+                int errcode = 0;
+                local_has_more_rows =
+                    (instr_ptr < final_instr_ptr)?1:0;
+                _dwarf_fill_frame_table(table,localregtab,
+                    current_loc,reg_count,&cfa_reg);
+                adres = _dwarf_emit_row(iter_data,
+                    reg_count,
+                    current_loc,
+                    local_has_more_rows,possible_subsequent_pc,
+                    &errcode);
+                if (adres == DW_DLV_ERROR) {
+                    SER(errcode);
+                }
+                current_loc = possible_subsequent_pc;
+                continue;
+            }
             search_over = search_pc &&
                 (possible_subsequent_pc > search_pc_val);
             /* If gone past pc needed, retain old pc.  */
@@ -733,8 +911,25 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "unsigned add overflowed");
             }
+            if (iter_data && instr_ptr > start_instr_ptr) {
+                int errcode = 0;
+                local_has_more_rows =
+                    (instr_ptr < final_instr_ptr)?1:0;
+                _dwarf_fill_frame_table(table,localregtab,
+                    current_loc,reg_count,&cfa_reg);
+                adres = _dwarf_emit_row(iter_data,
+                    reg_count,
+                    current_loc,
+                    local_has_more_rows,possible_subsequent_pc,
+                    &errcode);
+                if (adres == DW_DLV_ERROR) {
+                    SER(errcode);
+                }
+                current_loc = possible_subsequent_pc;
+                continue;
+            }
             search_over = search_pc &&
-            (possible_subsequent_pc > search_pc_val);
+                (possible_subsequent_pc > search_pc_val);
             /* If gone past pc needed, retain old pc.  */
             if (!search_over) {
                 current_loc = possible_subsequent_pc;
@@ -1632,7 +1827,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             FREELOCALMALLOC;
             return DW_DLV_ERROR;
         }
-        }
+        } /* end switch on opcode */
         if (make_instr) {
             /* add dfi to end of singly-linked list */
             instr_count++;
@@ -1641,14 +1836,31 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             /* dfi itself is stale, the pointer is on the list */
             dfi = 0;
         }
-    } /*  end for-loop on ops */
-
+    } /*  end for-loop on ops */ /* LOOP END */
     /*  If frame instruction decoding was right we would
         stop exactly at
         final_instr_ptr. */
     if (instr_ptr > final_instr_ptr) {
         SER(DW_DLE_DF_FRAME_DECODING_ERROR);
     }
+    if (iter_data) {
+        /* Final row */
+        int fres = 0;
+        int errcode = 0;
+
+        _dwarf_fill_frame_table(table,localregtab,
+            current_loc,reg_count,&cfa_reg);
+        fres = _dwarf_emit_row(iter_data,
+            reg_count,
+            current_loc,
+            FALSE,possible_subsequent_pc,&errcode);
+        if (fres == DW_DLV_ERROR) {
+            SER(errcode);
+        }
+        FREELOCALMALLOC;
+        return DW_DLV_OK;
+    }
+
     /*  If search_over is set the last instr was an advance_loc
         so we are not done with rows. */
     if ((instr_ptr == final_instr_ptr) && !search_over) {
@@ -1666,26 +1878,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             *subsequent_pc = possible_subsequent_pc;
         }
     }
-
     /*  Fill in the actual output table, the space the
         caller passed in. */
     if (table) {
-
-        struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
-        struct Dwarf_Reg_Rule_s *t3reg = localregtab;
-        unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,
-            reg_count);
-        unsigned curreg = 0;
-
-        table->fr_loc = current_loc;
-        for (; curreg < minregcount ; curreg++, t3reg++, t2reg++) {
-            *t2reg = *t3reg;
-        }
-
-        /*  CONSTCOND */
-        /*  Do not update the main table with the cfa_reg.
-            Just leave cfa_reg as cfa_reg. */
-        table->fr_cfa_rule = cfa_reg;
+        _dwarf_fill_frame_table(table,localregtab,
+            current_loc,reg_count,&cfa_reg);
     }
     /* Dealloc anything remaining on stack. */
     for (; top_stack != NULL;) {

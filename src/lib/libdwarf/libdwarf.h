@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "2.2.1"
+#define DW_LIBDWARF_VERSION "2.3.0"
 #define DW_LIBDWARF_VERSION_MAJOR 2
-#define DW_LIBDWARF_VERSION_MINOR 2
-#define DW_LIBDWARF_VERSION_MICRO 1
+#define DW_LIBDWARF_VERSION_MINOR 3
+#define DW_LIBDWARF_VERSION_MICRO 0
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -1546,10 +1546,11 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_RLE_ERROR                       506
 #define DW_DLE_MACHO_SEGMENT_COUNT_HEURISTIC_FAIL 507
 #define DW_DLE_DUPLICATE_NOTE_GNU_BUILD_ID     508
-#define DW_DLE_SYSCONF_VALUE_UNUSABLE     509
+#define DW_DLE_SYSCONF_VALUE_UNUSABLE          509
+#define DW_DLE_FRAME_ITERATOR_ERR              510
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        509
+#define DW_DLE_LAST        510
 #define DW_DLE_LO_USER     0x10000
 /*! @} endgroup dw_dle */
 
@@ -6053,6 +6054,67 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
     Dwarf_Unsigned * dw_outlen,
     Dwarf_Error    * dw_error);
 
+/*! @typedef dwarf_iterate_fde_callback_function_type
+
+    Used as a function pointer to a user-written
+    callback function. This provides the register
+    table for a row address.
+    See dwarf_iterate_fde_all_regs3().
+    @param dw_reg_table
+    The register table for address data.
+    @param dw_row_pc
+    The address for the row the callback is reportinf.
+    @param dw_has_more_rows
+    If non-zero means there are more rows in the current FDE.
+    @param dw_subsequent_pc
+    The pc address of the next row in the current FDE.
+    @param dw_user_data
+    Passes your callback a pointer to space you allocated
+    @return
+    Return DW_DLV_OK if the data is valid.
+    If a serious error of some kind return DW_DLV_ERROR.
+*/
+typedef int (*dwarf_iterate_fde_callback_function_type) (
+    Dwarf_Regtable3* dw_reg_table,
+    Dwarf_Addr dw_row_pc,
+    Dwarf_Bool dw_has_more_rows,
+    Dwarf_Addr dw_subsequent_pc,
+    void * dw_user_data);
+
+/*! @brief Iterate all rows for a given FDE, invoking
+    the provided callback for each row. Iteration
+    continues until all rows have been visited, or
+    until the callback returns TRUE.
+    This is much more efficient than repeatedly calling
+    dwarf_get_fde_info_for_all_regs3_b() when you need
+    to extract all rows of an FDE.
+    See dwarfexample/frame2.c for an example of
+    its use.
+
+    @param dw_fde
+    Pass in the FDE of interest.
+    @param dw_reg_table
+    Pass in the address of a struct to be
+    filled in and returned via
+    the callback with fde row data for the current row.
+    @param dw_callback
+    The callback that should b invoked for each row
+    in the FDE. The register table of size
+    @dw_reg_table_size is passed to the callback.
+    @param dw_callback_user_data
+    User data that is passed to the callback
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK if iterations all succeeded
+*/
+DW_API int dwarf_iterate_fde_all_regs3(
+    Dwarf_Fde        dw_fde,
+    Dwarf_Regtable3 *dw_reg_table,
+    dwarf_iterate_fde_callback_function_type dw_callback,
+    void            *dw_callback_user_data,
+    Dwarf_Error     *dw_error);
+
 /*! @brief Return information on frame registers at a given pc value
 
     An FDE at a given pc (code address)
@@ -6085,7 +6147,8 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
     in the table.
 
 */
-DW_API int dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde dw_fde,
+DW_API int dwarf_get_fde_info_for_all_regs3_b(
+    Dwarf_Fde        dw_fde,
     Dwarf_Addr       dw_pc_requested,
     Dwarf_Regtable3* dw_reg_table,
     Dwarf_Addr*      dw_row_pc,

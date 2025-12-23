@@ -20,6 +20,13 @@ target_compile_definitions(frame1 PRIVATE CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib 
 target_compile_options(frame1 PRIVATE ${DW_FWALL})
 target_link_libraries(frame1 PRIVATE dwarf)
 
+set_source_group(FRAME2_SOURCES "Source Files" frame2.c)
+add_executable(frame2 ${FRAME2_SOURCES} ${FRAME2_HEADERS} ${CONFIGURATION_FILES})
+set_folder(frame2 src/bin/dwarfexample)
+target_compile_definitions(frame2 PRIVATE CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib ${DW_LIBDWARF_STATIC} _GNU_SOURCE)
+target_compile_options(frame2 PRIVATE ${DW_FWALL})
+target_link_libraries(frame2 PRIVATE dwarf)
+
 set_source_group(FINDFUNCBYPC_SOURCES "Source Files" findfuncbypc.c)
 add_executable(findfuncbypc ${FINDFUNCBYPC_SOURCES} ${FINDFUNCBYPC_HEADERS} ${CONFIGURATION_FILES})
 set_folder(findfuncbypc src/bin/dwarfexample)

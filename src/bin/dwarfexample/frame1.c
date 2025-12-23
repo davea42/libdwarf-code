@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021 David Anderson.  All rights reserved.
+Copyright (c) 2009-2025 David Anderson.  All rights reserved.
 This example code is hereby placed in the Public Domain
 for anyone to use for any purpose.
 */
@@ -14,13 +14,28 @@ for anyone to use for any purpose.
 
     This uses public structs from libdwarf.h so it is
     stuck with limitations for compatibility.
+    See Dwarf_Regtable3 in libdwarf.h .
+
+    See frame2.c for a faster way to
+    build a complete map of all frame rows.
+
+    Options:
+    --skip-all-printf
+        Turn off all printf to allow focusing on
+        just the time spent in libdwarf.
+    --just-print-selected-regs
+        Avoid extra printing for purposes not needed
+        for the main purpose here.
+    --stop-at-fde-n=v
+        where v is an integer, such as 8 .
+        Useful for limiting regression test output.
 
     There needs to be a more flexible alternative, one
     can be updated when DWARF changes.
 
     gcc/clang may produce .eh_frame without .debug_frame.
     To read .eh_frame call dwarf_get_fde_list_eh()
-    below instead of dwarf_get_fde_list() .
+    as shown below instead of dwarf_get_fde_list() .
 */
 
 #include <config.h>
@@ -67,6 +82,7 @@ static void print_fde_selected_regs( Dwarf_Fde fde);
 static void print_reg(int r);
 
 static int just_print_selected_regs = 0;
+static int keep_all_printf = 1;
 static int print_selected_regs = 0;
 static int stop_at_n_fdes = 0;
 
@@ -121,6 +137,10 @@ main(int argc, char **argv)
     for (curopt = 1;curopt < argc; ++curopt) {
         if (strncmp(argv[curopt],"--",2)) {
             break;
+        }
+        if (!strcmp(argv[curopt],"--skip-all-printf")) {
+            keep_all_printf = 0;
+            continue;
         }
         if (!strcmp(argv[curopt],"--just-print-selected-regs")) {
             just_print_selected_regs++;
@@ -214,7 +234,9 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     /*  If you wish to read .eh_frame data, use
         dwarf_get_fde_list_eh() instead.
         Get debug_frame with dwarf_get_fde_list. */
+    if (keep_all_printf) {
     printf(" Print %s\n",sect);
+    }
     if (!strcmp(sect,".eh_frame"))
     {
         res = dwarf_get_fde_list_eh(dbg,&cie_data,&cie_element_count,
@@ -231,9 +253,11 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
         printf("Error reading frame data ");
         exit(EXIT_FAILURE);
     }
+    if (keep_all_printf) {
     printf( "%" DW_PR_DSd " cies present. "
         "%" DW_PR_DSd " fdes present. \n",
         cie_element_count,fde_element_count);
+    }
     /*if (fdenum >= fde_element_count) {
         printf("Want fde %d but only %" DW_PR_DSd " present\n",fdenum,
             fde_element_count);
@@ -254,9 +278,11 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
                 " to get its cie\n",fdenum);
             exit(EXIT_FAILURE);
         }
+        if (keep_all_printf) {
         printf("Print cie of fde %" DW_PR_DSd  "\n",fdenum);
         print_cie_instrs(dbg,cie,&error);
         printf("\nPrint fde %" DW_PR_DSd  "\n",fdenum);
+        }
         if (just_print_selected_regs) {
             print_fde_selected_regs(fde_data[fdenum]);
         } else {
@@ -357,9 +383,13 @@ print_fde_col(Dwarf_Signed k,
     (void)has_more_rows;
     (void)subsequent_pc;
     if (row_pc != jsave) {
+        if (keep_all_printf) {
         printf(" row_pc=0x%" DW_PR_DUx ,row_pc);
+        }
     }
+    if (keep_all_printf) {
     printf(" col=%" DW_PR_DSd " ",k);
+    }
     switch(value_type) {
     case DW_EXPR_OFFSET:
         type_title = "DW_EXPR_OFFSET";
@@ -368,6 +398,7 @@ print_fde_col(Dwarf_Signed k,
         type_title = "DW_EXPR_VAL_OFFSET";
 
         preg2:
+        if (keep_all_printf) {
         printf("<%s ", type_title);
         if (reg_used == SAME_VAL) {
             printf(" SAME_VAL");
@@ -389,6 +420,7 @@ print_fde_col(Dwarf_Signed k,
             printf(") ");
         }
         printf("]");
+        }
         break;
     case DW_EXPR_EXPRESSION:
         type_title = "DW_EXPR_EXPRESSION";
@@ -397,6 +429,7 @@ print_fde_col(Dwarf_Signed k,
         type_title = "DW_EXPR_VAL_EXPRESSION";
 
         pexp2:
+        if (keep_all_printf) {
         printf("<%s ", type_title);
         print_reg(rule_id);
         printf("=");
@@ -423,6 +456,7 @@ print_fde_col(Dwarf_Signed k,
             }
 #endif
         }
+        }
         break;
     default:
         printf("Internal error in libdwarf, value type %d\n",
@@ -439,14 +473,15 @@ print_fde_col(Dwarf_Signed k,
         printf("%s", ">");
     }
 #endif
+    if (keep_all_printf) {
     printf("%s", ">");
     printf("\n");
+    }
 }
 
 /*  In dwarfdump we use
     dwarf_get_fde_info_for_cfa_reg3_b() to get subsequent pc
-    and avoid incrementing pc by for the next cfa,
-    using has_more_rows and subsequent_pc passed back.
+    and avoid incrementing pc for the next cfa.
 
     Here, to verify function added in May 2018,
     we instead use dwarf_get_fde_info_for_reg3_b()
@@ -513,9 +548,11 @@ print_fde_selected_regs( Dwarf_Fde fde)
     for (jsave = low_pc ; next_jsave < high_addr;
         jsave = next_jsave) {
         next_jsave = jsave+1;
+        if (keep_all_printf) {
         printf("\n");
         printf(" FDE columns (registers) for pc 0x%"
             DW_PR_DUx "\n",jsave);
+        }
         for (k = 0; k < selected_cols_count ; ++k ) {
             Dwarf_Unsigned reg = 0;
             Dwarf_Unsigned offset_relevant = 0;
@@ -568,8 +605,10 @@ print_frame_instrs(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned i = 0;
 
+    if (keep_all_printf) {
     printf("\nPrint %" DW_PR_DUu " frame instructions\n",
         frame_instr_count);
+    }
     for ( ; i < frame_instr_count; ++i) {
         int res = 0;
         Dwarf_Unsigned  instr_offset_in_instrs = 0;
@@ -604,6 +643,7 @@ print_frame_instrs(Dwarf_Debug dbg,
             }
             break;
         }
+        if (keep_all_printf) {
         dwarf_get_CFA_name(cfa_operation,&op_name);
         printf("[%2" DW_PR_DUu "]  %" DW_PR_DUu " %s ",i,
             instr_offset_in_instrs,op_name);
@@ -724,6 +764,7 @@ print_frame_instrs(Dwarf_Debug dbg,
         default:
             printf("UNKNOWN FIELD 0x%x\n",fields[0]);
         }
+        }
     }
     return DW_DLV_OK;
 }
@@ -757,14 +798,16 @@ print_fde_instrs(Dwarf_Debug dbg,
         printf("Problem getting fde range \n");
         exit(EXIT_FAILURE);
     }
-    /*  As a test case, we just chose an address. 
-        To see ALL the rows in the fde, start at lowpc instead */
+    /*  As a test case, we could chose an address, but
+        with care as lowpc and func length */
     arbitrary_addr = lowpc + (func_length/2);
+    if (keep_all_printf) {
     printf("function low pc 0x%" DW_PR_DUx
         "  and length 0x%" DW_PR_DUx
-        "  and midpoint addr we choose 0x%" DW_PR_DUx
+        "  and addr we choose 0x%" DW_PR_DUx
         "\n",
         lowpc,func_length,arbitrary_addr);
+    }
 
     /*  1 is arbitrary. We are winding up getting the
         rule count here while leaving things unchanged. */
@@ -779,11 +822,14 @@ print_fde_instrs(Dwarf_Debug dbg,
         exit(EXIT_FAILURE);
     }
 
+    printf("Now read frame data at chosen address\n");
     res = dwarf_get_fde_info_for_all_regs3(fde,arbitrary_addr ,
         &tab3,&actual_pc,error);
+#if 0
     printf("function  Requested_pc 0x%"
         DW_PR_DUx " Actual addr of row 0x%" DW_PR_DUx "\n",
         arbitrary_addr,actual_pc);
+#endif
     if (res != DW_DLV_OK) {
         free(tab3.rt3_rules);
         tab3.rt3_rules = 0;
@@ -793,9 +839,12 @@ print_fde_instrs(Dwarf_Debug dbg,
     /*  Now for an example of iterating through a range of addrs
         efficiently, lets redo the above and iterate pc values.
         the function called is new as of 0.9.0 October 2023. */
+    if (keep_all_printf) {
+    printf("Now read frame data again, starting at lowpc\n");
+    }
     for (arbitrary_addr=lowpc; has_more_rows  ;
         arbitrary_addr = subsequent_pc) {
-        res = dwarf_get_fde_info_for_all_regs3_b(fde,arbitrary_addr ,
+        res = dwarf_get_fde_info_for_all_regs3_b(fde,arbitrary_addr,
             &tab3,&actual_pc,&has_more_rows, &subsequent_pc,error);
         if (res != DW_DLV_OK) {
             free(tab3.rt3_rules);
@@ -803,14 +852,15 @@ print_fde_instrs(Dwarf_Debug dbg,
             printf("dwarf_get_fde_info_for_all_regs3_b failed!\n");
             exit(EXIT_FAILURE);
         }
-#if 0
-            " More rows? %s Subsequent_pc 0x%" DW_PR_DUx "\n",
-            arbitrary_addr,actual_pc,has_more_rows?"yes":"no",
+        if (keep_all_printf) {
+        printf("row_pc 0x%lx hasmore %s subsequent_pc 0x%"
+            DW_PR_DUx "\n",
+            (unsigned long)actual_pc,has_more_rows?"yes":"no",
             subsequent_pc);
-#endif
         printf("\nRegtable at pc 0x%" DW_PR_DUx "\n",actual_pc);
+        }
         print_regtable(&tab3);
-        if (has_more_rows) {
+        if (has_more_rows && keep_all_printf) {
             printf("  Next row to print is pc 0x%"
                 DW_PR_DUx "\n",subsequent_pc);
         }
@@ -846,7 +896,9 @@ print_fde_instrs(Dwarf_Debug dbg,
             printf("dwarf_expand_frame_instructions failed!\n");
             exit(EXIT_FAILURE);
         }
+        if (keep_all_printf) {
         printf("Frame op count: %" DW_PR_DUu "\n",frame_instr_count);
+        }
         print_frame_instrs(dbg,frame_instr_head,
             frame_instr_count, error);
 
@@ -904,6 +956,8 @@ print_one_regentry(const char *prefix_i,
     int is_cfa = !strcmp("cfa",prefix);
     if (is_cfa) {
         prefix="cfa  ";
+    } else if (entry->dw_regnum == DW_FRAME_SAME_VAL) {
+        return;
     }
 
     buf[0] = 0;
@@ -1000,7 +1054,7 @@ print_regtable(Dwarf_Regtable3 *tab3)
 {
     int r;
     /* We won't print too much. A bit arbitrary. */
-    int max = 10;
+    int max = 20;
     if (max > tab3->rt3_reg_table_size) {
         max = tab3->rt3_reg_table_size;
     }

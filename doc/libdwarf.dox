@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-12-14 v2.2.1
+    @date 2025-10-17 v2.3.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1189,7 +1189,7 @@
 
     We list these with newest first.
 
-    <b>Changes 2.2.0 to 2.2.1</b>
+    <b>Changes 2.2.0 to 2.3.0</b>
 
     Added function dwarf_set_harmless_errors_enabled(
     Dwarf_Debug dw_dbg,int dw_v). Passing in dw_v
@@ -1197,6 +1197,12 @@
     harmless errors, which makes a meaningful improvement
     in library performance for some calls.
     By default harmless errors are checked-for.
+
+    Added function dwarf_iterate_fde_all_regs3() which
+    lets callers get all elements of the .debug_frame
+    and .eh_frame sections via callbacks the function
+    makes to a function you write. Simple to use
+    and, for FDEs with many rows, faster. 
 
     <b>Changes 2.1.0 to 2.2.0</b>
 

@@ -4,7 +4,7 @@
 AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = simplereader frame1 findfuncbypc \
+bin_PROGRAMS = simplereader frame1 frame2 findfuncbypc \
     dwdebuglink  jitreader showsectiongroups
 dwarfbigend=@DWARF_BIGENDIAN@
 
@@ -20,6 +20,13 @@ frame1_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
   -I$(top_builddir)/src/lib/libdwarf
 frame1_CFLAGS = $(DWARF_CFLAGS_WARN)
 frame1_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
+frame2_SOURCES = frame2.c
+frame2_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir)/src/lib/libdwarf
+frame2_CFLAGS = $(DWARF_CFLAGS_WARN)
+frame2_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 findfuncbypc_SOURCES = findfuncbypc.c
