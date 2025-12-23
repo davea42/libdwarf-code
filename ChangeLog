@@ -1,4 +1,38 @@
 2025-12-23:  David Anderson
+    commit 8b741a2e929b0bbbfe314c169ad5e485e3bd5cc2
+
+    Version number update to 2.3.0 using 'make rebuild'
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_lname_version.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2025-12-23:  David Anderson
+    commit 31d319c5299d168bd7161af2b31b68b803d21def
+
+    Commentary additions.
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/frame2.c
+
+2025-12-23:  David Anderson
+    commit 8e832ed30ad5e62afb703e5dff0c17c6d5bb7c0d
+
+    Added a sentence about setting the number of registers.
+    Don't make the number allowed excessively large
+    if you set the number yourself.
+            modified:   doc/libdwarf.dox
+
+2025-12-23:  David Anderson
+    commit 0ad47aebc3cdf9a037f236ccd6e18d7b0955dfc2
+
+    ChangeLog up to date.
+            modified:   ChangeLog
+
+2025-12-23:  David Anderson
     commit 85e1671a0115a12406725ec5f61b84bc32649177
 
     Squashed commit of the following:
