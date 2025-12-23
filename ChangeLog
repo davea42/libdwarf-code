@@ -1,3 +1,58 @@
+2025-12-23:  David Anderson
+    commit 85e1671a0115a12406725ec5f61b84bc32649177
+
+    Squashed commit of the following:
+
+    For release 2.3.0, so some change are the
+    version update.
+    cmake and meson and configure.ac and Makefile.am
+    handle the addtion of new source files.
+
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfexample/Makefile.am
+            modified:   src/bin/dwarfexample/NEWS
+    example of original way of getting all frame rows
+            modified:   src/bin/dwarfexample/frame1.c
+    example of new way of getting all frame rows.
+            new file:   src/bin/dwarfexample/frame2.c
+            modified:   src/bin/dwarfexample/meson.build
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+    The following implement the new functionality.
+    of faster preparation of frame rows from an FDE.
+    Refactored parts of dwarf_frame.c
+    dwarf_frame_cfa_read.c dwarf_frame_iter.c
+    for the new functionality.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            renamed:    src/lib/libdwarf/dwarf_cfa_read.c -> src/lib/libdwarf/dwarf_frame_cfa_read.c
+            new file:   src/lib/libdwarf/dwarf_frame_iter.c
+
+    Added typedef
+    typedef int (*dwarf_iterate_fde_callback_function_type)(...)
+    for frame reading iterator.
+    Added API function
+    DW_API int dwarf_iterate_fde_all_regs3(...)
+    using that callback.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+            modified:   src/lib/libdwarf/meson.build
+            modified:   tools/makerelease.sh
+
+2025-12-16:  David Anderson
+    commit 51531d1e8b8da1438cedd2b82087a5b56ee26969
+
+    Now up to date
+            modified:   ChangeLog
+
 2025-12-16:  David Anderson
     commit 822955dbf32b38e7d1a9e386115aee43c2d516cb
 
