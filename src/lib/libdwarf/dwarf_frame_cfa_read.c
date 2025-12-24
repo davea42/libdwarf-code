@@ -187,23 +187,20 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
 static void
 _dwarf_fill_frame_table(Dwarf_Frame table,
     struct Dwarf_Reg_Rule_s *localregtab ,
-    Dwarf_Addr current_loc,
-    unsigned reg_count,
-    struct Dwarf_Reg_Rule_s* cfa_reg)
+    Dwarf_Addr               current_loc,
+    Dwarf_Unsigned           reg_count,
+    struct Dwarf_Reg_Rule_s *cfa_reg)
 {
     struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
     struct Dwarf_Reg_Rule_s *t3reg = localregtab;
-    unsigned minregcount =  (unsigned)MIN(table->fr_reg_count,
-        reg_count);
-    unsigned curreg = 0;
+    Dwarf_Unsigned minregcount =
+        (Dwarf_Unsigned)MIN(table->fr_reg_count, reg_count);
+    Dwarf_Unsigned curreg = 0;
 
     table->fr_loc = current_loc;
     for (; curreg < minregcount ; curreg++, t3reg++, t2reg++) {
         *t2reg = *t3reg;
     }
-
-    /*  Do not update the main table with the cfa_reg.
-        Just leave cfa_reg as cfa_reg. */
     table->fr_cfa_rule = *cfa_reg;
 }
 
@@ -386,12 +383,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             iter_data->aa_cfa_reg  = &cfa_reg;
         }
     }
-    if (reg_count != (Dwarf_Unsigned)(unsigned int)reg_count) {
-        /*  The register count is absurd. Something
-            is going to go very badly, including 
-            performance! */
-        SER(DW_DLE_FRAME_REGISTER_COUNT_MISMATCH);
-    }
     if (iter_data && !table){
         /*  libdwarf internal error, if iter_data we
             need table. */
@@ -530,7 +521,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 local_has_more_rows =
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
-                    current_loc,(unsigned int)reg_count,&cfa_reg);
+                    current_loc,reg_count,&cfa_reg);
                 alres =_dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
@@ -645,7 +636,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 local_has_more_rows =
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
-                    current_loc,(unsigned int)reg_count,&cfa_reg);
+                    current_loc,reg_count,&cfa_reg);
                 adres = _dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
@@ -712,7 +703,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 local_has_more_rows =
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
-                    current_loc,(unsigned int)reg_count,&cfa_reg);
+                    current_loc,reg_count,&cfa_reg);
                 adres = _dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
@@ -787,7 +778,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 local_has_more_rows =
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
-                    current_loc,(unsigned int)reg_count,&cfa_reg);
+                    current_loc,reg_count,&cfa_reg);
                 adres =_dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
@@ -857,7 +848,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 local_has_more_rows =
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
-                    current_loc,(unsigned int)reg_count,&cfa_reg);
+                    current_loc,reg_count,&cfa_reg);
                 adres = _dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
@@ -922,7 +913,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 local_has_more_rows =
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
-                    current_loc,(unsigned int)reg_count,&cfa_reg);
+                    current_loc,reg_count,&cfa_reg);
                 adres = _dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
@@ -1855,7 +1846,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         int errcode = 0;
 
         _dwarf_fill_frame_table(table,localregtab,
-            current_loc,(unsigned int)reg_count,&cfa_reg);
+            current_loc,reg_count,&cfa_reg);
         fres = _dwarf_emit_row(iter_data,
             reg_count,
             current_loc,
@@ -1888,7 +1879,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         caller passed in. */
     if (table) {
         _dwarf_fill_frame_table(table,localregtab,
-            current_loc,(unsigned int)reg_count,&cfa_reg);
+            current_loc,reg_count,&cfa_reg);
     }
     /* Dealloc anything remaining on stack. */
     for (; top_stack != NULL;) {
