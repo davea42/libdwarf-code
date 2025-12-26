@@ -189,9 +189,6 @@ _dwarf_dump_optional_fields(const char *msg,
     /* useful? */
     printf("  cc_cu_die_offset_present...: %d \n",
         context->cc_cu_die_offset_present);
-    printf("  cc_at_ranges_offset_present: %d 0x%lx\n",
-        context->cc_at_ranges_offset_present,
-        (unsigned long)context->cc_at_ranges_offset);
     printf("  cc_addr_base_offset_present: %d 0x%lx\n",
         context->cc_addr_base_offset_present,
         (unsigned long)context->cc_addr_base_offset);

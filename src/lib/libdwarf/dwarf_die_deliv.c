@@ -1503,10 +1503,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     &at_ranges_offset,
                     &is_info,
                     error);
-                if (res == DW_DLV_OK) {
-                    cucon->cc_at_ranges_offset = at_ranges_offset;
-                    cucon->cc_at_ranges_offset_present = TRUE;
-                } else {
+                if (res != DW_DLV_OK) {
                     local_attrlist_dealloc(dbg,atcount,alist);
                     return res;
                 }

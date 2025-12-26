@@ -444,8 +444,6 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
     Dwarf_Error    *dw_error)
 {
     Dwarf_CU_Context context = 0;
-    Dwarf_Unsigned local_ranges_offset = 0;
-    Dwarf_Bool     local_ranges_offset_present = FALSE;
     Dwarf_Bool     have_die_ranges_offset = FALSE;
     Dwarf_Unsigned die_ranges_offset = 0;
     Dwarf_Bool     have_die_base_addr = FALSE;
@@ -484,16 +482,11 @@ dwarf_get_ranges_baseaddress(Dwarf_Debug dw_dbg,
             "dwarf_get_ranges_baseaddress");
         return DW_DLV_ERROR;
     }
-    if (have_die_ranges_offset) {
-        /*  From dw_die */
-        local_ranges_offset_present = have_die_ranges_offset;
-        local_ranges_offset = die_ranges_offset;
-    }
     if (dw_at_ranges_offset) {
-        *dw_at_ranges_offset = local_ranges_offset;
+        *dw_at_ranges_offset = die_ranges_offset;
     }
     if (dw_at_ranges_offset_present) {
-        *dw_at_ranges_offset_present = local_ranges_offset_present;
+        *dw_at_ranges_offset_present = have_die_ranges_offset;
     }
     if (context->cc_base_address_present) {
         *dw_baseaddress = context->cc_base_address;
