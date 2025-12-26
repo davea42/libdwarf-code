@@ -1,3 +1,46 @@
+2025-12-26:  David Anderson
+    commit f5606676cb99128d5133755b0e7a3f3462a3368f
+    Merge: 569fa9b5 2da8530a
+
+    Merge branch 'oltolm-cleanup'
+    Removing unused CU fields.
+
+2025-12-26:  David Anderson
+    commit 2da8530a129820dad28cc5bd96a54cee35540a66
+    Merge: 569fa9b5 cd927945
+
+    Merge branch 'cleanup' of https://github.com/oltolm/libdwarf-code into oltolm-cleanup
+    Removing unused fields from CU struct.
+
+2025-12-24:  David Anderson
+    commit 569fa9b592485a39d7477b3ee76ce28505afef4e
+
+    Removed all aspects of casts added in last commit.
+    Changed interal use to use Dwarf_Unsigned consistently
+    for the reg_count instead of unsigned int.
+            modified:   src/lib/libdwarf/dwarf_frame_cfa_read.c
+
+2025-12-24:  David Anderson
+    commit 95fffbb1cdc38643bc02864194c828ad96cc1d94
+
+    In several places a Dwarf_Unsigned needed an
+    explicit cast to unsigned int to satisfy
+    VS C compiler (avoiding warnings).
+    We added a simple test to validate that this loses no
+    bits in the value.
+            modified:   src/lib/libdwarf/dwarf_frame_cfa_read.c
+
+2025-10-09:  oltolm
+    commit cd92794502c5d153c82f16d6b3a76e689f3a4e06
+
+    remove unused fields from Dwarf_CU_Context_s
+
+2025-12-23:  David Anderson
+    commit a7adf8ad450353d42803ff8fc936a3df6e1c5d6a
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
 2025-12-23:  David Anderson
     commit 8b741a2e929b0bbbfe314c169ad5e485e3bd5cc2
 
