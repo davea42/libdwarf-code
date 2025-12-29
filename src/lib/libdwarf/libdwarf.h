@@ -588,6 +588,12 @@ typedef struct Dwarf_Regtable_Entry3_s {
 */
 typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
+    /*  Required Condition:
+        rt3_rules points to array rt3_reg_table_size
+            of struct Dwarf_Regtable_Entry3_s and the
+            array entries should be all zero bits
+            on calling dwarf_get_fde_info_for_all_regs3_b().
+    */
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
@@ -6081,10 +6087,10 @@ typedef int (*dwarf_iterate_fde_callback_function_type) (
     Dwarf_Addr dw_subsequent_pc,
     void * dw_user_data);
 
-/*! @brief Iterate all rows for a given FDE, invoking
-    the provided callback for each row. Iteration
-    continues until all rows have been visited, or
-    until the callback returns TRUE.
+/*! @brief Iterate all rows for a given FDE. 
+    Iinvokes a provided callback function for each row.
+    Iteration continues until all rows have been visited.
+
     This is much more efficient than repeatedly calling
     dwarf_get_fde_info_for_all_regs3_b() when you need
     to extract all rows of an FDE.
@@ -6119,13 +6125,15 @@ DW_API int dwarf_iterate_fde_all_regs3(
 
     An FDE at a given pc (code address)
     This function is new in October 2023 version 0.9.0.
+    See libdwarf.h for the requred condition of
+    dw_reg_table pointer passed in.
 
     @param dw_fde
     Pass in the FDE of interest.
     @param dw_pc_requested
     Pass in a pc (code) address inside that FDE.
     @param dw_reg_table
-    On success, returns a pointer to a struct
+    On success, returns a filled in dw_reg_table
     given the frame state.
     @param dw_row_pc
     On success returns the address of the row of
@@ -6159,11 +6167,14 @@ DW_API int dwarf_get_fde_info_for_all_regs3_b(
 /*! @brief @brief Return information on frame registers at a given pc value
 
     Identical to dwarf_get_fde_info_for_all_regs3_b() except that
-    this doesn't output dw_has_more_rows and dw_subsequent_pc.
+    this doesn't output dw_has_more_rows and dw_subsequent_pc,
+    so dwarf_get_fde_info_for_all_regs3_b() is a better choice.
 
     If you need to iterate through all rows of the FDE, consider
-    switching to dwarf_get_fde_info_for_all_regs3_b() as it is more
-    efficient.
+    switching to dwarf_get_fde_info_for_all_regs3_b() or
+    dwarf_iterate_fde_all_regs3().
+    .
+    
 */
 DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Dwarf_Addr       dw_pc_requested,
@@ -6176,8 +6187,11 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
 
     It is efficient to iterate across all table_columns (registers)
     using this function (dwarf_get_fde_info_for_reg3_c()).
-    Or one could instead call dwarf_get_fde_info_for_all_regs3()
-    and index into the table it fills in.
+
+    Or if one wants the data for all frame rows one
+    could instead call dwarf_iterate_fde_all_regs3()
+    and index into the data it fills in and returns
+    via a callback function you write.
 
     If dw_value_type == DW_EXPR_EXPRESSION or
     DW_EXPR_VALUE_EXPRESSION dw_offset
@@ -6191,11 +6205,19 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     argument in  dwarf_get_fde_info_for_reg3_b().
     Both versions operate correctly.
 
+    As of  libdwarf 2.3.0 the CFA can be requested
+    with dw_table_column.  Previously the CFA was unavailable.
+    By default the cfa pseudo register number is DW_FRAME_CFA_COL
+    from dwarf.h.
+
     @param dw_fde
     Pass in the FDE of interest.
     @param dw_table_column
     Pass in the table_column, column numbers in the table
-    are 0 through the number_of_registers-1.
+    are 0 through the number_of_registers-1 and 
+    the 'column' of the CFA (by default it is 
+    DW_FRAME_CFA_COL, but might have been set
+    by your code using dwarf_set_frame_cfa_value()).
     @param dw_pc_requested
     Pass in the pc of interest within dw_fde.
     @param dw_value_type
@@ -6653,6 +6675,10 @@ DW_API int dwarf_cie_section_offset(Dwarf_Debug dw_dbg,
     The Dwarf_Debug of interest.
     @param dw_value
     Pass in the value to record for the library to use.
+    The library someone arbitrarily does not allow
+    setting the number of register rules (registers)
+    below 188 (DW_FRAME_HIGHEST_NORMAL_REGISTER in dwarf.h)
+    and does not apply any dw_value lower than that.
     @return
     Returns the previous value.
 */
