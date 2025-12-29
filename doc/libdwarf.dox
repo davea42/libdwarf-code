@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-10-17 v2.3.0
+    @date 2025-12-28 v2.3.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1204,6 +1204,16 @@
     and .eh_frame sections via callbacks the function
     makes to a function you write. Simple to use
     and, for FDEs with many rows, faster. 
+    A prerelease version failed to allow retrieving
+    the CFA pseudo-register value, but that is now
+    fixed. See dwarfexample/frame2.c for an example
+    of use.
+
+    dwarf_set_frame_rule_table_size() now allows setting
+    register rules table size as low as 40 entries.
+    The default remains arbitrary: DW_FRAME_LAST_REG_NUM (189)
+    as that suffices for most architectures without being
+    excessive.
 
     <b>Changes 2.1.0 to 2.2.0</b>
 
