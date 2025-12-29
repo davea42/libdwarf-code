@@ -34,6 +34,11 @@ for anyone to use for any purpose.
     gcc/clang may produce .eh_frame without .debug_frame.
     To read .eh_frame call dwarf_get_fde_list_eh()
     as shown below instead of dwarf_get_fde_list() .
+
+    All formatting is standard C (with
+    long long types), references to
+    DW_PR_* macros have been removed.
+    As of December 29 2025, version 2.3.0
 */
 
 #include <config.h>
@@ -205,10 +210,11 @@ main(int argc, char **argv)
         In dwarfdump we get the SAME_VAL, UNDEF_VAL,
         INITIAL_VAL CFA_VAL from dwconf_s struct. 
 
-        Do not make regtabrulecount higher than
+        Do not make regtabrulecount much higher than
         necessary for your system, a value higher 
-        than necessary wastes cpu time and memory use. */
-    regtabrulecount=1999;
+        than necessary wastes cpu time and memory use.
+        The default is DW_FRAME_HIGHEST_NORMAL_REGISTER (188) */
+    regtabrulecount=1999;/* for performance measurement. */
     dwarf_set_frame_undefined_value(dbg, UNDEF_VAL);
     dwarf_set_frame_rule_initial_value(dbg, INITIAL_VAL);
     dwarf_set_frame_same_value(dbg,SAME_VAL);
@@ -259,12 +265,12 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
         exit(EXIT_FAILURE);
     }
     if (keep_all_printf) {
-    printf( "%" DW_PR_DSd " cies present. "
-        "%" DW_PR_DSd " fdes present. \n",
+    printf( "%lld cies present. "
+        "%lld fdes present. \n",
         cie_element_count,fde_element_count);
     }
     /*if (fdenum >= fde_element_count) {
-        printf("Want fde %d but only %" DW_PR_DSd " present\n",fdenum,
+        printf("Want fde %d but only %lld present\n",fdenum,
             fde_element_count);
         exit(EXIT_FAILURE);
     }*/
@@ -281,12 +287,12 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
         }
         res = dwarf_get_cie_of_fde(fde_data[fdenum],&cie,&error);
         if (res != DW_DLV_OK) {
-            printf("Error accessing cie of fdenum %" DW_PR_DSd
+            printf("Error accessing cie of fdenum %lld"
                 " to get its cie\n",fdenum);
             exit(EXIT_FAILURE);
         }
         if (keep_all_printf) {
-        printf("\nPrint fde %" DW_PR_DSd  "\n",fdenum);
+        printf("\nPrint fde %lld\n",fdenum);
         }
         /*  This call gets all the reg data via
             the callback function. */
@@ -386,11 +392,13 @@ print_all_fde_rows(Dwarf_Debug dbg,
     user_data.ld_lowpc = lowpc;
     oldrulecount = dwarf_set_frame_rule_table_size(dbg,1);
     dwarf_set_frame_rule_table_size(dbg,oldrulecount);
+    reg_table = zero_regtab3;
     reg_table.rt3_reg_table_size = oldrulecount;
-    reg_table.rt3_rules = (struct Dwarf_Regtable_Entry3_s *) malloc(
-        sizeof(struct Dwarf_Regtable_Entry3_s)* oldrulecount);
+    reg_table.rt3_rules = (struct Dwarf_Regtable_Entry3_s *)calloc(
+        oldrulecount,
+        sizeof(struct Dwarf_Regtable_Entry3_s));
     if (!reg_table.rt3_rules) {
-        printf("Unable to malloc for %lu rules\n",
+        printf("Unable to calloc for %lu rules\n",
             (unsigned long)oldrulecount);
         exit(EXIT_FAILURE);
     }
@@ -464,6 +472,10 @@ value_type_name(int valuetype,char *buf,unsigned buflen)
 }
 #endif
 
+/*  The ugly type casts (signed long)(Dwarf_Signed) on dw_offset
+    are because the public struct struct Dwarf_Regtable_Entry3_s
+    has dw_offset as unsigned though it is really a signed
+    value. We have avoided breaking source compatibilty so far. */
 static void
 print_one_regentry(const char *prefix_i,
     struct Dwarf_Regtable_Entry3_s *entry)
@@ -482,41 +494,54 @@ print_one_regentry(const char *prefix_i,
     switch(entry->dw_value_type) {
     case DW_EXPR_OFFSET:
         print_reg(entry->dw_regnum);
+        if (keep_all_printf) {
         if (entry->dw_offset_relevant) {
-            printf(" %+ld",(signed long)entry->dw_offset);
+            printf(" %+ld",
+                (signed long)(Dwarf_Signed)entry->dw_offset);
             if (!is_cfa  && entry->dw_regnum != CFA_VAL) {
-                printf(" compiler botch, regnum != CFA_VAL");
+                printf(" compiler botch, regnum %lu != CFA_VAL",
+                    (unsigned long)entry->dw_regnum);
             }
         }
         printf(">\n");
+        }
         break;
     case DW_EXPR_VAL_OFFSET:
         print_reg(entry->dw_regnum);
-        printf(" %+ld",(signed long)entry->dw_offset);
-        if (!is_cfa  && entry->dw_regnum != CFA_VAL) {
-            printf(" compiler botch, regnum != CFA_VAL");
+        if (keep_all_printf) {
+        printf(" %+ld",(signed long)(Dwarf_Signed)entry->dw_offset);
         }
+        if (!is_cfa  && entry->dw_regnum != CFA_VAL) {
+            printf(" compiler botch, regnum %lu != CFA_VAL",
+                (unsigned long)entry->dw_regnum);
+        }
+        if (keep_all_printf) {
         printf(">\n");
+        }
         break;
     case DW_EXPR_EXPRESSION:
         print_reg(entry->dw_regnum);
+        if (keep_all_printf) {
         if (entry->dw_offset_relevant) {
             printf(" FAIL. ERROR: a DW_EXPR_EXPRESSION "
                 "must not have the dw_offset marked as "
                 "offset_relevant \n");
             printf(" offset_rel  ERROR: %d ",
                 entry->dw_offset_relevant);
-            printf(" %+ld", (signed long)entry->dw_offset);
+            printf(" %+ld", 
+                (signed long)(Dwarf_Signed)entry->dw_offset);
         }
         printf("Block ptr set? %s ",
             entry->dw_block.bl_data?"yes":"no");
         printf(" Value is at address given by expr val ");
-        /* printf(" block-ptr  0x%" DW_PR_DUx " ",
+        /* printf(" block-ptr  0x%llx ",
             (Dwarf_Unsigned)entry->dw_block_ptr); */
         printf(">\n");
+        }
         break;
     case DW_EXPR_VAL_EXPRESSION:
-        printf(" expression byte len  %" DW_PR_DUu " " ,
+        if (keep_all_printf) {
+        printf(" expression byte len  %llu " ,
             entry->dw_block.bl_len);
         printf("Block ptr set? %s ",
             entry->dw_block.bl_data?"yes":"no");
@@ -527,16 +552,17 @@ print_one_regentry(const char *prefix_i,
             printf(" offset_rel  ERROR: %d ",
                 entry->dw_offset_relevant);
             printf("  %+ld",
-                (signed long)entry->dw_offset);
+                (signed long)(Dwarf_Signed)entry->dw_offset);
         }
         printf(" Value is expr val ");
         if (!entry->dw_block.bl_data) {
             printf("Compiler or libdwarf botch, "
                 "NULL block data pointer. ");
         }
-        /* printf(" block-ptr  0x%" DW_PR_DUx " ",
+        /* printf(" block-ptr  0x%llx ",
             (Dwarf_Unsigned)entry->dw_block.bl_data); */
         printf(">\n");
+        }
         break;
     default: break;
     }

@@ -36,6 +36,11 @@ for anyone to use for any purpose.
     gcc/clang may produce .eh_frame without .debug_frame.
     To read .eh_frame call dwarf_get_fde_list_eh()
     as shown below instead of dwarf_get_fde_list() .
+
+    All formatting is standard C (with
+    long long types), references to 
+    DW_PR_* macros have been removed.
+    As of December 29 2025, version 2.3.0
 */
 
 #include <config.h>
@@ -57,8 +62,9 @@ for anyone to use for any purpose.
 
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
 
+#define FALSE 0
+#define TRUE 1
 #ifdef _O_BINARY
 /*  This is for a Windows environment */
 #define O_BINARY _O_BINARY
@@ -204,10 +210,11 @@ main(int argc, char **argv)
         In dwarfdump we get the SAME_VAL, UNDEF_VAL,
         INITIAL_VAL CFA_VAL from dwconf_s struct.   
 
-        Do not make regtabrulecount higher than
+        Do not make regtabrulecount much higher than
         necessary for your system, a value higher
-        than necessary wastes cpu time and memory use. */
-    regtabrulecount=1999;
+        than necessary wastes cpu time and memory use. 
+        The default is DW_FRAME_HIGHEST_NORMAL_REGISTER (188) */
+    regtabrulecount=1999; /* For performance measurement */
     dwarf_set_frame_undefined_value(dbg, UNDEF_VAL);
     dwarf_set_frame_rule_initial_value(dbg, INITIAL_VAL);
     dwarf_set_frame_same_value(dbg,SAME_VAL);
@@ -258,12 +265,12 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
         exit(EXIT_FAILURE);
     }
     if (keep_all_printf) {
-    printf( "%" DW_PR_DSd " cies present. "
-        "%" DW_PR_DSd " fdes present. \n",
+    printf( "%lld cies present. "
+        "%lld fdes present. \n",
         cie_element_count,fde_element_count);
     }
     /*if (fdenum >= fde_element_count) {
-        printf("Want fde %d but only %" DW_PR_DSd " present\n",fdenum,
+        printf("Want fde %d but only %lld present\n",fdenum,
             fde_element_count);
         exit(EXIT_FAILURE);
     }*/
@@ -278,14 +285,14 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
         }
         res = dwarf_get_cie_of_fde(fde_data[fdenum],&cie,&error);
         if (res != DW_DLV_OK) {
-            printf("Error accessing cie of fdenum %" DW_PR_DSd
+            printf("Error accessing cie of fdenum %lld" 
                 " to get its cie\n",fdenum);
             exit(EXIT_FAILURE);
         }
         if (keep_all_printf) {
-        printf("Print cie of fde %" DW_PR_DSd  "\n",fdenum);
+        printf("Print cie of fde %lld\n",fdenum);
         print_cie_instrs(dbg,cie,&error);
-        printf("\nPrint fde %" DW_PR_DSd  "\n",fdenum);
+        printf("\nPrint fde %lld\n",fdenum);
         }
         if (just_print_selected_regs) {
             print_fde_selected_regs(fde_data[fdenum]);
@@ -333,21 +340,20 @@ print_cie_instrs(Dwarf_Debug dbg,Dwarf_Cie cie,Dwarf_Error *error)
         exit(EXIT_FAILURE);
     }
     printf("CIE info\n");
-    printf("  cie index              : %" DW_PR_DSd "\n",
+    printf("  cie index              : %lld\n",
         cie_index);
-    printf("  cie length             : 0x%" DW_PR_DUx " (%"
-        DW_PR_DUu ")\n",
+    printf("  cie length             : 0x%llx (%llu)\n",
         bytes_in_cie,bytes_in_cie);
     printf("  cie version            : %d\n",version);
     printf("  cie augmenter          : %s\n",
         augmentation?augmentation:"<none>");
-    printf("  code alignment factor  : %" DW_PR_DUu "\n",
+    printf("  code alignment factor  : %llu\n",
         code_alignment_factor);
-    printf("  data alignment factor  : %" DW_PR_DSd "\n",
+    printf("  data alignment factor  : %lld\n",
         data_alignment_factor);
     printf("  return address register: %u\n",
         return_address_register_rule);
-    printf("  initial instructions length: %" DW_PR_DUu "\n",
+    printf("  initial instructions length: %llu\n",
         instr_len);
     printf("  offset size            : %u\n",offset_size);
     {
@@ -362,7 +368,7 @@ print_cie_instrs(Dwarf_Debug dbg,Dwarf_Cie cie,Dwarf_Error *error)
             printf("dwarf_expand_frame_instructions failed!\n");
             exit(EXIT_FAILURE);
         }
-        printf("CIE op count: %" DW_PR_DUu "\n",frame_instr_count);
+        printf("CIE op count: %llu\n",frame_instr_count);
         print_frame_instrs(dbg,frame_instr_head,
             frame_instr_count, error);
         dwarf_dealloc_frame_instr_head(frame_instr_head);
@@ -388,11 +394,15 @@ print_fde_col(Dwarf_Signed k,
     (void)subsequent_pc;
     if (row_pc != jsave) {
         if (keep_all_printf) {
-        printf(" row_pc=0x%" DW_PR_DUx ,row_pc);
+        printf(" row_pc=0x%llx" ,row_pc);
         }
     }
     if (keep_all_printf) {
-    printf(" col=%" DW_PR_DSd " ",k);
+        if (k == CFA_VAL) {
+            printf(" col=%lld [CFA] ",k);
+        } else {
+            printf(" col=%lld ",k);
+        }
     }
     switch(value_type) {
     case DW_EXPR_OFFSET:
@@ -418,7 +428,7 @@ print_fde_col(Dwarf_Signed k,
             print_reg(reg_used);
             printf(" ");
         } else {
-            printf("%02" DW_PR_DSd , offset);
+            printf("%02lld", offset);
             printf("(");
             print_reg(reg_used);
             printf(") ");
@@ -437,7 +447,7 @@ print_fde_col(Dwarf_Signed k,
         printf("<%s ", type_title);
         print_reg(rule_id);
         printf("=");
-        printf("expr-block-len=%" DW_PR_DUu , block->bl_len);
+        printf("expr-block-len=%llu", block->bl_len);
         {
             char pref[40];
 
@@ -469,8 +479,7 @@ print_fde_col(Dwarf_Signed k,
     }
 #if 0
     if (has_more_rows) {
-        printf(" has_more_rows? %s next pc: 0x%"
-            DW_PR_DUx ">",
+        printf(" has_more_rows? %s next pc: 0x%llx>",
             has_more_rows?"yes.":"no.",
             subsequent_pc);
     } else {
@@ -488,7 +497,7 @@ print_fde_col(Dwarf_Signed k,
     and avoid incrementing pc for the next cfa.
 
     Here, to verify function added in May 2018,
-    we instead use dwarf_get_fde_info_for_reg3_b()
+    we instead use dwarf_get_fde_info_for_reg3_c()
     which has the has_more_rows and subsequent_pc functions
     for the case where one is tracking a particular register
     and not closely watching the CFA value itself. */
@@ -498,8 +507,10 @@ static void
 print_fde_selected_regs( Dwarf_Fde fde)
 {
     Dwarf_Error oneferr = 0;
-    /* Arbitrary column numbers for testing. */
-    static int selected_cols[] = {1,2,3,4,5,6,7,8,
+    /*  Arbitrary column numbers for testing. 
+        Before 2.3.0 it was impossible get the CFA 'column'.
+    */
+    static int selected_cols[] = {CFA_VAL,1,2,3,4,5,6,7,8,
         9,10,11,12,13,14,15,16};
     static int selected_cols_count =
         sizeof(selected_cols)/sizeof(selected_cols[0]);
@@ -531,7 +542,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
         &fde_offset, &oneferr);
 
     if (fres == DW_DLV_ERROR) {
-        printf("FAIL: dwarf_get_fde_range err %" DW_PR_DUu
+        printf("FAIL: dwarf_get_fde_range err %llu"
             " line %d\n",
             dwarf_errno(oneferr),__LINE__);
         exit(EXIT_FAILURE);
@@ -554,21 +565,23 @@ print_fde_selected_regs( Dwarf_Fde fde)
         next_jsave = jsave+1;
         if (keep_all_printf) {
         printf("\n");
-        printf(" FDE columns (registers) for pc 0x%"
-            DW_PR_DUx "\n",jsave);
+        printf(" FDE columns (registers) for pc 0x%llx"
+            "\n",jsave);
         }
+        /* First, access CFA 'column',  */
         for (k = 0; k < selected_cols_count ; ++k ) {
             Dwarf_Unsigned reg = 0;
             Dwarf_Unsigned offset_relevant = 0;
-            int fires = 0;
-            Dwarf_Small value_type = 0;
-            Dwarf_Block block;
-            Dwarf_Unsigned offset;
-            Dwarf_Addr row_pc = 0;
+            int            fires = 0;
+            Dwarf_Small    value_type = 0;
+            Dwarf_Block    block; /* not initialized */
+            Dwarf_Signed   offset = 0;
+            Dwarf_Addr     row_pc = 0;
+            Dwarf_Unsigned col = selected_cols[k];
 
             block = dwblockzero;
-            fires = dwarf_get_fde_info_for_reg3_b(curfde,
-                selected_cols[k],
+            fires = dwarf_get_fde_info_for_reg3_c(curfde,
+                col,
                 jsave,
                 &value_type,
                 &offset_relevant,
@@ -580,7 +593,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
                 &subsequent_pc,
                 &oneferr);
             if (fires == DW_DLV_ERROR) {
-                printf("FAIL: reading reg err %" DW_PR_DUu " line %d",
+                printf("FAIL: reading reg err %llu line %d",
                     dwarf_errno(oneferr),__LINE__);
                 exit(EXIT_FAILURE);
             }
@@ -610,7 +623,7 @@ print_frame_instrs(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
 
     if (keep_all_printf) {
-    printf("\nPrint %" DW_PR_DUu " frame instructions\n",
+    printf("\nPrint %llu frame instructions\n",
         frame_instr_count);
     }
     for ( ; i < frame_instr_count; ++i) {
@@ -637,33 +650,33 @@ print_frame_instrs(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
                 printf("ERROR reading frame instruction "
-                    "%" DW_PR_DUu "\n",
+                    "%llu\n",
                     frame_instr_count);
                 dwarf_dealloc_error(dbg,*error);
                 *error = 0;
             } else {
                 printf("NO ENTRY reading frame instruction "
-                    " %" DW_PR_DUu "\n",frame_instr_count);
+                    " %llu\n",frame_instr_count);
             }
             break;
         }
         if (keep_all_printf) {
         dwarf_get_CFA_name(cfa_operation,&op_name);
-        printf("[%2" DW_PR_DUu "]  %" DW_PR_DUu " %s ",i,
+        printf("[%2llu]  %llu %s ",i,
             instr_offset_in_instrs,op_name);
         switch(fields[0]) {
         case 'u': {
             if (!fields[1]) {
-                printf("%" DW_PR_DUu " (0x%" DW_PR_DUx "\n",
+                printf("%llu (0x%llx\n",
                     u0,u0);
             }
             if (fields[1] == 'c') {
                 Dwarf_Unsigned final =
                     u0*code_alignment_factor;
-                printf("%" DW_PR_DUu ,final);
+                printf("%llu",final);
 #if 0
                 if (glflags.verbose) {
-                    printf("  (%" DW_PR_DUu " * %" DW_PR_DUu,
+                    printf("  (%llu * %llu)",
                         u0,code_alignment_factor);
 
                 }
@@ -674,12 +687,12 @@ print_frame_instrs(Dwarf_Debug dbg,
         break;
         case 'r': {
             if (!fields[1]) {
-                printf("r%" DW_PR_DUu "\n",u0);
+                printf("r%llu\n",u0);
                 break;
             }
             if (fields[1] == 'u') {
                 if (!fields[2]) {
-                    printf("%" DW_PR_DUu ,u1);
+                    printf("%llu",u1);
                     printf("\n");
                     break;
                 }
@@ -687,24 +700,24 @@ print_frame_instrs(Dwarf_Debug dbg,
                     Dwarf_Signed final =
                         (Dwarf_Signed)u0 *
                         data_alignment_factor;
-                    printf("%" DW_PR_DSd ,final);
+                    printf("%lld",final);
                     printf("\n");
                 }
             }
             if (fields[1] == 'r') {
-                printf("r%" DW_PR_DUu "\n",u0);
+                printf("r%llu\n",u0);
                 printf(" ");
-                printf("r%" DW_PR_DUu "\n",u1);
+                printf("r%llu\n",u1);
                 printf("\n");
             }
             if (fields[1] == 's') {
                 if (fields[2] == 'd') {
                     Dwarf_Signed final = s1 * data_alignment_factor;
-                    printf("r%" DW_PR_DUu "\n",u0);
-                    printf("%" DW_PR_DSd , final);
+                    printf("r%llu\n",u0);
+                    printf("%llu", final);
 #if 0
                     if (glflags.verbose) {
-                        printf("  (%" DW_PR_DSd " * %" DW_PR_DSd,
+                        printf("  (%lld * %lld",
                             s1,data_alignment_factor);
                     }
 #endif
@@ -713,9 +726,9 @@ print_frame_instrs(Dwarf_Debug dbg,
             }
             if (fields[1] == 'b') {
                 /* rb */
-                printf("r%" DW_PR_DUu "\n",u0);
-                printf("%" DW_PR_DUu  ,u0);
-                printf(" expr block len %" DW_PR_DUu "\n",
+                printf("r%llu\n",u0);
+                printf("%llu",u0);
+                printf(" expr block len %llu\n",
                     expression_block.bl_len);
                 dump_block("    ", expression_block.bl_data,
                     (Dwarf_Signed) expression_block.bl_len);
@@ -734,10 +747,10 @@ print_frame_instrs(Dwarf_Debug dbg,
             if (fields[1] == 'd') {
                 Dwarf_Signed final = s0*data_alignment_factor;
 
-                printf(" %" DW_PR_DSd ,final);
+                printf(" %lld",final);
 #if 0
                 if (glflags.verbose) {
-                    printf("  (%" DW_PR_DSd " * %" DW_PR_DSd,
+                    printf("  (%lld * %lld",
                         s0,data_alignment_factor);
                 }
 #endif
@@ -747,7 +760,7 @@ print_frame_instrs(Dwarf_Debug dbg,
         break;
         case 'b': {
             if (!fields[1]) {
-                printf(" expr block len %" DW_PR_DUu "\n",
+                printf(" expr block len %llu\n",
                     expression_block.bl_len);
                 dump_block("    ", expression_block.bl_data,
                     (Dwarf_Signed) expression_block.bl_len);
@@ -773,6 +786,7 @@ print_frame_instrs(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+static const Dwarf_Regtable3 zerotab3;
 /* Just prints the instructions in the fde. */
 static void
 print_fde_instrs(Dwarf_Debug dbg,
@@ -791,7 +805,7 @@ print_fde_instrs(Dwarf_Debug dbg,
     Dwarf_Bool has_more_rows =  TRUE;
     Dwarf_Addr actual_pc = 0;
     Dwarf_Regtable3 tab3;
-    int oldrulecount = 0;
+    Dwarf_Unsigned oldrulecount = 0;
     Dwarf_Small  *outinstrs = 0;
     Dwarf_Unsigned instrslen = 0;
     Dwarf_Cie cie = 0;
@@ -806,23 +820,26 @@ print_fde_instrs(Dwarf_Debug dbg,
         with care as lowpc and func length */
     arbitrary_addr = lowpc + (func_length/2);
     if (keep_all_printf) {
-    printf("function low pc 0x%" DW_PR_DUx
-        "  and length 0x%" DW_PR_DUx
-        "  and addr we choose 0x%" DW_PR_DUx
+    printf("function low pc 0x%llx" 
+        "  and length 0x%llx"
+        "  and addr we choose 0x%llx"
         "\n",
         lowpc,func_length,arbitrary_addr);
     }
 
     /*  1 is arbitrary. We are winding up getting the
         rule count here while leaving things unchanged. */
+    tab3 = zerotab3;
     oldrulecount = dwarf_set_frame_rule_table_size(dbg,1);
     dwarf_set_frame_rule_table_size(dbg,oldrulecount);
 
     tab3.rt3_reg_table_size = oldrulecount;
-    tab3.rt3_rules = (struct Dwarf_Regtable_Entry3_s *) malloc(
-        sizeof(struct Dwarf_Regtable_Entry3_s)* oldrulecount);
+    tab3.rt3_rules = (struct Dwarf_Regtable_Entry3_s *)calloc(
+        oldrulecount,
+        sizeof(struct Dwarf_Regtable_Entry3_s));
     if (!tab3.rt3_rules) {
-        printf("Unable to malloc for %d rules\n",oldrulecount);
+        printf("Unable to calloc for %lu rules\n",
+           (unsigned long)oldrulecount);
         exit(EXIT_FAILURE);
     }
 
@@ -830,8 +847,8 @@ print_fde_instrs(Dwarf_Debug dbg,
     res = dwarf_get_fde_info_for_all_regs3(fde,arbitrary_addr ,
         &tab3,&actual_pc,error);
 #if 0
-    printf("function  Requested_pc 0x%"
-        DW_PR_DUx " Actual addr of row 0x%" DW_PR_DUx "\n",
+    printf("function  Requested_pc 0x%llx"
+        " Actual addr of row 0x%llx\n",
         arbitrary_addr,actual_pc);
 #endif
     if (res != DW_DLV_OK) {
@@ -857,16 +874,15 @@ print_fde_instrs(Dwarf_Debug dbg,
             exit(EXIT_FAILURE);
         }
         if (keep_all_printf) {
-        printf("row_pc 0x%lx hasmore %s subsequent_pc 0x%"
-            DW_PR_DUx "\n",
+        printf("row_pc 0x%lx hasmore %s subsequent_pc 0x%llx\n",
             (unsigned long)actual_pc,has_more_rows?"yes":"no",
             subsequent_pc);
-        printf("\nRegtable at pc 0x%" DW_PR_DUx "\n",actual_pc);
+        printf("\nRegtable at pc 0x%llx\n",actual_pc);
         }
         print_regtable(&tab3);
         if (has_more_rows && keep_all_printf) {
-            printf("  Next row to print is pc 0x%"
-                DW_PR_DUx "\n",subsequent_pc);
+            printf("  Next row to print is pc 0x%llx\n",
+                subsequent_pc);
         }
     }
     /*print_regtable(&tab3); */
@@ -901,7 +917,7 @@ print_fde_instrs(Dwarf_Debug dbg,
             exit(EXIT_FAILURE);
         }
         if (keep_all_printf) {
-        printf("Frame op count: %" DW_PR_DUu "\n",frame_instr_count);
+        printf("Frame op count: %llu\n",frame_instr_count);
         }
         print_frame_instrs(dbg,frame_instr_head,
             frame_instr_count, error);
@@ -975,7 +991,7 @@ print_one_regentry(const char *prefix_i,
         printf("   [offset_rel? %s ",
             entry->dw_offset_relevant?"yes.":"no.");
         if (entry->dw_offset_relevant) {
-            printf(" Offset  %" DW_PR_DSd " " ,
+            printf(" Offset  %lld " ,
                 (Dwarf_Signed)entry->dw_offset);
             if (is_cfa) {
                 printf("Defines cfa value");
@@ -993,7 +1009,7 @@ print_one_regentry(const char *prefix_i,
     case DW_EXPR_VAL_OFFSET:
         print_reg(entry->dw_regnum);
         printf("[");
-        printf(" offset  %" DW_PR_DSd " " ,
+        printf(" offset  %lld " ,
             (Dwarf_Signed)entry->dw_offset);
         if (is_cfa) {
             printf("does this make sense? No?");
@@ -1014,19 +1030,19 @@ print_one_regentry(const char *prefix_i,
                 "offset_relevant \n");
             printf(" offset_rel  ERROR: %d ",
                 entry->dw_offset_relevant);
-            printf(" offset  %" DW_PR_DSd " " ,
+            printf(" offset  %lld " ,
                 (Dwarf_Signed)entry->dw_offset);
         }
         printf("Block ptr set? %s ",
             entry->dw_block.bl_data?"yes":"no");
         printf(" Value is at address given by expr val ");
-        /* printf(" block-ptr  0x%" DW_PR_DUx " ",
+        /* printf(" block-ptr  0x%llx ",
             (Dwarf_Unsigned)entry->dw_block_ptr); */
         printf("]");
         break;
     case DW_EXPR_VAL_EXPRESSION:
         printf("[");
-        printf(" expression byte len  %" DW_PR_DUu " " ,
+        printf(" expression byte len  %llu " ,
             entry->dw_block.bl_len);
         printf("Block ptr set? %s ",
             entry->dw_block.bl_data?"yes":"no");
@@ -1036,7 +1052,7 @@ print_one_regentry(const char *prefix_i,
                 "offset_relevant \n");
             printf(" offset_rel  ERROR: %d ",
                 entry->dw_offset_relevant);
-            printf(" offset  %" DW_PR_DSd " " ,
+            printf(" offset  %lld " ,
                 (Dwarf_Signed)entry->dw_offset);
         }
         printf(" Value is expr val ");
@@ -1044,7 +1060,7 @@ print_one_regentry(const char *prefix_i,
             printf("Compiler or libdwarf botch, "
                 "NULL block data pointer. ");
         }
-        /* printf(" block-ptr  0x%" DW_PR_DUx " ",
+        /* printf(" block-ptr  0x%llx ",
             (Dwarf_Unsigned)entry->dw_block.bl_data); */
         printf("]");
         break;
