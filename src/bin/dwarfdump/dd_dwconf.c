@@ -1417,6 +1417,10 @@ static char *genericregnames[] = {
 
 /*  This is a simple generic set of registers.  The
     table entry count is pretty arbitrary.
+    However, some sarubbo-11 *.bin cases have a
+    return address register 117. So lets
+    the base standard to 150. 
+    December 2025, v2.3.0
 */
 void
 init_conf_file_data(struct dwconf_s *config_file_data)
@@ -1425,7 +1429,7 @@ init_conf_file_data(struct dwconf_s *config_file_data)
     config_file_data->cf_abi_name = "";
     config_file_data->cf_config_file_path = "";
     config_file_data->cf_interface_number = 3;
-    config_file_data->cf_table_entry_count = 100;
+    config_file_data->cf_table_entry_count = 150;
     config_file_data->cf_initial_rule_value = DW_FRAME_UNDEFINED_VAL;
     config_file_data->cf_cfa_reg =  DW_FRAME_CFA_COL3;
     config_file_data->cf_address_size =  0;
