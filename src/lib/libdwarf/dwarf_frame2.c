@@ -857,9 +857,30 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        if (return_address_register >
-            dbg->de_frame_reg_rules_entry_count) {
-            _dwarf_error(dbg, error, DW_DLE_CIE_RET_ADDR_REG_ERROR);
+        if (return_address_register !=
+            dbg->de_frame_cfa_col_number &&
+                return_address_register >
+                dbg->de_frame_reg_rules_entry_count) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_CIE_RET_ADDR_REG_ERROR: The "
+                "return address register %u",
+                return_address_register);
+            dwarfstring_append_printf_u(&m,
+                " vs. cfa colum %u"
+                " mismatch ",
+                dbg->de_frame_cfa_col_number);
+            dwarfstring_append_printf_u(&m,
+                " or the return address register is"
+                " too large vs rules entry count of"
+                " %u.",
+                dbg->de_frame_reg_rules_entry_count);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_CIE_RET_ADDR_REG_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         frame_ptr += size;

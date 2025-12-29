@@ -191,7 +191,7 @@ _dwarf_fill_frame_table(Dwarf_Frame table,
     Dwarf_Unsigned           reg_count,
     struct Dwarf_Reg_Rule_s *cfa_reg)
 {
-    struct Dwarf_Reg_Rule_s *t2reg = table->fr_reg;
+    struct Dwarf_Reg_Rule_s *t2reg = &(table->fr_reg[0]);
     struct Dwarf_Reg_Rule_s *t3reg = localregtab;
     Dwarf_Unsigned minregcount =
         (Dwarf_Unsigned)MIN(table->fr_reg_count, reg_count);
@@ -220,9 +220,8 @@ _dwarf_emit_row(
     Dwarf_Addr table_row_pc = 0;
 
     _dwarf_rule_copy(iter_data->aa_dbg,
-        iter_data->aa_pubregtable,
+        iter_data->aa_frameregtable,
         iter_data->aa_regtab3,
-        iter_data->aa_regti,
         reg_count,
         &table_row_pc);
     if (row_pc != table_row_pc) {
@@ -522,7 +521,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     (instr_ptr < final_instr_ptr)?1:0;
                 _dwarf_fill_frame_table(table,localregtab,
                     current_loc,reg_count,&cfa_reg);
-                alres =_dwarf_emit_row(iter_data,
+                alres = _dwarf_emit_row(iter_data,
                     reg_count,
                     current_loc,
                     local_has_more_rows,
@@ -1114,7 +1113,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         case DW_CFA_remember_state:
         {
             stack_table = (Dwarf_Frame)
-            _dwarf_get_alloc(dbg, DW_DLA_FRAME, 1);
+                _dwarf_get_alloc(dbg, DW_DLA_FRAME, 1);
             if (stack_table == NULL) {
                 SER(DW_DLE_DF_ALLOC_FAIL);
             }
