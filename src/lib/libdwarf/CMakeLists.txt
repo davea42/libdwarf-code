@@ -144,7 +144,7 @@ install(EXPORT libdwarfTargets
 export(
   TARGETS dwarf
   NAMESPACE libdwarf::
-  FILE "${PROJECT_BINARY_DIR}/libdwarf-targets.cmake"
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/libdwarf-targets.cmake"
 )
 install(FILES "${PROJECT_BINARY_DIR}/src/lib/libdwarf/libdwarf.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 install(FILES "${PROJECT_SOURCE_DIR}/cmake/Findzstd.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")
