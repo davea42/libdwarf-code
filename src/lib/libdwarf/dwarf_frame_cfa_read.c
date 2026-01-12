@@ -98,7 +98,6 @@ dump_frame_rule(char *msg, Dwarf_Regtable_Entry3 *reg_rule)
 }
 #endif /*0*/
 
-
 /*  Cleans up the in-process linked list of these
     in case of early exit in
     _dwarf_exec_frame_instr.  */
@@ -300,7 +299,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 #define FREELOCALMALLOC                  \
         _dwarf_free_dfi_list(ilisthead); \
         ilisthead =0;                    \
-        free(dfi); dfi = 0              
+        free(dfi); dfi = 0
 /* SER === SIMPLE_ERROR_RETURN */
 #define SER(code)                     \
         FREELOCALMALLOC;              \
@@ -594,7 +593,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             localregtab[reg_no].dw_offset = result;
             localregtab[reg_no].dw_offset_relevant = 1;
-            localregtab[reg_no].dw_regnum = 
+            localregtab[reg_no].dw_regnum =
                 (Dwarf_Half)reg_num_of_cfa;
             localregtab[reg_no].dw_value_type = DW_EXPR_OFFSET;
             if (make_instr) {
