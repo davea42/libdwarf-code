@@ -76,14 +76,8 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 }
 /* Only used for debugging libdwarf. */
 static void dump_frame_rule(char *msg,
-    struct Dwarf_Reg_Rule_s *reg_rule);
+    Dwarf_Regtable3 *reg_rule);
 #endif /*0*/
-
-static void _dwarf_init_reg_rules_dw3(
-    Dwarf_Regtable_Entry3 *base,
-    Dwarf_Unsigned first,
-    Dwarf_Unsigned last,
-    Dwarf_Unsigned  initial_value);
 
 /*  The rules for register settings are described
     in libdwarf.pdf and the html version.
@@ -462,7 +456,6 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /*  This is the only situation this is set.
         and is really dangerous. as fde and cie
         are set for dealloc by dwarf_finish(). */
-    new_fde->fd_fde_owns_cie = TRUE;
     /*  Now read the cie corresponding to the fde,
         _dwarf_read_cie_fde_prefix checks
         cie_ptr for being within the section. */
@@ -523,6 +516,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
             return res;
         }
         new_fde->fd_cie = new_cie;
+        new_fde->fd_fde_owns_cie = TRUE;
     } else {
         dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
         new_fde = 0;
@@ -700,28 +694,53 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
     }
 
     cie = fde->fd_cie;
-    if (cie->ci_initial_table == NULL) {
+    if (!cie->ci_initial_table) {
+        /*  We do not have an initial table yet.
+            It will be remembered in future calls. */
+
         Dwarf_Small *instrstart = cie->ci_cie_instr_start;
         Dwarf_Small *instrend = instrstart +cie->ci_length +
             cie->ci_length_size +
             cie->ci_extension_size -
             (cie->ci_cie_instr_start -
             cie->ci_cie_start);
+        Dwarf_Regtable_Entry3 *cfa= 0;
+        Dwarf_Regtable_Entry3 *rules= 0;
+        Dwarf_Frame cieframe = 0;
+        Dwarf_Unsigned rules_count =
+            dbg->de_frame_reg_rules_entry_count;
+
         if (instrend > cie->ci_cie_end) {
             _dwarf_error(dbg, error,DW_DLE_CIE_INSTR_PTR_ERROR);
             return DW_DLV_ERROR;
         }
-        cie->ci_initial_table = (Dwarf_Frame)_dwarf_get_alloc(dbg,
+        cieframe = (Dwarf_Frame)_dwarf_get_alloc(dbg,
             DW_DLA_FRAME, 1);
-
-        if (cie->ci_initial_table == NULL) {
+#if 0
+printf("dadebug alloc cieframe, ptr %p line %d\n",(void *)cieframe,__LINE__);
+fflush(stdout);
+#endif
+        if (!cieframe) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
-        _dwarf_init_reg_rules_ru(cie->ci_initial_table->fr_reg,
-            0, cie->ci_initial_table->fr_reg_count,
-            dbg->de_frame_rule_initial_value);
-        _dwarf_init_reg_rules_ru(&cie->ci_initial_table->fr_cfa_rule,
+        cie->ci_initial_table = cieframe;
+
+        /*  The initial table is a separate
+            allocation, not part of
+            argument 'table' */
+        res = _dwarf_initialize_frame_table(dbg,cieframe,
+            rules_count, NULL,error);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,cieframe,DW_DLA_FRAME);
+            cieframe = 0;
+            return res;
+        }
+        rules = cieframe->fr_regtable->rt3_rules;
+        _dwarf_init_reg_rules_dw3(rules,
+            0,rules_count ,dbg->de_frame_rule_initial_value);
+        cfa = &cieframe->fr_regtable->rt3_cfa_rule;
+        _dwarf_init_reg_rules_dw3(cfa,
             0,1,dbg->de_frame_rule_initial_value);
         res = _dwarf_exec_frame_instr( /* make_instr= */ FALSE,
             /* search_pc */ FALSE,
@@ -729,7 +748,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             /* location */ 0,
             instrstart,
             instrend,
-            cie->ci_initial_table,
+            cieframe,
             cie, dbg,
             cfa_reg_col_num,
             has_more_rows,
@@ -738,9 +757,14 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             NULL /* no iterator data, no callback here*/,
             error);
         if (res != DW_DLV_OK) {
+            dwarf_dealloc(dbg,cieframe,DW_DLA_FRAME);
             return res;
         }
     }
+    /*  So we have CIE initial instructions in
+        cieframe Dwarf_Regtable3
+        So do the next step, exec some frame instrs
+        till it is time to stop.  */
 
     {
         Dwarf_Small *instr_end = fde->fd_length +
@@ -750,6 +774,9 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
             return DW_DLV_ERROR;
         }
+        /*  This call will pick up cie->initial_table
+            instructions from cie, if any exist.  It always
+            starts from byte zero of the fde instructions. */
         res = _dwarf_exec_frame_instr( /* make_instr= */ FALSE,
             /* search_pc */ TRUE,
             pc_requested,
@@ -764,10 +791,18 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             NULL,NULL,
             iterator_data,
             error);
+#if 0
+        if (res != DW_DLV_OK) {
+            Dwarf_Frame cf = cie->ci_initial_table;
+            dwarf_dealloc(dbg,cf,DW_DLA_FRAME);
+            cie->ci_initial_table = 0;
+        }
+#endif
     }
     return res;
 }
 
+#if 0 /* no longer needed */
 /*  Copying frame data (cfa and resultant row
     for a cp address) from the internal records
     to the public struct records.
@@ -783,7 +818,6 @@ _dwarf_rule_copy(
 {
     /* public */
     struct Dwarf_Regtable_Entry3_s *rule_i = NULL;
-    struct Dwarf_Reg_Rule_s *rule_f = NULL;
     Dwarf_Unsigned           i = 0;
 
     /*  COPIES To regtable rule from fde rule. */
@@ -822,8 +856,11 @@ _dwarf_rule_copy(
         *row_pc_out = fde_frame_table->fr_loc;
     }
 }
+#endif /* 0 */
 
+#if 0
 static const struct Dwarf_Frame_s zero_fde_frame_table;
+#endif
 
 /*  Called from user code. See libdwarf.h for required
     condition on reg_table passed in.
@@ -838,24 +875,24 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
     Dwarf_Error     *error)
 {
     Dwarf_Debug              dbg = 0;
-    struct Dwarf_Frame_s     fde_frame_table;
+    struct Dwarf_Frame_s    *fde_frame_table;
     int                      res = 0;
     /*  Constraints in Dwarf_Regtable3 mean
         a table size (meaning number of registers in a frame)
         must fit in a Dwarf_Half (16 bits). */
     Dwarf_Unsigned           output_table_real_data_size = 0;
 
-    fde_frame_table = zero_fde_frame_table;
+    (void) row_pc;
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
+    fde_frame_table   = &(fde->fd_fde_frame_table);
     output_table_real_data_size = reg_table->rt3_reg_table_size;
     output_table_real_data_size =
         MIN(output_table_real_data_size,
             dbg->de_frame_reg_rules_entry_count);
-    res = _dwarf_initialize_fde_frame_table(dbg, &fde_frame_table,
-        output_table_real_data_size,
-        error);
+    res = _dwarf_initialize_frame_table(dbg, fde_frame_table,
+        output_table_real_data_size, reg_table, error);
     if (res != DW_DLV_OK) {
-        _dwarf_empty_fde_frame_table(&fde_frame_table);
+        _dwarf_empty_frame_table(fde_frame_table);
         return res;
     }
     /* Allocate array of internal structs to match,
@@ -864,18 +901,21 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
         more sanity checks and create a frame row in
         fde_frame_table. */
     res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
-        &fde_frame_table,
+        fde_frame_table,
         dbg->de_frame_cfa_col_number,
         has_more_rows,subsequent_pc,
         NULL /* No iterator data */,
         error);
+    *row_pc = fde_frame_table->fr_loc;
     if (res != DW_DLV_OK) {
-        _dwarf_empty_fde_frame_table(&fde_frame_table);
+        _dwarf_empty_frame_table(fde_frame_table);
         return res;
     }
-    _dwarf_rule_copy(dbg,&fde_frame_table, reg_table,
+#if 0
+    _dwarf_rule_copy(dbg,fde_frame_table, reg_table,
         output_table_real_data_size,row_pc);
-    _dwarf_empty_fde_frame_table(&fde_frame_table);
+#endif
+    _dwarf_empty_frame_table(fde_frame_table);
     return DW_DLV_OK;
 }
 
@@ -962,94 +1002,96 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
 {
     struct Dwarf_Frame_s * fde_frame_table =
         &(fde->fd_fde_frame_table);
-    int res = DW_DLV_ERROR;
-
-    Dwarf_Debug dbg = 0;
+    int            res = DW_DLV_ERROR;
+    Dwarf_Debug    dbg = 0;
     Dwarf_Unsigned table_real_data_size = 0;
-
-    Dwarf_Bool col_is_cfa = FALSE;
+    Dwarf_Bool     col_is_cfa = FALSE;
 
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
-
     if (table_column == dbg->de_frame_cfa_col_number) {
         col_is_cfa = TRUE;
     }
-    if (!fde->fd_have_fde_tab  ||
-    /*  The test is just in case it's not inside the table.
-        For non-MIPS
-        it could be outside the table and that is just fine, it was
-        really a mistake to put it in the table in 1993.  */
+    table_real_data_size = dbg->de_frame_reg_rules_entry_count;
+    /*  The second part of the 'if' here is just in case it's not
+        inside the table.  For non-MIPS it must be
+        outside the table.  It was a mistake
+        to put it in the table (as register 0) in 1993.  */
+
+    if (!fde->fd_have_fde_frame_tab  ||
         fde->fd_fde_pc_requested != pc_requested) {
-        if (fde->fd_have_fde_tab) {
-            _dwarf_empty_fde_frame_table(fde_frame_table);
-            fde->fd_have_fde_tab = FALSE;
+        if (fde->fd_have_fde_frame_tab) {
+            /*  The pc_requested changed, so we
+                to restart the calculation from cie
+                and the first byte of fde instructions */
+            _dwarf_empty_frame_table(fde_frame_table);
+            fde->fd_have_fde_frame_tab = FALSE;
         }
-        table_real_data_size = dbg->de_frame_reg_rules_entry_count;
-        res = _dwarf_initialize_fde_frame_table(dbg, fde_frame_table,
-            table_real_data_size, error);
+        /* We do not yet have a frame table */
+        res = _dwarf_initialize_frame_table(dbg, fde_frame_table,
+            table_real_data_size,NULL, error);
         if (res != DW_DLV_OK) {
             return res;
         }
-        if (!col_is_cfa  && table_column >= table_real_data_size) {
-            _dwarf_empty_fde_frame_table(fde_frame_table);
-            fde->fd_have_fde_tab = FALSE;
+        if (!col_is_cfa && table_column >= table_real_data_size) {
+            _dwarf_empty_frame_table(fde_frame_table);
+            fde->fd_have_fde_frame_tab = FALSE;
             _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
             return DW_DLV_ERROR;
-        }
+        
+         }
+     }
 
-        /*  _dwarf_get_fde_info_for_a_pc_row will perform
-            more sanity checks and run the cie/fde */
-        res = _dwarf_get_fde_info_for_a_pc_row(fde,
-            pc_requested, fde_frame_table,
-            dbg->de_frame_cfa_col_number,
-            has_more_rows,subsequent_pc,
-            NULL /* no iterator data */,
-            error);
-        if (res != DW_DLV_OK) {
-            _dwarf_empty_fde_frame_table(fde_frame_table);
-            fde->fd_have_fde_tab = FALSE;
-            return res;
-        }
+    /*  _dwarf_get_fde_info_for_a_pc_row will perform
+        more sanity checks and run the instructions
+        until stopped.  */
+    res = _dwarf_get_fde_info_for_a_pc_row(fde,
+        pc_requested, fde_frame_table,
+        dbg->de_frame_cfa_col_number,
+        has_more_rows,subsequent_pc,
+        NULL /* no iterator data */,
+        error);
+    if (res != DW_DLV_OK) {
+        _dwarf_empty_frame_table(fde_frame_table);
+        fde->fd_have_fde_frame_tab = FALSE;
+        return res;
     }
-
     if (row_pc_out) {
         *row_pc_out = fde_frame_table->fr_loc;
     }
     /*  Without value_type the data cannot be understood,
         so we insist on it being present, we don't test it. */
     if (col_is_cfa) {
+        Dwarf_Regtable3 * regt = fde_frame_table->fr_regtable;
         if (register_num) {
-            *register_num =
-                fde_frame_table->fr_cfa_rule.ru_register;
+            *register_num = regt->rt3_cfa_rule.dw_regnum;
         }
         if (offset) {
-            *offset =
-                fde_frame_table->fr_cfa_rule.ru_register;
+            *offset = (Dwarf_Signed)regt->rt3_cfa_rule.dw_offset;
         }
         if (block) {
-            *block = fde_frame_table->fr_cfa_rule.ru_block;
+            *block = regt->rt3_cfa_rule.dw_block;
         }
         *value_type =
-            fde_frame_table->fr_cfa_rule.ru_value_type;
+            regt->rt3_cfa_rule.dw_value_type;
         *offset_relevant =
-            fde_frame_table->fr_cfa_rule.ru_is_offset;
+            regt->rt3_cfa_rule.dw_offset_relevant;
     } else {
+        Dwarf_Regtable3 * regt = fde_frame_table->fr_regtable;
+        Dwarf_Regtable_Entry3 *rules = regt->rt3_rules;
         if (register_num) {
-            *register_num =
-                fde_frame_table->fr_reg[table_column].ru_register;
+            *register_num = rules[table_column].dw_regnum;
         }
         if (offset) {
-            *offset = fde_frame_table->fr_reg[table_column].ru_offset;
+            *offset = (Dwarf_Signed)rules[table_column].dw_offset;
         }
         if (block) {
-            *block = fde_frame_table->fr_reg[table_column].ru_block;
+            *block = rules[table_column].dw_block;
         }
-        *value_type =
-            fde_frame_table->fr_reg[table_column].ru_value_type;
-        *offset_relevant =
-            fde_frame_table->fr_reg[table_column].ru_is_offset;
+        *value_type = rules[table_column].dw_value_type;
+        *offset_relevant = rules[table_column].dw_offset_relevant;
     }
-    fde->fd_have_fde_tab = TRUE;
+    fde->fd_have_fde_frame_tab = TRUE;
+    /*  Memoized to avoid recalculation! */
     fde->fd_fde_pc_requested = pc_requested;
     return DW_DLV_OK;
 
@@ -1109,49 +1151,24 @@ dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde fde,
     Dwarf_Addr     *subsequent_pc,
     Dwarf_Error    *error)
 {
-
-    struct Dwarf_Frame_s fde_frame_table;
-    int res = DW_DLV_ERROR;
+    int res = DW_DLV_OK;
     Dwarf_Debug dbg = 0;
-    Dwarf_Unsigned table_real_data_size = 0;
 
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
-    fde_frame_table = zero_fde_frame_table;
 
-    table_real_data_size = dbg->de_frame_reg_rules_entry_count;
-    res = _dwarf_initialize_fde_frame_table(dbg, &fde_frame_table,
-        table_real_data_size, error);
-    if (res != DW_DLV_OK)
-        return res;
-    res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
-        &fde_frame_table,
-        dbg->de_frame_cfa_col_number,has_more_rows,
+    res = dwarf_get_fde_info_for_reg3_c(fde,
+        dbg->de_frame_cfa_col_number,
+        pc_requested,
+        value_type,
+        offset_relevant,
+        register_num,
+        offset,
+        block,
+        row_pc_out,
+        has_more_rows,
         subsequent_pc,
-        NULL /* no iterator data*/,
         error);
-    if (res != DW_DLV_OK) {
-        _dwarf_empty_fde_frame_table(&fde_frame_table);
-        return res;
-    }
-    if (register_num) {
-        *register_num = fde_frame_table.fr_cfa_rule.ru_register;
-    }
-    if (offset) {
-        *offset = fde_frame_table.fr_cfa_rule.ru_offset;
-    }
-    if (row_pc_out != NULL) {
-        *row_pc_out = fde_frame_table.fr_loc;
-    }
-    if (block) {
-        *block = fde_frame_table.fr_cfa_rule.ru_block;
-    }
-    /*  Without value_type the data cannot be
-        understood, so we insist
-        on it being present, we don't test it. */
-    *value_type = fde_frame_table.fr_cfa_rule.ru_value_type;
-    *offset_relevant = fde_frame_table.fr_cfa_rule.ru_is_offset;
-    _dwarf_empty_fde_frame_table(&fde_frame_table);
-    return DW_DLV_OK;
+    return res;
 }
 
 /*  Return pointer to the instructions in the dwarf fde.  */
@@ -1290,14 +1307,21 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
     int res = DW_DLV_ERROR;
     Dwarf_Debug dbg = 0;
     Dwarf_Small * instr_start = instruction;
-    Dwarf_Small * instr_end = (Dwarf_Small *)instruction + i_length;;
+    Dwarf_Small * instr_end = (Dwarf_Small *)instruction + i_length;
+    Dwarf_Unsigned rules_count = 0;
+    Dwarf_Frame   cieframe = 0;
+#if 0
+    Dwarf_Regtable3 *regtable = 0;
+    Dwarf_Regtable_Entry3 *cfa= 0;
+    Dwarf_Regtable_Entry3 *rules= 0;
+#endif
+
 
     if (cie == 0) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }
     dbg = cie->ci_dbg;
-
     if (!returned_instr_head  || !returned_instr_count) {
         _dwarf_error_string(dbg, error, DW_DLE_RET_OP_LIST_NULL,
             "DW_DLE_RET_OP_LIST_NULL: "
@@ -1312,13 +1336,42 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
         return DW_DLV_ERROR;
     }
+    rules_count = dbg->de_frame_reg_rules_entry_count;
+    cieframe = (Dwarf_Frame)_dwarf_get_alloc(dbg,
+            DW_DLA_FRAME, 1);
+    if (!cieframe) {
+         _dwarf_error_string(dbg,error, DW_DLE_DF_ALLOC_FAIL,
+             "DW_DLE_DF_ALLOC_FAIL: Failing setup of frame"
+             " in dwarf_expand_frame_instructions");
+         return DW_DLV_ERROR;
+    }
+#if 0
+printf("dadebug alloc frame fde_cie_list, ptr %p line %d\n",(void *)cieframe,__LINE__);
+fflush(stdout);
+#endif
+    res = _dwarf_initialize_frame_table(dbg,
+        cieframe, rules_count, NULL,error);
+    if (res != DW_DLV_OK ) {
+        dwarf_dealloc(dbg,cieframe,DW_DLA_FRAME);
+        return res;
+    }
+    /*  We will not touch the rules here, but they
+        now exist. */
+#if 0
+    rules = cieframe->fr_regtable->rt3_rules;
+    cfa = &cieframe->fr_regtable->rt3_cfa_rule;
+    _dwarf_init_reg_rules_dw3(rules,
+        0,rules_count ,dbg->de_frame_rule_initial_value);
+    _dwarf_init_reg_rules_dw3(cfa,
+        0,1,dbg->de_frame_rule_initial_value);
+#endif
     res = _dwarf_exec_frame_instr( /* make_instr= */ TRUE,
         /* search_pc */ FALSE,
         /* search_pc_val */ 0,
         /* location */ 0,
         instr_start,
         instr_end,
-        /* Dwarf_Frame */ NULL,
+        cieframe,
         cie,
         dbg,
         dbg->de_frame_cfa_col_number,
@@ -1328,10 +1381,8 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         returned_instr_count,
         NULL /* no iterator data, no callback here */,
         error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    return DW_DLV_OK;
+    dwarf_dealloc(dbg,cieframe,DW_DLA_FRAME);
+    return res;
 }
 
 /*  Call to access  a single CFA frame instruction.
@@ -1578,27 +1629,27 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
 #if 0  /* dump_frame_rule() FOR DEBUGGING */
 /* Used solely for debugging libdwarf. */
 static void
-dump_frame_rule(char *msg, struct Dwarf_Reg_Rule_s *reg_rule)
+dump_frame_rule(char *msg, Dwarf_Regtable_Entry3 *reg_rule)
 {
     printf
         ("%s type %s (0x%" DW_PR_XZEROS DW_PR_DUx
         "), is_off %" DW_PR_DUu
-        " reg %" DW_PR_DUu " offset 0x%" DW_PR_XZEROS DW_PR_DUx
-        " blockp 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+        " reg %" DW_PR_DUu " offset %" DW_PR_DSd
+        " blocklen %" DW_PR_DUu "\n",
         msg,
-        (reg_rule->ru_value_type == DW_EXPR_OFFSET) ?
+        (reg_rule->dw_value_type == DW_EXPR_OFFSET) ?
             "DW_EXPR_OFFSET" :
-        (reg_rule->ru_value_type == DW_EXPR_VAL_OFFSET) ?
+        (reg_rule->dw_value_type == DW_EXPR_VAL_OFFSET) ?
             "DW_EXPR_VAL_OFFSET" :
-        (reg_rule->ru_value_type == DW_EXPR_VAL_EXPRESSION) ?
+        (reg_rule->dw_value_type == DW_EXPR_VAL_EXPRESSION) ?
             "DW_EXPR_VAL_EXPRESSION" :
-        (reg_rule->ru_value_type == DW_EXPR_EXPRESSION) ?
+        (reg_rule->dw_value_type == DW_EXPR_EXPRESSION) ?
             "DW_EXPR_EXPRESSION" : "Unknown",
-        (Dwarf_Unsigned) reg_rule->ru_value_type,
-        (Dwarf_Unsigned) reg_rule->ru_is_off,
-        (Dwarf_Unsigned) reg_rule->ru_register,
-        (Dwarf_Unsigned) reg_rule->ru_offset_or_block_len,
-        (Dwarf_Unsigned) reg_rule->ru_block);
+        (Dwarf_Unsigned) reg_rule->dw_value_type,
+        (Dwarf_Unsigned) reg_rule->dw_offset_relevant,
+        (Dwarf_Unsigned) reg_rule->dw_regnum,
+        (Dwarf_Unsigned)reg_rule->dw_offset,
+        (Dwarf_Unsigned)reg_rule->dw_block.bl_len);
     return;
 }
 #endif /*0*/
@@ -1642,9 +1693,11 @@ dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 
     /*  Take the caller-specified value, but do not
         let the value be too small.  */
-    if (value < 50) {
-        /* arbitrarily */
-        dbg->de_frame_reg_rules_entry_count = 50;
+    if (value) {
+        if (value < 50) {
+            /* arbitrarily */
+            dbg->de_frame_reg_rules_entry_count = 50;
+        }
     }
     return orig;
 }
@@ -1662,7 +1715,9 @@ Dwarf_Half
 dwarf_set_frame_cfa_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
     Dwarf_Half orig = (Dwarf_Half)dbg->de_frame_cfa_col_number;
-    dbg->de_frame_cfa_col_number = value;
+    if (value > 0) {
+        dbg->de_frame_cfa_col_number = value;
+    }
     return orig;
 }
 /* Similar to above, but for the other crucial fields for frames. */
@@ -1671,7 +1726,9 @@ dwarf_set_frame_same_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
     Dwarf_Half orig =
         (Dwarf_Half)dbg->de_frame_same_value_number;
-    dbg->de_frame_same_value_number = value;
+    if (value > 0) {
+        dbg->de_frame_same_value_number = value;
+    }
     return orig;
 }
 Dwarf_Half
@@ -1679,7 +1736,9 @@ dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
     Dwarf_Half orig =
         (Dwarf_Half)dbg->de_frame_same_value_number;
-    dbg->de_frame_undefined_value_number = value;
+    if (value > 0) {
+        dbg->de_frame_undefined_value_number = value;
+    }
     return orig;
 }
 
@@ -1696,64 +1755,164 @@ dwarf_set_default_address_size(Dwarf_Debug dbg,
     return orig;
 }
 
+#if 0
 static int
-_dwarf_init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
+_dwarf_init_reg_rules_alloc(Dwarf_Debug dbg,
+    Dwarf_Frame  f,
     Dwarf_Unsigned count, Dwarf_Error * error)
 {
+    Dwarf_Regtable3 * regt = f->fr_regtable;
+    Dwarf_Regtable_Entry3* rules = 0;
+
     f->fr_reg_count = count;
-    f->fr_reg = (struct Dwarf_Reg_Rule_s *)
-        calloc((size_t)count, sizeof(struct Dwarf_Reg_Rule_s));
-    if (f->fr_reg == 0) {
-        if (error) {
-            _dwarf_error(dbg, error, DW_DLE_DF_ALLOC_FAIL);
-        }
+    if (!regt) {
+        _dwarf_error_string(dbg,error,
+            DW_DLE_FRAME_FDE_TABLE_ERR,
+            "DW_DLE_FRAME_FDE_TABLE_ERR: "
+            "Failed to allocate fr_regtable."
+            " Libdwarf error");
         return DW_DLV_ERROR;
     }
-    _dwarf_init_reg_rules_ru(f->fr_reg,0, count,
+    /* We expect rules to be non-null already. */
+    if (!rules) {
+        rules  = (Dwarf_Regtable3_Entry3*)
+            calloc((size_t)count, sizeof(Dwarf_Regtable3_Entry3));
+        if (!rules) {
+            dwarfstrting m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_DF_ALLOC_FAIL allocating "
+                "%u elements for"
+                "Dwarf_Regtable3_Entry3 array",
+                count);
+            dwarfstring_destructor(&m);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_DF_ALLOC_FAIL,
+                dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+    }
+    regt->rt3_rules =rules;
+    _dwarf_init_reg_rules_dw3(rules,0, count,
         dbg->de_frame_rule_initial_value);
     return DW_DLV_OK;
 }
-int
-_dwarf_initialize_fde_frame_table(Dwarf_Debug dbg,
-    struct Dwarf_Frame_s *fde_frame_table,
-    Dwarf_Unsigned table_real_data_size,
-    Dwarf_Error * error)
-{
-    unsigned entry_size = sizeof(struct Dwarf_Frame_s);
-    memset(fde_frame_table,0,entry_size);
+#endif
 
-    fde_frame_table->fr_loc = 0;
-    fde_frame_table->fr_next = 0;
-    return _dwarf_init_reg_rules_alloc(dbg,fde_frame_table,
-        table_real_data_size,error);
+static const struct Dwarf_Frame_s zero_frame;
+/*  Fills in frame, creates zeroed Regtable or
+    records user-created zeroed Regtable */
+
+int
+_dwarf_initialize_frame_table(Dwarf_Debug dbg,
+    Dwarf_Frame      frame_table,
+    Dwarf_Unsigned   table_real_data_size,
+    Dwarf_Regtable3 *regtable,
+    Dwarf_Error     *error)
+{
+    Dwarf_Frame fr = frame_table;
+    Dwarf_Regtable3 *rt = 0;
+    Dwarf_Regtable_Entry3 *rules = 0;
+
+    *frame_table = zero_frame;
+    fr->fr_loc = 0;
+    fr->fr_next = 0;
+    fr->fr_owns_regtable = TRUE;
+    fr->fr_reg_count = table_real_data_size;
+    if (regtable) {
+        fr->fr_regtable = regtable;
+        fr->fr_owns_regtable = FALSE;
+        return DW_DLV_OK;
+    }
+    fr->fr_owns_regtable = TRUE;
+    rt = (Dwarf_Regtable3 *)calloc(1, sizeof(Dwarf_Regtable3));
+    if (!rt) {
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    fr->fr_regtable = rt;
+    rules  = (Dwarf_Regtable_Entry3*)
+        calloc((size_t)table_real_data_size,
+            sizeof(Dwarf_Regtable_Entry3));
+    rt->rt3_reg_table_size = (Dwarf_Half)table_real_data_size;
+    if (!rules) {
+        free(rt);
+        fr->fr_regtable = 0;
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    rt->rt3_rules = rules;
+    return DW_DLV_OK;
 }
 
+/*  Any frame table, not just fde frame table */
 void
-_dwarf_empty_fde_frame_table(struct Dwarf_Frame_s *fde_frame_table)
+_dwarf_empty_frame_table(struct Dwarf_Frame_s *frame)
 {
-    free(fde_frame_table->fr_reg);
-    fde_frame_table->fr_reg_count = 0;
-    fde_frame_table->fr_reg = 0;
+    Dwarf_Regtable3 * rt = 0;
+
+    if (!frame) {
+        return; /* impossible */
+    }
+    if (frame->fr_owns_regtable) {
+        rt = frame->fr_regtable;
+#if 0
+printf("dadebug empty_frame_table  frees fr_regtab %p line %d\n",
+(void *)rt,__LINE__);
+#endif
+        if (rt) {
+            free(rt->rt3_rules);
+            rt->rt3_rules = 0;
+            rt->rt3_reg_table_size = 0;
+            free(rt);
+        }
+        frame->fr_regtable = 0;
+        frame->fr_owns_regtable = FALSE;
+    } else {
+#if 0
+printf("dadebug empty_frame_table does nothing %p line %d\n",
+(void *)frame,__LINE__);
+#endif
+    }
 }
 
 /*  Return DW_DLV_OK if we succeed. else return DW_DLV_ERROR.  */
 int
 _dwarf_frame_constructor(Dwarf_Debug dbg, void *frame)
 {
-    struct Dwarf_Frame_s *fp = frame;
-
+    (void)frame;
     if (IS_INVALID_DBG(dbg)) {
         return DW_DLV_ERROR;
     }
-    return _dwarf_init_reg_rules_alloc(dbg,fp,
-        dbg->de_frame_reg_rules_entry_count, 0);
+    return DW_DLV_OK;
 }
 
 void
 _dwarf_frame_destructor(void *frame)
 {
     struct Dwarf_Frame_s *fp = frame;
-    _dwarf_empty_fde_frame_table(fp);
+#if 0
+printf("dadebug frame__destructor empties frame %p line %d\n",
+(void*)fp,__LINE__);
+#endif
+    _dwarf_empty_frame_table(fp);
+}
+void
+_dwarf_cie_destructor(void *c)
+{
+    Dwarf_Cie cie = (Dwarf_Cie)c;
+     
+    if (cie->ci_initial_table) {
+        Dwarf_Frame f = cie->ci_initial_table;
+#if 0
+printf("dadebug cie_destructor dealloc frame %p line %d\n",
+(void *)f,__LINE__);
+#endif
+        dwarf_dealloc(cie->ci_dbg,f,DW_DLA_FRAME);
+        cie->ci_initial_table = 0;
+    }
 }
 
 void
@@ -1764,16 +1923,35 @@ _dwarf_fde_destructor(void *f)
     if (fde->fd_fde_owns_cie) {
         Dwarf_Debug dbg = fde->fd_dbg;
 
+#if 0
+printf("dadebug cie_destructor from fde_destructor in tdestroy? %u  %d\n",
+dbg->de_in_tdestroy, __LINE__);
+#endif
         if (!dbg->de_in_tdestroy) {
             /*  This is just for dwarf_get_fde_for_die() and
                 must not be applied in alloc tree destruction. */
+#if 0
+printf("dadebug cie_destructor from fde_destructor %p frame %p line %d\n",
+(void *)fde->fd_cie,(void *)fde->fd_cie->ci_initial_table, __LINE__);
+#endif
             dwarf_dealloc(fde->fd_dbg,fde->fd_cie,DW_DLA_CIE);
             fde->fd_cie = 0;
         }
+    } 
+#if 0
+else {
+/* FIXME */
+printf("dadebug cie_destructor not done fde_destructor %p line %d\n",
+(void *)fde->fd_cie, __LINE__);
     }
-    if (fde->fd_have_fde_tab) {
-        _dwarf_empty_fde_frame_table(&fde->fd_fde_frame_table);
-        fde->fd_have_fde_tab = FALSE;
+#endif
+    if (fde->fd_have_fde_frame_tab) {
+#if 0
+printf("dadebug fde_destructor empties frame table fde struct line %d\n", __LINE__);
+#endif
+        _dwarf_empty_frame_table(&fde->fd_fde_frame_table);
+        fde->fd_have_fde_frame_tab = FALSE;
+        fde->fd_fde_frame_table = zero_frame;
     }
 }
 void
@@ -1801,28 +1979,10 @@ dwarf_dealloc_frame_instr_head(Dwarf_Frame_Instr_Head h)
     dwarf_dealloc(h->fh_dbg,h,DW_DLA_FRAME_INSTR_HEAD);
 }
 
-void
-_dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
-    Dwarf_Unsigned first, Dwarf_Unsigned last,
-    Dwarf_Unsigned initial_value)
-{
-    struct Dwarf_Reg_Rule_s *r = base+first;
-    Dwarf_Unsigned i = first;
-    for (; i < last; ++i,++r) {
-        r->ru_is_offset = 0;
-        r->ru_value_type = DW_EXPR_OFFSET;
-        r->ru_register = (Dwarf_Unsigned)initial_value;
-        r->ru_offset = 0;
-        r->ru_args_size = 0;
-        r->ru_block.bl_data = 0;
-        r->ru_block.bl_len = 0;
-    }
-}
-
 /*  For any remaining columns after what fde has.
     Set Dwarf_Regtable_Entry3 to
     standard initial values. */
-static void
+void
 _dwarf_init_reg_rules_dw3(
     Dwarf_Regtable_Entry3 *base,
     Dwarf_Unsigned first, Dwarf_Unsigned last,

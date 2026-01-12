@@ -1082,6 +1082,7 @@ print_one_fde(Dwarf_Debug dbg,
 
     fde = fde_data[fde_index];
     fres = dwarf_get_fde_range(fde,
+
         &low_pc, &func_length,
         &fde_bytes,
         &fde_bytes_length,

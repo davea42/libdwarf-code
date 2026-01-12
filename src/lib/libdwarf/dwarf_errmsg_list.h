@@ -696,6 +696,9 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_DUPLICATE_NOTE_GNU_BUILD_ID(508) Duplicated section "},
 {"DW_DLE_SYSCONF_VALUE_UNUSABLE(509) sysconf() return is < 200 "
     "or greater than 100million"},
-{"DW_DLE_FRAME_ITERATOR_ERR(510) Error creating frame data"}
+{ "DW_DLE_FRAME_ITERATOR_ERR(510) Error creating frame data"},
+{ "DW_DLE_FRAME_FDE_TABLE_ERR(511) Possibly a libdwarf internal "
+    " error related to Dwarf_Regtab3 data." }
+
 };
 #endif /* DWARF_ERRMSG_LIST_H */

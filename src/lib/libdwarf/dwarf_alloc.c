@@ -371,7 +371,8 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
         _dwarf_frame_instr_destructor} ,
 
     /* 0x14  20 DW_DLA_CIE */
-    {sizeof(struct Dwarf_Cie_s),MULTIPLY_NO,  0, 0},
+    {sizeof(struct Dwarf_Cie_s),MULTIPLY_NO,  0,
+        _dwarf_cie_destructor},
 
     /* 0x15 DW_DLA_FDE */
     {sizeof(struct Dwarf_Fde_s),MULTIPLY_NO,  0,

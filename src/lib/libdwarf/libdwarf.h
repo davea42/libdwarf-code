@@ -1554,9 +1554,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_DUPLICATE_NOTE_GNU_BUILD_ID     508
 #define DW_DLE_SYSCONF_VALUE_UNUSABLE          509
 #define DW_DLE_FRAME_ITERATOR_ERR              510
+#define DW_DLE_FRAME_FDE_TABLE_ERR             511
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        510
+#define DW_DLE_LAST        511
 #define DW_DLE_LO_USER     0x10000
 /*! @} endgroup dw_dle */
 
@@ -6087,7 +6088,7 @@ typedef int (*dwarf_iterate_fde_callback_function_type) (
     Dwarf_Addr dw_subsequent_pc,
     void * dw_user_data);
 
-/*! @brief Iterate all rows for a given FDE. 
+/*! @brief Iterate all rows for a given FDE.
     Iinvokes a provided callback function for each row.
     Iteration continues until all rows have been visited.
 
@@ -6103,6 +6104,10 @@ typedef int (*dwarf_iterate_fde_callback_function_type) (
     Pass in the address of a struct to be
     filled in and returned via
     the callback with fde row data for the current row.
+    The struct should be all zeros. The
+    array of struct Dwarf_Regtable_Entry3_s for
+    register rules in the struct must have been allocated
+    and initialized with all zero bits.
     @param dw_callback
     The callback that should b invoked for each row
     in the FDE. The register table of size
@@ -6125,7 +6130,7 @@ DW_API int dwarf_iterate_fde_all_regs3(
 
     An FDE at a given pc (code address)
     This function is new in October 2023 version 0.9.0.
-    See libdwarf.h for the requred condition of
+    See libdwarf.h for the required condition of
     dw_reg_table pointer passed in.
 
     @param dw_fde
@@ -6133,6 +6138,10 @@ DW_API int dwarf_iterate_fde_all_regs3(
     @param dw_pc_requested
     Pass in a pc (code) address inside that FDE.
     @param dw_reg_table
+    Pass in the address of a Dwarf_Regtable3 struct
+    which has been initialized with zero bits, and
+    for which the dw_rt3_rules array has been
+    allocated and the initialized with all zero bits.
     On success, returns a filled in dw_reg_table
     given the frame state.
     @param dw_row_pc
@@ -6153,7 +6162,6 @@ DW_API int dwarf_iterate_fde_all_regs3(
     Returns DW_DLV_OK if the dw_pc_requested is in the
     FDE passed in and there is some applicable row
     in the table.
-
 */
 DW_API int dwarf_get_fde_info_for_all_regs3_b(
     Dwarf_Fde        dw_fde,
@@ -6174,7 +6182,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3_b(
     switching to dwarf_get_fde_info_for_all_regs3_b() or
     dwarf_iterate_fde_all_regs3().
     .
-    
+
 */
 DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Dwarf_Addr       dw_pc_requested,
@@ -6214,8 +6222,8 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Pass in the FDE of interest.
     @param dw_table_column
     Pass in the table_column, column numbers in the table
-    are 0 through the number_of_registers-1 and 
-    the 'column' of the CFA (by default it is 
+    are 0 through the number_of_registers-1 and
+    the 'column' of the CFA (by default it is
     DW_FRAME_CFA_COL, but might have been set
     by your code using dwarf_set_frame_cfa_value()).
     @param dw_pc_requested
@@ -6675,6 +6683,7 @@ DW_API int dwarf_cie_section_offset(Dwarf_Debug dw_dbg,
     The Dwarf_Debug of interest.
     @param dw_value
     Pass in the value to record for the library to use.
+    If zero, the Frame Rule Table Size is left unchanged.
     The library someone arbitrarily does not allow
     setting the number of register rules (registers)
     below 188 (DW_FRAME_HIGHEST_NORMAL_REGISTER in dwarf.h)
@@ -6693,6 +6702,7 @@ DW_API Dwarf_Half dwarf_set_frame_rule_table_size(
     The Dwarf_Debug of interest.
     @param dw_value
     Pass in the value to record for the library to use.
+    If zero, the Frame Rule Initial Value is left unchanged.
     @return
     Returns the previous value.
 */
@@ -6705,6 +6715,7 @@ DW_API Dwarf_Half dwarf_set_frame_rule_initial_value(
     The Dwarf_Debug of interest.
     @param dw_value
     Pass in the value to record for the library to use.
+    If zero, the Frame CFA_Column is left unchanged.
     @return
     Returns the previous value.
 */
@@ -6718,6 +6729,7 @@ DW_API Dwarf_Half dwarf_set_frame_cfa_value(
     The Dwarf_Debug of interest.
     @param dw_value
     Pass in the value to record for the library to use.
+    If zero, the Frame Same Value Default is left unchanged.
     @return
     Returns the previous value.
 */
@@ -6730,6 +6742,7 @@ DW_API Dwarf_Half dwarf_set_frame_same_value(
     The Dwarf_Debug of interest.
     @param dw_value
     Pass in the value to record for the library to use.
+    If zero, the Frame Undefined Value Default is left unchanged.
     @return
     Returns the previous value.
 */

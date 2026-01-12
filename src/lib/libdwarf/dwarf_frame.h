@@ -137,6 +137,7 @@ struct Dwarf_Frame_Instr_Head_s {
     Dwarf_Unsigned     fh_array_count;
 };
 
+#if 0 /* delete Dwarf_Reg_Rule_s */
 /*
     struct Dwarf_Reg_Rule_s denotes the rule for a register in
     a row of the frame table.
@@ -178,36 +179,43 @@ struct Dwarf_Reg_Rule_s {
         or DW_EXPR_VAL_EXPRESSION this is filled in. */
     Dwarf_Block    ru_block;
 };
-typedef struct Dwarf_Frame_s *Dwarf_Frame;
+#endif /* obsolete */
 /*
-    This structure represents a row of the frame table.
-    Fr_loc is the pc value for this row, and Fr_reg
-    contains the rule for each column.
-
-    Entry DW_FRAME_CFA_COL of fr_reg was the traditional MIPS
-    way of setting CFA.  cfa_rule is the current one.
-
-    This is simlar to struct Dwarf_Regtable3_s 
-    but with fr_loc and fr_next added 
-    for internal convenience, and with the fr_reg_count
-    the size it should have been in struct Dwarf_Regtable3_s in
-    libdwarf.h
+    Dwarf_Frame_s contains a row of the frame table.
+    It is a wrapper of the public Frame Table
+    (so we avoid copying the array of rules
+    except in special cases, such as
+    DW_CFA_remember_state and
+    DW_CFA_restore_state) but
+    with added data for convenience.
 */
+typedef struct Dwarf_Frame_s *Dwarf_Frame;
 struct Dwarf_Frame_s {
 
-    /* Pc value corresponding to this row of the frame table. */
+    /*  Pc value corresponding to the current row of the
+        frame table recorded in fr_regtable.rt3_rules. */
     Dwarf_Addr fr_loc;
 
-    /*  The CFA rule */
-    struct Dwarf_Reg_Rule_s fr_cfa_rule;
+    /*  Has to be a pointer, User will have created
+        much of the structure
+        for the few public API functions using this. */
+    struct Dwarf_Regtable3_s * fr_regtable;
 
     /* Rules for all the registers in this row. */
-    /*  fr_reg_count is the the number of
-        entries of the fr_reg array. */
+    /*  fr_reg_count is the the number of entries of the
+        fr_regtable->Dwarf_Regtable_Entry3.rt3_rules
+        array and the same as rt3_reg_table_size.
+        So the *true* fr_reg_count must fit in 16 bits.*/
     Dwarf_Unsigned fr_reg_count;
-    struct Dwarf_Reg_Rule_s *fr_reg;
 
-    Dwarf_Frame fr_next; /* for CFA_remember_state */
+#if 0 /* No longer used. */
+    struct Dwarf_Reg_Rule_s fr_cfa_rule; /* Not used */
+    struct Dwarf_Reg_Rule_s *fr_reg;     /* Not used */
+#endif
+
+    Dwarf_Frame fr_next; /* For DW_CFA_remember_state,
+        DW_CFA_restore_state. */
+    Dwarf_Bool  fr_owns_regtable; /* To know when/not to free */
 };
 
 /* See dwarf_frame.c for the heuristics used to set the
@@ -303,7 +311,6 @@ struct Dwarf_Cie_s {
         find address_size from the compilation-unit. */
     Dwarf_Half   ci_address_size;
     Dwarf_Half   ci_segment_size;
-
 };
 
 /*
@@ -364,7 +371,7 @@ struct Dwarf_Fde_s {
     /* The following are memoization to save recalculation. */
     struct Dwarf_Frame_s fd_fde_frame_table;
     Dwarf_Addr     fd_fde_pc_requested;
-    Dwarf_Bool     fd_have_fde_tab;
+    Dwarf_Bool     fd_have_fde_frame_tab;
 
     /*  Set by dwarf_get_fde_for_die() */
     Dwarf_Bool     fd_fde_owns_cie;
@@ -396,12 +403,13 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg,
 struct Dwarf_Allreg_Args_s {
     void                    *aa_user_data;
     Dwarf_Debug              aa_dbg;
-    dwarf_iterate_fde_callback_function_type 
-                             aa_callback;
+    dwarf_iterate_fde_callback_function_type aa_callback;
     Dwarf_Frame              aa_frameregtable; /* pointer */
+#if 0
     struct Dwarf_Reg_Rule_s *aa_localregtab;
     struct Dwarf_Reg_Rule_s *aa_cfa_reg;
     Dwarf_Regtable3         *aa_regtab3;
+#endif
 };
 
 enum Dwarf_augmentation_type
@@ -500,23 +508,23 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Unsigned * returned_frame_instr_count,
     struct Dwarf_Allreg_Args_s *iterator_data,
     Dwarf_Error *error);
-void
-_dwarf_rule_copy(Dwarf_Debug dbg,
+#if 0
+void _dwarf_rule_copy(Dwarf_Debug dbg,
     Dwarf_Frame      fde_frame_table,
     Dwarf_Regtable3 *reg_table,
     Dwarf_Unsigned   reg_rule_count,
     Dwarf_Addr      *row_pc_out);
-
-void _dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
+#endif
+void _dwarf_init_reg_rules_dw3(struct Dwarf_Regtable_Entry3_s *base,
     Dwarf_Unsigned first, Dwarf_Unsigned last,
     Dwarf_Unsigned initial_value);
-int _dwarf_initialize_fde_frame_table(Dwarf_Debug dbg,
+int _dwarf_initialize_frame_table(Dwarf_Debug dbg,
     struct Dwarf_Frame_s *fde_frame_table,
     Dwarf_Unsigned table_real_data_size,
+    struct Dwarf_Regtable3_s *regtab_in,
     Dwarf_Error * error);
-void _dwarf_empty_fde_frame_table(struct Dwarf_Frame_s *fde_frame_table);
-int
-_dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
+void _dwarf_empty_frame_table(struct Dwarf_Frame_s *fde_frame);
+int _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
     Dwarf_Frame table,
     Dwarf_Unsigned cfa_reg_col_num,
@@ -544,4 +552,5 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 int _dwarf_frame_constructor(Dwarf_Debug dbg,void * );
 void _dwarf_frame_destructor (void *);
 void _dwarf_fde_destructor (void *);
+void _dwarf_cie_destructor (void *);
 void _dwarf_frame_instr_destructor(void *);

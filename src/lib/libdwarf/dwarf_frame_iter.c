@@ -66,7 +66,9 @@ dwarf_iterate_fde_all_regs3(Dwarf_Fde fde,
     Dwarf_Error     *error)
 {
     int             res = 0;
+#if 0
     Dwarf_Addr      row_pc = 0;
+#endif
     struct Dwarf_Frame_s *fde_frame_table = 0;
     Dwarf_Debug     dbg = 0;
     Dwarf_Unsigned output_table_real_data_size = 0;
@@ -82,8 +84,8 @@ dwarf_iterate_fde_all_regs3(Dwarf_Fde fde,
     Dwarf_Off       fde_offset = 0;
 
     allreg_data = zero_allreg_data;
-    fde_frame_table   = &(fde->fd_fde_frame_table);
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
+    fde_frame_table   = &(fde->fd_fde_frame_table);
     if (!regtab3) {
         _dwarf_error_string(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
             "DW_DLE_DEBUGFRAME_ERROR: dwarf_iterate_fde_all_regs3 "
@@ -107,12 +109,11 @@ dwarf_iterate_fde_all_regs3(Dwarf_Fde fde,
     allreg_data.aa_user_data = user_data;
     allreg_data.aa_dbg = dbg;
     allreg_data.aa_callback  = dwarf_callback_all_regs3;
-    allreg_data.aa_regtab3   = regtab3;
     allreg_data.aa_frameregtable  = fde_frame_table;
-    allreg_data.aa_localregtab = 0; /* See dwarf_cfa_read.c */
     output_table_real_data_size = regtab3->rt3_reg_table_size;
-    res = _dwarf_initialize_fde_frame_table(dbg, fde_frame_table,
+    res = _dwarf_initialize_frame_table(dbg, fde_frame_table,
         output_table_real_data_size,
+        regtab3,
         error);
     if (res != DW_DLV_OK) {
         return res;
@@ -122,14 +123,16 @@ dwarf_iterate_fde_all_regs3(Dwarf_Fde fde,
         dwarf_callback_all_regs3 function pointer.
         The values returned by this one call must
         be ignored other than the result and error. */
+#if 0
     _dwarf_rule_copy(dbg, fde_frame_table, regtab3,
         output_table_real_data_size, &row_pc);
+#endif
     res = _dwarf_get_fde_info_for_a_pc_row(fde, lowpc,
         fde_frame_table,
         dbg->de_frame_cfa_col_number,
         &has_more_rows,&subsequent_pc,
         &allreg_data,
         error);
-    _dwarf_empty_fde_frame_table(fde_frame_table);
+    _dwarf_empty_frame_table(fde_frame_table);
     return res;
 }

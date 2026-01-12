@@ -411,7 +411,8 @@ print_all_fde_rows(Dwarf_Debug dbg,
     case DW_DLV_ERROR:
         printf("DW_DLV_ERROR from "
             "dwarf_iterate_fde_all_regs3 "
-            " fde number: %ld\n",(signed long)fdenum);
+            " fde number: %ld %s\n",(signed long)fdenum,
+            dwarf_errmsg(*error));
         break;
     case DW_DLV_NO_ENTRY:
         printf("DW_DLV_NO_ENTRY from "

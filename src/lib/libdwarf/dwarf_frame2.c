@@ -1055,6 +1055,8 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     new_cie->ci_cie_start = prefix->cf_start_addr;
 
     if ( frame_ptr > section_ptr_end) {
+        dwarf_dealloc(dbg,new_cie,DW_DLA_CIE);
+        new_cie = 0;
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
         return DW_DLV_ERROR;
     }
@@ -1398,6 +1400,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     if (augt == aug_gcc_eh_z) {
         new_fde->fd_gnu_eh_aug_present = TRUE;
     }
+    new_fde->fd_have_fde_frame_tab = FALSE;
     new_fde->fd_gnu_eh_augmentation_bytes = fde_aug_data;
     new_fde->fd_gnu_eh_augmentation_len = fde_aug_data_len;
     validate_length(dbg,cieptr,new_fde->fd_length,
@@ -1534,8 +1537,9 @@ _dwarf_dealloc_fde_cie_list_internal(Dwarf_Fde head_fde_ptr,
         Dwarf_Frame frame = curcie->ci_initial_table;
 
         nextcie = curcie->ci_next;
-        if (frame)
+        if (frame) {
             dwarf_dealloc(curcie->ci_dbg, frame, DW_DLA_FRAME);
+        }
         dwarf_dealloc(curcie->ci_dbg, curcie, DW_DLA_CIE);
     }
 }
@@ -2047,11 +2051,6 @@ dwarf_dealloc_fde_cie_list(Dwarf_Debug dbg,
     Dwarf_Signed i = 0;
 
     for (i = 0; i < cie_element_count; ++i) {
-        Dwarf_Frame frame = cie_data[i]->ci_initial_table;
-
-        if (frame) {
-            dwarf_dealloc(dbg, frame, DW_DLA_FRAME);
-        }
         dwarf_dealloc(dbg, cie_data[i], DW_DLA_CIE);
     }
     for (i = 0; i < fde_element_count; ++i) {
