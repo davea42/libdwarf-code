@@ -1157,7 +1157,7 @@ dwarf_get_fde_info_for_cfa_reg3_c(Dwarf_Fde fde,
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
 
     res = dwarf_get_fde_info_for_reg3_c(fde,
-        dbg->de_frame_cfa_col_number,
+        (Dwarf_Half)dbg->de_frame_cfa_col_number,
         pc_requested,
         value_type,
         offset_relevant,
@@ -1993,7 +1993,7 @@ _dwarf_init_reg_rules_dw3(
     for (; i < last; ++i,++r) {
         r->dw_offset_relevant = 0;
         r->dw_value_type = DW_EXPR_OFFSET;
-        r->dw_regnum = initial_value;
+        r->dw_regnum = (Dwarf_Half)initial_value;
         r->dw_offset = 0;
         r->dw_args_size = 0;
         r->dw_block.bl_data = 0;

@@ -321,7 +321,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         regnum,result)                                  \
         localregtab[reg_no].dw_offset_relevant = offrel;\
         localregtab[reg_no].dw_value_type = valtype;    \
-        localregtab[reg_no].dw_regnum = regnum;         \
+        localregtab[reg_no].dw_regnum = (Dwarf_Half)regnum; \
         localregtab[reg_no].dw_offset = result
 
     /*  Sweeps the frame instructions. */
@@ -594,7 +594,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             localregtab[reg_no].dw_offset = result;
             localregtab[reg_no].dw_offset_relevant = 1;
-            localregtab[reg_no].dw_regnum = reg_num_of_cfa;
+            localregtab[reg_no].dw_regnum = 
+                (Dwarf_Half)reg_num_of_cfa;
             localregtab[reg_no].dw_value_type = DW_EXPR_OFFSET;
             if (make_instr) {
                 dfi->fi_fields = "rud";
@@ -1199,7 +1200,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             cfa_reg->dw_offset_relevant = 1;
             cfa_reg->dw_value_type = DW_EXPR_OFFSET;
-            cfa_reg->dw_regnum  = reg_no;
+            cfa_reg->dw_regnum  = (Dwarf_Half)reg_no;
             cfa_reg->dw_offset = (Dwarf_Signed)nonfactoredoffset;
             if (make_instr) {
                 dfi->fi_fields = "ru";
@@ -1371,7 +1372,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             localregtab[lreg].dw_offset_relevant = 0; /* arbitrary */
             localregtab[lreg].dw_value_type = DW_EXPR_EXPRESSION;
-            localregtab[lreg].dw_regnum = reg_no;
+            localregtab[lreg].dw_regnum = (Dwarf_Half)reg_no;
             localregtab[lreg].dw_block.bl_data = instr_ptr;
             localregtab[lreg].dw_block.bl_len = block_len;
             if (make_instr) {
@@ -1477,7 +1478,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             cfa_reg->dw_offset_relevant = 1;
             cfa_reg->dw_value_type = DW_EXPR_OFFSET;
-            cfa_reg->dw_regnum = reg_no;
+            cfa_reg->dw_regnum = (Dwarf_Half)reg_no;
             cfa_reg->dw_offset = result;
             if (make_instr) {
                 dfi->fi_fields = "rsd";
