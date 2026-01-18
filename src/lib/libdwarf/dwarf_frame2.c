@@ -2052,9 +2052,11 @@ dwarf_dealloc_fde_cie_list(Dwarf_Debug dbg,
 
     for (i = 0; i < cie_element_count; ++i) {
         dwarf_dealloc(dbg, cie_data[i], DW_DLA_CIE);
+        cie_data[i] = 0;
     }
     for (i = 0; i < fde_element_count; ++i) {
         dwarf_dealloc(dbg, fde_data[i], DW_DLA_FDE);
+        fde_data[i] = 0;
     }
     if (cie_data) {
         dwarf_dealloc(dbg, cie_data, DW_DLA_LIST);
