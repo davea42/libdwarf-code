@@ -123,10 +123,6 @@ dwarf_iterate_fde_all_regs3(Dwarf_Fde fde,
         dwarf_callback_all_regs3 function pointer.
         The values returned by this one call must
         be ignored other than the result and error. */
-#if 0
-    _dwarf_rule_copy(dbg, fde_frame_table, regtab3,
-        output_table_real_data_size, &row_pc);
-#endif
     res = _dwarf_get_fde_info_for_a_pc_row(fde, lowpc,
         fde_frame_table,
         dbg->de_frame_cfa_col_number,
