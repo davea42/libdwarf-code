@@ -208,11 +208,6 @@ struct Dwarf_Frame_s {
         So the *true* fr_reg_count must fit in 16 bits.*/
     Dwarf_Unsigned fr_reg_count;
 
-#if 0 /* No longer used. */
-    struct Dwarf_Reg_Rule_s fr_cfa_rule; /* Not used */
-    struct Dwarf_Reg_Rule_s *fr_reg;     /* Not used */
-#endif
-
     Dwarf_Frame fr_next; /* For DW_CFA_remember_state,
         DW_CFA_restore_state. */
     Dwarf_Bool  fr_owns_regtable; /* To know when/not to free */
