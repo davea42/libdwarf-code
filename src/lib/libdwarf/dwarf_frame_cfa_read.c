@@ -563,6 +563,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             break;
         case DW_CFA_offset: {  /* base op */
+            /*  The offset is unsigned per the Standard */
             int adres = 0;
             Dwarf_Signed result = 0;
             reg_no = (reg_num_type) (instr &
@@ -591,7 +592,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return DW_DLV_ERROR;
             }
-            localregtab[reg_no].dw_offset = result;
+            /*  dw_offset should be signed for most
+                purposes, but was not
+                when initially defined in 1993.
+                Not sure what range of values should
+                be allowed.
+                For DW_CFA_offset the offset value is
+                defined as unsigned per DWARF standard. */
+            localregtab[reg_no].dw_offset = (Dwarf_Unsigned)result;
             localregtab[reg_no].dw_offset_relevant = 1;
             localregtab[reg_no].dw_regnum =
                 (Dwarf_Half)reg_num_of_cfa;
