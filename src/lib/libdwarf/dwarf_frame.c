@@ -62,6 +62,109 @@
 
 #define MIN(a,b)  (((a) < (b))? (a):(b))
 
+#if 0 /* for debugging only */
+static void dump_fde_table(
+    Dwarf_Debug dbg,
+    Dwarf_Fde fde,
+    const char *msg,
+    int call_line)
+{
+    Dwarf_Frame      fr = 0;
+    Dwarf_Regtable3  *rt = 0;
+
+    (void)dbg;
+    printf("Fde %s call line %d \n",msg, call_line);
+    printf("    ptr %p have frame tab %d pc_requested 0x%lx",
+        (void *)fde,fde->fd_have_fde_frame_tab,
+        (unsigned long)fde->fd_fde_pc_requested);
+
+    fr = &fde->fd_fde_frame_table;
+    rt = fr->fr_regtable;
+    printf("    member: Frame addr %p regtable %p owns rt? %d\n",
+        (void *)fr,(void *)rt,
+        fr->fr_owns_regtable);
+}
+#endif /* debugging only */
+
+#if 0 /* for debugging only */
+static int maxtouch = 0;
+#define MAXTOUCH 5000
+static Dwarf_Unsigned mtarray[MAXTOUCH];
+static void
+add_alloc(void *a)
+{
+    Dwarf_Unsigned addr = (Dwarf_Unsigned)a;
+    int i = 0;
+    int firstzero = -1;
+    int lefttofree = 0;
+    int found = -1;
+
+    for ( ; i < maxtouch; ++i) {
+        if (!mtarray[i]) {
+            if (firstzero == -1) {
+                firstzero = i;
+            }
+        }
+        if (mtarray[i] == addr) {
+            printf("Duplicate alloc entry %d val 0x%08lx\n",
+                i,(unsigned long)addr);
+            found = i;
+            break;
+        }
+    }
+    if (found < 0) {
+        if (firstzero != -1) {
+            printf("Reuse alloc entry %d val 0x%08lx\n",
+                firstzero,(unsigned long)addr);
+            mtarray[firstzero] = addr;
+        } else {
+            printf("New alloc entry %d val 0x%08lx\n",
+                maxtouch,(unsigned long)addr);
+            mtarray[maxtouch] = addr;
+            ++maxtouch;
+        }
+    }
+    for (i = 0 ; i < maxtouch; ++i) {
+        if (mtarray[i]) {
+            lefttofree++;
+        }
+    }
+    printf("Number of allocations that need be freed: %d\n",
+        lefttofree);
+}
+static void
+all_free(void *a)
+{
+    Dwarf_Unsigned addr = (Dwarf_Unsigned)a;
+    int i = 0;
+    int found = -1;
+    int lefttofree = 0;
+    if (a) {
+        for ( ; i < maxtouch; ++i) {
+            if (mtarray[i] == addr) {
+                printf("Alloc freed entry %d val 0x%08lx\n",
+                    i,(unsigned long)addr);
+                found = i;
+                mtarray[i] = 0;
+                break;
+            }
+        }
+        if (found < 0) {
+            printf("Never found alloc to free! addr 0x%08lx\n",
+                (unsigned long)addr);
+        }
+    }
+    printf("To Free");
+    for (i = 0 ; i < maxtouch; ++i) {
+        if (mtarray[i]) {
+            printf(" %p ",(void *)mtarray[i]);
+            lefttofree++;
+        }
+    }
+    printf("\n");
+    printf("Number of allocs yet to be freed: %d\n",lefttofree);
+}
+#endif /* calloc/free counts for debugging libdwarf */
 #if 0 /* dump_bytes FOR DEBUGGING */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
@@ -822,6 +925,7 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
         output_table_real_data_size, reg_table, error);
     if (res != DW_DLV_OK) {
         _dwarf_empty_frame_table(fde_frame_table);
+        fde->fd_have_fde_frame_tab = FALSE;
         return res;
     }
     /* Allocate array of internal structs to match,
@@ -838,6 +942,7 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
     *row_pc = fde_frame_table->fr_loc;
     if (res != DW_DLV_OK) {
         _dwarf_empty_frame_table(fde_frame_table);
+        fde->fd_have_fde_frame_tab = FALSE;
         return res;
     }
     _dwarf_empty_frame_table(fde_frame_table);
@@ -925,7 +1030,7 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
     Dwarf_Addr     *subsequent_pc,
     Dwarf_Error    *error)
 {
-    struct Dwarf_Frame_s * fde_frame_table =
+    struct Dwarf_Frame_s *fde_frame_table =
         &(fde->fd_fde_frame_table);
     int            res = DW_DLV_ERROR;
     Dwarf_Debug    dbg = 0;
@@ -1674,6 +1779,7 @@ _dwarf_initialize_frame_table(Dwarf_Debug dbg,
     Dwarf_Regtable3 *rt = 0;
     Dwarf_Regtable_Entry3 *rules = 0;
 
+    _dwarf_empty_frame_table(frame_table);
     *frame_table = zero_frame;
     fr->fr_loc = 0;
     fr->fr_next = 0;
@@ -1724,7 +1830,6 @@ _dwarf_empty_frame_table(struct Dwarf_Frame_s *frame)
         }
         frame->fr_regtable = 0;
         frame->fr_owns_regtable = FALSE;
-    } else {
     }
 }
 
