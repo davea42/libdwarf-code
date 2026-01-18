@@ -89,6 +89,9 @@ ChangeLog2019 \
 ChangeLog2020 \
 ChangeLog2021 \
 ChangeLog2022 \
+ChangeLog2023 \
+ChangeLog2024 \
+ChangeLog2025 \
 cmake \
 CMakeLists.txt \
 CODINGSTYLE.md \
