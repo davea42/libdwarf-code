@@ -114,26 +114,30 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
 
 /*
     _dwarf_exec_frame_instr() is the heart of the
-    debug_frame stuff.  Don't even
-    think of reading this without reading both the Libdwarf
-    and consumer API carefully first.  This function
-    executes frame instructions contained in a Cie or an
-    Fde, but does in a number of different ways depending
-    on the information sought.  Start_instr_ptr points
-    to the first byte of the frame instruction stream,
-    and final_instr_ptr one past the last byte.
+    debug_frame stuff.  Don't even think of reading
+    this without reading both the Libdwarf and consumer
+    API carefully first.  This function executes frame
+    instructions contained in a Cie or an Fde, but does in
+    a number of different ways depending on the information
+    sought.  start_instr_ptr points to the first byte of
+    the frame instruction stream, and final_instr_ptr one
+    past the last byte.
 
     In addition have the structs Dwarf_Regtable_Entry3_s
-    and struct Dwarf_Regtable3_s from libdwarf.h
-    on hand to refer to.  From dwarf_frame.h:
-    Dwarf_Frame_s, Dwarf_Cie_s, and Dwarf_Fde_s.
+    and struct Dwarf_Regtable3_s from libdwarf.h on hand
+    to refer to.  From dwarf_frame.h: Dwarf_Frame_s,
+    Dwarf_Cie_s, and Dwarf_Fde_s.
 
-    The function begins reading instructions from the beginning
-    at initial_loc, the low pc of the FDE, but
+    The function begins reading instructions
+    from the CIE pertaining pertaining to the
+    FDE being read, then continues reading
+    instructions at start_instr_ptr and ends
+    at final_instr_ptr (possibly earlier if
+    the call has search_pc TRUE and the pc
+    is in a valid row of the virtual frame table). 
+    initial_loc is the low pc of the FDE, but
     starting with the CIE initial instructions
-    to prime the set of instructions. Always.
-    (Any CIE instructions are remembered in the CIE
-    so do not need to be re-evaluated)
+    to prime the set of instructions.
 
     The offsets returned in the frame instructions are
     factored.  That is they need to be multiplied by either
@@ -156,49 +160,7 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
     It does not do a whole lot of input validation being a private
     function.  Please make sure inputs are valid.
 
-    (Option 1) If make_instr is TRUE, it makes a list of pointers
-    to Dwarf_Frame_Op structures containing an easy to
-    parse intermediate language representing the frame
-    instructions involved.  A pointer to this list is
-    returned in ret_frame_instr.  Make_instr is TRUE only
-    when a list of frame instructions is to be returned.
-    In this case since we are not interested in the
-    contents of the table, the input Cie can be NULL.
-    This is the only case where the input Cie can be NULL.
-    The table argument is NULL.
-    Only called this way from dwarf_expand_frame_instructions()
-
-    (Option 2) If search_pc is TRUE, frame instructions are
-    executed till either a location is reached that
-    is greater than the search_pc_val provided, or all
-    instructions are executed.  At this point the last
-    row of the table generated is returned in a structure.
-    A pointer to this structure is supplied in table.
-
-    (Option 3) This function is also used to create the
-    initial table row defined by a Cie.  In this case,
-    the Dwarf_Cie pointer cie, is NULL.  For an FDE,
-    however, cie points to the associated Cie.  Option (5)
-    is FALSE in this case.
-
-    (Option 4) If search_pc is TRUE and (has_more_rows and
-        subsequent_pc are non-null) then:
-            has_more_rows is set TRUE if there are instruction
-            bytes following the detection of search_over.
-            If all the instruction bytes have been seen
-            then *has_more_rows is set FALSE.
-
-            If *has_more_rows is TRUE then *subsequent_pc
-            is set to the pc value that is the following
-            row in the table.
-
-    (Option 5) if  iter_data is non-null  we are not returning
-        data of interest here, but we are calling a
-        user-written function to return row user data.
-        We will iterate through all the rows in the
-        fde  and call the callback function with each
-        row. In this case (1),(2),(3), and (4) are FALSE.
-
+    Arguments:
     make_instr - make list of frame instr? 0/1
     ret_frame_instr -  Ptr to list of ptrs to frame instrs
     search_pc  - Search for a pc value?  0/1
@@ -207,16 +169,64 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
         of the fde.
     start_instr_ptr -   Ptr to start of frame instrs.
     final_instr_ptr -   Ptr just past frame instrs.
-    table       -     Ptr to struct with last row.
-    cie     -   Ptr to Cie used by the Fde.
-    iter_data - data used when iterating using a
+    table           -   Ptr to struct with last row.
+    cie             -   Ptr to Cie used by the Fde.
+    iter_data       - data used when iterating using a
         callback function.
 
+    (Option 1) If make_instr is TRUE, it makes a list
+    of pointers to Dwarf_Frame_Op structures containing
+    an easy to parse intermediate language representing
+    the frame instructions involved.  A pointer to this
+    list is returned in ret_frame_instr.  Make_instr is
+    TRUE only when a list of frame instructions is to be
+    returned.  In this case since we are not interested in
+    the contents of the table, the input Cie can be NULL.
+    This is the only case where the input Cie can be NULL.
+    The table argument is NULL.  Only called this way
+    from dwarf_expand_frame_instructions()
+    Returns the list by setting *ret_frame_instr_head
+    and *returned_frame_instr_count.
+
+    (Option 2) if  iter_data is non-null  we are not
+    returning data of interest here, but we are calling
+    a user-written function to return row user data.
+    We will iterate through all the rows in the fde  and
+    call the callback function with each row.  Only called
+    this way from dwarf_iterate_fde_all_regs3().
+
+    If neither of the above applies:
+
+    (Option 3) If search_pc is non-zero, frame instructions
+    are executed till either a location is reached that
+    is greater than the search_pc_val provided, or all
+    instructions are executed.  At this point the last
+    row of the table generated is returned in a structure.
+    A pointer to this structure is supplied in table.
+
+        if (has_more_rows and subsequent_pc are non-null) then:
+        *has_more_rows is set TRUE if there are instruction
+        bytes following the detection of search_over.
+        If all the instruction bytes have been seen
+        then *has_more_rows is set FALSE.
+
+        If *has_more_rows is TRUE then *subsequent_pc
+        is set to the pc value that is the following
+        row in the table (so callers can easily iterate
+        through all rows in the Frame).
+
+    (Option 4) This function is also used to create the
+    initial table row defined by a Cie and save it in
+    the CIE ci_initial_table field.  In this case, the
+    search_pc and search_pc_val are 0.  Typically an
+    immediately following libdwarf call to the function
+    will have search_pc as TRUE.
+
     Different cies may have distinct address-sizes, so the cie
-    is used, not de_pointer_size.
+    is used to determine address-size.
 */
 
-/*   Here we need to populate Dwarf_Regtable3,
+/*  Here we need to populate Dwarf_Regtable3,
     The public regtable, with the cfa row and with
     the one row of registers. */
 static int
