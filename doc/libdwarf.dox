@@ -333,11 +333,9 @@
     from the great majority of @e libdwarf functions, and
     for these functions the return type is always @b int .
 
-    If it is a decently large
-    or long-running program then you want to
-    free any local memory you
-    allocated and return res.
-    If it is a small
+    If it is a decently large or long-running
+    program then you want to free any local memory
+    you allocated and return res.  If it is a small
     or experimental program print something and exit
     (possibly leaking memory).
 
@@ -355,37 +353,38 @@
     happen automatically when you call dwarf_finish().
 
     @subsubsection A Slight Performance Enhancement
-    Very long running library access programs
-    using relevant appropriate dwarf_dealloc calls
-    should consider calling dwarf_set_de_alloc_flag(0).
+    Very long running library access programs using
+    relevant appropriate dwarf_dealloc calls should
+    consider calling dwarf_set_de_alloc_flag(0).
     Using this one could get a performance enhancement
-    of perhaps five percent in @e libdwarf CPU time and a
-    reduction in memory use.
+    of perhaps five percent in @e libdwarf CPU time
+    and a reduction in memory use.
 
-    Be sure to test using valgrind or -fsanitize to ensure your
-    code really does the extra dwarf_dealloc calls
-    needed since when using dwarf_set_de_alloc_flag(0)
-    dwarf_finish() does only limited cleanup.
+    Be sure to test using valgrind (at runtime) or
+    the gcc option -fsanitize at compile time and run
+    tests appropriately to ensure your code really does
+    the extra dwarf_dealloc calls needed since when
+    using dwarf_set_de_alloc_flag(0) dwarf_finish()
+    does only limited cleanup.
 
     @section dwsec_cuplan Extracting Data Per Compilation Unit
 
     The library is designed to run a single pass
-    through the set of Compilation Units (CUs), via
-    a sequence of calls to dwarf_next_cu_header_e().
+    through the set of Compilation Units (CUs), via a
+    sequence of calls to dwarf_next_cu_header_e().
     (dwarf_next_cu_header_d() is supported but
-    its use requires that it be immediately followed
-    by a call to dwarf_siblingof_b().
+    its use requires that it be immediately
+    followed by a call to dwarf_siblingof_b().
     see dwarf_next_cu_header_d(). )
 
     Within a CU opened with dwarf_next_cu_header_e()
-    do something (if desired) on the CU_DIE
-    returned, and call dwarf_child() on the CU_DIE
-    to begin recursing through all DIEs.
-    If you save the CU_DIE you can repeat  passes
-    beginning with dwarf_child() on the CU_DIE,
-    though it almost certainly faster to remember,
-    in your data structures,
-    what you need from the first pass.
+    do something (if desired) on the CU_DIE returned,
+    and call dwarf_child() on the CU_DIE to begin
+    recursing through all DIEs.  If you save the CU_DIE
+    you can repeat  passes beginning with dwarf_child()
+    on the CU_DIE, though it almost certainly faster
+    to remember, in your data structures, what you
+    need from the first pass.
 
     The general plan:
 
@@ -660,9 +659,10 @@
     line tables etc and the standard @e libdwarf
     function calls work.
 
-    Take great care in your reader code because any
-    failure to reject object files with corrupt data
-    in areas actually read by libdwarf nullifies the
+    Take great care in your object reader code because
+    any failure to reject object files with corrupt
+    data in areas such as object headers, section
+    headers, or relocation records nullifies the
     intended guarantee that the library will not crash.
 
     Data you need to create involves these types.
