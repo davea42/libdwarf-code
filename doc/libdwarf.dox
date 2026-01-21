@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2025-12-28 v2.3.0
+    @date 2026-01-20 v2.3.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -573,6 +573,10 @@
     CFA_Column      > Table_Size
     @endcode
 
+    If these conditions are not honored the library
+    will return a DW_DLV_ERROR code rather than use
+    an improper set of values.
+
     @section dwsec_pubnames .debug_pubnames etc DWARF2-DWARF4
 
     Each section consists of a header for a specific
@@ -656,6 +660,11 @@
     line tables etc and the standard @e libdwarf
     function calls work.
 
+    Take great care in your reader code because any
+    failure to reject object files with corrupt data
+    in areas actually read by libdwarf nullifies the
+    intended guarantee that the library will not crash.
+
     Data you need to create involves these types.
     What follows describes how to fill them in and
     how to make them work for you.
@@ -711,8 +720,9 @@
     must fill in a few fields for @e libdwarf.
     The fields here are
     standard Elf, but for most you can just use
-    the value zero.  We assume here you will not be
-    doing relocations at runtime.
+    the value zero.  We assume you will not be
+    doing relocations at runtime and do not describe
+    how to do relocations.
 
     @b as_name: Here you set a section name via
     the pointer.  The section names must be names
@@ -768,8 +778,10 @@
     @section dwsec_sectiongroup Section Groups: Split Dwarf, COMDAT groups
 
     A typical executable or shared object is unlikely
-    to have any section groups, and in that case
-    what follows is irrelevant and unimportant.
+    to have any section groups as the linker would
+    have removed those when building an executable
+    or shared-object, and in that case what follows
+    is irrelevant and unimportant.
 
     @b COMDAT groups are defined by the Elf ABI and 
     enable compilers and linkers
@@ -1192,22 +1204,21 @@
 
     <b>Changes 2.2.0 to 2.3.0</b>
 
+    Added function dwarf_iterate_fde_all_regs3() which
+    lets callers get all rows of the .debug_frame
+    and .eh_frame sections via callbacks the function
+    makes to a function you write. Simple to use
+    and, for FDEs with many rows, sixty times faster. 
+    A prerelease version failed to allow retrieving
+    the CFA pseudo-register value, but that is fixed.
+    See dwarfexample/frame2.c for an example of use.
+
     Added function dwarf_set_harmless_errors_enabled(
     Dwarf_Debug dw_dbg,int dw_v). Passing in dw_v
     of 0 (zero) turns off checking for what are really
     harmless errors, which makes a meaningful improvement
     in library performance for some calls.
     By default harmless errors are checked-for.
-
-    Added function dwarf_iterate_fde_all_regs3() which
-    lets callers get all elements of the .debug_frame
-    and .eh_frame sections via callbacks the function
-    makes to a function you write. Simple to use
-    and, for FDEs with many rows, faster. 
-    A prerelease version failed to allow retrieving
-    the CFA pseudo-register value, but that is now
-    fixed. See dwarfexample/frame2.c for an example
-    of use.
 
     dwarf_set_frame_rule_table_size() now allows setting
     register rules table size as low as 40 entries.
