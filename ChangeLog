@@ -1,3 +1,73 @@
+2026-01-26:  David Anderson
+    commit 84511baec5d26856914476d23645c247eff2a72c
+
+    This is used in 'make rebuild' to create C source
+    for libdwarf based on information read from dwarf.h
+    and libdwarf.h.  In a Cross-build to Arm ABI the compiler
+    warned of careless comparison of signed to unsigned.
+    Fixed now with completely safe (in
+    this context) cast to signed long.
+            modified:   src/bin/buildDW_LNAME/buildlname.c
+
+2026-01-26:  David Anderson
+    commit 78927f411ccac59e1ba4fa20a46cc6ff5f469d5d
+
+    Remove Trailing whitespace.
+    Fix indent errors to be in project codingstyle.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/lib/libdwarf/dwarf_frame_cfa_read.c
+
+2026-01-26:  David Anderson
+    commit ae1b1aede39171547f1dc5cc733cc9864f0d58f5
+
+    Current. Nothing new here.
+            modified:   doc/libdwarf.pdf
+
+2026-01-20:  David Anderson
+    commit 43e2d2b61b7b699196144030b0e1b2f63ae4b745
+
+    Small clarifications and details added.
+            modified:   doc/libdwarf.dox
+
+2026-01-20:  David Anderson
+    commit d25e242eb0ad1761d3931207907c2b3f43081f8e
+
+    Refined the documentation Frames and Section Groups
+    for completeness and clarity.
+            modified:   doc/libdwarf.dox
+
+2026-01-20:  David Anderson
+    commit 8eccd1de53c2a2bfdab56c9afccf72f9dbe29eba
+
+    Updated change date.
+    Noted tentative next release.
+            modified:   README.md
+
+    Revised a long comment for clarity and precision.
+            modified:   src/lib/libdwarf/dwarf_frame_cfa_read.c
+
+2026-01-18:  David Anderson
+    commit 55659532d59871d2fb78cc7efbbc779a9e4c6fc6
+
+    Remove 2025 changes, those are in ChangeLog2025 now
+            modified:   ChangeLog
+
+    Added ChangeLog2022, 23,24,25 to make the list of
+    changelogs complete in the next release.
+            modified:   Makefile.am
+
+2026-01-18:  David Anderson
+    commit 289bcf248be63107c80baee91f417f7aac359186
+
+    2025 and earlier will be removed later.
+            modified:   ChangeLog
+
+    This is just 2025.
+            new file:   ChangeLog2025
+
 2026-01-18:  David Anderson
     commit 807f61c7b954acdff6dfca92f06d3571ff934a0b
 
