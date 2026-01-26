@@ -911,7 +911,7 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
     int                      res = 0;
     /*  Constraints in Dwarf_Regtable3 mean
         a table size (meaning number of registers in a frame)
-        must fit in a Dwarf_Half (16 bits). */
+        must fit in a Dwarf_Half (16 bits unsigned). */
     Dwarf_Unsigned           output_table_real_data_size = 0;
 
     (void) row_pc;
@@ -921,6 +921,10 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
     output_table_real_data_size =
         MIN(output_table_real_data_size,
             dbg->de_frame_reg_rules_entry_count);
+    res = _dwarf_validate_register_numbers(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     res = _dwarf_initialize_frame_table(dbg, fde_frame_table,
         output_table_real_data_size, reg_table, error);
     if (res != DW_DLV_OK) {
@@ -1038,6 +1042,10 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
     Dwarf_Bool     col_is_cfa = FALSE;
 
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
+    res = _dwarf_validate_register_numbers(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     if (table_column == dbg->de_frame_cfa_col_number) {
         col_is_cfa = TRUE;
     }
