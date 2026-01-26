@@ -1310,13 +1310,13 @@ process_one_file(
         dwarf_set_harmless_errors_enabled(dbgtied,0);
         dwarf_set_harmless_errors_enabled(dbg,0); */
     if (!glflags.gf_suppress_harmless) {
-         /*  This is the default in dwarfdump: check
-             for harmless errors. So we tell libdwarf
-             to check.  */
-         if (dbgtied) {
-             dwarf_set_harmless_errors_enabled(dbgtied,1);
-         }
-         dwarf_set_harmless_errors_enabled(dbg,1);
+        /*  This is the default in dwarfdump: check
+            for harmless errors. So we tell libdwarf
+            to check.  */
+        if (dbgtied) {
+            dwarf_set_harmless_errors_enabled(dbgtied,1);
+        }
+        dwarf_set_harmless_errors_enabled(dbg,1);
     }
     dres = get_address_size_and_max(dbg,&elf_address_size,0,
         &onef_err);

@@ -184,7 +184,7 @@ struct glflags_s {
 
     /* a call to libdwarf will speed up the library
         See dwarf_set_harmless_errors_enabled() */
-    int        gf_suppress_harmless; 
+    int        gf_suppress_harmless;
 
     /* The following tells libdwarf not to check for duplicated
         attributes if TRUE. */

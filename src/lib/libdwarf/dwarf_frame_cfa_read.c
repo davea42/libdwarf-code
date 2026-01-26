@@ -134,7 +134,7 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
     instructions at start_instr_ptr and ends
     at final_instr_ptr (possibly earlier if
     the call has search_pc TRUE and the pc
-    is in a valid row of the virtual frame table). 
+    is in a valid row of the virtual frame table).
     initial_loc is the low pc of the FDE, but
     starting with the CIE initial instructions
     to prime the set of instructions.

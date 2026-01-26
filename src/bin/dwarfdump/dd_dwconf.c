@@ -1419,7 +1419,7 @@ static char *genericregnames[] = {
     table entry count is pretty arbitrary.
     However, some sarubbo-11 *.bin cases have a
     return address register 117. So lets
-    the base standard to 150. 
+    the base standard to 150.
     December 2025, v2.3.0
 */
 void

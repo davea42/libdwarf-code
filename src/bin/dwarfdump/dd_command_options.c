@@ -717,7 +717,7 @@ OPT_CHECK_USAGE,              /* -ku  --check-usage         */
 OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended*/
 OPT_CHECK_FUNCTIONS,          /*  --check-functions*/
 
-                              /* speeds up libdwarf to do this */
+/* Speeds up libdwarf to do this */
 OPT_SUPPRESS_HARMLESS,        /* --suppress-harmless-errors */
 
 /* File Specifications    */
