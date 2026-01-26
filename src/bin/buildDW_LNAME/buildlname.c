@@ -186,7 +186,7 @@ print_table_entries(FILE *outfile)
             continue;
         }
         /*  now print switch cases   */
-        for (k = sublist_start; k < i; ++k) {
+        for (k = sublist_start; k < (signed long)i; ++k) {
             fprintf(outfile,"    case %s:\n",
                 lnsix[k].ln_name);
         }
@@ -194,7 +194,7 @@ print_table_entries(FILE *outfile)
         sublist_start = i;
         sublist_entry = lnsix[i];
     }
-    for (k = sublist_start;k >= 0 &&  k < i; ++k) {
+    for (k = sublist_start;k >= 0 &&  k < (signed long)i; ++k) {
         fprintf(outfile,"    case %s:\n",
             lnsix[k].ln_name);
     }
