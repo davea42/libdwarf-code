@@ -85,6 +85,10 @@ dwarf_iterate_fde_all_regs3(Dwarf_Fde fde,
 
     allreg_data = zero_allreg_data;
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
+    res = _dwarf_validate_register_numbers(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     fde_frame_table   = &(fde->fd_fde_frame_table);
     if (!regtab3) {
         _dwarf_error_string(dbg,error,DW_DLE_DEBUGFRAME_ERROR,

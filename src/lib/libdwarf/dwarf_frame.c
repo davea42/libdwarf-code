@@ -1678,7 +1678,9 @@ dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg,
 {
     Dwarf_Half orig =
         (Dwarf_Half)dbg->de_frame_rule_initial_value;
-    dbg->de_frame_rule_initial_value = value;
+    if (value) {
+        dbg->de_frame_rule_initial_value = value;
+    }
     return orig;
 }
 
