@@ -1,4 +1,56 @@
 2026-01-26:  David Anderson
+    commit b677a22f2ea99c2475364cfcda475a11edfb2a75
+
+    Release date set 1 February.
+            modified:   README.md
+    Release date set 1 February.
+    Clarified recent Changes entry
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2026-01-26:  David Anderson
+    commit f5b5429ac5bf58e20943da45043284043aefd7a3
+
+    Ensure that all initial entrances to reading Frame data
+    call _dwarf_validate_register_numbers() early on
+    to be sure that table sizes and same-value etc
+    follow the rules.
+    A couple cases this was not done before now.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2026-01-26:  David Anderson
+    commit 78060b72a06fb5fa3cfd9731ec8736689fade804
+
+    Now dwarf_set_frame_rule_initial_value() interprets
+    dw_value argument as meaning 'just return current value,
+    do not change the initial value setting'.
+    It was an ommission to fail to do this days ago.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    Now dwarf_iterate_fde_all_regs3() calls
+    _dwarf_validate_register_numbers() so we return error
+    rather than try to run frame data with bogus
+    user settings of frame register defaults.
+            modified:   src/lib/libdwarf/dwarf_frame_iter.c
+
+2026-01-26:  David Anderson
+    commit fa6789ffbf39a032e3668c53b0262b47e7a92102
+
+    Noted Changes with dwarf_set_frame_rule_initial_value()
+    etc to make the functions easier to use when just
+    getting the current value.
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2026-01-26:  David Anderson
+    commit b9d8bc27d91f52e62ca11ea6ee5256e456b459ed
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
+2026-01-26:  David Anderson
     commit 84511baec5d26856914476d23645c247eff2a72c
 
     This is used in 'make rebuild' to create C source
