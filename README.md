@@ -1,6 +1,6 @@
 # This is libdwarf README.md
 
-Updated 18 January 2026
+Updated 26 January 2026
 
 ## Goal
 Libdwarf has been focused for years
@@ -34,7 +34,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
-    Version 2.3.0  Tentative 1 February  2026.
+    Version 2.3.0  Released  1 February  2026.
     Version 2.2.0  Released 10 October   2025.
     Version 2.1.0  Released 20 July      2025.
     Version 2.0.0  Released 20 May       2025.

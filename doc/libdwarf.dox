@@ -1204,6 +1204,8 @@
 
     <b>Changes 2.2.0 to 2.3.0</b>
 
+    Released 1 February 2026
+
     Added function dwarf_iterate_fde_all_regs3() which
     lets callers get all rows of the .debug_frame
     and .eh_frame sections via callbacks the function
@@ -1226,14 +1228,14 @@
     as that suffices for most architectures without being
     excessive. 
 
+    Now calls to
     dwarf_set_frame_rule_initial_value(),
     dwarf_set_frame_rule_table_size(),
     dwarf_set_frame_cfa_value(),
-    dwarf_set_frame_same_value(),
+    dwarf_set_frame_same_value(), or
     dwarf_set_frame_undefined_value() with an input dw_value
-    of zero (0)
-    tell the function to ignore the input dw_value argument and
-    return the current value of the frame rule set.
+    of zero (0) tell the function to ignore the input
+    dw_value argument and return the recorded value/size.
 
     <b>Changes 2.1.0 to 2.2.0</b>
 
