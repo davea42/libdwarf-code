@@ -6679,8 +6679,11 @@ DW_API int dwarf_cie_section_offset(Dwarf_Debug dw_dbg,
 
 /*! @brief Frame Rule Table Size
     @link frameregs Invariants for setting frame registers @endlink
+
     @param dw_dbg
     The Dwarf_Debug of interest.
+    If it is null or invalid, return the value zero
+    immediately
     @param dw_value
     Pass in the value to record for the library to use.
     If zero, the Frame Rule Table Size is left unchanged.
@@ -6700,9 +6703,10 @@ DW_API Dwarf_Half dwarf_set_frame_rule_table_size(
 
     @param dw_dbg
     The Dwarf_Debug of interest.
+    If it is null or invalid, return the value zero
+    immediately.
     @param dw_value
     Pass in the value to record for the library to use.
-    If zero, the Frame Rule Initial Value is left unchanged.
     @return
     Returns the previous value.
 */
@@ -6713,9 +6717,10 @@ DW_API Dwarf_Half dwarf_set_frame_rule_initial_value(
     @link frameregs Invariants for setting frame registers @endlink
     @param dw_dbg
     The Dwarf_Debug of interest.
+    If it is null or invalid, return the value zero
+    immediately.
     @param dw_value
     Pass in the value to record for the library to use.
-    If zero, the Frame CFA_Column is left unchanged.
     @return
     Returns the previous value.
 */
@@ -6727,9 +6732,10 @@ DW_API Dwarf_Half dwarf_set_frame_cfa_value(
     @link frameregs Invariants for setting frame registers @endlink
     @param dw_dbg
     The Dwarf_Debug of interest.
+    If it is null or invalid, return the value zero
+    immediately.
     @param dw_value
     Pass in the value to record for the library to use.
-    If zero, the Frame Same Value Default is left unchanged.
     @return
     Returns the previous value.
 */
@@ -6740,9 +6746,10 @@ DW_API Dwarf_Half dwarf_set_frame_same_value(
     @link frameregs Invariants for setting frame registers @endlink
     @param dw_dbg
     The Dwarf_Debug of interest.
+    If it is null or invalid, return the value zero
+    immediately.
     @param dw_value
     Pass in the value to record for the library to use.
-    If zero, the Frame Undefined Value Default is left unchanged.
     @return
     Returns the previous value.
 */

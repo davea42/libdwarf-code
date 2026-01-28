@@ -866,6 +866,10 @@ struct Dwarf_Debug_s {
     unsigned int   de_universalbinary_count;
     unsigned int   de_universalbinary_index;
 
+    /*  If zero these are not validated and must be validated.
+        See _dwarf_validate_register_numbers() */
+    unsigned char  de_frame_numbers_validated;
+
     unsigned char de_big_endian_object; /* Non-zero if
         object being read is big-endian. */
 

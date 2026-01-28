@@ -200,6 +200,9 @@ _dwarf_validate_register_numbers(
     Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
+    if (dbg->de_frame_numbers_validated) {
+        return DW_DLV_OK;
+    }
     if (dbg->de_frame_same_value_number ==
         dbg->de_frame_undefined_value_number) {
         return regerror(dbg,error,DW_DLE_DEBUGFRAME_ERROR,
@@ -245,6 +248,7 @@ _dwarf_validate_register_numbers(
             "DW_DLE_DEBUGFRAME_ERROR "
             "cfa_column <= number of registers");
     }
+    dbg->de_frame_numbers_validated = TRUE;
     return DW_DLV_OK;
 }
 
@@ -923,6 +927,10 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
             dbg->de_frame_reg_rules_entry_count);
     res = _dwarf_validate_register_numbers(dbg,error);
     if (res == DW_DLV_ERROR) {
+#if 0
+printf(" dadebug FAIL _dwarf_validate_register_numbers\n");
+fflush(stdout);
+#endif
         return res;
     }
     res = _dwarf_initialize_frame_table(dbg, fde_frame_table,
@@ -1684,11 +1692,16 @@ Dwarf_Half
 dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg,
     Dwarf_Half value)
 {
-    Dwarf_Half orig =
-        (Dwarf_Half)dbg->de_frame_rule_initial_value;
-    if (value) {
-        dbg->de_frame_rule_initial_value = value;
+    Dwarf_Half orig = 0;
+    int invalid = FALSE;
+
+    invalid = IS_INVALID_DBG(dbg);
+    if (invalid) {
+        return 0;
     }
+    orig = (Dwarf_Half)dbg->de_frame_rule_initial_value;
+    dbg->de_frame_rule_initial_value = value;
+    dbg->de_frame_numbers_validated = FALSE;
     return orig;
 }
 
@@ -1706,18 +1719,21 @@ dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg,
 Dwarf_Half
 dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig =
-        (Dwarf_Half)dbg->de_frame_reg_rules_entry_count;
-    dbg->de_frame_reg_rules_entry_count = value;
+    Dwarf_Half orig = 0;
+    int invalid = FALSE;
 
+    invalid = IS_INVALID_DBG(dbg);
+    if (invalid) {
+        return 0;
+    }
+    orig = (Dwarf_Half)dbg->de_frame_reg_rules_entry_count;
     /*  Take the caller-specified value, but do not
         let the value be too small.  */
-    if (value) {
-        if (value < 50) {
-            /* arbitrarily */
-            dbg->de_frame_reg_rules_entry_count = 50;
-        }
+    if (value < 50) {
+        value = 50;    /* arbitrarily */
     }
+    dbg->de_frame_reg_rules_entry_count = value;
+    dbg->de_frame_numbers_validated = FALSE;
     return orig;
 }
 /*  This allows consumers to set the CFA register value
@@ -1733,31 +1749,47 @@ dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 Dwarf_Half
 dwarf_set_frame_cfa_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig = (Dwarf_Half)dbg->de_frame_cfa_col_number;
-    if (value > 0) {
-        dbg->de_frame_cfa_col_number = value;
+    Dwarf_Half orig = 0;
+    int invalid = FALSE;
+
+    invalid = IS_INVALID_DBG(dbg);
+    if (invalid) {
+        return 0;
     }
+    orig = (Dwarf_Half)dbg->de_frame_cfa_col_number;
+    dbg->de_frame_cfa_col_number = value;
+    dbg->de_frame_numbers_validated = FALSE;
     return orig;
 }
 /* Similar to above, but for the other crucial fields for frames. */
 Dwarf_Half
 dwarf_set_frame_same_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig =
-        (Dwarf_Half)dbg->de_frame_same_value_number;
-    if (value > 0) {
-        dbg->de_frame_same_value_number = value;
+    Dwarf_Half orig = 0;
+    int invalid = FALSE;
+
+    invalid = IS_INVALID_DBG(dbg);
+    if (invalid) {
+        return 0;
     }
+    orig = (Dwarf_Half)dbg->de_frame_same_value_number;
+    dbg->de_frame_same_value_number = value;
+    dbg->de_frame_numbers_validated = FALSE;
     return orig;
 }
 Dwarf_Half
 dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
 {
-    Dwarf_Half orig =
-        (Dwarf_Half)dbg->de_frame_same_value_number;
-    if (value > 0) {
-        dbg->de_frame_undefined_value_number = value;
+    Dwarf_Half orig = 0;
+    int invalid = FALSE;
+
+    invalid = IS_INVALID_DBG(dbg);
+    if (invalid) {
+        return 0;
     }
+    orig = (Dwarf_Half)dbg->de_frame_same_value_number;
+    dbg->de_frame_undefined_value_number = value;
+    dbg->de_frame_numbers_validated = FALSE;
     return orig;
 }
 
@@ -1767,7 +1799,14 @@ Dwarf_Small
 dwarf_set_default_address_size(Dwarf_Debug dbg,
     Dwarf_Small value  )
 {
-    Dwarf_Small orig = dbg->de_pointer_size;
+    Dwarf_Small orig = 0;
+    int invalid = FALSE;
+
+    invalid = IS_INVALID_DBG(dbg);
+    if (invalid) {
+        return 0;
+    }
+    orig = dbg->de_pointer_size;
     if (value > 0 && value <= sizeof(Dwarf_Addr)) {
         dbg->de_pointer_size = value;
     }
