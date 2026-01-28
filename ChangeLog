@@ -1,3 +1,37 @@
+2026-01-28:  David Anderson
+    commit 165ab8d2588ad3f64c2ca8d6ccd629710c873f51
+
+    Now for dwarf_set_frame_rule_initial_value() and similar
+    check the Dwarf_Debug argument is non-null and
+    a real (not pointing to a zeroed structure) pointer.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+    Added new field in Dwarf_Debug so after a change
+    to the frame rule etc settings the next access to
+    frame data will check that these settings are
+    an acceptable combination, else it will
+    return DW_DLV_ERROR.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+    Mention that a null Dwarf_Debug argument will
+    cause these little functions to return zero
+    as the 'previous' value in doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2026-01-28:  David Anderson
+    commit 705db521d00eeecb04c0acaed3c2c76d83de6f76
+
+    Minor changes for release.
+            modified:   README.md
+    Final corrections of a couple typos.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2026-01-26:  David Anderson
+    commit 58ed2549b4cf2647577880bbd5b83ae21ceeac6d
+
+    Changes up to date now.
+            modified:   ChangeLog
+
 2026-01-26:  David Anderson
     commit b677a22f2ea99c2475364cfcda475a11edfb2a75
 
