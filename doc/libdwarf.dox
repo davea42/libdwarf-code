@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2026-01-26 v2.3.0
+    @date 2026-02-01 v2.3.0
 
     @section draft Suggestions for improvement are welcome.
 
@@ -453,7 +453,7 @@
 
     Sometimes compilers (or linkers) leave trash
     behind as a result of optimizations.  If there
-    is a lot of space wasted that way it is quality
+    is a lot of space wasted that way it is a quality
     of implementation issue.  But usually the wasted
     space, if any, is small.
 
@@ -1223,19 +1223,10 @@
     By default harmless errors are checked-for.
 
     dwarf_set_frame_rule_table_size() now allows setting
-    register rules table size as low as 40 entries.
+    register rules table size as low as 50 entries.
     The default remains arbitrary: DW_FRAME_LAST_REG_NUM (189)
     as that suffices for most architectures without being
     excessive. 
-
-    Now calls to
-    dwarf_set_frame_rule_initial_value(),
-    dwarf_set_frame_rule_table_size(),
-    dwarf_set_frame_cfa_value(),
-    dwarf_set_frame_same_value(), or
-    dwarf_set_frame_undefined_value() with an input dw_value
-    of zero (0) tell the function to ignore the input
-    dw_value argument and return the recorded value/size.
 
     <b>Changes 2.1.0 to 2.2.0</b>
 
