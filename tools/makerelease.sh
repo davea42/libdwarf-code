@@ -26,11 +26,9 @@ chkres $? "configure failed"
 make dist
 chkres $? "make dist "
 f=libdwarf-$d.tar.xz
-f=libdwarf-special-$d.tar.gz
 ls libdwarf-$d*
-mv  libdwarf-$d.tar.gz libdwarf-special-$d.tar.gz
-chkres $? "rename failed"
-f=libdwarf-special-$d.tar.gz
+#mv  libdwarf-$d.tar.gz libdwarf-$d.tar.gz
+#chkres $? "rename failed"
 echo "Release name: $f"
 
 cp $f /home/davea/web4/gweb/pagedata/
