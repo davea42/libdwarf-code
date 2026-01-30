@@ -1,4 +1,10 @@
 2026-01-28:  David Anderson
+    commit d0655f0003ccce9d2108d506b64c89f0c0de2035
+
+    Now up to date.
+            modified:   ChangeLog
+
+2026-01-28:  David Anderson
     commit 165ab8d2588ad3f64c2ca8d6ccd629710c873f51
 
     Now for dwarf_set_frame_rule_initial_value() and similar
