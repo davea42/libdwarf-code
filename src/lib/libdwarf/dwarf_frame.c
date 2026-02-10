@@ -837,6 +837,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc(dbg,cieframe,DW_DLA_FRAME);
             cieframe = 0;
+            cie->ci_initial_table = 0;
             return res;
         }
         rules = cieframe->fr_regtable->rt3_rules;
@@ -861,6 +862,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             error);
         if (res != DW_DLV_OK) {
             dwarf_dealloc(dbg,cieframe,DW_DLA_FRAME);
+            cieframe = 0;
+            cie->ci_initial_table = 0;
             return res;
         }
     }

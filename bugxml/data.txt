@@ -1,3 +1,22 @@
+
+id: DW202602-001
+fuzzer: oss fuzz 4475563464
+datereported: 2026-02-10
+reportedby: Oliver Chang
+vulnerability: Use After Free and memory leak
+product: libdwarf
+description: Reading a corrupted object frame section results
+  in a use-after-free error and memory leak in libdwarf.
+  Ossfuzz vulnerability  4475563464 
+  Vulnerability existed since 12 January 2026 (new
+  versions of frame reading functions).
+datefixed: 2026-02-10
+references: regressiontests/ossfuzz4475563464/fuzz_set_frame_all-6159202753249280
+gitfixid: 
+tarrelease:
+endrec:  DW202602-001
+
+
 id: DW202510-003
 fuzzer: oss fuzz 449018019
 datereported: 2025-10-02
