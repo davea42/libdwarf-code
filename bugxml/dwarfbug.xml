@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202602-001</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 4475563464</fuzzer>
+<datereported>2026-02-10</datereported>
+<reportedby>Oliver Chang</reportedby>
+<product>libdwarf</product>
+<vulnerability> Use After Free and memory leak
+</vulnerability>
+<description> Reading a corrupted object frame section results
+  in a use-after-free error and memory leak in libdwarf.
+  Ossfuzz vulnerability  4475563464
+  Vulnerability existed since 2026-01-12 (new
+  versions of frame reading functions).
+</description>
+<datefixed>2026-02-10</datefixed>
+<references> regressiontests/ossfuzz4475563464/fuzz_set_frame_all-6159202753249280
+</references>
+<gitfixid>9d08910d34e88ab61d197ce4e089a869b1ab9510</gitfixid>
+<tarrelease>To Be Determined</tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202510-003</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 449018019</fuzzer>
-<datereported>2025-10-02</datereported>
+<datereported>2025-09-30</datereported>
 <reportedby>David Korczynski</reportedby>
 <product>libdwarf</product>
 <vulnerability> Excessive time running fuzz_crc_32 testcase.
@@ -16,7 +37,7 @@
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
 </description>
-<datefixed></datefixed>
+<datefixed>2025-09-30</datefixed>
 <references> regressiontests/ossfuzz449018019/
 </references>
 <gitfixid>43bb5458f5600d231f1e11d31cf2b29748fd1925</gitfixid>
@@ -38,7 +59,7 @@
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
 </description>
-<datefixed></datefixed>
+<datefixed>2025-09-30</datefixed>
 <references> regressiontests/ossfuzz448717186/
 </references>
 <gitfixid>43bb5458f5600d231f1e11d31cf2b29748fd1925</gitfixid>

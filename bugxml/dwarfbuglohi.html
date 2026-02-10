@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of February 2026</p>
-<p> Record count: 230 </p>
+<p> Record count: 231 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -7510,7 +7510,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
 </p>
-<p>datefixed:</p>
+<p>datefixed: 2025-09-30
+</p>
 <p>references: regressiontests/ossfuzz448717186/
 </p>
 <p>gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
@@ -7524,7 +7525,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>cve:</p>
 <p>fuzzer: oss fuzz 449018019
 </p>
-<p>datereported: 2025-10-02
+<p>datereported: 2025-09-30
 </p>
 <p>reportedby: David Korczynski
 </p>
@@ -7539,12 +7540,42 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
 </p>
-<p>datefixed:</p>
+<p>datefixed: 2025-09-30
+</p>
 <p>references: regressiontests/ossfuzz449018019/
 </p>
 <p>gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
 </p>
 <p>tarrelease: libdwarf-2.2.0.tar.xz
+</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202602-001">231) DW202602-001</h3>
+<p>id: DW202602-001
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 4475563464
+</p>
+<p>datereported: 2026-02-10
+</p>
+<p>reportedby: Oliver Chang
+</p>
+<p>vulnerability: Use After Free and memory leak
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Reading a corrupted object frame section results
+  in a use-after-free error and memory leak in libdwarf.
+  Ossfuzz vulnerability  4475563464
+  Vulnerability existed since 2026-01-12 (new
+  versions of frame reading functions).
+</p>
+<p>datefixed: 2026-02-10
+</p>
+<p>references: regressiontests/ossfuzz4475563464/fuzz_set_frame_all-6159202753249280
+</p>
+<p>gitfixid: 9d08910d34e88ab61d197ce4e089a869b1ab9510
+</p>
+<p>tarrelease: To Be Determined
 </p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>

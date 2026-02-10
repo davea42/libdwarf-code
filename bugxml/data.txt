@@ -8,18 +8,18 @@ product: libdwarf
 description: Reading a corrupted object frame section results
   in a use-after-free error and memory leak in libdwarf.
   Ossfuzz vulnerability  4475563464 
-  Vulnerability existed since 12 January 2026 (new
+  Vulnerability existed since 2026-01-12 (new
   versions of frame reading functions).
 datefixed: 2026-02-10
 references: regressiontests/ossfuzz4475563464/fuzz_set_frame_all-6159202753249280
-gitfixid: 
-tarrelease:
+gitfixid: 9d08910d34e88ab61d197ce4e089a869b1ab9510
+tarrelease: To Be Determined
 endrec:  DW202602-001
 
 
 id: DW202510-003
 fuzzer: oss fuzz 449018019
-datereported: 2025-10-02
+datereported: 2025-09-30
 reportedby: David Korczynski
 vulnerability: Excessive time running fuzz_crc_32 testcase.
 product: libdwarf
@@ -29,7 +29,7 @@ description: Vulnerability involving slow access to
   We now check more thoroughly and return error quickly
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
-datefixed:
+datefixed: 2025-09-30
 references: regressiontests/ossfuzz449018019/
 gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
 tarrelease: libdwarf-2.2.0.tar.xz
@@ -47,7 +47,7 @@ description: Vulnerability involving slow access to
   We now check more thoroughly and return error quickly
   so there is no slowdown.
   Been a vulnerability since Mach-o support added in 2018.
-datefixed: 
+datefixed: 2025-09-30
 references: regressiontests/ossfuzz448717186/
 gitfixid: 43bb5458f5600d231f1e11d31cf2b29748fd1925
 tarrelease:  libdwarf-2.2.0.tar.xz
