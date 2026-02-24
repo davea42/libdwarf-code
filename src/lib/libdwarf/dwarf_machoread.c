@@ -89,6 +89,8 @@ print_arch_item(unsigned int i,
 }
 #endif
 
+#if 0 /* This check is inappropriate.  */
+/*  The actual list gets added-to by Apple */
 /*  One wonders if a duplicated segname name is an error.
     I suppose so, but we do not yet check for that. */
 static const char *
@@ -120,6 +122,7 @@ _dwarf_is_known_segname(char *sname)
     }
     return FALSE;
 }
+#endif
 /*  We do not expect non-ascii characters in section
     names, they are defined by the compiler-writers
     and ABI rules. We allow an empty name... */
@@ -433,10 +436,6 @@ load_segment_command_content32(
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
     _dwarf_safe_strcpy(msp->segname,sizeof(msp->segname),
         sc.segname,sizeof(sc.segname));
-    if (!_dwarf_is_known_segname(msp->segname)) {
-        *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
-        return DW_DLV_ERROR;
-    }
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -663,10 +662,6 @@ _dwarf_macho_load_dwarf_section_details32(
         }
         _dwarf_safe_strcpy(secs->segname, sizeof(secs->segname),
             mosec.segname,sizeof(mosec.segname));
-        if (!_dwarf_is_known_segname(secs->segname)) {
-            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
-            return DW_DLV_ERROR;
-        }
         ASNAR(mfp->mo_copy_word,secs->addr,mosec.addr);
         ASNAR(mfp->mo_copy_word,secs->size,mosec.size);
         ASNAR(mfp->mo_copy_word,secs->offset,mosec.offset);

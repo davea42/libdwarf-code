@@ -126,10 +126,6 @@ _dwarf_load_segment_command_content64(
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
     _dwarf_safe_strcpy(msp->segname,sizeof(msp->segname),
         sc.segname,sizeof(sc.segname));
-    if (!_dwarf_is_known_segname(msp->segname)) {
-        *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
-        return DW_DLV_ERROR;
-    }
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -290,10 +286,6 @@ _dwarf_macho_load_dwarf_section_details64(
         _dwarf_safe_strcpy(secs->segname,
             sizeof(secs->segname),
             mosec.segname,sizeof(mosec.segname));
-        if (!_dwarf_is_known_segname(secs->segname)) {
-            *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
-            return DW_DLV_ERROR;
-        }
         ASNAR(mfp->mo_copy_word,secs->addr,mosec.addr);
         ASNAR(mfp->mo_copy_word,secs->size,mosec.size);
         ASNAR(mfp->mo_copy_word,secs->offset,mosec.offset);
