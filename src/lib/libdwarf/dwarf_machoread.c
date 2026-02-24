@@ -353,7 +353,6 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     struct mach_header mh32;
     int res = 0;
     Dwarf_Unsigned inner = mfp->mo_inner_offset;
-    Dwarf_Unsigned commandsizetotal = 0;
 
     if (sizeof(mh32) > mfp->mo_filesize) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
@@ -376,15 +375,8 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     ASNAR(mfp->mo_copy_word,mfp->mo_header.flags,mh32.flags);
     mfp->mo_header.reserved = 0;
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
-    res = _dwarf_uint64_mult(mfp->mo_header.sizeofcmds,
-        mfp->mo_command_count,&commandsizetotal);
-    if (res == DW_DLV_ERROR) {
-        /* overflow  in multiply */
-        *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
-        return DW_DLV_ERROR;
-    }
-    if (commandsizetotal >= mfp->mo_filesize ||
-        commandsizetotal >=  MAX_COMMANDS_SIZE ) {
+    if (mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
+        mfp->mo_header.sizeofcmds >= MAX_COMMANDS_SIZE ) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
