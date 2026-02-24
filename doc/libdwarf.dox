@@ -1202,6 +1202,16 @@
 
     We list these with newest first.
 
+    <b>Changes 2.3.0 to 2.3.1</b>
+
+    Fixed vulerability oss fuzz 4475563464 (aka
+    libdwarf DW202602-001) reading frame data from
+    a fuzzed DWARF frame section.
+    @see https://www.prevanders.net/dwarfbug.xml  DW202602-001
+
+    Now allows DW_AT_dwo_id and DW_AT_GNU_dwo_id in any DWARF4 or
+    DWARF5 object where such an attribute makes sense.
+
     <b>Changes 2.2.0 to 2.3.0</b>
 
     Released 1 February 2026
