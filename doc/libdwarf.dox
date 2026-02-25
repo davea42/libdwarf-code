@@ -1212,6 +1212,12 @@
     Now allows DW_AT_dwo_id and DW_AT_GNU_dwo_id in any DWARF4 or
     DWARF5 object where such an attribute makes sense.
 
+    Now allows access to a .eh_frame section (APPLE names it
+    __eh_frame) in a Mach-o executable. 
+    Just dwarf_init_path() (for example) and ensure
+    dw_true_path_out_buffer and dw_true_path_bufferlen
+    arguments a passed in as zero (0).
+
     <b>Changes 2.3.0 to 2.3.1</b>
 
     Fixed vulerability oss fuzz 4475563464 (aka

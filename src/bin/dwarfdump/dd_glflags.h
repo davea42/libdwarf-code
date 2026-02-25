@@ -132,6 +132,7 @@ struct glflags_s {
     Dwarf_Bool gf_info_flag;  /* .debug_info */
     Dwarf_Bool gf_line_flag;
     Dwarf_Bool gf_no_follow_debuglink;
+    Dwarf_Bool gf_no_follow_dsym;
     Dwarf_Bool gf_line_print_pc;
     Dwarf_Bool gf_line_skeleton_flag;
     Dwarf_Bool gf_loc_flag;

@@ -103,6 +103,7 @@ do_all(void)
     glflags.gf_types_flag =  TRUE; /* .debug_types */
     glflags.gf_line_flag = TRUE;
     glflags.gf_no_follow_debuglink = FALSE;
+    glflags.gf_no_follow_dsym = FALSE;
     glflags.gf_global_debuglink_paths = 0;
     glflags.gf_global_debuglink_count = 0;
     glflags.gf_pubnames_flag = TRUE;
@@ -367,6 +368,7 @@ static void arg_print_weaknames(void);
 static void arg_suppress_harmless(void);
 
 static void arg_no_follow_debuglink(void);
+static void arg_no_follow_dsym(void);
 static void arg_add_debuglink_path(void);
 static void arg_debuglink_path_invalid(void);
 
@@ -607,7 +609,7 @@ static const char *usage_long_text[] = {
 "                                         (as much as possible)",
 " ",
 "-------------------------------------------------------------------",
-"GNU debuglink options",
+"GNU debuglink/Apple dSYM options",
 "-------------------------------------------------------------------",
 " --no-follow-debuglink       Do not follow GNU debuglink, ",
 "                             just use the file directly so,",
@@ -620,6 +622,10 @@ static const char *usage_long_text[] = {
 "                             startup and removing a ",
 "                             safety check but allowing debuglink",
 "                             and debugid paths to be used.",
+" --no-follow-dsym            Do not follow an Apple dSYM directory",
+"                             path to find DWARF data.",
+"                             .eh_frame format data may be in",
+"                             the executable object.",
 "-------------------------------------------------------------------",
 "Search text in attributes",
 "-------------------------------------------------------------------",
@@ -799,6 +805,7 @@ OPT_PRINT_LANGUAGE_VERSION_TABLE,
 OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
 OPT_ADD_DEBUGLINK_PATH,      /* --add-debuglink-path=<text> */
 OPT_SUPPRESS_DEBUGLINK_CRC,  /* --suppress-debuglink-crc */
+OPT_NO_FOLLOW_DSYM,          /* --no-follow-dsym */
 
 /* Search text in attributes                        */
 OPT_SEARCH_ANY,       /* -S any=<text>   --search-any=<text>  */
@@ -956,6 +963,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
 {"suppress-debuglink-crc", dwno_argument, 0,
     OPT_SUPPRESS_DEBUGLINK_CRC},
+{"no-follow-dsym", dwno_argument, 0,OPT_NO_FOLLOW_DSYM},
 
 /* Search text in attributes. */
 {"search-any",            dwrequired_argument, 0,OPT_SEARCH_ANY  },
@@ -1853,6 +1861,11 @@ void arg_no_follow_debuglink(void)
 {
     glflags.gf_no_follow_debuglink = TRUE;
 }
+/*  Option --no-follow-dsym */
+void arg_no_follow_dsym(void)
+{
+    glflags.gf_no_follow_dsym = TRUE;
+}
 
 /*  Option --suppress-debuglink-crc */
 void arg_suppress_debuglink_crc(void)
@@ -2670,6 +2683,7 @@ set_command_options(int argc, char *argv[])
         case OPT_ADD_DEBUGLINK_PATH: arg_add_debuglink_path();  break;
         case OPT_SUPPRESS_DEBUGLINK_CRC:
             arg_suppress_debuglink_crc(); break;
+        case OPT_NO_FOLLOW_DSYM: arg_no_follow_dsym();break;
 
         /* Search text in attributes. */
         case OPT_SEARCH_ANY:            arg_search_any();
