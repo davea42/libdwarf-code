@@ -146,7 +146,8 @@ static struct macho_sect_names_s {
     { "", "" },  /* ELF index-0 entry */
     { "__debug_abbrev",         ".debug_abbrev"   },
     { "__debug_aranges",        ".debug_aranges"  },
-    { "__debug_frame",          ".debug_frame"    },
+    { "__debug_frame",          ".debug_frame" /* a guess */},
+    { "__eh_frame",             ".eh_frame"       },
     { "__debug_info",           ".debug_info"     },
     { "__debug_addr",           ".debug_addr"     },
     { "__debug_line",           ".debug_line"     },
@@ -729,6 +730,7 @@ _dwarf_macho_load_dwarf_sections(
     struct generic_macho_segment_command *segp =
         mfp->mo_segment_commands;
     if (ftype != MH_DSYM &&
+        ftype != MH_EXECUTE &&
         ftype != MH_OBJECT) {
         /* We do not think it can have DWARF */
         return DW_DLV_OK;
