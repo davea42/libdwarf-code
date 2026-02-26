@@ -6,6 +6,7 @@
 
 import os
 import sys
+import datetime
 
 
 def usage():
@@ -100,7 +101,10 @@ def updatedoxversion(doxcount, l, sver):
         if not wds[0] == "@date":
             return l, doxcount
         vnow = ''.join(["v",sver,"\n"])
-        l2 = " ".join([doxd2,wds[1],vnow])
+        d=datetime.date.today()
+        ds = d.isoformat()
+        l2 = " ".join([doxd2,ds,vnow])
+        print("New libdwarf.dox date:",l2)
         return l2, int(doxcount + 1)
     return l, doxcount
 

@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2026-02-25 v2.3.1
+    @date 2026-02-26 v2.3.1
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1206,7 +1206,7 @@
 
     Fixed vulerability oss fuzz 4475563464 (aka
     libdwarf DW202602-001) reading frame data from
-    a fuzzed DWARF frame section.
+    a fuzzed (corrupted) DWARF frame section.
     @see https://www.prevanders.net/dwarfbug.xml  DW202602-001
 
     Now allows DW_AT_dwo_id and DW_AT_GNU_dwo_id in any DWARF4 or
@@ -1214,19 +1214,9 @@
 
     Now allows access to a .eh_frame section (APPLE names it
     __eh_frame) in a Mach-o executable. 
-    Just dwarf_init_path() (for example) and ensure
-    dw_true_path_out_buffer and dw_true_path_bufferlen
-    arguments a passed in as zero (0).
-
-    <b>Changes 2.3.0 to 2.3.1</b>
-
-    Fixed vulerability oss fuzz 4475563464 (aka
-    libdwarf DW202602-001) reading frame data from
-    a fuzzed DWARF frame section.
-    @see https://www.prevanders.net/dwarfbug.xml  DW202602-001
-
-    Now allows DW_AT_dwo_id and DW_AT_GNU_dwo_id in any DWARF4 or
-    DWARF5 object where such an attribute makes sense.
+    Just call dwarf_init_path() (for example) and ensure
+    the dw_true_path_out_buffer and dw_true_path_bufferlen
+    arguments are passed in as zero (0).
 
     <b>Changes 2.2.0 to 2.3.0</b>
 
