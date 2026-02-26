@@ -1,4 +1,19 @@
 2026-02-26:  David Anderson
+    commit dab2013feea9cb6a33a14de816b9ebd83245299e
+
+    Correct two typos.
+            modified:   doc/libdwarf.dox
+
+2026-02-26:  David Anderson
+    commit 7c3f0421fbeacc16796e63c8c245f8051c443098
+
+    Up to date with git log
+            modified:   ChangeLog
+    Added a few words in Changes about 2.3.1 mach-o sizeofcmds
+    object header field.
+            modified:   doc/libdwarf.dox
+
+2026-02-26:  David Anderson
     commit 1edc4fa567e8b40223440b1884c08e83c1a9462f
 
     Updated version and date
