@@ -1219,7 +1219,7 @@
     arguments are passed in as zero (0).
     Corrects a sanity check of Mach-o objects by
     eliminating an inappropriate multiply of the sizeofcmds
-    header field..
+    header field.
 
     <b>Changes 2.2.0 to 2.3.0</b>
 
@@ -1333,7 +1333,7 @@
     sections we read we have added a function prototype
     for struct Dwarf_Obj_Access_Methods_a_s function
     om_load_section(). This will help when
-    reading multi gigiabyte object files.
+    reading multi-gigabyte object files.
     And we added a function prototype for destructing
     the object specific data while removing library
     internal public functions.
