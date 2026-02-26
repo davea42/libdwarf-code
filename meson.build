@@ -1,5 +1,5 @@
 project('libdwarf', ['c','cpp'],
-  version: '2.3.0',
+  version: '2.3.1',
   default_options : [
     'buildtype=debugoptimized',
     'warning_level=3',
