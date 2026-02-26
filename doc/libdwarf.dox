@@ -1217,6 +1217,9 @@
     Just call dwarf_init_path() (for example) and ensure
     the dw_true_path_out_buffer and dw_true_path_bufferlen
     arguments are passed in as zero (0).
+    Corrects a sanity check of Mach-o objects by
+    eliminating an inappropriate multiply of the sizeofcmds
+    header field..
 
     <b>Changes 2.2.0 to 2.3.0</b>
 

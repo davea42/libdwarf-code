@@ -1,3 +1,128 @@
+2026-02-26:  David Anderson
+    commit 1edc4fa567e8b40223440b1884c08e83c1a9462f
+
+    Updated version and date
+            modified:   doc/libdwarf.dox
+
+    Now sets date and version in the @date line
+            modified:   tools/updatesemanticversion.py
+
+2026-02-26:  David Anderson
+    commit f3b9ea622e4eff4af867c9cb518f13c34c6d8975
+
+    Now version is 2.3.1
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2026-02-25:  David Anderson
+    commit 08f7a9caa38cd4ac1107023443d81c05032e9498
+
+    Adds a new option to dwarfdump so one can print
+    a mach-o (Apple) object file's .eh_frame
+    (which Apple calls __eh_frame) even when
+    there is a dSYM file present.
+        dwarfdump --no-follow-dsym
+            modified:   doc/libdwarf.dox
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2026-02-25:  David Anderson
+    commit 23429695499186a6540e73fce30d9fc7c1d536dc
+
+    Making it possible to show .eh_frame from an Apple
+    executable.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2026-02-24:  David Anderson
+    commit 20cee728a9d623eb9db5f3d9fa528c4741d768b4
+
+    Deleting function _is_known_segname() because
+    Apple adds names over time. Too difficult
+    to check correctly here.
+            modified:   dwarf_64machoread.c
+            modified:   dwarf_machoread.c
+
+2026-02-24:  David Anderson
+    commit 3ea848204b3fb5ab1e37f9cb050c394089a7e587
+
+    Restoring comments lost in previous merge.
+            modified:   doc/libdwarf.dox
+
+2026-02-24:  David Anderson
+    commit 9f25480f20c4322fa15ca5be2a2b2a6622cd6694
+    Merge: ed51ee8d 29d9b070
+
+    Merge branch 'jeremy-rifkin-jr/mach-o-header-size-check'
+
+    Fixing mistake in handling Macho Commands size field.
+    We no longer multiply sizeofcmds header field
+    by anything.
+
+2026-02-24:  David Anderson
+    commit ed51ee8d616603dad427c683a463a034b3c35fce
+
+    Adding to Changes documentation
+            modified:   doc/libdwarf.dox
+
+2026-02-24:  Jeremy Rifkin
+    commit 29d9b0706461f1bfab66e6ac082909210dd2b034
+
+    Fix large load command size check
+
+2026-02-23:  Jeremy Rifkin
+    commit aeb19e7578f6f8a6c793dc19169551ae34c7e546
+
+    Relax condition for DW_DLE_IMPROPER_DWO_ID (#315)
+
+2026-02-10:  David Anderson
+    commit eab3c42416fb5c14c1f5ba60294642ca34599b11
+
+    Now with fix date and commit id for DW202602-001
+    oss fuzz 4475563464
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-02-10:  David Anderson
+    commit 9d08910d34e88ab61d197ce4e089a869b1ab9510
+
+    Document  vulnerability oss fuzz 4475563464,
+    DW202602-001.
+            modified:   bugxml/data.txt
+
+    This fixes the vulnerability.
+    Vulnerability existed since 12 January 2026 (new
+    versions of frame reading functions).
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2026-02-10:  David Anderson
+    commit b9ccc43ed5417465aa394ec50a4b0f3739997825
+
+    Normal auto-update.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-01-30:  David Anderson
+    commit 63c286fa066879eb535bd9d72c48e924bb06790f
+
+    Removing code related to a special release.
+            modified:   tools/makerelease.sh
+
+2026-01-30:  David Anderson
+    commit b02f75c11a08a938044c3f6db23a5e1cb91ae221
+
+    trivial, final cleanup for 2.3.0
+            modified:   ChangeLog
+
 2026-01-28:  David Anderson
     commit d0655f0003ccce9d2108d506b64c89f0c0de2035
 
