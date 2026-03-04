@@ -34,6 +34,7 @@ using configure,cmake, and meson.
 
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7275/badge)](https://bestpractices.coreinfrastructure.org/projects/7275)
 
+    Version 2.3.1  Released  4 March     2026.
     Version 2.3.0  Released  1 February  2026.
     Version 2.2.0  Released 10 October   2025.
     Version 2.1.0  Released 20 July      2025.
@@ -336,11 +337,26 @@ a build and then
 
     make distcheck
 
+# Recent Changes
+see the <strong>Recent Changes</strong> section in
+libdwarf.pdf in the release.
+Or read doc/libdwarf.dox in the
+release with a text editor and
+search for the Recent Changes section.
+
+[dwhtml]: https://www.prevanders.net/libdwarfdoc/index.html
+[dwpdf]: https://www.prevanders.net/libdwarf.pdf 
+
+Or see the latest online html version [dwhtml] for the details..
+Or see (via download) the latest pdf html version [dwpdf].
+
+Notice the table of contents at the right edge of the html page.
+
 # INCOMPATIBILITIES. Changes to interfaces
 
 ### Post 0.11.0 
 
-See libdwarf.pdf or the libdwarf html
+See libdwarf.pdf or read doc/libdwarf.dox
 documentation and look for the Changes section.
 See below for links to the documents.
 Since May 2021 we follow the Semantic Versioning standard.
@@ -427,17 +443,6 @@ A few  dealloc() functions changed name to have
 a consistent pattern for all such.
 Access to the DWARF5 .debug\_names section
 is now fully implemented.
-
-See the <strong>Recent Changes</strong> section in
-libdwarf.pdf (in the release).
-
-[dwhtml]: https://www.prevanders.net/libdwarfdoc/index.html
-[dwpdf]: https://www.prevanders.net/libdwarf.pdf
-
-Or see the latest online html version [dwhtml] for the details..
-Or see (via download) the latest pdf html version [dwpdf].
-
-Notice the table of contents at the right edge of the html page.
 
 ## Reading DWARF from memory
 
