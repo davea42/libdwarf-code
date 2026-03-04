@@ -1,3 +1,79 @@
+2026-03-04:  David Anderson
+    commit c62684cccbcdb159d50be781d0db27bdbd16bcc7
+
+    Changes in source are inside comments. No
+    logic change.
+
+    This now works better.
+    Now we do not get warnings from latex about
+    duplicate hypertargets from dwarf.h or libdwarf.h .
+    A result of changes below to doxygen comments.
+            modified:   doc/Doxyfile
+
+    Ensuring @page and @file appropriately different
+            modified:   doc/checkexamples.c
+
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+    Ensuring latex subdirectory emptied
+            modified:   doc/pdfbld.sh
+    Ensuring @page and @file appropriately different
+    to avoid duplicate entry warnings from latex.
+    Small readability improvement.
+            modified:   src/bin/dwarfexample/jitreader.c
+    Ensuring @page and @file appropriately different
+    to avoid duplicate entry warnings from latex.
+            modified:   src/lib/libdwarf/dwarf.h
+    Ensuring @page and @file appropriately different
+    to avoid duplicate entry warnings from latex.
+    Removed a stray /x in a doxygen comment.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Unfortunately still true that rerunning
+    doxygen and latex  do not result in
+    the same size of libdwarf.pdf, even
+    if nothing changed.
+
+2026-03-04:  David Anderson
+    commit 0dbf48f395bdc670e89d15011464fbf884a085bb
+
+    Text fix, small.
+            modified:   doc/libdwarf.pdf
+
+2026-03-04:  David Anderson
+    commit 3967b5a3f2492fe6f329036a65c74da4555c28f1
+
+    Normal month change
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+    For Readability and 2.3.1 release
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+    Now with version 2.3.1 in comments.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_lname_version.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2026-03-04:  David Anderson
+    commit 2c61e4cf66bff74a0eaa0b1200e3c2e739c19835
+
+    Improvements for readability, and 2.3.1 release
+    is 4 March.
+            modified:   README.md
+
+2026-02-26:  David Anderson
+    commit b0366e75a3c76dffbf405ddcf289535fb880aef1
+
+    Up to date with git log
+            modified:   ChangeLog
+            modified:   doc/libdwarf.pdf
+
 2026-02-26:  David Anderson
     commit dab2013feea9cb6a33a14de816b9ebd83245299e
 
