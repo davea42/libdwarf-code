@@ -944,7 +944,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = libdwarf.dox jitaccess.dox ../src/lib/libdwarf/dwarf.h ../src/lib/libdwarf/libdwarf.h checkexamples.c ../src/bin/dwarfexample/jitreader.c ../src/bin/dwarfexample/showsectiongroups.c 
+INPUT  = libdwarf.dox jitaccess.dox ../src/lib/libdwarf/dwarf.h ../src/lib/libdwarf/libdwarf.h checkexamples.c ../src/bin/dwarfexample/jitreader.c ../src/bin/dwarfexample/showsectiongroups.c 
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -2845,7 +2845,7 @@ GENERATE_LEGEND        = YES
 # files.
 # The default value is: YES.
 
-DOT_CLEANUP            = YES
+DOT_CLEANUP            = NO
 
 # You can define message sequence charts within doxygen comments using the \msc
 # command. If the MSCGEN_TOOL tag is left empty (the default), then doxygen will

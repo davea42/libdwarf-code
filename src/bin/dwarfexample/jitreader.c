@@ -4,9 +4,12 @@
 
 /*! @file jitreader.c
     @defgroup jitreader Demonstrating reading DWARF without a file.
-    @brief How to read DWARF2 and later from memory.
+    @brief How to read DWARF2 and later from memory. JIT.
 
     @code
+
+    The C source is src/bin/dwarfexample/jitreader.c
+
 */
 
 #include <config.h>
@@ -42,9 +45,10 @@
     are ever known to libdwarf. They are totally
     private to your code.
     The code you write (like this example) you compile
-    separate from libdwarf. You never place your code
-    into libdwarf, you just link your code into
-    your application and link against libdwarf.
+    separate from libdwarf. Never place your code
+    into libdwarf, just link your compiled code into
+    your application and link in libdwarf as usual.
+
 */
 
 /* Some valid DWARF2 data */

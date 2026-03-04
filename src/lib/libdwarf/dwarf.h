@@ -27,8 +27,8 @@ Free Software Foundation, Inc., 51 Franklin Street - Fifth
 Floor, Boston MA 02110-1301, USA.
 */
 
-/*! @file */
-/*! @page dwarf.h
+/*! @file dwarf.h */
+/*! @page dwarfheader
     dwarf.h contains all the identifiers
     such as DW_TAG_compile_unit etc from the
     various versions of the DWARF Standard

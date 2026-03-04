@@ -32,12 +32,12 @@
     For details on licensing, see COPYING in the files list.
 
     README.md may be of interest (automatically shown on
-    the project page on github..
+    the project page on github).
 
     Examples of using libdwarf are in doc/checkexamples.c
     and src/bin/dwarfexamples.
 
-    To download source, one can also do:
+    To download source, one could do:
 
     <b>git clone https://github.com/davea42/libdwarf-code code</b>
 
@@ -257,7 +257,7 @@
     can do what it likes with the error situation.
     The library will continue from the error and
     will return an error code on returning to your
-    @libdwarf call ... but the calling function will not
+    libdwarf call ... but the calling function will not
     know what the error was.
 
     @code

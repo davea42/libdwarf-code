@@ -1,12 +1,12 @@
 /*! @file checkexamples.c
-    @page checkexamples.c
+    @page checkexamples
     checkexamples.c contains what user code should be.
     Hence the code typed in checkexamples.c is PUBLIC DOMAIN
     and may be copied, used, and altered without any
     restrictions.
 
-    checkexamples.c need not be compiled routinely nor
-    should it ever be executed.
+    This specific source file need not be compiled routinely
+    nor should it ever be executed.
 
     To verify syntatic correctness compile in the
     libdwarf-code/doc directory with:

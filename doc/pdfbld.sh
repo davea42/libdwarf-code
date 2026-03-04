@@ -51,6 +51,11 @@ ckres() {
 
 if [ $c = "y" ]
 then
+  if [ -d latex -o -d latex ]
+  then
+    rm -rf latex
+    ckres $? "rm existing latex directory FAIL"
+  fi
   doxygen
   ckres $? "doc doxygen FAIL "
   cd latex

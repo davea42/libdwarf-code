@@ -29,8 +29,8 @@
   Floor, Boston MA 02110-1301, USA.
 
 */
-/*! @file*/
-/*! @page libdwarf.h
+/*! @file libdwarf.h */
+/*! @page libdwarfheader
     @tableofcontents
     libdwarf.h contains all the type declarations
     and function function declarations
@@ -8588,7 +8588,7 @@ DW_API int dwarf_get_xu_index_section_type(
 
 /*! @brief Get a Hash Entry
 
-    @see examplez/x
+    @see examplez
 
     @param dw_xuhdr
     Pass in an open header pointer.
