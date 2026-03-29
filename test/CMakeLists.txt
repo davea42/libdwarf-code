@@ -3,7 +3,6 @@ target_compile_definitions(dwarf_tests INTERFACE ${DW_LIBDWARF_STATIC} _GNU_SOUR
 target_compile_options(dwarf_tests INTERFACE ${DW_FWALL})
 target_include_directories(dwarf_tests INTERFACE "${PROJECT_SOURCE_DIR}/src/lib/libdwarf" "${PROJECT_SOURCE_DIR}/src/lib/libdwarfp" "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump")
 
-if(DO_TESTING)
   add_executable(selfteststring
     "${PROJECT_SOURCE_DIR}/test/test_dwarfstring.c"
     "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c"
@@ -142,28 +141,15 @@ if(DO_TESTING)
   target_link_libraries(selfregex PRIVATE dwarf_tests)
   add_test(NAME selfregex COMMAND selfregex)
 
+if(NOT WIN32)
+  configure_file("${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf" "${PROJECT_BINARY_DIR}/test/dwarfdump.conf" @ONLY)
+  configure_file("${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf" "${PROJECT_BINARY_DIR}/dwarfdump.conf" @ONLY)
+  add_test(NAME selfdwarfdumppe COMMAND python3 ${PROJECT_SOURCE_DIR}/test/test_dwarfdump.py PE cmake ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} ${PROJECT_VERSION})
+  add_test(NAME selfdwarfdumpelf COMMAND python3 ${PROJECT_SOURCE_DIR}/test/test_dwarfdump.py Elf cmake ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} ${PROJECT_VERSION})
+  add_test(NAME selfdwarfdumpmacho COMMAND python3 ${PROJECT_SOURCE_DIR}/test/test_dwarfdump.py Macos cmake ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} ${PROJECT_VERSION})
 endif()
 
-if(DO_TESTING AND NOT WIN32)
-  add_custom_target (copyconf ALL COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf ${PROJECT_BINARY_DIR}/test/dwarfdump.conf)
-  add_custom_target (copyconf2 ALL COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf ${PROJECT_BINARY_DIR}/dwarfdump.conf )
-    set(pebasedir "${PROJECT_SOURCE_DIR}")
-    set(peshdir   "${PROJECT_SOURCE_DIR}/test")
-    set(pebindir  "${PROJECT_BINARY_DIR}")
-    add_test(NAME selfdwarfdumppe COMMAND python3 ${peshdir}/test_dwarfdump.py PE cmake ${pebasedir} ${pebindir} ${PROJECT_VERSION})
-
-    set(elfbasedir "${PROJECT_SOURCE_DIR}")
-    set(elfshdir   "${PROJECT_SOURCE_DIR}/test")
-    set(elfbindir  "${PROJECT_BINARY_DIR}")
-    add_test(NAME selfdwarfdumpelf COMMAND python3 ${elfshdir}/test_dwarfdump.py Elf cmake ${elfbasedir} ${elfbindir} ${PROJECT_VERSION})
-
-    set(macbasedir "${PROJECT_SOURCE_DIR}")
-    set(macshdir   "${PROJECT_SOURCE_DIR}/test")
-    set(macbindir  "${PROJECT_BINARY_DIR}")
-    add_test(NAME selfdwarfdumpmacho COMMAND python3 ${macshdir}/test_dwarfdump.py Macos cmake ${macbasedir} ${macbindir} ${PROJECT_VERSION})
-endif()
-
-if(DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
+if(BUILD_DWARFEXAMPLE AND NOT WIN32)
   add_test(NAME selfjitreader COMMAND sh -c "${PROJECT_SOURCE_DIR}/test/test_jitreaderdiff.sh ${PROJECT_SOURCE_DIR}")
   add_test(NAME selfdebuglinka COMMAND sh -c "${PROJECT_SOURCE_DIR}/test/test_debuglink-a.sh ${PROJECT_SOURCE_DIR}")
   add_test(NAME selfdebuglinkb COMMAND sh -c "${PROJECT_SOURCE_DIR}/test/test_debuglink-b.sh ${PROJECT_SOURCE_DIR}")
