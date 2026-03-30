@@ -1,3 +1,55 @@
+2026-03-30:  David Anderson
+    commit 0904e7323d9dabc9cf5c36dc43a132ce3e0a23bf
+    Merge: 5bdda5ac f9397fb2
+
+    Merge branch 'flagarde-cmake'
+    To better support cmake builds
+    by help projects using subproject(FetchContent...)
+
+2026-03-30:  David Anderson
+    commit f9397fb2e697adca2ab0609fae3cb4563d5abcee
+    Merge: 5bdda5ac d5cd5467
+
+    Merge branch 'cmake' of https://github.com/flagarde/libdwarf-code into flagarde-cmake
+    Changing CMAKE_CURRENT_SOURCE_DIR to PROJECT_SOURCE_DIR
+
+2026-03-30:  David Anderson
+    commit 5bdda5acb2afe968a91ade712f6e3c3ea5a86a47
+
+    Clarified entry about doxygen usage.
+            modified:   ChangeLog
+
+2026-03-29:  flagarde
+    commit d5cd5467041eb84f63de55ca95de7bbdc227245a
+
+    test python3 is installed
+
+2026-03-29:  flagarde
+    commit 6547a6ae2f4856052bf4a8e0988cee909097e294
+
+    clean
+
+2026-03-29:  flagarde
+    commit 11c4315bd4147021c29dd9e8c826f65fd8451620
+
+    clean
+
+2026-03-27:  flagarde
+    commit 2b2ba5505cc233a4a3c42fdf2305008d589cfb2a
+
+    use INTERFACE
+
+2026-03-27:  flagarde
+    commit 6be1413350f234b9065c157cd11347b2128cf8a9
+
+    clean
+
+2026-03-04:  David Anderson
+    commit b5ef10c9df0f494596fd9d31e19048a3ed5f28ba
+
+    Now with latest present.
+            modified:   ChangeLog
+
 2026-03-04:  David Anderson
     commit c62684cccbcdb159d50be781d0db27bdbd16bcc7
 
