@@ -5,6 +5,11 @@
     logic change.
 
     This now works better.
+
+    The problem was that @file was empty
+    and @page was dwarf.h (or libdwarf.h)
+    so effectively @fail matched @page. Duplication.
+
     Now we do not get warnings from latex about
     duplicate hypertargets from dwarf.h or libdwarf.h .
     A result of changes below to doxygen comments.
