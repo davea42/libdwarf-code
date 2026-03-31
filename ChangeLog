@@ -1,3 +1,25 @@
+2026-03-31:  David Anderson
+    commit 6954b083193fb6bbc87d45db791589a2fa0c8af9
+
+    All versions are updated to 2.3.2
+    to avoid confusing with the 2.3.1 release.
+    The recent change is an update
+    to the cmake build scripts.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2026-03-30:  David Anderson
+    commit 2c6feb8bb62949dabca9f7ecd4177134ef21ead4
+
+            modified:   ChangeLog
+    Updated with latest.
+
 2026-03-30:  David Anderson
     commit 0904e7323d9dabc9cf5c36dc43a132ce3e0a23bf
     Merge: 5bdda5ac f9397fb2
