@@ -1,8 +1,10 @@
 # Cmake on Unix/linux/MacOS/FreeBSD/OpenBSD
 Created 26 April 2019
-Updated 3 August 2025
+Updated 31 March 2026
 
 Consider switching entirely to meson for your build.
+
+Requires cmake 3.12 as of 31 March 2026.
 
 ## NOTE on build failing as strdup() missing
 
