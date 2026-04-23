@@ -1597,9 +1597,8 @@ read_line_table_program(Dwarf_Debug dbg,
                     regs.lr_is_stmt;
                 curr_line->li_l_data.li_basic_block =
                     regs.lr_basic_block;
-                curr_line->li_l_data.li_end_sequence =
-                    curr_line->li_l_data.
-                    li_epilogue_begin = regs.lr_epilogue_begin;
+                curr_line->li_l_data.li_end_sequence = regs.lr_end_sequence;
+                curr_line->li_l_data.li_epilogue_begin = regs.lr_epilogue_begin;
                 curr_line->li_l_data.li_prologue_end =
                     regs.lr_prologue_end;
                 curr_line->li_l_data.li_isa =
