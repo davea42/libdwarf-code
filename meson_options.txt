@@ -22,6 +22,11 @@ option('sanitize',
   value : false,
   description : 'compile and link with -fsanitize options'
 )
+option('drmemory',
+  type : 'boolean',
+  value : false,
+  description : 'Build with options for DrMemory'
+)
 
 option('wall',
   type : 'boolean',

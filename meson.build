@@ -87,6 +87,12 @@ sanitize_flags_try = [
   '-fsanitize=undefined'
 ]
 
+drmemory_flags_try = [
+  '-fno-inline',
+  '-g',
+  '-g0',
+  '-gdwarf-5'
+]
 
 if sys_windows
   if cc.get_id() != 'msvc'
@@ -106,6 +112,14 @@ foreach cf: dev_cflags_try
     endif
   endif
 endforeach
+dev_drmemory = get_option('drmemory')
+if dev_drmemory
+  foreach cf: drmemory_flags_try
+    if cc.has_argument(cf)
+      dev_cflags += cf
+    endif
+  endforeach
+endif
 
 dev_speciallibdwarfmalloc = get_option('libdwarfspecialmalloc') 
 if dev_speciallibdwarfmalloc
