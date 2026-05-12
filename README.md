@@ -1,6 +1,6 @@
 # This is libdwarf README.md
 
-Updated 31 March 2026
+Updated 12 May 2026
 
 ## Goal
 Libdwarf has been focused for years

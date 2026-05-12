@@ -698,7 +698,15 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "or greater than 100million"},
 { "DW_DLE_FRAME_ITERATOR_ERR(510) Error creating frame data"},
 { "DW_DLE_FRAME_FDE_TABLE_ERR(511) Possibly a libdwarf internal "
-    " error related to Dwarf_Regtab3 data." }
-
+    "error related to Dwarf_Regtab3 data." },
+{"DW_DLE_COMPRESSED_FORMAT_ODD(512) Error unknown compression "
+    "type, possibly a corrupt object file."},
+{"DW_DLE_COMPRESSED_FORMAT_UNKNOWN(513) Neither zlib nor zstd. "
+    "Possibly a corrupt object file"},
+{"DW_DLE_ALLOC_DECOMPRESS_FAIL(514) malloc() space for uncompressed"
+    "section content failed."},
+{"DW_DLE_ZSTD_DATA_ERROR(515) ZSTD decompress library call failed"},
+{"DW_DLE_ZLIB_ZSTD_MISSING(516) Cannot decompress a section without "
+    "zlib and zstd libraries"}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

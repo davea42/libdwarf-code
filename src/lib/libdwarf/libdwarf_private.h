@@ -56,7 +56,9 @@ typedef SSIZE_T ssize_t;
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
 
-/* The following actually assumes (as used here)
+/*   See also dwarf_elf_load_headers.c for ASNARLRAW */
+
+/*  The following actually assumes (as used here)
     that t is 8 bytes (integer) while s is
     also 8 bytes (Dwarf_Sig8 struct).
     Just slightly different from the ASNAR generally

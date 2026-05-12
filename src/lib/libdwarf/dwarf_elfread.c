@@ -74,6 +74,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_SYS_TYPES_H */
 #include <stdio.h> /* debug printf */
 #include <string.h> /* memset() strdup() strncmp() */
+#ifdef HAVE_ZLIB_H
+#include "zlib.h"
+#endif /* ZLIB */
+#ifdef HAVE_ZSTD_H
+#include "zstd.h"
+#endif /* ZSTD */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -165,7 +171,7 @@ static Dwarf_Unsigned elf_get_nolibelf_file_size(void *obj)
     return elf->f_filesize;
 }
 
-static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
+static Dwarf_Unsigned elf_get_nolibelf_section_count(void *obj)
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
@@ -199,9 +205,47 @@ static int elf_get_nolibelf_section_info(void *obj,
     return DW_DLV_NO_ENTRY;
 }
 
-/*  This interface does not support mmap. It is malloc only */
 static int
-elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
+elf_load_find_sec_ptr(void *obj,Dwarf_Unsigned section_index,
+    struct generic_shdr **sp_inout,
+    int *decompressme, int *errorc)
+{
+    dwarf_elf_object_access_internals_t *elf =
+        (dwarf_elf_object_access_internals_t*)(obj);
+
+    (void)errorc;
+    if (0 < section_index &&
+        section_index < elf->f_loc_shdr.g_count) {
+        struct generic_shdr *sp =
+            elf->f_shdr + section_index;
+
+        if (!sp->gh_size) {
+            return DW_DLV_NO_ENTRY;
+        }
+        *sp_inout = sp;
+        if (sp->gh_flags & SHF_COMPRESSED) {
+            switch(sp->gh_type) {
+            case SHT_STRTAB:
+            case SHT_SYMTAB:
+            case SHT_REL:
+            case SHT_RELA:
+                *decompressme = TRUE;
+                break;
+            case SHT_NOBITS:
+            default:
+                break;
+            }
+        }
+        return DW_DLV_OK;
+    }
+    return DW_DLV_NO_ENTRY;
+}
+
+/*  This interface does not support mmap. It is malloc only
+    Use return_data to return a pointer to an in-memory
+    area with section content. */
+static int
+elf_load_nolibelf_section(void *obj, Dwarf_Unsigned section_index,
     Dwarf_Small **return_data, int *errorc)
 {
     /*  Linux kernel read size limit 0x7ffff000,
@@ -214,64 +258,81 @@ elf_load_nolibelf_section (void *obj, Dwarf_Unsigned section_index,
     Dwarf_Small *  read_target = 0;
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
+    struct generic_shdr *sp = 0;
+    int decompressme = FALSE;
+    int res = 0;
 
-    if (0 < section_index &&
-        section_index < elf->f_loc_shdr.g_count) {
-        int res = 0;
-
-        struct generic_shdr *sp =
-            elf->f_shdr + section_index;
-        if (sp->gh_content) {
-            *return_data = (Dwarf_Small *)sp->gh_content;
-            return DW_DLV_OK;
-        }
-        if (!sp->gh_size) {
-            return DW_DLV_NO_ENTRY;
-        }
-        /*  Guarding against bad values and
-            against overflow */
-        if (sp->gh_size > elf->f_filesize ||
-            sp->gh_offset > elf->f_filesize ||
-            (sp->gh_size + sp->gh_offset) >
-                elf->f_filesize) {
-            *errorc = DW_DLE_ELF_SECTION_ERROR;
-            return DW_DLV_ERROR;
-        }
-        sp->gh_load_type = Dwarf_Alloc_Malloc;
-        sp->gh_content = malloc((size_t)sp->gh_size);
-        if (!sp->gh_content) {
-            *errorc = DW_DLE_ALLOC_FAIL;
-            return DW_DLV_ERROR;
-        }
-        /*  Linux has a 2GB limit on read size.
-            So break this into 2gb pieces.  */
-        remaining_bytes = sp->gh_size;
-        read_size = remaining_bytes;
-        read_offset = sp->gh_offset;
-        read_target = (Dwarf_Small*)sp->gh_content;
-        for ( ; remaining_bytes > 0; read_size = remaining_bytes ) {
-            if (read_size > read_size_limit) {
-                read_size = read_size_limit;
-            }
-            res = RRMOA(elf->f_fd,
-                (void *)read_target, read_offset,
-                read_size,
-                elf->f_filesize, errorc);
-            if (res != DW_DLV_OK) {
-                free(sp->gh_content);
-                sp->gh_content = 0;
-                return res;
-            }
-            remaining_bytes -= read_size;
-            read_offset += read_size;
-            read_target += read_size;
-        }
-        sp->gh_was_alloc = TRUE;
-        sp->gh_load_type = Dwarf_Alloc_Malloc;
+    res = elf_load_find_sec_ptr(obj,section_index,&sp,
+        &decompressme,errorc);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    if (sp->gh_content) {
         *return_data = (Dwarf_Small *)sp->gh_content;
         return DW_DLV_OK;
     }
-    return DW_DLV_NO_ENTRY;
+    /*  Guarding against bad values and
+        against overflow */
+    if (sp->gh_size > elf->f_filesize ||
+        sp->gh_offset > elf->f_filesize ||
+        (sp->gh_size + sp->gh_offset) >
+            elf->f_filesize) {
+        *errorc = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
+
+    sp->gh_load_type = Dwarf_Alloc_Malloc;
+    sp->gh_content = malloc((size_t)sp->gh_size);
+    if (!sp->gh_content) {
+        *errorc = DW_DLE_ALLOC_FAIL;
+        return DW_DLV_ERROR;
+    }
+    /*  Linux has a 2GB limit on read size.
+        So break this into 2gb pieces.  */
+    remaining_bytes = sp->gh_size;
+    read_size = remaining_bytes;
+    read_offset = sp->gh_offset;
+    read_target = (Dwarf_Small*)sp->gh_content;
+    for ( ; remaining_bytes > 0; read_size = remaining_bytes ) {
+        if (read_size > read_size_limit) {
+            read_size = read_size_limit;
+        }
+        res = RRMOA(elf->f_fd,
+            (void *)read_target, read_offset,
+            read_size,
+            elf->f_filesize, errorc);
+        if (res != DW_DLV_OK) {
+            free(sp->gh_content);
+            sp->gh_content = 0;
+            return res;
+        }
+        remaining_bytes -= read_size;
+        read_offset += read_size;
+        read_target += read_size;
+    }
+    sp->gh_was_alloc = TRUE;
+    sp->gh_load_type = Dwarf_Alloc_Malloc;
+
+    if (decompressme) {
+        Dwarf_Unsigned flags = sp->gh_flags;
+        if (flags& SHF_COMPRESSED) {
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+            *errorc = 0;
+            /* decompress and set new section size */
+            _dwarf_do_decompress_elf(elf,sp,errorc);
+            if (*errorc) {
+                free(sp->gh_content);
+                sp->gh_content = 0;
+                return DW_DLV_ERROR;
+            }
+#else /* COMPRESSED TEST */
+            *errorc = DW_DLE_ZLIB_ZSTD_MISSING;
+            return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+        }
+    }
+    *return_data = (Dwarf_Small *)sp->gh_content;
+    return DW_DLV_OK;
 }
 
 #ifdef HAVE_FULL_MMAP
@@ -378,9 +439,9 @@ _dwarf_mmap_calc(Dwarf_Unsigned baseoff,
 }
 
 /*  Calls elf_load_nolibelf_section() if
-    malloc  is preferred. */
+    malloc is preferred. */
 static int
-elf_load_nolibelf_section_a (void* obj,
+elf_load_nolibelf_section_a(void* obj,
     Dwarf_Unsigned    dw_section_index,
     enum Dwarf_Sec_Alloc_Pref *dw_alloc_type,
     Dwarf_Small   **return_data_ptr,
@@ -392,9 +453,18 @@ elf_load_nolibelf_section_a (void* obj,
 {
     int res  = 0;
     enum Dwarf_Sec_Alloc_Pref alloc_type_in = *dw_alloc_type;
-    switch (alloc_type_in) {
-    case Dwarf_Alloc_Malloc: {
-        /* Does NOT alter *return_data_len */
+    struct generic_shdr *sp = 0;
+    int decompressme = FALSE;
+
+    res = elf_load_find_sec_ptr(obj,dw_section_index,&sp,
+        &decompressme,errc);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    if (alloc_type_in == Dwarf_Alloc_Malloc ||
+        TRUE == decompressme) {
+        /*  Does NOT alter *return_data_len
+            unless is symtab/symstr sec compressed*/
         res = elf_load_nolibelf_section(obj,dw_section_index,
             return_data_ptr,errc);
         *return_mmap_base_ptr = 0;
@@ -404,8 +474,9 @@ elf_load_nolibelf_section_a (void* obj,
         /* *return_data_len =  not set */
         return res;
     }
-    case Dwarf_Alloc_Mmap: {
-        Dwarf_Unsigned baseoff = 0; /* for Macos might be non-zero */
+    if (alloc_type_in == Dwarf_Alloc_Mmap) {
+        Dwarf_Unsigned baseoff = 0; /* for Macos might be non-zero
+            but not in Elf */
         Dwarf_Small   *realarea = (void*)-1;
         Dwarf_Unsigned computed_mmaplen = 0;
         Dwarf_Unsigned pageoff = 0;
@@ -413,86 +484,65 @@ elf_load_nolibelf_section_a (void* obj,
             (dwarf_elf_object_access_internals_t*)(obj);
         void *         mmptr = 0;
 
-        if (0 < dw_section_index &&
-            dw_section_index < elf->f_loc_shdr.g_count) {
-            Dwarf_Unsigned seclen = 0;
-            Dwarf_Unsigned secoffset = 0;
-            int localerrc = 0;
-            Dwarf_Unsigned pagesizebits = 0;
+        Dwarf_Unsigned seclen = 0;
+        Dwarf_Unsigned secoffset = 0;
+        int localerrc = 0;
+        Dwarf_Unsigned pagesizebits = 0;
 
-            struct generic_shdr *sp =
-                elf->f_shdr + dw_section_index;
-            if (sp->gh_content) {
-                *return_data_ptr = (Dwarf_Small *)sp->gh_content;
-                return DW_DLV_OK;
-            }
-            seclen = sp->gh_size;
-            if (!seclen) {
-                return DW_DLV_NO_ENTRY;
-            }
-            secoffset = sp->gh_offset;
-            res = _dwarf_mmap_calc(baseoff,secoffset,
-                seclen,elf->f_filesize,
-                &pageoff,&computed_mmaplen,
-                &pagesizebits,&localerrc);
-            if (res == DW_DLV_ERROR ) {
-                /* Does NOT alter *return_data_len */
-                res = elf_load_nolibelf_section(obj,
-                    dw_section_index,
-                    return_data_ptr,errc);
-                *return_mmap_base_ptr = 0;
-                *return_mmap_offset = 0;
-                *return_mmap_len = 0;
-                *dw_alloc_type = Dwarf_Alloc_Malloc;
-                /* *return_data_len =  not set */
-                return res;
-            }
-
-            /*  Coverity Scan CID 531843. Possible overflow
-                computing computed_mmaplen.  This is
-                a false positive,  Marked as such
-                in Coverity scan 16 July 2025. */
-            mmptr = mmap(0, (size_t)computed_mmaplen,
-                PROT_READ|PROT_WRITE, MAP_PRIVATE,
-                elf->f_fd,(off_t)pageoff);
-            if (mmptr == (void *)-1) {
-                /* Does NOT alter *return_data_len */
-                res = elf_load_nolibelf_section(obj,
-                    dw_section_index,
-                    return_data_ptr,errc);
-                *return_mmap_base_ptr = 0;
-                *return_mmap_offset = 0;
-                *return_mmap_len = 0;
-                *dw_alloc_type = Dwarf_Alloc_Malloc;
-                /* *return_data_len =  not set */
-                return res;
-#if 0  /* suppressing mmap fail use malloc instead */
-                *errc = DW_DLE_ELF_SECTION_ERROR;
-                return DW_DLV_ERROR;
-#endif
-            }
-            sp->gh_load_type = Dwarf_Alloc_Mmap;
-            realarea = (Dwarf_Small*)mmptr;
-            sp->gh_mmap_realarea = (char*)realarea;
-            sp->gh_computed_mmaplen = computed_mmaplen;
-            sp->gh_content   = (char *)realarea +
-                (secoffset&pagesizebits);
-            sp->gh_was_alloc = TRUE;
-            *return_data_ptr = (Dwarf_Small *)sp->gh_content;
-            *dw_alloc_type =  sp->gh_load_type;
-            *return_data_len = seclen;
-            *return_mmap_base_ptr = realarea;
-            *return_mmap_offset = pageoff;
-            *return_mmap_len = computed_mmaplen;
-            return DW_DLV_OK;
+        seclen = sp->gh_size;
+        secoffset = sp->gh_offset;
+        res = _dwarf_mmap_calc(baseoff,secoffset,
+            seclen,elf->f_filesize,
+            &pageoff,&computed_mmaplen,
+            &pagesizebits,&localerrc);
+        if (res == DW_DLV_ERROR ) {
+            /* Does NOT alter *return_data_len */
+            res = elf_load_nolibelf_section(obj,
+                dw_section_index,
+                return_data_ptr,errc);
+            *return_mmap_base_ptr = 0;
+            *return_mmap_offset = 0;
+            *return_mmap_len = 0;
+            *dw_alloc_type = Dwarf_Alloc_Malloc;
+            /* *return_data_len =  not set */
+            return res;
         }
-        return DW_DLV_NO_ENTRY;
+
+        /*  Coverity Scan CID 531843. Possible overflow
+            computing computed_mmaplen.  This is
+            a false positive,  Marked as such
+            in Coverity scan 16 July 2025. */
+        mmptr = mmap(0, (size_t)computed_mmaplen,
+            PROT_READ|PROT_WRITE, MAP_PRIVATE,
+            elf->f_fd,(off_t)pageoff);
+        if (mmptr == (void *)-1) {
+            /* Does NOT alter *return_data_len
+                unless is symtab/symstr sec compressed*/
+            res = elf_load_nolibelf_section(obj,
+                dw_section_index,
+                return_data_ptr,errc);
+            *return_mmap_base_ptr = 0;
+            *return_mmap_offset = 0;
+            *return_mmap_len = 0;
+            *dw_alloc_type = Dwarf_Alloc_Malloc;
+            /* *return_data_len =  not set */
+            return res;
+        }
+        sp->gh_load_type = Dwarf_Alloc_Mmap;
+        realarea = (Dwarf_Small*)mmptr;
+        sp->gh_mmap_realarea = (char*)realarea;
+        sp->gh_computed_mmaplen = computed_mmaplen;
+        sp->gh_content   = (char *)realarea +
+            (secoffset&pagesizebits);
+        sp->gh_was_alloc = TRUE;
+        *return_data_ptr = (Dwarf_Small *)sp->gh_content;
+        *dw_alloc_type =  sp->gh_load_type;
+        *return_data_len = seclen;
+        *return_mmap_base_ptr = realarea;
+        *return_mmap_offset = pageoff;
+        *return_mmap_len = computed_mmaplen;
+        return DW_DLV_OK;
     }
-    break;
-    case Dwarf_Alloc_None:
-    default:
-    break;
-    } /* end switch */
     *errc = DW_DLE_ELF_SECTION_ERROR;
     return DW_DLV_ERROR;
 }
@@ -795,6 +845,9 @@ _dwarf_destruct_elf_nlaccess(void * obj)
                 munmap(shp->gh_mmap_realarea,
                     (size_t)shp->gh_computed_mmaplen);
                 /* If returned non-zero unmap failed */
+                shp->gh_was_alloc = FALSE;
+                shp->gh_mmap_realarea =0;
+                shp->gh_computed_mmaplen = 0;
             }
         } break;
 #endif /* HAVE_FULL_MMAP */
@@ -808,12 +861,10 @@ _dwarf_destruct_elf_nlaccess(void * obj)
         shp->gh_sht_group_array = 0;
         shp->gh_sht_group_array_count = 0;
     }
-    free(ep->f_shdr);
-    ep->f_shdr = 0;
     ep->f_loc_shdr.g_count = 0;
     free(ep->f_phdr);
     ep->f_phdr = 0;
-    free(ep->f_elf_shstrings_data);
+    /* Freed via one of the gh_content above */
     ep->f_elf_shstrings_data = 0;
     ep->f_elf_shstrings_max = 0;
     free(ep->f_dynamic);
@@ -826,6 +877,8 @@ _dwarf_destruct_elf_nlaccess(void * obj)
     ep->f_symtab = 0;
     free(ep->f_dynsym);
     ep->f_dynsym = 0;
+    free(ep->f_shdr);
+    ep->f_shdr = 0;
 
     /* if TRUE close f_fd on destruct.*/
     if (ep->f_destruct_close_fd) {
@@ -976,6 +1029,7 @@ _dwarf_elf_object_access_internals_init(
         _dwarf_destruct_elf_nlaccess((void *)localdoas);
         localdoas = 0;
         return res;
+
     }
     /* We are not looking at symbol strings for now. */
     res = _dwarf_load_elf_symstr(intfc,errcode);
@@ -1001,7 +1055,10 @@ _dwarf_elf_object_access_internals_init(
 
         shp = intfc->f_shdr +i;
         section_type = shp->gh_type;
-        if (!shp->gh_namestring) {
+        /*  An empty namestring is a suggestion
+            of corrupt Elf, and useless PE/Mach-o
+            10 May 2026. */
+        if (!shp->gh_namestring || !shp->gh_namestring[0]) {
             /*  A serious error which we ignore here
                 as it will be caught elsewhere
                 if necessary. */

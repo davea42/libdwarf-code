@@ -1,10 +1,106 @@
+2026-05-12:  David Anderson
+    commit 8fbedf47c0c3915abd9fa384b130e8a3897d10eb
+
+    Nothing in the API or dwarfdump changes in this
+    revision.
+
+    A major revision to decompressed arbitrary
+    Elf sections which are marked SHF_COMPRESSED.
+    Previously only a few section types
+    (mainly DWARF specific, such as .debug_info)
+    would be decompressed.
+    If, for example, the section strings themselves
+    (with section names!) are compressed one cannot
+    properly deal with the section headers themselves (nothing
+    will show up properly named).
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_elfread.h
+
+2026-05-12:  David Anderson
+    commit 8ee4abda0574aed931ef74f65a0cc530cd6c4bcf
+
+    Reformatted comments to match project codingstyle.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2026-05-12:  David Anderson
+    commit 197a2cfd010b5f94a73b4d936f2a131e9d533590
+
+    Updateing date, no other changes needed.
+            modified:   README.md
+
+2026-05-12:  David Anderson
+    commit 34cc11223c2fa1d587cfb287ccad1468673a4575
+
+    Added comment referring to ASNARLRAW
+    as that is similar to but different from
+    the other ASN* macros used to read
+    data fields from object-file size/format/endianness to
+    internal generic values like Dwarf_Unsigned etc.
+            modified:   libdwarf_private.h
+
+2026-05-12:  David Anderson
+    commit 6cdae1ad93e416f76774bd5608969dc65afb0d34
+
+    Added a sanity check to validate
+    a *.dss_data pointer non-null.
+            modified:   dwarf_util.c
+
+2026-05-12:  David Anderson
+    commit 9cd433936b223b0d0f3a6236a6c6d27f2ba1e741
+
+    Added new error codes used
+    in the reorganized elf-object reader code.
+            modified:   libdwarf.h
+
+2026-05-12:  David Anderson
+    commit 577803d7db065ef02e79d97f41aeb44f5119c4a3
+
+    Added small explanation.
+            modified:   dwarf_setup_sections.c
+
+2026-05-12:  David Anderson
+    commit b06af9984b1c37762aab43c91fd63ff3a0e7dde8
+
+    Added default explanatory text for new error values.
+            modified:   dwarf_errmsg_list.h
+
+2026-05-12:  David Anderson
+    commit 17c64d3eceaec97360d2a38700647a662d37d033
+
+    Removing #if 0 code as not relevant.
+    Added some commentary for clarity of goals.
+            modified:   dwarf_init_finish.c
+
+2026-05-05:  David Anderson
+    commit b77072b86835e5e2d0f7cece727c9251cec6c701
+
+    Adding options (not in configure or cmake)
+    to build with DrMemory for checking memory
+    resource used in testing.
+            modified:   meson.build
+            modified:   meson_options.txt
+
+2026-05-05:  David Anderson
+    commit 4219b9d3c386f75ca5f47ade03def1a157057e49
+
+    Normal update on month change.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-04:  David Anderson
+    commit 651d464db440bf31a7e0fe92bc7df0801edacd69
+
+    details on dwarf line table report change added.
+            modified:   ChangeLog
+
 2026-05-04:  David Anderson
     commit 95e2a516a4333f57875469a1b4ea86f0c5d96686
 
             Documenting the line table change in more detail.
             modified:   ChangeLog
     Shortened lines, removed a trailing space character.
-            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+           modified: src/lib/libdwarf/dwarf_line_table_reader_common.h
 
 2026-05-04:  Mehdi
     commit 156c8bf0cc635facd05833b1d2024eee6f82969b

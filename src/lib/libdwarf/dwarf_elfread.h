@@ -117,6 +117,7 @@ struct generic_shdr {
         free() or
         unmap this  this if not null*/
     char *       gh_content;
+    Dwarf_Unsigned gh_compressed_len; /*0 if was not compressed */
     /*  Actual load type */
     enum Dwarf_Sec_Alloc_Pref gh_load_type;
     /*  Normally TRUE, meaning do free/munmap in dwarf_finish() */
@@ -258,14 +259,17 @@ int dwarf_construct_elf_access(int fd,
     dwarf_elf_object_access_internals_t **ep,int *errcode);
 int dwarf_destruct_elf_access(
     dwarf_elf_object_access_internals_t *ep,int *errcode);
-int _dwarf_load_elf_header(
-    dwarf_elf_object_access_internals_t *ep,int *errcode);
+int _dwarf_load_elf_header(dwarf_elf_object_access_internals_t *ep,
+    int *errcode);
 int _dwarf_load_elf_sectheaders(
     dwarf_elf_object_access_internals_t* ep,int *errcode);
 int _dwarf_load_elf_symtab_symbols(
     dwarf_elf_object_access_internals_t *ep,int *errcode);
-int _dwarf_load_elf_symstr(
-    dwarf_elf_object_access_internals_t *ep, int *errcode);
+int _dwarf_load_elf_symstr(dwarf_elf_object_access_internals_t *ep,
+    int *errcode);
+int _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
+    struct generic_shdr *psh,
+    int* error);
 
 /*  These two enums used for type safety in passing
     values. */
@@ -280,6 +284,15 @@ enum RelocOffsetSize {
 
 int _dwarf_load_elf_relx(dwarf_elf_object_access_internals_t *ep,
     Dwarf_Unsigned secnum,enum RelocRela,int *errcode);
+#ifndef SHF_COMPRESSED
+#define SHF_COMPRESSED (1 << 11)
+#endif /* SHF_COMPRESSED */
+#ifndef ELFCOMPRESS_ZLIB
+#define ELFCOMPRESS_ZLIB        1
+#endif /*ELFCOMPRESS_ZLIB*/
+#ifndef ELFCOMPRESS_ZSTD
+#define ELFCOMPRESS_ZSTD        2
+#endif /*ELFCOMPRESS_ZSTD*/
 
 #ifndef EI_NIDENT
 #define EI_NIDENT 16

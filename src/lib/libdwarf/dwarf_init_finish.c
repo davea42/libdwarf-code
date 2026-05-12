@@ -97,14 +97,16 @@
 static const char * _dwarf_pref_name(enum Dwarf_Sec_Alloc_Pref pref)
 {
     switch(pref) {
-    case Dwarf_Alloc_Malloc) {
+    case Dwarf_Alloc_Malloc:
         return "Dwarf_Alloc_Malloc";
-    case Dwarf_Alloc_Mmap){
+    case Dwarf_Alloc_Mmap:
         return "Dwarf_Alloc_Mmap";
-    case Dwarf_Alloc_None){
+    case Dwarf_Alloc_None):
         return "Dwarf_Alloc_None";
+    default:
+        break;
     }
-    return "Unknown. Error";
+    return "Dwarf_Alloc Unknown. Error";
 }
 
 static void dump_load_data(const char *msg,
@@ -1327,10 +1329,14 @@ do_decompress(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     section->dss_compressed_length = srclen;
+    /*  Checking if section content (not
+        section name) starts with ZLIB */
     if (!strncmp("ZLIB",(const char *)src,4)) {
         unsigned i = 0;
         unsigned l = 8;
         unsigned char *c = src+4;
+        /*  The next 8 bytes are a big-endian
+            unsigned integer giving uncompressed length */
         for ( ; i < l; ++i,c++) {
             uncompressed_len <<= 8;
             uncompressed_len += *c;
@@ -1391,44 +1397,8 @@ do_decompress(Dwarf_Debug dbg,
             " The compressed section is not properly formatted");
         return DW_DLV_ERROR;
     }
-#if 0 /* Dropping heuristic check. Not reliable. */
-    /*  The heuristics are unreliable. Turned off now  */
-    if (!zstdcompress) {
-        /*  According to zlib.net zlib essentially never expands
-            the data when compressing.  There is no statement
-            about  any effective limit in the compression factor
-            though we, here, assume  such a limit to check
-            for sanity in the object file.
-            These tests are heuristics.  */
-        int res = 0;
-        Dwarf_Unsigned max_inflated_len =
-            srclen*ALLOWED_ZLIB_INFLATION;
-
-        res = check_uncompr_inflation(dbg,
-            error, uncompressed_len, srclen,max_inflated_len,
-            "zlib");
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-    }
-    if (zstdcompress) {
-        /*  According to zlib.net zlib essentially never expands
-            the data when compressing.  There is no statement
-            about  any effective limit in the compression factor
-            though we, here, assume  such a limit to check
-            for sanity in the object file.
-            These tests are heuristics.  */
-        int res = 0;
-        Dwarf_Unsigned max_inflated_len =
-            srclen*ALLOWED_ZSTD_INFLATION;
-        res = check_uncompr_inflation(dbg,
-            error, uncompressed_len, srclen,max_inflated_len,
-            "zstd");
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-    }
-#endif /* 0 */
+    /*  Dropped heuristic of excess compress inflation.
+        Not reliable. */
     if ((src +srclen) > endsection) {
         _dwarf_error_string(dbg, error,
             DW_DLE_ZLIB_SECTION_SHORT,
@@ -1594,6 +1564,8 @@ Hold off on this, keep old error for the moment
         /* Neither zdebug nor reloc apply to .group sections. */
         return res;
     }
+    /*  We delay decompress of dwarfdump-important sections
+        to here, not decompress in elf-specific reader. */
     if ((section->dss_zdebug_requires_decompress ||
         section->dss_shf_compressed ||
         section->dss_ZLIB_compressed) &&

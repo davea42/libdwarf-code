@@ -69,6 +69,9 @@ add_debug_section_info(Dwarf_Debug dbg,
         If not set on some section we claim (later) that there
         is no DWARF info present. see 'foundDwarf' in this file */
     int duperr,int emptyerr,int have_dwarf,
+
+    /*  havezdebug set if actual section name
+        starts with .zdebug */
     int havezdebug,
     int *err)
 {

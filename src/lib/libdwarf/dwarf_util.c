@@ -899,6 +899,12 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context context,
         dbg->de_debug_abbrev.dss_data;
     Dwarf_Unsigned     hashable_val             = 0;
 
+    if (!dbg->de_debug_abbrev.dss_data) {
+        _dwarf_error_string(dbg, error,DW_DLE_DEBUG_ABBREV_NULL,
+            "DW_DLE_DEBUG_ABBREV_NULL: Missing "
+            "abbrev section content! Corrupt object file");
+        return DW_DLV_ERROR;
+    }
     if (!hash_table_base->tb_entries) {
         hash_table_base->tb_table_entry_count =
             HT_DEFAULT_TABLE_SIZE;

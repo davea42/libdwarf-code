@@ -57,6 +57,26 @@ calls
 #include <string.h> /* memcpy() strcmp() strdup()
     strlen() strncmp() */
 
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit(), C89 malloc */
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
+#include <sys/types.h>   /* for open() */
+#include <sys/stat.h>   /* for open() */
+#include <fcntl.h>   /* for open() */
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* lseek read close */
+#endif /* HAVE_UNISTD_H */
+#ifdef HAVE_ZLIB_H
+#include "zlib.h"
+#endif /* ZLIB */
+#ifdef HAVE_ZSTD_H
+#include "zstd.h"
+#endif /* ZSTD */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_local_malloc.h"
@@ -91,6 +111,35 @@ dumpsizes(int line,Dwarf_Unsigned s,
 }
 #endif /*0*/
 
+/*  The following actually assumes (as used here)
+    that t is 8 bytes (integer) while s is
+    l bytes.
+    Used only in dwarf_elf_load_headers.c for
+    compressed sections.
+    Just slightly different from the ASNAR generally
+    used in libdwarf.  */
+#ifdef WORDS_BIGENDIAN
+#define ASNARLRAW(dwcopy,ec,t,s,l)        \
+    do {                                  \
+        unsigned tbyte = sizeof(t) - (l); \
+        *ec = 0;                           \
+        if (sizeof(t) < (l)) {            \
+            *ec = DW_DLE_ZLIB_UNCOMPRESS_ERROR; \
+        }                                 \
+        (t) = 0;                          \
+        dwcopy(((char *)&(t))+tbyte ,&(s)[0],(l));\
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define ASNARLRAW(dwcopy,ec,t,s,l)    \
+    do {                              \
+        *ec = 0;                       \
+        if (sizeof(t) < (l)) {        \
+            *ec = DW_DLE_ZLIB_UNCOMPRESS_ERROR; \
+        }                             \
+        dwcopy(&(t),&(s)[0],(l));     \
+    } while (0)
+#endif /* end LITTLE- BIG-ENDIAN */
+
 int nibblecounts[16] = {
 0,1,1,2,
 1,2,2,3,
@@ -112,6 +161,145 @@ getbitsoncount(Dwarf_Unsigned v_in)
     return bitscount;
 }
 
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+/*  This is exclusively for reading .symtab and .symstr
+    sections. See dwarf_elf_init() for decompressing all
+    other sections. We need decompress to do relocations (if any
+    relocations and if either of these sections compressed).  */
+int
+_dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
+    struct generic_shdr *psh,
+    int* error)
+{
+    Dwarf_Small *basesrc = (Dwarf_Small*)psh->gh_content;
+    Dwarf_Small *src = basesrc;
+    Dwarf_Small *dest = 0;
+    Dwarf_Unsigned destlen = 0;
+    Dwarf_Unsigned srclen = psh->gh_size;
+    Dwarf_Unsigned flags = psh->gh_flags;
+    Dwarf_Small *endsection = 0;
+    int zstdcompress = FALSE;
+    Dwarf_Unsigned uncompressed_len = 0;
+
+    endsection = basesrc + srclen;
+    if ((basesrc + 12) > endsection) {
+        *error = DW_DLE_ZLIB_SECTION_SHORT;
+        /*_dwarf_error_string(dbg, error,DW_DLE_ZLIB_SECTION_SHORT,
+            "DW_DLE_ZLIB_SECTION_SHORT"
+            "Section too short to be either zlib or zstd related"); */
+        return DW_DLV_ERROR;
+    }
+    uncompressed_len = 0;
+    /*  We are looking at the first bytes of the section content,
+        not a section name string. */
+    if (!strncmp("ZLIB",(const char *)src,4)) {
+        /*  This should be impossible */
+        unsigned i = 0;
+        unsigned l = 8;
+        unsigned char *c = src+4;
+        for ( ; i < l; ++i,c++) {
+            uncompressed_len <<= 8;
+            uncompressed_len += *c;
+        }
+        src = src + 12;
+        srclen -= 12;
+        *error = DW_DLE_ZLIB_SECTION_SHORT;
+        return DW_DLV_OK;
+    } else  if (flags & SHF_COMPRESSED) {
+        /*  The prefix is a struct:
+            unsigned int type; followed by pad if following are 64bit!
+            size-of-target-address size
+            size-of-target-address
+        */
+        Dwarf_Small *ptr    = (Dwarf_Small *)src;
+        Dwarf_Unsigned type = 0;
+        Dwarf_Unsigned size = 0;
+        /* Dwarf_Unsigned addralign = 0; */
+        unsigned fldsize    = ep->f_pointersize/8;
+        unsigned structsize = 3* fldsize;
+        ASNARLRAW(ep->f_copy_word,error,type,ptr,DWARF_32BIT_SIZE);
+        if (*error) {
+            return DW_DLV_ERROR;
+        }
+        ptr += fldsize;
+        ASNARLRAW(ep->f_copy_word,error,size,ptr,fldsize);
+        if (*error) {
+            return DW_DLV_ERROR;
+        }
+        type = psh->gh_type;
+        switch(type) {
+        case ELFCOMPRESS_ZLIB:
+            break;
+        case ELFCOMPRESS_ZSTD:
+            zstdcompress = TRUE;
+            break;
+        default: {
+            /* Likely a corrupt object file. */
+            *error = DW_DLE_COMPRESSED_FORMAT_ODD;
+            return DW_DLV_ERROR;
+        }
+        }
+        uncompressed_len = size;
+        src    += structsize;
+        srclen -= structsize;
+    } else {
+        /* Likely a corrupt object file. */
+        *error = DW_DLE_COMPRESSED_FORMAT_UNKNOWN;
+        return DW_DLV_ERROR;
+    }
+    /*  Dropped heuristic of excess compress inflation.
+        Not reliable. */
+    if ((src +srclen) > endsection) {
+        *error = DW_DLE_ZLIB_SECTION_SHORT;
+        return DW_DLV_ERROR;
+    }
+    destlen = uncompressed_len;
+    dest = malloc(destlen);
+    if (!dest) {
+        *error = DW_DLE_ALLOC_DECOMPRESS_FAIL;
+        return DW_DLV_ERROR;
+    }
+    /*  uncompress is a zlib function. */
+    if (!zstdcompress) {
+        int res = 0;
+        uLongf dlen = destlen;
+
+        res = uncompress(dest,&dlen,src,srclen);
+        if (res == Z_BUF_ERROR) {
+            free(dest);
+            *error = DW_DLE_ZLIB_BUF_ERROR;
+            return DW_DLV_ERROR;
+        } else if (res == Z_MEM_ERROR) {
+            free(dest);
+            *error = DW_DLE_ZLIB_BUF_ERROR;
+            return DW_DLV_ERROR;
+        } else if (res != Z_OK) {
+            free(dest);
+            *error = DW_DLE_ZLIB_DATA_ERROR;
+            return DW_DLV_ERROR;
+        }
+    }
+    /*  ZSTD_decompress is a zstd function. */
+    if (zstdcompress) {
+        size_t zsize =
+            ZSTD_decompress(dest,destlen,src,srclen);
+        if (zsize != destlen) {
+            free(dest);
+            *error = DW_DLE_ZSTD_DATA_ERROR;
+            return DW_DLV_ERROR;
+        }
+    }
+    /* Z_OK */
+    free(psh->gh_content);
+    psh->gh_content = (char *)dest;
+    psh->gh_load_type = Dwarf_Alloc_Malloc;
+    psh->gh_was_alloc = TRUE;
+    psh->gh_size = destlen;
+    psh->gh_compressed_len = srclen;
+    return DW_DLV_OK;
+}
+#endif /*defined(HAVE_ZLIB) && defined(HAVE_ZSTD)*/
+
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
     Dwarf_Unsigned sectype,
@@ -121,6 +309,9 @@ _dwarf_load_elf_section_is_dwarf(const char *sname,
     *is_rela = FALSE;
     if (_dwarf_ignorethissection(sname)) {
         return FALSE;
+    }
+    if (sectype == SHT_REL) {
+        return TRUE;
     }
     if (sectype == SHT_RELA) {
         *is_rela = TRUE;
@@ -305,130 +496,6 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     ep->f_loc_ehdr.g_totalsize = sizeof(dw_elf64_ehdr);
     return DW_DLV_OK;
 }
-
-#if 0 /* ngeneric_phdr_from_phdr32 not needed */
-static int
-generic_phdr_from_phdr32(dwarf_elf_object_access_internals_t* ep,
-    struct generic_phdr **phdr_out,
-    Dwarf_Unsigned * count_out,
-    Dwarf_Unsigned offset,
-    Dwarf_Unsigned entsize,
-    Dwarf_Unsigned count,
-    int *errcode)
-{
-    dw_elf32_phdr *pph =0;
-    dw_elf32_phdr *orig_pph =0;
-    struct generic_phdr *gphdr =0;
-    struct generic_phdr *orig_gphdr =0;
-    Dwarf_Unsigned i = 0;
-    int res = 0;
-
-    *count_out = 0;
-    pph = (dw_elf32_phdr *)calloc(count , entsize);
-    if (pph == 0) {
-        *errcode =  DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
-    gphdr = (struct generic_phdr *)calloc(count,sizeof(*gphdr));
-    if (gphdr == 0) {
-        free(pph);
-        *errcode =  DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
-
-    orig_pph = pph;
-    orig_gphdr = gphdr;
-    res = RRMOA(ep->f_fd,pph,offset,count*entsize,
-        ep->f_filesize,errcode);
-    if (res != DW_DLV_OK) {
-        free(pph);
-        free(gphdr);
-        return res;
-    }
-    for ( i = 0; i < count;
-        ++i,  pph++,gphdr++) {
-        ASNAR(ep->f_copy_word,gphdr->gp_type,pph->p_type);
-        ASNAR(ep->f_copy_word,gphdr->gp_offset,pph->p_offset);
-        ASNAR(ep->f_copy_word,gphdr->gp_vaddr,pph->p_vaddr);
-        ASNAR(ep->f_copy_word,gphdr->gp_paddr,pph->p_paddr);
-        ASNAR(ep->f_copy_word,gphdr->gp_filesz,pph->p_filesz);
-        ASNAR(ep->f_copy_word,gphdr->gp_memsz,pph->p_memsz);
-        ASNAR(ep->f_copy_word,gphdr->gp_flags,pph->p_flags);
-        ASNAR(ep->f_copy_word,gphdr->gp_align,pph->p_align);
-    }
-    free(orig_pph);
-    *phdr_out = orig_gphdr;
-    *count_out = count;
-    ep->f_phdr = orig_gphdr;
-    ep->f_loc_phdr.g_name = "Program Header";
-    ep->f_loc_phdr.g_offset = offset;
-    ep->f_loc_phdr.g_count = count;
-    ep->f_loc_phdr.g_entrysize = sizeof(dw_elf32_phdr);
-    ep->f_loc_phdr.g_totalsize = sizeof(dw_elf32_phdr)*count;
-    return DW_DLV_OK;
-}
-
-static int
-generic_phdr_from_phdr64(dwarf_elf_object_access_internals_t* ep,
-    struct generic_phdr **phdr_out,
-    Dwarf_Unsigned * count_out,
-    Dwarf_Unsigned offset,
-    Dwarf_Unsigned entsize,
-    Dwarf_Unsigned count,
-    int *errcode)
-{
-    dw_elf64_phdr *pph =0;
-    dw_elf64_phdr *orig_pph =0;
-    struct generic_phdr *gphdr =0;
-    struct generic_phdr *orig_gphdr =0;
-    int res = 0;
-    Dwarf_Unsigned i = 0;
-
-    *count_out = 0;
-    pph = (dw_elf64_phdr *)calloc(count , entsize);
-    if (pph == 0) {
-        *errcode =  DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
-    gphdr = (struct generic_phdr *)calloc(count,sizeof(*gphdr));
-    if (gphdr == 0) {
-        free(pph);
-        *errcode =  DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
-
-    orig_pph = pph;
-    orig_gphdr = gphdr;
-    res = RRMOA(ep->f_fd,pph,offset,count*entsize,
-        ep->f_filesize,errcode);
-    if (res != DW_DLV_OK) {
-        free(pph);
-        free(gphdr);
-        return res;
-    }
-    for ( i = 0; i < count;
-        ++i,  pph++,gphdr++) {
-        ASNAR(ep->f_copy_word,gphdr->gp_type,pph->p_type);
-        ASNAR(ep->f_copy_word,gphdr->gp_offset,pph->p_offset);
-        ASNAR(ep->f_copy_word,gphdr->gp_vaddr,pph->p_vaddr);
-        ASNAR(ep->f_copy_word,gphdr->gp_paddr,pph->p_paddr);
-        ASNAR(ep->f_copy_word,gphdr->gp_filesz,pph->p_filesz);
-        ASNAR(ep->f_copy_word,gphdr->gp_memsz,pph->p_memsz);
-        ASNAR(ep->f_copy_word,gphdr->gp_flags,pph->p_flags);
-        ASNAR(ep->f_copy_word,gphdr->gp_align,pph->p_align);
-    }
-    free(orig_pph);
-    *phdr_out = orig_gphdr;
-    *count_out = count;
-    ep->f_phdr = orig_gphdr;
-    ep->f_loc_phdr.g_name = "Program Header";
-    ep->f_loc_phdr.g_offset = offset;
-    ep->f_loc_phdr.g_count = count;
-    ep->f_loc_phdr.g_entrysize = sizeof(dw_elf64_phdr);
-    ep->f_loc_phdr.g_totalsize = sizeof(dw_elf64_phdr)*count;
-    return DW_DLV_OK;
-}
-#endif /*0*/
 
 static void
 copysection32(
@@ -673,47 +740,77 @@ static int
 _dwarf_generic_elf_load_symbols32(
     dwarf_elf_object_access_internals_t *ep,
     struct generic_symentry **gsym_out,
-    Dwarf_Unsigned offset,Dwarf_Unsigned size,
+    struct generic_shdr *psh,
     Dwarf_Unsigned *count_out,int *errcode)
 {
-    Dwarf_Unsigned ecount = 0;
-    Dwarf_Unsigned size2 = 0;
-    Dwarf_Unsigned i = 0;
-    dw_elf32_sym *psym = 0;
-    dw_elf32_sym *orig_psym = 0;
+    Dwarf_Unsigned  ecount = 0;
+    Dwarf_Unsigned  size2 = 0;
+    Dwarf_Unsigned  offset =0;
+    Dwarf_Unsigned  size =0;
+    Dwarf_Unsigned  i = 0;
+    dw_elf32_sym   *psym = 0;
     struct generic_symentry * gsym = 0;
     struct generic_symentry * orig_gsym = 0;
-    int res = 0;
+    Dwarf_Unsigned flags = 0;
+    Dwarf_Small   *content = 0;
+    int            res = 0;
 
+    flags = psh->gh_flags;
+    size = psh->gh_size;
+    offset = psh->gh_offset;
+
+    content = calloc(1,size);
+    if (!content) {
+        *errcode = DW_DLE_ALLOC_FAIL;
+        return DW_DLV_ERROR;
+    }
+    res = RRMOA(ep->f_fd,content,offset,size,
+        ep->f_filesize,errcode);
+    if (res != DW_DLV_OK) {
+        free(content);
+        return res;
+    }
+    psh->gh_content = (char *)content;
+    psh->gh_load_type = Dwarf_Alloc_Malloc;
+    if (flags& SHF_COMPRESSED) {
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+        *errcode = 0;
+        _dwarf_do_decompress_elf(ep,psh,errcode);
+        /* decompress and set new section size */
+        if (*errcode) {
+            free(psh->gh_content);
+            psh->gh_content = 0;
+            return DW_DLV_ERROR;
+        }
+#else /* COMPRESSED TEST */
+        free(psh->gh_content);
+        *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
+        return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+    }
+    size = psh->gh_size;
     ecount = (long)(size/sizeof(dw_elf32_sym));
     size2 = ecount * sizeof(dw_elf32_sym);
     if (size != size2) {
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
     if (size >= ep->f_filesize ) {
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
-    psym = calloc(ecount,sizeof(dw_elf32_sym));
-    if (!psym) {
-        *errcode = DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
+    psym = (dw_elf32_sym *)psh->gh_content;
     gsym = calloc(ecount,sizeof(struct generic_symentry));
     if (!gsym) {
-        free(psym);
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    res = RRMOA(ep->f_fd,psym,offset,size,
-        ep->f_filesize,errcode);
-    if (res!= DW_DLV_OK) {
-        free(psym);
-        free(gsym);
-        return res;
-    }
-    orig_psym = psym;
     orig_gsym = gsym;
     for ( i = 0; i < ecount; ++i,++psym,++gsym) {
         Dwarf_Unsigned bind = 0;
@@ -730,9 +827,10 @@ _dwarf_generic_elf_load_symbols32(
         gsym->gs_bind = bind;
         gsym->gs_type = type;
     }
+    psh->gh_was_alloc = TRUE;
+    psh->gh_load_type = Dwarf_Alloc_Malloc;
     *count_out = ecount;
     *gsym_out = orig_gsym;
-    free(orig_psym);
     return DW_DLV_OK;
 }
 
@@ -740,48 +838,87 @@ static int
 _dwarf_generic_elf_load_symbols64(
     dwarf_elf_object_access_internals_t *ep,
     struct generic_symentry **gsym_out,
-    Dwarf_Unsigned offset,Dwarf_Unsigned size,
+    struct generic_shdr *psh,
     Dwarf_Unsigned *count_out,int *errcode)
 {
     Dwarf_Unsigned ecount = 0;
+    Dwarf_Unsigned size = 0;
+    Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned size2 = 0;
     Dwarf_Unsigned i = 0;
-    dw_elf64_sym *psym = 0;
-    dw_elf64_sym *orig_psym = 0;
+    dw_elf64_sym  *psym = 0;
     struct generic_symentry * gsym = 0;
     struct generic_symentry * orig_gsym = 0;
-    int res = 0;
+    int            res = 0;
+    Dwarf_Unsigned flags = 0;
+    char *         content = 0;
 
+    flags = psh->gh_flags;
+    size = psh->gh_size;
+    offset = psh->gh_offset;
+    content = calloc(1,size);
+    if (!content) {
+        *errcode = DW_DLE_ALLOC_FAIL;
+        return DW_DLV_ERROR;
+    }
+    res = RRMOA(ep->f_fd,content,offset,size,
+        ep->f_filesize,errcode);
+    if (res != DW_DLV_OK) {
+        free(content);
+        return res;
+    }
+    psh->gh_content = content;
+    psh->gh_load_type = Dwarf_Alloc_Malloc;
+    if (flags& SHF_COMPRESSED) {
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+        *errcode = 0;
+        _dwarf_do_decompress_elf(ep,psh,errcode);
+        /* decompress and set new section size */
+
+        if (*errcode) {
+            free(psh->gh_content);
+            psh->gh_content = 0;
+            return DW_DLV_ERROR;
+        }
+#else /* COMPRESSED TEST */
+        free(psh->gh_content);
+        psh->gh_content = 0;
+        *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
+        return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+    }
+    size = psh->gh_size;
     ecount = (long)(size/sizeof(dw_elf64_sym));
     size2 = ecount * sizeof(dw_elf64_sym);
     if (size != size2) {
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
     if (size >= ep->f_filesize ) {
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
-    psym = calloc(ecount,sizeof(dw_elf64_sym));
-    if (!psym) {
-        *errcode = DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
+    psym = (dw_elf64_sym *)psh->gh_content;
     gsym = calloc(ecount,sizeof(struct generic_symentry));
     if (!gsym) {
-        free(psym);
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
     res = RRMOA(ep->f_fd,psym,offset,size,
         ep->f_filesize,errcode);
     if (res!= DW_DLV_OK) {
-        free(psym);
         free(gsym);
+        free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_ALLOC_FAIL;
         return res;
     }
-    orig_psym = psym;
     orig_gsym = gsym;
     for ( i = 0; i < ecount; ++i,++psym,++gsym) {
         Dwarf_Unsigned bind = 0;
@@ -798,9 +935,9 @@ _dwarf_generic_elf_load_symbols64(
         gsym->gs_bind = bind;
         gsym->gs_type = type;
     }
+    psh->gh_was_alloc = TRUE;
     *count_out = ecount;
     *gsym_out = orig_gsym;
-    free(orig_psym);
     return DW_DLV_OK;
 }
 
@@ -825,13 +962,11 @@ _dwarf_generic_elf_load_symbols(
     }
     if (ep->f_offsetsize == 32) {
         res = _dwarf_generic_elf_load_symbols32(ep,
-            &gsym,
-            psh->gh_offset,psh->gh_size,
+            &gsym,psh,
             &count,errcode);
     } else if (ep->f_offsetsize == 64) {
         res = _dwarf_generic_elf_load_symbols64(ep,
-            &gsym,
-            psh->gh_offset,psh->gh_size,
+            &gsym,psh,
             &count,errcode);
     } else {
         *errcode = DW_DLE_OFFSET_SIZE;
@@ -840,37 +975,13 @@ _dwarf_generic_elf_load_symbols(
     if (res == DW_DLV_OK) {
         *gsym_out = gsym;
         *count_out = count;
+    } else {
+        free(psh->gh_content);
+        psh->gh_content = 0;
+        psh->gh_was_alloc = FALSE;
     }
     return res;
 }
-#if 0 /* dwarf_load_elf_dynsym_symbols() not needed */
-int
-dwarf_load_elf_dynsym_symbols(
-    dwarf_elf_object_access_internals_t *ep, int*errcode)
-{
-    int res = 0;
-    struct generic_symentry *gsym = 0;
-    Dwarf_Unsigned count = 0;
-    Dwarf_Unsigned secnum = ep->f_dynsym_sect_index;
-    struct generic_shdr * psh = 0;
-
-    if (!secnum) {
-        return DW_DLV_NO_ENTRY;
-    }
-    psh = ep->f_shdr + secnum;
-    if we ever use this... gh_size big?
-    res = _dwarf_generic_elf_load_symbols(ep,
-        secnum,
-        psh,
-        &gsym,
-        &count,errcode);
-    if (res == DW_DLV_OK) {
-        ep->f_dynsym = gsym;
-        ep->f_loc_dynsym.g_count = count;
-    }
-    return res;
-}
-#endif /*0*/
 
 int
 _dwarf_load_elf_symtab_symbols(
@@ -898,6 +1009,7 @@ _dwarf_load_elf_symtab_symbols(
     if (res == DW_DLV_OK) {
         ep->f_symtab = gsym;
         ep->f_loc_symtab.g_count = count;
+    } else {
     }
     return res;
 }
@@ -1078,47 +1190,6 @@ generic_rel_from_rel64(
     return DW_DLV_OK;
 }
 
-#if 0 /* dwarf_load_elf_dynstr() not needed */
-int
-dwarf_load_elf_dynstr(
-    dwarf_elf_object_access_internals_t *ep, int *errcode)
-{
-    struct generic_shdr *strpsh = 0;
-    int res = 0;
-    Dwarf_Unsigned strsectindex  =0;
-    Dwarf_Unsigned strsectlength = 0;
-
-        if (!ep->f_dynsym_sect_strings_sect_index) {
-            return DW_DLV_NO_ENTRY;
-        }
-        strsectindex = ep->f_dynsym_sect_strings_sect_index;
-        strsectlength = ep->f_dynsym_sect_strings_max;
-        strpsh = ep->f_shdr + strsectindex;
-        /*  Alloc an extra byte as a guaranteed NUL byte
-            at the end of the strings in case the section
-            is corrupted and lacks a NUL at end. */
-        ep->f_dynsym_sect_strings = calloc(1,strsectlength+1);
-        if (!ep->f_dynsym_sect_strings) {
-            ep->f_dynsym_sect_strings = 0;
-            ep->f_dynsym_sect_strings_max = 0;
-            ep->f_dynsym_sect_strings_sect_index = 0;
-            *errcode = DW_DLE_ALLOC_FAIL;
-            return DW_DLV_ERROR;
-        }
-        res = RRMOA(ep->f_fd,ep->f_dynsym_sect_strings,
-            strpsh->gh_offset,
-            strsectlength,
-            ep->f_filesize,errcode);
-        if (res != DW_DLV_OK) {
-            ep->f_dynsym_sect_strings = 0;
-            ep->f_dynsym_sect_strings_max = 0;
-            ep->f_dynsym_sect_strings_sect_index = 0;
-            return res;
-        }
-    return DW_DLV_OK;
-}
-#endif /*0*/
-
 int
 _dwarf_load_elf_symstr(
     dwarf_elf_object_access_internals_t *ep, int *errcode)
@@ -1127,6 +1198,7 @@ _dwarf_load_elf_symstr(
     int res = 0;
     Dwarf_Unsigned strsectindex  =0;
     Dwarf_Unsigned strsectlength = 0;
+    Dwarf_Unsigned flags = 0;
 
     if (!ep->f_symtab_sect_strings_sect_index) {
         return DW_DLV_NO_ENTRY;
@@ -1144,6 +1216,7 @@ _dwarf_load_elf_symstr(
         *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
         return DW_DLV_ERROR;
     }
+    flags = strpsh->gh_flags;
     ep->f_symtab_sect_strings = calloc(1,strsectlength+1);
     if (!ep->f_symtab_sect_strings) {
         ep->f_symtab_sect_strings = 0;
@@ -1152,12 +1225,38 @@ _dwarf_load_elf_symstr(
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
+    strpsh->gh_load_type = Dwarf_Alloc_Malloc;
     res = RRMOA(ep->f_fd,ep->f_symtab_sect_strings,
         strpsh->gh_offset,
         strsectlength,
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
         free(ep->f_symtab_sect_strings);
+        ep->f_symtab_sect_strings = 0;
+        return res;
+    }
+    if (flags& SHF_COMPRESSED) {
+        strpsh->gh_content = ep->f_symtab_sect_strings;
+        strpsh->gh_was_alloc = TRUE;
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+        /* decompress and set new section size */
+        *errcode = 0;
+        _dwarf_do_decompress_elf(ep,strpsh,errcode);
+        if (*errcode) {
+            free(ep->f_symtab_sect_strings);
+            return DW_DLV_ERROR;
+        }
+        ep->f_symtab_sect_strings = strpsh->gh_content;
+#else /* COMPRESSED TEST */
+        free(ep->f_symtab_sect_strings);
+        ep->f_symtab_sect_strings = 0;
+        *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
+        return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+    }
+    if (res != DW_DLV_OK) {
+        free(ep->f_symtab_sect_strings);
+        strpsh->gh_content = 0;
         ep->f_symtab_sect_strings = 0;
         ep->f_symtab_sect_strings_max = 0;
         ep->f_symtab_sect_strings_sect_index = 0;
@@ -1175,13 +1274,16 @@ _dwarf_elf_load_sectstrings(
     int res = 0;
     struct generic_shdr *psh = 0;
     Dwarf_Unsigned secoffset = 0;
+    Dwarf_Unsigned flags =  0;
 
-    ep->f_elf_shstrings_length = 0;
-    if (stringsection >= ep->f_ehdr->ge_shnum) {
+    if (stringsection >= ep->f_loc_shdr.g_count) {
         *errcode = DW_DLE_SECTION_INDEX_BAD;
         return DW_DLV_ERROR;
     }
-    psh = ep->f_shdr + stringsection;
+    psh = ep->f_shdr+stringsection;
+    flags = psh->gh_flags;
+    ep->f_elf_shstrings_length = 0;
+
     secoffset = psh->gh_offset;
     if (is_empty_section(psh->gh_type)) {
         *errcode = DW_DLE_ELF_STRING_SECTION_MISSING;
@@ -1208,7 +1310,31 @@ _dwarf_elf_load_sectstrings(
     res = RRMOA(ep->f_fd,ep->f_elf_shstrings_data,secoffset,
         psh->gh_size,
         ep->f_filesize,errcode);
-    return res;
+    if (res != DW_DLV_OK) {
+        free(ep->f_elf_shstrings_data);
+        ep->f_elf_shstrings_data = 0;
+    }
+    psh->gh_content = ep->f_elf_shstrings_data;
+    psh->gh_load_type = Dwarf_Alloc_Malloc;
+    psh->gh_was_alloc = TRUE;
+    if (flags& SHF_COMPRESSED) {
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+        *errcode = 0;
+        _dwarf_do_decompress_elf(ep,psh,errcode);
+        /* decompress and set new section size */
+        if (*errcode) {
+            return DW_DLV_ERROR;
+        }
+#else /* COMPRESSED TEST */
+        free(ep->f_elf_shstrings_data);
+        ep->f_elf_shstrings_data = 0;
+        psh->gh_content = 0;
+        psh->gh_was_alloc = FALSE;
+        *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
+        return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+    }
+    return DW_DLV_OK;
 }
 
 static const dw_elf32_shdr shd32zero;
@@ -1438,29 +1564,71 @@ _dwarf_elf_load_a_relx_batch(
 {
     Dwarf_Unsigned count = 0;
     Dwarf_Unsigned size = 0;
+    Dwarf_Unsigned flags = 0;
     Dwarf_Unsigned size2 = 0;
     Dwarf_Unsigned sizeg = 0;
     Dwarf_Unsigned offset = 0;
-    int res = 0;
+    int            res = 0;
     Dwarf_Unsigned object_reclen = 0;
     struct generic_rela *grel = 0;
+    char *         relp = 0;
+    int            local_alloc = FALSE;
 
     /*  ASSERT: Caller guarantees localoffsetsize
         is a valid 4 or 8. */
     /*  ASSERT: Caller guarantees localrela is one
         of the 2 valid values 1 or 2 */
 
+    flags = gsh->gh_flags;
     offset = gsh->gh_offset;
     size = gsh->gh_size;
     if (size == 0) {
+        return DW_DLV_NO_ENTRY;
+    }
+    relp = (char *)gsh->gh_content;
+    if (!relp) {
+        relp = (char *)malloc(size);
+        local_alloc = TRUE;
+    }
+    if (!relp) {
+        *errcode = DW_DLE_REL_ALLOC;
         return DW_DLV_NO_ENTRY;
     }
     if ((offset > ep->f_filesize)||
         (size > ep->f_filesize) ||
         ((size +offset) > ep->f_filesize)) {
         *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
+        if (local_alloc) {
+            free(relp);
+        }
         return DW_DLV_ERROR;
     }
+    res = RRMOA(ep->f_fd,relp,offset,size,
+        ep->f_filesize,errcode);
+    if (res != DW_DLV_OK) {
+        free(relp);
+        free(grel);
+        return res;
+    }
+    if (local_alloc) {
+        gsh->gh_content = relp;
+        gsh->gh_was_alloc = TRUE;
+        gsh->gh_load_type = Dwarf_Alloc_Malloc;
+    }
+    if (flags& SHF_COMPRESSED) {
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+        *errcode = 0;
+        _dwarf_do_decompress_elf(ep,gsh,errcode);
+        /* decompress and set new section size */
+        if (*errcode) {
+            return DW_DLV_ERROR;
+        }
+#else /* COMPRESSED TEST */
+        *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
+        return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+    }
+    size = gsh->gh_size;
     if (localoffsize == RelocOffset32) {
         if (localrela ==  RelocIsRela) {
             object_reclen = sizeof(dw_elf32_rela);
@@ -1498,6 +1666,7 @@ _dwarf_elf_load_a_relx_batch(
             }
         }
     }
+
     sizeg = count*sizeof(struct generic_rela);
     grel = (struct generic_rela *)malloc(sizeg);
     if (!grel) {
@@ -1506,75 +1675,19 @@ _dwarf_elf_load_a_relx_batch(
     }
     if (localoffsize == RelocOffset32) {
         if (localrela ==  RelocIsRela) {
-            dw_elf32_rela *relp = 0;
-            relp = (dw_elf32_rela *)malloc(size);
-            if (!relp) {
-                free(grel);
-                *errcode = DW_DLE_ALLOC_FAIL;
-                return DW_DLV_ERROR;
-            }
-            res = RRMOA(ep->f_fd,relp,offset,size,
-                ep->f_filesize,errcode);
-            if (res != DW_DLV_OK) {
-                free(relp);
-                free(grel);
-                return res;
-            }
-            res = generic_rel_from_rela32(ep,gsh,relp,grel,errcode);
-            free(relp);
+            res = generic_rel_from_rela32(ep,gsh,
+                (dw_elf32_rela *)gsh->gh_content,grel,errcode);
         } else {
-            dw_elf32_rel *relp = 0;
-            relp = (dw_elf32_rel *)malloc(size);
-            if (!relp) {
-                free(grel);
-                *errcode = DW_DLE_ALLOC_FAIL;
-                return DW_DLV_ERROR;
-            }
-            res = RRMOA(ep->f_fd,relp,offset,size,
-                ep->f_filesize,errcode);
-            if (res != DW_DLV_OK) {
-                free(relp);
-                free(grel);
-                return res;
-            }
-            res = generic_rel_from_rel32(ep,gsh,relp,grel,errcode);
-            free(relp);
+            res = generic_rel_from_rel32(ep,gsh,
+                (dw_elf32_rel *)gsh->gh_content,grel,errcode);
         }
     } else {
         if (localrela ==  RelocIsRela) {
-            dw_elf64_rela *relp = 0;
-            relp = (dw_elf64_rela *)malloc(size);
-            if (!relp) {
-                free(grel);
-                *errcode = DW_DLE_ALLOC_FAIL;
-                return DW_DLV_ERROR;
-            }
-            res = RRMOA(ep->f_fd,relp,offset,size,
-                ep->f_filesize,errcode);
-            if (res != DW_DLV_OK) {
-                free(relp);
-                free(grel);
-                return res;
-            }
-            res = generic_rel_from_rela64(ep,gsh,relp,grel,errcode);
-            free(relp);
+            res = generic_rel_from_rela64(ep,gsh,
+                (dw_elf64_rela *)gsh->gh_content,grel,errcode);
         } else {
-            dw_elf64_rel *relp = 0;
-            relp = (dw_elf64_rel *)malloc(size);
-            if (!relp) {
-                free(grel);
-                *errcode = DW_DLE_ALLOC_FAIL;
-                return DW_DLV_ERROR;
-            }
-            res = RRMOA(ep->f_fd,relp,offset,size,
-                ep->f_filesize,errcode);
-            if (res != DW_DLV_OK) {
-                free(relp);
-                free(grel);
-                return res;
-            }
-            res = generic_rel_from_rel64(ep,gsh,relp,grel,errcode);
-            free(relp);
+            res = generic_rel_from_rel64(ep,gsh,
+                (dw_elf64_rel *)gsh->gh_content,grel,errcode);
         }
     }
     if (res == DW_DLV_OK) {
@@ -1925,6 +2038,7 @@ read_gs_section_group(
         Dwarf_Unsigned seclen = psh->gh_size;
         char *data = 0;
         char *dp = 0;
+        Dwarf_Unsigned flags = psh->gh_flags;
         Dwarf_Unsigned* grouparray = 0;
         char dblock[4];
         Dwarf_Unsigned va = 0;
@@ -1969,6 +2083,20 @@ read_gs_section_group(
             free(data);
             return res;
         }
+        if (flags & SHF_COMPRESSED) {
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+            *errcode = 0;
+            _dwarf_do_decompress_elf(ep,psh,errcode);
+            /* decompress and set new section size */
+            if (*errcode) {
+                return DW_DLV_ERROR;
+            }
+#else /* COMPRESSED TEST */
+            *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
+            return DW_DLV_ERROR;
+#endif /* COMPRESSED TEST */
+        }
+
         /*  Adding 1 is silly but possibly avoids a warning
             from a particular compiler. */
         groupmallocsize =  (1+count) * sizeof(Dwarf_Unsigned);
