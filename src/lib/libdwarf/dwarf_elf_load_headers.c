@@ -171,15 +171,18 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
     struct generic_shdr *psh,
     int* error)
 {
-    Dwarf_Small *basesrc = (Dwarf_Small*)psh->gh_content;
-    Dwarf_Small *src = basesrc;
-    Dwarf_Small *dest = 0;
+    Dwarf_Small   *basesrc = 0;
+    Dwarf_Small   *dest = 0;
     Dwarf_Unsigned destlen = 0;
-    Dwarf_Unsigned srclen = psh->gh_size;
-    Dwarf_Unsigned flags = psh->gh_flags;
-    Dwarf_Small *endsection = 0;
-    int zstdcompress = FALSE;
+    Dwarf_Unsigned srclen = 0;
+    Dwarf_Unsigned flags = 0;
+    Dwarf_Small   *endsection = 0;
+    int            zstdcompress = FALSE;
     Dwarf_Unsigned uncompressed_len = 0;
+
+    basesrc = (Dwarf_Small*)psh->gh_content;
+    srclen = psh->gh_size;
+    flags = psh->gh_flags;
 
     endsection = basesrc + srclen;
     if ((basesrc + 12) > endsection) {
@@ -192,16 +195,16 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
     uncompressed_len = 0;
     /*  We are looking at the first bytes of the section content,
         not a section name string. */
-    if (!strncmp("ZLIB",(const char *)src,4)) {
+    if (!strncmp("ZLIB",(const char *)basesrc,4)) {
         /*  This should be impossible */
         unsigned i = 0;
         unsigned l = 8;
-        unsigned char *c = src+4;
+        unsigned char *c = basesrc+4;
         for ( ; i < l; ++i,c++) {
             uncompressed_len <<= 8;
             uncompressed_len += *c;
         }
-        src = src + 12;
+        basesrc = basesrc + 12;
         srclen -= 12;
         *error = DW_DLE_ZLIB_SECTION_SHORT;
         return DW_DLV_OK;
@@ -211,7 +214,7 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
             size-of-target-address size
             size-of-target-address
         */
-        Dwarf_Small *ptr    = (Dwarf_Small *)src;
+        Dwarf_Small *ptr    = (Dwarf_Small *)basesrc;
         Dwarf_Unsigned type = 0;
         Dwarf_Unsigned size = 0;
         /* Dwarf_Unsigned addralign = 0; */
@@ -240,7 +243,7 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
         }
         }
         uncompressed_len = size;
-        src    += structsize;
+        basesrc    += structsize;
         srclen -= structsize;
     } else {
         /* Likely a corrupt object file. */
@@ -249,7 +252,7 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
     }
     /*  Dropped heuristic of excess compress inflation.
         Not reliable. */
-    if ((src +srclen) > endsection) {
+    if ((basesrc +srclen) > endsection) {
         *error = DW_DLE_ZLIB_SECTION_SHORT;
         return DW_DLV_ERROR;
     }
@@ -264,7 +267,7 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
         int res = 0;
         uLongf dlen = destlen;
 
-        res = uncompress(dest,&dlen,src,srclen);
+        res = uncompress(dest,&dlen,basesrc,srclen);
         if (res == Z_BUF_ERROR) {
             free(dest);
             *error = DW_DLE_ZLIB_BUF_ERROR;
@@ -282,7 +285,7 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
     /*  ZSTD_decompress is a zstd function. */
     if (zstdcompress) {
         size_t zsize =
-            ZSTD_decompress(dest,destlen,src,srclen);
+            ZSTD_decompress(dest,destlen,basesrc,srclen);
         if (zsize != destlen) {
             free(dest);
             *error = DW_DLE_ZSTD_DATA_ERROR;
@@ -1254,17 +1257,13 @@ _dwarf_load_elf_symstr(
         return DW_DLV_ERROR;
 #endif /* COMPRESSED TEST */
     }
-    if (res != DW_DLV_OK) {
-        free(ep->f_symtab_sect_strings);
-        strpsh->gh_content = 0;
-        ep->f_symtab_sect_strings = 0;
-        ep->f_symtab_sect_strings_max = 0;
-        ep->f_symtab_sect_strings_sect_index = 0;
-        return res;
-    }
     return DW_DLV_OK;
 }
 
+/*  The string section should not be filled in
+    or its content read yet. This is called
+    right after initial headers array created.
+    No gh_content is set yet.  */
 static int
 _dwarf_elf_load_sectstrings(
     dwarf_elf_object_access_internals_t *ep,
@@ -1282,7 +1281,6 @@ _dwarf_elf_load_sectstrings(
     }
     psh = ep->f_shdr+stringsection;
     flags = psh->gh_flags;
-    ep->f_elf_shstrings_length = 0;
 
     secoffset = psh->gh_offset;
     if (is_empty_section(psh->gh_type)) {
@@ -1291,32 +1289,31 @@ _dwarf_elf_load_sectstrings(
     }
     if (secoffset >= ep->f_filesize ||
         psh->gh_size > ep->f_filesize ||
-        (secoffset + psh->gh_size) >
-            ep->f_filesize) {
+        (secoffset + psh->gh_size) > ep->f_filesize) {
         *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
         return DW_DLV_ERROR;
     }
-    if (psh->gh_size > ep->f_elf_shstrings_max) {
-        free(ep->f_elf_shstrings_data);
-        ep->f_elf_shstrings_data = (char *)malloc(psh->gh_size);
-        ep->f_elf_shstrings_max = psh->gh_size;
-        if (!ep->f_elf_shstrings_data) {
-            ep->f_elf_shstrings_max = 0;
-            *errcode = DW_DLE_ALLOC_FAIL;
-            return DW_DLV_ERROR;
-        }
+    if (psh->gh_content) {
+        *errcode = DW_DLE_ELF_STRING_SECTION_ERROR;
+        return DW_DLV_ERROR;
     }
-    ep->f_elf_shstrings_length = psh->gh_size;
-    res = RRMOA(ep->f_fd,ep->f_elf_shstrings_data,secoffset,
+    psh->gh_content = (char *)malloc(psh->gh_size);
+    if (!psh->gh_content) {
+        *errcode = DW_DLE_ALLOC_FAIL;
+        return DW_DLV_ERROR;
+    }
+    res = RRMOA(ep->f_fd,psh->gh_content,secoffset,
         psh->gh_size,
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
         free(ep->f_elf_shstrings_data);
         ep->f_elf_shstrings_data = 0;
     }
-    psh->gh_content = ep->f_elf_shstrings_data;
     psh->gh_load_type = Dwarf_Alloc_Malloc;
     psh->gh_was_alloc = TRUE;
+    ep->f_elf_shstrings_max = psh->gh_size;
+    ep->f_elf_shstrings_length = psh->gh_size;
+    ep->f_elf_shstrings_data = psh->gh_content;
     if (flags& SHF_COMPRESSED) {
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
         *errcode = 0;
@@ -1325,10 +1322,16 @@ _dwarf_elf_load_sectstrings(
         if (*errcode) {
             return DW_DLV_ERROR;
         }
+        ep->f_elf_shstrings_max = psh->gh_size;
+        ep->f_elf_shstrings_length = psh->gh_size;
+        ep->f_elf_shstrings_data = psh->gh_content;
 #else /* COMPRESSED TEST */
-        free(ep->f_elf_shstrings_data);
-        ep->f_elf_shstrings_data = 0;
+        /* We cannot decompress, so we really have nothing. */
+        free(psh->gh_content);
         psh->gh_content = 0;
+        ep->f_elf_shstrings_max = 0;
+        ep->f_elf_shstrings_length = 0;
+        ep->f_elf_shstrings_data = 0;
         psh->gh_was_alloc = FALSE;
         *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
         return DW_DLV_ERROR;
