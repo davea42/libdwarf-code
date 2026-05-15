@@ -1,3 +1,35 @@
+2026-05-13:  David Anderson
+    commit 9e20057aa6e01efda8786ad42deaabc0b1377e5d
+
+    Now comments say 2.3.2
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_lname_version.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2026-05-12:  David Anderson
+    commit dd3ca3226b2c48ff8588d02a74a90cdabea4e91c
+
+    CoverityScan found issues in _dwarf_elf_load_sectstrings()
+    (changed as part of the big elf reader changes).
+    These exposed serious problems (indeed it is amazing
+    it worked with the problems) so a revision of code
+    simplifies and clarifies.
+    Also simplfied and clarified _dwarf_do_decompress_elf()
+    here too.
+    Now no CoverityScan issues.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-05-12:  David Anderson
+    commit b5480bb86e374abc5647bfb207ec4c18647dcb42
+
+    Now just about the current year, 2026
+            modified:   ChangeLog
+
 2026-05-12:  David Anderson
     commit 300cdfe26335f8065f84c6044cab49c4dbd2816a
 
