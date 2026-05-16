@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2026</p>
-<p> Record count: 231 </p>
+<p> Record count: 234 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -7575,8 +7575,96 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: 9d08910d34e88ab61d197ce4e089a869b1ab9510
 </p>
-<p>tarrelease: To Be Determined
+<p>tarrelease: libdwarf-2.3.1.tar.xz
 </p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-001">232) DW202605-001</h3>
+<p>id: DW202605-001
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 513063397
+</p>
+<p>datereported: 2026-05-12
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: duplicate free results in abort.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Reading a corrupted object frame section results
+  in a use-after-free error and memory leak and abort in libdwarf.
+  Ossfuzz vulnerability  513063397
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+</p>
+<p>datefixed: 2026-05-16
+</p>
+<p>references: regressiontests/ossfuzz513063397/fuzz_init_b-6754026074210304
+</p>
+<p>gitfixid: 27a19350b16995730d82fd1c224a7f22b39c443c
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-002">233) DW202605-002</h3>
+<p>id: DW202605-002
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 513032442
+</p>
+<p>datereported: 2026-05-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: duplicate free results in abort.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Reading a corrupted object frame section results
+  in a use-after-free error and memory leak and abort in libdwarf.
+  Ossfuzz vulnerability  513032442
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+  Identical fix as to DW202605-001.
+</p>
+<p>datefixed: 2026-05-16
+</p>
+<p>references: regressiontests/ossfuzz513032442/fuzz_findfuncbypc-5181686974578688
+</p>
+<p>gitfixid:</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-003">234) DW202605-003</h3>
+<p>id: DW202605-003
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 513032442
+</p>
+<p>datereported: 2026-05-14
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Leaks memory reading section group data.
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Reading a corrupted object section results
+  in a memory leak  in local function read_gs_section_group().
+  It would leak memory with some corrupted objects
+  marked as having Elf SHF_GROUP sections.
+  Ossfuzz vulnerability  513010516
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+  The function was not completely updated to match
+  the revisions introduced 12 May (4 days ago),
+  leading directly to the leak.
+</p>
+<p>datefixed: 2026-05-16
+</p>
+<p>references:</p>
+<p>gitfixid: 4c8aecaf95f94ff4baa8840ea90df7b5fd14a71f
+</p>
+<p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
 </body>

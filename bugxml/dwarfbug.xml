@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202605-003</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 513032442</fuzzer>
+<datereported>2026-05-14</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Leaks memory reading section group data.
+</vulnerability>
+<description> Reading a corrupted object section results
+  in a memory leak  in local function read_gs_section_group().
+  It would leak memory with some corrupted objects
+  marked as having Elf SHF_GROUP sections.
+  Ossfuzz vulnerability  513010516
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+  The function was not completely updated to match
+  the revisions introduced 12 May (4 days ago),
+  leading directly to the leak.
+</description>
+<datefixed>2026-05-16</datefixed>
+<references></references>
+<gitfixid>4c8aecaf95f94ff4baa8840ea90df7b5fd14a71f</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202605-002</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 513032442</fuzzer>
+<datereported>2026-05-14</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> duplicate free results in abort.
+</vulnerability>
+<description> Reading a corrupted object frame section results
+  in a use-after-free error and memory leak and abort in libdwarf.
+  Ossfuzz vulnerability  513032442
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+  Identical fix as to DW202605-001.
+</description>
+<datefixed>2026-05-16</datefixed>
+<references> regressiontests/ossfuzz513032442/fuzz_findfuncbypc-5181686974578688
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
+<dwid>DW202605-001</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 513063397</fuzzer>
+<datereported>2026-05-12</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> duplicate free results in abort.
+</vulnerability>
+<description> Reading a corrupted object frame section results
+  in a use-after-free error and memory leak and abort in libdwarf.
+  Ossfuzz vulnerability  513063397
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+</description>
+<datefixed>2026-05-16</datefixed>
+<references> regressiontests/ossfuzz513063397/fuzz_init_b-6754026074210304
+</references>
+<gitfixid>27a19350b16995730d82fd1c224a7f22b39c443c</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202602-001</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 4475563464</fuzzer>
@@ -19,7 +87,7 @@
 <references> regressiontests/ossfuzz4475563464/fuzz_set_frame_all-6159202753249280
 </references>
 <gitfixid>9d08910d34e88ab61d197ce4e089a869b1ab9510</gitfixid>
-<tarrelease>To Be Determined</tarrelease>
+<tarrelease>libdwarf-2.3.1.tar.xz</tarrelease>
 </dwbug>
 <dwbug>
 <dwid>DW202510-003</dwid>
