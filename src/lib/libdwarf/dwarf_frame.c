@@ -930,10 +930,6 @@ dwarf_get_fde_info_for_all_regs3_b(Dwarf_Fde fde,
             dbg->de_frame_reg_rules_entry_count);
     res = _dwarf_validate_register_numbers(dbg,error);
     if (res == DW_DLV_ERROR) {
-#if 0
-printf(" dadebug FAIL _dwarf_validate_register_numbers\n");
-fflush(stdout);
-#endif
         return res;
     }
     res = _dwarf_initialize_frame_table(dbg, fde_frame_table,
