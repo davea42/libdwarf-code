@@ -827,6 +827,7 @@ _dwarf_destruct_elf_nlaccess(void * obj)
 
     ep = (dwarf_elf_object_access_internals_t *)aip->ai_object;
     free(ep->f_ehdr);
+    ep->f_ehdr = 0;
     shp = ep->f_shdr;
     shcount = ep->f_loc_shdr.g_count;
     for (i = 0; i < shcount; ++i,++shp) {
@@ -864,23 +865,29 @@ _dwarf_destruct_elf_nlaccess(void * obj)
     ep->f_loc_shdr.g_count = 0;
     free(ep->f_phdr);
     ep->f_phdr = 0;
-    /* Freed via one of the gh_content above */
+
+    /*  Whether elf shstrings and symtab strings
+        share the same section or not, we do
+        not need to free these. Section frees
+        of gh_content already did it. */
     ep->f_elf_shstrings_data = 0;
+    ep->f_elf_shstrings_length = 0;
     ep->f_elf_shstrings_max = 0;
-    free(ep->f_dynamic);
-    ep->f_dynamic = 0;
-    /*free(ep->f_symtab_sect_strings);  gh_content above
-        does the free */
+    ep->f_elf_shstrings_index = 0;
     ep->f_symtab_sect_strings = 0;
+    ep->f_symtab_sect_strings_max = 0;
+    ep->f_symtab_sect_strings_sect_index = 0;
+
     free(ep->f_dynsym_sect_strings);
     ep->f_dynsym_sect_strings = 0;
+    free(ep->f_dynamic);
+    ep->f_dynamic = 0;
     free(ep->f_symtab);
     ep->f_symtab = 0;
     free(ep->f_dynsym);
     ep->f_dynsym = 0;
     free(ep->f_shdr);
     ep->f_shdr = 0;
-
     /* if TRUE close f_fd on destruct.*/
     if (ep->f_destruct_close_fd) {
         _dwarf_closer(ep->f_fd);

@@ -1,4 +1,4 @@
-/* Copyright 2018 David Anderson. All rights reserved.
+/* Copyright 2018-2026 David Anderson. All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -1209,6 +1209,15 @@ _dwarf_load_elf_symstr(
     strsectindex = ep->f_symtab_sect_strings_sect_index;
     strsectlength = ep->f_symtab_sect_strings_max;
     strpsh = ep->f_shdr + strsectindex;
+    if (strsectindex == ep->f_elf_shstrings_index) {
+        /*  content loaded already by
+            _dwarf_elf_load_sectstrings() as
+            they are the same section number. */
+        ep->f_symtab_sect_strings_sect_index = strpsh->gh_secnum;
+        ep->f_symtab_sect_strings_max = ep->f_elf_shstrings_max;
+        ep->f_symtab_sect_strings = strpsh->gh_content;
+        return DW_DLV_OK;
+    }
     /*  Alloc an extra byte as a guaranteed NUL byte
         at the end of the strings in case the section
         is corrupted and lacks a NUL at end. */
@@ -1298,7 +1307,7 @@ _dwarf_elf_load_sectstrings(
         *errcode = DW_DLE_ELF_STRING_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
-    psh->gh_content = (char *)malloc(psh->gh_size);
+    psh->gh_content = (char *)calloc(1,psh->gh_size+1);
     if (!psh->gh_content) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
@@ -1312,6 +1321,10 @@ _dwarf_elf_load_sectstrings(
     }
     psh->gh_load_type = Dwarf_Alloc_Malloc;
     psh->gh_was_alloc = TRUE;
+#if 0
+FIXME
+#endif
+    ep->f_elf_shstrings_index = stringsection;
     ep->f_elf_shstrings_max = psh->gh_size;
     ep->f_elf_shstrings_length = psh->gh_size;
     ep->f_elf_shstrings_data = psh->gh_content;

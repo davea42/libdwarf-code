@@ -1202,11 +1202,16 @@
 
     We list these with newest first.
 
-    <b>Changes 2.3.0 to 2.3.2</b>
+    <b>Changes 2.3.1 to 2.3.2</b>
 
     Now libdwarf will decompress any library-relevant 
     compressed Elf sections.  In previous versions
     only a small subset of Elf sections could be decompressed.
+
+    The new code was detected as having vulerabilities
+    by oss fuzz systems. Documented as DW202605-001
+    and DW202605-002 and DW202605-003.
+    Fixed 16 May 2026 for 2.3.2.
 
     <b>Changes 2.3.0 to 2.3.1</b>
 

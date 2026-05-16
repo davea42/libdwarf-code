@@ -218,12 +218,6 @@ typedef struct elf_filedata_s {
     struct location      f_loc_phdr;
     struct generic_phdr* f_phdr;
 
-    char *f_elf_shstrings_data; /* section name strings */
-    /* length of currentsection.  Might be zero..*/
-    Dwarf_Unsigned  f_elf_shstrings_length;
-    /* size of malloc-d space */
-    Dwarf_Unsigned  f_elf_shstrings_max;
-
     /* This is the .dynamic section */
     struct location      f_loc_dynamic;
     struct generic_dynentry * f_dynamic;
@@ -237,13 +231,24 @@ typedef struct elf_filedata_s {
     Dwarf_Unsigned f_dynsym_sect_strings_sect_index;
     Dwarf_Unsigned f_dynsym_sect_index;
 
-    /* .symtab .strtab */
-    struct location      f_loc_symtab;
-    struct generic_symentry* f_symtab;
+    /*  shstrings and strtab strings may be independent
+        or may share the same section. */
+    char *f_elf_shstrings_data; /* section name strings */
+    /* length of shstrings section.  Might be zero early on.*/
+    Dwarf_Unsigned  f_elf_shstrings_length;
+    /* size of malloc-d space */
+    Dwarf_Unsigned  f_elf_shstrings_max;
+    /*  The following so we know when strtab and shstrings
+        are in the same section, see
+        f_symtab_sect_strings_sect_index below. */
+    Dwarf_Unsigned  f_elf_shstrings_index;
     char * f_symtab_sect_strings;
     Dwarf_Unsigned f_symtab_sect_strings_max;
     Dwarf_Unsigned f_symtab_sect_strings_sect_index;
     Dwarf_Unsigned f_symtab_sect_index;
+
+    struct location      f_loc_symtab;
+    struct generic_symentry* f_symtab;
 
     /* Starts at 3. 0,1,2 used specially. */
     Dwarf_Unsigned f_sg_next_group_number;
