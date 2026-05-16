@@ -1,3 +1,20 @@
+id: DW202605-001
+fuzzer: oss fuzz 513063397
+datereported: 2026-05-12
+reportedby: David Korczynski
+vulnerability: duplicate free results in abort.
+product: libdwarf
+description: Reading a corrupted object frame section results
+  in a use-after-free error and memory leak and abort in libdwarf.
+  Ossfuzz vulnerability  513063397
+  Vulnerability existed since 2026-05-12 (new
+  versions of Elf reading functions).
+datefixed: 2026-05-16
+references: regressiontests/ossfuzz513063397/fuzz_init_b-6754026074210304
+gitfixid: 27a19350b16995730d82fd1c224a7f22b39c443c
+tarrelease: 
+endrec:  DW202605-001
+
 
 id: DW202602-001
 fuzzer: oss fuzz 4475563464
@@ -13,7 +30,7 @@ description: Reading a corrupted object frame section results
 datefixed: 2026-02-10
 references: regressiontests/ossfuzz4475563464/fuzz_set_frame_all-6159202753249280
 gitfixid: 9d08910d34e88ab61d197ce4e089a869b1ab9510
-tarrelease: To Be Determined
+tarrelease: libdwarf-2.3.1.tar.xz
 endrec:  DW202602-001
 
 
