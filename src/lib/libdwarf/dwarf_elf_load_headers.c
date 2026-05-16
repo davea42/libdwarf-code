@@ -2058,6 +2058,11 @@ read_gs_section_group(
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
             return DW_DLV_ERROR;
         }
+        if (psh->gh_content) {
+            /* Should NOT be set earlier! */
+            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+            return DW_DLV_ERROR;
+        }
         data = malloc(seclen);
         if (!data) {
             *errcode = DW_DLE_ALLOC_FAIL;
@@ -2087,6 +2092,9 @@ read_gs_section_group(
             free(data);
             return res;
         }
+        psh->gh_content = data;
+        psh->gh_was_alloc = TRUE;
+        psh->gh_load_type = Dwarf_Alloc_Malloc;
         if (flags & SHF_COMPRESSED) {
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
             *errcode = 0;
@@ -2100,18 +2108,15 @@ read_gs_section_group(
             return DW_DLV_ERROR;
 #endif /* COMPRESSED TEST */
         }
-
         /*  Adding 1 is silly but possibly avoids a warning
             from a particular compiler. */
         groupmallocsize =  (1+count) * sizeof(Dwarf_Unsigned);
         if (groupmallocsize >= ep->f_filesize) {
-            free(data);
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
             return DW_DLV_ERROR;
         }
         grouparray = malloc(groupmallocsize);
         if (!grouparray) {
-            free(data);
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
@@ -2122,7 +2127,6 @@ read_gs_section_group(
         if (va != 1 && va != 0x1000000) {
             /*  Could be corrupted elf object. */
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
-            free(data);
             free(grouparray);
             return DW_DLV_ERROR;
         }
@@ -2143,7 +2147,6 @@ read_gs_section_group(
             ASNAR(_dwarf_memcpy_swap_bytes,gsecb,dblock);
             if (!gseca) {
                 /*  zero! Oops. No point in looking at gsecb */
-                free(data);
                 free(grouparray);
                 *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                 return DW_DLV_ERROR;
@@ -2169,7 +2172,6 @@ read_gs_section_group(
             }
             if (targpsh->gh_section_group_number) {
                 /* multi-assignment to groups. Oops. */
-                free(data);
                 free(grouparray);
                 *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                 return DW_DLV_ERROR;
@@ -2182,7 +2184,6 @@ read_gs_section_group(
             ++ep->f_sg_next_group_number;
             ++ep->f_sht_group_type_section_count;
         }
-        free(data);
         psh->gh_sht_group_array = grouparray;
         psh->gh_sht_group_array_count = count;
     }
