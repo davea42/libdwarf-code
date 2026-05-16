@@ -1238,20 +1238,21 @@ _dwarf_load_elf_symstr(
         ep->f_symtab_sect_strings = 0;
         return res;
     }
+    strpsh->gh_content = ep->f_symtab_sect_strings;
+    strpsh->gh_was_alloc = TRUE;
     if (flags& SHF_COMPRESSED) {
-        strpsh->gh_content = ep->f_symtab_sect_strings;
-        strpsh->gh_was_alloc = TRUE;
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
         /* decompress and set new section size */
         *errcode = 0;
         _dwarf_do_decompress_elf(ep,strpsh,errcode);
         if (*errcode) {
-            free(ep->f_symtab_sect_strings);
+            /*  gh_content will cause the free */
+            ep->f_symtab_sect_strings = 0;
             return DW_DLV_ERROR;
         }
         ep->f_symtab_sect_strings = strpsh->gh_content;
 #else /* COMPRESSED TEST */
-        free(ep->f_symtab_sect_strings);
+        /*  gh_content will cause the free */
         ep->f_symtab_sect_strings = 0;
         *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
         return DW_DLV_ERROR;

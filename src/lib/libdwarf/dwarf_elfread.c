@@ -869,7 +869,8 @@ _dwarf_destruct_elf_nlaccess(void * obj)
     ep->f_elf_shstrings_max = 0;
     free(ep->f_dynamic);
     ep->f_dynamic = 0;
-    free(ep->f_symtab_sect_strings);
+    /*free(ep->f_symtab_sect_strings);  gh_content above
+        does the free */
     ep->f_symtab_sect_strings = 0;
     free(ep->f_dynsym_sect_strings);
     ep->f_dynsym_sect_strings = 0;
