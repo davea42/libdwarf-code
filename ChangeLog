@@ -1,3 +1,79 @@
+2026-05-16:  David Anderson
+    commit da5a595c8342d6148b81e59a4e13f8878943414e
+
+    Changes now documents vulnerabilities fixed.
+            modified:   doc/libdwarf.dox
+    Refinements handling symbol table strings and
+    section strings.  Sometimes both in one section
+    and that was not handled correctly
+    in the latest elf reader.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_elfread.h
+
+2026-05-16:  David Anderson
+    commit 806d9b5e221215227bedcd404eefd7ac7e436008
+
+    Remove #if 0 endif debug line.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2026-05-16:  David Anderson
+    commit e2a6ad4f5d6c240645ee4bef12f8f04e71abfb87
+
+    Three new vulnerabilities added.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-16:  David Anderson
+    commit 4c8aecaf95f94ff4baa8840ea90df7b5fd14a71f
+
+    Correcting local function read_gs_section_group()
+    to match up completely to the section reading
+    changes introduced 12 May (4 days ago).
+    It would leak memory with some corrupted objects
+    marked as having Elf SHF_GROUP sections.
+    Vulnerability DW202605-003 oss fuzz  513010516.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-05-16:  David Anderson
+    commit 49360293f9d5270687f87ee5eb75a2b7b3f05f0b
+
+    Vulnerability DW202605-002 fix is
+    the same as fixed DW202605-001.
+    Both were related to code changed 12 May 2026.
+            modified:   data.txt
+
+2026-05-16:  David Anderson
+    commit f1380260f2fd1f6831c71bbc773a3406c8389a9c
+
+    New vulnerability DW202605-001
+            modified:   data.txt
+
+2026-05-16:  David Anderson
+    commit 27a19350b16995730d82fd1c224a7f22b39c443c
+
+    ossfuzz 513063397 was duplicate frees abort and
+    resulted from errors in dealing with the shstrings
+    section and pointers to the strings.
+    These errors resulted from the major revisions
+    in these two files in 8fbedf47c0c3915abd9fa384b130e8a3897d10eb
+    and the subsequent dd3ca3226b2c48ff8588d02a74a90cdabea4e91c,
+    both 4 days ago.
+    AKA libdwarf vulnerability DW202605-001
+    Function _dwarf_load_elf_symstr()
+            modified:   dwarf_elf_load_headers.c
+
+    Function _dwarf_destruct_elf_nlaccess()
+            modified:   dwarf_elfread.c
+
+2026-05-15:  David Anderson
+    commit 7ef8486ccdb8e6745c18eeb4ba69f336914c656f
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2026-05-13:  David Anderson
     commit 9e20057aa6e01efda8786ad42deaabc0b1377e5d
 
