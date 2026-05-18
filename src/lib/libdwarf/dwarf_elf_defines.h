@@ -29,6 +29,9 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+
+/*  Updated based on Elf gabi 18 May 2026 */
+
 #ifndef DWARF_ELF_DEFINES_H
 #define DWARF_ELF_DEFINES_H
 
@@ -715,6 +718,72 @@ extern "C" {
 #ifndef EM_BPF
 #define EM_BPF           247
 #endif
+#ifndef EM_GRAPHCORE_IPU
+#define EM_GRAPHCORE_IPU 248
+#endif
+#ifndef EM_IMG1
+#define EM_IMG1 249
+#endif
+#ifndef EM_NFP
+#define EM_NFP 250
+#endif
+#ifndef EM_VE
+#define EM_VE 251
+#endif
+#ifndef EM_CSKY
+#define EM_CSKY 252
+#endif
+#ifndef EM_ARC_COMPACT3_64
+#define EM_ARC_COMPACT3_64 253
+#endif
+#ifndef EM_MCS6502
+#define EM_MCS6502 254
+#endif
+#ifndef EM_ARC_COMPACT3
+#define EM_ARC_COMPACT3 255
+#endif
+#ifndef EM_KVX 
+#define EM_KVX 256
+#endif
+#ifndef EM_65816
+#define EM_65816 257
+#endif
+#ifndef EM_LOONGARCH
+#define EM_LOONGARCH 258
+#endif
+#ifndef EM_KF32
+#define EM_KF32 259
+#endif
+#ifndef EM_U16_U8CORE
+#define EM_U16_U8CORE 260
+#endif
+#ifndef EM_TACHYUM
+#define EM_TACHYUM 261
+#endif
+#ifndef EM_56800EF
+#define EM_56800EF 262
+#endif
+#ifndef EM_SBF
+#define EM_SBF 263
+#endif
+#ifndef EM_AIENGINE
+#define EM_AIENGINE 264
+#endif
+#ifndef EM_SIMA_MLA
+#define EM_SIMA_MLA 265
+#endif
+#ifndef EM_BANG
+#define EM_BANG 266
+#endif
+#ifndef EM_LOONGGPU
+#define EM_LOONGGPU 267
+#endif
+#ifndef EM_SW64
+#define EM_SW64 268
+#endif
+#ifndef EM_AIECTRLCODE
+#define EM_AIECTRLCODE 269
+#endif
 
 /* Standard Elf dynamic tags. */
 #ifndef DT_NULL
@@ -753,54 +822,42 @@ extern "C" {
 #ifndef DT_STRSZ
 #define DT_STRSZ  10
 #endif
-
 #ifndef DT_SYMENT
 #define DT_SYMENT 11
 #endif
-
 #ifndef DT_INIT
 #define DT_INIT 12
 #endif
-
 #ifndef DT_FINI
 #define DT_FINI 13
 #endif
-
 #ifndef DT_SONAME
 #define DT_SONAME 14
 #endif
-
 #ifndef DT_RPATH
 #define DT_RPATH 15
 #endif
-
 #ifndef DT_SYMBOLIC
 #define DT_SYMBOLIC 16
 #endif
-
 #ifndef DT_REL
 #define DT_REL 17
 #endif
 #ifndef DT_RELSZ
 #define DT_RELSZ 18
 #endif
-
 #ifndef DT_RELENT
 #define DT_RELENT 19
 #endif
-
 #ifndef DT_PLTREL
 #define DT_PLTREL 20
 #endif
-
 #ifndef DT_DEBUG
 #define DT_DEBUG 21
 #endif
-
 #ifndef DT_TEXTREL
 #define DT_TEXTREL 22
 #endif
-
 #ifndef DT_JMPREL
 #define DT_JMPREL 23
 #endif
@@ -855,17 +912,18 @@ extern "C" {
 #ifndef EI_VERSION
 #define EI_VERSION       6
 #endif
-#ifndef EI_PAD
-#define EI_PAD           7
-#endif
 #ifndef EI_OSABI
 #define EI_OSABI         7
 #endif
-#ifndef EI_NIDENT
-#define EI_NIDENT        16
+#ifndef EI_OSABIVERSION 
+#define EI_OSABIERSION   8
 #endif
-#ifndef EI_ABIVERSION
-#define EI_ABIVERSION       8
+#ifndef EI_PAD 
+#define EI_PAD           9
+#endif
+
+#ifndef EI_NIDENT 
+#define EI_NIDENT 16    
 #endif
 
 #ifndef ELFMAG0
@@ -937,6 +995,24 @@ extern "C" {
 #endif
 #ifndef ELFOSABI_OPENBSD
 #define ELFOSABI_OPENBSD    12
+#endif
+#ifndef ELFOSABI_OPENVMS
+#define ELFOSABI_OPENVMS    13
+#endif
+#ifndef ELFOSABI_NSK
+#define ELFOSABI_NSK    14
+#endif
+#ifndef ELFOSABI_AROS
+#define ELFOSABI_AROS    15
+#endif
+#ifndef ELFOSABI_FENIXOS
+#define ELFOSABI_FENIXOS    16
+#endif
+#ifndef ELFOSABI_CLOUDABI
+#define ELFOSABI_CLOUDABI    17
+#endif
+#ifndef ELFOSABI_OPENVOS
+#define ELFOSABI_OPENVOS    18
 #endif
 #ifndef ELFOSABI_ARM_AEABI
 #define ELFOSABI_ARM_AEABI  64
