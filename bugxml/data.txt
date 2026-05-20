@@ -1,26 +1,44 @@
 
 id: DW202605-003
-fuzzer: oss fuzz 513032442
+fuzzer: oss fuzz 488137256
+datereported: 2026-02-26
+reportedby: David Korczynski
+vulnerability: Leaks memory in _dwarf_internal_read_rnglists_header
+product: libdwarf
+description: A severly corrupted object file exposed
+  broken code in _dwarf_elf_setup_all_section_groups() which
+  lead to reading a nonsense section as it it contained a group
+  section list. Errors were found, but not properly dealt with
+  in the erroneous context in which they were detected.
+  The code was broken in 2019 when support for Elf section groups
+  was added (libdwarf-20191104.tar.gz had the broken code,
+  for example). 
+datefixed: 2026-05-20
+references: regressiontests/ossfuzz488137256/fuzz_die_cu-4889329913888768
+gitfixid: 
+tarrelease:
+endrec:  DW202605-004
+
+id: DW202605-003
+fuzzer: oss fuzz 513010516
 datereported: 2026-05-14
 reportedby: David Korczynski
 vulnerability: Leaks memory reading section group data.
 product: libdwarf
-description: Reading a corrupted object section results
-  in a memory leak  in local function read_gs_section_group().
-  It would leak memory with some corrupted objects
-  marked as having Elf SHF_GROUP sections.
+description: 
   Ossfuzz vulnerability  513010516
   Vulnerability existed since 2026-05-12 (new
   versions of Elf reading functions).
   The function was not completely updated to match
   the revisions introduced 12 May (4 days ago),
   leading directly to the leak.
+  Leak was a mishandling when Elf SHF_GROUP flag was set
+  in a section header.
 datefixed: 2026-05-16
+references: regressiontests/ossfuzz513010516/fuzz_dnames-5764687336898560
 gitfixid: 4c8aecaf95f94ff4baa8840ea90df7b5fd14a71f
 tarrelease:
 endrec:  DW202605-003
-
-
 
 id: DW202605-002
 fuzzer: oss fuzz 513032442
