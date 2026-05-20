@@ -742,7 +742,7 @@ extern "C" {
 #ifndef EM_ARC_COMPACT3
 #define EM_ARC_COMPACT3 255
 #endif
-#ifndef EM_KVX 
+#ifndef EM_KVX
 #define EM_KVX 256
 #endif
 #ifndef EM_65816
@@ -915,15 +915,15 @@ extern "C" {
 #ifndef EI_OSABI
 #define EI_OSABI         7
 #endif
-#ifndef EI_OSABIVERSION 
+#ifndef EI_OSABIVERSION
 #define EI_OSABIERSION   8
 #endif
-#ifndef EI_PAD 
+#ifndef EI_PAD
 #define EI_PAD           9
 #endif
 
-#ifndef EI_NIDENT 
-#define EI_NIDENT 16    
+#ifndef EI_NIDENT
+#define EI_NIDENT 16
 #endif
 
 #ifndef ELFMAG0

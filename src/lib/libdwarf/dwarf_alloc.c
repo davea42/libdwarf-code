@@ -1323,7 +1323,6 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         !dbg->de_printf_callback.dp_buffer_user_provided ) {
         free(dbg->de_printf_callback.dp_buffer);
     }
-
     _dwarf_destroy_group_map(dbg);
     /*  de_alloc_tree might be NULL if
         global_de_alloc_tree_on is zero. */
