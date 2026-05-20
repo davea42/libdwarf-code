@@ -208,8 +208,10 @@ dwarf_initialize_search_hash( void **treeptr,
         entry_index = k;
     }
 #ifdef TESTINGHASHTAB
-printf("debugging: initial alloc size estimate %lu\n",size_estimate);
-printf("debugging: initial alloc prime to use %lu\n",prime_to_use);
+    printf("debugging: initial alloc size estimate %lu\n",
+        size_estimate);
+    printf("debugging: initial alloc prime to use %lu\n",
+    prime_to_use);
 #endif
     base->tablesize_ = prime_to_use;
     base->allowed_fill_ = calculate_allowed_fill(allowed_fill_percent,
@@ -386,7 +388,7 @@ resize_table(struct hs_base *head,
         unsigned long tsize = head->tablesize_;
         struct ts_entry *p = &head->hashtab_[0];
 #ifdef TESTINGHASHTAB
-printf("debugging: Resize %lu to %lu\n",tsize,prime_to_use);
+        printf("debugging: Resize %lu to %lu\n",tsize,prime_to_use);
 #endif
         for ( ; ix < tsize; ix++,p++) {
             int inserted = 0;

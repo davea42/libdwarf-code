@@ -910,7 +910,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context context,
             HT_DEFAULT_TABLE_SIZE;
         hash_table_base->tb_total_abbrev_count= 0;
 #ifdef TESTINGHASHTAB
-printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
+        printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
 #endif
         hash_table_base->tb_entries =
             (Dwarf_Abbrev_List *)
@@ -1436,13 +1436,13 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Hash_Table hash_table,
 #endif
             }
 #ifdef TESTINGHASHTAB
-printf("debugging: hashnum %lu listcount %u\n",hashnum,listcount);
+    printf("debugging: hashnum %lu listcount %u\n",hashnum,listcount);
 #endif
         }
     }
 #ifdef TESTINGHASHTAB
-printf("debugging: max ref count of any abbrev %lu, \n",
-(unsigned long)max_refs);
+    printf("debugging: max ref count of any abbrev %lu, \n",
+        (unsigned long)max_refs);
 #endif
     /* Frees all the pointers at once: an array. */
     free(hash_table->tb_entries);
