@@ -87,7 +87,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         if (res == DW_DLV_OK) {
           printf(">>Success");
         } else {
-          printf(">>Error");
+          printf(">>Error, dwarf_siblingof_b failed\n");
         }
         dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
       }
