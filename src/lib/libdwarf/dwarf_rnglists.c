@@ -559,6 +559,8 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
             "Impossible end of rnglist");
         return DW_DLV_ERROR;
     }
+    free(buildhere->rc_offset_value_array);
+    buildhere->rc_offset_value_array = 0;
     *next_offset =  buildhere->rc_past_last_rnglist_offset;
     return DW_DLV_OK;
 }

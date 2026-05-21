@@ -1307,6 +1307,7 @@ _dwarf_elf_load_sectstrings(
         *errcode = DW_DLE_ELF_STRING_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
+    /* An extra zero byte so always null-terminated */
     psh->gh_content = (char *)calloc(1,psh->gh_size+1);
     if (!psh->gh_content) {
         *errcode = DW_DLE_ALLOC_FAIL;
@@ -1321,9 +1322,6 @@ _dwarf_elf_load_sectstrings(
     }
     psh->gh_load_type = Dwarf_Alloc_Malloc;
     psh->gh_was_alloc = TRUE;
-#if 0
-FIXME
-#endif
     ep->f_elf_shstrings_index = stringsection;
     ep->f_elf_shstrings_max = psh->gh_size;
     ep->f_elf_shstrings_length = psh->gh_size;
@@ -1845,9 +1843,11 @@ validate_section_name_string(Dwarf_Unsigned section_length,
 }
 
 /*  Without proper section names in place nothing
-    is going to work in reading DWARF sections. */
+    is going to work in reading DWARF sections. 
+    This assumes we are set up with the section
+    strings read in and pointed to by ep->f_elf_shstrings_data. */
 static int
-_dwarf_elf_load_sect_namestring(
+_dwarf_elf_load_sect_namestrings(
     dwarf_elf_object_access_internals_t *ep,
     int *errcode)
 {
@@ -1859,6 +1859,7 @@ _dwarf_elf_load_sect_namestring(
     stringsecbase = ep->f_elf_shstrings_data;
     gshdr = ep->f_shdr;
     generic_count = ep->f_loc_shdr.g_count;
+    /* Here we ensure gh_namestring set to something with null termination */
     for (i = 0; i < generic_count; i++, ++gshdr) {
         const char *namestr =
             "<No valid Elf section strings exist>";
@@ -2245,11 +2246,10 @@ _dwarf_elf_setup_all_section_groups(
             /*  No data here. */
             continue;
         }
-        if (!elf_sht_groupsec(psh->gh_type,name)) {
-            /* Step B */
-            if (elf_flagmatches(psh->gh_flags,SHF_GROUP)) {
-                ep->f_shf_group_flag_section_count++;
-            }
+        if (elf_sht_groupsec(psh->gh_type,name) ||
+            elf_flagmatches(psh->gh_flags,SHF_GROUP)) {
+            ep->f_shf_group_flag_section_count++;
+        } else {
             continue;
         }
         /* Looks like a section group. Do Step A. */
@@ -2338,7 +2338,7 @@ _dwarf_elf_find_sym_sections(
         } else if (!strcmp(name,".dynamic")) {
             ep->f_dynamic_sect_index = i;
             ep->f_loc_dynamic.g_offset = psh->gh_offset;
-        }
+        } 
     }
     res = validate_links(ep,ep->f_symtab_sect_index,
         ep->f_symtab_sect_strings_sect_index,errcode);
@@ -2374,7 +2374,7 @@ _dwarf_load_elf_sectheaders(
     if (res != DW_DLV_OK) {
         return res;
     }
-    res  = _dwarf_elf_load_sect_namestring(ep,errcode);
+    res  = _dwarf_elf_load_sect_namestrings(ep,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }

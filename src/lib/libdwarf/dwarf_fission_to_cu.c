@@ -303,10 +303,6 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
 
     cu_context->cc_rnglists_base  =
         buildhere->rc_offsets_off_in_sect;
-printf("debug SET rnglists base from rc_offsetts_off_in_sectt: "
-"0x%lx lie %d\n",
-(unsigned long)cu_context->cc_rnglists_base,
-__LINE__);
     cu_context->cc_rnglists_base_present = TRUE;
     cu_context->cc_rnglists_base_contr_size = size;
     /* FIXME cc_rnglists_header_length_present? */
@@ -354,7 +350,8 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     for (si = 0; si < smax ; ++si) {
         int sec_index = 0;
 
-        memset(&fission_data,0,sizeof(fission_data));
+        fission_data = fission_data_zero;
+        /*memset(&fission_data,0,sizeof(fission_data)); */
         fdres = dwarf_get_debugfission_for_key(dbg,
             &cu_context->cc_signature,
             keylist[si],

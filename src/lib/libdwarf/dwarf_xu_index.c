@@ -1100,6 +1100,18 @@ _dwarf_get_xuhdr(Dwarf_Debug dbg,
 
 }
 
+static void clear_pcu_data( Dwarf_Debug_Fission_Per_CU *percu)
+{
+    Dwarf_Unsigned size = 0;
+
+    size = sizeof(percu->pcu_offset);
+    memset(&percu->pcu_offset,0,size);
+    size = sizeof(percu->pcu_size);
+    memset(&percu->pcu_size,0,size);
+    size = sizeof(percu->pcu_hash);
+    memset(&percu->pcu_hash,0,size);
+}
+
 static int
 transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned percu_index,
@@ -1128,6 +1140,7 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
         secnums[i] = num;
     }
     n = percu_index;
+    clear_pcu_data(percu_out);
     for (l = 0; l < max_cols; ++l) {  /* L */
         Dwarf_Unsigned sec_off = 0;
         Dwarf_Unsigned sec_size = 0;
