@@ -1,3 +1,124 @@
+2026-05-22:  David Anderson
+    commit 221b72d65821e11b618c6ac1443d58b134738f91
+
+    Updating latest vulnerability text.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-22:  David Anderson
+    commit b0eed69821b848742c4d258a1ea4bc51e63d5799
+
+    Fixed important typo in latest vulnerability report:
+    DW202605-004
+            modified:   bugxml/data.txt
+
+2026-05-22:  David Anderson
+    commit f45f68da5c107bdfbc82fd4d4662048ffe12ab88
+
+    Updated bug list.
+            modified:   ../../../bugxml/data.txt
+
+    A severly corrupted object file exposed
+    broken code in _dwarf_elf_setup_all_section_groups() which
+    memory allocated in _dwarf_internal_read_rnglists_header() failed to
+    free(buildhere->lc_offset_value_array) before returning.
+    The bug was initially found February 26, 2026 by OSSFUZZ folks.
+    ossfuzz488137256
+    The bug was introduced in version 2.0.0, May 2025
+
+    Removing a function that was new days ago and
+    was a bad idea.
+            modified:   ../../lib/libdwarf/dwarf_elf_load_headers.c
+
+    Ensure allocated data lc_offset_value_array
+    us always freed. Same bug number: ossfuzz488137256
+            modified:   ../../lib/libdwarf/dwarf_fission_to_cu.c
+
+    Ensure allocated data lc_offset_value_array
+    us always freed. Same bug number: ossfuzz488137256
+            modified:   ../../lib/libdwarf/dwarf_loclists.c
+
+2026-05-21:  David Anderson
+    commit 0b04448896582ac1fef9db5512f789beebf60463
+
+    Remove 3 lines #if 0
+    -_dwarf_elf_load_sect_namestring() renamed to
+    -_dwarf_elf_load_sect_namestrings()
+    Clarified the logic looking for SHF_GROUP instances.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Use struct copy (of static instance) instead of memset()
+    to zero a local struct.
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+
+    Ensure that free(buildhere->rc_offset_value_array);
+    is always executed by _dwarf_internal_read_rnglists_header()
+    This fixes memory leak ossfuzz ss fuzz 488137256
+    also known as DW202605-003.
+    dwarf_loclists.c does not have this leak though
+    it is quite similar code.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+    Use new local function clear_pcu_data() and memset
+    to ebsure percu->pcu_offset and pcu_size and pcu_hash
+    are fully zeroed before use.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2026-05-21:  David Anderson
+    commit 9542058ba317520e0783e00713c39b7aaefd7d92
+
+    To avoid a final printf ending without a newline
+    (which is annoying in regression testing, diff tools
+    do not like that sort of thing)
+    made the following change:
+             if (res == DW_DLV_OK) {
+               printf(">>Success");
+             } else {
+    -          printf(">>Error");
+    +          printf(">>Error, dwarf_siblingof_b failed\n");
+             }
+             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+
+            modified:   fuzz_die_cu.c
+
+2026-05-20:  David Anderson
+    commit 9114e82411612954096d36ec5b3ddd2776091563
+
+    Added ossfuzz issue 488137256 and corrected
+    copy paste error with respect to  DW202605-00?
+    vulnerabilities.
+            modified:   bugxml/data.txt
+
+2026-05-20:  David Anderson
+    commit cbed925acceec05f68ea7a32f2a4e5e55ed6154b
+
+    Removed an unwanted blank line.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+
+2026-05-20:  David Anderson
+    commit 106b63c48605ae6591b68338e6aa8338dd1ecc94
+
+    Moved printf code conditioned by TESTINGHASHTAB
+    to be properly indented.
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2026-05-18:  David Anderson
+    commit 1c8480dc0721a19166179912031018b32368d75c
+
+    Updated EM_ and EI_ and ELFOSABI_ lists from data in Elf gabi.
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+
+2026-05-16:  David Anderson
+    commit 7b407f5e8e30e3695c087b1426597d895e586917
+
+    Up to date with git diff.
+            modified:   ChangeLog
+
 2026-05-16:  David Anderson
     commit da5a595c8342d6148b81e59a4e13f8878943414e
 
