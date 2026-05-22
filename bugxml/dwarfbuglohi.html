@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2026</p>
-<p> Record count: 234 </p>
+<p> Record count: 235 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -7638,7 +7638,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>id: DW202605-003
 </p>
 <p>cve:</p>
-<p>fuzzer: oss fuzz 513032442
+<p>fuzzer: oss fuzz 513010516
 </p>
 <p>datereported: 2026-05-14
 </p>
@@ -7648,21 +7648,47 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>product: libdwarf
 </p>
-<p>description: Reading a corrupted object section results
-  in a memory leak  in local function read_gs_section_group().
-  It would leak memory with some corrupted objects
-  marked as having Elf SHF_GROUP sections.
-  Ossfuzz vulnerability  513010516
+<p>description:  Ossfuzz vulnerability  513010516
   Vulnerability existed since 2026-05-12 (new
   versions of Elf reading functions).
   The function was not completely updated to match
   the revisions introduced 12 May (4 days ago),
   leading directly to the leak.
+  Leak was a mishandling when Elf SHF_GROUP flag was set
+  in a section header.
 </p>
 <p>datefixed: 2026-05-16
 </p>
-<p>references:</p>
+<p>references: regressiontests/ossfuzz513010516/fuzz_dnames-5764687336898560
+</p>
 <p>gitfixid: 4c8aecaf95f94ff4baa8840ea90df7b5fd14a71f
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-004">235) DW202605-004</h3>
+<p>id: DW202605-004
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 488137256
+</p>
+<p>datereported: 2026-02-26
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Leaks memory in _dwarf_internal_read_rnglists_header
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A severly corrupted object file exposed
+  broken code in _dwarf_elf_setup_all_section_groups() which
+  memory allocated in _dwarf_internal_read_rnglists_header() failed to
+  free() before returning.
+</p>
+<p>datefixed: 2026-05-20
+</p>
+<p>references: regressiontests/ossfuzz488137256/fuzz_die_cu-4889329913888768
+</p>
+<p>gitfixid: f45f68da5c107bdfbc82fd4d4662048ffe12ab88
 </p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>

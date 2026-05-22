@@ -8,10 +8,11 @@ product: libdwarf
 description: A severly corrupted object file exposed
   broken code in _dwarf_elf_setup_all_section_groups() which
   memory allocated in _dwarf_internal_read_rnglists_header() failed to
-  free() before returning.
+  free(buildhere->lc_offset_value_array) before returning.
+  The bug was introduced in libdwarf-2.0.0, May 2025. 
 datefixed: 2026-05-20
 references: regressiontests/ossfuzz488137256/fuzz_die_cu-4889329913888768
-gitfixid: 
+gitfixid: f45f68da5c107bdfbc82fd4d4662048ffe12ab88
 tarrelease:
 endrec:  DW202605-004
 
