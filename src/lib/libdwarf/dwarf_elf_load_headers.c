@@ -1843,7 +1843,7 @@ validate_section_name_string(Dwarf_Unsigned section_length,
 }
 
 /*  Without proper section names in place nothing
-    is going to work in reading DWARF sections. 
+    is going to work in reading DWARF sections.
     This assumes we are set up with the section
     strings read in and pointed to by ep->f_elf_shstrings_data. */
 static int
@@ -1859,7 +1859,8 @@ _dwarf_elf_load_sect_namestrings(
     stringsecbase = ep->f_elf_shstrings_data;
     gshdr = ep->f_shdr;
     generic_count = ep->f_loc_shdr.g_count;
-    /* Here we ensure gh_namestring set to something with null termination */
+    /*  Here we ensure gh_namestring set to something with
+        null termination */
     for (i = 0; i < generic_count; i++, ++gshdr) {
         const char *namestr =
             "<No valid Elf section strings exist>";
@@ -2024,15 +2025,6 @@ elf_sht_groupsec(Dwarf_Unsigned type, const char *sname)
     /*  ARM compilers name SHT group "__ARM_grp<long name here>"
         not .group */
     if ((type == SHT_GROUP) || (!strcmp(sname,".group"))){
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static int
-elf_flagmatches(Dwarf_Unsigned flagsword,Dwarf_Unsigned flag)
-{
-    if ((flagsword&flag) == flag) {
         return TRUE;
     }
     return FALSE;
@@ -2246,8 +2238,7 @@ _dwarf_elf_setup_all_section_groups(
             /*  No data here. */
             continue;
         }
-        if (elf_sht_groupsec(psh->gh_type,name) ||
-            elf_flagmatches(psh->gh_flags,SHF_GROUP)) {
+        if (elf_sht_groupsec(psh->gh_type,name)) {
             ep->f_shf_group_flag_section_count++;
         } else {
             continue;
@@ -2338,7 +2329,7 @@ _dwarf_elf_find_sym_sections(
         } else if (!strcmp(name,".dynamic")) {
             ep->f_dynamic_sect_index = i;
             ep->f_loc_dynamic.g_offset = psh->gh_offset;
-        } 
+        }
     }
     res = validate_links(ep,ep->f_symtab_sect_index,
         ep->f_symtab_sect_strings_sect_index,errcode);

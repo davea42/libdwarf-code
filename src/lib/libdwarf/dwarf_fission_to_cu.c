@@ -123,16 +123,12 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
         buildhere,
         &nextset,error);
     if (res != DW_DLV_OK) {
-        free(buildhere->lc_offset_value_array);
-        buildhere->lc_offset_value_array = 0;
         return res;
     }
     cu_context->cc_loclists_base_present = TRUE;
     cu_context->cc_loclists_base_contr_size = size;
     cu_context->cc_loclists_base            =
         buildhere->lc_offsets_off_in_sect;
-    free(buildhere->lc_offset_value_array);
-    buildhere->lc_offset_value_array = 0;
     return DW_DLV_OK;
 }
 

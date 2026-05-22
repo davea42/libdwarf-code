@@ -7,12 +7,8 @@ vulnerability: Leaks memory in _dwarf_internal_read_rnglists_header
 product: libdwarf
 description: A severly corrupted object file exposed
   broken code in _dwarf_elf_setup_all_section_groups() which
-  lead to reading a nonsense section as it it contained a group
-  section list. Errors were found, but not properly dealt with
-  in the erroneous context in which they were detected.
-  The code was broken in 2019 when support for Elf section groups
-  was added (libdwarf-20191104.tar.gz had the broken code,
-  for example). 
+  memory allocated in _dwarf_internal_read_rnglists_header() failed to
+  free() before returning.
 datefixed: 2026-05-20
 references: regressiontests/ossfuzz488137256/fuzz_die_cu-4889329913888768
 gitfixid: 

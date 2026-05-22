@@ -358,7 +358,13 @@ read_single_lle_entry(Dwarf_Debug dbg,
 /*  Reads the header. Determines the
     various offsets, including offset
     of the next header. Does no memory
-    allocations here. */
+    allocations here.
+    buildhere->lc_offset_value_array is malloced
+    and used here but
+    not elsewhere, so here we free that
+    here before returning to avoid a leak.
+    As in dwarf_rnglists.c
+*/
 int
 _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
     Dwarf_Bool build_offset_array,
@@ -501,6 +507,8 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
         }
     } /* else no offset table */
 
+    free(buildhere->lc_offset_value_array);
+    buildhere->lc_offset_value_array = 0;
     buildhere->lc_offsets_off_in_sect = offset+localoff;
     buildhere->lc_first_loclist_offset =
         buildhere->lc_offsets_off_in_sect + lists_len;
