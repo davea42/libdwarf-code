@@ -2099,6 +2099,7 @@ read_gs_section_group(
             return res;
         }
         psh->gh_content = data;
+        data = 0; /* Do not use data before returning */
         psh->gh_was_alloc = TRUE;
         psh->gh_load_type = Dwarf_Alloc_Malloc;
         if (flags & SHF_COMPRESSED) {
@@ -2163,7 +2164,6 @@ read_gs_section_group(
                     This is pretty horrible. */
                 if (gsecb >= ep->f_loc_shdr.g_count) {
                     *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
-                    free(data);
                     free(grouparray);
                     return DW_DLV_ERROR;
                 }
