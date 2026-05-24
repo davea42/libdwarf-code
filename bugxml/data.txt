@@ -5,9 +5,13 @@ reportedby: David Korczynski
 vulnerability: Leak from _dwarf_load_elf_sectheaders()
 product: libdwarf
 description: Direct leak of memory.
-datefixed: 
+  A very badly corrupted Elf object file resulted in repeating
+  the allocation of a string table, leaving the original copy
+  to leak memory.  Now we notice the attempted repeat
+  and return an error.
+datefixed: 2026-05-24
 references: regressiontests/ossfuzz514729017/fuzz_die_cu_e_print-4644164729110528
-gitfixid: 
+gitfixid: 12162ed757c510b06b8b53154e8f971053164ba3
 tarrelease:
 endrec:  DW202605-007
 

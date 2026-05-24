@@ -7764,11 +7764,17 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>product: libdwarf
 </p>
 <p>description: Direct leak of memory.
+  A very badly corrupted Elf object file resulted in repeating
+  the allocation of a string table, leaving the original copy
+  to leak memory.  Now we notice the attempted repeat
+  and return an error.
 </p>
-<p>datefixed:</p>
+<p>datefixed: 2026-05-24
+</p>
 <p>references: regressiontests/ossfuzz514729017/fuzz_die_cu_e_print-4644164729110528
 </p>
-<p>gitfixid:</p>
+<p>gitfixid: 12162ed757c510b06b8b53154e8f971053164ba3
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>

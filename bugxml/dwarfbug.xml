@@ -10,11 +10,15 @@
 <vulnerability> Leak from _dwarf_load_elf_sectheaders()
 </vulnerability>
 <description> Direct leak of memory.
+  A very badly corrupted Elf object file resulted in repeating
+  the allocation of a string table, leaving the original copy
+  to leak memory.  Now we notice the attempted repeat
+  and return an error.
 </description>
-<datefixed></datefixed>
+<datefixed>2026-05-24</datefixed>
 <references> regressiontests/ossfuzz514729017/fuzz_die_cu_e_print-4644164729110528
 </references>
-<gitfixid></gitfixid>
+<gitfixid>12162ed757c510b06b8b53154e8f971053164ba3</gitfixid>
 <tarrelease></tarrelease>
 </dwbug>
 <dwbug>
