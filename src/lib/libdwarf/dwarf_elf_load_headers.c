@@ -761,7 +761,10 @@ _dwarf_generic_elf_load_symbols32(
     flags = psh->gh_flags;
     size = psh->gh_size;
     offset = psh->gh_offset;
-
+    if (psh->gh_content) {
+        *errcode = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
     content = calloc(1,size);
     if (!content) {
         *errcode = DW_DLE_ALLOC_FAIL;
@@ -787,6 +790,7 @@ _dwarf_generic_elf_load_symbols32(
         }
 #else /* COMPRESSED TEST */
         free(psh->gh_content);
+        psh->gh_content = 0;
         *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
         return DW_DLV_ERROR;
 #endif /* COMPRESSED TEST */
@@ -859,6 +863,10 @@ _dwarf_generic_elf_load_symbols64(
     flags = psh->gh_flags;
     size = psh->gh_size;
     offset = psh->gh_offset;
+    if (psh->gh_content) {
+        *errcode = DW_DLE_ELF_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
     content = calloc(1,size);
     if (!content) {
         *errcode = DW_DLE_ALLOC_FAIL;
@@ -1012,7 +1020,6 @@ _dwarf_load_elf_symtab_symbols(
     if (res == DW_DLV_OK) {
         ep->f_symtab = gsym;
         ep->f_loc_symtab.g_count = count;
-    } else {
     }
     return res;
 }
@@ -1228,8 +1235,15 @@ _dwarf_load_elf_symstr(
         *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
         return DW_DLV_ERROR;
     }
-    flags = strpsh->gh_flags;
+    if (ep->f_symtab_sect_strings_sect_index ==
+        ep->f_elf_shstrings_index ) {
+        ep->f_symtab_sect_strings = ep->f_elf_shstrings_data;
+        ep->f_symtab_sect_strings_max = ep->f_elf_shstrings_max;
+        return DW_DLV_OK;
+    }
+
     ep->f_symtab_sect_strings = calloc(1,strsectlength+1);
+    flags = strpsh->gh_flags;
     if (!ep->f_symtab_sect_strings) {
         ep->f_symtab_sect_strings = 0;
         ep->f_symtab_sect_strings_max = 0;
@@ -1319,6 +1333,9 @@ _dwarf_elf_load_sectstrings(
     if (res != DW_DLV_OK) {
         free(ep->f_elf_shstrings_data);
         ep->f_elf_shstrings_data = 0;
+        free(psh->gh_content);
+        psh->gh_content = 0;
+        return res;
     }
     psh->gh_load_type = Dwarf_Alloc_Malloc;
     psh->gh_was_alloc = TRUE;
