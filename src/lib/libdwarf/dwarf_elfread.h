@@ -259,11 +259,6 @@ typedef struct elf_filedata_s {
     Dwarf_Unsigned f_dwo_group_section_count;
 } dwarf_elf_object_access_internals_t;
 
-int dwarf_construct_elf_access(int fd,
-    const char *path,
-    dwarf_elf_object_access_internals_t **ep,int *errcode);
-int dwarf_destruct_elf_access(
-    dwarf_elf_object_access_internals_t *ep,int *errcode);
 int _dwarf_load_elf_header(dwarf_elf_object_access_internals_t *ep,
     int *errcode);
 int _dwarf_load_elf_sectheaders(
