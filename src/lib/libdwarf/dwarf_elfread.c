@@ -815,6 +815,7 @@ elf_relocations_nolibelf(void* obj_in,
     return res;
 }
 
+/* Frees ai_object content and ai_object itself. */
 static void
 _dwarf_destruct_elf_nlaccess(void * obj)
 {
@@ -826,8 +827,6 @@ _dwarf_destruct_elf_nlaccess(void * obj)
     Dwarf_Unsigned i = 0;
 
     ep = (dwarf_elf_object_access_internals_t *)aip->ai_object;
-    free(ep->f_ehdr);
-    ep->f_ehdr = 0;
     shp = ep->f_shdr;
     shcount = ep->f_loc_shdr.g_count;
     for (i = 0; i < shcount; ++i,++shp) {
@@ -838,6 +837,7 @@ _dwarf_destruct_elf_nlaccess(void * obj)
         case Dwarf_Alloc_Malloc:
             if (shp->gh_was_alloc) {
                 free(shp->gh_content);
+                shp->gh_content = 0;
             }
             break;
 #ifdef HAVE_FULL_MMAP
@@ -862,6 +862,8 @@ _dwarf_destruct_elf_nlaccess(void * obj)
         shp->gh_sht_group_array = 0;
         shp->gh_sht_group_array_count = 0;
     }
+    free(ep->f_ehdr);
+    ep->f_ehdr = 0;
     ep->f_loc_shdr.g_count = 0;
     free(ep->f_phdr);
     ep->f_phdr = 0;
