@@ -1256,6 +1256,5 @@ int
 _dwarf_entrypc(Dwarf_Die die,
     Dwarf_Addr  *return_addr,
     Dwarf_Error *error);
-
 int _dwarf_get_suppress_debuglink_crc(void);
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);
