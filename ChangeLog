@@ -1,3 +1,72 @@
+2026-05-24:  David Anderson
+    commit 122fa86c90ae48c760b4836a88f94df5bd5edb62
+
+    Up to date with DW202605-007
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-24:  David Anderson
+    commit 12162ed757c510b06b8b53154e8f971053164ba3
+
+    Corrupted Elf object lead to reading a strings section twice.
+    Now we watch for duplicate access and generate an error.
+    We also check to see if section header strings
+    and symtab strings are the same section number and if so only read
+    the section once.  This fixes oss fuzz 514729017 (DW202605-007
+    on dwarfbug.html)
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-05-24:  David Anderson
+    commit d7bc3a426caeaca603fc9fec196318000d80b40b
+
+    Moving a free down near the end of the destruct code.
+    Easier for a reader to know it's safe without
+    detailed inspection.
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2026-05-24:  David Anderson
+    commit cbfb36e12daa983582f4485d0fa03c7487b8dbd8
+
+    Delete an unwanted blank line.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2026-05-24:  David Anderson
+    commit 82a245f9d9e6674e0c24d366034b62fb99731441
+
+    Delete two function declarations.
+    No implementation of either function ever existed.
+            modified:   src/lib/libdwarf/dwarf_elfread.h
+
+2026-05-23:  David Anderson
+    commit b08516eaeadbe6639df4170639713593867b7005
+
+    New vulnerability.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-23:  David Anderson
+    commit f49716564b3a263ce81c5319fecea4c9319e178f
+
+    Fixing ossfuzz 514727740
+    A severly corrupted object file exposed
+    broken code in read_gs_section_group(), it was
+    doing a free(data) but data was stale, ownership
+    was transferred to gh_content so now data=0 as soon
+    as ownership transferred and dropped the incorrect free().
+    The bug was introduced Earlier in this month, May 2026.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-05-22:  David Anderson
+    commit 4b3cf93cc5819fbbef6d81812a08bae704c09aad
+
+    Still minor corrections to bug data.
+    With latest from git log
+            modified:   ChangeLog
+
 2026-05-22:  David Anderson
     commit 221b72d65821e11b618c6ac1443d58b134738f91
 
