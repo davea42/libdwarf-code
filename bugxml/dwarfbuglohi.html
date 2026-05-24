@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of May 2026</p>
-<p> Record count: 235 </p>
+<p> Record count: 238 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -7682,7 +7682,8 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 <p>description: A severly corrupted object file exposed
   broken code in _dwarf_elf_setup_all_section_groups() which
   memory allocated in _dwarf_internal_read_rnglists_header() failed to
-  free() before returning.
+  free(buildhere-&gt;lc_offset_value_array) before returning.
+  The bug was introduced in libdwarf-2.0.0, May 2025.
 </p>
 <p>datefixed: 2026-05-20
 </p>
@@ -7690,6 +7691,84 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>gitfixid: f45f68da5c107bdfbc82fd4d4662048ffe12ab88
 </p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-005">236) DW202605-005</h3>
+<p>id: DW202605-005
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 514727740
+</p>
+<p>datereported: 2026-05-19
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Double free and crash reading section group data
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A severly corrupted object file exposed
+  broken code in read_gs_section_group(), it was
+  doing a free(data) but data was stale, ownership
+  was transferred to gh_content so now data=0 as soon
+  as ownership transferred and dropped the incorrect free().
+  The bug was introduced Earlier in this month, May 2026.
+</p>
+<p>datefixed: 2026-05-23
+</p>
+<p>references: regressiontests/ossfuzz514727740/fuzz_init_b-4646656783220736
+</p>
+<p>gitfixid: f49716564b3a263ce81c5319fecea4c9319e178f
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-006">237) DW202605-006</h3>
+<p>id: DW202605-006
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 514753154
+</p>
+<p>datereported: 2026-05-19
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Double free and crash reading section group data
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Reading a corrupted object file resulted
+  in a double-free and a crash.
+  An earlier bug report this month (May) also
+  fixed this.
+</p>
+<p>datefixed: 2026-05-23
+</p>
+<p>references: regressiontests/ossfuzz514753154/fuzz_showsectgrp-5634424300699648
+</p>
+<p>gitfixid: f49716564b3a263ce81c5319fecea4c9319e178f
+</p>
+<p>tarrelease:</p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202605-007">238) DW202605-007</h3>
+<p>id: DW202605-007
+</p>
+<p>cve:</p>
+<p>fuzzer: oss fuzz 514729017
+</p>
+<p>datereported: 2026-05-19
+</p>
+<p>reportedby: David Korczynski
+</p>
+<p>vulnerability: Leak from _dwarf_load_elf_sectheaders()
+</p>
+<p>product: libdwarf
+</p>
+<p>description: Direct leak of memory.
+</p>
+<p>datefixed:</p>
+<p>references: regressiontests/ossfuzz514729017/fuzz_die_cu_e_print-4644164729110528
+</p>
+<p>gitfixid:</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
