@@ -66,18 +66,19 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>description: Direct leak of memory.
   A very badly corrupted Elf object file resulted
-  in it being treated as both a .strtab and  an SHT_GROUP
+  in a section being treated as both a .strtab and  an SHT_GROUP
   leading to a leak of memory. A corruption with
-  .symtab and SHT_GROUP would have the same problem,
-  due to the organization of dwarf_elfread.c in
-  changes to elf reading last month (April).
+  .symtab and SHT_GROUP would have the same problem.
+  Now libdwarf notices and returns an error instead of leaking memory.
+  Leakage caused by the revision of dwarf_elfread.c last month (April).
   So the bug was introduced a few weeks ago.
 </p>
 <p>datefixed: 2026-05-26
 </p>
 <p>references: regressiontests/ossfuzz516582687/fuzz_gdbindex-5725564647571456
 </p>
-<p>gitfixid:</p>
+<p>gitfixid: 6e6d732a3b921d7f771b0bfe417a3e3c47520dac
+</p>
 <p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <h3 id="DW202605-007">2) DW202605-007</h3>
