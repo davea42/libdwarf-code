@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2019, David Anderson
+Copyright (c) 2019-2026, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -30,7 +30,7 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*  A lighly generalized data buffer.
+/*  A lightly generalized data buffer.
     Works for more than just strings,
     but has features (such as ensuring
     data always has a NUL byte following
@@ -270,7 +270,8 @@ _dwarfstring_append_zeros(dwarfstring *data, size_t l)
     return res;
 }
 
-int dwarfstring_append_printf_s(dwarfstring *data,
+int
+dwarfstring_append_printf_s(dwarfstring *data,
     char *format,char *s)
 {
     size_t stringlenszt = 0;
@@ -400,7 +401,8 @@ static char Xtable[16] = {
 
 /*  We deal with formats like:
     %d   %5d %05d %+d %+5d %-5d (and ld and lld too). */
-int dwarfstring_append_printf_i(dwarfstring *data,
+int
+dwarfstring_append_printf_i(dwarfstring *data,
     char *format,
     dwarfstring_i v)
 {
@@ -681,7 +683,8 @@ trimleadingzeros(char *ptr,size_t digits,unsigned keepcount)
     %u   %5u %05u (and ld and lld too).
     %x   %5x %05x (and ld and lld too).  */
 
-int dwarfstring_append_printf_u(dwarfstring *data,
+int
+dwarfstring_append_printf_u(dwarfstring *data,
     char *format,
     dwarfstring_u v)
 {
