@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202605-008</dwid>
+<cve></cve>
+<fuzzer>oss fuzz 516582687</fuzzer>
+<datereported>2026-05-26</datereported>
+<reportedby>David Korczynski</reportedby>
+<product>libdwarf</product>
+<vulnerability> Leak from read_gs_section_group
+</vulnerability>
+<description> Direct leak of memory.
+  A very badly corrupted Elf object file resulted
+  in it being treated as both a .strtab and  an SHT_GROUP
+  leading to a leak of memory. A corruption with
+  .symtab and SHT_GROUP would have the same problem,
+  due to the organization of dwarf_elfread.c in
+  changes to elf reading last month (April).
+  So the bug was introduced a few weeks ago.
+</description>
+<datefixed>2026-05-26</datefixed>
+<references> regressiontests/ossfuzz516582687/fuzz_gdbindex-5725564647571456
+</references>
+<gitfixid></gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202605-007</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 514729017</fuzzer>
