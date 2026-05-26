@@ -765,6 +765,12 @@ _dwarf_generic_elf_load_symbols32(
         *errcode = DW_DLE_ELF_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
+    if (psh->gh_sht_group_array ||
+        psh->gh_sht_group_array_count ||
+        psh->gh_content) {
+        *errcode = DW_DLE_ELF_GRPSTRING_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
     content = calloc(1,size);
     if (!content) {
         *errcode = DW_DLE_ALLOC_FAIL;
@@ -863,8 +869,10 @@ _dwarf_generic_elf_load_symbols64(
     flags = psh->gh_flags;
     size = psh->gh_size;
     offset = psh->gh_offset;
-    if (psh->gh_content) {
-        *errcode = DW_DLE_ELF_SECTION_ERROR;
+    if (psh->gh_sht_group_array ||
+        psh->gh_sht_group_array_count ||
+        psh->gh_content) {
+        *errcode = DW_DLE_ELF_GRPSTRING_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
     content = calloc(1,size);
@@ -1225,6 +1233,16 @@ _dwarf_load_elf_symstr(
         ep->f_symtab_sect_strings = strpsh->gh_content;
         return DW_DLV_OK;
     }
+    /*  if strpsh->gh_sht_group_array is non-zero
+        then the section is set up as a GROUP section
+        and reading as a string section is absurd.
+        And gh_content set in a way we do not want.*/
+    if (strpsh->gh_sht_group_array ||
+        strpsh->gh_sht_group_array_count ||
+        strpsh->gh_content) {
+        *errcode = DW_DLE_ELF_GRPSTRING_SECTION_ERROR;
+        return DW_DLV_ERROR;
+    }
     /*  Alloc an extra byte as a guaranteed NUL byte
         at the end of the strings in case the section
         is corrupted and lacks a NUL at end. */
@@ -1241,7 +1259,6 @@ _dwarf_load_elf_symstr(
         ep->f_symtab_sect_strings_max = ep->f_elf_shstrings_max;
         return DW_DLV_OK;
     }
-
     ep->f_symtab_sect_strings = calloc(1,strsectlength+1);
     flags = strpsh->gh_flags;
     if (!ep->f_symtab_sect_strings) {

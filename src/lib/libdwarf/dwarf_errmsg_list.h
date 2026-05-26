@@ -707,6 +707,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "section content failed."},
 {"DW_DLE_ZSTD_DATA_ERROR(515) ZSTD decompress library call failed"},
 {"DW_DLE_ZLIB_ZSTD_MISSING(516) Cannot decompress a section without "
-    "zlib and zstd libraries"}
+    "zlib and zstd libraries"},
+{"DW_DLE_ELF_GRPSTRING_SECTION_ERROR(517) A section marked"
+    " as SHT_GROUP and named as stringtable. Corrupt Elf" }
 };
 #endif /* DWARF_ERRMSG_LIST_H */

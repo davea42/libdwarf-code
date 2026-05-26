@@ -1560,9 +1560,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_ALLOC_DECOMPRESS_FAIL           514
 #define DW_DLE_ZSTD_DATA_ERROR                 515
 #define DW_DLE_ZLIB_ZSTD_MISSING               516
+#define DW_DLE_ELF_GRPSTRING_SECTION_ERROR     517
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        516
+#define DW_DLE_LAST        517
 #define DW_DLE_LO_USER     0x10000
 /*! @} endgroup dw_dle */
 
