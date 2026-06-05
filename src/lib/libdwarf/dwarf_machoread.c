@@ -485,7 +485,7 @@ _dwarf_macho_load_segment_commands(
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }
-#if 0
+#if 0 /* inappropriate test */
     Not appropriate, segtotsize is internal space,not file space.
     if (segtotsize > MAX_COMMANDS_SIZE ) {
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
@@ -1335,35 +1335,6 @@ _dwarf_object_detector_universal_head_fd(
     *dw_contentcount = (unsigned int)duhd.au_count;
     duhdp->au_arches = duhd.au_arches;
     *dw_head = duhdp;
-    return DW_DLV_OK;
-}
-
-int
-_dwarf_object_detector_universal_instance(
-    Dwarf_Universal_Head dw_head,
-    Dwarf_Unsigned  dw_index_of,
-    Dwarf_Unsigned *dw_cpu_type,
-    Dwarf_Unsigned *dw_cpusubtype,
-    Dwarf_Unsigned *dw_offset,
-    Dwarf_Unsigned *dw_size,
-    Dwarf_Unsigned *dw_align,
-    int         *errcode)
-{
-    struct  Dwarf_Universal_Arch_s* arch = 0;
-
-    if (!dw_head) {
-        *errcode = DW_DLE_UNIVERSAL_BINARY_ERROR;
-        return DW_DLV_ERROR;
-    }
-    if (dw_index_of >= dw_head->au_count){
-        return DW_DLV_NO_ENTRY;
-    }
-    arch =  dw_head->au_arches +dw_index_of;
-    *dw_cpu_type = arch->au_cputype;
-    *dw_cpusubtype = arch->au_cpusubtype;
-    *dw_offset = arch->au_offset;
-    *dw_size = arch->au_size;
-    *dw_align = arch->au_align;
     return DW_DLV_OK;
 }
 

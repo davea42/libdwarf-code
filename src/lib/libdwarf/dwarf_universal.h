@@ -45,15 +45,6 @@ int _dwarf_object_detector_universal_head(
     Dwarf_Universal_Head * dw_head,
     int            *errcode);
 
-int _dwarf_object_detector_universal_instance(
-    Dwarf_Universal_Head dw_head,
-    Dwarf_Unsigned  dw_index_of,
-    Dwarf_Unsigned *dw_cpu_type,
-    Dwarf_Unsigned *dw_cpu_subtype,
-    Dwarf_Unsigned *dw_offset,
-    Dwarf_Unsigned *dw_size,
-    Dwarf_Unsigned *dw_align,
-    int         *errcode);
 void _dwarf_dealloc_universal_head(Dwarf_Universal_Head dw_head);
 
 #ifdef __cplusplus
