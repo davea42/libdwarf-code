@@ -510,6 +510,11 @@ dwarf_object_detector_fd(int fd,
     return res;
 }
 
+static const struct elf_header h_zero; 
+
+/*  We are using an ELF 32 header as a stand-in for
+    whichever header type we are actually reading.   */
+   
 int
 _dwarf_object_detector_fd_a(int fd,
     unsigned *ftype,
@@ -525,6 +530,7 @@ _dwarf_object_detector_fd_a(int fd,
     Dwarf_Unsigned remaininglen  = 0;
     int            res = 0;
 
+    h = h_zero;
     {
         res = _dwarf_seekr(fd,0,SEEK_END,&filesize);
         if (res != DW_DLV_OK) {
@@ -549,6 +555,11 @@ _dwarf_object_detector_fd_a(int fd,
     }
     /*  fileoffsetbase is non zero iff we have
         an Apple Universal Binary. */
+    if (readlen > remaininglen) {
+        /* Not a real object file */
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        return DW_DLV_ERROR;
+    }
     res = _dwarf_object_read_random(fd, (char *)&h,
         fileoffsetbase,
         readlen, filesize,errcode);
