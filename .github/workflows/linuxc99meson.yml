@@ -13,7 +13,7 @@ jobs:
   linuxc99meson:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install meson / ninja
       run: |
         sudo apt-get -qq update
@@ -32,7 +32,7 @@ jobs:
   linuxc17meson:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install meson / ninja
       run: |
         sudo apt-get -qq update
