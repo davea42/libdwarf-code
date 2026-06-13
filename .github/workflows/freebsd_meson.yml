@@ -10,22 +10,26 @@ permissions:
 jobs:
   freebsd_meson:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
+
     steps:
       - uses: actions/checkout@v6
       - name: FreeBSD-with-meson
         uses: cross-platform-actions/action@v1.2.0
         with:
           operating_system: freebsd
-          sync_files: runner-to-vm
           version:  '15.0'
-          run: |
-            uname -a
-            whoami
-            freebsd-version
-            echo $SHELL
-            sudo pkg install -y python3 bash meson ninja pkgconf
-            sudo pkg install -y gmake binutils zstd
-            mkdir builddir && cd builddir
-            meson setup -Ddwarfexample=true . ..
-            ninja
-            ninja test
+      - name: freebsd-meson-run
+        run: |
+          uname -a
+          whoami
+          freebsd-version
+          echo $SHELL
+          sudo pkg install -y python3 bash meson ninja pkgconf
+          sudo pkg install -y gmake binutils zstd
+          mkdir builddir && cd builddir
+          meson setup -Ddwarfexample=true . ..
+          ninja
+          ninja test
