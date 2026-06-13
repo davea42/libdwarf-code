@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v6
     - name: tools
       run:  |
-        brew install meson ninja
+        brew install meson
     - name: 
       run:  |
         mkdir builddir && cd builddir
