@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v6
     - name: tools
       run: | 
-        export HOMEBREW_REQUIRE_TAP_TRUST=1
+        brew untap aws/tap azure/bicep
         brew install automake libtool
     - name: aclocal
       run: aclocal
