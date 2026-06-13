@@ -11,8 +11,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v6
-    - name: brew
-      run: brew install cmake ninja
     - name:  cmake
       run:  |
         mkdir builddir && cd builddir
