@@ -12,7 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: tools
-      run:  brew install automake libtool
+      run: | 
+        export HOMEBREW_REQUIRE_TAP_TRUST=1
+        brew install automake libtool
     - name: aclocal
       run: aclocal
     - name: autoreconf
