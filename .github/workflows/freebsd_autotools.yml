@@ -20,7 +20,6 @@ jobs:
           operating_system: freebsd
           sync_files: runner-to-vm
           version:  '15.0'
-          shell: cpa.sh {0}
           run: |
             uname -a
             whoami
