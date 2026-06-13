@@ -9,6 +9,9 @@ permissions:
 jobs:
   freebsd_autotools:
     runs-on: ubuntu-latest
+    defaults:
+       run:
+         shell: cpa.sh {0}
     steps:
       - uses: actions/checkout@v6
       - name: FreeBSD-with-autotools
@@ -17,6 +20,7 @@ jobs:
           operating_system: freebsd
           sync_files: runner-to-vm
           version:  '15.0'
+          shell: cpa.sh {0}
           run: |
             uname -a
             whoami
