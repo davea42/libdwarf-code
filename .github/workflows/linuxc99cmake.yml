@@ -13,7 +13,7 @@ jobs:
   linuxc99cmake:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install cmake
       run: |
         sudo apt-get -qq update
@@ -28,7 +28,7 @@ jobs:
   linuxc17make:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install cmake
       run: |
         sudo apt-get -qq update
