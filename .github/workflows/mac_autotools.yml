@@ -12,9 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: tools
-      run: | 
-        brew trust aws/tap azure/bicep
-        brew install automake libtool
+      run: brew install automake libtool
     - name: aclocal
       run: aclocal
     - name: autoreconf
