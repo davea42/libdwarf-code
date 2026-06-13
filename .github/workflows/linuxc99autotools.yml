@@ -10,8 +10,12 @@ permissions:
 jobs:
   linux_autotools_c99:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
@@ -24,8 +28,12 @@ jobs:
       run:  make distcheck
   linux_autotools_c17:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
