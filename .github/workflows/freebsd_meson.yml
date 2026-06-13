@@ -11,7 +11,7 @@ jobs:
   freebsd_meson:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: FreeBSD-with-meson
         uses: cross-platform-actions/action@v0.23.0
         with:
