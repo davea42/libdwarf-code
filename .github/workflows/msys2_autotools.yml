@@ -16,12 +16,12 @@ jobs:
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         update: true
         install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
+    - uses: actions/checkout@v6
     - name: Configure
       run: autoreconf -vif && ./configure --disable-static --enable-shared
     - name: Build
