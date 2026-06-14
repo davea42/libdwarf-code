@@ -12,7 +12,7 @@ jobs:
   linux_autotools:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
@@ -26,7 +26,7 @@ jobs:
   linux_autotools_c99:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
@@ -40,7 +40,7 @@ jobs:
   linux_autotools_c17:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
@@ -54,7 +54,7 @@ jobs:
   linux_cmake:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install cmake
       run: |
         sudo apt-get -qq update
@@ -68,7 +68,7 @@ jobs:
   linuxc99cmake:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install cmake
       run: |
         sudo apt-get -qq update
@@ -79,10 +79,10 @@ jobs:
         CFLAGS="-std=c99" cmake -G "Unix Makefiles" -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         make
         ctest -R self
-  linuxc17make:
+  linuxc17cmake:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install cmake
       run: |
         sudo apt-get -qq update
@@ -95,7 +95,7 @@ jobs:
   linux_meson:
     runs-on: ubuntu-latest
     steps:  
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install meson / ninja
       run: |
         sudo apt-get -qq update
@@ -114,7 +114,7 @@ jobs:
   linuxc99meson:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install meson / ninja
       run: |
         sudo apt-get -qq update
@@ -133,7 +133,7 @@ jobs:
   linuxc17meson:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install meson / ninja
       run: |
         sudo apt-get -qq update
@@ -150,76 +150,83 @@ jobs:
         ninja
         ninja test
 
-
   freebsd_autotools:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: FreeBSD-with-autotools
-        uses: cross-platform-actions/action@v0.23.0
+        uses: cross-platform-actions/action@v1.2.0
         with:
           operating_system: freebsd
-          sync_files: runner-to-vm
-          version:  '14.0'
-          run: |
-            uname -a
-            whoami
-            freebsd-version
-            echo $SHELL
-            sudo pkg install -y python3 bash automake pkgconf
-            sudo pkg install -y libtool gmake binutils lzlib
-            autoreconf --warnings=all  -vif
-            ./configure
-            make
-            make check
+          version:  '15.0'
+      - name: Freebsd-autotools-run
+        run: |
+          uname -a
+          whoami
+          freebsd-version
+          echo $SHELL
+          sudo pkg install -y python3 bash automake pkgconf
+          sudo pkg install -y libtool gmake binutils lzlib
+          autoreconf --warnings=all  -vif
+          ./configure
+          make
+          make check
 
   freebsd_cmake:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: FreeBSD-with-cmake
-        uses: cross-platform-actions/action@v0.23.0
+        uses: cross-platform-actions/action@v1.2.0
         with:
           operating_system: freebsd
-          sync_files: runner-to-vm
-          version:  '14.0'
-          run: |
-            uname -a
-            freebsd-version
-            echo $SHELL
-            sudo pkg install -y python3 bash cmake ninja pkgconf
-            sudo pkg install -y gmake binutils lzlib
-            mkdir builddir && cd builddir
-            cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
-            ninja
-            ninja test
+          version:  '15.0'
+      - name: freebsd-cmake-run
+        run: |
+          uname -a
+          freebsd-version
+          echo $SHELL
+          sudo pkg install -y python3 bash cmake ninja pkgconf
+          sudo pkg install -y gmake binutils lzlib
+          mkdir builddir && cd builddir
+          cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+          ninja
+          ninja test
 
   freebsd_meson:
     runs-on: ubuntu-latest
     name: FreeBSD-with-meson
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: FreeBSD-meson 
-      uses: cross-platform-actions/action@v0.23.0
+      uses: cross-platform-actions/action@v1.2.0
       with:
         operating_system: freebsd
-        sync_files: runner-to-vm
-        version:  '14.0'
-        run: |
-          uname -a
-          freebsd-version
-          echo $SHELL
-          sudo pkg install -y python3 bash meson ninja 
-          sudo pkg install -y pkgconf gmake binutils zstd
-          mkdir build && cd build
-          meson setup -Ddwarfexample=true . ..
-          ninja
-          ninja test
+        version:  '15.0'
+    - name: freebsd-meson-run
+      run: |
+        uname -a
+        freebsd-version
+        echo $SHELL
+        sudo pkg install -y python3 bash meson ninja 
+        sudo pkg install -y pkgconf gmake binutils zstd
+        mkdir build && cd build
+        meson setup -Ddwarfexample=true . ..
+        ninja
+        ninja test
 
   macos_autotools:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: tools
       run:  brew install automake libtool
     - name: autoreconf
@@ -234,9 +241,7 @@ jobs:
   macos_cmake:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: brew
-      run: brew install cmake ninja
+    - uses: actions/checkout@v6
     - name: cmake
       run:  |
         mkdir builddir && cd builddir
@@ -247,10 +252,10 @@ jobs:
   macos_meson:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: brew
       run:  |
-        brew install meson ninja
+        brew install meson
     - name: meson
       run:  |
         mkdir builddir && cd builddir
@@ -259,19 +264,19 @@ jobs:
         ninja test
 
   msys2_autotools:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     defaults:
       run:
         shell: msys2 {0}
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         update: true
         install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
+    - uses: actions/checkout@v6
     - name: Configure
       run: autoreconf -vif && ./configure --disable-static --enable-shared
     - name: Build
@@ -282,19 +287,19 @@ jobs:
       run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
 
   msys2_cmake:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     defaults:
       run:
         shell: msys2 {0}
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         update: true
         install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen  mingw-w64-x86_64-ninja
+    - uses: actions/checkout@v6
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
@@ -304,19 +309,19 @@ jobs:
         ninja test
 
   msys2_meson:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
     defaults:
       run:
         shell: msys2 {0}
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-    - uses: actions/checkout@v4
-    - uses: msys2/setup-msys2@v2
+    - uses: msys2/setup-msys2@v6
       with:
         msystem: MINGW64
         update: true
         install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen 
+    - uses: actions/checkout@v6
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
