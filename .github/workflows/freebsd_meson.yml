@@ -24,8 +24,6 @@ jobs:
       - name: freebsd-meson-run
         run: |
           uname -a
-          whoami
-          freebsd-version
           echo $SHELL
           sudo pkg install -y python3 bash meson ninja pkgconf
           sudo pkg install -y gmake binutils zstd
