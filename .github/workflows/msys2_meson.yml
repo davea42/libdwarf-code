@@ -16,12 +16,12 @@ jobs:
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         update: true
         install: base-devel git  mingw-w64-x86_64-toolchain mingw-w64-x86_64-python3 mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-zlib mingw-w64-x86_64-doxygen 
+    - uses: actions/checkout@v6
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
