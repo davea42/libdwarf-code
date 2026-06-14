@@ -166,8 +166,6 @@ jobs:
       - name: Freebsd-autotools-run
         run: |
           uname -a
-          whoami
-          freebsd-version
           echo $SHELL
           sudo pkg install -y python3 bash automake pkgconf
           sudo pkg install -y libtool gmake binutils lzlib
@@ -192,7 +190,6 @@ jobs:
       - name: freebsd-cmake-run
         run: |
           uname -a
-          freebsd-version
           echo $SHELL
           sudo pkg install -y python3 bash cmake ninja pkgconf
           sudo pkg install -y gmake binutils lzlib
@@ -214,8 +211,6 @@ jobs:
     - name: freebsd-meson-run
       run: |
         uname -a
-        freebsd-version
-        whoami
         echo $SHELL
         sudo pkg install -y python3 bash meson ninja 
         sudo pkg install -y pkgconf gmake binutils zstd
@@ -255,8 +250,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: brew
-      run:  |
-        brew install meson
+      run: brew install meson
     - name: meson
       run:  |
         mkdir builddir && cd builddir
