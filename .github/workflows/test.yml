@@ -200,6 +200,10 @@ jobs:
 
   freebsd_meson:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: cpa.sh {0}
+
     name: FreeBSD-with-meson
     steps:
     - uses: actions/checkout@v6
@@ -308,6 +312,7 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
+
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
