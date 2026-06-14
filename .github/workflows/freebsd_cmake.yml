@@ -24,7 +24,6 @@ jobs:
       - name: freebsd-cmake-run
         run: |
           uname -a
-          freebsd-version
           echo $SHELL
           sudo pkg install -y python3 bash cmake ninja pkgconf
           sudo pkg install -y gmake binutils lzlib zstd

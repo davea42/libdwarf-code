@@ -25,8 +25,6 @@ jobs:
       - name: Freebsd-autotools-run
         run: |
           uname -a
-          whoami
-          freebsd-version
           echo $SHELL
           sudo pkg install -y python3 bash automake libtool
           sudo pkg install -y pkgconf gmake binutils lzlib 
