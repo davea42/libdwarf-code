@@ -215,6 +215,7 @@ jobs:
       run: |
         uname -a
         freebsd-version
+        whoami
         echo $SHELL
         sudo pkg install -y python3 bash meson ninja 
         sudo pkg install -y pkgconf gmake binutils zstd
@@ -316,7 +317,7 @@ jobs:
     env:
       PYTHONIOENCODING: "utf-8"
     steps:
-    - uses: msys2/setup-msys2@v6
+    - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         update: true
