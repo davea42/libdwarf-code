@@ -359,7 +359,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     /*  New_cie points to the Cie being read, and head_cie_ptr and
         cur_cie_ptr are used for chaining them up in sequence.
         In case cie's are reused aggressively we need tail_cie_ptr
-        to add to the chain.  If we re-use an early cie
+        to add to the chain.  If we reuse an early cie
         later on, that does not mean we chain a
         new cie to the early one,
         we always chain it to the tail.  */
@@ -869,7 +869,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 "return address register %u",
                 return_address_register);
             dwarfstring_append_printf_u(&m,
-                " vs. cfa colum %u"
+                " vs. cfa column %u"
                 " mismatch ",
                 dbg->de_frame_cfa_col_number);
             dwarfstring_append_printf_u(&m,

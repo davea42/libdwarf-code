@@ -1630,7 +1630,7 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Build a head with all the relevent Entries
+/*  Build a head with all the relevant Entries
     attached.
     If the context is not found in the main object,
     and there is a tied-file

@@ -85,7 +85,7 @@ _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
 #endif /* __sgi */
 
 #if 0 /* debug_print_range (debugging) */
-/*  Debugging only. Requires start. can calulate one of len, end */
+/*  Debugging only. Requires start. can calculate one of len, end */
 static void
 debug_print_range(const char *msg,
     int lineno,
@@ -237,7 +237,7 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
         }
     }
-    head_chain = 0; /* Unneccesary, but showing intent. */
+    head_chain = 0; /* Unnecessary, but showing intent. */
     *globals = ret_globals;
     return DW_DLV_OK;
 }
@@ -521,7 +521,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                     set the rest of the fields.
                     All the translations from disk
                     form to libdwarf types and the sanity
-                    chacking are already done. */
+                    checking are already done. */
             }
             /* we have an entry to set up Dwarf_Global */
             res = _dwarf_make_global_add_to_chain(dbg,
@@ -1037,7 +1037,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
                 *out_phead_chain = 0;
                 return mres;
             }
-            /*  die_offset_in_cu may now be zero, meaing
+            /*  die_offset_in_cu may now be zero, meaning
                 end of the pairs list */
             pubnames_like_ptr += pubnames_context->pu_length_size;
             pubnames_like_offset += pubnames_context->pu_length_size;

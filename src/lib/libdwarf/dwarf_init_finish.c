@@ -470,7 +470,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         /*  The fields treatments with  regard
             to endianness is unclear.  In any case a single
             bit should be on, as 0x01000000
-            without any endiannes swapping.
+            without any endianness swapping.
             Or so it seems given limited evidence.
             We read with length checking and allow the
             reader to byte swap and then fix things.
@@ -1242,7 +1242,7 @@ check_uncompr_inflation(Dwarf_Debug dbg,
                 compression not actually inflating. */
             "DW_DLE_ZLIB_UNCOMPRESS_ERROR:"
             " The %s compressed section  is"
-            " absurdly large so arithmentic overflow."
+            " absurdly large so arithmetic overflow."
             " So corrupt dwarf",(char *)libname);
         _dwarf_error_string(dbg, error,
             DW_DLE_ZLIB_UNCOMPRESS_ERROR,

@@ -1792,7 +1792,7 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
             /*  For finding base data from skeleton.
                 For the few fields inherited
                 (per the DWARF5 standard but for
-                .debug_rnglists is not interited
+                .debug_rnglists is not inherited
                 in spite of what DW5 says). */
             res = _dwarf_find_all_offsets_via_fission(dbg,
                 cu_context,error);
@@ -1827,7 +1827,7 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
 
     /*  Add the context into the section context list.
         This is the one and only place where it is
-        saved for re-use and eventual dealloc. */
+        saved for reuse and eventual dealloc. */
     if (!dis->de_cu_context_list) {
         /*  First cu encountered. */
         dis->de_cu_context_list = icu_context;

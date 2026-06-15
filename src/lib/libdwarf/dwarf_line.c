@@ -1712,7 +1712,7 @@ dwarf_linebeginstatement(Dwarf_Line line,
     line tables, each ending with a DW_LNE_end_sequence.
     Each table describes a contiguous region.
     Because compilers may split function code up in arbitrary ways
-    compilers may need to emit multiple contigous regions (ie
+    compilers may need to emit multiple contiguous regions (ie
     line tables) for a single function.
     See the DWARF3 spec section 6.2.  */
 int
@@ -1793,8 +1793,8 @@ dwarf_line_is_addr_set(Dwarf_Line line,
 }
 
 /*  Each 'line' entry has a line-address.
-    If the entry is a DW_LNE_end_sequence the adddress
-    is one-beyond the last address this contigous region
+    If the entry is a DW_LNE_end_sequence the address
+    is one-beyond the last address this contiguous region
     covers, so the address is not inside the region,
     but is just outside it.  */
 int
@@ -1872,7 +1872,7 @@ _dwarf_filename(Dwarf_Line_Context context,
     if (fileno_in >= context->lc_file_entry_count) {
         _dwarf_error_string(dbg,error, DW_DLE_NO_FILE_NAME,
             "DW_DLE_NO_FILE_NAME "
-            "A file number is too larg. Corrupt dwarf");
+            "A file number is too large. Corrupt dwarf");
         return DW_DLV_ERROR;
     }
 #endif
@@ -2652,7 +2652,7 @@ _dwarf_line_context_constructor(Dwarf_Debug dbg, void *m)
     return DW_DLV_OK;
 }
 
-/*  This cleans up a contex record.
+/*  This cleans up a context record.
     The lines tables (actuals and logicals)
     are themselves items that will
     be dealloc'd either manually

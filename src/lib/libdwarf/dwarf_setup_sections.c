@@ -117,7 +117,7 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
-/*  Avoid adding offest to null s2.
+/*  Avoid adding offset to null s2.
     This function avoids a compiler warning:
     error: 'strcmp' reading 1 or more bytes
     from a region of size 0

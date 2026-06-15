@@ -1200,7 +1200,7 @@ build_array_of_lle(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Build a head with all the relevent Entries
+/*  Build a head with all the relevant Entries
     attached, all the locdescs and for each such,
     all its expression operators.
 */
@@ -1302,7 +1302,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
                 object reader is taking all responsibility
                 for object checking while not doing
                 enough checking.  So this is a special
-                accomodation for the specific user code and
+                accommodation for the specific user code and
                 we cannot guarantee this suffices. */
             if (!array) {
                 _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,

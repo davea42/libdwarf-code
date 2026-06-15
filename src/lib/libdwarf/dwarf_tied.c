@@ -80,7 +80,7 @@ _dwarf_tied_make_entry(Dwarf_Sig8 *key, Dwarf_CU_Context val)
 
 /*  Tied data Key is Dwarf_Sig8.
     A hash needed because we are using a hash search
-    here. Would not be needed for the other tree searchs
+    here. Would not be needed for the other tree searches
     like balanced trees..  */
 DW_TSHASHTYPE
 _dwarf_tied_data_hashfunc(const void *keyp)
