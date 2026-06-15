@@ -9,7 +9,7 @@
 2009-12-29  DavidAnderson <davea42@earthlink.net>
      * gennames.c: Add cast to int  in printf so that the printf with *
        as the field width sees an int, not size_t.
-     * Makefile.in:  Add depenencies for libdwarf.so to match
+     * Makefile.in:  Add dependencies for libdwarf.so to match
        libdwarf.a
 2009-12-26  DavidAnderson <davea42@earthlink.net>
      * libdwarf.h, pro_section.c, pro_reloc_symbolic.c: Reformatted
@@ -17,7 +17,7 @@
        Initialized local variables where a few were not initialized
        (this did not affect correctness, just readability).
 2009-11-27  DavidAnderson <davea42@earthlink.net>
-     * dwarf_form.c: Was an incorrect implemenation of
+     * dwarf_form.c: Was an incorrect implementation of
        the reading of DW_FORM_sec_offset.
      * libdwarf2.1.mm: Improved the documentation on reading DW_FORM_sec_offset.
        See dwarf_global_formref() documentation.
