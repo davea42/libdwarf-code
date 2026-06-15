@@ -265,7 +265,7 @@ struct Dwarf_CU_Context_s {
 
     /*  cc_low_pc[_present] is applied as base address of
         of rnglists and loclists when reading an rle_head,
-        compied into cc_cu_base_address. Comes from
+        compiled into cc_cu_base_address. Comes from
         CU_DIE, not rnglists or loclists */
     Dwarf_Bool cc_low_pc_present;
 
@@ -918,7 +918,7 @@ struct Dwarf_Debug_s {
         .debug_addr (a GNU extension) and attempt
         to print a raw .debug_addr section.  Simply
         assuming the first CU seen values for these
-        work for everything in the GNU extenstion
+        work for everything in the GNU extension
         .debug_addr section. Only needed if the version
         here is 4 (DWARF4). */
     Dwarf_Half de_debug_addr_version;

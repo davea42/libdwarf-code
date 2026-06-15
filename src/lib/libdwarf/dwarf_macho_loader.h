@@ -206,7 +206,7 @@ struct mach_header_64 {
     incremental link against a base file
     and can't be link edited again */
 #define MH_DYLDLINK    0x4        /* the object file is input for the
-    dynamic linker and can't be staticly
+    dynamic linker and can't be statically
     link edited again */
 #define MH_BINDATLOAD    0x8 /* the object file's undefined
     references are bound by the dynamic
@@ -894,7 +894,7 @@ struct section_64 { /* for 64-bit architectures */
 #define SEG_UNIXSTACK    "__UNIXSTACK"  /* the unix stack segment */
 
 #define SEG_IMPORT    "__IMPORT" /* the segment for the self (dyld) */
-                    /* modifing code stubs that has read, */
+                    /* modifying code stubs that has read, */
                     /* write and execute permissions */
 
 /*
@@ -928,7 +928,7 @@ struct fvmlib_command {
 };
 
 /*
-* Dynamicly linked shared libraries are identified by two things.  The
+* Dynamically linked shared libraries are identified by two things.  The
 * pathname (the name of the library as found for execution), and the
 * compatibility version number.  The pathname must match
 * and the compatibility
@@ -1017,7 +1017,7 @@ struct sub_client_command {
 * "-sub_umbrella umbrella_name" where
 * Where "umbrella_name" is the name of the
 * sub_umbrella framework.  When
-* staticly linking when -twolevel_namespace is
+* statically linking when -twolevel_namespace is
 * in effect a twolevel namespace
 * umbrella framework will only cause its subframeworks
 * and those frameworks
@@ -1047,7 +1047,7 @@ struct sub_umbrella_command {
 * "-sub_library library_name" where
 * Where "library_name" is the name of the
 * sub_library shared library.  When
-* staticly linking when -twolevel_namespace is in
+* statically linking when -twolevel_namespace is in
 * effect a twolevel namespace
 * shared library will only cause its subframeworks
 * and those frameworks
@@ -1432,7 +1432,7 @@ struct dysymtab_command {
     * grouped together (they are not
     * grouped by their module since they are only
     * used if the object is moved
-    * from it staticly link edited address).
+    * from it statically link edited address).
     */
     TYP(locreloff,4); /* offset to local relocation entries */
     TYP(nlocrel,4); /* number of local relocation entries */
@@ -1726,7 +1726,7 @@ struct dyld_info_command {
     * symbol-name, addend>
     * The opcodes are a compressed way to encode the table by only
     * encoding when a column changes.  In addition simple patterns
-    * like for runs of pointers initialzed to the same value can be
+    * like for runs of pointers initialized to the same value can be
     * encoded in a few bytes.
     */
     TYP(bind_off,4); /* file offset to binding info */

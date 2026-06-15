@@ -65,7 +65,7 @@ struct Dwarf_Abbrev_List_s {
         .debug_abbrev content, and we want to know
         of it at the first encounter. */
     Dwarf_Bool     abl_has_form_indirect;
-    /*  The following are the decoded attribte and
+    /*  The following are the decoded attribute and
         FORM pairs, abl_abbrev_count of them. */
     Dwarf_Half    *abl_attr;
     Dwarf_Half    *abl_form;

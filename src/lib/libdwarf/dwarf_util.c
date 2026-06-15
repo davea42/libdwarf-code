@@ -1671,7 +1671,7 @@ _dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
     int length_size = 0;
     int exten_size = 0;
 
-    /*  This verifies the lenght itself can be read,
+    /*  This verifies the length itself can be read,
         callers must verify the length is appropriate. */
     READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
         ptr,length_size,exten_size,

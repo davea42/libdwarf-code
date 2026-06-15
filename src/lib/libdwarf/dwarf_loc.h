@@ -208,7 +208,7 @@ struct Dwarf_Loc_Head_c_s {
     Dwarf_Bool       ll_at_loclists_base_present;
     Dwarf_Unsigned   ll_at_loclists_base;
 
-    /*  DW_AT_low_pc originally, , perhaps interited
+    /*  DW_AT_low_pc originally, , perhaps inherited
         into dwp from skeleton. */
     Dwarf_Bool       ll_cu_base_address_present;
     Dwarf_Unsigned   ll_cu_base_address;

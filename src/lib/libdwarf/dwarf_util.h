@@ -176,7 +176,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         if (!ckdi_dbg || ckdi_dbg->de_magic != DBG_IS_VALID) {\
             _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL, \
                 "DW_DLE_DBG_NULL: "                           \
-                "accesing a cu context, Dwarf_Debug "         \
+                "accessing a cu context, Dwarf_Debug "         \
                 "either null or it contains"                  \
                 "a stale Dwarf_Debug pointer");               \
             return DW_DLV_ERROR;                              \

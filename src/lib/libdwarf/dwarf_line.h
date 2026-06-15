@@ -46,7 +46,7 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 /*
     This structure is used to build a list of all the
     files that are used in the current compilation unit.
-    All of the fields execpt fi_next have meanings that
+    All of the fields except fi_next have meanings that
     are obvious from section 6.2.4 of the Libdwarf Doc.
     Because of DW_LNE_define_file we
     make this a list, not an array.

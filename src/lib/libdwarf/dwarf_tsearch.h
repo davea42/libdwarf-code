@@ -116,7 +116,7 @@ void dwarf_tdump(const void*root,
     const char *msg);
 
 /*  Returns NULL  and does nothing
-    unless the implemenation used uses a hash tree. */
+    unless the implementation used uses a hash tree. */
 void * dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);
