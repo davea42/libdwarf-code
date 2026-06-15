@@ -335,7 +335,7 @@
       * dwarf_alloc.c pro_alloc.c pro_init.c: changing BSD-ish bzero()
  	to posix-standard memset() calls.
       * configure.in: remove bstring.h test, add alloca.h test.
-        No longer useing bzero, some environments have alloca
+        No longer using bzero, some environments have alloca
 	in malloc.h, no alloca.h.  If neither exist
         it's up to you to deal with it.
       * dwarf_line.c dwarf_print_lines.c dwarf_sort_line.c: Test
@@ -457,7 +457,7 @@
       Add a new function _dwarf_load_section to handle
       loading of sections.
       * dwarf_opaque.h: Add entries to Dwarf_Debug_s to
-      store section indicies.
+      store section indices.
       * most consumer files: Load sections on demand so
       that unneeded sections don't get loaded.
       * dwarf_init_finish.c: Fixed an incorrect check for
