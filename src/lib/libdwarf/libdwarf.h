@@ -1928,7 +1928,7 @@ DW_API int dwarf_set_tied_dbg(Dwarf_Debug dw_split_dbg,
     On success returns the applicable tied-Dwarf_Debug
     through the pointer.
     If dw_dbg is a tied-Dwarf_Debug  the function returns
-    null(0) through the poiner.
+    null(0) through the pointer.
     If there is no tied-Dwarf_Debug (meaning there is
     just a main-Dwarf_Debug) the function returns
     null (0) through the pointer.
@@ -2779,7 +2779,7 @@ DW_API int dwarf_die_offsets(Dwarf_Die dw_die,
     @return
     On success, returns DW_DLV_OK.
     If dw_die is null or its contents are
-    corrupted retuns DW_DLV_ERROR and there
+    corrupted returns DW_DLV_ERROR and there
     is nothing useful returned.
     Never returns DW_DLV_NO_ENTRY.
 */
@@ -2994,7 +2994,7 @@ DW_API int dwarf_srclanglname(Dwarf_Die dw_die,
     @param dw_die
     The DIE of interest.
     @param dw_returned verstring
-    On success returns the language verion
+    On success returns the language version
     string from a DW_AT_language_version
     attributes (normally
     only found on a CU DIE). For example DW_LNAME_C
@@ -3139,7 +3139,7 @@ DW_API int dwarf_lvn_name(Dwarf_Die dw_die,
     @param dw_lvn_index
     To see all table entries,
     pass in the index of a table entry, beginning with
-    0, and call again with subsequent numbers untill
+    0, and call again with subsequent numbers until
     the function returns DW_DLV_NO_ENTRY (meaning
     there are no more entries). The index has no intrinsic
     meaning.
@@ -7851,7 +7851,7 @@ DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
 
 /*! @brief Allocate Any Fast Access DWARF2-DWARF4
 
-    This interface new in 0.6.0. Simplfies access
+    This interface new in 0.6.0. Simplifies access
     by replace dwarf_get_pubtypes, dwarf_get_funcs,
     dwarf_get_types, dwarfget_vars, and dwarf_get_weaks
     with a single set of types.
@@ -9104,7 +9104,7 @@ DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     through the pointer @b dw_s_out and the value
     returned is DW_DLV_OK.
 
-    The strings returned on sucess are in static storage
+    The strings returned on success are in static storage
     and must not be freed.
 
     These functions are generated from information
