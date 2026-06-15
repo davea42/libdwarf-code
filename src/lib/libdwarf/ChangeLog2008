@@ -259,5 +259,5 @@
      * pro_opaque.h: Add di_last_child field.
 2008-01-14  DavidAnderson <davea42@earthlink.net>
      * libdwarf2p.1.mm: Added missing backslash to correct formatting
-       error. Thanks to Daniel Golub for pointing out the ommission.
+       error. Thanks to Daniel Golub for pointing out the omission.
      * libdwarf2.p1.pdf: Regenerated.
