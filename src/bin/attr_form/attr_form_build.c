@@ -86,7 +86,7 @@ the formal AT DW_AT_lo_user and the FORM being above 0x2c
 (ie the highest defined by any DWARF standard, lacking
 a DW_FORM_lo_user value)
 
-Lines beggining with a # character are ignored
+Lines beginning with a # character are ignored
 by the code in dwarfdump reading this output.
 Any lines commented with C comments are stripped
 by the initial C pre-processor invocation.

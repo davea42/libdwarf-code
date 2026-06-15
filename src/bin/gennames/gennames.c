@@ -59,7 +59,7 @@ void dd_minimal_count_global_error(void) {}
 
     The doprinting argument is so that when used by tag_tree.c,
     and tag_attr.c that we don't get irritating messages on stderr
-    when those dwarfdump built-time applications are run.
+    when those dwarfdump build-time applications are run.
 
     ======== For consistency across the library we
     ======== now only use the #define macro version,

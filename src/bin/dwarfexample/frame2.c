@@ -476,7 +476,7 @@ value_type_name(int valuetype,char *buf,unsigned buflen)
 /*  The ugly type casts (signed long)(Dwarf_Signed) on dw_offset
     are because the public struct struct Dwarf_Regtable_Entry3_s
     has dw_offset as unsigned though it is really a signed
-    value. We have avoided breaking source compatibilty so far. */
+    value. We have avoided breaking source compatibility so far. */
 static void
 print_one_regentry(const char *prefix_i,
     struct Dwarf_Regtable_Entry3_s *entry)

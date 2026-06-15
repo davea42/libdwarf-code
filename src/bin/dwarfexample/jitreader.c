@@ -24,7 +24,7 @@
 #include "libdwarf_private.h"
 
 /*
-    This demonstates processing DWARF
+    This demonstrates processing DWARF
     from in_memory data.  For simplicity
     in this example we are using static arrays.
     The C source is src/bin/dwarfexample/jitreader.c

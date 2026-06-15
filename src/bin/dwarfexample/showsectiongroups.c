@@ -141,7 +141,7 @@ one_file_show_groups(char  *path_in,
         free(sec_names_array);
         free(sec_numbers_array);
         free(group_numbers_array);
-        printf("Error from libdwarf getting group detals "
+        printf("Error from libdwarf getting group details "
             "sizes \"%s\":  %s\n",
             shortpath, dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
