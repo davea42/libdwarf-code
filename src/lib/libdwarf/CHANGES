@@ -5,13 +5,13 @@ April 14, 2000  davea@sgi.com
 Corrected minor bugs in production of 32bit dwarf with
 64 bit pointers.  Fixed omissions in legal
 DIE children of a DIE.  Make small changes in
-description of regster output in frame information
+description of register output in frame information
 access.
 
 -------------------------------------------------------------
 Mar 7, 2000 davea@sgi.com
 Corrected line table reading so it will handle
-reading an object with a diffent number of standard
+reading an object with a different number of standard
 op codes than at libdwarf compile time.
 This was possible all along, but libdwarf did
 not do it right.
