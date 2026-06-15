@@ -8,7 +8,7 @@
        dwarf_lineoff() wrongly returns a signed column number.
        Added dwarf_add_lineentry_b() as preparation for creating
        DWARF3/4 output.
-     * dwarf_line.h: Added new struct fields to accomodate
+     * dwarf_line.h: Added new struct fields to accommodate
        DWARF3/4 isa and discriminator fields.
      * dwarf_line.c: Now deals with the VLIW line calculations
        in DWARF4.  Adds support for computing the discriminator
@@ -64,7 +64,7 @@
        debug_info related only.
      * dwarf_die_deliv.c: Now handles .debug_types as well as
        .debug_info, and context information for the two sections
-       is kept seperate.
+       is kept separate.
      * dwarf_elf_access.c: Add a check for relocations of .debug_types.
      * dwarf_error.c: Added error strings related to .debug_types.
      * dwarf_form.c: Changes for .debug_types, mainly due to removing
@@ -222,7 +222,7 @@
        section padding the code could read-from-memory
        one past the end of the section
        which could (in very rare circumstances) coredump
-       an application. In addition, earlier in the same funcion
+       an application. In addition, earlier in the same function
        we did not account for the case where we had already read to
        end of section. Both fixed.
 2011-06-06  DavidAnderson <davea42@earthlink.net>
@@ -292,6 +292,6 @@
      * libdwarf2.1.pdf: Regenerated.
      * dwarf_form.c: Corrected handling of DW_FORM_exprloc.
      * dwarf_query.c: Implemented dwarf_get_die_address_size().
-       Corected handling of DW_FORM_exprloc.
+       Corrected handling of DW_FORM_exprloc.
      * dwarf_util.c: Added handling of DW_FORM_exprloc and
        DW_FORM_flag_present.

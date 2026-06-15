@@ -95,7 +95,7 @@
      * dwarf_sort_line.c: Consistent layout for while statements.
      * dwarf_util.c: Consistent layout for if, for and while statements.
        New functions 'dwarf_encode_leb128', 'dwarf_encode_signed_leb128'
-       to encode a value as unsiged LEB128 and signed LEB128.
+       to encode a value as unsigned LEB128 and signed LEB128.
      * dwarf_util.h: Consistent layout for the macros DECODE_LEB128_UWORD,
        DECODE_LEB128_SWORD, SKIP_LEB128_WORD, CHECK_DIE, READ_UNALIGNED,
        SIGN_EXTEND, READ_AREA_LENGTH to include proper tabbing.
@@ -113,7 +113,7 @@
      * dwarf_loc.c: DW_OP_GNU_implicit_pointer requires a version stamp
        to work correctly.  Created a new function
        dwarf_loclist_from_expr_b()
-       to allow clients to expicitly pass the version stamp.
+       to allow clients to explicitly pass the version stamp.
        Most clients can continue to use the old interface.
      * libdwarf.h: Declaring new function dwarf_loclist_from_expr_b()
      * libdwarf2.1.mm: Documenting dwarf_loclist_from_expr_b()

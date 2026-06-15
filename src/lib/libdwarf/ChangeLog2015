@@ -173,7 +173,7 @@
      * dwarf_loc.c: Correct the handling of split dwarf loclist.
      * dwarf_opaque.h: Add cc_ranges_base_present for split dwarf.
        Add _dwarf_get_ranges_base_attr_from_tied() for split dwarf.
-     * dwarf_query.c: Get and remember skeleton compilaton unit
+     * dwarf_query.c: Get and remember skeleton compilation unit
        DW_AT_[GNU_]ranges_base from tied objects for split dwarf.
      * dwarf_ranges.c: If a tied object present, look for ranges
        there, not in split dwarf object.
@@ -350,9 +350,9 @@
        calculations. No more coding the table twice.
      * dwarf_line.c,dwarf_print_lines.c: Now #include
        dwarf_line_table_reader_common.c
-     * Makefile.in: Reflects new source depedencies.
+     * Makefile.in: Reflects new source dependencies.
      * dwarf_line2.c: An internal function interface changed,
-       so accomodated it here.
+       so accommodated it here.
      * libdwarf.h.in, dwarf_error.c: New error code, DW_DLE_BAD_LINE_TABLE_OPERATION.
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
@@ -428,7 +428,7 @@ Changes not staged for commit:
        local names of popular pointers.
      * dwarf_print_lines.c,dwarf_sort_line.c: An internal
        function now has a leading _ and a context argument..
-     * dwarf_opaque.h: Added cc_segment_selector_size to contex structure.
+     * dwarf_opaque.h: Added cc_segment_selector_size to context structure.
      * libdwarf.h.in:  Added commentary on two-level line table functions etc.
 2015-09-17  David Anderson
      * dwarf.h, dwarf_alloc.c,dwarf_base_types.h,dwarf_init_finish.c,
@@ -586,7 +586,7 @@ Changes not staged for commit:
        DW_*_VERSION* version names.
      * dwarf_init_finish.c: Added to 3 comments.
      * dwarf_loc.c: Use the new DW_*_VERSION* version names.
-       Use a local variable to simpify some comparisons
+       Use a local variable to simplify some comparisons
        for readability.
      * dwarf_opaque.h: Update the comments about version numbers.
        Added new comments foreshadowing changes for DebugFission

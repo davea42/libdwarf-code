@@ -204,7 +204,7 @@
 2020-11-15: David Anderson
     * dwarf_locationop_read.c: Comments corrected.
 2020-11-15: David Anderson
-    * libdwarf.h.in: Cooment for dwarf_get_die_infotypes_flag()
+    * libdwarf.h.in: Comment for dwarf_get_die_infotypes_flag()
       corrected.
     * generated_libdwarf.h.in: Regenerated
 2020-11-12: David Anderson
@@ -410,7 +410,7 @@
       at the end of a list of macro operands. Added
       macro CHECKNULLCONTEXT to avoid lots of 8 line
       sequences just checking basic call sanity.
-      Gave the structure sentinal a name: MC_SENTINAL
+      Gave the structure sentinel a name: MC_SENTINAL
       (only exists in this one source file).
     * dwarf_macro5.h: Added mc_section_size so offset
       insanity is caught.  Added comments about
@@ -561,7 +561,7 @@
 2020-09-26: David Anderson
     * baseline.ltp: new test baseline for debuglink.
     * test_linkedtopath.c: Now with better coverage
-      of the paths in tbe debuglink code, we
+      of the paths in the debuglink code, we
       add a getcwd here to return a test cwd
       of /exam/ple so the output of debuglink
       does not depend on the real build
@@ -639,7 +639,7 @@
     * dwarf_alloc.c: Two DEBUG lines were too long,
       broke those lines to shorter ones.
       Added DEBUG-only output where it had not
-      reported earler.
+      reported earlier.
 2020-09-15: David Anderson
     * dwarf_alloc.c: Added ifdef DEBUG
       printf for cases it should exist.
@@ -823,7 +823,7 @@
       free with user calls that allocated their
       own section data to load a section and a certain
       error arising during the call.
-    * dwarf_loc.c: To elminate ambiguity, renamed
+    * dwarf_loc.c: To eliminate ambiguity, renamed
       some fields from lowpc to rawlowpc (for example).
     * dwarf_loclists.c(build_array_of_lle): Removed
       a block of code duplicating work done in dwarf_loc.c.
@@ -884,7 +884,7 @@
     * dwarf_locationop_read.c: Added DW_OP_GNU_variable_value.
     * dwarf_names.c, dwarf_names_enum.h: Regenerated.
     * dwarf.h: Added in GNU names that had been accidentally
-      ommitted: DW_AT_GNU_deleted,DW_AT_GNU_locviews,
+      omitted: DW_AT_GNU_deleted,DW_AT_GNU_locviews,
       DW_AT_GNU_entry_view,DW_OP_GNU_variable_value.
       These caused the regeneration of dwarf_names.h.
 2020-07-22: David Anderson
@@ -1052,7 +1052,7 @@
     * dwarf_gdbindex.h: Removed gdbindex_offset_type typedef
       as it is not used anywhere.
     * dwarf_global.c(dwarf_get_cu_die_offset_given_cu_header_offset):
-      Updated a commment to reflect handling of DWARF5 and more.
+      Updated a comment to reflect handling of DWARF5 and more.
     * dwarf_util.h: Removed SKIP_LEB128_WORD_CK as it
       is no longer used and replaced by a better function.
     * dwarf_query.c: Removed comment about that macro.
@@ -1327,7 +1327,7 @@
       dwarf_dealloc_attribute().
     * libdwarf2.1.pdf: Regenerated. Version 2.94.
 2020-05-19: David Anderson
-    * dwarf_rnglists.c: Ommited a crucial assign to rh_debug so it
+    * dwarf_rnglists.c: Omitted a crucial assign to rh_debug so it
       leaked if de_alloc_tree absent.
 2020-05-19: David Anderson
     *  dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
@@ -1577,7 +1577,7 @@
       do printf instead.
     * dwarf_die_deliv.c,dwarf_frame2.c: Altered the
       DW_DLE_ADDRESS_SIZE_ERROR
-      strings so the 3 cases can be distinquished easily
+      strings so the 3 cases can be distinguished easily
       (just a convenience for debugging).
     * dwarf_globals.c: Removed one superfluous ().
     * dwarf_query.c: Reforatted lgpl text for shorter
@@ -1597,7 +1597,7 @@
     * dwarf_die_deliv.c: Working toward complete dealloc
       of resources to eliminate the  dependence on de_alloc_tree.
     * dwarf_error.c: #if 0 a debug message.
-    * dwarf_form.c: Remove superflous ().
+    * dwarf_form.c: Remove superfluous ().
     * dwarf_global.c(_dwarf_internal_globals_dealloc):
       Recreated and documented critical dealloc code
       so Dwarf_Global_Context gets dealloc-c.
@@ -1722,7 +1722,7 @@
       Following dwarf_dealloc of cudie  we assign 0 to it.`
       New function local_dealloc_cu_context() enables
       accurate and full dealloc of a cu context
-      (which means there was some error fount) in
+      (which means there was some error found) in
       an easy and complete way.
       local_attrlist_dealloc() does similarly for attrlists.
       A DECODE_LEB128_UWORD_CK now in a wrapper so on error
@@ -1889,7 +1889,7 @@
     * dwarf_opaque.h: Adding dss_is_rela so we can
       process .rel. sections too.
 2020-01-25: David Anderson
-    * dwarf_form.c: DW_FORM_rnglistx was ommitted from a switch statement.
+    * dwarf_form.c: DW_FORM_rnglistx was omitted from a switch statement.
       Adding it in fixed the resulting errors in a DWARF5 object file
       built by clang 9.0.0.0
 2020-01-16: David Anderson

@@ -52,7 +52,7 @@
     * dwarf_abbrev.c: See DW201709-001. A carefully
       constructed invalid abbrev section could result
       in a caller getting an invalid memory reference.
-      So an addtional 'if' statement catches the error now.
+      So an additional 'if' statement catches the error now.
 2017-08-22 David Anderson
     * gennames.c: Update version string.
 2017-08-21 David Anderson
@@ -151,7 +151,7 @@
       Added array of dwo section names so those group 2 names get the
       right group (and obviously get it right).
     * dwarf_init_finish.c: most of the new code for groups is in this
-      file.  Now accomodates non-dwarf
+      file.  Now accommodates non-dwarf
       SHT_GROUP sections by figuring out they should
       be ignored. Fixed some indentation issues.
       Added critical commentary to make it easier to follow the
@@ -284,7 +284,7 @@
     * dwarf.h: Corrected comment about DW_IDX_type_unit.
     * dwarf_alloc.c, dwarf_alloc.h: Added support for .debug_names
       and Dwarf_Dnames_Head.
-    * dwarf_dnames.c,dwarf_dnames.h: Skeleton implemenatation
+    * dwarf_dnames.c,dwarf_dnames.h: Skeleton implementation
       of .debug_denames section reader.
     * dwarf_errmsg_list.c: Added new *DEBUG_NAMES* error codes.
     * libdwarf.h.in: New *DEBUG_NAMES* and new Dwarf_Dnames_Head type.

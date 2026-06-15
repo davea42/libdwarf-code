@@ -49,7 +49,7 @@
        variables to avoid
        compiler warning about shadowing other locals.
      * dwarf_tsearchhash.c: Changed to avoid compiler warnings
-       about const casts whereever possible.
+       about const casts wherever possible.
      * libdwarf.h.in: Added prototypes for DWARF5
        dwarf_get_SECT_name() and dwarf_get_MACRO_name().
      * pro_alloc.c: Add include of pro_alloc.h.
@@ -68,7 +68,7 @@
        Implement dwarf_get_die_section_name() allow
        clients to get the Elf
        section name actually used for the section.
-     * dwarf_xu_index.c: Remmove traling whitespace  and fix
+     * dwarf_xu_index.c: Remove trailing whitespace  and fix
        indents.
 2014-07-11  David Anderson
      * dwarf_opaque.h: Various CU context fields were

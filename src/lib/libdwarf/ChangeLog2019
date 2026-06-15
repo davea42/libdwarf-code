@@ -105,7 +105,7 @@
        dwarf_names_new.h: regenerated with new version string.
      * libdwarf_version.h: updated version string.
 2019-10-14 David Anderson
-     * CMakeLists.txt: Addded dwarf_debuglink.h to sourcefiles.
+     * CMakeLists.txt: Added dwarf_debuglink.h to sourcefiles.
      * Added tests of the debuglink stuff.
      * Makefile.in: regenerated.
      * baseline.ltp: Added correct test baseline output.
@@ -256,7 +256,7 @@
      * Makefile.in: regenerated
      * pro_log_extra_flag_strings.c: Giving producer-code users
        a way to control frame and line constants without
-       reqiring a change to libdwarf.h.in or other
+       requiring a change to libdwarf.h.in or other
        header files.
      * dwarfstring.h, dwarstring.c: Adding flexible
        string buffers to libdwarf.
@@ -356,7 +356,7 @@
 2019-09-03 David Anderson
      * dwarf_abbrev.c: Fixed indents and removed
        trailing whitespace.
-     * pro_line.h: Added a temporary accomodation of
+     * pro_line.h: Added a temporary accommodation of
        the MIN_INST_LENGTH for s390 for dwarfgen.
        This is a hack and needs a fix to dwarfgen.
        Reformatted copyright for shorter lines with
@@ -447,7 +447,7 @@
        Added _dwarf_siblingof_internal() declaration.
      * dwarf_query.c: Renaming some fields to match
        changes in dwarf_opaque.h
-     * dwarf_ranges.c: Improve resilence in
+     * dwarf_ranges.c: Improve resilience in
        dwarf_get_ranges_a().
      * dwarf_tied.c: Rename to match dwarf_opaque.h
        name changes.
@@ -532,7 +532,7 @@
        Minor if() revision for consistency. Some casts
        added to avoid compiler warnings and communicate intent.
      * dwarf_object_detector.c: Added Windows specific ifdef/include
-       and accomodation of HAVE_CUSTOM_LIBELF.
+       and accommodation of HAVE_CUSTOM_LIBELF.
      * dwarf_object_read_common.c: Added Windows specific
        ifdef/include and a slight reformatting of argument
        lists.
@@ -859,7 +859,7 @@
         of the old dwarf_uncompress_integer_block().
       * libdwarf.h.in: Declare dwarf_uncompress_integer_block_a()
         and dwarf_uncompress_integer_block_a().
-      * pro_forms.c: Implment the two new functions.
+      * pro_forms.c: Implement the two new functions.
 2019-02-10   David Anderson
       * dwarf_errmsg_list.h,libdwarf.h.in: Adding
         DW_DLE_NO_STREAM_RELOC_SUPPORT error code.
@@ -994,7 +994,7 @@
 2019-01-09   David Anderson
      * dwarf_original_elf_init.c: One of the calls to
        dwarf_object_init_b() was checking the result code
-       then doing a statment that will crash the caller unless
+       then doing a statement that will crash the caller unless
        the result code was DW_DLV_OK.
 2019-01-05   David Anderson
      * dwarf_generic_init.c: Removed trailing whitespace.

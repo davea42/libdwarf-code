@@ -423,7 +423,7 @@
 2016-06-08 David Anderson
     * gennames.c: Update version string.
 2016-06-07 David Anderson
-    * Makefile.in: Use $(SONAME) rather than libdwarf.so.1 whereever
+    * Makefile.in: Use $(SONAME) rather than libdwarf.so.1 wherever
       possible.
 2016-06-01 David Anderson
     * Makefile.in: Tweaks for debian build compatibility.
@@ -449,7 +449,7 @@
     * libdwarf.h.in, dwarf_errmsg_list.c: Adding
       DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH error code.
       Fixed unsigned/signed comparison warning in the table test code.
-    * dwarf_line.c: If we find a null pointer from include directores
+    * dwarf_line.c: If we find a null pointer from include directories
       we substitute "<erroneous NULL include dir pointer>" for the
       reader.
     * dwarf_line_table_reader_common.c: Detect a corrupted DWARF5
@@ -826,7 +826,7 @@
        dwarf_line_table_reader_common.c,dwarf_macro5.c,dwarf_query.c,
        dwarf_tsearchhash.c: Eliminated use of int/Dwarf_Signed
        in favor of unsigned types where
-       signed served no purpose. Added ommitted return DW_DLV_NO_ERROR
+       signed served no purpose. Added omitted return DW_DLV_NO_ERROR
        in dwarf_frame2.c.  Other than 'unused parameter' fixed
        the warnings from gcc.
        No interfaces changed though. To keep binary compatibility.
@@ -886,7 +886,7 @@
 2016-01-19  David Anderson
      * libdwarf.h.in, dwarf_error.c: New error numbers.
        DW_DLE_LINE_STRP_OFFSET_BAD, DW_DLE_STRING_FORM_IMPROPER.
-     * dwarf_form.c: Added suport for DW_FORM_line_strp into
+     * dwarf_form.c: Added support for DW_FORM_line_strp into
        dwarf_form_string().
 2016-01-17  David Anderson
      * dwarf_frame2.c: Added additional checks for

@@ -51,7 +51,7 @@
     * CMakeLists.txt: Moved the install  of libdwarf stuff
       here from ../CMakeLists.txt so it works for cmake before
       and after cmake 3.13.
-      Repair an old ommission in an install that
+      Repair an old omission in an install that
       modern cmake seemingly did not care if
       repaired or not.
 2021-05-15  David Anderson

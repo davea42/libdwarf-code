@@ -295,7 +295,7 @@
        it was doing two jobs. Now each job called where
        needed.
      * dwarf_object_detector.c,dwarf_object_detector.h:
-       tweeks for better error codes and trailing
+       tweaks for better error codes and trailing
        spaces and indent issues.
      * dwarf_opaque.h: Removed deleted function.
 2018-10-02  David Anderson
@@ -523,7 +523,7 @@
     * pro_forms.c: The new return of error is now
       return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
       to at least avoid a warning about this
-      necessary uglyness of pointer/integer confusion.
+      necessary ugliness of pointer/integer confusion.
       The dwarf reader (consumer) interfaces have none
       of this.
 2018-07-20 David Anderson
