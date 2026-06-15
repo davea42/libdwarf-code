@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2026-03-31 v2.3.2
+    @date 2026-06-15 v2.3.2
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1208,7 +1208,7 @@
     compressed Elf sections.  In previous versions
     only a small subset of Elf sections could be decompressed.
 
-    The new code was detected as having vulerabilities
+    The new code was detected as having vulnerabilities
     by oss fuzz systems. Documented as DW202605-001
     and DW202605-002 and DW202605-003.
     Fixed 16 May 2026 for 2.3.2.
@@ -1532,7 +1532,7 @@
     and dwarf_siblingof_c().
     Used exactly as documented dwarf_next_cu_header_d()
     and  dwarf_siblingof_b() work fine and continue to
-    be supported for the forseeable future. However
+    be supported for the foreseeable future. However
     it would be easy to misuse as the requirement that
     dwarf_siblingof_b() be called immediately after
     a successful call to dwarf_next_cu_header_d()
