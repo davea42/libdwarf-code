@@ -38,7 +38,7 @@
        Added some support for DWARF4 segment value in tuples.
        Added dwarf_get_arange_info_b() so all DWARF4 information
        can be retrieved by client code.
-     * libdwarf.h: Aded new interface dwarf_get_arange_info_b(),
+     * libdwarf.h: Added new interface dwarf_get_arange_info_b(),
 2010-03-28  DavidAnderson <davea42@earthlink.net>
      * libdwarf.h: Adding dwarf_get_harmless_error_list(),
        dwarf_insert_harmless_error(), and
