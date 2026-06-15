@@ -61,7 +61,7 @@ typedef enum /* Dwarf_Check_Categories */ {
         is reported at a later time. See
         dwarf_set_harmless_errors() to turn off such error checks.
         The other errors dwarfdump reports are also generally harmless
-        but are detected by dwarfdump so it's possble to report the
+        but are detected by dwarfdump so it's possible to report the
         error as soon as the error is discovered. */
     harmless_result,
     fde_duplication,
@@ -259,7 +259,7 @@ struct glflags_s {
     /* Other error in lookup by address or by_die */
     int     gf_error_code_search_by_address;
 
-    /* Avoid some unneccesary work lookup by address. */
+    /* Avoid some unnecessary work lookup by address. */
     char    gf_all_cus_seen_search_by_address;
 
     /*  Die indents >= this prefix an indent count instead

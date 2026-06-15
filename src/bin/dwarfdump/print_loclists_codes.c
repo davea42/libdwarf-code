@@ -67,7 +67,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
     Dwarf_Bool   * bError)
 {
     /*  Once most committed FIXME remove this and let
-        lenght print */
+        length print */
     (void)lle_byte_count;
     if (debug_addr_unavailable) {
         *bError = TRUE;
@@ -164,7 +164,7 @@ print_debug_loclists_linecodes(Dwarf_Bool checking,
         }
         break;
     case  DW_LLE_offset_pair:
-        /*  debug_addr_unavailable does apply becase
+        /*  debug_addr_unavailable does apply because
             that might cause base address to be invalid. */
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,

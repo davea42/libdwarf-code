@@ -449,7 +449,7 @@ dd_check_globals_data(Dwarf_Debug dbg,
             if (strcmp(name,check_name)) {
                 /* FAIL */
                 DWARF_CHECK_ERROR(check_functions_result,
-                    "Name mistmatch with dwarf_globname");
+                    "Name mismatch with dwarf_globname");
             }
         }
     } else {
@@ -466,7 +466,7 @@ dd_check_globals_data(Dwarf_Debug dbg,
             if (global_die_off != cfglobal_die_offset) {
                 /* FAIL */
                 DWARF_CHECK_ERROR(check_functions_result,
-                    "Die offset mistmatch with "
+                    "Die offset mismatch with "
                     "dwarf_global_die_offset");
             }
         }

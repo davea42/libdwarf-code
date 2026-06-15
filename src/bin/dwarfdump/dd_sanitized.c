@@ -52,7 +52,7 @@ Copyright 2016-2018 David Anderson. All rights reserved.
     We do not translate an input % to %% (as in real uri)
     as that would be a bit confusing for most readers.
 
-    The conversion makes it possble to print UTF-8 strings
+    The conversion makes it possible to print UTF-8 strings
     reproducibly, sort of (not showing the
     real glyph!).
 

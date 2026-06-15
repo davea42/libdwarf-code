@@ -1,9 +1,9 @@
 libdwarf/CODINGSTYLE
-Updated 22 December 2021
+Updated 15 December 2026, spelling corrections
 
 This document is a brief description of the main coding style
 conventions in dwarfdump.   Many of them will be obvious from
-the code, but over time some accidental diffences crept in.
+the code, but over time some accidental differences crept in.
 
 For further remarks see the file codingstyle.md in the
 base directory.

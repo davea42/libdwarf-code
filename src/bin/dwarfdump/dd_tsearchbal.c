@@ -454,7 +454,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
 
     /* A6: */
     {
-        /*  Balance factors on nodes betwen S and Q need to be
+        /*  Balance factors on nodes between S and Q need to be
             changed from zero to +-1  */
         int kc2 = compar(key,s->keyptr);
         if (kc2 < 0) {

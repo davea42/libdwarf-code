@@ -6,7 +6,7 @@
       print_die.c,print_frames.c,print_locs.c,print_pubnames.c,
       testesb.c: Correct spelling in comments.
 2020-12-25 David Anderson
-    * print_die.c: expresssion -> expression in a printf string.
+    * print_die.c: expression -> expression in a printf string.
 2020-12-24 David Anderson
     * CMakeLists.txt: Needed the same sed transformation
       that was added in runtests.sh a few minutes ago to
@@ -732,7 +732,7 @@
     * command_options.c: Add --print-debug-gnu option
       to print these sections.
     * dwarfdump.c: Implement printing of these sections.
-    * glflags.h: Addd boolean gf_debug_gnu_flag for the
+    * glflags.h: Add boolean gf_debug_gnu_flag for the
       --print-debug-gnu option.
     * print_debug_gnu.c: Now prints these sections.
 2020-07-04: David Anderson
@@ -936,7 +936,7 @@
       avoid any need for malloc/free by the esb functions.
 2020-05-21: David Anderson
     * dwarfdump.c: Now using DROP_ERROR_INSTANCE macro
-      everwhere needed, avoiding the hand-coding.
+      everywhere needed, avoiding the hand-coding.
       Using dwarf_dealloc_attribute() now.
     * dwarf_globals.h: Extra parens in DROP_ERROR_INSTANCE
       for readability, and using dwarf_dealloc_error()
@@ -1253,7 +1253,7 @@
       esb_constructor for secname.`
     * print_ranges.c: Move acquiring section name down
       after the first call of dwarf_get_ranges() so we get
-      the true name with any compression involed reported.
+      the true name with any compression involved reported.
     * print_sections.c: Removed Dwarf_Die
     current_cu_die_for_print_frames,
       it is no longer needed.

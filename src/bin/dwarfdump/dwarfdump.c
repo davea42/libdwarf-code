@@ -1358,7 +1358,7 @@ process_one_file(
         int res = 0;
 
         if (dbgtied) {
-            /*  Assuming tied is exectuable main is dwo/dwp */
+            /*  Assuming tied is executable main is dwo/dwp */
             dbg_with_code = dbgtied;
         }
         res = calculate_likely_limits_of_code(dbg_with_code,
@@ -2493,7 +2493,7 @@ build_linkonce_info(Dwarf_Debug dbg)
     nCount = dwarf_get_section_count(dbg);
 
     /*  FIXME: dwarf_get_section_info_by_index_a() only
-        works for section indicies
+        works for section indices
         as int. It works acceptably, but will fail with
         more than 32000 sections
         (a very large number) with 32bit Windows. */

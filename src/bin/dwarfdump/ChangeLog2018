@@ -109,11 +109,11 @@
 2018-09-24 Carlos Alberto Enciso
     * command_options.c: Add support for long name options.
 2018-09-24 Carlos Alberto Enciso
-    * command_options.c: Add missing desriptions in the
+    * command_options.c: Add missing descriptions in the
       usage message for
       -q, -U, -x line5 and -x noprintsettinggroups.
 2018-09-24 Carlos Alberto Enciso
-    * command_options.c: Add missing desriptions in the
+    * command_options.c: Add missing descriptions in the
       usage message for
       -EI, -Em and -kw.
 2018-09-20 Carlos Alberto Enciso

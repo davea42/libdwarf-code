@@ -109,7 +109,7 @@
      * configure.in: Add -O0 to  --enable-wall.
        So if a coredump during debugging gdb will work really well.
      * configure: Regenerated.
-     * print_frames.c: Ommitted a 'return' statement so
+     * print_frames.c: Omitted a 'return' statement so
        some output duplicated. Added in the missing return.
 2015-11-01  David Anderson
      * Makefile.in, configure.in: Implement --enable-wall for compile-time
@@ -210,7 +210,7 @@
 2015-09-11  David Anderson
      * dwarfdump.c, dwarfdump.1: Added -x tied=<path>
        option so one can get .debug_addr data when referencing
-       a .dwp or .dwo. Tieing these together.
+       a .dwp or .dwo. Tying these together.
      * print_die.c: Fixed indent errors.
 2015-09-05  David Anderson
      * tag_attr.list,tag_attr_ext.list,tag_tree.list: removed

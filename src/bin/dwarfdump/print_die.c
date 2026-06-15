@@ -1417,7 +1417,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         glflags.pRangesInfo);
                 }
 
-                /* Check the range array if in checl mode */
+                /* Check the range array if in check mode */
                 if ( glflags.gf_check_ranges) {
                     int rares = 0;
                     Dwarf_Error raerr = 0;
@@ -1733,7 +1733,7 @@ check_sibling_off(Dwarf_Unsigned loop_iteration,
         Dwarf_Off check_off = glflags.DIE_section_offset;
 
         /*  The following could use binary search as
-            the array is strictly assending values. */
+            the array is strictly ascending values. */
         for ( ; i < sibling_off_count; ++i) {
             off = sibling_off_array[i];
             if (check_off == off) {
@@ -5541,7 +5541,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     default:
         attribute_handled_by_switch = FALSE;
         break;
-    } /* end switch statment on attribute code */
+    } /* end switch statement on attribute code */
     if (!attribute_handled_by_switch) {
         if (fc == DW_FORM_CLASS_REFERENCE) {
             is_class_reference = TRUE;
@@ -8047,7 +8047,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         /*  DW_FORM_ref_addr is not accessed thru formref: ** it is an
             address (global section offset) in ** the .debug_info
             section.
-            DWARF2 incorrectly specifed the value here
+            DWARF2 incorrectly specified the value here
             as being the size of an address, which never made any
             sense: it has always been an offset of a DIE somewhere in
             .debug_info .

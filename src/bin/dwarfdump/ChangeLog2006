@@ -224,7 +224,7 @@
 	with DW_AT_decl_file, adding data from dwarf_srcfiles
 	to argument list of a few routines to make that possible.
       * print_sections.c: moved "line number info" string print so
-	it prints for -v as well as normal  line ouput.
+	it prints for -v as well as normal  line output.
 
 2002-10-23   Amaury Le Leyzour amaury@sgi.com
       * print_sections.c (print_weaknames): Changed
@@ -288,7 +288,7 @@
 	right type to match the % format.
 2000 April 13 davea@sgi.com
   print_sections.c - 1.56
-        - A single byte of zero is a perfectly legitmate null
+        - A single byte of zero is a perfectly legitimate null
           abbreviation entry          (in .debug_abbrev)
 	 now we print those directly and avoid a warning
           from dwarfdump

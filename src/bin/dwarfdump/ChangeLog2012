@@ -76,7 +76,7 @@
        when testing self references category.
        Support for counting number of occurrences of the pattern being
        searched (See -S option).
-       Add support for new option -kE; the atrribute
+       Add support for new option -kE; the attribute
        encodings are checked to see if they can use
        fewer bytes when encoded using LEB128. New
        functions 'check_attributes_encoding',

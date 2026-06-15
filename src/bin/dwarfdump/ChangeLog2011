@@ -68,7 +68,7 @@
 2011-10-22  DavidAnderson <davea42@earthlink.net>
      * common.c :Update version string.
      * dwarfdump.c: Update version string. Do not set ranges_flag
-       with -a because that is unsafe to print seperately in general.
+       with -a because that is unsafe to print separately in general.
      * dwarfdump.1: Rewrite the man page for completeness and
        accuracy.
 2011-10-11  DavidAnderson <davea42@earthlink.net>
@@ -144,7 +144,7 @@
        esb_extra string when it is no longer valid.
 2011-10-03  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Minor formatting changes.
-      * print_die.c: Initialize some local varables at definition. Ensure that
+      * print_die.c: Initialize some local variables at definition. Ensure that
         we do not get a FORM name in a name string (so a test
         works right).  And also ensure a FORM name does not get
         into a compiler-target setting.  Refine the formx_print_value()

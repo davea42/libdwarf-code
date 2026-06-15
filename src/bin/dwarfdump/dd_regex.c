@@ -26,7 +26,7 @@
 
     Revision 1.2  88/08/28  15:36:04  oz
     Use a complement bitmap to represent NCL.
-    This removes the need to have seperate
+    This removes the need to have separate
     code in the pmatch case block - it is
     just CCL code now.
 

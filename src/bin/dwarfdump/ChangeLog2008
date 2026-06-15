@@ -9,7 +9,7 @@
 	With -N, print .debug_ranges.
       * print_die.c: Print .debug_ranges details.
       * print_frames.c: Delete useless comment.
-      * globals.h: Allow re-use of debug_ranges formatting code.
+      * globals.h: Allow reuse of debug_ranges formatting code.
       * Makefile.in: Make the header dependency list more complete.
       * makename.h: Comment tweaked.
 2008-12-08 David Anderson <davea42@earthlink.net>

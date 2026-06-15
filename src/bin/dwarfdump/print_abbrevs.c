@@ -53,7 +53,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 #include "print_sections.h"
 
-/* The following relevent for one specific Linker. */
+/* The following relevant for one specific Linker. */
 #define SNLINKER_MAX_ATTRIB_COUNT  16
 /*  a warning limit which is arbitrary but
     leaves a bit more flexibility. */

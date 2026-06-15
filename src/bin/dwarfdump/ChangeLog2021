@@ -20,7 +20,7 @@
       and not quite so mysterious.
       Added new option --show-dwarfdump-conf to show
       the .dwarfdump.conf in use. The old and broken
-      depencence on -v is gone.
+      dependence on -v is gone.
     * glflags.c,glflags.h: New flag gf_show_dwarfdump_conf
       for the new option.
     * dwarfdump.1: Documented new option --show-dwarfdump-conf
@@ -231,7 +231,7 @@
      that do not have any sort of string FORM.
      Some #if 0 present to be removed shortly.
    * print_hipc_lopc_attr.c: A new #if 0 here is a non-functional
-     improvment in printing high-pc. Not ready for prime time.
+     improvement in printing high-pc. Not ready for prime time.
    * print_origloclist_codes.c: added DW_LLE_start_end case
      seen in test object.
 2021-01-23 David Anderson

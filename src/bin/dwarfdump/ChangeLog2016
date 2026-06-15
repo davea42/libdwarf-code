@@ -45,7 +45,7 @@
       loclist operators from LLE to LLEX
       as these are in use for certain DWARF4 loclist
       providers.  The DWARF5 LLE don't use the same
-      numberic values as the experimental ones.
+      numeric values as the experimental ones.
 2016-09-23  David Anderson
     * Makefile.in: A mistake here meant every compile
       rebuilds all of dwarfdump even with a trivial change.
@@ -485,7 +485,7 @@
      * common.c: Update version string.
      * dwarfdump.c: Update version string.
      * print_abbrevs.c: If an abbreviation number is a bit
-       goofy, accomodate it so we do not write to
+       goofy, accommodate it so we do not write to
        memory we did not allocate.  It will
        be caught a bit later in the run as an invalid DIE
        or abbreviation.

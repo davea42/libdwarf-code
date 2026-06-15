@@ -2715,7 +2715,7 @@ set_command_options(int argc, char *argv[])
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
         case OPT_NO_DUP_ATTR_CHECK:
-            /*  Suppress checking for duplicate attrbutes
+            /*  Suppress checking for duplicate attributes
                 in abbreviations entries,
                 It is rare compilers emit duplicates, but
                 if one did, use this option to let dwarfdump show
