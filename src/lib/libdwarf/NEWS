@@ -186,7 +186,7 @@ May 19, 2014
   For now, though, all dwarf_errmsg() strings continue to point to
   static strings.  Just please don't depend on it!
 
-  BINARY & SOURCE INCOMPATIBLITY:
+  BINARY & SOURCE INCOMPATIBILITY:
 
   The Producer code drops old dwarf_producer_init* functions
   and provides an old name with a new interface: dwarf_producer_init().
