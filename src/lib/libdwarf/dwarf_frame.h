@@ -285,7 +285,7 @@ struct Dwarf_Cie_s {
     /*  These are extracted from the gnu eh_frame
         augmentation if the
         augmentation begins with 'z'. See Linux LSB documents.
-        Otherwize these are zero. */
+        Otherwise these are zero. */
     unsigned char    ci_gnu_personality_handler_encoding;
     unsigned char    ci_gnu_lsda_encoding;
     unsigned char    ci_gnu_fde_begin_encoding;
