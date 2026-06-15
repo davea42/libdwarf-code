@@ -1,3 +1,435 @@
+2026-06-15:  David Anderson
+    commit f1f2c1ac716e0ac07c5186a2154aa02e485850f3
+
+    codespell fixed spelling errors.
+            modified:   libdwarf.dox
+
+2026-06-15:  David Anderson
+    commit 29b15aa8e64b7639e14b5d8da54154940e46f56e
+
+    Codespell found comments misspelled.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfexample/frame2.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/gennames/gennames.c
+
+2026-06-15:  David Anderson
+    commit e59fddbcd425a452afd06bd9f50c17c3c98689bd
+
+    codespell found spelling errors in comments
+    and error messages.
+            modified:   src/bin/dwarfdump/CODINGSTYLE
+            modified:   src/bin/dwarfdump/ChangeLog2006
+            modified:   src/bin/dwarfdump/ChangeLog2008
+            modified:   src/bin/dwarfdump/ChangeLog2011
+            modified:   src/bin/dwarfdump/ChangeLog2012
+            modified:   src/bin/dwarfdump/ChangeLog2015
+            modified:   src/bin/dwarfdump/ChangeLog2016
+            modified:   src/bin/dwarfdump/ChangeLog2018
+            modified:   src/bin/dwarfdump/ChangeLog2020
+            modified:   src/bin/dwarfdump/ChangeLog2021
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_dwconf.h
+            modified:   src/bin/dwarfdump/dd_getopt.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2026-06-15:  David Anderson
+    commit e5925c9b44a783f4e0ff8a824c687271a2b66a2e
+
+    More changes in comment spelling found by codespell.
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_frame2.c
+            modified:   dwarf_global.c
+            modified:   dwarf_init_finish.c
+            modified:   dwarf_line.c
+            modified:   dwarf_loclists.c
+            modified:   dwarf_rnglists.c
+            modified:   dwarf_setup_sections.c
+            modified:   dwarf_tied.c
+
+2026-06-15:  David Anderson
+    commit 8eec208b1aafe1fead020a40f4b279e6c386bae8
+
+    codespell fixed misspellings in comments.
+            modified:   dwarf_die_deliv.h
+            modified:   dwarf_line.h
+            modified:   dwarf_loc.h
+            modified:   dwarf_macho_loader.h
+            modified:   dwarf_opaque.h
+            modified:   dwarf_tsearch.h
+            modified:   dwarf_util.c
+            modified:   dwarf_util.h
+
+2026-06-15:  David Anderson
+    commit 08a795c2d7e1037021a7cf49094d50acc13c57fe
+
+    codespell fixed bad spelling.
+            modified:   ChangeLog2011
+            modified:   ChangeLog2012
+            modified:   ChangeLog2014
+            modified:   ChangeLog2015
+            modified:   ChangeLog2016
+            modified:   ChangeLog2017
+            modified:   ChangeLog2018
+            modified:   ChangeLog2019
+            modified:   ChangeLog2020
+            modified:   ChangeLog2021
+
+2026-06-15:  David Anderson
+    commit f114da04a9ccde738c7366988f09b44c6ed226e0
+
+    codespell fixed spellings
+            modified:   ChangeLog2010
+
+2026-06-15:  David Anderson
+    commit 67743d754ca0cb53e922b6b83a2a3c54bdbbd0b8
+
+    codespell fixed misspellings
+            modified:   ChangeLog2009
+
+2026-06-15:  David Anderson
+    commit 0ed06d0565df8fae9aa0bc11ce2cb0d73d001ee3
+
+    codespell fixed mispellings
+            modified:   CHANGES
+
+2026-06-15:  David Anderson
+    commit 1c704737b4278a4e1b5d1ba7e49391e1f8d42b94
+
+    codespell fixed spelling.
+            modified:   ChangeLog2008
+
+2026-06-15:  David Anderson
+    commit a167d4a3ce1c1229058470b9f067d466e77ff8d9
+
+    codespell fixed minor spelling mistake
+            modified:   dwarf_frame.h
+
+2026-06-15:  David Anderson
+    commit 6d178155e010f95aecef0140b0b0308e89345e92
+
+    codespell fixed misspellings
+            modified:   ChangeLog2006
+
+2026-06-15:  David Anderson
+    commit f26ef0e1006bd9b68ce24f8378fcf2a29d90041e
+
+    codespell spelling correction
+            modified:   NEWS
+
+2026-06-15:  David Anderson
+    commit e3f4f174ea160932bbfbbb8419ec47fa36bd17ae
+
+    codespell fixed some spellings.
+            modified:   libdwarf.h
+
+2026-06-14:  David Anderson
+    commit 161795ca343ba38d329731ee45192d8996873cc7
+
+    Corrected typo in msys2_meson test.
+            modified:   test.yml
+
+2026-06-14:  David Anderson
+    commit 49fd8e79736c274bee7a5a377182529a30051219
+
+    Should work now.
+            modified:   test.yml
+
+2026-06-14:  David Anderson
+    commit b7c05e40d8ec19fd56b03a193889c17e4f624d9b
+
+    Removed unnecessary references to freebsd-version
+            modified:   freebsd_autotools.yml
+            modified:   freebsd_cmake.yml
+
+2026-06-14:  David Anderson
+    commit 8977f294acd26deba747c0e18d5d51bef8e2d637
+
+    Removed pointless (and failing to run) freebsd-version command
+            modified:   freebsd_meson.yml
+
+2026-06-14:  David Anderson
+    commit 87936778a012d9229c6a8605cc0ff438fd81bd67
+
+    Typo introduced in last commit
+            modified:   test.yml
+
+2026-06-14:  David Anderson
+    commit 67107f72924fea805327e1e50668d20584fe033f
+
+    The individual versions work, this should
+    do all of them without warnings.
+            modified:   test.yml
+
+2026-06-14:  David Anderson
+    commit 1282be9cd7c9a19b312350d09b79f5b20caa5110
+
+    Back to windows-2025-vs2026 , though
+    github action lint is unaware windows-2025-vs2026 is correct.
+            modified:   msys2_autotools.yml
+            modified:   msys2_cmake.yml
+            modified:   msys2_meson.yml
+
+2026-06-14:  David Anderson
+    commit 64b345e8e3316ac9893c9ce548206757d92b5643
+
+    Now v6 not v4. all with slight ordering change
+    of setup.
+            modified:   msys2_autotools.yml
+            modified:   msys2_cmake.yml
+            modified:   msys2_meson.yml
+
+2026-06-14:  David Anderson
+    commit efa7f282ceb7052ac53c330c89695dea3ababeb0
+
+    Now action v6
+            modified:   msys2_cmake.yml
+
+2026-06-13:  David Anderson
+    commit 62baec1d0bc7654a164160f32db9af635094ea04
+
+    was windows-latest now windows-2025-vs2026
+            modified:   msys2_autotools.yml
+
+2026-06-13:  David Anderson
+    commit af593075334d81e6de37ffeb0ec2091ce92c3859
+
+    Now v6 not v4, reordered a little to match github msys2
+    recommendation.
+            modified:   msys2_autotools.yml
+
+2026-06-13:  David Anderson
+    commit cf46151e8c4f85f6c6b8f98e236782b2c2744d22
+
+    No need to brew ninja
+            modified:   mac_meson.yml
+
+2026-06-13:  David Anderson
+    commit 7b5574f999b6e15453216b650558c585ed21c801
+
+    Now v6 not v4
+            modified:   mac_meson.yml
+
+2026-06-13:  David Anderson
+    commit b351b2aa5bc3a2a8a245d8c60266ab5b0dc5b3a0
+
+    Remove no-longer-needed brew command. Defaults suffice
+            modified:   mac_cmake.yml
+
+2026-06-13:  David Anderson
+    commit 8c1bcacc8eddab3f097d8d2ae42e82629c2170b6
+
+    Now action is v6
+            modified:   mac_cmake.yml
+
+2026-06-13:  David Anderson
+    commit b213934904f08b30875789f10c253f6553611086
+
+    Just let the warning be emitted. Passes anyway.
+            modified:   mac_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 979cd122b20985a3b0a7ee2ca856cd2d6b0ac78f
+
+    Failed. trying another way to eliminate brew warning
+            modified:   mac_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 17d6b43ba71ce2e161c4ee2e39df856549dd25db
+
+    Different way to get brew to not issue warning
+            modified:   mac_autotools.yml
+
+2026-06-13:  David Anderson
+    commit ee5535c4d55464abe5eaac7dc5d0ac06f1d37ca9
+
+    brew needs export enforcing checks with  latest
+            modified:   mac_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 122a9d19c61e770d7f0b2e8e359714000238a8b4
+
+    v6  now
+            modified:   mac_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 0609e81081f75fbf522f6f4b536d6f650990d4b4
+
+    v6 not v4
+            modified:   linuxc99meson.yml
+
+2026-06-13:  David Anderson
+    commit a73a8e0e5e0e73f51444af69a9782b12cb3f79d2
+
+    Correcting old typo in naming. c17cmake not c17make
+            modified:   linuxc99cmake.yml
+
+2026-06-13:  David Anderson
+    commit 995379d593a7af52fe7222590365d6e69ad4ecf1
+
+    Removing warning on action
+            modified:   linuxc99cmake.yml
+
+2026-06-13:  David Anderson
+    commit a97259affd7463d04fdd6b8d063210f1543f91fb
+
+    Simplify. Previous incorrect.
+            modified:   linuxc99autotools.yml
+
+2026-06-13:  David Anderson
+    commit f5833f3f9d3d5ffa5e4b6cec93df65fb1ab0544d
+
+    Update to remove action warnings.
+            modified:   linuxc99autotools.yml
+
+2026-06-13:  David Anderson
+    commit b70e0ff610a009fb8a18a24aedbaa2dad767c514
+
+    Remove action warnings.
+            modified:   freebsd_meson.yml
+
+2026-06-13:  David Anderson
+    commit 0ecd2822ea7ed19d63c544a073c6588d70ee1d0c
+
+    Avoids action warnings from a test.
+            modified:   freebsd_cmake.yml
+
+2026-06-13:  David Anderson
+    commit 7b0aef6accb27f336944a7c6782a9b4a3843be35
+
+    Corrected indent errors
+            modified:   freebsd_autotools.yml
+
+2026-06-13:  David Anderson
+    commit a13d94e02cf56cdd3a8f0e3647093761a6b84730
+
+    Looking to eliminate yml warning.
+            modified:   freebsd_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 1a5dd8ee0a7385411e815a07d780500b8fedb7ca
+
+    Small mods to fix warnings
+            modified:   freebsd_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 63827597e7ff1e2487c5c0b9743c8d7082055bc7
+
+    Fixed mistake on sh {0} I hope.
+            modified:   freebsd_autotools.yml
+
+2026-06-13:  David Anderson
+    commit 5b306cfb699b98e7e2793f4856ec9a5f6814408b
+
+    Now with run:  shell: cpa.sh {0}
+            modified:   freebsd_autotools.yml
+
+2026-06-13:  David Anderson
+    commit b10bfb778e85c243023c18954e86f93e6803f692
+
+    Updated cross-platform_actions/actionv1.2.0
+    Updated to freebsd '15.0'
+            modified:   freebsd_autotools.yml
+            modified:   freebsd_cmake.yml
+            modified:   freebsd_meson.yml
+
+2026-06-13:  David Anderson
+    commit 73e43e16abf9a38e33eebf242d38584893c1c348
+
+    Changing v4 actions to v6 to avoid warning.
+            modified:   .github/workflows/freebsd_autotools.yml
+            modified:   .github/workflows/freebsd_cmake.yml
+            modified:   .github/workflows/freebsd_meson.yml
+
+2026-06-05:  David Anderson
+    commit 3037e1338c83cdffc030bf88efb2e9725ebc24a7
+
+    Now insuring a struct elf_header
+    is zerod before use.
+    And added a new test (sanity test) to catch
+    a macho object when given
+    a very-fuzzed object.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2026-06-05:  David Anderson
+    commit 8346a99a33c6f3525e58836bff5c760516dbf4d5
+
+    The internal function _dwarf_object_detector_universal_instance()
+    was never used. Removing it.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_universal.h
+
+2026-06-05:  David Anderson
+    commit 8ddc9ff452be8d7eb6004f8e7b47de8443d75e72
+
+    New month, one line changes for June.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-26:  David Anderson
+    commit ec907274c3573138bcdd16d0db5e055227f6d9f5
+
+    Now fully updated.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-26:  David Anderson
+    commit a8bda77aebbd25d590655046bb0ed0cc81f2bcb8
+
+    Updated to reflect fix of newest vulnerability.
+            modified:   bugxml/data.txt
+
+2026-05-26:  David Anderson
+    commit 6e6d732a3b921d7f771b0bfe417a3e3c47520dac
+
+    Now _dwarf_generic_elf_load_symbols32()
+    _dwarf_generic_elf_load_symbols64() and
+    _dwarf_load_elf_symstr()
+    check for a confusion of section name and type
+    that would lead to memory leakage and
+    now we return an error as appropriate.
+    This fixes oss-fuzz 516582687 (DW202605-008)
+    The bug first appeared last month (April)
+    as a result of the major changes in the libdwarf code
+    reading Elf object files.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+    Defined new error DW_DLE_ELF_GRPSTRING_SECTION_ERROR
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2026-05-26:  David Anderson
+    commit d27db3b595b6f9fbaf4917347973ab4e5e58026e
+
+    copyright year changed to 2026.
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_string.h
+
+2026-05-26:  David Anderson
+    commit 9b14b0c3bbc8cca8a2c68c04ed5ed83bf7546d80
+
+    New vulnerability documented.
+            modified:   bugxml/data.txt
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-05-24:  David Anderson
+    commit 1ac98981519d789d11cd80997c0d431975765db0
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2026-05-24:  David Anderson
     commit 122fa86c90ae48c760b4836a88f94df5bd5edb62
 
