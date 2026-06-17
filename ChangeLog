@@ -1,3 +1,16 @@
+2026-06-17:  David Anderson
+    commit 110376b5680cb2a06a30d1334c59f0c630e088e1
+
+    Additional sanity and overflow checks to detect
+    corrupted macho object file.
+            modified:   dwarf_machoread.c
+
+2026-06-15:  David Anderson
+    commit 83d11041423d59a22dbc0990d838c8f0e5b0f5ab
+
+    Up to date now
+            modified:   ChangeLog
+
 2026-06-15:  David Anderson
     commit f1f2c1ac716e0ac07c5186a2154aa02e485850f3
 
