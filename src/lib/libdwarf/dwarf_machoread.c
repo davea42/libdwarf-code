@@ -258,7 +258,13 @@ macho_load_section (void *obj, Dwarf_Unsigned section_index,
     if (0 < section_index &&
         section_index < macho->mo_dwarf_sectioncount) {
         int res = 0;
+        /*   inner is zero except if unified binary.
+             If unified, mo_filesize does not include
+             inner (inner is the distance from zero
+             to the present macho header in the overall
+             universal binary). */
         Dwarf_Unsigned inner = macho->mo_inner_offset;
+        Dwarf_Unsigned full_offset = 0;
 
         struct generic_macho_section *sp =
             macho->mo_dwarf_sections + section_index;
@@ -269,12 +275,17 @@ macho_load_section (void *obj, Dwarf_Unsigned section_index,
         if (!sp->size) {
             return DW_DLV_NO_ENTRY;
         }
-        if ((sp->size + sp->offset) >
-            macho->mo_filesize) {
+        full_offset = sp->size + sp->offset + inner;
+        if (full_offset < sp->size ||
+            full_offset < sp->offset ||
+            full_offset < inner) {
+            *error = DW_DLE_ARITHMETIC_OVERFLOW;
+            return DW_DLV_ERROR;
+        }
+        if ((sp->size + sp->offset) > macho->mo_filesize) {
             *error = DW_DLE_FILE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
-
         sp->loaded_data = malloc((size_t)sp->size);
         if (!sp->loaded_data) {
             *error = DW_DLE_ALLOC_FAIL;
@@ -421,10 +432,21 @@ load_segment_command_content32(
     Dwarf_Unsigned segoffset = mmp->offset_this_command;
     Dwarf_Unsigned afterseghdr = segoffset + sizeof(sc);
     Dwarf_Unsigned inner = mfp->mo_inner_offset;
+    Dwarf_Unsigned fulloffset = mfp->mo_inner_offset;
 
     if (segoffset > filesize ||
         mmp->cmdsize > filesize ||
         (mmp->cmdsize + segoffset) > filesize ) {
+        *errcode = DW_DLE_MACH_O_SEGOFFSET_BAD;
+        return DW_DLV_ERROR;
+    }
+    fulloffset = segoffset+inner;
+    if (fulloffset <segoffset || fulloffset < inner) { 
+        /* overflow */
+        *errcode = DW_DLE_ARITHMETIC_OVERFLOW;
+        return DW_DLV_ERROR;
+    }
+    if (afterseghdr > filesize ) {
         *errcode = DW_DLE_MACH_O_SEGOFFSET_BAD;
         return DW_DLV_ERROR;
     }
@@ -485,13 +507,6 @@ _dwarf_macho_load_segment_commands(
         *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
         return DW_DLV_ERROR;
     }
-#if 0 /* inappropriate test */
-    Not appropriate, segtotsize is internal space,not file space.
-    if (segtotsize > MAX_COMMANDS_SIZE ) {
-        *errcode = DW_DLE_MACHO_CORRUPT_COMMAND;
-        return DW_DLV_ERROR;
-    }
-#endif
 
     mfp->mo_segment_commands =
         (struct generic_macho_segment_command *)
@@ -640,11 +655,13 @@ _dwarf_macho_load_dwarf_section_details32(
         }
         innercur = inner+curoff;
         if (innercur < inner || innercur <curoff) {
+            /* overflow */
             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
         offplussize = inner+mfp->mo_filesize;
         if (offplussize < inner || offplussize <mfp->mo_filesize) {
+            /* overflow */
             *errcode = DW_DLE_MACHO_CORRUPT_SECTIONDETAILS;
             return DW_DLV_ERROR;
         }
@@ -998,14 +1015,25 @@ _dwarf_macho_object_access_internals_init(
     unsigned int unibinarycounti = 0;
 
     if (ftype == DW_FTYPE_APPLEUNIVERSAL) {
+        Dwarf_Unsigned endoffset = 0;
         res = _dwarf_macho_inner_object_fd(fd,
             uninumber,
             filesize,
             &ftypei,&unibinarycounti,&endiani,
             &offsetsizei,&fileoffseti,&filesizei,errcode);
         if (res != DW_DLV_OK) {
-            if (res == DW_DLV_ERROR) {
-            }
+            return res;
+        }
+        /*  At this point filesize is of the entire universal binary
+            file, filesizei is size of the uninumber-th macho binary 
+            in the overall file. 
+            fileoffseti is the offset of the uninumber-th
+            macho binary in the overall file */
+        endoffset = fileoffseti+filesizei;
+        if (endoffset < fileoffseti ||
+            endoffset < filesizei) {
+            /* overflow */
+            *errcode = DW_DLE_UNIVERSAL_BINARY_ERROR;
             return res;
         }
         *unibinarycount = unibinarycounti;
@@ -1017,7 +1045,7 @@ _dwarf_macho_object_access_internals_init(
     internals->mo_fd          = fd;
     internals->mo_offsetsize  = offsetsizei;
     internals->mo_pointersize = offsetsizei;
-    internals->mo_inner_offset  =  fileoffseti;
+    internals->mo_inner_offset  = fileoffseti;
     internals->mo_filesize    = filesizei;
     internals->mo_ftype       = ftypei;
     internals->mo_uninumber   = uninumber;
