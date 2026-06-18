@@ -1034,7 +1034,7 @@ _dwarf_macho_object_access_internals_init(
             endoffset < filesizei) {
             /* overflow */
             *errcode = DW_DLE_UNIVERSAL_BINARY_ERROR;
-            return res;
+            return DW_DLV_ERROR;
         }
         *unibinarycount = unibinarycounti;
         endian = endiani;
@@ -1133,7 +1133,7 @@ _dwarf_macho_object_access_init(
         localerrnum);
     if (res != DW_DLV_OK){
         _dwarf_destruct_macho_internals(internals);
-        return DW_DLV_ERROR;
+        return res;
     }
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface_a));
     if (!intfc) {
@@ -1284,10 +1284,10 @@ _dwarf_object_detector_universal_head_fd(
         fa = (struct fat_arch *)calloc(duhd.au_count,
             sizeof(struct fat_arch));
         if (!fa) {
-            *errcode = DW_DLE_ALLOC_FAIL;
             free(duhd.au_arches);
             duhd.au_arches = 0;
             free(fa);
+            *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
         if (sizeof(fh)+duhd.au_count*sizeof(*fa) >= dw_filesize) {
@@ -1320,9 +1320,9 @@ _dwarf_object_detector_universal_head_fd(
         fa = (struct fat_arch_64 *)calloc(duhd.au_count,
             sizeof(struct fat_arch_64));
         if (!fa) {
-            *errcode = DW_DLE_ALLOC_FAIL;
             free(duhd.au_arches);
             duhd.au_arches = 0;
+            *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
         if (sizeof(fh)+duhd.au_count*sizeof(*fa) >= dw_filesize) {
@@ -1336,6 +1336,7 @@ _dwarf_object_detector_universal_head_fd(
             duhd.au_count*sizeof(fa),
             dw_filesize,errcode);
         if (res == DW_DLV_ERROR) {
+            /* *errcode set by RRMOA */
             free(duhd.au_arches);
             duhd.au_arches = 0;
             free(fa);
