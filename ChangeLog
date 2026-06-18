@@ -1,3 +1,35 @@
+2026-06-18:  David Anderson
+    commit 9e1beb79105a7dae582e3b542565d449bd931241
+
+    An ossfuzz error (reading a fuzzed
+    Macho object file identified as
+    ossfuzzflaky/fuzz_init_path-5832857477251072
+    in libdwarf regressiontests) (that is not reproducible
+    by the ossfuzz folks) provoked an
+    examination of returns of DW_DLV_ERROR in dwarf_machoread.c.
+    They have not declared a vulnerability.
+    They did create a report showing the fuzzed
+    object and the messages from the test program
+    using libdwarf.
+
+    I cannot reproduce, here, what they recorded, so
+    I reviewed Macho-object reading code, while reviewing
+    their really strange output from using libdwarf.
+    I found bugs in a few places in handling object-file
+    corruption.
+
+    A small number of instances of mistakes in returning
+    error codes are hereby fixed.
+    These bugs have been present since Macho object reading
+    (by libdwarf) was written in 2021.
+            modified:   dwarf_machoread.c
+
+2026-06-17:  David Anderson
+    commit 3f05266345c36c5074960b375bc38a4103149224
+
+    New log entry
+            modified:   ChangeLog
+
 2026-06-17:  David Anderson
     commit 110376b5680cb2a06a30d1334c59f0c630e088e1
 
