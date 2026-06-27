@@ -2132,19 +2132,20 @@ read_gs_section_group(
             return res;
         }
         psh->gh_content = data;
+        data = 0;
         psh->gh_was_alloc = TRUE;
         psh->gh_load_type = Dwarf_Alloc_Malloc;
         if (flags & SHF_COMPRESSED) {
 #if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
-            free(data);
             *errcode = 0;
+            /*  decompress call will change gh_content
+                pointer value.  */
             _dwarf_do_decompress_elf(ep,psh,errcode);
             /* decompress and set new section size */
             if (*errcode) {
                 return DW_DLV_ERROR;
             }
 #else /* COMPRESSED TEST */
-            free(data);
             *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
             return DW_DLV_ERROR;
 #endif /* COMPRESSED TEST */
@@ -2153,21 +2154,18 @@ read_gs_section_group(
             from a particular compiler. */
         groupmallocsize =  (1+count) * sizeof(Dwarf_Unsigned);
         if (groupmallocsize >= ep->f_filesize) {
-            free(data);
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
             return DW_DLV_ERROR;
         }
         grouparray = malloc(groupmallocsize);
         if (!grouparray) {
-            free(data);
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
-        memcpy(dblock,data,DWARF_32BIT_SIZE);
+        memcpy(dblock,psh->gh_content,DWARF_32BIT_SIZE);
         ASNAR(memcpy,va,dblock);
         /* There is ambiguity on the endianness of this stuff. */
         if (va != 1 && va != 0x1000000) {
-            free(data);
             /*  Could be corrupted elf object. */
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
             free(grouparray);
@@ -2177,7 +2175,7 @@ read_gs_section_group(
         /*  A .group section will have 0 to G sections
             listed. Ignore the initial 'version' value
             of 1 in [0] */
-        dp = data;
+        dp = psh->gh_content;
         /* Skip the initial group version */
         dp = dp + DWARF_32BIT_SIZE;
         /* Remember all the group members */
@@ -2192,7 +2190,6 @@ read_gs_section_group(
                 Only one of them can be of any use. */
             ASNAR(_dwarf_memcpy_swap_bytes,gsecb,dblock);
             if (!gseca) {
-                free(data);
                 /*  zero! Oops. No point in looking at gsecb */
                 free(grouparray);
                 *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
@@ -2203,7 +2200,6 @@ read_gs_section_group(
                     the compiler generating the SHT_GROUP.
                     This is pretty horrible. */
                 if (gsecb >= ep->f_loc_shdr.g_count) {
-                    free(data);
                     *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                     free(grouparray);
                     return DW_DLV_ERROR;
@@ -2215,12 +2211,11 @@ read_gs_section_group(
             grouparray[i] = gseca;
             targpsh = ep->f_shdr + gseca;
             if (_dwarf_ignorethissection(targpsh->gh_namestring)){
-                /* data and dp are ok as is. Iterate again. */
+                /* dp ok as is. Iterate again. */
                 continue;
             }
             if (targpsh->gh_section_group_number) {
                 /* multi-assignment to groups. Oops. */
-                free(data);
                 free(grouparray);
                 *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                 return DW_DLV_ERROR;
@@ -2229,8 +2224,6 @@ read_gs_section_group(
                 ep->f_sg_next_group_number;
             foundone = 1;
         }
-        free(data);
-        data = 0;
         dp = 0;
         if (foundone) {
             ++ep->f_sg_next_group_number;
