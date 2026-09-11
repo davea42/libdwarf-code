@@ -336,7 +336,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             if (0 == _dw_linetab_harmless_reported) {
                 _dw_linetab_harmless_reported = 1;
                 dwarf_insert_harmless_error(dbg,
-                    "DW_DLE_LINE_NUMBER_HEADER_ERROR(harmless error): "
+                    "DW_DLE_LINE_NUMBER_HEADER_ERROR"
+                    "(harmless error): "
                     "maximum_operations_per_second is zero");
             }
             /*  In case we later improperly rely on the value at some

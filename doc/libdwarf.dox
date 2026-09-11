@@ -1201,11 +1201,13 @@
 
     <b>Changes 2.3.2 to 2.3.3</b>
 
+    Release 14 September 2026
+
     Now detects a (corrupted) DWARF4 or later line table
     header with maximum operations per instruction of
     zero (a compiler error) and records a harmless error.
-    These can be reported via dwarfdump -ka, though only
-    one instance is reported.
+    These can be reported via dwarfdump -ka, though at
+    most one instance is reported.
 
     Fixed a bug reading a Macos universal binary object
     file (64bit).

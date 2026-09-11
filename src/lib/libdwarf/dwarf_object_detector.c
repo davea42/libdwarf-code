@@ -510,11 +510,11 @@ dwarf_object_detector_fd(int fd,
     return res;
 }
 
-static const struct elf_header h_zero; 
+static const struct elf_header h_zero;
 
 /*  We are using an ELF 32 header as a stand-in for
     whichever header type we are actually reading.   */
-   
+
 int
 _dwarf_object_detector_fd_a(int fd,
     unsigned *ftype,

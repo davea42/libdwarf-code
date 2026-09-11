@@ -79,7 +79,6 @@ static struct Dwarf_Line_Registers_s
     DWARF4,5 line table header. */
 int _dw_linetab_harmless_reported;
 
-
 void
 _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
     unsigned lineversion,
