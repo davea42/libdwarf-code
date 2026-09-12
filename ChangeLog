@@ -1,3 +1,107 @@
+2026-09-12:  David Anderson
+    commit 1a611a9921feded87fa21804ba09c131cc23e73a
+
+    Removing the two new tests.  The tests have been
+    moved to libdwarf-regressiontests and there is
+    no reason to also have them here in libdwarf-code.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            deleted:    test/test_compress64.c
+            deleted:    test/test_macho_universal.c
+
+2026-09-11:  David Anderson
+    commit 04392173f7e409b5e2616aeea3e10f51eb6ef22d
+
+    Added 2.3.3 release date
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+
+    Fixed line lengths, trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_macho_loader.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2026-09-11:  David Anderson
+    commit 634bd02d17dcfdaad033f0d84fe211f4e4484eaa
+
+    Recording latest bug fixes.
+            modified:   doc/libdwarf.dox
+    Fixing a bug in decompressing 64bit Elf.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+    Minor testcase.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/test_compress64.c
+
+2026-09-11:  David Anderson
+    commit c2d189aa99da951fe7787d1bf6ab4ebeb4664e17
+
+    Fixing bug in reading Macho Universal object file (64bit).
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+    New test source
+            new file:   test/test_compress64.c
+
+2026-09-09:  David Anderson
+    commit c826efa84eaac3ef7ea5bac7ab9a3a712a2a99c6
+
+    Shortening two lines per project codingstyle.
+            modified:   test_macho_universal.c
+
+2026-09-09:  David Anderson
+    commit e89dcf42c22f0791dcdb4f4d51a76e176ef2f1ae
+    Merge: 7ffc5f4c 818a6eae
+
+    Merge branch 'MarkLee131-fat-arch-64-read-size'
+
+    A fix to handling of Maco universal binary header reading.
+
+2026-09-09:  David Anderson
+    commit 818a6eaed1faf1a8177632692cd5ea917cd1c71e
+
+    Normal month update
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-09-07:  MarkLee131
+    commit a1734869e00c41de033bcf1011ac91de6342bcc6
+
+    Fix fat_arch_64 read size in the universal binary header reader
+
+    The 64-bit branch of _dwarf_object_detector_universal_head_fd() read the
+    arch table with sizeof(fa), where fa is a struct fat_arch_64 *.  That is
+    8 bytes per entry; the entries are 32.  The buffer was allocated at the
+    right size, so only the first quarter of the table was filled and the
+    rest stayed zero from calloc.  Offset and size came back as zero,
+    _dwarf_fill_in_uni_arch_64() accepted them because zero is not greater
+    than the file size, and libdwarf then reported the inner object as too
+    small.  No FAT_MAGIC_64 universal binary could be read.
+
+    The 32-bit branch nine lines above uses sizeof(*fa), and so does the
+    bounds check eight lines above in the same 64-bit branch.
+
+    The return check differed too: the 64-bit branch tested
+    res == DW_DLV_ERROR, so DW_DLV_NO_ENTRY fell through with a partly
+    filled buffer.  It now matches the 32-bit branch.
+
+    This is an under-read into a correctly sized buffer, so nothing is
+    written out of bounds.
+
+    test/test_macho_universal.c writes the same one-architecture universal
+    binary twice, once with FAT_MAGIC and 32-bit entries and once with
+    FAT_MAGIC_64 and 64-bit ones, both naming the same inner object at the
+    same offset and size, and requires dwarf_init_path_a() to answer the
+    same way for each.  Before this change the 32-bit file gives
+    DW_DLV_NO_ENTRY and the 64-bit file gives DW_DLE_FILE_TOO_SMALL.
+
+2026-08-31:  David Anderson
+    commit 7ffc5f4c71ef54a90a03ae3d1140cbcb5fabb39d
+
+    Updated with latest
+            modified:   ChangeLog
+
 2026-08-31:  David Anderson
     commit 5920382cfb0f2cecae5d1faf476184bf16eb8cac
 
