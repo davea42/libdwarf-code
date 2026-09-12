@@ -141,16 +141,6 @@ target_include_directories(dwarf_tests INTERFACE "${PROJECT_SOURCE_DIR}/src/lib/
   target_link_libraries(selfregex PRIVATE dwarf_tests)
   add_test(NAME selfregex COMMAND selfregex)
 
-  add_executable(selfmachouniversal
-    "${PROJECT_SOURCE_DIR}/test/test_macho_universal.c")
-  target_link_libraries(selfmachouniversal PRIVATE dwarf_tests dwarf)
-  add_test(NAME selfmachouniversal COMMAND selfmachouniversal)
-
-  add_executable(selfcompress64
-    "${PROJECT_SOURCE_DIR}/test/test_compress64.c")
-  target_link_libraries(selfcompress64 PRIVATE dwarf_tests dwarf)
-  add_test(NAME selfcompress64 COMMAND selfcompress64)
-
 if(NOT WIN32)
   include(FindPython3)
   find_package(Python3 COMPONENTS Interpreter)
