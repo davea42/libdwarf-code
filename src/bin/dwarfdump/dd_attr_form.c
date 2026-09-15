@@ -449,6 +449,20 @@ qsortformclass(const void * e1in, const void * e2in)
     }
     return 0;
 }
+static int
+qsortattribute(const void * e1in, const void * e2in)
+{
+    Three_Key_Entry *e1 = (Three_Key_Entry *)e1in;
+    Three_Key_Entry *e2 = (Three_Key_Entry *)e2in;
+
+    if (e1->key1 < e2->key1) {
+        return -1;
+    }
+    if (e1->key1 > e2->key1) {
+        return 1;
+    }
+    return 0;
+}
 
 static int
 qsortform(const void * e1in, const void * e2in)
@@ -623,17 +637,21 @@ print_attr_form_usage(void)
             continue;
         }
         if (!startnoted) {
-            curform = tke->key2;
-            formtotal = tke->count;
-            startnoted = TRUE;
+            if (tke->count) {
+                curform = tke->key2;
+                formtotal = tke->count;
+                startnoted = TRUE;
+            }
             continue;
         }
         if (curform != tke->key2) {
-            pct = ( (float)formtotal / total)*100.0f;
-            printf(localformat,
-                (unsigned)j,
-                get_FORM_CLASS_name(curform),
-                formtotal,pct);
+            if (formtotal) {
+                pct = ( (float)formtotal / total)*100.0f;
+                printf(localformat,
+                    (unsigned)j,
+                    get_FORM_CLASS_name(curform),
+                    formtotal,pct);
+            }
             localsum += formtotal;
             curform = tke->key2;
             formtotal = tke->count;
@@ -672,21 +690,25 @@ print_attr_form_usage(void)
             continue;
         }
         if (!startnoted) {
-            curform = tke->key3;
-            formtotal = tke->count;
-            startnoted = TRUE;
+            if (tke->count) {
+                curform = tke->key3;
+                formtotal = tke->count;
+                startnoted = TRUE;
+            }
             continue;
         }
         if (curform != tke->key3) {
-            pct = ( (float)formtotal / total)*100.0f;
-            printf(localformat,
-                (unsigned)j,
-                get_FORM_name(curform),
-                formtotal,pct);
-            localsum += formtotal;
+            if (formtotal) {
+                pct = ( (float)formtotal / total)*100.0f;
+                printf(localformat,
+                    (unsigned)j,
+                    get_FORM_name(curform),
+                    formtotal,pct);
+                localsum += formtotal;
+                ++j;
+            }
             curform = tke->key3;
             formtotal = tke->count;
-            ++j;
             continue;
         }
         formtotal += tke->count;
@@ -706,6 +728,8 @@ print_attr_form_usage(void)
     curattr = 0;
     attrtotal = 0;
     startnoted = FALSE;
+    qsort(tk_l,recordmax,sizeof(Three_Key_Entry),
+        qsortattribute);
     printf("\n*** COUNT BY ATTRIBUTE ***\n");
     printf("[]                                   found rate\n");
     localsum = 0;
@@ -713,29 +737,33 @@ print_attr_form_usage(void)
     for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
 
-        if (!tke->key3) {
+        if (!tke->key1) {
             /* Skip table building data */
             continue;
         }
         if (!startnoted) {
-            curattr = tke->key1;
-            attrtotal = tke->count;
-            startnoted = TRUE;
+            if (tke->count) {
+                curattr = tke->key1;
+                attrtotal = tke->count;
+                startnoted = TRUE;
+            }
             continue;
         }
-        if (curattr != tke->key1) {
-            pct = ( (float)attrtotal / total)*100.0f;
-            printf(localformat,
-                (unsigned)j,
-                get_AT_name(curattr),
-                attrtotal,pct);
-            localsum += attrtotal;
+        if ((curattr != tke->key1)) {
+            if (attrtotal) {
+                pct = ( (float)attrtotal / total)*100.0f;
+                printf(localformat,
+                    (unsigned)j,
+                    get_AT_name(curattr),
+                    attrtotal,pct);
+                ++j;
+                localsum += attrtotal;
+            }
             curattr = tke->key1;
             attrtotal = tke->count;
-            ++j;
             continue;
         }
-        formtotal += tke->count;
+        attrtotal += tke->count;
     }
     if (attrtotal) {
         pct = ( (float)attrtotal / total)*100.0f;
