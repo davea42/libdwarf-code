@@ -1980,6 +1980,38 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  Badly damaged DWARF here. */
+static void
+_dw_report_strp_error(Dwarf_Debug dbg,
+    unsigned attrform,
+    Dwarf_Unsigned offset,
+    Dwarf_Unsigned secsize,
+    int errcode,
+    const char *errname,
+    Dwarf_Error *error)
+{
+    dwarfstring m;
+    const char *name = "<unknownform>";
+
+    dwarf_get_FORM_name(attrform,&name);
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append(&m,(char *)errname);
+    dwarfstring_append_printf_s(&m,
+        " Form %s ",(char *)name);
+    dwarfstring_append_printf_u(&m,
+        "string offset of 0x%" DW_PR_DUx " ",
+        offset);
+    dwarfstring_append_printf_u(&m,
+        "is larger than the string section "
+        "size of  0x%" DW_PR_DUx,
+        secsize);
+    _dwarf_error_string(dbg, error, errcode,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
+
 /*  Extracts a string from .debug_line_str
     offset must be a string-table offset, not
     an offset into a str_offsets table.
@@ -2015,54 +2047,38 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             if (res != DW_DLV_OK) {
                 return res;
             }
-            errcode = DW_DLE_STRP_OFFSET_BAD;
-            errname = "DW_DLE_STRP_OFFSET_BAD";
+            errcode = DW_DLE_LINE_STRP_OFFSET_BAD;
+            errname = "DW_DLE_LINE_STRP_OFFSET_BAD";
             secsize = dbg->de_debug_line_str.dss_size;
             secbegin = dbg->de_debug_line_str.dss_data;
-            strbegin= dbg->de_debug_line_str.dss_data + offset;
-            secend = dbg->de_debug_line_str.dss_data + secsize;
+            if (offset >= secsize) {
+                _dw_report_strp_error(dbg,attrform,offset,
+                    secsize,errcode,errname, error);
+                return DW_DLV_ERROR;
+            }
         } else {
             /* DW_FORM_strp  etc */
             res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
-            errcode = DW_DLE_STRING_OFFSET_BAD;
-            errname = "DW_DLE_STRING_OFFSET_BAD";
+            errcode = DW_DLE_STRP_OFFSET_BAD;
+            errname = "DW_DLE_STRP_OFFSET_BAD";
             secsize = dbg->de_debug_str.dss_size;
-            secbegin = dbg->de_debug_str.dss_data;
-            strbegin= dbg->de_debug_str.dss_data + offset;
-            secend = dbg->de_debug_str.dss_data + secsize;
+            secbegin= dbg->de_debug_str.dss_data;
+            if (offset >= secsize) {
+                _dw_report_strp_error(dbg,attrform,offset,
+                    secsize,errcode,errname,error);
+                return DW_DLV_ERROR;
+            }
         }
-        if (offset >= secsize) {
-            dwarfstring m;
-            const char *name = "<unknownform>";
-
-            dwarf_get_FORM_name(attrform,&name);
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append(&m,(char *)errname);
-            dwarfstring_append_printf_s(&m,
-                " Form %s ",(char *)name);
-            dwarfstring_append_printf_u(&m,
-                "string offset of 0x%" DW_PR_DUx " ",
-                offset);
-            dwarfstring_append_printf_u(&m,
-                "is larger than the string section "
-                "size of  0x%" DW_PR_DUx,
-                secsize);
-            _dwarf_error_string(dbg, error, errcode,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            /*  Badly damaged DWARF here. */
-            return DW_DLV_ERROR;
-        }
+        strbegin = secbegin + offset;
+        secend   = secbegin + secsize;
         res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,
             errcode,error);
         if (res != DW_DLV_OK) {
             return res;
         }
-
         *return_str = (char *)strbegin;
         return DW_DLV_OK;
     }
