@@ -1,3 +1,28 @@
+2026-09-15:  David Anderson
+    commit fd43b9b1e5dee61818a0191080f9ae0e552f3ea0
+
+    When reading .debug_str on a 32bit-pointer test machine
+    (latest FreeBSD for 32bit) -fsanitize reported an overflow
+    on adding to a 32bit pointer.  We were testing for
+    an offset sanity -after- doing an add. Now we
+    check before adding.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2026-09-15:  David Anderson
+    commit 6148f90520ba02ba826cf04320ba6d4f25e97f12
+
+    With -ka, the list of used DW_AT attributes counts
+    was showing incorrectly.  To be correct required
+    a specific use of qsort on the list
+    of attribute uses. Which is now done properly.
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+
+2026-09-12:  David Anderson
+    commit a19656ca7c74fca66d8a30bd9b0fe0169fa70890
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2026-09-12:  David Anderson
     commit 1a611a9921feded87fa21804ba09c131cc23e73a
 
