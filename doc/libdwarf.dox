@@ -1201,7 +1201,7 @@
 
     <b>Changes 2.3.2 to 2.3.3</b>
 
-    Release 14 September 2026
+    Release 18 September 2026
 
     Now detects a (corrupted) DWARF4 or later line table
     header with maximum operations per instruction of
@@ -1214,6 +1214,9 @@
 
     Fixed a bug reading Elf SHF_COMPRESSED sections in
     64bit object files. 
+
+    Moved a sanity test (on .debug_str offset) to
+    before adding the offset to a pointer.
     
 
     <b>Changes 2.3.1 to 2.3.2</b>
