@@ -1,3 +1,29 @@
+2026-09-17:  David Anderson
+    commit 42debcc7ea7b39fa642a9935c9dea7fb32581085
+
+    Now says part of 2.3.3:  regenerated.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_lname_version.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2026-09-15:  David Anderson
+    commit 5e8a163761281d7690d6fec03a35492834f857c8
+
+    Moved release date to Sept 18.
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+
+2026-09-15:  David Anderson
+    commit 25b1d9356914dfbeb170e6aeec8a6823656fe0c6
+
+    Up to date now.
+            modified:   ChangeLog
+
 2026-09-15:  David Anderson
     commit fd43b9b1e5dee61818a0191080f9ae0e552f3ea0
 
