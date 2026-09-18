@@ -32,6 +32,7 @@
     on adding to a 32bit pointer.  We were testing for
     an offset sanity -after- doing an add. Now we
     check before adding.
+    This has been wrong since support for DWARF5 was added.
             modified:   src/lib/libdwarf/dwarf_form.c
 
 2026-09-15:  David Anderson
@@ -41,6 +42,7 @@
     was showing incorrectly.  To be correct required
     a specific use of qsort on the list
     of attribute uses. Which is now done properly.
+    This has been a bug for more than a year.
             modified:   src/bin/dwarfdump/dd_attr_form.c
 
 2026-09-12:  David Anderson
@@ -79,6 +81,8 @@
     Recording latest bug fixes.
             modified:   doc/libdwarf.dox
     Fixing a bug in decompressing 64bit Elf.
+    The bug existed since SHF_COMPRESS support was
+    added to libdwarf.
             modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
             modified:   src/lib/libdwarf/dwarf_init_finish.c
     Minor testcase.
@@ -90,6 +94,8 @@
     commit c2d189aa99da951fe7787d1bf6ab4ebeb4664e17
 
     Fixing bug in reading Macho Universal object file (64bit).
+    The bug has existed since support for universal object
+    files was added in 2023.
             modified:   src/lib/libdwarf/dwarf_machoread.c
             modified:   src/lib/libdwarf/dwarf_opaque.h
     New test source
