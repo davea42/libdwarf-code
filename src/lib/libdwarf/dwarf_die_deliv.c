@@ -884,7 +884,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     }
     local_length_size = cu_context->cc_length_size;
     length = cu_context->cc_length;
-    max_cu_local_offset =  length;
+    max_cu_local_offset = length + local_length_size +
+        cu_context->cc_extension_size;
     res  = _dwarf_read_cu_version_and_abbrev_offset(dbg,
         cu_ptr,
         is_info,
