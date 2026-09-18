@@ -1,3 +1,23 @@
+2026-09-18:  David Anderson
+    commit ea78548a63863bea7bd062fd02ad470cc294a29f
+
+    Reported bug fixed .
+            modified:   ChangeLog
+
+2026-09-18:  David Anderson
+    commit 558b101fe0a02a32c313b6f78d8f8998b820a176
+
+    Correcting a CU context size check by adding in
+    the required length_size and extension_size.
+    A very very old bug.
+            modified:   dwarf_die_deliv.c
+
+2026-09-17:  David Anderson
+    commit dc69e3e726e5b5055d294a3cdfebb9bb6528f12a
+
+    Updated to match git log.
+            modified:   ChangeLog
+
 2026-09-17:  David Anderson
     commit 42debcc7ea7b39fa642a9935c9dea7fb32581085
 
