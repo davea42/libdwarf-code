@@ -6,6 +6,15 @@ Consider switching entirely to meson for your build.
 
 Requires cmake of at least 3.12 as of 31 March 2026.
 
+## As of 2.3.3 (September 2026) cmake builds both
+shared and non-shared versions of libdwarf.
+The options    -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
+are no longer required or supported.
+If C++ is not available dwarfgen will not build.
+To install static libdwarf add -DINSTALL_STATIC_LIBRARIES=YES
+to the cmake options.
+
+
 ## NOTE on build failing as strdup() missing
 
 If certain gcc build options are used (for example
@@ -24,13 +33,6 @@ cmake builds a static library: libdwarf.a
 For cmake, ignore the autogen.sh
 script in the base source directory, autogen.sh
 is only for configure.
-
-By default cmake builds just libdwarf and dwarfdump
-and libdwarf is a static (archive) library.
-To switch to a shared library output with cmake add
-the following to the cmake command:
-
-    -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
 
 Lets assume the base directory of the the libdwarf source in a
 directory named 'code' inside the directory '/path/to/' Always

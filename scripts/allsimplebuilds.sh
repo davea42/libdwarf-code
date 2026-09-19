@@ -269,8 +269,6 @@ else
   cd $bb
   chkres $? "cd cmake shared directory fail b"
   cmake -G Ninja  \
-    -DBUILD_SHARED=YES \
-    -DBUILD_NON_SHARED=NO \
     -DBUILD_DWARFEXAMPLE:BOOL=YES \
     -DBUILD_DWARFGEN:BOOL=YES \
     -DDO_TESTING:BOOL=YES \
@@ -298,10 +296,9 @@ else
   cd $bb
   chkres $? "cd cmake static directory fail b"
   cmake -G Ninja  \
+    -DINSTALL_STATIC_LIBRARIES:BOOL=TRUE \
     -DBUILD_DWARFEXAMPLE:BOOL=YES \
     -DBUILD_DWARFGEN:BOOL=YES \
-    -DBUILD_SHARED=NO \
-    -DBUILD_NON_SHARED=YES \
     -DDO_TESTING:BOOL=YES \
     -DCMAKE_INSTALL_PREFIX=$prefx \
     $spath
