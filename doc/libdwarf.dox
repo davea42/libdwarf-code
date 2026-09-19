@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2026-09-11 v2.3.3
+    @date 2026-09-19 v2.3.3
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1201,7 +1201,7 @@
 
     <b>Changes 2.3.2 to 2.3.3</b>
 
-    Release 18 September 2026
+    Release 22 September 2026
 
     Now detects a (corrupted) DWARF4 or later line table
     header with maximum operations per instruction of
@@ -1213,11 +1213,14 @@
     file (64bit).
 
     Fixed a bug reading Elf SHF_COMPRESSED sections in
-    64bit object files. 
+    64bit object files.
 
-    Moved a sanity test (on .debug_str offset) to
-    before adding the offset to a pointer.
-    
+    Moved a sanity test on .debug_str offset to
+    be before adding the offset to a pointer.
+
+    The cmake build of libdwarf changed slightly,
+    though the change does not require you to do
+    anything. See READMEcmake.md for details.
 
     <b>Changes 2.3.1 to 2.3.2</b>
 
