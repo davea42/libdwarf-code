@@ -1,7 +1,12 @@
 add_library(dwarf_tests INTERFACE)
-target_compile_definitions(dwarf_tests INTERFACE ${DW_LIBDWARF_STATIC} _GNU_SOURCE TESTING LIBDWARF_BUILD)
-target_compile_options(dwarf_tests INTERFACE ${DW_FWALL})
-target_include_directories(dwarf_tests INTERFACE "${PROJECT_SOURCE_DIR}/src/lib/libdwarf" "${PROJECT_SOURCE_DIR}/src/lib/libdwarfp" "${PROJECT_SOURCE_DIR}/src/bin/dwarfdump")
+dwarf_common_options(dwarf_tests)
+target_compile_definitions(dwarf_tests INTERFACE ${DW_LIBDWARF_STATIC} TESTING LIBDWARF_BUILD)
+target_include_directories(dwarf_tests INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/lib/libdwarf>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/lib/libdwarfp>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/bin/dwarfdump>
+  )
 
   add_executable(selfteststring
     "${PROJECT_SOURCE_DIR}/test/test_dwarfstring.c"
@@ -34,6 +39,7 @@ target_include_directories(dwarf_tests INTERFACE "${PROJECT_SOURCE_DIR}/src/lib/
   add_test(NAME selftest_linkedtopath COMMAND selftest_linkedtopath)
 
   add_executable(selftestlname "${PROJECT_SOURCE_DIR}/test/test_lname.c")
+  target_link_libraries(selftestlname PRIVATE dwarf_tests)
   add_test(NAME selftestlname COMMAND selftestlname -f "${PROJECT_SOURCE_DIR}")
 
   add_executable(selfgetopttest

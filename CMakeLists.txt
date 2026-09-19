@@ -3,11 +3,9 @@ cmake_minimum_required(VERSION 3.12)
 project(libdwarf VERSION 2.3.3 
     DESCRIPTION "Library to access DWARF debugging information" 
     HOMEPAGE_URL "https://github.com/davea42/libdwarf-code.git"
-    LANGUAGES C CXX)
+    LANGUAGES C)
 
 # libdwarf
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
-option(BUILD_SHARED "build shared library libdwarf[p].so and use it" FALSE)
 option(BUILD_MMAP "build library allowing mmap" TRUE)
 
 option(ENABLE_DECOMPRESSION
@@ -16,12 +14,20 @@ option(ENABLE_DECOMPRESSION
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
-option(LIBDWARF_STATIC "add -DLIBDWARF_STATIC" FALSE)
-
+option(INSTALL_STATIC_LIBRARIES "Install the static libraries" FALSE)
 option(BUILD_DWARFDUMP "Build dwarfdump (default is YES)" TRUE)
-
 option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
-message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
+if(BUILD_DWARFGEN)
+  include(CheckLanguage)
+  check_language(CXX)
+  if(CMAKE_CXX_COMPILER)
+    enable_language(CXX)
+  else()
+    message(STATUS "No C++ compiler available; disabling dwarfgen")
+    set(BUILD_DWARFGEN OFF CACHE BOOL "Build dwarfgen" FORCE)
+  endif()
+  message(STATUS "Building dwarfgen ... ${BUILD_DWARFGEN}")
+endif()
 
 option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
 message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
@@ -33,7 +39,6 @@ message(STATUS "Building api tests   ... ${DOTESTS}")
 option(PIC_ALWAYS "Build libdwarf with position-independent code for both static and shared (default is NO)" FALSE)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include_directories( ${PROJECT_BINARY_DIR} )
 
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
@@ -258,30 +263,61 @@ endif ()
 
 message(STATUS "CMAKE_SIZEOF_VOID_P ... : ${CMAKE_SIZEOF_VOID_P}")
 
-#  DW_FWALLXX are gnu C++ options.
-if (WALL)
-  set(DW_FWALLXX -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror)
-  set(DW_FWALL ${DW_FWALLXX} -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror )
-  message(STATUS "Compiler warning options... YES ${DW_FWALL}")
+if(WALL)
+  message(STATUS "Compiler warning options... YES")
 else()
-  unset(DW_FWALL )
   message(STATUS "Compiler warning options... NO")
 endif()
-#if (LIBDWARF_STATIC)
-#  set(DW_LIBDWARF_STATIC -DLIBDWARF_STATIC)
-#else()
-#  unset(DW_LIBDWARF_STATIC)
-#endif()
+
+function(dwarf_common_options TARGET)
+  get_target_property(TARGET_TYPE ${TARGET} TYPE)
+  if(TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+    set(VISIBILITY INTERFACE)
+  else()
+    set(VISIBILITY PRIVATE)
+  endif()
+
+  msvc_posix(${TARGET})
+
+  target_compile_definitions(${TARGET} ${VISIBILITY} $<$<PLATFORM_ID:Linux>:_GNU_SOURCE>)
+
+  target_compile_options(${TARGET} ${VISIBILITY}
+
+        $<$<AND:$<BOOL:${WALL}>,$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:GNU,Clang,AppleClang>>:
+            -Wall
+            -Wextra
+            -Wno-unused-private-field
+            -Wpointer-arith
+            -Wmissing-declarations
+            -Wcomment
+            -Wformat
+            -Wpedantic
+            -Wuninitialized
+            -Wshadow
+            -Wno-long-long
+            -Werror
+        >
+
+        $<$<AND:$<BOOL:${WALL}>,$<COMPILE_LANGUAGE:C>,$<C_COMPILER_ID:GNU,Clang,AppleClang>>:
+            -Wall
+            -Wextra
+            -Wpointer-arith
+            -Wmissing-declarations
+            -Wcomment
+            -Wformat
+            -Wpedantic
+            -Wuninitialized
+            -Wshadow
+            -Wno-long-long
+            -Werror
+            -Wmissing-prototypes
+            -Wdeclaration-after-statement
+        >
+    )
+endfunction()
+
 
 configure_file(cmake/config.h.in config.h)
-
-if(BUILD_NON_SHARED)
-  set(DW_LIBDWARF_STATIC -DLIBDWARF_STATIC)
-  set(BUILD_SHARED_LIBS NO)
-else()
-  unset(DW_LIBDWARF_STATIC)
-  set(BUILD_SHARED_LIBS YES)
-endif()
 
 include(GNUInstallDirs)
 
