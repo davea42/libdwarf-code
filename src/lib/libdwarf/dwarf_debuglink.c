@@ -287,9 +287,8 @@ mydirlen(char *s)
 {
     char *cp = 0;
     char *lastjoinchar = 0;
-    size_t count =0;
 
-    for (cp = s ; *cp ; ++cp,++count)  {
+    for (cp = s ; *cp ; ++cp)  {
         if (*cp == joinchar) {
             lastjoinchar = cp;
         }

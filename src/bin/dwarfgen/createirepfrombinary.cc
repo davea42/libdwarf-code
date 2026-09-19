@@ -768,8 +768,8 @@ readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 
     list<IRCUdata>  &cudata = irep.infodata().getCUData();
     list<IRCUdata>::iterator it = cudata.begin();
-    int ct = 0;
-    for ( ; it != cudata.end(); ++it,++ct) {
+    
+    for ( ; it != cudata.end(); ++it) {
         Dwarf_Unsigned macrooffset = 0;
         Dwarf_Unsigned cudieoffset = 0;
         bool foundmsect = it->hasMacroData(&macrooffset,&cudieoffset);
