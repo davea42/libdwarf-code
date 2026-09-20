@@ -1,6 +1,6 @@
 # Cmake on Unix/linux/MacOS/FreeBSD/OpenBSD
 Created 26 April 2019
-Updated 31 March 2026
+Updated 20 September 2026
 
 Consider switching entirely to meson for your build.
 
@@ -8,8 +8,9 @@ Requires cmake of at least 3.12 as of 31 March 2026.
 
 ## As of 2.3.3 (September 2026) cmake builds both
 shared and non-shared versions of libdwarf.
-The options    -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
-are no longer required or supported.
+The options -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
+are no longer required or supported (any use generates
+a warning from cmake).
 If C++ is not available dwarfgen will not build.
 To install static libdwarf add -DINSTALL_STATIC_LIBRARIES=YES
 to the cmake options.
