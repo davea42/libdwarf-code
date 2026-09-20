@@ -4633,6 +4633,47 @@ remark_wrong_string_format(Dwarf_Half attr,
     return;
 }
 
+#if 0
+Use this later.
+static int
+handle_CONSTANT(Dwarf_Half attr,Dwarf_Half,theform,
+    struct esb_s *valname,struct esb_s *esb_extra,
+    char **srcfiles,
+    Dwarf_Signed srcfiles_cnt,
+    Dwarf_Error *err)
+{
+    char         atnamebuf[ESB_FIXED_ALLOC_SIZE];
+    struct esb_s langver;
+        
+    if (fc != DW_FORM_CLASS_CONSTANT) {
+        remark_wrong_string_format(attr,theform);
+        esb_destructor(&valname);
+        esb_destructor(&esb_extra);
+        return DW_DLV_NO_ENTRY;
+    }
+    esb_constructor_fixed(&langver,atnamebuf,
+        sizeof(atnamebuf));
+    tres = get_attr_value(dbg, tag, die,
+        dieprint_cu_goffset,attrib, srcfiles, srcfiles_cnt,
+        &langver, glflags.show_form_used,
+        glflags.verbose,err);
+    if (tres == DW_DLV_ERROR) {
+        print_error_and_continue(
+            "Cannot  get value "
+            "for CLASS CONSTANT",
+            tres, *err);
+        esb_destructor(&valname);
+        esb_destructor(&esb_extra);
+        return tres;
+    }
+    esb_empty_string(&valname);
+    esb_append(&valname, esb_get_string(&langver));
+    esb_destructor(&langver);
+}   
+#endif /* 0 */
+
+
+
 static int
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
@@ -5098,6 +5139,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_upper_bound:
     case DW_AT_use_location:
     case DW_AT_vtable_elem_location:
+    /* case DW_AT_MIPS_software_pipeline_depth: */
         {
             /*  Value is a constant or a location
                 description or location list.
@@ -5106,6 +5148,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 or a reference is nontrivial
                 since DW_FORM_data{4,8}
                 could be either in DWARF{2,3}  */
+
 
             if (fc == DW_FORM_CLASS_CONSTANT) {
                 struct esb_s classconstantstr;
@@ -5302,6 +5345,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&linkagenamestr);
             return ml;
         }
+        /*  At least one compiler uses a constant, may be
+            a distinct meaning of the attribute code. */
         if (fc != DW_FORM_CLASS_STRING) {
             remark_wrong_string_format(attr,theform);
             esb_destructor(&valname);
