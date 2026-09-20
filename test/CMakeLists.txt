@@ -34,7 +34,7 @@ target_include_directories(dwarf_tests INTERFACE
     "${PROJECT_SOURCE_DIR}/src/lib/libdwarf/dwarf_error.h")
   target_link_libraries(selftest_linkedtopath PRIVATE dwarf_tests)
   if(MINGW OR MSYS OR WIN32)
-    target_link_libraries(selftest_linkedtopath PRIVATE dwarf)
+    target_link_libraries(selftest_linkedtopath PRIVATE dwarf-static)
   endif()
   add_test(NAME selftest_linkedtopath COMMAND selftest_linkedtopath)
 
