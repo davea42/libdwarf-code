@@ -22,7 +22,7 @@ stsecs=`date '+%s'`
 
 shared=y
 configureopt="--enable-shared --disable-static"
-cmakeopt="-DBUILD_SHARED=NO -DBUILD_NON_SHARED=YES"
+cmakeopt="-DINSTALL_STATIC_LIBRARIES=YES"
 mesonopt="--default-library static"
 
 # accomodate differences in cmake install file count:

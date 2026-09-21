@@ -194,7 +194,7 @@ jobs:
           sudo pkg install -y python3 bash cmake ninja pkgconf
           sudo pkg install -y gmake binutils lzlib
           mkdir builddir && cd builddir
-          cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+          cmake -G Ninja -DDO_TESTING=YES -DINSTALL_STATIC_LIBRARIES=YES -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
           ninja
           ninja test
 
@@ -247,7 +247,7 @@ jobs:
     - name: cmake
       run:  |
         mkdir builddir && cd builddir
-        cmake -G Ninja -DDO_TESTING=YES -DBUILD_NON_SHARED=YES -DBUILD_SHARED=NO -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        cmake -G Ninja -DDO_TESTING=YES -DINSTALL_STATIC_LIBRARIES=YES -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         ninja
         ninja test
 
@@ -306,7 +306,7 @@ jobs:
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON  -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE ../CMakeLists.txt
+        cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DINSTALL_STATIC_LIBRARIES=YES -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON   ../CMakeLists.txt
         ninja 
         ninja install
         ninja test
