@@ -2011,7 +2011,6 @@ _dw_report_strp_error(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
-
 /*  Extracts a string from .debug_line_str
     offset must be a string-table offset, not
     an offset into a str_offsets table.

@@ -4644,7 +4644,7 @@ handle_CONSTANT(Dwarf_Half attr,Dwarf_Half,theform,
 {
     char         atnamebuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s langver;
-        
+
     if (fc != DW_FORM_CLASS_CONSTANT) {
         remark_wrong_string_format(attr,theform);
         esb_destructor(&valname);
@@ -4669,10 +4669,8 @@ handle_CONSTANT(Dwarf_Half attr,Dwarf_Half,theform,
     esb_empty_string(&valname);
     esb_append(&valname, esb_get_string(&langver));
     esb_destructor(&langver);
-}   
+}
 #endif /* 0 */
-
-
 
 static int
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
@@ -5148,7 +5146,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 or a reference is nontrivial
                 since DW_FORM_data{4,8}
                 could be either in DWARF{2,3}  */
-
 
             if (fc == DW_FORM_CLASS_CONSTANT) {
                 struct esb_s classconstantstr;

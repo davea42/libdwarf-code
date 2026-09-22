@@ -231,7 +231,7 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
 
 #define CUR_INSTR_POS \
     instr_area_pos = (uintptr_t) \
-      (uintptr_t)(instr_ptr - start_instr_ptr)
+    (uintptr_t)(instr_ptr - start_instr_ptr)
 
 /*  Here we need to populate Dwarf_Regtable3,
     The public regtable, with the cfa row and with
@@ -1437,10 +1437,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 dfi->fi_expr.bl_data = instr_ptr;
             }
             if (instr_area_pos            > instr_area_length ||
-               block_len                  > instr_area_length ||
-               (instr_area_pos+block_len) > instr_area_length ||
-               instr_ptr < base_instr_ptr ) {
-               SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
+                block_len                  > instr_area_length ||
+                (instr_area_pos+block_len) > instr_area_length ||
+                instr_ptr < base_instr_ptr ) {
+                SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
                     "DW_DLE_DF_FRAME_DECODING_ERROR: "
                     "DW_CFA_expression "
                     "block len overflows instructions "
@@ -1911,11 +1911,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     } /*  end for-loop on ops */ /* LOOP END */
     /*  If frame instruction decoding was right we would
         stop exactly at
-        final_instr_ptr. */  
+        final_instr_ptr. */
     if (instr_ptr > final_instr_ptr) {
         SER(DW_DLE_DF_FRAME_DECODING_ERROR);
     }
-    /* ASSERT instr_area_pos == instr_area_length+1 */ 
+    /* ASSERT instr_area_pos == instr_area_length+1 */
     table->fr_loc = current_loc;
     if (iter_data) {
         /* Final row */

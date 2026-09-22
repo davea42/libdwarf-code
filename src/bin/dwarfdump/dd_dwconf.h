@@ -64,9 +64,9 @@ struct dwconf_s {
     unsigned long cf_named_regs_table_size;
     unsigned    cf_regs_malloced;
 
-    /*  The 'default initial value' when initializing a table. for MIPS
-        is DW_FRAME_SAME_VAL(1035). For other ISA/ABIs may be
-        DW_FRAME_UNDEFINED_VAL(1034). */
+    /*  The 'default initial value' when initializing a table.
+        For MIPS is DW_FRAME_SAME_VAL(1035).
+        For other ISA/ABIs may be DW_FRAME_UNDEFINED_VAL(1034). */
     unsigned cf_initial_rule_value;
     unsigned cf_same_val;
     unsigned cf_undefined_val;
