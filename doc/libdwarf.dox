@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2026-09-19 v2.3.3
+    @date 2026-09-22 v2.3.3
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1210,7 +1210,7 @@
     most one instance is reported.
 
     Fixed a bug reading a Macos universal binary object
-    file (64bit).
+    file (64bit universal header).
 
     Fixed a bug reading Elf SHF_COMPRESSED sections in
     64bit object files.
@@ -1221,6 +1221,9 @@
     The cmake build of libdwarf changed slightly,
     though the change does not require you to do
     anything. See READMEcmake.md for details.
+
+    Added error checks to avoid certain pointer additions
+    that overflowed on add with on 32bit FreeBSD 14.4 p9.
 
     <b>Changes 2.3.1 to 2.3.2</b>
 
