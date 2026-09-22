@@ -1686,8 +1686,8 @@ _dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
 }
 /*  New March 2020 */
 /*  We need to increment startptr for the caller
-    in these wrappers so the caller passes in
-    wrappers return either DW_DLV_OK or DW_DLV_ERROR.
+    in these wrappers so the caller passes in.
+    Wrappers return either DW_DLV_OK or DW_DLV_ERROR.
     Never DW_DLV_NO_ENTRY. */
 int
 _dwarf_leb128_uword_wrapper(Dwarf_Debug dbg,
