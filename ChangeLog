@@ -1,3 +1,146 @@
+2026-09-22:  David Anderson
+    commit a7dbd442071d93667732c9bfc8b10f9977ec69c2
+
+    Additional checks in reading erroneous frame
+    instructions to avoid adding an erroneous too-large
+    block len to a pointer. With 32bit FreeBSD 14.4 there
+    was a pointer overflow.
+            modified:   src/lib/libdwarf/dwarf_frame_cfa_read.c
+
+2026-09-22:  David Anderson
+    commit 178ed9a8ab9fbe00580fde450f62fa4c240e4a96
+
+    Final for 2.3.3...hopefully.
+            modified:   doc/libdwarf.pdf
+
+2026-09-22:  David Anderson
+    commit 5f0237ae065b4ac5ad0e15ab8c127a1da1ccc53f
+
+    Additional change for v2.3.3 release: on 32bit
+    FreeBSD avoid overflow in pointer+value.
+            modified:   doc/libdwarf.dox
+
+2026-09-22:  David Anderson
+    commit 58075c077eea8cd5f1b880288940dc53fc18030e
+
+    Clarified a comment.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2026-09-21:  David Anderson
+    commit 86c62722a202dd6f55ff1699da27dfad2c735f8f
+
+    Due to a change in some CMakeLists.txt files:
+    For cmake builds remove -DBUILD_SHARED=YES -DBUILD_NON_SHARED=NO
+    and add -DINSTALL_STATIC_LIBRARIES=YES
+    to avoid cmake warnings.
+            modified:   ../../../.github/workflows/freebsd_cmake.yml
+            modified:   ../../../.github/workflows/mac_cmake.yml
+            modified:   ../../../.github/workflows/msys2_cmake.yml
+            modified:   ../../../.github/workflows/test.yml
+            modified:   ../../../scripts/buildandreleasetest.sh
+
+2026-09-20:  David Anderson
+    commit 34c913a601436dcb4e0a0971f0c4a55f38356469
+
+    Additional comments.
+    A test case appears to be from a compiler using
+    user-level attribute codes that we currently
+    have no knowledge of.
+            modified:   print_die.c
+
+2026-09-20:  David Anderson
+    commit ac5adf589f9fe8a4dfbdaa992e97cb992aa8ee45
+    Merge: fc89c84d 8bcdfa0f
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    Comment correction.
+
+2026-09-20:  David Anderson
+    commit fc89c84de2151de45449c631bc3afe3016eeed58
+
+    Fixes a build problem in msys2.
+    if(MINGW OR MSYS OR WIN32)
+    -    target_link_libraries(selftest_linkedtopath PRIVATE dwarf)
+    +    target_link_libraries(selftest_linkedtopath PRIVATE dwarf-static)
+    endif()
+            modified:   test/CMakeLists.txt
+
+2026-09-20:  David Anderson
+    commit 8bcdfa0fd61a0160b4f1c2cb95cbd7fec00dcd6d
+
+    Fixes a build problem in msys2.
+    -    target_link_libraries(selftest_linkedtopath PRIVATE dwarf)
+    +    target_link_libraries(selftest_linkedtopath PRIVATE dwarf-static)
+            modified:   test/CMakeLists.txt
+
+2026-09-20:  David Anderson
+    commit a8f920dd7194afce43f2bd9e532b16d49e96dede
+
+    Correct the 'updated' date.
+            modified:   READMEcmake.md
+
+2026-09-19:  David Anderson
+    commit d0c11e6fd50b14ac9dbb0383825a92d9b14e3dea
+
+    Warnings from a compiler.
+    Line768: local variable ct was set but not used.
+    Deleted ct.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+    Line287: local variable count was set but not used.
+    Deleted count.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2026-09-19:  David Anderson
+    commit dadf55abe57b76824f2a227683c7a0ef67bfce12
+
+    Regenerated for 2.3.3
+            modified:   doc/libdwarf.pdf
+
+2026-09-19:  David Anderson
+    commit ab3d80a315824e2196cb95feda2b98fa5509f1cc
+
+    Revised release date: 22 September.
+            modified:   README.md
+            modified:   doc/libdwarf.dox
+
+2026-09-19:  David Anderson
+    commit d1b6d6f2c2a34cef6141f601c414aec24875a749
+
+    Document the new  cmake option
+        -DINSTALL_STATIC_LIBRARIES=YES
+    to install and use non-shared libdwarf.a (and libdwarfp.a if built).
+
+    By default install shared-libraries and dwarfdump
+    links to libdwarf.so
+
+    Remove all mention of -DBUILD_SHARED -DBUILD_NON_SHARED
+    as those are no longer supported (if present they are ignored).
+            modified:   READMEcmake.md
+            modified:   appveyor.yml
+
+    These cmake build changes were requested and provided by a cmake user.
+
+    Update the cmake builds per the above.
+            modified:   scripts/allsimplebuilds.sh
+
+2026-09-19:  David Anderson
+    commit 7d607060bd2d05ad217154d9d71169217ff2a140
+
+    Improving cmake build for consistency.
+            modified:   CMakeLists.txt
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+            modified:   test/CMakeLists.txt
+
+2026-09-18:  David Anderson
+    commit 115eaa9f960087dff29185e8f17663a9dc77bc3c
+
+    Up to date. With one spelling error in the log corrected.
+            modified:   ChangeLog
+
 2026-09-18:  David Anderson
     commit ea78548a63863bea7bd062fd02ad470cc294a29f
 
