@@ -1,4 +1,20 @@
 2026-09-22:  David Anderson
+    commit dbc21e9f21773c0bd1d4267e37e80c41391fd78d
+
+    Fixing indents,trailing whitespace, and one
+    too-long line.
+            modified:   src/bin/dwarfdump/dd_dwconf.h
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame_cfa_read.c
+
+2026-09-22:  David Anderson
+    commit f11279deb2bedabd355ca79b4aaf0902cb03f2bc
+
+    Up to date for release.
+            modified:   ChangeLog
+
+2026-09-22:  David Anderson
     commit a7dbd442071d93667732c9bfc8b10f9977ec69c2
 
     Additional checks in reading erroneous frame
