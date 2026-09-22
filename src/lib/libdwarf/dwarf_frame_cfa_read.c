@@ -157,8 +157,11 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
     If unsuccessful, returns DW_DLV_ERROR
         and sets returned_error to the error code
 
-    It does not do a whole lot of input validation being a private
+    It does not do a whole lot of argument
+    input validation being a private
     function.  Please make sure inputs are valid.
+    The data read from the object file has to be
+    checked as carefully as possible.
 
     Arguments:
     make_instr - make list of frame instr? 0/1
@@ -225,6 +228,10 @@ _dwarf_free_dfi_list(Dwarf_Frame_Instr fr)
     Different cies may have distinct address-sizes, so the cie
     is used to determine address-size.
 */
+
+#define CUR_INSTR_POS \
+    instr_area_pos = (uintptr_t) \
+      (uintptr_t)(instr_ptr - start_instr_ptr)
 
 /*  Here we need to populate Dwarf_Regtable3,
     The public regtable, with the cfa row and with
@@ -302,9 +309,22 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     numbers. */
 #define ERROR_IF_REG_NUM_TOO_HIGH(macreg,machigh_reg)        \
     do {                                                     \
-        if ((macreg) >= (machigh_reg)) {                     \
-            SER(DW_DLE_DF_REG_NUM_TOO_HIGH); \
-        }                                                    \
+        if ((macreg) >= (machigh_reg)) {     \
+            dwarfstring m;                   \
+            dwarfstring_constructor(&m);     \
+            FREELOCALMALLOC;                 \
+            dwarfstring_append_printf_u(&m,  \
+                "DW_DLE_DF_REG_NUM_TOO_HIGH "\
+                "registernum: %u",macreg);   \
+            dwarfstring_append_printf_u(&m,  \
+                " registernum maximum: %u",  \
+                machigh_reg);               \
+            _dwarf_error_string(dbg,error,   \
+                DW_DLE_DF_REG_NUM_TOO_HIGH,  \
+                dwarfstring_string(&m));     \
+            dwarfstring_destructor(&m);      \
+            return DW_DLV_ERROR;             \
+        }                                    \
     } /*CONSTCOND */ while (0)
 #define FREELOCALMALLOC                  \
         _dwarf_free_dfi_list(ilisthead); \
@@ -408,6 +428,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         did not have a valid augmentation. */
     Dwarf_Bool need_augmentation = FALSE;
     Dwarf_Unsigned instr_area_length = 0;
+    Dwarf_Unsigned instr_area_pos = 0;
     Dwarf_Unsigned i = 0;
     Dwarf_Bool local_has_more_rows = FALSE;
 
@@ -486,6 +507,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         }
         instr = *(Dwarf_Small *) instr_ptr;
         instr_ptr += sizeof(Dwarf_Small);
+        instr_area_pos += sizeof(Dwarf_Small);
         base_instr_ptr = instr_ptr;
         if ((instr & 0xc0) == 0x00) {
             opcode = instr;     /* is really extended op */
@@ -594,6 +616,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "negative factored_N_value location");
             }
+            CUR_INSTR_POS;
             /*  CHECK OVERFLOW */
             adres = _dwarf_int64_mult(
                 (Dwarf_Signed)factored_N_value,
@@ -655,6 +678,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             instr_ptr += address_size;
+            instr_area_pos += address_size;
             if (new_loc != 0 && current_loc != 0) {
                 /*  Pre-relocation or before current_loc
                     is set the test comparing new_loc
@@ -709,6 +733,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             instr_ptr += sizeof(Dwarf_Small);
+            instr_area_pos += sizeof(Dwarf_Small);
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -776,6 +801,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             instr_ptr += DWARF_HALF_SIZE;
+            instr_area_pos += DWARF_HALF_SIZE;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -851,6 +877,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             instr_ptr += DWARF_32BIT_SIZE;
+            instr_area_pos += DWARF_32BIT_SIZE;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -874,7 +901,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "unsigned add overflowed");
             }
-
             table->fr_loc = current_loc;
             if (iter_data && instr_ptr > start_instr_ptr) {
                 int errcode = 0;
@@ -916,6 +942,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             instr_ptr += DWARF_64BIT_SIZE;
+            instr_area_pos += DWARF_64BIT_SIZE;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -989,6 +1016,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -1030,6 +1058,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             reg_no = (reg_num_type) lreg;
             ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
             if (cie != NULL && cie->ci_initial_table != NULL) {
@@ -1062,6 +1091,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             reg_no = (reg_num_type) lreg;
             ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
             UPDATE_STD_RULE(reg_no,0,DW_EXPR_OFFSET,
@@ -1085,6 +1115,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             reg_no = (reg_num_type) lreg;
             ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
             UPDATE_STD_RULE(reg_no,0,DW_EXPR_OFFSET,
@@ -1098,15 +1129,15 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         case DW_CFA_register:
         {
-            Dwarf_Unsigned lreg;
+            Dwarf_Unsigned lreg  = 0;
             reg_num_type reg_noA = 0;
             reg_num_type reg_noB = 0;
             int adres = 0;
 
             adres = _dwarf_leb128_uword_wrapper(dbg,
                 &instr_ptr,final_instr_ptr,
-            &lreg,error);
-                if (adres != DW_DLV_OK) {
+                &lreg,error);
+            if (adres != DW_DLV_OK) {
                 FREELOCALMALLOC;
                 return adres;
             }
@@ -1119,10 +1150,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             reg_noB = (reg_num_type) lreg;
-            if (reg_noB > reg_count) {
-                SER(DW_DLE_DF_REG_NUM_TOO_HIGH);
-            }
+            /*  This check was always >, not >=, hence +1
+                to keep as original effect. */
+            ERROR_IF_REG_NUM_TOO_HIGH(reg_noB, reg_count+1);
             UPDATE_STD_RULE(reg_noA,0,DW_EXPR_OFFSET,
                 reg_noB, 0);
             if (make_instr) {
@@ -1206,6 +1238,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -1239,6 +1272,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             reg_no = (reg_num_type) lreg;
             ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
             cfa_reg->dw_regnum = (Dwarf_Half)reg_no;
@@ -1263,6 +1297,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -1300,6 +1335,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
                     "DW_CFA_METAWARE_info unrepresantable as signed");
             }
+            CUR_INSTR_POS;
             /* Not really known what the value means or is. */
             cfa_reg->dw_offset_relevant = 1;
             cfa_reg->dw_value_type = DW_EXPR_OFFSET;
@@ -1332,6 +1368,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             cfa_reg->dw_offset_relevant = 0;  /* arbitrary */
             cfa_reg->dw_value_type = DW_EXPR_EXPRESSION;
             cfa_reg->dw_block.bl_len = block_len;
@@ -1349,13 +1386,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     "available range.");
             }
             instr_ptr += block_len;
-            if (instr_area_length < block_len ||
+            instr_area_pos += block_len;
+            if (instr_area_length < instr_area_pos ||
                 instr_ptr < base_instr_ptr) {
                 SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
                     "DW_DLE_DF_FRAME_DECODING_ERROR: "
                     "DW_CFA_def_cfa_expression "
                     "block len overflows instructions "
-                    "available range.");
+                    "available range..");
             }
         }
         break;
@@ -1379,7 +1417,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             reg_no = (reg_num_type) lreg;
             ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-
             adres = _dwarf_leb128_uword_wrapper(dbg,
                 &instr_ptr,final_instr_ptr,
                 &block_len,error);
@@ -1387,6 +1424,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             localregtab[lreg].dw_offset_relevant = 0; /* arbitrary */
             localregtab[lreg].dw_value_type = DW_EXPR_EXPRESSION;
             localregtab[lreg].dw_regnum = (Dwarf_Half)reg_no;
@@ -1398,15 +1436,18 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 dfi->fi_expr.bl_len = block_len;
                 dfi->fi_expr.bl_data = instr_ptr;
             }
-            instr_ptr += block_len;
-            if (instr_area_length < block_len ||
-                instr_ptr < base_instr_ptr) {
-                SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
+            if (instr_area_pos            > instr_area_length ||
+               block_len                  > instr_area_length ||
+               (instr_area_pos+block_len) > instr_area_length ||
+               instr_ptr < base_instr_ptr ) {
+               SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
                     "DW_DLE_DF_FRAME_DECODING_ERROR: "
                     "DW_CFA_expression "
                     "block len overflows instructions "
                     "available range.");
             }
+            instr_ptr += block_len;
+            instr_area_pos += block_len;
             }
             break;
         case DW_CFA_offset_extended_sf: {
@@ -1445,6 +1486,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             UPDATE_STD_RULE(reg_no,1,DW_EXPR_OFFSET,
                 reg_num_of_cfa,result);
             if (make_instr) {
@@ -1482,6 +1524,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -1521,6 +1564,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
             }
@@ -1571,6 +1615,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (INVALIDUNSIGNED(factored_N_value) ) {
                 SERSTRING(DW_DLE_ARITHMETIC_OVERFLOW,
                     "DW_DLE_ARITHMETIC_OVERFLOW "
@@ -1634,6 +1679,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             /*  Do set dw_offset_relevant here, as
                 here factored_N_value counts.  */
             localregtab[reg_no].dw_offset_relevant = 1;
@@ -1675,6 +1721,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             localregtab[lreg].dw_offset_relevant = 0; /* arbitrary */
             localregtab[lreg].dw_value_type =
                 DW_EXPR_VAL_EXPRESSION;
@@ -1688,6 +1735,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 dfi->fi_expr.bl_data = instr_ptr;
             }
             instr_ptr += block_len;
+            instr_area_pos += block_len;
             if (instr_area_length < block_len ||
                 instr_ptr < base_instr_ptr) {
                 SERSTRING(DW_DLE_DF_FRAME_DECODING_ERROR,
@@ -1735,6 +1783,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             /*  Currently not put into ru_* reg rules, not
                 sure what to do with it. */
             /*  This is the total size of arguments
@@ -1774,6 +1823,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             if (make_instr) {
                 dfi->fi_fields = "rua";
                 dfi->fi_u0 = lreg;
@@ -1811,6 +1861,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 FREELOCALMALLOC;
                 return adres;
             }
+            CUR_INSTR_POS;
             /*  CHECK OVERFLOW */
             adres = _dwarf_int64_mult(
                 (Dwarf_Signed)offset,
@@ -1860,10 +1911,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     } /*  end for-loop on ops */ /* LOOP END */
     /*  If frame instruction decoding was right we would
         stop exactly at
-        final_instr_ptr. */
+        final_instr_ptr. */  
     if (instr_ptr > final_instr_ptr) {
         SER(DW_DLE_DF_FRAME_DECODING_ERROR);
     }
+    /* ASSERT instr_area_pos == instr_area_length+1 */ 
     table->fr_loc = current_loc;
     if (iter_data) {
         /* Final row */
