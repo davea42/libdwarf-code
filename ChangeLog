@@ -1,3 +1,54 @@
+2026-09-25:  David Anderson
+    commit 608cdc440f6ee30c784be7713d9224fe414b5f92
+
+    Version now 2.3.4 for future work.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   scripts/allsimplebuilds.sh
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/makerelease.sh
+
+2026-09-25:  David Anderson
+    commit c241c589d98ce8d8a458dcdb87460901f4cab48e
+
+    No longer needed. See dd_elf_naming.[ch] instead.
+            deleted:    src/bin/dwarfdump/dd_elf_cputype.h
+
+2026-09-25:  David Anderson
+    commit 35d4d8baab976cd08cf7672299973bc57cedd5c6
+
+    Shortened, in comments, floatingpoint to just floating
+    for some register names.
+    Added newly discovered attributes/tags for TI DSP machine.
+    (Some left as comments due to conflicts).
+            modified:   src/lib/libdwarf/dwarf.h
+
+2026-09-25:  David Anderson
+    commit 65a4e342fe442bc07ddac09b02f64bef88bb036d
+
+    Now building and using dd_elf_naming.[ch] in dwarfdump.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/meson.build
+
+2026-09-25:  David Anderson
+    commit 25d4b677e4e0079cfc005d783d9e6e06be3d8319
+
+    More complete and simpler code for Elf e_machine EM_
+    header field.
+            new file:   src/bin/dwarfdump/dd_elf_naming.c
+            new file:   src/bin/dwarfdump/dd_elf_naming.h
+
+2026-09-22:  David Anderson
+    commit 1c267616a4c8dc46b3380f0be4296ff8767bdfbb
+
+    Just indent, whitespace fixing here.
+            modified:   ChangeLog
+
 2026-09-22:  David Anderson
     commit dbc21e9f21773c0bd1d4267e37e80c41391fd78d
 
