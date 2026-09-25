@@ -501,17 +501,20 @@ DW_TAG_TI_assign_register       0x4004
 #define DW_AT_MIPS_assumed_size                 0x2011 /* MIPS/SGI */
 #define DW_AT_TI_interrupt                      0x2011 /* TI */
 
-/*  This set of 11 for C28x/C6000 TI DSP
-DW_AT_TI_symbol_name                    0x2001 
-DW_AT_TI_max_frame_size                 0x2002 
-DW_AT_TI_interrupt                      0x2003 
-DW_AT_TI_asm_line                       0x2004 
-DW_AT_TI_begin_file                     0x2005 
-DW_AT_TI_end_file                       0x2006 
-DW_AT_TI_begin_line                     0x2007 
-DW_AT_TI_end_line                       0x2008 
-DW_AT_TI_begin_column                   0x2009 
-DW_AT_TI_end_column                     0x200a 
+#define DW_AT_TI_symbol_name            0x2001 
+/*  Next 10 for TI C28x C62x C28x maybe other TI */
+#define DW_AT_TI_max_frame_size         0x2002 /* TI */ 
+/*
+DW_AT_TI_interrupt              0x2003
+*/
+#define DW_AT_TI_asm_line               0x2004 /* TI */
+#define DW_AT_TI_begin_file             0x2005 /* TI */
+#define DW_AT_TI_end_file               0x2006 /* TI */
+#define DW_AT_TI_begin_line             0x2007 /* TI */
+#define DW_AT_TI_end_line               0x2008 /* TI */
+#define DW_AT_TI_begin_column           0x2009 /* TI */
+#define DW_AT_TI_end_column             0x200a /* TI */
+/*
 DW_AT_TI_symbol_name                    0x200b 
 */
 

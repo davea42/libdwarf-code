@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 2.3.3 */
+/* Generated for source version 2.3.4 */
 
 /* BEGIN FILE */
 
@@ -979,6 +979,8 @@ dwarf_get_AT_name (unsigned int val,
         *s_out = "DW_AT_MIPS_loop_begin";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
+        0x2002. DW_AT_TI_max_frame_size */
+    /*  Skipping alternate spelling of value
         0x2002. DW_AT_CPQ_semantic_events */
     case DW_AT_MIPS_tail_loop_begin:
         *s_out = "DW_AT_MIPS_tail_loop_begin";
@@ -989,10 +991,14 @@ dwarf_get_AT_name (unsigned int val,
         *s_out = "DW_AT_MIPS_epilog_begin";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
+        0x2004. DW_AT_TI_asm_line */
+    /*  Skipping alternate spelling of value
         0x2004. DW_AT_CPQ_split_lifetimes_rtn */
     case DW_AT_MIPS_loop_unroll_factor:
         *s_out = "DW_AT_MIPS_loop_unroll_factor";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2005. DW_AT_TI_begin_file */
     /*  Skipping alternate spelling of value
         0x2005. DW_AT_HP_prologue */
     /*  Skipping alternate spelling of value
@@ -1000,22 +1006,32 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_MIPS_software_pipeline_depth:
         *s_out = "DW_AT_MIPS_software_pipeline_depth";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2006. DW_AT_TI_end_file */
     case DW_AT_MIPS_linkage_name:
         *s_out = "DW_AT_MIPS_linkage_name";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2007. DW_AT_TI_begin_line */
     /*  Skipping alternate spelling of value
         0x2007. DW_AT_ghs_mangled */
     case DW_AT_MIPS_stride:
         *s_out = "DW_AT_MIPS_stride";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
+        0x2008. DW_AT_TI_end_line */
+    /*  Skipping alternate spelling of value
         0x2008. DW_AT_HP_epilogue */
     case DW_AT_MIPS_abstract_name:
         *s_out = "DW_AT_MIPS_abstract_name";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2009. DW_AT_TI_begin_column */
     case DW_AT_MIPS_clone_origin:
         *s_out = "DW_AT_MIPS_clone_origin";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x200a. DW_AT_TI_end_column */
     case DW_AT_MIPS_has_inlines:
         *s_out = "DW_AT_MIPS_has_inlines";
         return DW_DLV_OK;
