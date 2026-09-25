@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-Portions Copyright (C) 2007-2021 David Anderson. All Rights Reserved.
+Portions Copyright (C) 2007-2026 David Anderson. All Rights Reserved.
 Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
 Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -85,12 +85,12 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_attr_form.h"
 #include "print_debug_gnu.h"
 #include "dd_naming.h" /* for get_FORM_name() */
+#include "dd_elf_naming.h" /* EM_* names etc */
 #include "dd_command_options.h"
 #include "dd_compiler_info.h"
 #include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
 #include "dd_mac_cputype.h"
-#include "dd_elf_cputype.h"
 #include "dd_pe_cputype.h"
 #include "dd_all_srcfiles.h"
 
@@ -2931,21 +2931,27 @@ const char * get_pathsource_name(Dwarf_Small ps)
     return psn[ps];
 }
 
-static const char *
+static void
 get_machine_name(Dwarf_Unsigned machine,
-    Dwarf_Small ftype)
+    Dwarf_Small ftype,
+    struct esb_s *out)
 {
     switch(ftype) {
     case DW_FTYPE_ELF:
-        return dd_elf_arch_name(machine);
+        dd_get_elf_machine_name(machine, out);
+        return;
     case DW_FTYPE_PE:
-        return dd_pe_arch_name(machine);
+        esb_append(out, dd_pe_arch_name(machine));
+        return;
     case DW_FTYPE_APPLEUNIVERSAL:
     case DW_FTYPE_MACH_O:
-        return dd_mach_arch_name(machine);
+        esb_append(out,dd_mach_arch_name(machine));
+        return;
     default:
-        return "Unexpected DW_FTYPE!";
+        esb_append(out,"Unexpected DW_FTYPE (file type)!");
+        break;
     }
+    return;
 }
 
 /*  'machine' number meaning the cpu architecture */
@@ -2963,6 +2969,8 @@ print_machine_arch(Dwarf_Debug dbg)
     Dwarf_Unsigned dw_ub_count = 0;
     Dwarf_Unsigned dw_ub_index = 0;
     Dwarf_Unsigned dw_comdat_groupnumber = 0;
+    struct esb_s   esbname;
+
     res = dwarf_machine_architecture(dbg,
         &dw_ftype,
         &dw_obj_pointersize,
@@ -2986,9 +2994,14 @@ print_machine_arch(Dwarf_Debug dbg)
     printf("  Pointersize           : %u\n",dw_obj_pointersize);
     printf("  endian                : %s\n", dw_obj_is_big_endian?
         "big endian":"little endian");
+
+    esb_constructor(&esbname);
+    get_machine_name(dw_obj_machine, dw_ftype,&esbname);
     printf("  machine/architecture  : %" DW_PR_DUu " (0x%" DW_PR_DUx
         ") <%s>\n",dw_obj_machine,dw_obj_machine,
-            get_machine_name(dw_obj_machine, dw_ftype));
+            esb_get_string(&esbname));
+    esb_destructor(&esbname);
+
     printf("  machine flags         : 0x%" DW_PR_DUx "\n",
         dw_obj_flags);
     printf("  path source           : %u  (%s)\n",dw_path_source,

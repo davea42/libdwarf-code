@@ -9,6 +9,7 @@ dwarfdump_src = [
   'dd_command_options.c',
   'dd_common.c',
   'dd_compiler_info.c',
+  'dd_elf_naming.c',
   'dd_regex.c',
   'dd_safe_strcpy.c',
   'dwarfdump.c',

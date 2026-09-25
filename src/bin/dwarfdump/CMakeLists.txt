@@ -19,6 +19,7 @@ print_aranges.c
 dd_attr_form.c
 dd_canonical_append.c
 dd_check_attr_encoding.c
+dd_elf_naming.c
 dd_lvn_table.c
 print_debugfission.c
 print_die.c
@@ -72,7 +73,7 @@ dd_opscounttab.h
 print_debug_gnu.h
 dd_dwconf_using_functions.h
 dd_esb_using_functions.h
-dd_elf_cputype.h
+dd_elf_naming.h
 dd_pe_cputype.h
 dd_helpertree.h
 dd_canonical_append.h
