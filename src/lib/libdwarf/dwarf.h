@@ -158,6 +158,13 @@ extern "C" {
 /* TI = Texas Instruments, for DWARF in COFF */
 /* https://www.ti.com/lit/an/spraab5/spraab5.pdf?ts=1705994928599 */
 
+/*  This set of four for C28x/C6000 TI DSP 
+DW_TAG_TI_branch_targtet        0x4001 
+DW_TAG_TI_far_type              0x4002
+DW_TAG_TI_pragma_can_inline     0x4003
+DW_TAG_TI_assign_register       0x4004
+*/
+
 #define DW_TAG_TI_far_type              0x4080 /* TI */
 #define DW_TAG_lo_user                  0x4080 /* TI */
 #define DW_TAG_MIPS_loop                0x4081
@@ -473,7 +480,6 @@ extern "C" {
 #define DW_AT_TI_veneer                         0x2000  /* TI */
 
 #define DW_AT_MIPS_fde                          0x2001 /* MIPS/SGI */
-#define DW_AT_TI_symbol_name                    0x2001 /* TI */
 #define DW_AT_MIPS_loop_begin                   0x2002 /* MIPS/SGI */
 #define DW_AT_MIPS_tail_loop_begin              0x2003 /* MIPS/SGI */
 #define DW_AT_MIPS_epilog_begin                 0x2004 /* MIPS/SGI */
@@ -494,6 +500,20 @@ extern "C" {
 #define DW_AT_MIPS_assumed_shape_dopetype       0x2010 /* MIPS/SGI */
 #define DW_AT_MIPS_assumed_size                 0x2011 /* MIPS/SGI */
 #define DW_AT_TI_interrupt                      0x2011 /* TI */
+
+/*  This set of 11 for C28x/C6000 TI DSP
+DW_AT_TI_symbol_name                    0x2001 
+DW_AT_TI_max_frame_size                 0x2002 
+DW_AT_TI_interrupt                      0x2003 
+DW_AT_TI_asm_line                       0x2004 
+DW_AT_TI_begin_file                     0x2005 
+DW_AT_TI_end_file                       0x2006 
+DW_AT_TI_begin_line                     0x2007 
+DW_AT_TI_end_line                       0x2008 
+DW_AT_TI_begin_column                   0x2009 
+DW_AT_TI_end_column                     0x200a 
+DW_AT_TI_symbol_name                    0x200b 
+*/
 
 /* HP extensions. */
 #define DW_AT_HP_unmodifiable      0x2001 /* conflict: MIPS */
@@ -1589,84 +1609,84 @@ most-likely-useful name. */
     ** MIPS1  save/restore takes 2 instructions per 64-bit reg, and
     ** in that case, the register is considered stored after
     ** the second swc1.  */
-#define DW_FRAME_FREG0  32 /* 64-bit floating point reg 0 */
-#define DW_FRAME_FREG1  33 /* 64-bit floating point reg 1 */
-#define DW_FRAME_FREG2  34 /* 64-bit floating point reg 2 */
-#define DW_FRAME_FREG3  35 /* 64-bit floating point reg 3 */
-#define DW_FRAME_FREG4  36 /* 64-bit floating point reg 4 */
-#define DW_FRAME_FREG5  37 /* 64-bit floating point reg 5 */
-#define DW_FRAME_FREG6  38 /* 64-bit floating point reg 6 */
-#define DW_FRAME_FREG7  39 /* 64-bit floating point reg 7 */
-#define DW_FRAME_FREG8  40 /* 64-bit floating point reg 8 */
-#define DW_FRAME_FREG9  41 /* 64-bit floating point reg 9 */
-#define DW_FRAME_FREG10 42 /* 64-bit floating point reg 10 */
-#define DW_FRAME_FREG11 43 /* 64-bit floating point reg 11 */
-#define DW_FRAME_FREG12 44 /* 64-bit floating point reg 12 */
-#define DW_FRAME_FREG13 45 /* 64-bit floating point reg 13 */
-#define DW_FRAME_FREG14 46 /* 64-bit floating point reg 14 */
-#define DW_FRAME_FREG15 47 /* 64-bit floating point reg 15 */
-#define DW_FRAME_FREG16 48 /* 64-bit floating point reg 16 */
-#define DW_FRAME_FREG17 49 /* 64-bit floating point reg 17 */
-#define DW_FRAME_FREG18 50 /* 64-bit floating point reg 18 */
-#define DW_FRAME_FREG19 51 /* 64-bit floating point reg 19 */
-#define DW_FRAME_FREG20 52 /* 64-bit floating point reg 20 */
-#define DW_FRAME_FREG21 53 /* 64-bit floating point reg 21 */
-#define DW_FRAME_FREG22 54 /* 64-bit floating point reg 22 */
-#define DW_FRAME_FREG23 55 /* 64-bit floating point reg 23 */
-#define DW_FRAME_FREG24 56 /* 64-bit floating point reg 24 */
-#define DW_FRAME_FREG25 57 /* 64-bit floating point reg 25 */
-#define DW_FRAME_FREG26 58 /* 64-bit floating point reg 26 */
-#define DW_FRAME_FREG27 59 /* 64-bit floating point reg 27 */
-#define DW_FRAME_FREG28 60 /* 64-bit floating point reg 28 */
-#define DW_FRAME_FREG29 61 /* 64-bit floating point reg 29 */
-#define DW_FRAME_FREG30 62 /* 64-bit floating point reg 30 */
-#define DW_FRAME_FREG31 63 /* 64-bit floating point reg 31 */
+#define DW_FRAME_FREG0  32 /* 64-bit float reg 0 */
+#define DW_FRAME_FREG1  33 /* 64-bit float reg 1 */
+#define DW_FRAME_FREG2  34 /* 64-bit float reg 2 */
+#define DW_FRAME_FREG3  35 /* 64-bit float reg 3 */
+#define DW_FRAME_FREG4  36 /* 64-bit float reg 4 */
+#define DW_FRAME_FREG5  37 /* 64-bit float reg 5 */
+#define DW_FRAME_FREG6  38 /* 64-bit float reg 6 */
+#define DW_FRAME_FREG7  39 /* 64-bit float reg 7 */
+#define DW_FRAME_FREG8  40 /* 64-bit float reg 8 */
+#define DW_FRAME_FREG9  41 /* 64-bit float reg 9 */
+#define DW_FRAME_FREG10 42 /* 64-bit float reg 10 */
+#define DW_FRAME_FREG11 43 /* 64-bit float reg 11 */
+#define DW_FRAME_FREG12 44 /* 64-bit float reg 12 */
+#define DW_FRAME_FREG13 45 /* 64-bit float reg 13 */
+#define DW_FRAME_FREG14 46 /* 64-bit float reg 14 */
+#define DW_FRAME_FREG15 47 /* 64-bit float reg 15 */
+#define DW_FRAME_FREG16 48 /* 64-bit float reg 16 */
+#define DW_FRAME_FREG17 49 /* 64-bit float reg 17 */
+#define DW_FRAME_FREG18 50 /* 64-bit float reg 18 */
+#define DW_FRAME_FREG19 51 /* 64-bit float reg 19 */
+#define DW_FRAME_FREG20 52 /* 64-bit float reg 20 */
+#define DW_FRAME_FREG21 53 /* 64-bit float reg 21 */
+#define DW_FRAME_FREG22 54 /* 64-bit float reg 22 */
+#define DW_FRAME_FREG23 55 /* 64-bit float reg 23 */
+#define DW_FRAME_FREG24 56 /* 64-bit float reg 24 */
+#define DW_FRAME_FREG25 57 /* 64-bit float reg 25 */
+#define DW_FRAME_FREG26 58 /* 64-bit float reg 26 */
+#define DW_FRAME_FREG27 59 /* 64-bit float reg 27 */
+#define DW_FRAME_FREG28 60 /* 64-bit float reg 28 */
+#define DW_FRAME_FREG29 61 /* 64-bit float reg 29 */
+#define DW_FRAME_FREG30 62 /* 64-bit float reg 30 */
+#define DW_FRAME_FREG31 63 /* 64-bit float reg 31 */
 
-#define DW_FRAME_FREG32 64 /* 64-bit floating point reg 32 */
-#define DW_FRAME_FREG33 65 /* 64-bit floating point reg 33 */
-#define DW_FRAME_FREG34 66 /* 64-bit floating point reg 34 */
-#define DW_FRAME_FREG35 67 /* 64-bit floating point reg 35 */
-#define DW_FRAME_FREG36 68 /* 64-bit floating point reg 36 */
-#define DW_FRAME_FREG37 69 /* 64-bit floating point reg 37 */
-#define DW_FRAME_FREG38 70 /* 64-bit floating point reg 38 */
-#define DW_FRAME_FREG39 71 /* 64-bit floating point reg 39 */
-#define DW_FRAME_FREG40 72 /* 64-bit floating point reg 40 */
-#define DW_FRAME_FREG41 73 /* 64-bit floating point reg 41 */
-#define DW_FRAME_FREG42 74 /* 64-bit floating point reg 42 */
-#define DW_FRAME_FREG43 75 /* 64-bit floating point reg 43 */
-#define DW_FRAME_FREG44 76 /* 64-bit floating point reg 44 */
-#define DW_FRAME_FREG45 77 /* 64-bit floating point reg 45 */
-#define DW_FRAME_FREG46 78 /* 64-bit floating point reg 46 */
-#define DW_FRAME_FREG47 79 /* 64-bit floating point reg 47 */
-#define DW_FRAME_FREG48 80 /* 64-bit floating point reg 48 */
-#define DW_FRAME_FREG49 81 /* 64-bit floating point reg 49 */
-#define DW_FRAME_FREG50 82 /* 64-bit floating point reg 50 */
-#define DW_FRAME_FREG51 83 /* 64-bit floating point reg 51 */
-#define DW_FRAME_FREG52 84 /* 64-bit floating point reg 52 */
-#define DW_FRAME_FREG53 85 /* 64-bit floating point reg 53 */
-#define DW_FRAME_FREG54 86 /* 64-bit floating point reg 54 */
-#define DW_FRAME_FREG55 87 /* 64-bit floating point reg 55 */
-#define DW_FRAME_FREG56 88 /* 64-bit floating point reg 56 */
-#define DW_FRAME_FREG57 89 /* 64-bit floating point reg 57 */
-#define DW_FRAME_FREG58 90 /* 64-bit floating point reg 58 */
-#define DW_FRAME_FREG59 91 /* 64-bit floating point reg 59 */
-#define DW_FRAME_FREG60 92 /* 64-bit floating point reg 60 */
-#define DW_FRAME_FREG61 93 /* 64-bit floating point reg 61 */
-#define DW_FRAME_FREG62 94 /* 64-bit floating point reg 62 */
-#define DW_FRAME_FREG63 95 /* 64-bit floating point reg 63 */
-#define DW_FRAME_FREG64 96 /* 64-bit floating point reg 64 */
-#define DW_FRAME_FREG65 97 /* 64-bit floating point reg 65 */
-#define DW_FRAME_FREG66 98 /* 64-bit floating point reg 66 */
-#define DW_FRAME_FREG67 99 /* 64-bit floating point reg 67 */
-#define DW_FRAME_FREG68 100 /* 64-bit floating point reg 68 */
-#define DW_FRAME_FREG69 101 /* 64-bit floating point reg 69 */
-#define DW_FRAME_FREG70 102 /* 64-bit floating point reg 70 */
-#define DW_FRAME_FREG71 103 /* 64-bit floating point reg 71 */
-#define DW_FRAME_FREG72 104 /* 64-bit floating point reg 72 */
-#define DW_FRAME_FREG73 105 /* 64-bit floating point reg 73 */
-#define DW_FRAME_FREG74 106 /* 64-bit floating point reg 74 */
-#define DW_FRAME_FREG75 107 /* 64-bit floating point reg 75 */
-#define DW_FRAME_FREG76 108 /* 64-bit floating point reg 76 */
+#define DW_FRAME_FREG32 64 /* 64-bit float reg 32 */
+#define DW_FRAME_FREG33 65 /* 64-bit float reg 33 */
+#define DW_FRAME_FREG34 66 /* 64-bit float reg 34 */
+#define DW_FRAME_FREG35 67 /* 64-bit float reg 35 */
+#define DW_FRAME_FREG36 68 /* 64-bit float reg 36 */
+#define DW_FRAME_FREG37 69 /* 64-bit float reg 37 */
+#define DW_FRAME_FREG38 70 /* 64-bit float reg 38 */
+#define DW_FRAME_FREG39 71 /* 64-bit float reg 39 */
+#define DW_FRAME_FREG40 72 /* 64-bit float reg 40 */
+#define DW_FRAME_FREG41 73 /* 64-bit float reg 41 */
+#define DW_FRAME_FREG42 74 /* 64-bit float reg 42 */
+#define DW_FRAME_FREG43 75 /* 64-bit float reg 43 */
+#define DW_FRAME_FREG44 76 /* 64-bit float reg 44 */
+#define DW_FRAME_FREG45 77 /* 64-bit float reg 45 */
+#define DW_FRAME_FREG46 78 /* 64-bit float reg 46 */
+#define DW_FRAME_FREG47 79 /* 64-bit float reg 47 */
+#define DW_FRAME_FREG48 80 /* 64-bit float reg 48 */
+#define DW_FRAME_FREG49 81 /* 64-bit float reg 49 */
+#define DW_FRAME_FREG50 82 /* 64-bit float reg 50 */
+#define DW_FRAME_FREG51 83 /* 64-bit float reg 51 */
+#define DW_FRAME_FREG52 84 /* 64-bit float reg 52 */
+#define DW_FRAME_FREG53 85 /* 64-bit float reg 53 */
+#define DW_FRAME_FREG54 86 /* 64-bit float reg 54 */
+#define DW_FRAME_FREG55 87 /* 64-bit float reg 55 */
+#define DW_FRAME_FREG56 88 /* 64-bit float reg 56 */
+#define DW_FRAME_FREG57 89 /* 64-bit float reg 57 */
+#define DW_FRAME_FREG58 90 /* 64-bit float reg 58 */
+#define DW_FRAME_FREG59 91 /* 64-bit float reg 59 */
+#define DW_FRAME_FREG60 92 /* 64-bit float reg 60 */
+#define DW_FRAME_FREG61 93 /* 64-bit float reg 61 */
+#define DW_FRAME_FREG62 94 /* 64-bit float reg 62 */
+#define DW_FRAME_FREG63 95 /* 64-bit float reg 63 */
+#define DW_FRAME_FREG64 96 /* 64-bit float reg 64 */
+#define DW_FRAME_FREG65 97 /* 64-bit float reg 65 */
+#define DW_FRAME_FREG66 98 /* 64-bit float reg 66 */
+#define DW_FRAME_FREG67 99 /* 64-bit float reg 67 */
+#define DW_FRAME_FREG68 100 /* 64-bit float reg 68 */
+#define DW_FRAME_FREG69 101 /* 64-bit float reg 69 */
+#define DW_FRAME_FREG70 102 /* 64-bit float reg 70 */
+#define DW_FRAME_FREG71 103 /* 64-bit float reg 71 */
+#define DW_FRAME_FREG72 104 /* 64-bit float reg 72 */
+#define DW_FRAME_FREG73 105 /* 64-bit float reg 73 */
+#define DW_FRAME_FREG74 106 /* 64-bit float reg 74 */
+#define DW_FRAME_FREG75 107 /* 64-bit float reg 75 */
+#define DW_FRAME_FREG76 108 /* 64-bit float reg 76 */
 
 /*  Having DW_FRAME_HIGHEST_NORMAL_REGISTER be higher than
     is strictly needed ... is safe.
