@@ -57,6 +57,7 @@
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
 #include "dwarf_alloc.h"
+#include "dwarf_safe_arithmetic.h"
 /*  These files are included to get the sizes
     of structs for malloc.
 */
@@ -661,15 +662,55 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         /* Usually count is 1, but do not assume it. */
         size = basesize;
     } else if (action == MULTIPLY_CT) {
-        size = basesize * count;
+        int result = 0;
+        result = _dwarf_uint64_mult(basesize,count,&size);
+        if (result == DW_DLV_ERROR) {
+#if DEBUG_ALLOC
+            printf("libdwarfdetector ALLOC count*basesize  "
+                "overflowed. Return NULL. Type 0x%x "
+                "size %lu line %d %s\n",
+                (unsigned)alloc_type,(unsigned long)size,
+                __LINE__,__FILE__);
+            fflush(stdout);
+#endif /* DEBUG_ALLOC */
+            return NULL;
+        }
     }  else {
         /* MULTIPLY_SP */
         /* DW_DLA_ADDR.. count * largest size */
-        size = count *
+        int result = 0;
+        Dwarf_Unsigned greater_addr_offset = 0;
+        greater_addr_offset = 
             (sizeof(Dwarf_Addr) > sizeof(Dwarf_Off) ?
             sizeof(Dwarf_Addr) : sizeof(Dwarf_Off));
+        result = _dwarf_uint64_mult(greater_addr_offset,count,&size);
+        if (result == DW_DLV_ERROR) {
+#if DEBUG_ALLOC
+            printf("libdwarfdetector ALLOC count*(addr or offset) "
+                "overflowed. Return NULL. Type 0x%x "
+                "size %lu line %d %s\n",
+                (unsigned)alloc_type,(unsigned long)size,
+                __LINE__,__FILE__);
+            fflush(stdout);
+#endif /* DEBUG_ALLOC */
+            return NULL;
+        }
     }
-    size += DW_RESERVE;
+    {
+        Dwarf_Unsigned localsize = size+DW_RESERVE;
+        if (localsize < size || localsize < DW_RESERVE) {
+#if DEBUG_ALLOC
+            printf("libdwarfdetector ALLOC size+DW_RESERVE "
+                "overflowed. Return NULL. Type 0x%x "
+                "size %lu line %d %s\n",
+                (unsigned)alloc_type,(unsigned long)localsize,
+                __LINE__,__FILE__);
+            fflush(stdout);
+#endif /* DEBUG_ALLOC */
+            return NULL;
+        }
+        size = localsize;
+    }
     alloc_mem = malloc(size);
     if (!alloc_mem) {
         return NULL;
@@ -695,15 +736,17 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
                     _dwarf_find_memory when
                     constructor fails. */
 #if DEBUG_ALLOC
-    printf("libdwarfdetector ALLOC constructor fails ret NULL "
-        "type 0x%x size %lu line %d %s\n",
-        (unsigned)alloc_type,(unsigned long)size,__LINE__,__FILE__);
-    fflush(stdout);
+                printf("libdwarfdetector ALLOC constructor fails. "
+                    "return NULL. "
+                    "Type 0x%x size %lu line %d %s\n",
+                    (unsigned)alloc_type,
+                    (unsigned long)size,__LINE__,__FILE__);
+                fflush(stdout);
 #endif /* DEBUG_ALLOC */
                 return NULL;
             }
         }
-        /*  See global flag.
+        /*  See global flag global_de_alloc_tree_on.
             If zero then caller chooses not
             to track allocations, so dwarf_finish()
             is unable to free anything the caller
@@ -721,7 +764,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             }
         }
 #if DEBUG_ALLOC
-        printf("\nlibdwarfdetector ALLOC ret 0x%lx type 0x%x "
+        printf("\nlibdwarfdetector ALLOC. Return 0x%lx type 0x%x "
             "size %lu line %d %s\n",
             (unsigned long)ret_mem,(unsigned)alloc_type,
             (unsigned long)size,__LINE__,__FILE__);
