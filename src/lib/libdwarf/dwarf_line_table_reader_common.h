@@ -26,7 +26,6 @@
    Public License along with this program; if not, write
    the Free Software Foundation, Inc., 51 Franklin Street -
    Fifth Floor, Boston MA 02110-1301, USA.
-
 */
 
 /*  This is #included twice. Once for
@@ -206,6 +205,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 {
     Dwarf_Small *line_ptr = data_start;
     Dwarf_Small *starting_line_ptr = data_start;
+
+    /* Length in bytes of the section data */
     Dwarf_Unsigned total_length = 0;
     int local_length_size = 0;
     int local_extension_size = 0;
@@ -492,6 +493,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (version < DW_LINE_VERSION5){
         Dwarf_Unsigned directories_count = 0;
         Dwarf_Unsigned directories_malloc = 5;
+
         line_context->lc_include_directories =
             malloc(sizeof(Dwarf_Small *) * directories_malloc);
         if (line_context->lc_include_directories == NULL) {
@@ -503,13 +505,39 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
         while ((*(char *) line_ptr) != '\0') {
             if (directories_count >= directories_malloc) {
-                Dwarf_Unsigned expand = 2 * directories_malloc;
-                Dwarf_Unsigned bytesalloc =
-                    sizeof(Dwarf_Small *) * expand;
-                Dwarf_Small **newdirs =
-                    realloc(line_context->lc_include_directories,
-                        bytesalloc);
+                Dwarf_Unsigned expand_to = 0;
+                Dwarf_Unsigned lsize = 0;
+                Dwarf_Unsigned bytesalloc = 0;
+                Dwarf_Unsigned orig_directories_count =
+                    directories_malloc;
+                Dwarf_Unsigned orig_directories_length =
+                    orig_directories_count*sizeof(Dwarf_Small *);
+                Dwarf_Small **newdirs = 0;
+                int dmres = 0;
 
+                /* Doubling the alloc size */
+                dmres = _dwarf_uint64_mult(2, orig_directories_count,
+                    &lsize);
+                if (dmres == DW_DLV_ERROR) {
+                    _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                        "DW_DLE_ALLOC_FAIL "
+                        "reallocating an array of include directories"
+                        " in a line table size overflow");
+                    return DW_DLV_ERROR;
+                }
+                expand_to = lsize;
+                dmres = _dwarf_uint64_mult( sizeof(Dwarf_Small *),
+                    expand_to,&bytesalloc);
+                if (dmres == DW_DLV_ERROR) {
+                    _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                        "DW_DLE_ALLOC_FAIL "
+                        "reallocating an array of include directories"
+                        " in a line table size overflow");
+                    return DW_DLV_ERROR;
+                }
+                newdirs = realloc(
+                    line_context->lc_include_directories,
+                    bytesalloc);
                 if (!newdirs) {
                     _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
                         "DW_DLE_ALLOC_FAIL "
@@ -518,9 +546,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     return DW_DLV_ERROR;
                 }
                 /* Doubled size, zero out second half. */
-                memset(newdirs + directories_malloc, 0,
-                    sizeof(Dwarf_Small *) * directories_malloc);
-                directories_malloc = expand;
+                memset(newdirs + orig_directories_count, 0,
+                    orig_directories_length);
+                directories_malloc = expand_to;
                 line_context->lc_include_directories = newdirs;
             }
             line_context->lc_include_directories[directories_count] =
@@ -717,13 +745,33 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_context->lc_directory_entry_format_count =
             directory_format_count;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+                "DW_DLE_LINE_OFFSET_BAD "
+                "The line table pointer points past end "
+                "of line table..");
+            return DW_DLV_ERROR;
+        }
         if (directory_format_count > 0) {
-            format_values = malloc(
-                sizeof(struct Dwarf_Unsigned_Pair_s) *
-                directory_format_count);
-            if (format_values == NULL) {
-                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-                return DW_DLV_ERROR;
+            {
+                int dmres = 0;
+                Dwarf_Unsigned lsize = 0;
+
+                dmres = _dwarf_uint64_mult(
+                    sizeof(struct Dwarf_Unsigned_Pair_s),
+                    directory_format_count,
+                    &lsize);
+                if (dmres == DW_DLV_ERROR) {
+                    _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                        "DW_DLE_ALLOC_FAIL "
+                        "multiplying by directory_format_count");
+                    return DW_DLV_ERROR;
+                }
+                format_values = malloc(lsize);
+                if (format_values == NULL) {
+                    _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                    return DW_DLV_ERROR;
+                }
             }
             for (i = 0; i < directory_format_count; i++) {
                 dres=read_uword_de(&line_ptr,
@@ -745,6 +793,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 /*  FIXME: what would be appropriate tests
                     of this pair of values? */
             }
+        }
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+                "DW_DLE_LINE_OFFSET_BAD "
+                "The line table pointer points past end "
+                "of line table..");
+            return DW_DLV_ERROR;
         }
         dres = read_uword_de(&line_ptr,&directories_count,
             dbg,err,line_ptr_end);
@@ -770,8 +825,21 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        line_context->lc_include_directories =
-            malloc(sizeof(Dwarf_Small *) * directories_count);
+        {
+            Dwarf_Unsigned localsize = 0;
+            int lres = 0;
+
+            lres = _dwarf_uint64_mult(sizeof(Dwarf_Small *),
+                directories_count,&localsize);
+            if (lres == DW_DLV_ERROR) {
+                free(format_values);
+                format_values = 0;
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                return lres;
+            }
+            line_context->lc_include_directories =
+                (Dwarf_Small **)malloc(localsize);
+        }
         if (line_context->lc_include_directories == NULL) {
             free(format_values);
             format_values = 0;
@@ -869,20 +937,36 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_context->lc_file_name_format_count =
             filename_format_count;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
-        filename_entry_pairs = malloc(
-            sizeof(struct Dwarf_Unsigned_Pair_s) *
-            filename_format_count);
-        if (!filename_entry_pairs) {
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return DW_DLV_ERROR;
-        }
         if (line_ptr >= line_ptr_end) {
-            free(filename_entry_pairs);
             _dwarf_error_string(dbg, err,
                 DW_DLE_LINE_NUMBER_HEADER_ERROR,
                 "DW_DLE_LINE_NUMBER_HEADER_ERROR: "
                 "reading filename format entries");
             return DW_DLV_ERROR;
+        }
+        {
+            int pares = 0;
+            Dwarf_Unsigned pasize = 0;
+
+            pares = _dwarf_uint64_mult(
+                sizeof(struct Dwarf_Unsigned_Pair_s),
+                filename_format_count, &pasize);
+
+            if (pares == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL "
+                    "count overflow calculating "
+                    "file entry pairs memory space");
+                return pares;
+            }
+            filename_entry_pairs = (struct Dwarf_Unsigned_Pair_s *)
+                malloc(pasize);
+            if (!filename_entry_pairs) {
+                _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL "
+                    "Allocating file entry pairs");
+                return DW_DLV_ERROR;
+            }
         }
         for (i = 0; i < filename_format_count; i++) {
             dres=read_uword_de(&line_ptr,
@@ -1139,12 +1223,25 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         subprog_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
-        subprog_entry_types = malloc(sizeof(Dwarf_Unsigned) *
-            subprog_format_count);
-        if (subprog_entry_types == NULL) {
-            _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
-                "DW_DLE_ALLOC_FAIL allocating subprog_entry_types");
-            return DW_DLV_ERROR;
+        {
+            int dmresx = 0;
+            Dwarf_Unsigned dmsize = 0;
+
+            dmresx = _dwarf_uint64_mult(sizeof(Dwarf_Unsigned),
+                subprog_format_count,&dmsize);
+            if (dmresx == DW_DLV_ERROR) {
+                _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL overflow calculating "
+                    "space for subprog entry types");
+                return dmresx;
+            }
+            subprog_entry_types = (Dwarf_Unsigned *)malloc(dmsize);
+            if (subprog_entry_types == NULL) {
+                _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL allocating "
+                    "subprog_entry_types");
+                return DW_DLV_ERROR;
+            }
         }
         if (subprog_format_count > total_length) {
             IssueExpError(dbg,err,
@@ -1162,15 +1259,27 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 "Line table forms odd, experimental libdwarf");
             return DW_DLV_ERROR;
         }
-
-        subprog_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
-            subprog_format_count);
-        if (subprog_entry_forms == NULL) {
-            free(subprog_entry_types);
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
-                "DW_DLE_ALLOC_FAIL allocating subprog_entry_forms");
-            return DW_DLV_ERROR;
+        {
+            Dwarf_Unsigned localsize = 0;
+            int lres = 0;
+            lres = _dwarf_uint64_mult(
+                sizeof(Dwarf_Unsigned),
+                subprog_format_count,&localsize);
+            if (lres == DW_DLV_ERROR) {
+                free(subprog_entry_types);
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                return lres;
+            }
+            subprog_entry_forms =
+                (Dwarf_Unsigned *)malloc(localsize);
+            if (subprog_entry_forms == NULL) {
+                free(subprog_entry_types);
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                _dwarf_error_string(dbg, err, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL allocating "
+                    "subprog_entry_forms");
+                return DW_DLV_ERROR;
+            }
         }
 
         for (i = 0; i < subprog_format_count; i++) {
@@ -1223,17 +1332,29 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             free(subprog_entry_forms);
             return DW_DLV_ERROR;
         }
-        line_context->lc_subprogs =
-            malloc(sizeof(struct Dwarf_Subprog_Entry_s) *
-                subprogs_count);
-        if (line_context->lc_subprogs == NULL) {
-            free(subprog_entry_types);
-            free(subprog_entry_forms);
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return DW_DLV_ERROR;
+        {
+            Dwarf_Unsigned localsize = 0;
+            int lres = 0;
+            lres = _dwarf_uint64_mult(
+                sizeof(struct Dwarf_Subprog_Entry_s),
+                subprogs_count,&localsize);
+            if (lres == DW_DLV_ERROR) {
+                free(subprog_entry_types);
+                free(subprog_entry_forms);
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                return lres;
+            }
+            line_context->lc_subprogs =
+                (struct Dwarf_Subprog_Entry_s *) malloc( localsize);
+            if (line_context->lc_subprogs == NULL) {
+                free(subprog_entry_types);
+                free(subprog_entry_forms);
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                return DW_DLV_ERROR;
+            }
+            memset(line_context->lc_subprogs, 0,
+                localsize);
         }
-        memset(line_context->lc_subprogs, 0,
-            sizeof(struct Dwarf_Subprog_Entry_s) * subprogs_count);
         for (i = 0; i < subprogs_count; i++) {
             struct Dwarf_Subprog_Entry_s *curline =
                 line_context->lc_subprogs + i;
