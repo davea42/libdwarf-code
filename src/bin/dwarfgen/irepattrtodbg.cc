@@ -236,10 +236,17 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             }
         }
         if (res != DW_DLV_OK) {
-            cerr << "ERROR dwarf_add_AT_ class constant fails," <<
-                dwarf_errmsg(error) <<
-                " attrnum " << attrnum <<
-                " Continuing" << endl;
+            if (res == DW_DLV_ERROR) {
+                cerr << "ERROR dwarf_add_AT_ class constant fails," <<
+                    dwarf_errmsg(error) <<
+                    " attrnum " << attrnum <<
+                    " Continuing" << endl;
+            } else {
+                cerr << 
+                    "NO_ENTRY dwarf_add_AT_ class constant fails," <<
+                    " attrnum " << attrnum <<
+                    " Continuing" << endl;
+            }
         }
         }
         break;
