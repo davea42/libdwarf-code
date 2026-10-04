@@ -34,6 +34,7 @@
 #include <limits.h> /* INT_MAX and al. */
 #include <stddef.h> /* NULL */
 #include <string.h> /* memcpy() */
+#include <stdio.h> /* printf for debug */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -463,6 +464,9 @@ dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug dbg,
     case DW_AT_identifier_case:
     case DW_AT_MIPS_loop_unroll_factor:
     case DW_AT_MIPS_software_pipeline_depth:
+    /* These two are standard, but we can ignore them */
+    case DW_AT_language_name:
+    case DW_AT_language_version:
         break;
 
     case DW_AT_decl_column:
