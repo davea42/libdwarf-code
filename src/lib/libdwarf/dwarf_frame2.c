@@ -367,6 +367,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     Dwarf_Cie cur_cie_ptr = NULL;
     Dwarf_Cie tail_cie_ptr = NULL;
     Dwarf_Unsigned cie_count = 0;
+    Dwarf_Unsigned maximum_possible_cie_count = 0;
+    Dwarf_Unsigned minimum_size_cie = 14 ;
 
     /*  Points to a list of contiguous pointers to
         Dwarf_Cie structures.
@@ -378,6 +380,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     Dwarf_Fde head_fde_ptr = NULL;
     Dwarf_Fde cur_fde_ptr = NULL;
     Dwarf_Unsigned fde_count = 0;
+    Dwarf_Unsigned maximum_possible_fde_count = 0;
+    Dwarf_Unsigned minimum_size_fde = 8 + dbg->de_pointer_size *2;
 
     /*  Points to a list of contiguous pointers to
         Dwarf_Fde structures.
@@ -394,6 +398,9 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     if (res == DW_DLV_ERROR) {
         return res;
     }
+
+    maximum_possible_fde_count = section_length / minimum_size_fde;
+    maximum_possible_cie_count = section_length / minimum_size_cie;
 
     /*  We create the fde and cie arrays.
         Processing each CIE as we come
@@ -464,6 +471,11 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                     return resc;
                 }
                 cie_count++;
+                if (cie_count >= maximum_possible_cie_count) {
+                    _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+                        head_cie_ptr);
+                    return DW_DLV_ERROR;
+                }
                 chain_up_cie(cie_ptr_to_use, &head_cie_ptr,
                     &tail_cie_ptr);
                 cur_cie_ptr = tail_cie_ptr;
@@ -524,6 +536,12 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                     return resf;
                 }
                 ++cie_count;
+                if (cie_count >= maximum_possible_cie_count) {
+                    _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+                        head_cie_ptr);
+                    return DW_DLV_ERROR;
+                }
+
                 chain_up_cie(cie_ptr_to_use, &head_cie_ptr,
                     &tail_cie_ptr);
                 cur_cie_ptr = tail_cie_ptr;
@@ -555,6 +573,11 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             }
             chain_up_fde(fde_ptr_to_use, &head_fde_ptr, &cur_fde_ptr);
             fde_count++;
+            if (fde_count >= maximum_possible_fde_count) {
+                _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+                    head_cie_ptr);
+                return DW_DLV_ERROR;
+            }
             /* ASSERT: DW_DLV_OK. */
             frame_ptr = cur_fde_ptr->fd_fde_start +
                 cur_fde_ptr->fd_length +
@@ -1437,7 +1460,7 @@ _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
             "is invalid");
         return DW_DLV_ERROR;
     }
-    if (section_end < (frame_ptr +4)) {
+    if (section_end < (frame_ptr+4)) {
         dwarfstring m;
         Dwarf_Unsigned u =
             (Dwarf_Unsigned)(uintptr_t)(frame_ptr+4) -
