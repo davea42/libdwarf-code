@@ -48,6 +48,7 @@
 #include "dwarf_util.h"
 #include "dwarf_line.h"
 #include "dwarf_string.h"
+#include "dwarf_safe_arithmetic.h"
 
 #define PRINTING_DETAILS 1
 /*  for dwarfstring_constructor_static, saving lots of malloc
