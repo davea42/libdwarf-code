@@ -158,8 +158,8 @@ extern "C" {
 /* TI = Texas Instruments, for DWARF in COFF */
 /* https://www.ti.com/lit/an/spraab5/spraab5.pdf?ts=1705994928599 */
 
-/*  This set of four for C28x/C6000 TI DSP 
-DW_TAG_TI_branch_targtet        0x4001 
+/*  This set of four for C28x/C6000 TI DSP
+DW_TAG_TI_branch_targtet        0x4001
 DW_TAG_TI_far_type              0x4002
 DW_TAG_TI_pragma_can_inline     0x4003
 DW_TAG_TI_assign_register       0x4004
@@ -501,9 +501,9 @@ DW_TAG_TI_assign_register       0x4004
 #define DW_AT_MIPS_assumed_size                 0x2011 /* MIPS/SGI */
 #define DW_AT_TI_interrupt                      0x2011 /* TI */
 
-#define DW_AT_TI_symbol_name            0x2001 
+#define DW_AT_TI_symbol_name            0x2001
 /*  Next 10 for TI C28x C62x C28x maybe other TI */
-#define DW_AT_TI_max_frame_size         0x2002 /* TI */ 
+#define DW_AT_TI_max_frame_size         0x2002 /* TI */
 /*
 DW_AT_TI_interrupt              0x2003
 */
@@ -515,7 +515,7 @@ DW_AT_TI_interrupt              0x2003
 #define DW_AT_TI_begin_column           0x2009 /* TI */
 #define DW_AT_TI_end_column             0x200a /* TI */
 /*
-DW_AT_TI_symbol_name                    0x200b 
+DW_AT_TI_symbol_name                    0x200b
 */
 
 /* HP extensions. */
