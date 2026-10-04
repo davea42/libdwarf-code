@@ -680,7 +680,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         /* DW_DLA_ADDR.. count * largest size */
         int result = 0;
         Dwarf_Unsigned greater_addr_offset = 0;
-        greater_addr_offset = 
+        greater_addr_offset =
             (sizeof(Dwarf_Addr) > sizeof(Dwarf_Off) ?
             sizeof(Dwarf_Addr) : sizeof(Dwarf_Off));
         result = _dwarf_uint64_mult(greater_addr_offset,count,&size);
