@@ -1,3 +1,131 @@
+2026-10-04:  David Anderson
+    commit 1ec6867d29f3b2f8c7d0779ec2b007ec4ca389d6
+
+    The next October commits (4) are about fixing problems
+    reported in libdwarf-code project Issue #328
+    Issue 328.
+    Adding include "dwarf_safe_arithmetic.h"
+    since include "dwarf_line_table_reader_common.h" requires
+    that now.
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+
+2026-10-04:  David Anderson
+    commit 5d5cbd43351a9bb7337b04ecd297f76d28f1b523
+
+    For Issue 328, adding sanity checks  for overflow of
+    multiplication and addition. With new local variables
+    helping clarity for the reader.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2026-10-04:  David Anderson
+    commit 0455886c76bc22c9926ee8ab49fb7dd78f45b950
+
+    For libdwarf Issue #328 adding sanity checks for add or
+    multiply overflow and new local variables to avoid
+    replication of multiplies (for the reader).
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2026-10-04:  David Anderson
+    commit bc8cd66ee0c43ff056c512b2236e279f8631e58a
+
+    Adding reasonableness checks in reading FDE and CIE data
+    to ensure termination with gigantic frame sections.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2026-10-04:  David Anderson
+    commit 7d8ce7726516be67aa6a9dbc2515fc20bb8df61b
+
+    Adding sanity checks (for overflow) in a multiplication.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-10-04:  David Anderson
+    commit d3a065351ae88ff788c68deac031218cddd12b7b
+
+    Reformatting a too-long line (project codingstyle).
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2026-10-04:  David Anderson
+    commit ca90f1255c9e46eff1fc83d0aa7eed8125adb70c
+
+    Refining DW_AT_TI entries.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2026-10-04:  David Anderson
+    commit edb0081193477f80bcab1a976fefbdd365b74cd3
+
+    Latest Ubuntu 26.04 compilers gave warning on the
+    implied drop of 'const'. Now warning avoided.
+    -    if (dwoptopt == ':' || (oli = strchr(ostr, dwoptopt)) == NULL) {
+    +    if (dwoptopt == ':' || (oli = strchr((char *)ostr, dwoptopt)) == NULL) {
+
+            modified:   src/bin/dwarfdump/dd_getopt.c
+
+2026-10-04:  David Anderson
+    commit 89fc8f8576bdea42bfee06b96f0d645fc0204898
+
+    When printing Elf em_machine, show both the name
+    and the integer itself. Especially now we have
+    better lists of em_machine values to work with.
+            modified:   src/bin/dwarfdump/dd_elf_naming.c
+
+2026-10-04:  David Anderson
+    commit 5609a237b78f1a7b17ed01d88485627fd2ecb042
+
+    Was mistakenly calling dwarf_errmsg() on
+    a libdwarfP object and failing to check
+    for DW_DLV_NO_ENTRY.
+    Fixed.
+            modified:   src/bin/dwarfgen/irepattrtodbg.cc
+
+2026-10-04:  David Anderson
+    commit 25f981db06e813d2c4d775716dee13df6c85e0ad
+
+    A change in compilers resulted in an error exit.
+    We were not prepared, here, for
+    DW_AT_language_name
+    DW_AT_language_version
+    in dwarfgen (which are now allowed in DWARF5 per
+    the DWARF committee).
+    Added them.
+
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+
+2026-10-04:  David Anderson
+    commit 297d276e2ee6b2178c3cd91a691ae336c64dfaa9
+
+    New month, html updated automatically.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-10-02:  David Anderson
+    commit 035ed5a18517082d488fd25dfa26b7fc05a4382e
+
+    See Issue  #328 for details.  We were not checking multiply
+    or add instances here for integer overflow.
+    Now we do.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2026-09-25:  David Anderson
+    commit fa6cb32257caf9d13341861618fd62d0d9e03a49
+
+    Regenerated to show 2.3.4 in comments.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-ext.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table-std.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_lname_version.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2026-09-25:  David Anderson
+    commit 91e050de563422b3d9acb4667db693bfb2679bf5
+
+    Recording  new dwarfdump files dd_naming.[ch]
+    and updating version to 2.3.4.
+            modified:   ChangeLog
+
 2026-09-25:  David Anderson
     commit 608cdc440f6ee30c784be7713d9224fe414b5f92
 
