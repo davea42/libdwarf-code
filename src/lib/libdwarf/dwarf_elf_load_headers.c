@@ -2169,6 +2169,12 @@ read_gs_section_group(
         /*  Adding 1 is silly but possibly avoids a warning
             from a particular compiler. */
         groupmallocsize =  (1+count) * sizeof(Dwarf_Unsigned);
+        if (groupmallocsize < sizeof(Dwarf_Unsigned) ||
+            groupmallocsize < (1+count)) {
+            /* multipy overflowed. */
+            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+            return DW_DLV_ERROR;
+        }
         if (groupmallocsize >= ep->f_filesize) {
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
             return DW_DLV_ERROR;
