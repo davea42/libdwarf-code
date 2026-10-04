@@ -56,7 +56,9 @@ THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
 #ifdef HAVE_ELF_H
 #include "elf.h"
 #endif /* HAVE_ELF_H */
+#if 0
 #include "dd_safe_strcpy.h"
+#endif
 #include "dd_esb.h"
 #include "dd_elf_naming.h"
 
@@ -384,7 +386,10 @@ dd_get_elf_machine_name(Dwarf_Unsigned value,
         esb_append(out,ev->em_name);
         return;
     }
-    esb_append(out,"Unknown em_machine");
+    esb_append_printf_u(out,"Unknown em_machine %d",
+        ev->em_number);
+    esb_append_printf_u(out," (0x%x)",
+        ev->em_number);
 }
 
 static struct em_values dtvals[] = {
