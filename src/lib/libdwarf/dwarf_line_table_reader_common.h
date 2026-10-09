@@ -795,6 +795,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             }
         }
         if (line_ptr >= line_ptr_end) {
+            free(format_values);
+            format_values = 0;
             _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
                 "DW_DLE_LINE_OFFSET_BAD "
                 "The line table pointer points past end "
