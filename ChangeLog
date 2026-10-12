@@ -1,3 +1,31 @@
+2026-10-12:  Yaroslav
+    commit 276cd4c0d8fab43c7c7835231fd39c5b29809168
+
+    In CMakeLists.txt in the source base directory.
+    Fix typo DOTESTS -> DO_TESTING (#329)
+
+2026-10-09:  David Anderson
+    commit 0c50d54a80b3ca1899a7bdb69d011592e7cc8750
+
+    The fix at commit 5d5cbd43351a9bb7337b04ecd297f76d28f1b523
+    left one return DW_DLV_ERROR at line 795 missing the required free
+    of 'format values'.
+             if (line_ptr >= line_ptr_end) {
+    +            free(format_values);
+    +            format_values = 0;
+                 _dwarf_error_string(dbg, err, DW_DLE_LINE_OFFSET_BAD,
+    A mistake introduced 5 days ago.
+    ossfuzz Issue: 571622054
+    ossfuzz Issue: 570352712
+    ossfuzz Issue: 570703910
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+2026-10-04:  David Anderson
+    commit 047d5626c31521be4eb4acd70eb0301a98b0f118
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2026-10-04:  David Anderson
     commit 1ec6867d29f3b2f8c7d0779ec2b007ec4ca389d6
 
