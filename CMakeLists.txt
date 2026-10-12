@@ -33,7 +33,7 @@ option(BUILD_DWARFEXAMPLE "Build dwarfexample (default is NO)" FALSE)
 message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
 
 option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
-message(STATUS "Building api tests   ... ${DOTESTS}")
+message(STATUS "Building api tests   ... ${DO_TESTING}")
 ### end what was configure.cmake
 
 option(PIC_ALWAYS "Build libdwarf with position-independent code for both static and shared (default is NO)" FALSE)
