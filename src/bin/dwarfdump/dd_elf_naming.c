@@ -915,7 +915,7 @@ static struct em_values sto_vals[] = {
 
 };
 void
-dd_get_elf_symbol_sto_type(Dwarf_Unsigned value, 
+dd_get_elf_symbol_sto_type(Dwarf_Unsigned value,
     struct esb_s *out)
 {
     struct em_values *ev = &sto_vals[0];
@@ -1031,7 +1031,7 @@ static struct em_values stt_vals[] = {
 };
 
 void
-dd_get_elf_symbol_stt_type(Dwarf_Unsigned value, 
+dd_get_elf_symbol_stt_type(Dwarf_Unsigned value,
     struct esb_s *out)
 {
     struct em_values *ev = &stt_vals[0];

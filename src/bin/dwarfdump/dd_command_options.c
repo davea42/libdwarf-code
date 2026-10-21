@@ -1129,7 +1129,11 @@ void arg_format_producer(void)
         printf("ERROR: -c<producer> requires "
             " a producer string\n");
         glflags.gf_count_major_errors++;
+        /* return added to Fix Github Issue #332*/
+        return;
     }
+    /*  Assumes the name points to a legitimate string.
+        The caller must check.  Github Issue #332*/
     if (!record_producer(dwoptarg)) {
         printf("ERROR: Compiler table max %d exceeded, "
             "limiting the tracked compilers to %d\n",

@@ -526,6 +526,8 @@ void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
     }
 }
 
+/*  Assumes the name points to a legitimate string.
+    The caller must check.  Github Issue #332*/
 Dwarf_Bool
 record_producer(char *name)
 {
