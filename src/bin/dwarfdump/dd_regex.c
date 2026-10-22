@@ -467,9 +467,9 @@ dd_re_exec(char *lp)
             if (!*lp) {
                 /*  Fixes github Issue  #331.
                     This bug was introduced
-                    around 1988 when Ozan Yigit 
+                    around 1988 when Ozan Yigit
                     wrote the code (see comments
-                    above for history).  
+                    above for history).
                     Failing to detect the end of
                     the input string. */
                 break;
