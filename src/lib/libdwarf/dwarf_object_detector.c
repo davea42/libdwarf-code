@@ -991,13 +991,18 @@ dwarf_object_detector_path_b(
                 debuglink_fd = -1;
             }
             dllenszt = dwarfstring_strlen(&m)+1;
-            if (dllenszt >= (size_t)outpath_len) {
+            /*  Fixing Issue #333. Was incorrect >= test */
+            if (dllenszt > (size_t)outpath_len) {
+                /*  Fixing Issue #333, was memory leak. */ 
+                dwarfstring_destructor(&m);
                 *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
                 return DW_DLV_ERROR;
             }
             res = dw_stpcpy(outpath,dwarfstring_string(&m),
                 &cp,outpath+outpath_len);
             if (res != DW_DLV_OK) {
+                /*  Fixing Issue #333, was memory leak. */ 
+                dwarfstring_destructor(&m);
                 *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
                 return DW_DLV_ERROR;
             }
