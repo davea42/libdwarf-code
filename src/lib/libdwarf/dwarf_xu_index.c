@@ -595,7 +595,7 @@ _dwarf_find_xu_target_sec_size(Dwarf_Debug dbg,
         break;
     case DW_SECT_MACRO:
         /* May not be loaded */
-        secptr = &dbg->de_debug_str_offsets;
+        secptr = &dbg->de_debug_macro;
         break;
     case DW_SECT_RNGLISTS:
         /* May not be loaded */
