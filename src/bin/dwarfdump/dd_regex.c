@@ -464,6 +464,16 @@ dd_re_exec(char *lp)
             if (res == DW_DLV_OK) {
                 break;
             }
+            if (!*lp) {
+                /*  Fixes github Issue  #331.
+                    This bug was introduced
+                    around 1988 when Ozan Yigit 
+                    wrote the code (see comments
+                    above for history).  
+                    Failing to detect the end of
+                    the input string. */
+                break;
+            }
             lp++;
         } while (*lp);
         break;
