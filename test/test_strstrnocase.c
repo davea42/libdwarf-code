@@ -24,7 +24,7 @@ test(const  char *t1, const char *t2,int resexp)
         t1,t2,resexp,res);
 }
 
-int main()
+int main(void)
 {
     test("aaaaa","a",1);
     test("aab_varaaa","ab_var",1);

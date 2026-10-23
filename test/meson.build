@@ -45,6 +45,10 @@ tests = [
    '../src/bin/dwarfdump/dd_sanitized.c',
    '../src/bin/dwarfdump/dd_utf8.c'
   ],
+  [
+   'test_strstrnocase.c',
+   '../src/bin/dwarfdump/dd_strstrnocase.c'
+  ],
 
   [
    'test_macrocheck.c',
