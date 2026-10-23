@@ -245,6 +245,7 @@ static void
 emit_offsets_array_msg(Dwarf_Debug dbg,
     Dwarf_Unsigned tab_length,
     Dwarf_Unsigned secsize,
+    const char * err_kind,
     Dwarf_Error *error)
 {
     dwarfstring m;
@@ -252,8 +253,11 @@ emit_offsets_array_msg(Dwarf_Debug dbg,
     dwarfstring_constructor(&m);
     dwarfstring_append_printf_u(&m,
         "DW_DLE_STR_OFFSETS_ARRAY_SIZE: "
-        " total length 0x%x  with table offset larger than ",
-        tab_length);
+        " total length 0x%x  ",tab_length);
+    dwarfstring_append(&m,(char *)err_kind);
+    dwarfstring_append_printf_u(&m,
+        " with table offset larger than %u",
+        secsize);
     dwarfstring_append_printf_u(&m,
         ".debug_str_offsets section size of 0x%x."
         " Perhaps the section is a GNU DWARF4"
@@ -344,13 +348,21 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
         length;
 
     net_end_offset = tab_length+globloff;
-
+    if (net_end_offset < local_extension_size ||
+        net_end_offset < local_offset_size ||
+        net_end_offset < tab_length ||
+        net_end_offset < length ||
+        net_end_offset < globloff ) {
+        emit_offsets_array_msg(dbg,tab_length,
+            secsize,"overflow",error);
+        return DW_DLV_ERROR;
+    }
     if (length > secsize  ||
         array_local_offset > secsize ||
         tab_length > secsize ||
         net_end_offset > secsize) {
         emit_offsets_array_msg(dbg,tab_length,
-            secsize,error);
+            secsize,"too large",error);
         return DW_DLV_ERROR;
     }
     /*  table_start_ptr is incremented past
