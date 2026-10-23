@@ -31,6 +31,13 @@ int main()
     /*  Matching even if container cannot match all of
         test string by being short but partially matching. */
     test("aab_va","ab_var",1);
+
+    /* no match */
+    test("iaibic","i3",0);
+    /*  run off end of main string with partial
+        match of test string.  */
+    test("iaibii","i3",1);
+
     test("aaaaa","b",0);
     test("abaaba","ba",1);
     test("abaaxa","x",1);
