@@ -96,8 +96,9 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     Dwarf_Small   *section_start = 0;
     Dwarf_Unsigned arealen = 0;
     Dwarf_Unsigned tablelen = 0;
-    int            offset_size = 0;
-    int            exten_size = 0;
+    Dwarf_Unsigned net_end_offset = 0;
+    Dwarf_Half     offset_size = 0;
+    Dwarf_Half     exten_size = 0;
     Dwarf_Small    address_size = 0;
     Dwarf_Small    segment_selector_size = 0;
     Dwarf_Half     version = 0;
@@ -178,8 +179,32 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
             data,offset_size,exten_size,
             error,
             section_size,end_data);
-        if (arealen > section_size ||
-            (arealen + offset_size +exten_size) > section_size) {
+        net_end_offset = dw_section_offset +
+            arealen + offset_size + exten_size; 
+        /*  Ensure no overflow */
+        if (net_end_offset < dw_section_offset ||
+            net_end_offset < arealen ||
+            net_end_offset < offset_size || 
+            net_end_offset < exten_size) {
+
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_SECTION_SIZE_ERROR: A .debug_addr "
+                "area size of 0x%x ",arealen);
+            dwarfstring_append_printf_u(&m,
+                "at offset 0x%x ",dw_section_offset);
+            dwarfstring_append_printf_u(&m,
+                "overflowed in its computation of end offset "
+                "0x%x. Corrupt DWARF.",net_end_offset);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_SECTION_SIZE_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        if (net_end_offset > section_size) {
+
             dwarfstring m;
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
@@ -212,6 +237,21 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
         offset_one_past_end = dw_section_offset
             + curlocaloffset + 4 /*rest of header */
             + tablelen;
+        if (net_end_offset != offset_one_past_end) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_SECTION_SIZE_ERROR: offset calculation "
+                "yields 0x%x ",net_end_offset);
+            dwarfstring_append_printf_u(&m,
+                " versus yields 0x%x ",offset_one_past_end);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_SECTION_SIZE_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         end_data = section_start + offset_one_past_end;
         tab.da_end_table = end_data;
         READ_UNALIGNED_CK(dbg,version,Dwarf_Half,data,
