@@ -1,3 +1,97 @@
+2026-10-22:  David Anderson
+    commit bf40dbf2508043d19dc0bcbdfd67b3b7f6e3a131
+
+    Has a fix for github issue 335.
+    Better behavior of some comparisons.
+            modified:   src/bin/dwarfdump/dd_strstrnocase.c
+
+    Now with test code that is actually run by
+    make check (for example).
+            modified:   test/Makefile.am
+            new file:   test/test_strstrnocase.c
+
+2026-10-22:  David Anderson
+    commit 29dfed1da46222c5627551c316bb3094891ed3ea
+
+    Updated by latest GNU configure.
+            modified:   INSTALL
+
+2026-10-22:  David Anderson
+    commit 542f5514790c7dd2ce5702f3bfba5627ce578339
+
+    remove trailing whitespace.
+            modified:   dd_getopt.c
+            modified:   dd_regex.c
+
+2026-10-22:  David Anderson
+    commit 4a4b08b8cf3cc0c73b6aa801b9a409ca21cbab6e
+
+         case DW_SECT_MACRO:
+             /* May not be loaded */
+    -        secptr = &dbg->de_debug_str_offsets;
+    +        secptr = &dbg->de_debug_macro;
+             break;
+    Issue #334, fixed.
+
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+
+2026-10-22:  David Anderson
+    commit cec7c813c6219305063ba4bf8ba1b7e1f1c1ff70
+
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2026-10-22:  David Anderson
+    commit 393a06d1996d339fa75284e8c86274f845a87381
+
+    +            /*  Fixing Issue #333. Was incorrect >= test */
+    +            if (dllenszt > (size_t)outpath_len) {
+    +                /*  Fixing Issue #333, was memory leak. */
+    +                dwarfstring_destructor(&m);
+    This code has been wrong for a few years.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2026-10-22:  David Anderson
+    commit 9b7dbdac2aba8734433fc5064279137a14f4cd35
+
+    +            if (!*lp) {
+    +                /*  Fixes github Issue  #331.
+    +                    This bug was introduced
+    +                    around 1988 when Ozan Yigit
+    +                    wrote the code (see comments
+    +                    above for history).
+    +                    Failing to detect the end of
+    +                    the input string. */
+    +                break;
+    +            }
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2026-10-21:  David Anderson
+    commit bc6e2280c32bc69618e90ae0c18474cb805bfa97
+
+    +       /* return added to Fix Github Issue #332*/
+    +      return;
+    so we avoid calling record_producer() with an
+    improper string pointer.
+            modified:   dd_command_options.c
+
+    +/*  Assumes the name points to a legitimate string.
+    +    The caller must check.  Github Issue #332*/
+            modified:   dd_compiler_info.c
+
+    Remove trailing whitespace.
+            modified:   dd_elf_naming.c
+
+    Adjust one line to avoid violating the
+    project coding standard on line length.
+            modified:   dd_getopt.c
+
+2026-10-12:  David Anderson
+    commit 7d5dc8397b24492855d8359910d5952795b8e9ca
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2026-10-12:  Yaroslav
     commit 276cd4c0d8fab43c7c7835231fd39c5b29809168
 
