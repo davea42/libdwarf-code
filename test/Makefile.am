@@ -49,6 +49,8 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_setupsections.log \
   test_sanitized.log \
   test_sanitized.trs \
+  test_strstrnocase.log \
+  test_strstrnocase.trs \
   test_testesb.log \
   test_testesb.trs
 
@@ -76,6 +78,7 @@ TESTS = test_canonical  \
   test_setupsections \
   test_testesb \
   test_sanitized \
+  test_strstrnocase \
   test_tied
 
 check_PROGRAMS = test_canonical \
@@ -97,6 +100,7 @@ check_PROGRAMS = test_canonical \
   test_setupsections \
   test_testesb \
   test_sanitized \
+  test_strstrnocase \
   test_tied
 
 test_canonical_SOURCES = test_canonical.c \
@@ -253,6 +257,15 @@ test_sanitized_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_sanitized_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
+test_strstrnocase_SOURCES = \
+    test_strstrnocase.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_strstrnocase.c
+test_strstrnocase_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_strstrnocase_CPPFLAGS = -I$(top_srcdir)\
+-I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump  \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_safe_strcpy_SOURCES = test_safe_strcpy.c \

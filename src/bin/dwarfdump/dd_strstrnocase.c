@@ -64,6 +64,9 @@ strstrnocase.c
 #include "dd_glflags.h"
 #include "dd_globals.h"
 
+/*  Supposed to return TRUE if the string contained
+    appears anywhere in container.
+    This now has the fix for github issue #335 . */
 Dwarf_Bool
 is_strstrnocase(const char * container, const char * contained)
 {
@@ -72,10 +75,13 @@ is_strstrnocase(const char * container, const char * contained)
     {
         const unsigned char * cntnd =
             (const unsigned char *)contained;
+        const unsigned char * ctp =
+            (const unsigned char *)ct;
 
-        for (; *cntnd && *ct ; ++cntnd,++ct)
+        /* Do not update ct in this loop. */
+        for (; *cntnd && *ct ; ++cntnd,++ctp)
         {
-            unsigned char lct = tolower(*ct);
+            unsigned char lct = tolower(*ctp);
             unsigned char tlc = tolower(*cntnd);
             if (lct != tlc) {
                 break;
@@ -86,7 +92,7 @@ is_strstrnocase(const char * container, const char * contained)
             /* ASSERT: innerwrong = FALSE  */
             return TRUE;
         }
-        if (!*ct) {
+        if (!*ctp) {
             /*  Ran out of container before contained,
                 so no future match of contained
                 is possible. */
@@ -98,31 +104,3 @@ is_strstrnocase(const char * container, const char * contained)
     }
     return FALSE;
 }
-
-#ifdef TEST
-static void
-test(const  char *t1, const char *t2,int resexp)
-{
-    Dwarf_Bool  res = is_strstrnocase(t1,t2);
-    if (res == resexp) {
-        return;
-    }
-    printf("Error,mismatch %s and %s.  Expected %d got %d\n",
-        t1,t2,resexp,res);
-}
-
-int main()
-{
-    test("aaaaa","a",1);
-    test("aaaaa","b",0);
-    test("abaaba","ba",1);
-    test("abaaxa","x",1);
-    test("abaabA","Ba",1);
-    test("a","ab",0);
-    test("b","c",0);
-    test("b","",0);
-    test("","c",0);
-    test("","",0);
-    test("aaaaa","aaaaaaaa",0);
-}
-#endif
