@@ -180,11 +180,11 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
             error,
             section_size,end_data);
         net_end_offset = dw_section_offset +
-            arealen + offset_size + exten_size; 
+            arealen + offset_size + exten_size;
         /*  Ensure no overflow */
         if (net_end_offset < dw_section_offset ||
             net_end_offset < arealen ||
-            net_end_offset < offset_size || 
+            net_end_offset < offset_size ||
             net_end_offset < exten_size) {
 
             dwarfstring m;
