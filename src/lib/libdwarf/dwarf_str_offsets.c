@@ -213,7 +213,7 @@ is_all_zeroes(Dwarf_Small*start,
         return TRUE;
     }
     for ( ; start < end; ++start) {
-        if (!*start) {
+        if (*start) {
             /* There is some garbage here. */
             return FALSE;
         }
@@ -619,7 +619,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             length includes space for 4 bytes of the header!  */
         array_start_offset = table_header_offset +
             local_offset_to_array;
-        table_end_offset = array_start_offset + total_table_length;
+        table_end_offset = table_header_offset + total_table_length;
     } else {
         Dwarf_Unsigned space_left = 0;
 
@@ -648,6 +648,8 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
 
         sot->so_table_end_offset = table_end_offset;
         sot->so_table_start_offset = table_header_offset;
+        sot->so_lcl_offset_to_array = array_start_offset -
+            table_header_offset;
         sot->so_table_end_offset = table_header_offset+
             total_table_length;
         sot->so_array_entry_count = entrycount;
@@ -663,7 +665,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         *unit_length_offset_out = sot->so_table_start_offset;
 
         /*  Where the table of offsets starts in the section. */
-        *table_start_offset_out = sot->so_table_start_offset;
+        *table_start_offset_out = array_start_offset;
 
         /*   Entrysize: 4 or 8 */
         *entry_size_out  = local_length_size;
