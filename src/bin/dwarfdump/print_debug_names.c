@@ -190,7 +190,7 @@ print_buckets(unsigned int indent,Dwarf_Dnames_Head dn,
 
     printf("\n");
     printindent(indent);
-    printf("Bucket (hash) table entry count: "
+    printf("Bucket table entry count: "
         "%" DW_PR_DUu "\n",bucket_count);
     printindent(indent);
     printf("[ ]    nameindex collisioncount\n");
