@@ -1157,32 +1157,40 @@ _dwarf_initialize_bucket_details(Dwarf_Dnames_Head dn,
         curbucket = dn->dn_bucket_array +i;
         curbucket->db_nameindex = offsetval;
     }
+    /*  Compute the number of collisions. That is,
+        one less than the number of names this bucket implies .  */
     for (i = 0; i < dn->dn_bucket_count; ) {
         Dwarf_Unsigned j = 0;
 
         curbucket = dn->dn_bucket_array+i;
         if (!curbucket->db_nameindex) {
+            /* No names apply to this bucket. */
             ++i;
             continue;
         }
+        /* bucket with a single entry counts zero. */
+        /*  Find the next bucket with name index
+            >  currrent nameindex */
         for (j = i+1; j < dn->dn_bucket_count; ++j) {
             struct Dwarf_DN_Bucket_s *partial =
                 dn->dn_bucket_array+j;
-
+            
             if (partial->db_nameindex) {
+                /* Found one. Count it. */
                 curbucket->db_collisioncount =
                     partial->db_nameindex - curbucket->db_nameindex;
-                    i = j;
-                    break;
+                /*  Skip over intermediates with empty buckets */
+                i = j;
+                /* bucket i is now the base */
+                curbucket = dn->dn_bucket_array+i;
+                break;
             }
         }
         if (j >= dn->dn_bucket_count) {
-            /* Ran off end */
+            /*  Ran off end of bucket array. */
+            /*  Fix to github Issue #330.  */
             curbucket->db_collisioncount =
-                dn->dn_name_count - curbucket->db_nameindex;
-            if (!curbucket->db_collisioncount) {
-                curbucket->db_collisioncount = 1;
-            }
+                dn->dn_name_count - curbucket->db_nameindex +1;
             break;
         }
     }
