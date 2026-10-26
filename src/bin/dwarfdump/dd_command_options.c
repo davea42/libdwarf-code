@@ -1,5 +1,5 @@
 /*
-  Copyright 2010-2018 David Anderson. All rights reserved.
+  Copyright 2010-2026 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of version 2 of the GNU General
@@ -760,7 +760,7 @@ OPT_FORMAT_FILE,              /* -u<file> --format-file=<file> */
 OPT_FORMAT_GCC,               /* -cg      --format-gcc         */
 OPT_FORMAT_GROUP_NUMBER,      /* -x<n>  --format-group-number=<n>*/
 
-/* -x<n>  --format-universalnumber=<n>*/
+/* -x universalnumber=<n> --format-universalnumber=<n>*/
 OPT_FORMAT_GROUP_UNIVERSALNUMBER,
 
 OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>   */
@@ -1917,23 +1917,19 @@ insert_debuglink_path(char *p)
     return DW_DLV_OK;
 }
 
-/*  Option --add-debuglink-path=<text> */
+/*  Option --add-debuglink-path=<text> 
+    Only the <text> portion is in dwoptarg */
 void arg_add_debuglink_path(void)
 {
+    int res = 0;
+
     if (!dwoptarg || !dwoptarg[0]) {
         arg_usage_error = TRUE;
         return;
     }
-    if (strncmp(dwoptarg,"add-debuglink-path=",21) == 0) {
-        dwoptarg = &dwoptarg[21];
-        if (strlen(dwoptarg)) {
-            int res = 0;
-
-            res = insert_debuglink_path(dwoptarg);
-            if (res == DW_DLV_OK) {
-                return;
-            }
-        }
+    res = insert_debuglink_path(dwoptarg);
+    if (res == DW_DLV_OK) {
+        return;
     }
     arg_debuglink_path_invalid();
 }
@@ -2237,7 +2233,7 @@ void arg_x_multiple_selection(void)
         dwoptarg = &dwoptarg[12];
         arg_format_groupnumber();
     } else if (strncmp(dwoptarg,"universalnumber=",16) == 0) {
-        dwoptarg = &dwoptarg[12];
+        dwoptarg = &dwoptarg[16];
         arg_format_universalnumber();
     } else if (strncmp(dwoptarg,"tied=",5) == 0) {
         dwoptarg = &dwoptarg[5];
@@ -2279,8 +2275,11 @@ arg_file_abi(void)
 }
 
 /*  Option '-x universalnumber='
+    and '--format-universal-number='
     greater than zero only applies to Mach-O universal
-    object files*/
+    object files. dwoptarg here has what follows the =
+    on the command line.  Must be a number following =,
+    and not an empty string. */
 static void
 arg_format_universalnumber(void)
 {
@@ -2291,7 +2290,8 @@ arg_format_universalnumber(void)
     int res = 0;
 
     if (!dwoptarg || !dwoptarg[0]) {
-        printf("ERROR *groupnumber= does not allow an empty text\n");
+        printf("ERROR *universalnumber= "
+            "does not allow an empty text\n");
         glflags.gf_count_major_errors++;
         arg_usage_error = TRUE;
         return;
