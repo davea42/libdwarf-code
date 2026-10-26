@@ -110,6 +110,8 @@ print_one_macro_entry(long i,
         if (mdp->dmd_fileindex == 0) {
             mdp->dmd_macro = "<zero index, no file specified>";
         } else if (srcf_count > 0  &&
+            /* testing dmd_fileindex for corrupted data */ 
+            mdp->dmd_fileindex > 0 &&
             mdp->dmd_fileindex <= srcf_count) {
             mdp->dmd_macro = srcfiles[mdp->dmd_fileindex-1];
         } else {

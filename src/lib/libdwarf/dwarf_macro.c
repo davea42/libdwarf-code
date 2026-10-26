@@ -223,6 +223,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
     unsigned long count = 0;
     unsigned long max_count = (unsigned long) maximum_count;
+ 
+
     _dwarf_reset_index_macro_stack(&msdata);
     if (IS_INVALID_DBG(dbg)) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
@@ -465,6 +467,20 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 return res;
             }
+            {
+                Dwarf_Signed sindex = 0;
+                sindex = (Dwarf_Signed)v1;
+                if (sindex < 0) {
+                    free_macro_stack(dbg,&msdata);
+                    dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_DEBUG_MACRO_INCONSISTENT,
+                        "DW_DLE_DEBUG_MACRO_INCONSISTENT"
+                         " DW_MACINFO_start_file negative "
+                         "Corrupt DWARF");
+                    return DW_DLV_ERROR;
+                }
+            }
             pdmd->dmd_lineno = v1;
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
@@ -480,6 +496,21 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 return res;
+            }
+            {
+                Dwarf_Signed sindex = 0;
+
+                sindex = (Dwarf_Signed)v1;
+                if (sindex < 0) {
+                    free_macro_stack(dbg,&msdata);
+                    dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_BAD_MACRO_INDEX,
+                        "DW_DLE_BAD_MACRO_INDEX: "
+                        " The file index read from object data"
+                        " is negative. Corrupt DWARF.");
+                    return DW_DLV_ERROR;
+                }
             }
             pdmd->dmd_fileindex = v1;
             (void) _dwarf_macro_stack_push_index(dbg, fileindex,
