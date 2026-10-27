@@ -1,3 +1,129 @@
+2026-10-27:  David Anderson
+    commit c04b95668ead62745542beb0d52bf2bcd8b12068
+
+    Fixed github Issue #343
+    An error check was in the wrong place
+    and another error involving an error message
+    that was incorrect.
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2026-10-27:  David Anderson
+    commit 07a95466908be75fbca9164a9ed5af5be7df5419
+
+    Fixing github Issues #342 and Issue #344
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+    Bugs created when the code was originally written.
+
+2026-10-26:  David Anderson
+    commit 924ef2eb3df73ff1235fabbbd202ff5c9a9132e1
+
+    Fix to github Issue #339.
+
+    We were not counting all the space reduction that -kE
+    wanted to report.
+    The AI figured out the correct fix.
+    It's been wrong here, for quite a few years.
+            modified:   src/bin/dwarfdump/dd_check_attr_encoding.c
+
+2026-10-26:  David Anderson
+    commit 0bb16cdc2c145ca1c317f6c6eac90c6263601d28
+
+    Very old bug. Years old.
+    -x universalbinary=
+    and
+    --add-debuglink-path=
+    did not work.
+    Now these work and are tested in regressiontests.
+    github issue #338
+            modified:   dd_command_options.c
+
+2026-10-26:  David Anderson
+    commit 1635b440619100877269ba20988de719a89481a4
+
+    Remove trailing whitespace.
+            modified:   print_macinfo.c
+
+2026-10-26:  David Anderson
+    commit 6a9253c955afaa315a0a302c49c941f7436ce731
+
+    These now guard against file index that is so large it is
+    actually negative.
+    Fixing github issue #340.
+    The lack of checking has been in place since
+    these source files were written. Ie, for years.
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+
+2026-10-25:  David Anderson
+    commit 21e75eff80d88d281c8bffbe99231cf9eac152ae
+
+    Fixes github issue #337.  Now we handle multiple
+    .debug_str_offsets offsets tables correctly.
+    This has been wrong since DWARF5 support added.
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2026-10-25:  David Anderson
+    commit 5d9631d0c456cc55618046fb17a30ce567f64eaf
+
+    Examination of the code setting up bucket data
+    in .debug_names showed that github Issue #330
+    is correct but  second bug in the same function
+    was even more important and is now fixed.
+    These bugs have been present since .debug_names
+    (DWARF5) support was added to libdwarf.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2026-10-25:  David Anderson
+    commit de987ed555c5b50e1959abf4a006ba7769acb2bb
+
+    Minor change to bucket table header line.
+            modified:   print_debug_names.c
+
+2026-10-24:  David Anderson
+    commit 2ce1e9a369f6283508930fd9fe033845e4f7d02d
+
+    Remove trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2026-10-23:  David Anderson
+    commit 71f04013ddc2a3c88b9e25a4162ee2824741b593
+
+    Github Issue #336.  Corrects a bug calculating .debug_addr
+    offsets.  Also adds checks
+    for unsigned integer addition overflow.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2026-10-23:  David Anderson
+    commit bb038c90e3df525213c151aa4f1b22dcc9eeed65
+
+    Added sanity checks for unsigned integer addition overflow.
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+
+2026-10-23:  David Anderson
+    commit 471603a561097c3002d573e2300c7812162ce420
+
+    Introducing test/test_strstrnocase.c to a build
+    using meson.
+            modified:   test/meson.build
+
+    Changed int main() to int main(void) to
+    match a C standard default prototype.
+            modified:   test/test_strstrnocase.c
+
+2026-10-23:  David Anderson
+    commit 51ffc0eb938b9cdc867cd5bbcc241a485b5750fd
+
+    Add extra testcases to verify a corner case
+    works as intended.
+            modified:   test/test_strstrnocase.c
+
+2026-10-22:  David Anderson
+    commit f2d442c5e3b7ca874c0f686053ffdea7a29d5f9e
+
+    Updated from gitlog
+            modified:   ChangeLog
+
 2026-10-22:  David Anderson
     commit bf40dbf2508043d19dc0bcbdfd67b3b7f6e3a131
 
