@@ -210,9 +210,8 @@ print_attributes_encoding(Dwarf_Debug dbg,
         Dwarf_Bool intro_printed = FALSE;
 
         for (index = 0; index < DW_AT_lo_user; ++index) {
-            if (!intro_printed &&
-                attributes_encoding_table[index].leb128) {
-                {
+            if (attributes_encoding_table[index].leb128) {
+                if (!intro_printed){
                     intro_printed = TRUE;
                     printf("\n*** SPACE USED AND WASTED BY ATTRIBUTE "
                         "ENCODINGS of DW_FORM_data<n> ***\n");
