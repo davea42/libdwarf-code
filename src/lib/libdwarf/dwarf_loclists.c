@@ -35,6 +35,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* free() malloc() */
 #include <stdio.h> /* printf debugging */
 #include <string.h> /* memset() */
+#include <stdint.h> /* uintptr_t */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -139,6 +140,14 @@ counted_loc_descr(Dwarf_Debug dbg,
     Dwarf_Unsigned leblen = 0;
     DECODE_LEB128_UWORD_LEN_CK(data,ops_len,leblen,
         dbg,error,enddata);
+    /*  If enddata <= data the macro above returns DW_DLV_ERROR. */
+    if (ops_len > (Dwarf_Unsigned)(uintptr_t)(enddata - data)) {
+        _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+            "DW_DLE_LOCLISTS_ERROR: "
+            "The counted location expression length "
+            "runs past the end of its allowed space");
+        return DW_DLV_ERROR;
+    }
     *loc_ops_count_len = leblen;
     *loc_ops_overall_size = ops_len+leblen;
     *loc_ops_len = ops_len;
@@ -409,7 +418,23 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-
+    if (offset >= sectionlength ||
+        (arealen+offset_size+exten_size) > (sectionlength - offset)) {
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_SECTION_SIZE_ERROR: A .debug_loclists "
+            "area size of 0x%x ",arealen);
+        dwarfstring_append_printf_u(&m,
+            "at offset 0x%x ",offset);
+        dwarfstring_append_printf_u(&m,
+            "runs past the end of the section (size "
+            "0x%x). Corrupt DWARF.",sectionlength);
+        _dwarf_error_string(dbg,error,DW_DLE_SECTION_SIZE_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     buildhere->lc_length = arealen +offset_size+exten_size;
     buildhere->lc_dbg = dbg;
     buildhere->lc_index = contextnum;
@@ -1242,7 +1267,6 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     }
     secsize = dbg->de_debug_loclists.dss_size;
     ctx = attr->ar_cu_context;
-    array = dbg->de_loclists_context;
     if (dbg != ctx->cc_dbg) {
         /* is_loclistx TRUE */
         /*  Now find the correct secondary CU context via
@@ -1304,12 +1328,6 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
                 enough checking.  So this is a special
                 accommodation for the specific user code and
                 we cannot guarantee this suffices. */
-            if (!array) {
-                _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
-                    "DW_DLE_LOCLISTS_ERROR: "
-                    "no .debug_loclists context available");
-                return DW_DLV_ERROR;
-            }
             loclists_contextnum = 0;
             /* FALL THROUGH */
         } else {
@@ -1318,6 +1336,13 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     }
 
     /*  C */
+    array = dbg->de_loclists_context;
+    if (!array) {
+        _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+            "DW_DLE_LOCLISTS_ERROR: "
+            "no .debug_loclists context available..");
+        return DW_DLV_ERROR;
+    }
     rctx = array[loclists_contextnum];
     table_base = rctx->lc_offsets_array;
     entrycount = rctx->lc_offset_entry_count;

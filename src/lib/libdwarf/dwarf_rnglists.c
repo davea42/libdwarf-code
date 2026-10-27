@@ -1518,6 +1518,12 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
     }
     /* C */
     array = localdbg->de_rnglists_context;
+    if (!array) {
+        _dwarf_error_string(dbg,error,DW_DLE_RLE_ERROR,
+            "DW_DLE_RLE_ERROR: "
+            "no .debug_rnglists context available..");
+        return DW_DLV_ERROR;
+    }
     rctx = array[rnglists_contextnum];
     table_base = rctx->rc_offsets_array;
     entrycount = rctx->rc_offset_entry_count;
