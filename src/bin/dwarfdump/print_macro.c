@@ -534,22 +534,25 @@ add_to_file_stack(unsigned k,
         if (!didprintdwarf && !glflags.gf_do_check_dwarf) {
             printf("%s",sanitized(esb_get_string(mtext)));
         }
+        if (macfile_stack_next_to_use < 1) {
+            printf("MACRONOTE: End file operation just above"
+                "  MOFF=0x%" DW_PR_XZEROS DW_PR_DUx
+                " has no applicable start file!"
+                " more DW_MACRO_end_file than DW_MACRO_start_file."
+                " 'dwarfdump --print-macinfo <objectfile>' "
+                " to see the instances."
+                " Possibly corrupt dwarf.\n",
+                macro_unit_offset);
+            glflags.gf_count_macronotes++;
+            return;
+        }
+#if 0
         if (!glflags.gf_do_check_dwarf) {
             macfile_entry *m = 0;
             m = macfile_from_array_index(
                 macfile_array_next_to_use -1);
-            if (macfile_stack_next_to_use < 1) {
-                printf("MACRONOTE: End file operation just above"
-                    "  MOFF=0x%" DW_PR_XZEROS DW_PR_DUx
-                    " file %s"
-                    " has no applicable start file!"
-                    " Possibly corrupt dwarf.\n",
-                    macro_unit_offset,
-                    sanitized(m->ms_filename));
-                glflags.gf_count_macronotes++;
-                return;
-            }
         }
+#endif
         /* Leave the file array untouched. */
         stack_useme = macfile_stack_next_to_use -1;
         macfile_stack[stack_useme] = 0;
