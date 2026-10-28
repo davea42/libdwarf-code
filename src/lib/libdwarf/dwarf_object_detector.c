@@ -700,11 +700,11 @@ match_buildid(
         }
         return TRUE;
     }
-    if (!blockmatch(buildid_base,buildid_debug,
-        buildid_length_base)) {
+    if (buildid_length_base != buildid_length_debug) {
         return FALSE;
     }
-    if (buildid_length_base != buildid_length_debug) {
+    if (!blockmatch(buildid_base,buildid_debug,
+        buildid_length_base)) {
         return FALSE;
     }
     return TRUE;
