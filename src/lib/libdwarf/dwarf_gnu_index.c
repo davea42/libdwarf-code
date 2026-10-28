@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020 David Anderson. All Rights Reserved.
+  Copyright (C) 2020-2026 David Anderson. All Rights Reserved.
   Redistribution and use in source and binary forms, with
   or without modification, are permitted provided that the
   following conditions are met:
@@ -128,6 +128,7 @@ dump_block(const char *msg,int bn, int lno,
     fflush(stdout);
 }
 #endif /*0*/
+
 /*  We could use dwarf_get_real_section_name()
     to determine the real name (perhaps ending in .dwo)
     but for now we just use the standard name here. */
@@ -375,12 +376,13 @@ _dwarf_count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
                 /* end of string */
                 break;
             }
-            if (curptr > endptr) {
-                build_errm_no_v(dbg,for_gnu_pubnames,
-                    "Past end of current block reading strings",
-                    error);
-                return DW_DLV_ERROR;
-            }
+        }
+        if (curptr >= endptr) {
+            build_errm_no_v(dbg,for_gnu_pubnames,
+                "Past end of current block reading strings"
+                " (NUL terminator missing).",
+                error);
+            return DW_DLV_ERROR;
         }
         /* string-terminating null byte */
         curptr += 1;
