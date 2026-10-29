@@ -1057,6 +1057,10 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
         col_is_cfa = TRUE;
     }
     table_real_data_size = dbg->de_frame_reg_rules_entry_count;
+    if (!col_is_cfa && table_column >= table_real_data_size) {
+        _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
+        return DW_DLV_ERROR;
+    }
     /*  The second part of the 'if' here is just in case it's not
         inside the table.  For non-MIPS it must be
         outside the table.  It was a mistake
@@ -1075,12 +1079,6 @@ dwarf_get_fde_info_for_reg3_c(Dwarf_Fde fde,
             table_real_data_size,NULL, error);
         if (res != DW_DLV_OK) {
             return res;
-        }
-        if (!col_is_cfa && table_column >= table_real_data_size) {
-            _dwarf_empty_frame_table(fde_frame_table);
-            fde->fd_have_fde_frame_tab = FALSE;
-            _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
-            return DW_DLV_ERROR;
         }
     }
     /*  _dwarf_get_fde_info_for_a_pc_row will perform
