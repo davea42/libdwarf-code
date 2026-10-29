@@ -84,7 +84,7 @@ dwarf_get_FORM_CLASS_name (enum Dwarf_Form_Class fc,
         *s_out = "DW_FORM_CLASS_FRAMEPTR";
         return DW_DLV_OK;
     case DW_FORM_CLASS_MACROPTR:
-        *s_out = "DW_FORM_CLASS_MAXCROPTR";
+        *s_out = "DW_FORM_CLASS_MACROPTR";
         return DW_DLV_OK;
     case DW_FORM_CLASS_ADDRPTR:
         *s_out = "DW_FORM_CLASS_ADDRPTR";
