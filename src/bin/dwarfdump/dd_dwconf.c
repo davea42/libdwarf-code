@@ -65,6 +65,20 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 */
 #define MAX_NEST_LEVEL 3
 
+/*  These are arbitrary, used for sanity checking.
+    But nothing so far suggests anyone wants larger values
+    for a table size or a register number.
+    Register numbers are stored as Dwarf_Unsigned in libdwarf.
+    The existing dwarfdump.conf itself is 700 lines,
+    and under 14000 bytes, and pseudo registers (such
+    as DW_FRAME_SAME_VALUE and the CFA) in libdwarf are
+    typically in the range 10K -15K.
+*/
+
+#define MAX_TABLE_SIZE      100000000 /* As number or as bytes. */
+#define MAX_REGISTER_NUMBER 10000000
+#define MAX_ADDRESS_SIZE 16 /* 4 and 8 are typical address sizes */
+
 struct token_s {
     unsigned tk_len;
     char *tk_data;
@@ -141,6 +155,21 @@ struct conf_internal_s {
     const char * conf_name_used;
     char ** conf_defaults;
 };
+
+static void
+log_and_exit(const char *cause,
+    unsigned long val,
+    unsigned long maxallowed,
+    const char *fname,
+    unsigned long lineno)
+{
+    printf("ERROR: %s "
+        "value is %lu but the maximum allowed is %lu. "
+        " reading conf file %s, line %lu. Giving up.\n",
+        cause,val,maxallowed,fname,lineno);
+    exit(EXIT_FAILURE);
+}
+
 static void
 init_conf_internal(struct conf_internal_s *s,
     struct dwconf_s * conf_out)
@@ -756,12 +785,20 @@ add_to_reg_table(struct dwconf_s *conf,
         conf->cf_regs = 0;
         conf->cf_named_regs_table_size = 0;
     }
+    if (rval > MAX_REGISTER_NUMBER) {
+        log_and_exit("adding a register",rval,MAX_REGISTER_NUMBER,
+            fname,lineno);
+    }
     if (rval >= conf->cf_named_regs_table_size) {
         char **newregs = 0;
         unsigned long newtablen = rval + CONF_TABLE_OVERSIZE;
         unsigned long newtabsize = newtablen * sizeof(char *);
         unsigned long oldtabsize =
             conf->cf_named_regs_table_size * sizeof(char *);
+        if (newtablen > MAX_TABLE_SIZE) {
+            log_and_exit("New table size",rval,MAX_REGISTER_NUMBER,
+                fname,lineno);
+        }
         newregs = realloc(conf->cf_regs, newtabsize);
         if (!newregs) {
             printf("dwarfdump: unable to malloc table %lu bytes. "
@@ -845,6 +882,10 @@ parsereg(char *cp, const char *fname, unsigned long lineno,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &regnum, &val);
+    if (val > MAX_REGISTER_NUMBER) {
+        log_and_exit("New register number",val,MAX_REGISTER_NUMBER,
+            fname,lineno);
+    }
 
     if (!ok) {
         ++errcount;
@@ -930,6 +971,10 @@ parsecfa_reg(char *cp, const char *fname, unsigned long lineno,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+    if (val > MAX_REGISTER_NUMBER) {
+        log_and_exit("New cfa number",val,MAX_REGISTER_NUMBER,
+            fname,lineno);
+    }
 
     if (!ok) {
         ++errcount;
@@ -965,6 +1010,10 @@ parseinitial_reg_value(char *cp, const char *fname,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+    if (val > MAX_REGISTER_NUMBER) {
+        log_and_exit("Initial register rule",val,
+            MAX_REGISTER_NUMBER, fname,lineno);
+    }
 
     if (!ok) {
 
@@ -998,6 +1047,10 @@ parsesame_val_reg(char *cp, const char *fname,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+    if (val > MAX_REGISTER_NUMBER) {
+        log_and_exit("Same Value register rule",val,
+            MAX_REGISTER_NUMBER, fname,lineno);
+    }
 
     if (!ok) {
 
@@ -1031,6 +1084,10 @@ parseundefined_val_reg(char *cp, const char *fname,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+    if (val > MAX_REGISTER_NUMBER) {
+        log_and_exit("Undefined Value register rule",val,
+            MAX_REGISTER_NUMBER, fname,lineno);
+    }
 
     if (!ok) {
 
@@ -1066,6 +1123,10 @@ parsereg_table_size(char *cp, const char *fname, unsigned long lineno,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+    if (val > MAX_TABLE_SIZE) {
+        log_and_exit("Table Size",val,
+            MAX_TABLE_SIZE, fname,lineno);
+    }
 
     if (!ok) {
         ++errcount;
@@ -1076,7 +1137,7 @@ parsereg_table_size(char *cp, const char *fname, unsigned long lineno,
     return res;
 }
 
-/* We are guaranteed it's a table size command, parse it
+/* We are guaranteed it's an address size command, parse it
     and record the table size.
 */
 static int
@@ -1100,6 +1161,10 @@ parseaddress_size(char *cp, const char *fname, unsigned long lineno,
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+    if (val > MAX_ADDRESS_SIZE) {
+        log_and_exit("Address Size",val,
+            MAX_ADDRESS_SIZE, fname,lineno);
+    }
 
     if (!ok) {
         ++errcount;
