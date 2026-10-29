@@ -48,7 +48,6 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
 */
 
-
 /*  Used for all sorts of tables, not just e_machine */
 struct em_values {
     const char *em_name;
@@ -90,4 +89,4 @@ void  dd_get_elf_symbol_stt_type(
     struct esb_s *out);
 
 void dd_get_elf_osabi_name(Dwarf_Unsigned value,
-        struct esb_s *out);
+    struct esb_s *out);

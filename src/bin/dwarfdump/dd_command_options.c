@@ -1917,7 +1917,7 @@ insert_debuglink_path(char *p)
     return DW_DLV_OK;
 }
 
-/*  Option --add-debuglink-path=<text> 
+/*  Option --add-debuglink-path=<text>
     Only the <text> portion is in dwoptarg */
 void arg_add_debuglink_path(void)
 {
