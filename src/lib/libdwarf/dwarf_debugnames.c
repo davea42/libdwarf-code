@@ -1174,7 +1174,7 @@ _dwarf_initialize_bucket_details(Dwarf_Dnames_Head dn,
         for (j = i+1; j < dn->dn_bucket_count; ++j) {
             struct Dwarf_DN_Bucket_s *partial =
                 dn->dn_bucket_array+j;
-            
+
             if (partial->db_nameindex) {
                 /* Found one. Count it. */
                 curbucket->db_collisioncount =

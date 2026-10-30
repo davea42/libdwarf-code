@@ -223,7 +223,6 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
     unsigned long count = 0;
     unsigned long max_count = (unsigned long) maximum_count;
- 
 
     _dwarf_reset_index_macro_stack(&msdata);
     if (IS_INVALID_DBG(dbg)) {
@@ -476,8 +475,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                     _dwarf_error_string(dbg, error,
                         DW_DLE_DEBUG_MACRO_INCONSISTENT,
                         "DW_DLE_DEBUG_MACRO_INCONSISTENT"
-                         " DW_MACINFO_start_file negative "
-                         "Corrupt DWARF");
+                        " DW_MACINFO_start_file negative "
+                        "Corrupt DWARF");
                     return DW_DLV_ERROR;
                 }
             }
