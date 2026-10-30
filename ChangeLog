@@ -1,3 +1,121 @@
+2026-10-30:  David Anderson
+    commit ccde17f569ac00d709b19f1397342f2bbb9946ce
+
+    Clarified by renaming output field description.
+    Corrected spelling for DW_LLEX_start_length_entry.
+    Removed an erroneous part of data printed:
+        " .debug_addr not available>"
+    modified:   src/bin/dwarfdump/print_llex_codes.c
+
+2026-10-30:  David Anderson
+    commit 125c7e61b48105b54897a0a7c10c2838d9921b3b
+
+    Adding new local variable to clarify
+    what is going on.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+2026-10-30:  David Anderson
+    commit 4efe093fe7579a352f4e70bd1603a604a1d6b391
+
+    removing accidental blank line.
+            modified:   ../../bin/dwarfdump/dwarfdump.c
+
+2026-10-30:  David Anderson
+    commit efbe639b047602ee506fd00961d6c4e1530b93a8
+
+    Fixing indent and removing trailing whitespace.
+            modified:   dwarf_debugnames.c
+            modified:   dwarf_macro.c
+
+2026-10-30:  David Anderson
+    commit a0cf3a8c71e096c9e8d57beb840a00fb6a3a4b5e
+    Merge: d311959d 7d993cfe
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+
+    Merging Issue 349 from pull request.
+
+2026-10-31:  Martin Mirchev
+    commit 7d993cfe52f726e9413bd9eccd8815aa4c124fdc
+
+    Use the end index for the high address of DW_LLE_GNU_start_end_entry (#349)
+
+    cook_gnu_loclist_contents() looked up both the low and the high address
+    of a GNU DWARF4 split-DWARF start_end loclist entry with ld_rawlow, so
+    every such entry was reported as the empty range [low, low). Look up the
+    high address with ld_rawhigh, as the DWARF5 DW_LLE_startx_endx case in
+    cook_loclists_contents() does.
+
+2026-10-29:  David Anderson
+    commit d311959dd0de50ff4004a1a7397c04cc894e4b22
+
+    Fixing github Issue 348
+    Was using the wrong type to decide the decompress.
+    Was re-reading from the compressed data.
+    Now uses the correct type (now named ch_type) and uses
+    the decompressed data.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-10-30:  Martin Mirchev
+    commit 6db85c046577bda09883cee713603d86c2e62611
+
+    Check the bounds of a DW_FORM_ref1 value in dwarf_formref() (#351)
+
+    The ref2/ref4/ref8/ref_udata cases read through READ_UNALIGNED_CK with
+    the section end, but DW_FORM_ref1 dereferenced ar_debug_ptr without a
+    check, so an attribute that ends the section read one byte past it.
+    Use the guard dwarf_global_formref() already has.
+
+2026-10-30:  Martin Mirchev
+    commit e62b0e63e3a488470c355688173802130c5aa697
+
+    Fix the name returned for DW_FORM_CLASS_MACROPTR (#350)
+
+    dwarf_get_FORM_CLASS_name() returned "DW_FORM_CLASS_MAXCROPTR" for
+    DW_FORM_CLASS_MACROPTR, which dwarfdump prints, for example with -ku.
+
+2026-10-29:  David Anderson
+    commit bc3d39e103cd7d332b8a6756b7f5972664676bbc
+
+    Fix for github issue #347.
+    A too large register number leads to
+    writing outside a malloc'd table.
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+
+2026-10-29:  David Anderson
+    commit 7137d26c590f829a29a4ba2696509a45fd7b3a1e
+
+    Remove trailing whitespace.
+    Fix an indent.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_elf_naming.h
+
+2026-10-28:  David Anderson
+    commit e6d1bbbcd36086c506fe15f575f48cc77f51833d
+
+    Github Issue 346.
+    If the last name in a .debug_gnu_pubnames block has no NUL inside the block's entry area, and the 4-byte end-of-block word (which should be zero) is not zero, dwarfdump --print-debug-gnu prints the name with a string scan that runs off the end of the section buffer. Here is a 27-byte section with one block and one entry.
+    Now we check that the string is NUL terminated
+    and return an error if the is not properly terminated.
+    It has been a bug since this code was written in 2020.
+            modified:   dwarf_gnu_index.c
+
+2026-10-28:  David Anderson
+    commit d6e6a4f49a8e201761d33d7480a48d791c485c3a
+
+    Github Issue #345
+    Bogus data in a .debug_id was causing
+    a crash (reading a corrupted object file).
+    This has been a bug since support for .debug_id
+    was added.
+            modified:   dwarf_object_detector.c
+
+2026-10-27:  David Anderson
+    commit 63bf9f780dbf08ceb28a844fc514b95867aba459
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2026-10-27:  David Anderson
     commit c04b95668ead62745542beb0d52bf2bcd8b12068
 
