@@ -1383,7 +1383,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
                 llc->ld_lopc = targaddr;
             }
             res = _dwarf_look_in_local_and_tied_by_index(
-                dbg,cucontext,llc->ld_rawlow,&targaddr,
+                dbg,cucontext,llc->ld_rawhigh,&targaddr,
                 error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
