@@ -1096,7 +1096,7 @@ homeify(char *s, struct esb_s* out)
     char *home = getenv("HOME");
     size_t homelen = 0;
 
-    if (!home) {
+    if (!home || !*home) {
         /* giving up */
         esb_append(out,s);
         return;
