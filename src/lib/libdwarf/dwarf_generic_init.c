@@ -331,11 +331,9 @@ dwarf_init_path_dl_a(const char *path,
             &ftype,&endian,&offsetsize,&filesize,
             &lpath_source,
             &errcode);
-        if (res != DW_DLV_OK ) {
-            if (res == DW_DLV_ERROR) {
-                errcode = 0;
-            }
-        }
+        /*  On DW_DLV_ERROR keep errcode: without a
+            true_path buffer there is no retry below
+            and errcode is what we report. */
     }
     if (res != DW_DLV_OK && true_path_out_buffer &&
         true_path_bufferlen) {
