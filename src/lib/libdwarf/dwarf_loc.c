@@ -1369,6 +1369,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             }
         case DW_LLEX_start_end_entry:{
             Dwarf_Addr targaddr = 0;
+            Dwarf_Addr targaddrhi = 0;
             res = _dwarf_look_in_local_and_tied_by_index(
                 dbg,cucontext,llc->ld_rawlow,&targaddr,
                 error);
@@ -1383,7 +1384,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
                 llc->ld_lopc = targaddr;
             }
             res = _dwarf_look_in_local_and_tied_by_index(
-                dbg,cucontext,llc->ld_rawhigh,&targaddr,
+                dbg,cucontext,llc->ld_rawhigh,&targaddrhi,
                 error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
@@ -1393,7 +1394,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
                     *error = 0;
                 }
             } else {
-                llc->ld_highpc = targaddr;
+                llc->ld_highpc = targaddrhi;
             }
 
             break;
@@ -1648,6 +1649,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         }
     }
     if (lkind == DW_LKIND_loclists) {
+
         if (is_loclistx) {
             if (ctx->cc_loclists_base_present ||
                 dbg->de_loclists_context_count == 1) {
