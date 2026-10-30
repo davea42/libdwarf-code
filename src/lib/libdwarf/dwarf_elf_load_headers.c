@@ -237,10 +237,10 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
             size-of-target-address
         */
         Dwarf_Small *ptr    = (Dwarf_Small *)basesrc;
-        Dwarf_Unsigned type = 0;
+        Dwarf_Unsigned ch_type = 0;
         Dwarf_Unsigned size = 0;
         /* Dwarf_Unsigned addralign = 0; */
-        ASNARLRAW(ep->f_copy_word,error,type,ptr,DWARF_32BIT_SIZE);
+        ASNARLRAW(ep->f_copy_word,error,ch_type,ptr,DWARF_32BIT_SIZE);
         if (*error) {
             return DW_DLV_ERROR;
         }
@@ -249,8 +249,7 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
         if (*error) {
             return DW_DLV_ERROR;
         }
-        type = psh->gh_type;
-        switch(type) {
+        switch(ch_type) {
         case ELFCOMPRESS_ZLIB:
             break;
         case ELFCOMPRESS_ZSTD:
@@ -945,6 +944,7 @@ _dwarf_generic_elf_load_symbols64(
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
+#if 0
     res = RRMOA(ep->f_fd,psym,offset,size,
         ep->f_filesize,errcode);
     if (res!= DW_DLV_OK) {
@@ -954,6 +954,7 @@ _dwarf_generic_elf_load_symbols64(
         *errcode = DW_DLE_ALLOC_FAIL;
         return res;
     }
+#endif
     orig_gsym = gsym;
     for ( i = 0; i < ecount; ++i,++psym,++gsym) {
         Dwarf_Unsigned bind = 0;
