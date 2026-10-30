@@ -964,7 +964,7 @@ validate_opcode(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     for (i = 0; i < curform->mf_formcount; ++i) {
-        if (curform->mf_formbytes[i] != stdfptr->mf_formbytes[1]) {
+        if (curform->mf_formbytes[i] != stdfptr->mf_formbytes[i]) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OPCODE_FORM_BAD);
             return DW_DLV_ERROR;
         }
@@ -982,13 +982,13 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     Dwarf_Error *error)
 {
     Dwarf_Small* table_data_start = macro_data;
+    Dwarf_Small* optable_start = macro_data;
     Dwarf_Unsigned local_size = 0;
     Dwarf_Unsigned cur_offset = 0;
     Dwarf_Small operand_table_count = 0;
     unsigned i = 0;
     struct Dwarf_Macro_Forms_s *curformentry = 0;
     Dwarf_Debug dbg = 0;
-    Dwarf_Byte_Ptr startptr = 0;
     Dwarf_Byte_Ptr endptr = 0;
 
     CHECKNULLCONTEXT(macro_context,dbg,error);
@@ -999,8 +999,10 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         return DW_DLV_ERROR;
     }
 
-    startptr = macro_context->mc_macro_header;
-    endptr = startptr + macro_context->mc_total_length;
+    /*  mc_total_length is not known yet (it is set
+        after the operands table has been read), so
+        the table can only be bounded by the section. */
+    endptr = section_base + section_size;
     READ_UNALIGNED_CK(dbg,operand_table_count,Dwarf_Small,
         macro_data,sizeof(Dwarf_Small),error,endptr);
     macro_data += sizeof(Dwarf_Small);
@@ -1087,7 +1089,9 @@ read_operands_table(Dwarf_Macro_Context macro_context,
             return res;
         }
     }
-    *table_size_out = macro_data - table_data_start;
+    /*  The size includes the opcode_operands_table_count
+        byte. */
+    *table_size_out = macro_data - optable_start;
     return DW_DLV_OK;
 }
 
