@@ -520,7 +520,6 @@ main(int argc, char *argv[])
         free(temp_path_buf);
         exit(EXIT_FAILURE);
     }
-
     if (esb_string_len(glflags.config_file_tiedpath) > 0) {
         unsigned         tftype = 0;
         unsigned         tendian = 0;
