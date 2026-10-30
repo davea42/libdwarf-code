@@ -96,7 +96,7 @@ print_llex_linecodes(
     case DW_LLEX_start_length_entry:
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
-                "<DW_LLEX_start_lenth_entry : 0x%"
+                "<DW_LLEX_start_length_entry : 0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 " .debug_addr not available>",rawlopc);
             esb_append_printf_u(esbp,
@@ -151,10 +151,10 @@ print_llex_linecodes(
                 esb_append_printf_i(esbp, "\n   [%2d]",llent);
             }
             esb_append_printf_u(esbp,
-                "< loaddr  0x%"
+                "<start-addr  0x%"
                 DW_PR_XZEROS DW_PR_DUx,lopc);
             esb_append_printf_u(esbp,
-                " hiaddr 0x%"
+                " endaddr 0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
@@ -167,6 +167,7 @@ print_llex_linecodes(
         }
         break;
     case DW_LLEX_start_end_entry:
+        /*  start and end are indexes into .debug_addr */
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_start_end_entry : 0x%"
@@ -183,17 +184,16 @@ print_llex_linecodes(
                 esb_append_printf_u(esbp,
                     "     0x%"
                     DW_PR_XZEROS DW_PR_DUx
-                    " .debug_addr not available>",rawhipc);
+                    " >",rawhipc);
                 esb_append_printf_i(esbp, "\n   [%2d]",llent);
             }
             esb_append_printf_u(esbp,
-                "< lowaddr : 0x%"
+                "<start-addr    0x%"
                 DW_PR_XZEROS DW_PR_DUx,lopc);
             esb_append_printf_u(esbp,
-                " highaddr  0x%"
+                " endaddr    0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
-
         }
         if (checking && !debug_addr_unavailable) {
             loc_error_check(
