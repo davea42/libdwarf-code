@@ -59,7 +59,34 @@
     0 2 4 or 8.
     If zero it means the following is address-size.
     The address then follows immediately for
-    that number of bytes. */
+    that number of bytes. 
+    The above was found long ago and is no longer correct.
+    What follows is current.
+
+    Linux Standard Base Core Specification 2.1
+    Chapter 7. EH Frame Header
+    DW_EH_PE_omit	0xff	No value is present.
+    DW_EH_PE_uleb128	0x01	Unsigned value is encoded using the Little Endian Base 128 (LEB128) as defined by DWARF Debugging Information Format.
+    DW_EH_PE_udata2	0x02	A 2 bytes unsigned value.
+    DW_EH_PE_udata4	0x03	A 4 bytes unsigned value.
+    DW_EH_PE_udata8	0x04	An 8 bytes unsigned value.
+    DW_EH_PE_sleb128	0x09	Signed value is encoded 
+    using the Little Endian Base 128 (LEB128)
+    as defined by DWARF Debugging Information Format.
+
+    DW_EH_PE_sdata2	0x0A	A 2 bytes signed value.
+    DW_EH_PE_sdata4	0x0B	A 4 bytes signed value.
+    DW_EH_PE_sdata8	0x0C	An 8 bytes signed value.
+
+    This is the only case where the value might be
+    signed. 
+    We stuff the signed value into an unsigned as this is
+    the only case so far where a signed value is possible..
+
+    We ignore the upper bits in 'op'. Meaning
+    we provide no access to those bits. Unfortunate.
+
+*/
 static int
 read_encoded_addr(Dwarf_Small *loc_ptr,
     Dwarf_Debug dbg,
@@ -72,6 +99,8 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     int len = 0;
     Dwarf_Half op = *loc_ptr;
     Dwarf_Unsigned operand = 0;
+    Dwarf_Signed operandsigned = 0;
+    Dwarf_Unsigned leb128_length = 0;
 
     len++;
     /*  The value follows the encoding byte. */
@@ -79,16 +108,22 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     if (!op) {
         op = address_size;
     }
+    if (op == 0xff) {
+        op = 0;
+    } else {
+        op = op & 0xf;
+    }
     switch (op) {
-    case 1:
-        if (loc_ptr >= section_end_ptr) {
-            _dwarf_error(dbg, error, DW_DLE_LOCEXPR_OFF_SECTION_END);
-            return DW_DLV_ERROR;
-        }
-        *val_out = *loc_ptr;
-        len++;
+    case 0:
+        *val_out = 0;
         break;
-
+    case 1: 
+        /* uleb value */
+        DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand,leb128_length,
+            dbg,error,section_end_ptr);
+        len += leb128_length;
+        *val_out = operand;
+        break;
     case 2:
         READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 2,
             error,section_end_ptr);
@@ -107,9 +142,43 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
         *val_out = operand;
         len +=8;
         break;
+    case 0x9:
+        /* sleb value */
+        DECODE_LEB128_SWORD_LEN_CK(loc_ptr, operandsigned,
+            leb128_length,
+            dbg,error,section_end_ptr);
+        len += leb128_length;
+        *val_out = (Dwarf_Unsigned)operandsigned;
+        break;
+    case 0xa:
+        /* 2 byte signed */
+        READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 2,
+            error, section_end_ptr);
+        SIGN_EXTEND(operand,2);
+        len += 2;
+        *val_out = operand;
+        break;
+    case 0xb:
+        /* 4 byte signed */
+        READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 4,
+            error, section_end_ptr);
+        SIGN_EXTEND(operand,4);
+        len += 4;
+        *val_out = operand;
+        break;
+    case 0xc:
+        /* 8 byte signed */
+        READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 8,
+            error, section_end_ptr);
+        SIGN_EXTEND(operand,8);
+        len += 8;
+        *val_out = operand;
+        break;
     default:
         /* We do not know how much to read. */
-        _dwarf_error(dbg, error, DW_DLE_GNU_OPCODE_ERROR);
+        _dwarf_error_string(dbg, error, DW_DLE_GNU_OPCODE_ERROR,
+             "DW_DLE_GNU_OPCODE_ERROR: Unknown exception header "
+             "value format for DW_OP_GNU_encoded_addr.");
         return DW_DLV_ERROR;
     };
     *len_out = len;
@@ -124,7 +193,6 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     All op reader code should call this to
     extract operator fields. For any
     DWARF version.
-
 */
 int
 _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
