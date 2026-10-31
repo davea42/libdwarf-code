@@ -238,7 +238,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         free_macro_stack(dbg,&msdata);
         return res;
     }
-    if (!dbg->de_debug_abbrev.dss_size) {
+    if (!dbg->de_debug_macinfo.dss_size) {
         free_macro_stack(dbg,&msdata);
         return DW_DLV_NO_ENTRY;
     }
