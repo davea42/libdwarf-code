@@ -551,14 +551,14 @@ print_attr_array(unsigned int indent,
     printindent(indent);
     printf("[]    idxnum formnum    idxname            formname\n");
     for ( ; k < count; ++k) {
-        const char *idname = 0;
-        const char *formname = 0;
+        const char *idname = "<unknownidx>";
+        const char *formname = "<unknownform>";
         Dwarf_Half a = idxattr_array[k];
         Dwarf_Half f = form_array[k];
 
         printindent(indent);
         printf("[%3" DW_PR_DUu "]", k);
-        printf(" 0x%04u 0x%04u", a,f);
+        printf(" 0x%04x 0x%04x", a,f);
         if (k == (count-1)) {
             if (a || f) {
                 printf("\nERROR: last entry should be 0,0"
@@ -592,7 +592,6 @@ check_die_pub_offset( Dwarf_Debug dbg,
     Dwarf_Die itemdie = 0;
     Dwarf_Unsigned global_offset = local_die_offset+
         cu_hd_offset;
-    Dwarf_Unsigned cuhdr_offset = 0;
 
     sres = dwarf_offdie_b(dbg,global_offset,
         is_info,&itemdie,&error);
@@ -603,7 +602,7 @@ check_die_pub_offset( Dwarf_Debug dbg,
             "0x%" DW_PR_DUx
             " = "
             "0x%" DW_PR_DUx "\n\n",
-            cuhdr_offset,local_die_offset,
+            cu_hd_offset,local_die_offset,
             global_offset);
         if (sres == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,error);
@@ -983,8 +982,8 @@ print_dname_record(Dwarf_Debug dbg,Dwarf_Dnames_Head dn,
     Dwarf_Half offset_size = 0;
     char * augstring = 0;
     unsigned int indent = 0;
-    Dwarf_Bool     has_single_cu_offset;
-    Dwarf_Bool     has_single_tu_offset;
+    Dwarf_Bool     has_single_cu_offset = FALSE;
+    Dwarf_Bool     has_single_tu_offset = FALSE;
     Dwarf_Unsigned single_cu_offset = 0;
     Dwarf_Unsigned single_tu_offset = 0;
 
