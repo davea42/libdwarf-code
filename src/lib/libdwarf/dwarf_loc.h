@@ -149,7 +149,7 @@ struct Dwarf_Locdesc_c_s {
 
     /*  count of struct Dwarf_Loc_Expr_Op_s (expression operators)
         in array. */
-    Dwarf_Half       ld_cents;
+    Dwarf_Unsigned   ld_cents;
     /* pointer to array of expression operator structs */
     Dwarf_Loc_Expr_Op      ld_s;
 

@@ -767,7 +767,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
         }
     }
-    locdesc->ld_cents = (Dwarf_Half)op_count;
+    locdesc->ld_cents = op_count;
     locdesc->ld_s = block_loc;
 
     locdesc->ld_lkind = lkind;
