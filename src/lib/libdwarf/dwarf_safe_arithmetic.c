@@ -135,14 +135,14 @@ _dwarf_uint64_mult(Dwarf_Unsigned x, Dwarf_Unsigned y,
     *result = x*y;
 #endif /*  */
     Dwarf_Unsigned computed = x * y;
-    Dwarf_Unsigned bigger = 0;
 
     *result = computed;
     if (!x || !y) {
         return DW_DLV_OK;
     }
-    bigger = (x > y)?x:y;
-    if (computed < bigger)  {
+    /*  Comparing the product with the larger operand
+        misses products that wrap past it, such as 3*2^63. */
+    if (computed / y != x) {
         return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
