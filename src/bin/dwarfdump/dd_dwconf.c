@@ -239,7 +239,7 @@ is_this_text_file(FILE *stream)
         if (c == '\r' || c == '\t') {
             continue;
         }
-        if (c >= ' ' && c <= '}') {
+        if (c >= ' ' && c <= '~') {
             continue;
         } else {
             printf("Found non-ascii character 0x%02x "

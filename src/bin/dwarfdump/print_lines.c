@@ -828,10 +828,16 @@ print_line_context_record(Dwarf_Line_Context line_context,
         }
         if (modtime) {
             time_t tt3 = (time_t)modtime;
+            const char *tstr = ctime(&tt3);
 
             /* ctime supplies newline */
-            printf( "file mod time 0x%lx %s", (unsigned long)tt3,
-                ctime(&tt3));
+            if (tstr) {
+                printf( "file mod time 0x%lx %s", (unsigned long)tt3,
+                    tstr);
+            } else {
+                printf( "file mod time 0x%lx <invalid time>\n",
+                    (unsigned long)tt3);
+            }
         } else {
             printf("  file mod time 0\n");
         }
