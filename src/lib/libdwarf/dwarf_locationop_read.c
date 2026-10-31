@@ -74,11 +74,17 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     Dwarf_Unsigned operand = 0;
 
     len++;
+    /*  The value follows the encoding byte. */
+    loc_ptr++;
     if (!op) {
         op = address_size;
     }
     switch (op) {
     case 1:
+        if (loc_ptr >= section_end_ptr) {
+            _dwarf_error(dbg, error, DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         *val_out = *loc_ptr;
         len++;
         break;
