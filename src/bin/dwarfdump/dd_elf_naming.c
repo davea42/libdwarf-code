@@ -386,10 +386,10 @@ dd_get_elf_machine_name(Dwarf_Unsigned value,
         esb_append(out,ev->em_name);
         return;
     }
-    esb_append_printf_u(out,"Unknown em_machine %d",
-        ev->em_number);
+    esb_append_printf_u(out,"Unknown em_machine %u",
+        value);
     esb_append_printf_u(out," (0x%x)",
-        ev->em_number);
+        value);
 }
 
 static struct em_values dtvals[] = {
