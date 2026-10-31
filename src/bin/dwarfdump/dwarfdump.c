@@ -1279,7 +1279,7 @@ process_one_file(
         {
             Dwarf_Unsigned index = 0;
             Dwarf_Unsigned count = 0;
-            dres = dwarf_get_universalbinary_count(dbg,&index,&count);
+            dres = dwarf_get_universalbinary_count(dbgtied,&index,&count);
             if (dres == DW_DLV_OK) {
                 const char * name = "object";
                 if (count != 1) {
