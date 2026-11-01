@@ -123,14 +123,14 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
         /* uleb value */
         DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand,leb128_length,
             dbg,error,section_end_ptr);
-        if (leb128_length > 200) {
+        if (leb128_length > 200 ) {
             _dwarf_error_string(dbg, error, DW_DLE_GNU_OPCODE_ERROR,
                 "DW_DLE_GNU_OPCODE_ERROR: a uleb128 longer "
                 "than 200 bytes means lots of leading zeros "
                 "and we presume a corrupted object file.");
             return DW_DLV_ERROR;
         }
-        len += (int)leb128_length;
+        len = len + (int)(unsigned int)leb128_length;
         *val_out = operand;
         break;
     case 2:
@@ -163,7 +163,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
                 "and we presume a corrupted object file..");
             return DW_DLV_ERROR;
         }
-        len += (int)leb128_length;
+        len = len + (int)(unsigned int)leb128_length;
         *val_out = (Dwarf_Unsigned)operandsigned;
         break;
     case 0xa:
