@@ -164,7 +164,7 @@ _dwarf_uint64_add(
         return DW_DLV_OK;
     }
     bigger = (dw_lhs > dw_rhs)?dw_lhs:dw_rhs;
-    if (computed && computed < bigger)  {
+    if (computed < bigger)  {
         return DW_DLV_ERROR;
     }
     *result = computed;
