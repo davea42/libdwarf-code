@@ -1,3 +1,176 @@
+2026-11-02:  Martin Mirchev
+    commit 0dc5bfdeb85e2e2099e96400f1a2472fb27227bd
+
+    github PR 365
+    Detect a sum that wraps to exactly 0 in _dwarf_uint64_add()
+    (#365) The overflow test skipped a zero result, so 1 +
+    (2^64-1) was accepted while 2 + (2^64-1) was rejected.
+    Both operands are nonzero at that point, so a zero
+    sum can only come from a wrap.
+
+    Signed-off-by: Martin Mirchev <mmirchev@comp.nus.edu.sg>
+
+2026-11-02:  Martin Mirchev
+    commit dbe06641eb195611582f9b1d94bff12769fa5217
+
+    github PR 364
+    Detect every overflow in _dwarf_uint64_mult() (#364)
+    Comparing the wrapped product with the larger operand
+    misses products that wrap past it, such as 3 * 2^63
+    and (2^32+1)^2. Check the product by division instead.
+
+Example by davea42 (for 64bit ull)
+#include "stdio.h"
+int main(void)
+{
+    unsigned long long v1 = 0;
+    unsigned long long v2 = 0;
+    unsigned long  long v3 = 0;
+
+    v1 = ((unsigned long long)1)<<63;
+    v3 =  3;
+    v2 = v3*v1;
+    if (v3/v1 != v1) {
+        printf("FAIL \n");
+    }
+}
+
+2026-11-01:  Martin Mirchev
+    commit 7c033dd24ba6e91b62ce20b43f0ca9765d48ff9c
+
+    dwarfdump: tied universal-binary count, '~' in
+    dwarfdump.conf, NULL ctime() (#363)
+
+    Take the tied-file universal-binary count from dbgtied
+    instead of dbg, accept '~' as a plain-text character
+    in dwarfdump.conf, and do not pass a NULL ctime()
+    result to printf %s.
+
+2026-11-01:  Martin Mirchev
+    commit c2fbdcc6592adb390db74290e9b77bd5b661c020
+This is a commit of PR #362
+operating on src/bin/dwarfdump/print_debug_names.c
+
+    dwarfdump: fix --print-debug-names output for unknown
+    names, form codes and cuhdroff (#362)
+
+    print_attr_array() printed NULL names with %s for an
+    unknown DW_IDX or form and printed the codes as decimal
+    with a 0x prefix.  check_die_pub_offset() printed a
+    never-assigned local instead of the CU header offset.
+    print_dname_record() left has_single_cu_offset and
+    has_single_tu_offset uninitialised when the CU or TU
+    list is empty.
+
+2026-10-31:  David Anderson
+    commit 3a5cc7f1f9b5b9a2c8afa8f857de76deefb08cb4
+
+    Issue #354
+    Fixed the operand read in read_encoded_addr.c
+    then rewrote the function do support the real
+    meaning of the initial byte of
+    DW_OP_GNU_encoded_addr.
+    See DWARF Exception Header Encoding in
+    Linux Standard Base Core Specification 2.1
+            modified:   dwarf_locationop_read.c
+
+2026-10-31:  Martin Mirchev
+    commit 84e3c95a4295ade91eac116370032ed222d4a197
+
+    dwarfdump: print an unknown e_machine value, ignore an empty HOME (#361)
+
+    For an e_machine value not in the table,
+    dd_get_elf_machine_name() printed ev->em_number,
+    which is then the next table entry (or the sentinel),
+    with %d, which esb_append_printf_u() rejects: e_machine
+    254 showed "Unknown em_machine ESBERR_pct_dcount_error_u
+    (0x102)". Print the value itself with %u.
+
+    homeify() handled an unset HOME but not an empty one:
+    with HOME= every file name matched and got a "$HOME"
+    prefix. Treat an empty HOME like an unset one.
+
+2026-10-31:  Martin Mirchev
+    commit a8e0729ec3f7f20e64d8d5bc47e9b4cce1e47e3f
+
+    Keep the error code in dwarf_init_path() without a
+    true_path buffer (#360)
+
+    When dwarf_object_detector_path_b() failed,
+    dwarf_init_path_dl_a() reset errcode to 0. Without
+    a true_path buffer there is no retry, so the caller
+    got DW_DLV_ERROR with "DW_DLE_No error (0)" instead
+    of e.g.  DW_DLE_FILE_TOO_SMALL. Keep the detector's
+    error code.
+
+    Fixes #356
+
+2026-10-31:  Martin Mirchev
+    commit 809222513a415e8c99d6e7637c07cb251975e027
+
+    Keep the full operator count of a location expression (#359)
+
+    ld_cents was a Dwarf_Half, so an expression with more
+    than 65535 operators kept only the low 16 bits of its
+    count and lost the trailing operators. The public API
+    already returns the count as Dwarf_Unsigned; make the
+    internal field match.
+
+    Fixes #355
+
+2026-10-31:  Martin Mirchev
+    commit e9e6a33f4cb358c11fafd8c3712c9af802d83e8e
+
+    Read the DW_OP_GNU_encoded_addr value after its
+    encoding byte (#358)
+
+    read_encoded_addr() counted the encoding byte in
+    the length but read the value starting at it, so the
+    address was shifted by one byte (f1 00 <addr> printed
+    0x2233445566778800 instead of 0x1122334455667788).
+    Skip the encoding byte, and check the section end
+    for the 1-byte case as the other sizes do.
+
+    Fixes #354
+
+2026-10-31:  Martin Mirchev
+    commit 86e4b9a28eaf098747d3dc232f3004786aac60a9
+
+    Accept DWARF5 .debug_macro units with an opcode_operands_table
+    (#357)
+
+    read_operands_table() bounded the table with
+    mc_total_length, which is only set after the table has
+    been read, so every unit with opcode_operands_table_flag
+    failed with DW_DLE_READ_LITTLEENDIAN_ERROR.  Bound it by
+    the section instead, include the count byte in the table
+    size, and compare each form in validate_opcode() with
+    the matching standard form instead of mf_formbytes[1].
+
+    Also make dwarf_get_macro_details() test the
+    .debug_macinfo size instead of the .debug_abbrev size.
+
+    Fixes #353
+
+2026-10-31:  Martin Mirchev
+    commit 80f0b4ac57f3cc4b7531a1ddc779f6b3e8c917a1
+
+    Check table_column before reusing the memoized frame
+    table (#352)
+
+    dwarf_get_fde_info_for_reg3_c() only rejected a
+    column at or past the register-rule count when it
+    rebuilt the FDE's frame table. A second call with
+    the same pc reused the memoized table and indexed
+    rules[table_column] without a check. Check the
+    column first.
+
+2026-10-30:  David Anderson
+    commit aa6dc48f55880c82075cb29649bd95d66a92477a
+
+    Now up to date.
+            modified:   ChangeLog
+
 2026-10-30:  David Anderson
     commit ccde17f569ac00d709b19f1397342f2bbb9946ce
 
@@ -38,13 +211,16 @@
 2026-10-31:  Martin Mirchev
     commit 7d993cfe52f726e9413bd9eccd8815aa4c124fdc
 
-    Use the end index for the high address of DW_LLE_GNU_start_end_entry (#349)
+    Use the end index for the high address of
+    DW_LLE_GNU_start_end_entry (#349)
 
-    cook_gnu_loclist_contents() looked up both the low and the high address
-    of a GNU DWARF4 split-DWARF start_end loclist entry with ld_rawlow, so
-    every such entry was reported as the empty range [low, low). Look up the
-    high address with ld_rawhigh, as the DWARF5 DW_LLE_startx_endx case in
-    cook_loclists_contents() does.
+    cook_gnu_loclist_contents() looked up both the low
+    and the high address of a GNU DWARF4 split-DWARF
+    start_end loclist entry with ld_rawlow, so every such
+    entry was reported as the empty range [low, low). Look
+    up the high address with ld_rawhigh, as the DWARF5
+    DW_LLE_startx_endx case in cook_loclists_contents()
+    does.
 
 2026-10-29:  David Anderson
     commit d311959dd0de50ff4004a1a7397c04cc894e4b22
@@ -59,11 +235,13 @@
 2026-10-30:  Martin Mirchev
     commit 6db85c046577bda09883cee713603d86c2e62611
 
-    Check the bounds of a DW_FORM_ref1 value in dwarf_formref() (#351)
+    Check the bounds of a DW_FORM_ref1 value in dwarf_formref()
+    (#351)
 
-    The ref2/ref4/ref8/ref_udata cases read through READ_UNALIGNED_CK with
-    the section end, but DW_FORM_ref1 dereferenced ar_debug_ptr without a
-    check, so an attribute that ends the section read one byte past it.
+    The ref2/ref4/ref8/ref_udata cases read through
+    READ_UNALIGNED_CK with the section end, but DW_FORM_ref1
+    dereferenced ar_debug_ptr without a check, so an
+    attribute that ends the section read one byte past it.
     Use the guard dwarf_global_formref() already has.
 
 2026-10-30:  Martin Mirchev
@@ -94,7 +272,14 @@
     commit e6d1bbbcd36086c506fe15f575f48cc77f51833d
 
     Github Issue 346.
-    If the last name in a .debug_gnu_pubnames block has no NUL inside the block's entry area, and the 4-byte end-of-block word (which should be zero) is not zero, dwarfdump --print-debug-gnu prints the name with a string scan that runs off the end of the section buffer. Here is a 27-byte section with one block and one entry.
+    If the last name in a .debug_gnu_pubnames block has
+    no NUL inside the block's entry area, and the 4-byte
+    end-of-block word (which should be zero) is not zero,
+    dwarfdump --print-debug-gnu prints the name with a
+    string scan that runs off the end of the section
+    buffer. Here is a 27-byte section with one block and
+    one entry.
+
     Now we check that the string is NUL terminated
     and return an error if the is not properly terminated.
     It has been a bug since this code was written in 2020.
