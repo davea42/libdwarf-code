@@ -795,8 +795,8 @@ add_to_reg_table(struct dwconf_s *conf,
         unsigned long newtabsize = newtablen * sizeof(char *);
         unsigned long oldtabsize =
             conf->cf_named_regs_table_size * sizeof(char *);
-        if (newtablen > MAX_TABLE_SIZE) {
-            log_and_exit("New table size",rval,MAX_REGISTER_NUMBER,
+        if (newtabsize > MAX_TABLE_SIZE) {
+            log_and_exit("New table size",rval,MAX_TABLE_SIZE,
                 fname,lineno);
         }
         newregs = realloc(conf->cf_regs, newtabsize);
