@@ -59,27 +59,29 @@
     0 2 4 or 8.
     If zero it means the following is address-size.
     The address then follows immediately for
-    that number of bytes. 
+    that number of bytes.
     The above was found long ago and is no longer correct.
     What follows is current.
 
     Linux Standard Base Core Specification 2.1
     Chapter 7. EH Frame Header
-    DW_EH_PE_omit	0xff	No value is present.
-    DW_EH_PE_uleb128	0x01	Unsigned value is encoded using the Little Endian Base 128 (LEB128) as defined by DWARF Debugging Information Format.
-    DW_EH_PE_udata2	0x02	A 2 bytes unsigned value.
-    DW_EH_PE_udata4	0x03	A 4 bytes unsigned value.
-    DW_EH_PE_udata8	0x04	An 8 bytes unsigned value.
-    DW_EH_PE_sleb128	0x09	Signed value is encoded 
+    DW_EH_PE_omit    0xff  No value is present.
+    DW_EH_PE_uleb128 0x01  Unsigned value is encoded using
+        the Little Endian Base 128 (LEB128) as defined
+        by DWARF Debugging Information Format.
+    DW_EH_PE_udata2  0x02  A 2 bytes unsigned value.
+    DW_EH_PE_udata4  0x03  A 4 bytes unsigned value.
+    DW_EH_PE_udata8  0x04  An 8 bytes unsigned value.
+    DW_EH_PE_sleb128 0x09  Signed value is encoded
     using the Little Endian Base 128 (LEB128)
     as defined by DWARF Debugging Information Format.
 
-    DW_EH_PE_sdata2	0x0A	A 2 bytes signed value.
-    DW_EH_PE_sdata4	0x0B	A 4 bytes signed value.
-    DW_EH_PE_sdata8	0x0C	An 8 bytes signed value.
+    DW_EH_PE_sdata2  0x0A  A 2 bytes signed value.
+    DW_EH_PE_sdata4  0x0B  A 4 bytes signed value.
+    DW_EH_PE_sdata8  0x0C  An 8 bytes signed value.
 
     This is the only case where the value might be
-    signed. 
+    signed.
     We stuff the signed value into an unsigned as this is
     the only case so far where a signed value is possible..
 
@@ -117,7 +119,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     case 0:
         *val_out = 0;
         break;
-    case 1: 
+    case 1:
         /* uleb value */
         DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand,leb128_length,
             dbg,error,section_end_ptr);
@@ -126,7 +128,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
                 "DW_DLE_GNU_OPCODE_ERROR: a uleb128 longer "
                 "than 200 bytes means lots of leading zeros "
                 "and we presume a corrupted object file.");
-             return DW_DLV_ERROR; 
+            return DW_DLV_ERROR;
         }
         len += (int)leb128_length;
         *val_out = operand;
@@ -159,7 +161,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
                 "DW_DLE_GNU_OPCODE_ERROR: an sleb128 longer "
                 "than 200 bytes means lots of leading zeros "
                 "and we presume a corrupted object file..");
-             return DW_DLV_ERROR; 
+            return DW_DLV_ERROR;
         }
         len += (int)leb128_length;
         *val_out = (Dwarf_Unsigned)operandsigned;
@@ -191,8 +193,8 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     default:
         /* We do not know how much to read. */
         _dwarf_error_string(dbg, error, DW_DLE_GNU_OPCODE_ERROR,
-             "DW_DLE_GNU_OPCODE_ERROR: Unknown exception header "
-             "value format for DW_OP_GNU_encoded_addr.");
+            "DW_DLE_GNU_OPCODE_ERROR: Unknown exception header "
+            "value format for DW_OP_GNU_encoded_addr.");
         return DW_DLV_ERROR;
     };
     *len_out = len;
