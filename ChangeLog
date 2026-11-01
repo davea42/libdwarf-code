@@ -1,3 +1,51 @@
+2026-11-01:  David Anderson
+    commit 8121834ad8c1950b816346bab12c12fbe6ad8149
+
+    A copy and paste of some documentation resulted
+    in numerous TAB characters.
+    All those have now been removed, along with
+    trailing whitespace and indent errors.
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+
+2026-11-01:  David Anderson
+    commit aa75f5b3019715a041aa84f42a328548b67f33e3
+
+    VS complained about truncating a Dwarf_Unsigned to int
+    (reading a uleb or sleb) so we add a cast.
+    We also add a sanity check: if the sleb/uleb was
+    more than 200 characters long that means lots
+    of leading zeros and we presume that means
+    a corrupted object file.
+    Some leading zero padding is allowed for alignment
+    though early DWARF specifications did not say
+    any was allowed.
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+
+2026-11-01:  David Anderson
+    commit e1c3e6989ff219e1d3546ea73f5436727f208c95
+
+    Added an extra sanity check to ensure there
+    is no way we can step outside the table bounds
+    of the abi table (frame data definitions)
+    being set up.
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+
+2026-11-01:  David Anderson
+    commit f6775609600f40e7b01aac1ac37e463bbbefefaf
+
+    Normal monthly update of the ending month name.
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-11-01:  David Anderson
+    commit 7c2874c3096846388e702aaf3ff16ade13898bc5
+
+    git log. Modified
+    to limit comment line length to about
+    60 characters to improve consistency
+    (in appearance).
+            modified:   ChangeLog
+
 2026-11-02:  Martin Mirchev
     commit 0dc5bfdeb85e2e2099e96400f1a2472fb27227bd
 
