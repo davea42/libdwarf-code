@@ -530,5 +530,12 @@ _dwarf_leb128_sword_wrapper(Dwarf_Debug dbg,
     Dwarf_Small * endptr,
     Dwarf_Signed *out_value,
     Dwarf_Error * error);
+int
+_dwarf_leb128_skip_wrapper(
+    Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Error * error);
+
 
 #endif /* DWARF_UTIL_H */

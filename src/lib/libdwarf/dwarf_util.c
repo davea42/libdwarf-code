@@ -600,7 +600,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         SKIP_LEB128_LEN_CK(val_ptr,leb128_length,
             dbg,error,section_end_ptr);
         *size_out = leb128_length;
-        return DW_DLV_OK;;
+        return DW_DLV_OK;
     }
 
     case DW_FORM_indirect:
@@ -1719,3 +1719,18 @@ _dwarf_leb128_sword_wrapper(Dwarf_Debug dbg,
     *startptr = start;
     return DW_DLV_OK;
 }
+
+/*  dwarf_macro.c needs this to clean up allocations */
+int
+_dwarf_leb128_skip_wrapper(
+    Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Error * error)
+{
+    Dwarf_Small * start = *startptr;
+    SKIP_LEB128_CK(start,dbg,error,endptr);
+    *startptr = start;
+    return DW_DLV_OK;
+}
+

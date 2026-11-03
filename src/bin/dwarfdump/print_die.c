@@ -912,6 +912,7 @@ print_macinfo_for_cu(
             print_error_and_continue(esb_get_string(&m),
                 mres,*err);
             esb_destructor(&m);
+            return mres;
         }
     }
     return DW_DLV_OK;

@@ -283,8 +283,12 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             /* line, string */
         case DW_MACINFO_vendor_ext:
             /* number, string */
-            SKIP_LEB128_CK(pnext,dbg,error,
-                macro_end);
+            res = _dwarf_leb128_skip_wrapper(dbg,
+                  &pnext,macro_end,error);
+            if (res == DW_DLV_ERROR) {
+                free_macro_stack(dbg,&msdata);
+                return res;
+            }
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
@@ -311,8 +315,12 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             break;
         case DW_MACINFO_start_file:
             /* line, file index */
-            SKIP_LEB128_CK(pnext,dbg,error,
-                macro_end);
+            res = _dwarf_leb128_skip_wrapper(dbg,
+                  &pnext,macro_end,error);
+            if (res == DW_DLV_ERROR) {
+                free_macro_stack(dbg,&msdata);
+                return res;
+            }
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
@@ -320,8 +328,13 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
                 return DW_DLV_ERROR;
             }
-            SKIP_LEB128_CK(pnext,dbg,error,
-                macro_end);
+            res = _dwarf_leb128_skip_wrapper(dbg,
+                  &pnext,macro_end,error); 
+            if (res == DW_DLV_ERROR) {
+                free_macro_stack(dbg,&msdata);
+                return res;
+            }
+
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
