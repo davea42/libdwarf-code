@@ -583,7 +583,6 @@ dwarf_gdbindex_addressarea_entry(
             entryindex,error);
         return DW_DLV_ERROR;
     }
-
     READ_GDBINDEX(lowaddr ,Dwarf_Unsigned,
         base,
         sizeof(gdbindex_64));
@@ -733,6 +732,7 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned fieldlen = 0;
     Dwarf_Unsigned remaining = 0;
     Dwarf_Unsigned val = 0;
+    Dwarf_Unsigned fieldsleft = 0;
 
     if (!gdbindexptr || !gdbindexptr->gi_dbg) {
         _dwarf_error_string(NULL, error,
@@ -746,15 +746,16 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     endptr = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     fieldlen = gdbindexptr->gi_cuvectorhdr.dg_entry_length;
-    /*  The initial 4 bytes is not part of the array,
-        it is some sort of count.  Get past it.
-        Compare offsets, not pointers, so nothing wraps
+    /*  Compare offsets, not pointers, so nothing wraps
         on a 32-bit host. */
     remaining = (Dwarf_Unsigned)(endptr - base);
+    fieldsleft = (remaining - cuvector_offset)/fieldlen;
+    /*  The number of fields left includes the leading
+        count field. So if fieldsleft is less than 2
+        or innerindex is too large
+        something is badly wrong. */
     if (!fieldlen || cuvector_offset > remaining ||
-        (remaining - cuvector_offset)/fieldlen < 2 ||
-        innerindex >
-            (remaining - cuvector_offset)/fieldlen - 2) {
+        fieldsleft < 2 || innerindex > (fieldsleft - 2)) {
         Dwarf_Debug dbg = gdbindexptr->gi_dbg;
         emit_one_value_msg(dbg, DW_DLE_GDB_INDEX_INDEX_ERROR,
             "DW_DLE_GDB_INDEX_INDEX_ERROR:"
@@ -764,6 +765,8 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
             innerindex,error);
         return DW_DLV_ERROR;
     }
+    /*  The initial (4 bytes) field is not part of the array,
+        it is some sort of count.  Get past it. */
     base += cuvector_offset + fieldlen + fieldlen*innerindex;
     READ_GDBINDEX(val ,Dwarf_Unsigned,
         base,
