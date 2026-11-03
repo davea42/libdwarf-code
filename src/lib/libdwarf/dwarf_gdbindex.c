@@ -681,6 +681,7 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Small *base = 0;
     Dwarf_Small *endptr = 0;
     Dwarf_Unsigned fieldlen = 0;
+    Dwarf_Unsigned remaining = 0;
     Dwarf_Unsigned val = 0;
 
     if (!gdbindexptr || !gdbindexptr->gi_dbg) {
@@ -696,8 +697,11 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindexptr,
     endptr = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     fieldlen = gdbindexptr->gi_cuvectorhdr.dg_entry_length;
-    base += cuvector_offset;
-    if (( base + fieldlen) >endptr) {
+    /*  Compare offsets, not pointers: on a 32-bit host
+        base + cuvector_offset can wrap past endptr. */
+    remaining = (Dwarf_Unsigned)(endptr - base);
+    if (cuvector_offset > remaining ||
+        fieldlen > remaining - cuvector_offset) {
         Dwarf_Debug dbg = gdbindexptr->gi_dbg;
         emit_no_value_msg(dbg, DW_DLE_GDB_INDEX_INDEX_ERROR,
             "DW_DLE_GDB_INDEX_INDEX_ERROR:"
@@ -707,6 +711,7 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindexptr,
             error);
         return DW_DLV_ERROR;
     }
+    base += cuvector_offset;
     READ_GDBINDEX(val,Dwarf_Unsigned,
         base,
         fieldlen);
@@ -726,6 +731,7 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Small *base = 0;
     Dwarf_Small *endptr =  0;
     Dwarf_Unsigned fieldlen = 0;
+    Dwarf_Unsigned remaining = 0;
     Dwarf_Unsigned val = 0;
 
     if (!gdbindexptr || !gdbindexptr->gi_dbg) {
@@ -737,15 +743,18 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
         return DW_DLV_ERROR;
     }
     base = gdbindexptr->gi_cuvectorhdr.dg_base;
-    base += cuvector_offset;
     endptr = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     fieldlen = gdbindexptr->gi_cuvectorhdr.dg_entry_length;
     /*  The initial 4 bytes is not part of the array,
-        it is some sort of count.  Get past it.*/
-    base += fieldlen;
-    base += fieldlen*innerindex;
-    if ((base+fieldlen) >= endptr) {
+        it is some sort of count.  Get past it.
+        Compare offsets, not pointers, so nothing wraps
+        on a 32-bit host. */
+    remaining = (Dwarf_Unsigned)(endptr - base);
+    if (!fieldlen || cuvector_offset > remaining ||
+        (remaining - cuvector_offset)/fieldlen < 2 ||
+        innerindex >
+            (remaining - cuvector_offset)/fieldlen - 2) {
         Dwarf_Debug dbg = gdbindexptr->gi_dbg;
         emit_one_value_msg(dbg, DW_DLE_GDB_INDEX_INDEX_ERROR,
             "DW_DLE_GDB_INDEX_INDEX_ERROR:"
@@ -755,7 +764,7 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
             innerindex,error);
         return DW_DLV_ERROR;
     }
-
+    base += cuvector_offset + fieldlen + fieldlen*innerindex;
     READ_GDBINDEX(val ,Dwarf_Unsigned,
         base,
         fieldlen);
@@ -822,8 +831,11 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
         gdbindexptr->gi_section_length;
     fulloffset = gdbindexptr->gi_constant_pool_offset
         + stringoffsetinpool;
-    stringitself = gdbindexptr->gi_section_data + fulloffset;
-    if (stringitself > section_end) {
+    /*  Compare the offset, not the pointer: on a 32-bit host
+        gi_section_data + fulloffset can wrap below the
+        section. */
+    if (stringoffsetinpool > gdbindexptr->gi_section_length ||
+        fulloffset > gdbindexptr->gi_section_length) {
         emit_one_value_msg(dbg,DW_DLE_GDBINDEX_STRING_ERROR,
             "DW_DLE_GDBINDEX_STRING_ERROR: "
             "The dwarf_gdbindex_string_by_offset() "
@@ -834,6 +846,8 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
             error);
         return DW_DLV_ERROR;
     }
+    pooldata = gdbindexptr->gi_section_data;
+    stringitself = pooldata + fulloffset;
     res = _dwarf_check_string_valid(dbg,pooldata,
         stringitself, section_end,
         DW_DLE_GDBINDEX_STRING_ERROR,
