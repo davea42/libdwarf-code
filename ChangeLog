@@ -1,3 +1,65 @@
+2026-11-03:  David Anderson
+    commit bee6f5fb067e8a4767fb21ad66f453f4fcbe437f
+
+        In print_macinfo_for_cu() on error DW_DLV_ERROR was
+        not returned, leading to leak of error information.
+            modified:   src/bin/dwarfdump/print_die.c
+
+        If an leb needed to be skipped, and while skipping ran off the end
+        of the section, then the local malloc data would be leaked.
+        SKIP_LEB128_CK
+        changed to
+        res = _dwarf_leb128_skip_wrapper(dbg,.....)
+        as the wrapper lets us clean up as required.
+            modified:   src/lib/libdwarf/dwarf_macro.c
+
+        Creating the wrapper.
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2026-11-03:  David Anderson
+    commit 38277f9a68c7c1264aa5da81915448c7d66876db
+
+    Refines the already-correct code to be easier for
+    a human to read and understand.
+    Revised short and relevant comments.
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+
+2026-11-04:  Martin Mirchev
+    commit d12f4192d33c7d378b1207b95aec55d89d0f4442
+
+    Compare offsets, not pointers, in the .gdb_index bounds checks (#366)
+
+    dwarf_gdbindex_cuvector_length(),
+    dwarf_gdbindex_cuvector_inner_attributes() and
+    dwarf_gdbindex_string_by_offset() add a 32-bit offset
+    from the section to a pointer and then compare the
+    pointer with the section end. On a 32-bit host the sum
+    can wrap below the section start, the check passes,
+    and the read goes out of bounds (dwarfdump -I reads
+    before the .gdb_index buffer, or segfaults for a
+    larger offset). The string check's lower bound never
+    applied either, because pooldata was left 0.
+
+    Check the offsets against the bytes remaining before
+    forming the pointer, and set pooldata to the section
+    data. The inner-attribute check now also accepts an
+    entry that ends exactly at the end of the section.
+
+    Signed-off-by: Martin Mirchev <mmirchev@comp.nus.edu.sg>
+
+2026-11-01:  David Anderson
+    commit b104a960b4202edb36f0beb4b586ad785d38339c
+
+    VS is really fussy. Another fix to placate it.
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+
+2026-11-01:  David Anderson
+    commit 96a391450a68c9048bf1e9c76d2bbb6563ddeee0
+
+    Up to date.
+            modified:   ChangeLog
+
 2026-11-01:  David Anderson
     commit 8121834ad8c1950b816346bab12c12fbe6ad8149
 
