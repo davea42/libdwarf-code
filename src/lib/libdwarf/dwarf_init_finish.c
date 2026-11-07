@@ -1465,6 +1465,17 @@ do_decompress(Dwarf_Debug dbg,
             DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_DATA_ERROR,
                 DW_DLV_ERROR);
         }
+        if (dlen != destlen) {
+            /*  The stream ended before filling dest,
+                the rest of dest is uninitialized. */
+            free(dest);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_ZLIB_DATA_ERROR,
+                "DW_DLE_ZLIB_DATA_ERROR"
+                " The zlib uncompressed length does not"
+                " match the length in the section header.");
+            return DW_DLV_ERROR;
+        }
     }
     if (zstdcompress) {
         size_t zsize =
