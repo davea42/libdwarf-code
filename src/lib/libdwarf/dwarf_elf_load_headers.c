@@ -296,6 +296,13 @@ _dwarf_do_decompress_elf(dwarf_elf_object_access_internals_t *ep,
             *error = DW_DLE_ZLIB_DATA_ERROR;
             return DW_DLV_ERROR;
         }
+        if (dlen != destlen) {
+            /*  The stream ended before filling dest,
+                the rest of dest is uninitialized. */
+            free(dest);
+            *error = DW_DLE_ZLIB_DATA_ERROR;
+            return DW_DLV_ERROR;
+        }
     }
     /*  ZSTD_decompress is a zstd function. */
     if (zstdcompress) {
