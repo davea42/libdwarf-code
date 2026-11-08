@@ -224,7 +224,11 @@ struct Dwarf_P_Attribute_s {
         index of symbol in SYMTAB */
     Dwarf_Unsigned ar_debug_str_offset; /* Offset in .debug_str
         if non-zero. Zero offset never assigned a string. */
-    Dwarf_Ubyte ar_rel_type;  /* relocation type */
+
+    /*  relocation type, int to match uses here of ar_rel_type. 
+        8 bits was not enough for relocation type on ARM */
+    int            ar_rel_type;
+
     Dwarf_Unsigned ar_rel_offset; /* Offset of reloc within block */
     char ar_reloc_len; /* Number of bytes that relocation
         applies to. 4 or 8. Unused and may
