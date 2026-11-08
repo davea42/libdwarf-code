@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <dwarfbug>
 <dwbug>
+<dwid>DW202610-001</dwid>
+<cve>CVE-2026-116732</cve>
+<fuzzer></fuzzer>
+<datereported>2026-10-19</datereported>
+<reportedby>HaiND (Nguyen Dinh Hai)</reportedby>
+<product>libdwarf</product>
+<vulnerability> out-of-bounds read in the DWARF5 `.debug_addr` table
+</vulnerability>
+<description> A crash is likely.
+  A bug in dealing with multiple tables inside a .debug_addr
+  section leads to an inappropriate read.
+  No need to fuzz anything, just need a proper testcase.
+  Has been a bug since the .debug_addr reader code
+  was added in 2022.
+</description>
+<datefixed>2026-10-22</datefixed>
+<references> regressiontests/debugaddrIssue336/
+</references>
+<gitfixid>71f04013ddc2a3c88b9e25a4162ee2824741b593</gitfixid>
+<tarrelease></tarrelease>
+</dwbug>
+<dwbug>
 <dwid>DW202605-008</dwid>
 <cve></cve>
 <fuzzer>oss fuzz 516582687</fuzzer>

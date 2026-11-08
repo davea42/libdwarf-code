@@ -49,7 +49,7 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <H2>LibDwarf Vulnerabilities Oldest First</H2>
 </p>as of November 2026</p>
-<p> Record count: 239 </p>
+<p> Record count: 240 </p>
 <h3 id="DW201412-001">1) DW201412-001</h3>
 <p>id: DW201412-001
 </p>
@@ -7816,6 +7816,35 @@ Vulnerabilities <a href="./dwarfbuglohi.html">listed oldest-first</a>.
 </p>
 <p>tarrelease: libdwarf-2.3.2.tar.xz
 </p>
+<p> <a href="#top">[top]</a> </p>
+<h3 id="DW202610-001">240) DW202610-001</h3>
+<p>id: DW202610-001
+</p>
+<p>cve: CVE-2026-116732
+</p>
+<p>fuzzer:</p>
+<p>datereported: 2026-10-19
+</p>
+<p>reportedby: HaiND (Nguyen Dinh Hai)
+</p>
+<p>vulnerability: out-of-bounds read in the DWARF5 `.debug_addr` table
+</p>
+<p>product: libdwarf
+</p>
+<p>description: A crash is likely.
+  A bug in dealing with multiple tables inside a .debug_addr
+  section leads to an inappropriate read.
+  No need to fuzz anything, just need a proper testcase.
+  Has been a bug since the .debug_addr reader code
+  was added in 2022.
+</p>
+<p>datefixed: 2026-10-22
+</p>
+<p>references: regressiontests/debugaddrIssue336/
+</p>
+<p>gitfixid: 71f04013ddc2a3c88b9e25a4162ee2824741b593
+</p>
+<p>tarrelease:</p>
 <p> <a href="#top">[top]</a> </p>
 <p> <a href="#top">[top]</a> </p>
 </body>
