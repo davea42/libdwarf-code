@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011-2020 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2026 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -224,11 +224,8 @@ struct Dwarf_P_Attribute_s {
         index of symbol in SYMTAB */
     Dwarf_Unsigned ar_debug_str_offset; /* Offset in .debug_str
         if non-zero. Zero offset never assigned a string. */
-
-    /*  relocation type, int to match uses here of ar_rel_type. 
-        8 bits was not enough for relocation type on ARM */
+    /*  8 bits insufficient for ARM rel types, int is ok. */
     int            ar_rel_type;
-
     Dwarf_Unsigned ar_rel_offset; /* Offset of reloc within block */
     char ar_reloc_len; /* Number of bytes that relocation
         applies to. 4 or 8. Unused and may

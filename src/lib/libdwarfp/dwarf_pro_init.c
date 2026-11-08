@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2017 David Anderson, Inc. All rights reserved.
+  Portions Copyright 2008-2026 David Anderson, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
@@ -129,12 +129,6 @@ static int common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags,
     /*  We want the following to have an elf section
         number that matches 'nothing' */
 static struct Dwarf_P_Section_Data_s init_sect = {
-    MAGIC_SECT_NO, 0, 0, 0, 0
-};
-static struct Dwarf_P_Section_Data_s init_sect_debug_str = {
-    MAGIC_SECT_NO, 0, 0, 0, 0
-};
-static struct Dwarf_P_Section_Data_s init_sect_debug_line_str = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
 
@@ -300,12 +294,22 @@ common_init(Dwarf_P_Debug dbg,
 {
     unsigned int k = 0;
     int res = 0;
+    Dwarf_P_Section_Data string_sections = 0;
+
+    string_sections = (Dwarf_P_Section_Data)_dwarf_p_get_alloc(dbg,
+        2 * sizeof(struct Dwarf_P_Section_Data_s));
+    if (!string_sections) {
+        *err_ret = DW_DLE_ALLOC_FAIL;
+        return DW_DLV_ERROR;
+    }
+    string_sections[0].ds_elf_sect_no = MAGIC_SECT_NO;
+    string_sections[1].ds_elf_sect_no = MAGIC_SECT_NO;
 
     dbg->de_version_magic_number = PRO_VERSION_MAGIC;
     dbg->de_n_debug_sect = 0;
     dbg->de_debug_sects = &init_sect;
-    dbg->de_debug_str = &init_sect_debug_str;
-    dbg->de_debug_line_str = &init_sect_debug_line_str;
+    dbg->de_debug_str = &string_sections[0];
+    dbg->de_debug_line_str = &string_sections[1];
     dbg->de_current_active_section = &init_sect;
     dbg->de_flags = flags;
 

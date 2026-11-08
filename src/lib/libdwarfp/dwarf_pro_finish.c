@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011-2020 David Anderson. All rights reserved.
+  Portions Copyright 2011-2026 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -40,6 +40,7 @@
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"
+#include "dwarf_pro_section.h"
 
 /*  This routine deallocates all memory, and does some
     finishing up.  New September 2016. */
@@ -57,6 +58,10 @@ dwarf_producer_finish_a(Dwarf_P_Debug dbg, Dwarf_Error * error)
     free(dbg->de_debug_sup.ds_checksum);
     dbg->de_debug_sup.ds_checksum = 0;
     dbg->de_debug_sup.ds_checksum_len = 0;
+    free(dbg->de_debug_str->ds_data);
+    dbg->de_debug_str->ds_data = 0;
+    free(dbg->de_debug_line_str->ds_data);
+    dbg->de_debug_line_str->ds_data = 0;
     _dwarf_p_dealloc_all(dbg);
     return DW_DLV_OK ;
 }
