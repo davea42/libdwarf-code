@@ -1,3 +1,67 @@
+2026-11-08:  David Anderson
+    commit eaaa082ce7550d03a219e40ebd3fa00a60c9215a
+
+    libdwarfp (producer library) was not dealing with
+    .debug_str and/or .debug_line_str as output when
+    multiple object files were processed in sequence.
+    See github Issue #369 .
+            modified:   dwarf_pro_finish.c
+            modified:   dwarf_pro_init.c
+            modified:   dwarf_pro_opaque.h
+
+2026-11-08:  David Anderson
+    commit 3d634c347c68ee1be75f3a0bfef73bf280796264
+
+    On ARM 8 bit relocation type is insufficient.
+    github Issue #368 .
+    Made int to match its use in another variable in the library.
+            modified:   src/lib/libdwarfp/dwarf_pro_opaque.h
+
+2026-11-08:  David Anderson
+    commit 699f3abcd2871405fb9489c20c88311226b9f69e
+
+    A github issue also had a CVE number, so documenting
+    the CVE number (these are regenerated files)
+
+            modified:   bugxml/dwarfbug.html
+            modified:   bugxml/dwarfbug.xml
+            modified:   bugxml/dwarfbuglohi.html
+
+2026-11-08:  David Anderson
+    commit bc7afbb72eeabd9c285202da81c2a509a9a67a31
+    Merge: 3e8cdd99 74ca813b
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+    Adding a missing check in decompression.
+
+2026-11-08:  Mounika2456
+    commit 74ca813b8b0d38aa124ef0f9956e5d2cf035ea9b
+
+    reject zlib sections that inflate short of the header length (#367)
+
+    do_decompress() and _dwarf_do_decompress_elf() malloc() the
+    uncompressed size from the Elf_Chdr (or .zdebug ZLIB header)
+    and accept Z_OK from uncompress() without checking the
+    returned length. A stream that ends early leaves the tail of
+    the buffer uninitialized while the section size is set to the
+    full header value, so libdwarf parses heap garbage as
+    .debug_* data or as ELF symbols used in relocation.
+
+    The zstd branch already rejects zsize != destlen. Do the same
+    for zlib.
+
+2026-11-05:  David Anderson
+    commit 3e8cdd99031ef67135f47ffce2dd1268366ae412
+
+    github issue had CVE number, so added here.
+            modified:   data.txt
+
+2026-11-04:  David Anderson
+    commit eea2d7ac9d37621edfb267838a3f083eed6394e1
+
+    Recent git log updates.
+            modified:   ChangeLog
+
 2026-11-03:  David Anderson
     commit bee6f5fb067e8a4767fb21ad66f453f4fcbe437f
 
