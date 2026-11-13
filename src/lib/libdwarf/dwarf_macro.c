@@ -284,7 +284,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         case DW_MACINFO_vendor_ext:
             /* number, string */
             res = _dwarf_leb128_skip_wrapper(dbg,
-                  &pnext,macro_end,error);
+                &pnext,macro_end,error);
             if (res == DW_DLV_ERROR) {
                 free_macro_stack(dbg,&msdata);
                 return res;
@@ -316,7 +316,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         case DW_MACINFO_start_file:
             /* line, file index */
             res = _dwarf_leb128_skip_wrapper(dbg,
-                  &pnext,macro_end,error);
+                &pnext,macro_end,error);
             if (res == DW_DLV_ERROR) {
                 free_macro_stack(dbg,&msdata);
                 return res;
@@ -329,7 +329,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
             res = _dwarf_leb128_skip_wrapper(dbg,
-                  &pnext,macro_end,error); 
+                &pnext,macro_end,error);
             if (res == DW_DLV_ERROR) {
                 free_macro_stack(dbg,&msdata);
                 return res;
