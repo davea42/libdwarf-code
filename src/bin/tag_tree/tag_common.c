@@ -51,6 +51,11 @@ void
 bad_line_input(char *format,...)
 {
     va_list ap;
+
+    /*  CoverityScan did not like leaving ap uninitialized
+        and ap is not necessarily a pointer which
+        can be initialized by '= 0;'  */
+    memset(&ap,0,sizeof(ap));
     va_start(ap,format);
     fprintf(stderr,
         "tag_(tree,attr,form) table build failed, line %d: \"%s\". ",
