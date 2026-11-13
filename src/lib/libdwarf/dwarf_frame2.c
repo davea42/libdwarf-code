@@ -474,6 +474,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 if (cie_count >= maximum_possible_cie_count) {
                     _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
                         head_cie_ptr);
+                    dwarf_dealloc(dbg,cie_ptr_to_use,DW_DLA_CIE);
+                    cie_ptr_to_use = 0;
                     return DW_DLV_ERROR;
                 }
                 chain_up_cie(cie_ptr_to_use, &head_cie_ptr,
