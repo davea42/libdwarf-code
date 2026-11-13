@@ -1,3 +1,47 @@
+2026-11-13:  David Anderson
+    commit fbd1691526e008a78bc94fccaf56b54aa8b45521
+
+    CoverityScan reported a real memory leak here.
+    The error test was added this year.
+    if (cie_count >= maximum_possible_cie_count) {
+        _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+            head_cie_ptr);
+    +   dwarf_dealloc(dbg,cie_ptr_to_use,DW_DLA_CIE);
+    +   cie_ptr_to_use = 0;
+        return DW_DLV_ERROR;
+    }
+
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2026-11-13:  David Anderson
+    commit a6b720674356803e31c4d6aa8c20f6cd97276965
+
+    CoverityScan did not like leaving va_list ap
+    uninitialized and ap is not necessarily a pointer which
+    can be initialized by '= 0;'. So initialize with memset().
+            modified:   src/bin/tag_tree/tag_common.c
+
+2026-11-13:  David Anderson
+    commit 844ca6e64b16abdb0ba0edc64a7b8b8381e2612b
+
+    Added details on the changes, 2.3.3 to 2.3.4
+            modified:   doc/libdwarf.dox
+
+2026-11-13:  David Anderson
+    commit f8f9234022d6e0756cf9e45acc1ccfa8f3792c0d
+
+    Fixing indents and whitespace.
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2026-11-09:  David Anderson
+    commit 0e875adcabe6fe525c71aefa7c656acb02fdda8b
+
+    Up to date
+            modified:   ChangeLog
+    Announcing tentative release date
+            modified:   README.md
+
 2026-11-08:  David Anderson
     commit eaaa082ce7550d03a219e40ebd3fa00a60c9215a
 
