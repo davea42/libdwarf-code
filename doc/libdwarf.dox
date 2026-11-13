@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2026-09-24 v2.3.4
+    @date 2026-11-13 v2.3.4
 
     @section draft Suggestions for improvement are welcome.
 
@@ -1198,6 +1198,17 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
+    <b>Changes 2.3.3 to 2.3.4</b>
+
+    No API change.  Fixed many bugs found by contributors
+    using LLMs. Many bugs were five or more years old.
+    One bug was rejecting valid zlib compressed sections.
+    One was reading .gdb_index sections and not detecting
+    certain error conditions.
+    One was reading .debug_macro sections incorrectly.
+    Fixed an issue reading DWARF4 loclists 
+    DW_LLE_GNU_start_end_entry entries.
 
     <b>Changes 2.3.2 to 2.3.3</b>
 
