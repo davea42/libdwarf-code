@@ -3278,7 +3278,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                     int nres = if_relocatable_string_form(dbg,curattr,
                         &is_debug_str,error);
                     if (nres != DW_DLV_OK) {
-                        return res;
+                        return nres;
                     }
                     if (is_debug_str) {
                         curattr->ar_rel_symidx =
