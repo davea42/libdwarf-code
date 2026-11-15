@@ -2169,6 +2169,18 @@ read_gs_section_group(
             if (*errcode) {
                 return DW_DLV_ERROR;
             }
+            /*  count was computed from the compressed
+                size, recompute from the decompressed size. */
+            seclen = psh->gh_size;
+            if (seclen < DWARF_32BIT_SIZE) {
+                *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+                return DW_DLV_ERROR;
+            }
+            count = seclen/psh->gh_entsize;
+            if (count >= ep->f_loc_shdr.g_count) {
+                *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+                return DW_DLV_ERROR;
+            }
 #else /* COMPRESSED TEST */
             *errcode = DW_DLE_ZLIB_ZSTD_MISSING;
             return DW_DLV_ERROR;
