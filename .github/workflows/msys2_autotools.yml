@@ -18,9 +18,9 @@ jobs:
     steps:
     - uses: msys2/setup-msys2@v2
       with:
-        msystem: MINGW64
+        msystem: UCRT64
         update: true
-        install: base-devel git autoconf automake libtool mingw-w64-x86_64-toolchain mingw-w64-x86_64-zlib
+        install: base-devel git autoconf automake libtool mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-zlib
     - uses: actions/checkout@v6
     - name: Configure
       run: autoreconf -vif && ./configure --disable-static --enable-shared
