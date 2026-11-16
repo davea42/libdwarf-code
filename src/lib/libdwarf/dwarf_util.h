@@ -536,6 +536,4 @@ _dwarf_leb128_skip_wrapper(
     Dwarf_Small ** startptr,
     Dwarf_Small * endptr,
     Dwarf_Error * error);
-
-
 #endif /* DWARF_UTIL_H */
