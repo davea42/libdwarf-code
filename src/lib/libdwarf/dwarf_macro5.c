@@ -1024,8 +1024,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         macro_data += sizeof(Dwarf_Small);
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
             dbg, error, endptr);
-        cur_offset = (formcount+ macro_data) - section_base;
-        if (cur_offset >= section_size) {
+        if (formcount >= (Dwarf_Unsigned)(endptr - macro_data)) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
             return DW_DLV_ERROR;
         }
@@ -1065,8 +1064,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         curformentry->mf_code = opcode_number;
         curformentry->mf_formcount = (Dwarf_Small)formcount;
 
-        cur_offset = (formcount+ macro_data) - section_base;
-        if (cur_offset >= section_size) {
+        if (formcount >= (Dwarf_Unsigned)(endptr - macro_data)) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
             return DW_DLV_ERROR;
         }
