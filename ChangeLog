@@ -1,3 +1,109 @@
+2026-11-16:  David Anderson
+    commit 695029476aafe127b70adbdde642ce251d7e8308
+
+    Made upcoming release 'official'.
+            modified:   README.md
+
+2026-11-16:  David Anderson
+    commit 6f0db8fd83768825d98ba3ed6c001303a4fe7e67
+
+    Fixed one line length to match project codingstyle.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2026-11-16:  David Anderson
+    commit c55af1e1b143597a427d85f865532c2d7731894c
+
+    Removed useless blank lines.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2026-11-15:  David Anderson
+    commit ff2dc01edf1c4ed0539670beb712faea795ed7ef
+
+    Transferring individual test details into the full test
+            modified:   test.yml
+
+2026-11-15:  David Anderson
+    commit 97608448ce3e81cecc63df6163ac547654fcb12e
+
+    oops. I hope fixed.
+            modified:   msys2_cmake.yml
+
+2026-11-15:  David Anderson
+    commit a4fc5ba939a9ba29aad167a5ec2f4a9d699704e4
+
+    Updatint to ucrt
+            modified:   msys2_cmake.yml
+
+2026-11-15:  David Anderson
+    commit ec24e77ddd17b0754ef197dd83e21a11408dc4ca
+
+    Not quite right yet.
+            modified:   msys2_autotools.yml
+
+2026-11-15:  David Anderson
+    commit 4db833af7010918d72f550333f5eac20de2b3c59
+
+    Update to ucrt
+            modified:   msys2_autotools.yml
+
+2026-11-15:  David Anderson
+    commit 9697417bf0d61bc0af91217d69b60245c8dcd5c9
+
+    now ucrt
+            modified:   msys2_meson.yml
+
+2026-11-15:  David Anderson
+    commit 3667c4898b1fff3c75e8c1e3c28b4668adbd28ac
+
+    removing ref to python3 in setup
+            modified:   msys2_meson.yml
+
+2026-11-15:  David Anderson
+    commit 831a98f4db9018a53572d6c0e7a0bc0bf29a652e
+
+    To fix workflow warning
+            modified:   msys2_meson.yml
+
+2026-11-15:  David Anderson
+    commit c920da74205b96f8fd1d59f37026370b2f3c74e2
+
+    Oops. Fixed typo.
+        int nres = if_relocatable_string_form(dbg,curattr,
+            &is_debug_str,error);
+            if (nres != DW_DLV_OK) {
+    -           return res;
+    +           return nres;
+        }
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+
+2026-11-15:  Mounika2456
+    commit b7880cce7bb97b6bd0d2bb8ebb955c0c897800ab
+
+    recompute SHT_GROUP count after decompression (#370)
+
+    read_gs_section_group() takes count from the on-disk size of
+    the section, then decompresses an SHF_COMPRESSED group into a
+    buffer of ch_size bytes. The member loop still walks count
+    words, so a ch_size smaller than the compressed size reads
+    past the end of the decompressed buffer.
+
+    Recompute count from the decompressed size, as the symbol and
+    relocation loaders already do, and reject a group too short to
+    hold the version word.
+
+2026-11-13:  David Anderson
+    commit 0102be6ac4555d5d5b2ce0fa547e6507b8ee00ce
+
+    Two more places with equivalent code that were
+    not entirely correct.  CoverityScan noticed.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+2026-11-13:  David Anderson
+    commit 0ee9c432bf3882065674ea74367f2714512ca51d
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2026-11-13:  David Anderson
     commit fbd1691526e008a78bc94fccaf56b54aa8b45521
 
