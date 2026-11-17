@@ -1,3 +1,35 @@
+2026-11-17:  David Anderson
+    commit dae95a7f0325a758db718c0c0f64ca2623f0a8c0
+
+    All the code places encountering a DW_DLE_MACRO_OFFSET_BAD
+    error include specific wording showing which error
+    is being noticed.  Making it easier to understand
+    what is actually wrong in the DWARF.
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+
+2026-11-17:  Mounika2456
+    commit a253977dcf061d965e9bdb073fcc0e7b68cbbb0c
+
+    bound macro operand form counts by bytes left in
+    read_operands_table (#371)
+
+    read_operands_table() checked each ULEB128 formcount
+    with (formcount + macro_data) - section_base >=
+    section_size. A formcount near 2^64 wraps the pointer
+    back into the section, so the check passes. For an
+    opcode above DW_MACRO_undef_strx the valid_macro_form()
+    loop then reads mf_formbytes[k] past the end of
+    .debug_macro.
+
+    Compare formcount with the bytes remaining before endptr instead.
+
+2026-11-16:  David Anderson
+    commit 3d7df21a7056633c31e8e91facae2834e3a80778
+
+    Up to date with git log. Lots of changes
+    to get github actions on msys2 to work again.
+            modified:   ChangeLog
+
 2026-11-16:  David Anderson
     commit 695029476aafe127b70adbdde642ce251d7e8308
 
