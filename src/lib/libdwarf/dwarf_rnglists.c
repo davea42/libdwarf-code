@@ -1600,6 +1600,13 @@ _dwarf_fill_in_rle_head(Dwarf_Debug dbg,
             table_entryval;
     } else {
         rle_global_offset = attr_val;
+        if (rle_global_offset >= secsize) {
+            _dwarf_error_string(dbg,error, DW_DLE_RLE_ERROR,
+                "DW_DLE_RLE_ERROR: a .debug_rnglists[.dwo] "
+                "DW_FORM_sec_offset value "
+                "is greater than the rnglists section size");
+            return DW_DLV_ERROR;
+        }
     }
     /* E */
     shead.rh_end_data_area = enddata;
