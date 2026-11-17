@@ -686,12 +686,13 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             is quite ugly. */
         /*  This gets an ugly compiler warning. Sorry. */
         operand2 = (Dwarf_Unsigned)(uintptr_t)loc_ptr;
-        offset = offset + operand1;
-        loc_ptr = loc_ptr + operand1;
-        if (loc_ptr > section_end) {
+        if (operand1 >
+            (Dwarf_Unsigned)(uintptr_t)(section_end - loc_ptr)) {
             _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
             return DW_DLV_ERROR;
         }
+        offset = offset + operand1;
+        loc_ptr = loc_ptr + operand1;
         break;
     case DW_OP_stack_value:  /* DWARF4 */
         break;
@@ -785,12 +786,13 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             is quite ugly. */
         /*  This gets an ugly compiler warning. Sorry. */
         operand2 = (Dwarf_Unsigned)(uintptr_t)loc_ptr;
-        offset = offset + operand1;
-        loc_ptr = loc_ptr + operand1;
-        if (loc_ptr > section_end) {
+        if (operand1 >
+            (Dwarf_Unsigned)(uintptr_t)(section_end - loc_ptr)) {
             _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
             return DW_DLV_ERROR;
         }
+        offset = offset + operand1;
+        loc_ptr = loc_ptr + operand1;
         break;
     case DW_OP_const_type:           /* DWARF5 */
     case DW_OP_GNU_const_type:       /* 0xf4 */
