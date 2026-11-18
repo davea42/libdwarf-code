@@ -215,7 +215,7 @@ dwarf_get_die_marker_a(Dwarf_P_Debug dbg,
             DW_DLV_ERROR);
     }
     *marker = die->di_marker;
-    return DW_DLV_ERROR;
+    return DW_DLV_OK;
 }
 
 /*---------------------------------------------------------
