@@ -1027,7 +1027,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                         before 2038. */
                     calculated_size += DWARF_64BIT_SIZE;
                     if (write_out) {
-                        Dwarf_Unsigned u8 = cur->dfe_index;
+                        /* github Issue #375 */
+                        Dwarf_Unsigned u8 = cur->dfe_timestamp;
                         WRITE_UNALIGNED(dbg, (void *) data,
                             (const void *) &u8,
                             sizeof(u8), DWARF_64BIT_SIZE);
@@ -1048,7 +1049,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                 case DW_FORM_data1:
                     calculated_size += 1;
                     if (write_out) {
-                        unsigned char ub = cur->dfe_index;
+                        /* github Issue #375 */
+                        unsigned char ub = cur->dfe_size;
                         *data = ub;
                         data += 1;
                     }
@@ -1056,7 +1058,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                 case DW_FORM_data2:
                     calculated_size += DWARF_HALF_SIZE;
                     if (write_out) {
-                        Dwarf_Half uh = cur->dfe_index;
+                        /* github Issue #375 */
+                        Dwarf_Half uh = cur->dfe_size;
                         memcpy(data,&uh,DWARF_HALF_SIZE);
 
                     }
@@ -1064,7 +1067,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                 case DW_FORM_data4:
                     calculated_size += DWARF_32BIT_SIZE;
                     if (write_out) {
-                        ASNOUT(data,cur->dfe_index,
+                        /* github Issue #375 */
+                        ASNOUT(data,cur->dfe_size,
                             DWARF_32BIT_SIZE);
                         data += DWARF_32BIT_SIZE;
                     }
@@ -1072,7 +1076,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                 case DW_FORM_data8:
                     calculated_size += DWARF_64BIT_SIZE;
                     if (write_out) {
-                        Dwarf_Unsigned u8 = cur->dfe_index;
+                        /* github Issue #375 */
+                        Dwarf_Unsigned u8 = cur->dfe_size;
                         WRITE_UNALIGNED(dbg, (void *) data,
                             (const void *) &u8,
                             sizeof(u8), DWARF_64BIT_SIZE);
