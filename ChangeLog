@@ -1,3 +1,33 @@
+2026-11-19:  Mounika2456
+    commit d9489c16cfa6020b07d33538ac03c39cb208dc61
+
+    check the DW_AT_ranges sec_offset in _dwarf_fill_in_rle_head (#376)
+
+    When the CU has DW_AT_rnglists_base, _dwarf_fill_in_rle_head()
+    bounds-checks only that base. A DW_FORM_sec_offset DW_AT_ranges
+    value is then used unchecked as rle_global_offset, and
+    rh_rlepointer = dss_data + attr_val. In a 64-bit DWARF5 unit a
+    value such as 0xfffffffffffffff0 wraps the pointer to just before
+    the .debug_rnglists buffer. read_single_rle_entry() only checks
+    against the table end, so it reads below the heap block.
+
+    Reject an offset >= the section size, as the DW_FORM_rnglistx
+    branch and _dwarf_fill_in_lle_head() already do.
+
+2026-11-19:  David Anderson
+    commit 8d55c77434c5aa1b20e4fa9f91b725dc15d80c09
+    Merge: 913d2a1c 4a186912
+
+    Merge branch 'main' of https://github.com/davea42/libdwarf-code
+
+    Leftovers.
+
+2026-11-19:  David Anderson
+    commit 913d2a1c5a7fd4d25feab778da50bc36ffaa236c
+
+    Up to date now.
+            modified:   ChangeLog
+
 2026-11-19:  David Anderson
     commit e6458f04cebfa9f9585d111c03ab291756b4403b
 
