@@ -20,7 +20,14 @@
 
     Merge branch 'main' of https://github.com/davea42/libdwarf-code
 
-    Leftovers.
+    Leftovers with nothing explicit in git log. My fault.
+
+    github PR #377
+    Calculate space/offset in Dwarf_Unsigned and check
+    the space_needed is not so large it will overflow
+    a size_t (just 32bit on Windows 64)..
+
+    src/lib/libdwarf/dwarf_macro.c
 
 2026-11-19:  David Anderson
     commit 913d2a1c5a7fd4d25feab778da50bc36ffaa236c
