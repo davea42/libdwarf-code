@@ -124,6 +124,7 @@ static void dump_load_data(const char *msg,
     printf("  secsize         : %lu\n",
         (unsigned long)sec->dss_size);
     printf("  did_decompress  : %u\n",sec->dss_did_decompress);
+    printf("  decompres_faileds: %u\n",sec->dss_decompress_failed);
     printf("  mmap_len        : %lu\n",
         (unsigned long)sec->dss_computed_mmap_len);
     printf("  mmap_offset     : %lu\n",
@@ -1474,6 +1475,10 @@ do_decompress(Dwarf_Debug dbg,
                 "DW_DLE_ZLIB_DATA_ERROR"
                 " The zlib uncompressed length does not"
                 " match the length in the section header.");
+            section->dss_data = 0;
+            section->dss_size = 0;
+            section->dss_did_decompress = TRUE;
+            section->dss_decompress_failed = TRUE;
             return DW_DLV_ERROR;
         }
     }
@@ -1486,6 +1491,10 @@ do_decompress(Dwarf_Debug dbg,
                 DW_DLE_ZLIB_DATA_ERROR,
                 "DW_DLE_ZLIB_DATA_ERROR"
                 " The zstd ZSTD_decompress() failed.");
+            section->dss_data = 0;
+            section->dss_size = 0;
+            section->dss_did_decompress = TRUE;
+            section->dss_decompress_failed = TRUE;
             return DW_DLV_ERROR;
         }
     }
@@ -1496,6 +1505,7 @@ do_decompress(Dwarf_Debug dbg,
     section->dss_was_alloc= TRUE;
     section->dss_actual_load_type= Dwarf_Alloc_Malloc;
     section->dss_did_decompress = TRUE;
+    section->dss_decompress_failed = FALSE;
     return DW_DLV_OK;
 }
 #endif /* HAVE_ZLIB && HAVE_ZSTD */
@@ -1523,8 +1533,17 @@ _dwarf_load_section(Dwarf_Debug dbg,
     enum Dwarf_Sec_Alloc_Pref finaltype = pref;
 
     /* check to see if the section is already loaded */
-    if (section->dss_data !=  NULL) {
+    if (section->dss_data !=  NULL && section->dss_size > 0
+        && section->dss_decompress_failed == FALSE) {
         return DW_DLV_OK;
+    }
+    if (section->dss_decompress_failed) {
+        _dwarf_error_string(dbg, error,
+            DW_DLE_SECTION_ERROR,
+            "DW_DLE_SECTION_ERROR: "
+            " decompress failed. Section cannot be loaded. "
+            "Likely corrupt object file.");
+        return DW_DLV_ERROR;
     }
     o = dbg->de_obj_file;
     /*  There is an elf convention that section index 0
@@ -1623,6 +1642,7 @@ Hold off on this, keep old error for the moment
             required. */
         res = do_decompress(dbg,section,error);
         if (res != DW_DLV_OK) {
+            /* if DW_DLV_ERROR, error already set */
             return res;
         }
 #else /* !defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */

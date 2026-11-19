@@ -323,6 +323,7 @@ elf_load_nolibelf_section(void *obj, Dwarf_Unsigned section_index,
             if (*errorc) {
                 free(sp->gh_content);
                 sp->gh_content = 0;
+                sp->gh_size = 0;
                 return DW_DLV_ERROR;
             }
 #else /* COMPRESSED TEST */
