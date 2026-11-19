@@ -129,6 +129,16 @@ static int _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Error * error);
 
 static int
+impossible_formcount(Dwarf_Unsigned iv)
+{
+    mf_small_type localiv = (mf_small_type)iv;
+    if (localiv != iv) {
+         return TRUE;
+    }
+    return FALSE;
+}
+
+static int
 is_std_moperator(Dwarf_Small op)
 {
     if (op >= 1 && op <= DW_MACRO_undef_strx) {
@@ -1008,6 +1018,8 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     endptr = section_base + section_size;
     READ_UNALIGNED_CK(dbg,operand_table_count,Dwarf_Small,
         macro_data,sizeof(Dwarf_Small),error,endptr);
+    /*  Value of operand_table_count will fit in operand_table_count
+        by construction.  */
     macro_data += sizeof(Dwarf_Small);
     /* Estimating minimum size */
     local_size = operand_table_count * 4;
@@ -1028,6 +1040,21 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         macro_data += sizeof(Dwarf_Small);
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
             dbg, error, endptr);
+        if (impossible_formcount(formcount)) {
+            /*  formcount too large to fit in mf_formcount.
+                so this is a basic sanity check. */
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+               "DW_DLE_MACRO_OFFSET_BAD as formcount "
+               "is too large 0x%x to be meaningful"
+               " skimming in read_operands_table()" ,
+               formcount);
+            _dwarf_error_string(dbg, error, DW_DLE_MACRO_OFFSET_BAD,
+               dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         if (formcount >= (Dwarf_Unsigned)(endptr - macro_data)) {
             _dwarf_error_string(dbg, error, DW_DLE_MACRO_OFFSET_BAD,
                 "DW_DLE_MACRO_OFFSET_BAD skimming operand table");
@@ -1066,6 +1093,21 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         macro_data += sizeof(Dwarf_Small);
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
             dbg, error, endptr);
+        if (impossible_formcount(formcount)) {
+            /*  formcount too large to fit in mf_formcount.  
+                so this is a basic sanity check. */
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+               "DW_DLE_MACRO_OFFSET_BAD as formcount "
+               "is too large 0x%x to be meaningful"
+               " in read_operands_table()",
+               formcount);
+            _dwarf_error_string(dbg, error, DW_DLE_MACRO_OFFSET_BAD,
+               dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
         curformentry->mf_formcount = (Dwarf_Small)formcount;
         if (curformentry->mf_formcount != formcount) {
             /*  formcount too large to fit in mf_formcount.  

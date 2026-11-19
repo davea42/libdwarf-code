@@ -32,12 +32,16 @@
    (also appears as an extension to DWARF4)
 */
 
+/*  A type for easy fast safe checking in impossible_formcount(),
+    impossible_opcode() */
+typedef Dwarf_Small mf_small_type;
+
 struct Dwarf_Macro_Forms_s {
     /* Code means DW_MACRO_define etc. */
     Dwarf_Small         mf_code;
 
     /* How many entries in mf_formbytes array. */
-    Dwarf_Small         mf_formcount;
+    mf_small_type   mf_formcount;
 
     /* Never free these, these are in the object file memory */
     const Dwarf_Small * mf_formbytes;
@@ -52,7 +56,7 @@ struct Dwarf_Macro_Operator_s {
     /*  mo_opcode == mo_form->mf_code unless it is
         the final 0 byte in which case all 3 values
         are zero */
-    Dwarf_Small      mo_opcode;
+    mf_small_type      mo_opcode;
 
     struct Dwarf_Macro_Forms_s * mo_form;
 
