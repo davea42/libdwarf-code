@@ -465,6 +465,7 @@ struct Dwarf_Section_s {
         Set dss_was_alloc  TRUE */
     Dwarf_Small    dss_zdebug_requires_decompress;
     Dwarf_Small    dss_did_decompress;
+    Dwarf_Small    dss_decompress_failed;
     Dwarf_Small    dss_shf_compressed; /* section SHF_COMPRESS */
     Dwarf_Small    dss_was_alloc;
 
