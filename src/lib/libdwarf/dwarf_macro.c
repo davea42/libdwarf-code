@@ -211,9 +211,9 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     /* count space used by strings */
     unsigned long str_space = 0;
     int done = 0;
-    unsigned long space_needed = 0;
-    unsigned long space_used = 0;
-    unsigned long string_offset = 0;
+    Dwarf_Unsigned space_needed = 0;
+    Dwarf_Unsigned space_used = 0;
+    Dwarf_Unsigned string_offset = 0;
     Dwarf_Small *return_data = 0;
     Dwarf_Small *pdata = 0;
     unsigned long final_count = 0;
@@ -383,10 +383,23 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         We have 'count' array entries to allocate and
         str_space bytes of string space to provide for. */
 
-    string_offset = count * sizeof(Dwarf_Macro_Details);
+    string_offset = (Dwarf_Unsigned)count *
+        sizeof(Dwarf_Macro_Details);
 
     /* extra 2 not really needed */
     space_needed = string_offset + str_space + 2;
+    if (space_needed > (Dwarf_Unsigned)(((size_t)-1)/2)) {
+        /*  unsigned long or size_t may be 32 bits,
+            so a huge entry count must not wrap
+            the allocation size. */
+        free_macro_stack(dbg,&msdata);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_MACRO_MALLOC_SPACE,
+            "DW_DLE_DEBUG_MACRO_MALLOC_SPACE: "
+            ".debug_macinfo entry count too large "
+            "for the space needed. Corrupt DWARF.");
+        return DW_DLV_ERROR;
+    }
     space_used = 0;
     return_data = pdata = (Dwarf_Small *)_dwarf_get_alloc(
         dbg, DW_DLA_STRING, space_needed);
@@ -455,7 +468,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             }
             slen = (unsigned long)strlen((char *) pnext) + 1;
             _dwarf_safe_strcpy((char *)latest_str_loc,
-                space_needed - space_used,
+                (size_t)(space_needed - space_used),
                 (const char *)pnext,slen-1);
             pdmd->dmd_macro = (char *) latest_str_loc;
             latest_str_loc += slen;
