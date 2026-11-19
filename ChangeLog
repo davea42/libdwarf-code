@@ -1,3 +1,75 @@
+2026-11-19:  David Anderson
+    commit e6458f04cebfa9f9585d111c03ab291756b4403b
+
+    github Issue #375
+    For emitting DWARF5 line tables it would write
+    the wrong data for  DW_LNCT_size and DW_LNCT_timestamp.
+    This was a copy/paste error.
+    We don't actually write DWARF5 line tables,
+    but lets do this correctly anyway, right now.
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+
+2026-11-19:  David Anderson
+    commit 343b908f316f35be3aa00aaca937a3bddfecb8fa
+
+    github Issue #374
+    A new field we mark when decompression fails so
+    we can be sure not to read the compressed data.
+    +    Dwarf_Small    dss_decompress_failed;
+
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2026-11-19:  David Anderson
+    commit f02d6ec3d369f925db6835f2c547ec222bc4ef0f
+
+    github Issue #371
+    If a corrupt DWARF5 macro header has a formcount
+    field which is really large we could
+    wrap and result in a crash.
+    Now we check the value for sanity.
+            modified:   ../libdwarf/dwarf_macro5.c
+            modified:   ../libdwarf/dwarf_macro5.h
+
+2026-11-19:  David Anderson
+    commit 297d9c3745d4d2b5f2d3cb0bbe56eb4081d912b8
+
+    github Issue #374
+    If decompress fails we zero gh_content and
+    add a flag of decompress failed so
+    we avoid acessing the compressed data.
+            modified:   ../libdwarf/dwarf_elfread.c
+            modified:   ../libdwarf/dwarf_init_finish.c
+
+2026-11-18:  David Anderson
+    commit c3385e22a405489a5885caa7a4f5fbb8c021b45e
+
+    Github Issue #372.
+    dwarf_get_die_marker_a() always returned
+    DW_DLV_ERROR even with no error.
+    Now returns DW_DLV_OK if no error.
+            modified:   dwarf_pro_die.c
+
+2026-11-19:  Mounika2456
+    commit b45478da13c74afd0589651efb1baab6a13329ac
+
+    bound implicit_value/entry_value lengths in 
+    _dwarf_read_loc_expr_op (#373)
+
+    _dwarf_read_loc_expr_op() added the ULEB128 block length of
+    DW_OP_implicit_value and DW_OP_entry_value to loc_ptr and then
+    checked loc_ptr > section_end. A length near 2^64 wraps the
+    pointer back into the section, so the check passes and the op is
+    returned with a block length of 2^64-1. dwarfdump then reads that
+    many bytes from the block and runs off the end of .debug_info.
+
+    Compare the length with the bytes remaining before advancing.
+
+2026-11-17:  David Anderson
+    commit 16b1efa893fcab6533e37026dccffb97c8f3e6d4
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2026-11-17:  David Anderson
     commit dae95a7f0325a758db718c0c0f64ca2623f0a8c0
 
@@ -251,8 +323,10 @@
         not returned, leading to leak of error information.
             modified:   src/bin/dwarfdump/print_die.c
 
-        If an leb needed to be skipped, and while skipping ran off the end
-        of the section, then the local malloc data would be leaked.
+        If an leb needed to be skipped, and while skipping
+        ran off the end of the section, then the local
+        malloc data would be leaked.
+
         SKIP_LEB128_CK
         changed to
         res = _dwarf_leb128_skip_wrapper(dbg,.....)
