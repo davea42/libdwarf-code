@@ -1681,6 +1681,14 @@ _dwarf_elf_load_a_relx_batch(
     if (size == 0) {
         return DW_DLV_NO_ENTRY;
     }
+    if (gsh->gh_content) {
+        /*  Already loaded as some other section, such as
+            the section name strings. Reading (and possibly
+            decompressing) relocations into it would
+            overwrite or free data still in use. */
+        *errcode = DW_DLE_RELOC_INVALID;
+        return DW_DLV_ERROR;
+    }
     relp = (char *)gsh->gh_content;
     if (!relp) {
         relp = (char *)malloc(size);
