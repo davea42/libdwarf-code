@@ -313,25 +313,12 @@ elf_load_nolibelf_section(void *obj, Dwarf_Unsigned section_index,
     sp->gh_was_alloc = TRUE;
     sp->gh_load_type = Dwarf_Alloc_Malloc;
 
-    if (decompressme) {
-        Dwarf_Unsigned flags = sp->gh_flags;
-        if (flags& SHF_COMPRESSED) {
-#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
-            *errorc = 0;
-            /* decompress and set new section size */
-            _dwarf_do_decompress_elf(elf,sp,errorc);
-            if (*errorc) {
-                free(sp->gh_content);
-                sp->gh_content = 0;
-                sp->gh_size = 0;
-                return DW_DLV_ERROR;
-            }
-#else /* COMPRESSED TEST */
-            *errorc = DW_DLE_ZLIB_ZSTD_MISSING;
-            return DW_DLV_ERROR;
-#endif /* COMPRESSED TEST */
-        }
-    }
+    /*  Do not decompress here. _dwarf_load_section(),
+        the only caller, keeps the on-disk section size
+        and decompresses SHF_COMPRESSED sections itself.
+        Decompressing here too would have do_decompress()
+        read the already-decompressed (possibly much
+        smaller) buffer using the on-disk size. */
     *return_data = (Dwarf_Small *)sp->gh_content;
     return DW_DLV_OK;
 }
