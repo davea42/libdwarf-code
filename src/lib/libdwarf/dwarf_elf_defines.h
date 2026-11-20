@@ -39,6 +39,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
+/*  Usually relocations we care about are absolute, but
+    something like R_X86_64_PC32 is pc relative.
+    and R_386_GOTOFF or GOTPC are different.
+    basically we hope to not really care in most cases. */
+#define DW_REL_ABS    0
+#define DW_REL_PC     1
+#define DW_REL_GOTOFF 2
+#define DW_REL_GOTPC  3
+
 /* Standard Elf section types. */
 #ifndef SHT_NULL
 #define SHT_NULL 0

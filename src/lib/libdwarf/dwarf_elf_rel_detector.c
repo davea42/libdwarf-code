@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019, David Anderson
+Copyright (c) 2019-2026, David Anderson
 All rights reserved.
 cc
 Redistribution and use in source and binary forms, with
@@ -35,10 +35,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_elf_defines.h"
 #include "dwarf_elf_rel_detector.h"
 
+#define THUNK(t,T,fl) ((t == T)?(flavor=fl,1):0)
+
 unsigned
-_dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
+_dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine,
+    int *oflavor)
 {
     unsigned r = 0;
+    int flavor = DW_REL_ABS;
 
     switch (machine) {
 #if defined(EM_MIPS) && defined (R_MIPS_32)
@@ -95,7 +99,8 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
             |  (type == R_386_GOTPC)
 #endif
 #if defined (R_386_PC32)
-            |  (type == R_386_PC32)
+            /*|  (type == R_386_PC32) */
+            | THUNK(type,R_386_PC32,DW_REL_PC)
 #endif
 #if defined (R_386_TLS_LDO_32)
             | (type == R_386_TLS_LDO_32)
@@ -216,7 +221,8 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
     case EM_X86_64:
         r = (0
 #if defined (R_X86_64_PC32)
-            | (type == R_X86_64_PC32)
+            /*| (type == R_X86_64_PC32) */
+            | THUNK(type,R_X86_64_PC32,DW_REL_PC)
 #endif
 #if defined (R_X86_64_32)
             | (type == R_X86_64_32)
@@ -233,13 +239,16 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
         break;
     default: break;
     }
+    *oflavor = flavor;
     return r;
 }
 
 unsigned
-_dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine)
+_dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine,
+    int * oflavor)
 {
     unsigned r = 0;
+    int flavor = DW_REL_ABS; 
 
     switch (machine) {
 #if defined(EM_MIPS) && defined (R_MIPS_64)
@@ -348,7 +357,8 @@ _dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine)
             | (type == R_X86_64_64)
 #endif
 #if defined (R_X86_64_PC64)
-            | (type == R_X86_64_PC64)
+            /*| (type == R_X86_64_PC64) */
+            | THUNK(type,R_X86_64_PC64,DW_REL_PC)
 #endif
 #if defined (R_X86_64_DTPOFF32)
             | (type == R_X86_64_DTPOFF64)
@@ -367,5 +377,6 @@ _dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine)
 #endif /* EM_AARCH64 */
     default: break;
     }
+    *oflavor = flavor;
     return r;
 }

@@ -629,6 +629,7 @@ update_entry(Dwarf_Debug dbg,
     Dwarf_Half machine  = (Dwarf_Half)obj->f_machine;
     struct generic_symentry *symp = 0;
     int is_rela = rela->gr_is_rela;
+    int oflavor = DW_REL_ABS;
 
     offset = rela->gr_offset;
     addend = rela->gr_addend;
@@ -646,9 +647,9 @@ update_entry(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     /* Determine relocation size */
-    if (_dwarf_is_32bit_abs_reloc(type, machine)) {
+    if (_dwarf_is_32bit_abs_reloc(type, machine,&oflavor)) {
         reloc_size = 4;
-    } else if (_dwarf_is_64bit_abs_reloc(type, machine)) {
+    } else if (_dwarf_is_64bit_abs_reloc(type, machine,&oflavor)) {
         reloc_size = 8;
     } else if (!type) {
         /*  There is nothing to do. , this is the case such as
@@ -677,6 +678,11 @@ update_entry(Dwarf_Debug dbg,
         Dwarf_Small *targ = target_section+offset;
         Dwarf_Unsigned presentval = 0;
         Dwarf_Unsigned outval = 0;
+        Dwarf_Unsigned pcval = 0;
+
+        if (oflavor == DW_REL_PC) {
+            pcval = offset;
+        }
 
         if (!is_rela) {
             READ_UNALIGNED_SAFE(dbg,presentval,
@@ -687,7 +693,7 @@ update_entry(Dwarf_Debug dbg,
             and st_value will be zero.
             But a few compilers have
             presentval zero and st_value set. */
-        outval = presentval + symp->gs_value + addend;
+        outval = presentval + symp->gs_value - pcval + addend;
         WRITE_UNALIGNED_LOCAL(dbg,targ,
             &outval,sizeof(outval),(unsigned long)reloc_size);
     }
