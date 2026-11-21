@@ -1642,7 +1642,15 @@ Hold off on this, keep old error for the moment
             required. */
         res = do_decompress(dbg,section,error);
         if (res != DW_DLV_OK) {
-            /* if DW_DLV_ERROR, error already set */
+            /*  if DW_DLV_ERROR, error already set.
+                Every failure path must leave the section
+                marked failed, otherwise dss_data still
+                points at the compressed bytes and the
+                next load returns them as the section. */
+            section->dss_data = 0;
+            section->dss_size = 0;
+            section->dss_did_decompress = TRUE;
+            section->dss_decompress_failed = TRUE;
             return res;
         }
 #else /* !defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
