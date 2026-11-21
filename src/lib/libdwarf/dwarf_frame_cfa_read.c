@@ -443,6 +443,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     regtab3 =  table->fr_regtable;
     cfa_reg = &regtab3->rt3_cfa_rule;
     localregtab = regtab3->rt3_rules;
+    /*  The rules array may be the caller's own
+        (dwarf_get_fde_info_for_all_regs3_b(),
+        dwarf_iterate_fde_all_regs3()) with fewer than
+        de_frame_reg_rules_entry_count entries.
+        Never touch more entries than it has. */
+    if (table->fr_reg_count < reg_count) {
+        reg_count = table->fr_reg_count;
+    }
     if (iter_data) {
         iter_data->aa_frameregtable  = table;
     }
