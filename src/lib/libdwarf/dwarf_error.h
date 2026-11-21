@@ -39,6 +39,10 @@ void _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
 void _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval, char *msg);
 
+void _dwarf_error_append_string(Dwarf_Debug dbg, Dwarf_Error * error,
+    char *msg);
+
+
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error((dbg), error, (errval)); return(retval);
 

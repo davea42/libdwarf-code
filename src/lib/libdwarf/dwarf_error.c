@@ -210,6 +210,37 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     return;
 }
 
+/*  New in 2.3.4, November 2026.  Allows libdwarf to
+    append a string to an existing error while
+    avoiding trashing an error which is static data
+    (meaning memory is nearly exhausted) */
+void _dwarf_error_append_string(Dwarf_Debug dbg, Dwarf_Error * error,
+    char *msg)
+{ 
+    struct Dwarf_Error_s * errptr = 0;
+    dwarfstring *existingmsg = 0;
+
+    if (!dbg) {
+        return;
+    }
+    if (!error) {
+        return;
+    }
+    errptr = *(Dwarf_Error*)error;
+    if (!errptr) {
+        return;
+    }
+    if (errptr->er_static_alloc != DE_STANDARD) {
+        return;
+    }
+    if (!errptr->er_msg) {
+        return;
+    }
+    existingmsg = (dwarfstring *)errptr->er_msg;
+    dwarfstring_append(existingmsg,msg);
+}
+
+
 Dwarf_Unsigned
 dwarf_errno(Dwarf_Error error)
 {
@@ -219,6 +250,8 @@ dwarf_errno(Dwarf_Error error)
     return (error->er_errval);
 }
 
+/*  Returns a static string from a global table of
+    string pointers (or "Dwarf_Error value out of range")*/ 
 char*
 dwarf_errmsg_by_number(Dwarf_Unsigned errornum )
 {
