@@ -1414,6 +1414,16 @@ dwarf_formflag(Dwarf_Attribute attr,
     }
 
     if (attr->ar_attribute_form == DW_FORM_flag) {
+        Dwarf_Byte_Ptr section_end =
+            _dwarf_calculate_info_section_end_ptr(cu_context);
+
+        if (attr->ar_debug_ptr >= section_end) {
+            _dwarf_error_string(dbg, error,
+                DW_DLE_ATTR_FORM_SIZE_BAD,
+                "DW_DLE_ATTR_FORM_SIZE_BAD: "
+                "DW_FORM_flag outside of the section.");
+            return DW_DLV_ERROR;
+        }
         *ret_bool = *(Dwarf_Small *)(attr->ar_debug_ptr);
         return DW_DLV_OK;
     }
