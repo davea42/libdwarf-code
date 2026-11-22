@@ -1451,9 +1451,10 @@ dwarf_highpc_b(Dwarf_Die die,
                 index_to_addr,
                 &addr_out,
                 error);
-            if (res2 != DW_DLV_OK) {
-                return res2;
+            if (res2 == DW_DLV_OK) {
+                *return_value = addr_out;
             }
+            return res2;
         }
         READ_UNALIGNED_CK(dbg, addr, Dwarf_Addr,
             info_ptr, address_size,
