@@ -1,3 +1,68 @@
+2026-11-22:  David Anderson
+    commit 1bdccce55cbb44c610bac77b7c211f00f442fce2
+
+    This is a major improvement in accuracy and
+    readability in case of errors.
+    With or without decompression.
+
+    I believe this addresses all the issues in PR #382 PR #374
+    and PR #383
+    Those will remain open for now so the bug filers can
+    check that this commit really fixes things.
+
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2026-11-22:  David Anderson
+    commit d653469c9dbac30ec0515789ae8553ebc0e5c0b2
+
+    github Issue #379.
+    On reading an indexed (into .debug_addr a section
+    new in DWARF5) address
+    the code was ignoring it and returning something else.
+    Bad bug.
+    Now we return the actual address the lookup found.
+    This has been wrong since DWARF5 support was added.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2026-11-21:  David Anderson
+    commit d3667de3885376c18b6092de334f3286b101f03b
+
+    Added a new internal function
+    _dwarf_error_append_string() so that a higher level
+    can add to the string explaining what the lower level found.
+    We're not using this yet, but it's something that can
+    be very useful.
+            modified:   src/lib/libdwarf/dwarf_error.c
+            modified:   src/lib/libdwarf/dwarf_error.h
+
+2026-11-20:  David Anderson
+    commit c2b8e0e0f06b89f23ecc3da50bfe57934b47a870
+
+    github Issue #378
+    pc-relative relocations were not handled correctly,
+    leading to incorrect output from dwarfdump -f or -F
+    This has been a bug for many years (decades).
+    We do not yet handle such for non-Elf objects.
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+            modified:   src/lib/libdwarf/dwarf_elf_rel_detector.c
+            modified:   src/lib/libdwarf/dwarf_elf_rel_detector.h
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2026-11-19:  David Anderson
+    commit 1713ab4a8b163ddac911cc0c634b0fe4449803f6
+
+    Correcting the record on #377, which
+    is a correction to src/lib/libdwarf/dwarf_macro.c
+            modified:   ChangeLog
+
+2026-11-19:  David Anderson
+    commit b7ce8dcaa0770c564a8aacc74a6636fb7cb25294
+
+    Up to date, no outstanding Issue
+            modified:   ChangeLog
+
 2026-11-19:  Mounika2456
     commit d9489c16cfa6020b07d33538ac03c39cb208dc61
 
