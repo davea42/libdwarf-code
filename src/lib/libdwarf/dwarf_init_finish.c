@@ -415,6 +415,14 @@ this_section_dwarf_relevant(const char *scn_name,
     return FALSE;
 }
 
+static void
+_dw_empty_this_section(struct Dwarf_Section_s *section) 
+{
+    section->dss_data = 0;
+    section->dss_size = 0;
+    section->dss_did_decompress = TRUE;
+    section->dss_decompress_failed = TRUE;
+}
 /*  This assumes any non-Elf object files have no SHT_GROUP
     sections. So this code will not be invoked on non-Elf objects.
     One supposes this is unlikely to match any non-Elf
@@ -446,14 +454,17 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     res = _dwarf_load_section(dbg,&secdata,error);
     if (res != DW_DLV_OK) {
         _dwarf_malloc_section_free(&secdata);
+        _dw_empty_this_section(&secdata);
         return res;
     }
     if (!secdata.dss_data) {
+        _dw_empty_this_section(&secdata);
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
     if (doas->as_entrysize != 4) {
         _dwarf_malloc_section_free(&secdata);
+        _dw_empty_this_section(&secdata);
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
@@ -479,19 +490,24 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             data but little-endian SHT_GROUP data. */
         if ((data+DWARF_32BIT_SIZE) > secend) {
             /* Duplicates the check in READ_UNALIGNED_CK
-                so we can free allocated memory bere. */
+                so we can get a specific error . */
             _dwarf_malloc_section_free(&secdata);
+            _dw_empty_this_section(&secdata);
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
         }
-        READ_UNALIGNED_CK(dbg,fval,Dwarf_Unsigned,
-            data,
-            DWARF_32BIT_SIZE,
-            error,
-            secend);
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,
+            &fval,data,DWARF_32BIT_SIZE,secend,
+            error);
+        if (res == DW_DLV_ERROR) {
+            _dwarf_malloc_section_free(&secdata);
+            _dw_empty_this_section(&secdata);
+            return res;
+        }
         if (fval != 1 && fval != 0x1000000) {
             /*  Could be corrupted elf object. */
             _dwarf_malloc_section_free(&secdata);
+            _dw_empty_this_section(&secdata);
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
         }
@@ -502,16 +518,20 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
 
             if ((data+DWARF_32BIT_SIZE) > secend) {
                 /* Duplicates the check in READ_UNALIGNED_CK
-                    so we can free allocated memory bere. */
+                    so we can get a more specific error. */
                 _dwarf_malloc_section_free(&secdata);
+                _dw_empty_this_section(&secdata);
                 _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
                 return DW_DLV_ERROR;
             }
-            READ_UNALIGNED_CK(dbg,val,Dwarf_Unsigned,
-                data,
-                DWARF_32BIT_SIZE,
-                error,
-                secend);
+            res = _dwarf_read_unaligned_ck_wrapper(dbg,
+                &val,data,DWARF_32BIT_SIZE,secend,
+                error);
+            if (res == DW_DLV_ERROR) {
+                _dwarf_malloc_section_free(&secdata);
+                _dw_empty_this_section(&secdata);
+                return res;
+            }
             if (val > section_count) {
                 /*  Might be confused endianness by
                     the compiler generating the SHT_GROUP.
@@ -521,6 +541,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     DWARF_32BIT_SIZE);
                 if (valr > section_count) {
                     _dwarf_malloc_section_free(&secdata);
+                    _dw_empty_this_section(&secdata);
                     _dwarf_error(dbg,error,
                         DW_DLE_GROUP_INTERNAL_ERROR);
                     return DW_DLV_ERROR;
@@ -547,6 +568,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 }
                 if (resx == DW_DLV_ERROR){
                     _dwarf_malloc_section_free(&secdata);
+                    _dw_empty_this_section(&secdata);
                     _dwarf_error(dbg,error,err);
                     return resx;
                 }
@@ -563,11 +585,13 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     error);
                 if (res != DW_DLV_OK) {
                     _dwarf_malloc_section_free(&secdata);
+                    _dw_empty_this_section(&secdata);
                     return res;
                 }
             }
         }
     }
+    _dw_empty_this_section(&secdata);
     _dwarf_malloc_section_free(&secdata);
     return DW_DLV_OK;
 }
@@ -1328,6 +1352,7 @@ do_decompress(Dwarf_Debug dbg,
     Dwarf_Unsigned uncompressed_len = 0;
     Dwarf_Unsigned headersize = 12; /* Usually right */
     Dwarf_Unsigned fieldsize = dbg->de_pointer_size;
+    int res = DW_DLV_OK;
 
     endsection = basesrc + section->dss_size;
     if (!strncmp("ZLIB",(const char *)src,4)) {
@@ -1349,10 +1374,14 @@ do_decompress(Dwarf_Debug dbg,
             _dwarf_error_string(dbg, error,
                 DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
                 dwarfstring_string(&m));
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
             return DW_DLV_ERROR;
         }
         }
     } else {
+        _dwarf_malloc_section_free(section);
+        _dw_empty_this_section(section);
         _dwarf_error_string(dbg, error,
             DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
             "DW_DLE_ZDEBUG_INPUT_FORMAT_ODD"
@@ -1361,6 +1390,8 @@ do_decompress(Dwarf_Debug dbg,
     }
 
     if ((basesrc + headersize) > endsection) {
+        _dwarf_malloc_section_free(section);
+        _dw_empty_this_section(section);
         _dwarf_error_string(dbg, error,DW_DLE_ZLIB_SECTION_SHORT,
             "DW_DLE_ZLIB_SECTION_SHORT"
             "Section too short to be either zlib or zstd related");
@@ -1385,20 +1416,34 @@ do_decompress(Dwarf_Debug dbg,
         section->dss_ZLIB_compressed = TRUE;
     } else  if (flags & SHF_COMPRESSED) {
         /*  The prefix is a struct:
-            unsigned int type; followed by pad if following are 64bit!
+            unsigned int type; followed by pad if the
+            following are 64bit!
             size-of-target-address size
             size-of-target-address
         */
         Dwarf_Small *ptr    = (Dwarf_Small *)src;
         Dwarf_Unsigned type = 0;
         Dwarf_Unsigned size = 0;
-        /* Dwarf_Unsigned addralign = 0; */
-        READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,
-            DWARF_32BIT_SIZE,
-            error,endsection);
+        
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,
+              &type,ptr,DWARF_32BIT_SIZE,endsection,
+              error);
+        if (res == DW_DLV_ERROR) {
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
+            return res;
+        }
+        /*  If fieldsize == 8, this passes over the type
+            and the 4 bytes of zeros */
         ptr += fieldsize;
-        READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fieldsize,
-            error,endsection);
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,
+              &size,ptr,fieldsize,endsection,
+              error);
+        if (res == DW_DLV_ERROR) {
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
+            return res;
+        }
         switch(type) {
         case ELFCOMPRESS_ZLIB:
             break;
@@ -1418,6 +1463,7 @@ do_decompress(Dwarf_Debug dbg,
                 DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
+            _dw_empty_this_section(section);
             return DW_DLV_ERROR;
         }
         } /* end switch */
@@ -1441,6 +1487,8 @@ do_decompress(Dwarf_Debug dbg,
     destlen = uncompressed_len;
     dest = malloc(destlen);
     if (!dest) {
+         _dwarf_malloc_section_free(section);
+        _dw_empty_this_section(section);
         _dwarf_error_string(dbg, error,
             DW_DLE_ALLOC_FAIL,
             "DW_DLE_ALLOC_FAIL"
@@ -1450,18 +1498,23 @@ do_decompress(Dwarf_Debug dbg,
     }
     /*  uncompress is a zlib function. */
     if (!zstdcompress) {
-        int res = 0;
         uLongf dlen = destlen;
 
         res = uncompress(dest,&dlen,src,srclen);
         if (res == Z_BUF_ERROR) {
             free(dest);
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
             DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_BUF_ERROR, DW_DLV_ERROR);
         } else if (res == Z_MEM_ERROR) {
             free(dest);
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
             DWARF_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
         } else if (res != Z_OK) {
             free(dest);
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
             /* Probably Z_DATA_ERROR. */
             DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_DATA_ERROR,
                 DW_DLV_ERROR);
@@ -1470,15 +1523,13 @@ do_decompress(Dwarf_Debug dbg,
             /*  The stream ended before filling dest,
                 the rest of dest is uninitialized. */
             free(dest);
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
             _dwarf_error_string(dbg, error,
                 DW_DLE_ZLIB_DATA_ERROR,
                 "DW_DLE_ZLIB_DATA_ERROR"
                 " The zlib uncompressed length does not"
                 " match the length in the section header.");
-            section->dss_data = 0;
-            section->dss_size = 0;
-            section->dss_did_decompress = TRUE;
-            section->dss_decompress_failed = TRUE;
             return DW_DLV_ERROR;
         }
     }
@@ -1491,10 +1542,8 @@ do_decompress(Dwarf_Debug dbg,
                 DW_DLE_ZLIB_DATA_ERROR,
                 "DW_DLE_ZLIB_DATA_ERROR"
                 " The zstd ZSTD_decompress() failed.");
-            section->dss_data = 0;
-            section->dss_size = 0;
-            section->dss_did_decompress = TRUE;
-            section->dss_decompress_failed = TRUE;
+            _dwarf_malloc_section_free(section);
+            _dw_empty_this_section(section);
             return DW_DLV_ERROR;
         }
     }

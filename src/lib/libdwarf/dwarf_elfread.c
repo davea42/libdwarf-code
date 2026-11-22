@@ -287,6 +287,7 @@ elf_load_nolibelf_section(void *obj, Dwarf_Unsigned section_index,
         *errorc = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
+    sp->gh_was_alloc = TRUE;
     /*  Linux has a 2GB limit on read size.
         So break this into 2gb pieces.  */
     remaining_bytes = sp->gh_size;
@@ -304,6 +305,8 @@ elf_load_nolibelf_section(void *obj, Dwarf_Unsigned section_index,
         if (res != DW_DLV_OK) {
             free(sp->gh_content);
             sp->gh_content = 0;
+            sp->gh_was_alloc = FALSE;
+            sp->gh_size = 0;
             return res;
         }
         remaining_bytes -= read_size;
@@ -324,10 +327,15 @@ elf_load_nolibelf_section(void *obj, Dwarf_Unsigned section_index,
                 free(sp->gh_content);
                 sp->gh_content = 0;
                 sp->gh_size = 0;
+                sp->gh_was_alloc = FALSE;
                 return DW_DLV_ERROR;
             }
 #else /* COMPRESSED TEST */
             *errorc = DW_DLE_ZLIB_ZSTD_MISSING;
+            free(sp->gh_content);
+            sp->gh_content = 0;
+            sp->gh_size = 0;
+            sp->gh_was_alloc = FALSE;
             return DW_DLV_ERROR;
 #endif /* COMPRESSED TEST */
         }
@@ -845,6 +853,8 @@ _dwarf_destruct_elf_nlaccess(void * obj)
             if (shp->gh_was_alloc) {
                 free(shp->gh_content);
                 shp->gh_content = 0;
+                shp->gh_size = 0;
+                shp->gh_was_alloc = FALSE;
             }
             break;
 #ifdef HAVE_FULL_MMAP
