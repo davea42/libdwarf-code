@@ -1784,7 +1784,7 @@ dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
     if (invalid) {
         return 0;
     }
-    orig = (Dwarf_Half)dbg->de_frame_same_value_number;
+    orig = (Dwarf_Half)dbg->de_frame_undefined_value_number;
     dbg->de_frame_undefined_value_number = value;
     dbg->de_frame_numbers_validated = FALSE;
     return orig;
