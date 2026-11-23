@@ -1638,7 +1638,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, errc, DW_DLV_ERROR);
     }
-#if 0 /* Not changing error, to disruptive of regression tests. */
+#if 0 /* Not changing error, too disruptive of regression tests. */
 Hold off on this, keep old error for the moment
     if (res == DW_DLV_ERROR) {
         _dwarf_error_string(dbg, error,
@@ -1695,6 +1695,8 @@ Hold off on this, keep old error for the moment
             return res;
         }
 #else /* !defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
+        /* See notes on #issue 374 */
+        _dw_empty_this_section(section);
         _dwarf_error_string(dbg, error,
             DW_DLE_ZDEBUG_REQUIRES_ZLIB,
             "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
