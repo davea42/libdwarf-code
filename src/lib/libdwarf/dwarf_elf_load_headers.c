@@ -161,7 +161,8 @@ getbitsoncount(Dwarf_Unsigned v_in)
     return bitscount;
 }
 
-#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
+/*  Used with and without  zlib/zstd. So
+    always needed. See github Issue #374 */
 static void
 _mark_elf_decompress_failed(struct generic_shdr *psh)
 {
@@ -175,6 +176,7 @@ _mark_elf_decompress_failed(struct generic_shdr *psh)
     psh->gh_compressed_len = 0;
 
 }
+#if defined(HAVE_ZLIB) && defined(HAVE_ZSTD)
 /*  This is exclusively for reading .symtab and .symstr
     sections. See dwarf_elf_init() (do_decompress())
     for decompressing all
