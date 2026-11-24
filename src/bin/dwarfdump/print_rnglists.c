@@ -129,6 +129,7 @@ print_single_rle(Dwarf_Unsigned lineoffset,
     Dwarf_Unsigned code,
     Dwarf_Unsigned v1,
     Dwarf_Unsigned v2,
+    Dwarf_Unsigned baseaddr,
     Dwarf_Unsigned entrylen,
     Dwarf_Unsigned goff)
 {
@@ -154,23 +155,27 @@ print_single_rle(Dwarf_Unsigned lineoffset,
     case DW_RLE_end_of_list:
         printf("           ");
         printf("           ");
+        printf(" %" DW_PR_DUu,entrylen);
         break;
 
     case DW_RLE_base_addressx:{
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx ,v1);
         printf("           ");
+        printf(" %" DW_PR_DUu,entrylen);
         }
         break;
     case DW_RLE_startx_endx: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
+        printf(" %" DW_PR_DUu,entrylen);
         }
         break;
     case DW_RLE_startx_length: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
+        printf(" %" DW_PR_DUu,entrylen);
         }
         break;
 
@@ -178,27 +183,36 @@ print_single_rle(Dwarf_Unsigned lineoffset,
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
+        printf(" %" DW_PR_DUu,entrylen);
+        printf(
+            " (0x%" DW_PR_XZEROS DW_PR_DUx
+            " 0x%" DW_PR_XZEROS DW_PR_DUx ")",
+            v1+baseaddr,v2+baseaddr);
         }
         break;
     case DW_RLE_base_address: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1);
         printf("           ");
+        printf(" %" DW_PR_DUu,entrylen);
         }
         break;
     case DW_RLE_start_end: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
+        printf(" %" DW_PR_DUu,entrylen);
         }
         break;
     case DW_RLE_start_length: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
+        printf(" %" DW_PR_DUu,entrylen);
         }
         break;
     default:
+        printf("\n");
         printf(" ERROR: Unknown RLE code in .debug_rnglists. %s\n",
             esb_get_string(&m));
         simple_err_return_msg_either_action(res,
@@ -206,7 +220,6 @@ print_single_rle(Dwarf_Unsigned lineoffset,
         break;
     }
     esb_destructor(&m);
-    printf(" %" DW_PR_DUu,entrylen);
     printf("\n");
     return res;
 }
@@ -227,6 +240,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     Dwarf_Unsigned ct = 0;
     int title_printed = FALSE;
     Dwarf_Unsigned goff = offset_of_first_range;
+    Dwarf_Unsigned baseaddr = 0;
 
     for ( ; curoffset < endoffset; ++ct ) {
         unsigned entrylen = 0;
@@ -250,8 +264,17 @@ print_entire_rangeslist(Dwarf_Debug dbg,
                 "entryname            "
                 "val1       val2 entrylen\n");
         }
-        print_single_rle(curoffset,
-            code,v1,v2,entrylen,goff);
+        if(code == DW_RLE_base_address) {
+            baseaddr = v1;
+            print_single_rle(curoffset,
+                code,v1,v2,baseaddr,entrylen,goff);
+        } else if(code == DW_RLE_offset_pair) {
+            print_single_rle(curoffset,
+                code,v1,v2,baseaddr,entrylen,goff);
+        } else {
+            print_single_rle(curoffset,
+                code,v1,v2,baseaddr,entrylen,goff);
+        }
         curoffset += entrylen;
         goff += entrylen;
         if (curoffset > endoffset) {
