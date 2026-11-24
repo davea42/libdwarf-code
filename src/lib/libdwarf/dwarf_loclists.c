@@ -200,8 +200,10 @@ read_single_lle_entry(Dwarf_Debug dbg,
     switch(code) {
     case DW_LLE_end_of_list: break;
     case DW_LLE_base_addressx:{
+        /*  Reading the index into .debug_addr of the base addr*/
         DECODE_LEB128_UWORD_LEN_CK(data,val1,leblen,
             dbg,error,enddata);
+        /* macro updates data argument */
         count += leblen;
         }
         break;
@@ -217,7 +219,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             dbg,error,enddata);
         count += leblen;
         res = counted_loc_descr(dbg,data,enddata,
-            dataoffset,
+            dataoffset + (Dwarf_Unsigned)(data - startdata),
             &loc_ops_overall_size,
             &loc_ops_count_len,
             &loc_ops_len,
@@ -236,7 +238,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
         int res = 0;
 
         res = counted_loc_descr(dbg,data,enddata,
-            dataoffset,
+            dataoffset+ (Dwarf_Unsigned)(data - startdata),
             &loc_ops_overall_size,
             &loc_ops_count_len,
             &loc_ops_len,
@@ -269,7 +271,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
         data += address_size;
         count += address_size;
         res = counted_loc_descr(dbg,data,enddata,
-            dataoffset,
+            dataoffset + (Dwarf_Unsigned)(data - startdata),
             &loc_ops_overall_size,
             &loc_ops_count_len,
             &loc_ops_len,
@@ -294,7 +296,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
             dbg,error,enddata);
         count += (unsigned)leblen;
         res = counted_loc_descr(dbg,data,enddata,
-            dataoffset,
+            dataoffset + (Dwarf_Unsigned)(data - startdata),
             &loc_ops_overall_size,
             &loc_ops_count_len,
             &loc_ops_len,
@@ -316,7 +318,8 @@ read_single_lle_entry(Dwarf_Debug dbg,
             dwarfstring_append_printf_u(&m,
                 "DW_DLE_LOCLISTS_ERROR: "
                 "The loclists entry at .debug_loclists"
-                " offset 0x%x" ,dataoffset);
+                " offset 0x%x" ,dataoffset +
+                (data - startdata));
             dwarfstring_append_printf_u(&m,
                 " has code 0x%x which is unknown",code);
             _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
