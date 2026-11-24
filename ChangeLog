@@ -1,3 +1,67 @@
+2026-11-23:  David Anderson
+    commit fa6f9c029b19f07f78fd0111acef4b73ad6345a5
+
+    Fixing Issue #380.
+
+    Needed to increment a value to correctly report
+    the section offset.
+    This has been wrong since DWARF5 support was
+    introduced.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2026-11-23:  David Anderson
+    commit c3779554f04eb9f89416a2330a6e47aa316149a1
+
+    Moved a #if down to expose a function that should
+    always be compiled (problem introduced a couple
+    days ago).
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2026-11-23:  David Anderson
+    commit d70725c2f047e92f0af2dd0c6ca6befdba127e3d
+
+    Some correction and amplification of debug_rnglists printing.
+            modified:   src/bin/dwarfdump/print_rnglists.c
+
+2026-11-23:  David Anderson
+    commit 8ef480353c260f8d93d106b19ed9cc1318abc5a0
+
+    -#if 0 /* Not changing error, to disruptive of regression tests. */
+    +#if 0 /* Not changing error, too disruptive of regression tests. */
+    ...
+     #else /* !defined(HAVE_ZLIB) && defined(HAVE_ZSTD) */
+    +        /* See notes on #issue 374 we need this */
+    +        _dw_empty_this_section(section);
+
+            modified:   dwarf_init_finish.c
+
+2026-11-23:  David Anderson
+    commit ad92922cccba1516e28e38e3a1886c89dc51141e
+
+         Used with and without  zlib/zstd. So
+         always needed. See github Issue #374
+         Removed #if guard.
+     static void
+     _mark_elf_decompress_failed(struct generic_shdr *psh)
+
+            modified:   dwarf_elf_load_headers.c
+
+2026-11-22:  David Anderson
+    commit e580fcedfdf55179e5bc26aa1ef299a8b137cbd2
+
+    The fix to issue #381.
+    The bug was introduced when the function
+    dwarf_frame_set_undefined_value() was originally written
+    (before 2019).
+            modified:   dwarf_frame.c
+
+2026-11-22:  David Anderson
+    commit 465389aa7ca9ae3d6c58a698e3824e78076fc4bc
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2026-11-22:  David Anderson
     commit 1bdccce55cbb44c610bac77b7c211f00f442fce2
 
