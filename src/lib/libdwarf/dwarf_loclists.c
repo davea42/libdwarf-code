@@ -1170,6 +1170,7 @@ build_array_of_lle(Dwarf_Debug dbg,
         e->ld_opsblock = eops;
         e->ld_lle_bytecount = entrylen;
         data += entrylen;
+        dataoffset += entrylen;
         bytescounttotal += entrylen;
         if (code == DW_LLE_end_of_list) {
             /*  This terminates the entries for a loclist portion.*/

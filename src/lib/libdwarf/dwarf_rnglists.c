@@ -205,6 +205,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD_LEN_CK(data,val1,leblen,
             dbg,error,enddata);
         count += leblen;
+        dataoffset += leblen;
         }
         break;
     case DW_RLE_startx_endx:
@@ -216,6 +217,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
             dbg,error,enddata);
         count += leblen;
+        dataoffset += leblen;
         }
         break;
     case DW_RLE_base_address: {
@@ -223,6 +225,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
             data,address_size,error,enddata);
         data += address_size;
         count += address_size;
+        dataoffset += address_size;
         }
         break;
     case DW_RLE_start_end: {
@@ -234,6 +237,7 @@ read_single_rle_entry(Dwarf_Debug dbg,
             data,address_size,error,enddata);
         data += address_size;
         count += address_size;
+        dataoffset += address_size;
         }
         break;
     case DW_RLE_start_length: {
@@ -241,9 +245,11 @@ read_single_rle_entry(Dwarf_Debug dbg,
             data,address_size,error,enddata);
         data += address_size;
         count += address_size;
+        dataoffset += address_size;
         DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
             dbg,error,enddata);
         count += leblen;
+        dataoffset += leblen;
         }
         break;
     default: {
@@ -1248,6 +1254,7 @@ build_array_of_rle(Dwarf_Debug dbg,
         e->rle_raw2 = val2;
         bytescounttotal += entrylen;
         data += entrylen;
+        dataoffset += entrylen;
         if (code == DW_RLE_end_of_list) {
             done = TRUE;
             break;
