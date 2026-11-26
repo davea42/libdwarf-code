@@ -5859,7 +5859,6 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Unsigned op_loop_count = 0;
 
     alloc_skip_branch_array(0,&op_branch_checking);
-    /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
     possibly_increase_esb_alloc(string_out,no_of_ops,100);
     if (no_of_ops > 1) {
