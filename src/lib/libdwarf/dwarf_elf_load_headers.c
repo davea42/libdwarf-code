@@ -1684,14 +1684,25 @@ _dwarf_elf_load_a_relx_batch(
         return DW_DLV_NO_ENTRY;
     }
     relp = (char *)gsh->gh_content;
-    if (!relp) {
-        relp = (char *)malloc(size);
-        local_alloc = TRUE;
+    if (relp) {
+        /*  This is a case of a section which is
+            named .shstrings and yet has 
+            section type SHT_REL or SHT_RELA
+            (for just one example).
+            Corrupt Elf.
+            github Issue #385
+            It is even worse when SHF_COMPRESSED
+            is a section flag because we try to
+            decompress twice. */
+        *errcode = DW_DLE_RELOC_INVALID;
+        return DW_DLV_ERROR;
     }
+    relp = (char *)malloc(size);
     if (!relp) {
         *errcode = DW_DLE_REL_ALLOC;
         return DW_DLV_NO_ENTRY;
     }
+    local_alloc = TRUE;
     if ((offset > ep->f_filesize)||
         (size > ep->f_filesize) ||
         ((size +offset) > ep->f_filesize)) {
